@@ -20,62 +20,52 @@
 #ifndef LITERATURESOURCE_H
 #define LITERATURESOURCE_H
 
-
 #include <ostream>
 #include <string>
 #include "NoteBox/Helper.h"
 
-namespace NoteBox::Enums {
-using std::string;
-    struct Note {
-        string id;
+namespace NoteBox::Entity {
+    using std::string;
+
+    struct LiteratureSource {
+        int id;
         string title;
+        string author;
+        string year;
+        string publication;
+        string url;
+        string noteId;
         string content;
 
-        // std::string subject;
-        // std::string topic;
-        // std::string subtopic;
-        // std::string category;
-        // std::string question;
-        // std::string answer;
-        // QuestionDifficulty difficulty;
-        // QuestionImportance importance;
-        // ll last_update;
+        LiteratureSource(int id_, string title_, string author_, string year_, string publication_,
+                         string url_, string noteId_, string content_) : id(id_),
+                                                                         title(std::move(title_)),
+                                                                         author(std::move(author_)),
+                                                                         year(std::move(year_)),
+                                                                         publication(std::move(publication_)),
+                                                                         url(std::move(url_)),
+                                                                         noteId(std::move(noteId_)),
+                                                                         content(std::move(content_)) {
+        }
 
-        Note(string id_, string title_, string content_) :
-        id(std::move(id_)), title(std::move(title_)), content(std::move(content_)) {}
-
-        friend std::ostream& operator<<(std::ostream& os, const Note& file) {
-            os << "Question{id: " << file.id
-               // << ", subject: " << file.subject
-               // << ", topic: " << file.topic
-               // << ", subtopic: " << file.subtopic
-               // << ", category: " << file.category
-               // << ", question: " << file.question
-               // << ", answer: " << file.answer
-               // << ", difficulty: " << static_cast<int>(file.difficulty)
-               // << ", importance: " << static_cast<int>(file.importance)
-               // << ", last_update: " << file.last_update
-               << "}";
+        friend std::ostream &operator<<(std::ostream &os, const LiteratureSource &source) {
+            os << "LiteratureSource{id: " << source.id
+                    << ", title: " << source.title
+                    << ", author: " << source.author
+                    << ", year: " << source.year
+                    << ", publication: " << source.publication
+                    << ", url: " << source.url
+                    << ", noteId: " << source.noteId
+                    << "}";
             return os;
         }
 
-        bool operator==(const Note &other) const {
-            return
-                    this->id == other.id;
-                    // this->subject == other.subject &&
-                    // this->topic == other.topic &&
-                    // this->subtopic == other.subtopic &&
-                    // this->category == other.category &&
-                    // this->question == other.question &&
-                    // this->answer == other.answer &&
-                    // this->difficulty == other.difficulty &&
-                    // this->importance == other.importance &&
-                    // this->last_update == other.last_update;
+        bool operator==(const LiteratureSource &other) const {
+            return this->id == other.id &&
+                   this->title == other.title &&
+                   this->author == other.author;
         }
     };
-
 }
 
-#endif
 #endif // LITERATURESOURCE_H

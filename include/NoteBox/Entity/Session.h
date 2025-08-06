@@ -1,0 +1,48 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
+//
+// This program is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see 
+// <https://www.gnu.org/licenses/> or write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef SESSION_H
+#define SESSION_H
+
+#include <ostream>
+#include <string>
+
+namespace NoteBox::Entity {
+    using std::string;
+
+    struct Session {
+        int id;
+        string current_path;
+        string last_opened;
+
+        Session(int id_, string current_path_, string last_opened_) : id(id_),
+                                                                      current_path(std::move(current_path_)),
+                                                                      last_opened(std::move(last_opened_)) {
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, const Session &session) {
+            os << "Session{id: " << session.id
+                    << ", current_path: " << session.current_path
+                    << ", last_opened: " << session.last_opened
+                    << "}";
+            return os;
+        }
+
+        bool operator==(const Session &other) const {
+            return this->id == other.id &&

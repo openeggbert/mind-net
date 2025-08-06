@@ -17,63 +17,76 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef NOTE_H
+#define NOTE_H
 
-#ifndef QUESTION_H
-#define QUESTION_H
+
 #include <ostream>
 #include <string>
 #include "NoteBox/Helper.h"
 
 namespace NoteBox::Entity {
-using std::string;
+    using std::string;
+
     struct Note {
         string id;
+        string parent_note_id;
         string title;
         string content;
+        string question;
+        string note_type;
+        string created_at;
+        string updated_at;
+        string last_shown_at;
+        string last_reviewed_at;
+        int review_in_x_days;
+        int importance;
+        int difficulty;
+        int source_id;
 
-        // std::string subject;
-        // std::string topic;
-        // std::string subtopic;
-        // std::string category;
-        // std::string question;
-        // std::string answer;
-        // QuestionDifficulty difficulty;
-        // QuestionImportance importance;
-        // ll last_update;
+        Note(string id_, string title_, string content_) : id(std::move(id_)), title(std::move(title_)),
+                                                           content(std::move(content_)),
+                                                           note_type("standard"), review_in_x_days(0), importance(0),
+                                                           difficulty(0), source_id(0) {
+        }
 
-        Note(string id_, string title_, string content_) :
-        id(std::move(id_)), title(std::move(title_)), content(std::move(content_)) {}
-
-        friend std::ostream& operator<<(std::ostream& os, const Note& file) {
-            os << "Question{id: " << file.id
-               // << ", subject: " << file.subject
-               // << ", topic: " << file.topic
-               // << ", subtopic: " << file.subtopic
-               // << ", category: " << file.category
-               // << ", question: " << file.question
-               // << ", answer: " << file.answer
-               // << ", difficulty: " << static_cast<int>(file.difficulty)
-               // << ", importance: " << static_cast<int>(file.importance)
-               // << ", last_update: " << file.last_update
-               << "}";
+        friend std::ostream &operator<<(std::ostream &os, const Note &note) {
+            os << "Note{id: " << note.id
+                    << ", parent_note_id: " << note.parent_note_id
+                    << ", title: " << note.title
+                    << ", content: " << note.content
+                    << ", question: " << note.question
+                    << ", note_type: " << note.note_type
+                    << ", created_at: " << note.created_at
+                    << ", updated_at: " << note.updated_at
+                    << ", last_shown_at: " << note.last_shown_at
+                    << ", last_reviewed_at: " << note.last_reviewed_at
+                    << ", review_in_x_days: " << note.review_in_x_days
+                    << ", importance: " << note.importance
+                    << ", difficulty: " << note.difficulty
+                    << ", source_id: " << note.source_id
+                    << "}";
             return os;
         }
 
         bool operator==(const Note &other) const {
             return
-                    this->id == other.id;
-                    // this->subject == other.subject &&
-                    // this->topic == other.topic &&
-                    // this->subtopic == other.subtopic &&
-                    // this->category == other.category &&
-                    // this->question == other.question &&
-                    // this->answer == other.answer &&
-                    // this->difficulty == other.difficulty &&
-                    // this->importance == other.importance &&
-                    // this->last_update == other.last_update;
+                    this->id == other.id &&
+                    this->parent_note_id == other.parent_note_id &&
+                    this->title == other.title &&
+                    this->content == other.content &&
+                    this->question == other.question &&
+                    this->note_type == other.note_type &&
+                    this->created_at == other.created_at &&
+                    this->updated_at == other.updated_at &&
+                    this->last_shown_at == other.last_shown_at &&
+                    this->last_reviewed_at == other.last_reviewed_at &&
+                    this->review_in_x_days == other.review_in_x_days &&
+                    this->importance == other.importance &&
+                    this->difficulty == other.difficulty &&
+                    this->source_id == other.source_id;
         }
     };
-
 }
 
-#endif
+#endif // NOTE_H

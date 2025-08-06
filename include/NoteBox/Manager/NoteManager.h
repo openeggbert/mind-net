@@ -18,7 +18,7 @@ namespace NoteBox::Manager {
 
         const std::string &getCurrentPath() const;
 
-        std::shared_ptr<Enums::Note> getCurrentNote();
+        std::shared_ptr<Entity::Note> getCurrentNote();
 
         void cd(const std::string &path);
 

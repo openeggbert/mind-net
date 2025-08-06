@@ -10,7 +10,7 @@ namespace NoteBox::Manager {
 
     const std::string &NoteManager::getCurrentPath() const { return currentPath; }
 
-    std::shared_ptr<Enums::Note> NoteManager::getCurrentNote() {
+    std::shared_ptr<Entity::Note> NoteManager::getCurrentNote() {
         return nullptr;//notes.at(currentPath);
     }
 

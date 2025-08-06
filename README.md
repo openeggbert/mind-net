@@ -27,7 +27,12 @@ rm [NOTE_ID] ... removes note with given id
 
 pwd ... prints id of the current note
 
-col
+colls
+coladd
+coledit
+colshow
+colpwd
+colcd
 
 exit ... exits the application
 

@@ -1,0 +1,53 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
+//
+// This program is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see 
+// <https://www.gnu.org/licenses/> or write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef COLLECTION_NOTE_H
+#define COLLECTION_NOTE_H
+
+#include <ostream>
+#include "NoteBox/Entity/Note.h"
+
+namespace NoteBox::Entity {
+    struct CollectionNote {
+        int collection_id;
+        string note_id;
+        int order_index;
+
+        CollectionNote(int collection_id_, string note_id_, int order_index_) : collection_id(collection_id_),
+            note_id(std::move(note_id_)),
+            order_index(order_index_) {
+        }
+
+        friend std::ostream &operator<<(std::ostream &os, const CollectionNote &collection_note) {
+            os << "CollectionNote{collection_id: " << collection_note.collection_id
+                    << ", note_id: " << collection_note.note_id
+                    << ", order_index: " << collection_note.order_index
+                    << "}";
+            return os;
+        }
+
+        bool operator==(const CollectionNote &other) const {
+            return this->collection_id == other.collection_id &&
+                   this->note_id == other.note_id &&
+                   this->order_index == other.order_index;
+        }
+    };
+}
+
+#endif // COLLECTION_NOTE_H
