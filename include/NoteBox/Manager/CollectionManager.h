@@ -1,20 +1,20 @@
 //
 // Created by robertvokac on 8/4/25.
 //
+#ifndef COLLECTIONMANAGER_H
+#define COLLECTIONMANAGER_H
 
-#ifndef NOTEMANAGER_H
-#define NOTEMANAGER_H
 #include <memory>
 
 #include "NoteBox/Entity/Note.h"
 
 namespace NoteBox::Manager {
-    class NoteManager {
+    class CollectionManager {
     private:
         std::string currentPath; // e.g., "/1a/2b"
 
     public:
-        NoteManager();
+        CollectionManager();
 
         const std::string &getCurrentPath() const;
 
@@ -30,5 +30,4 @@ namespace NoteBox::Manager {
     };
 }
 
-
-#endif //NOTEMANAGER_H
+#endif // COLLECTIONMANAGER_H

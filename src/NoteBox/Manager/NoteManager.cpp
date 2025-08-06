@@ -50,12 +50,27 @@ namespace NoteBox::Manager {
         // std::cout << ":" << currentPath << "\n";
     }
 
-    void NoteManager::list() const {
+    void NoteManager::list(size_t page, size_t pageSize) const {
         // auto note = getCurrentNote();
-        // for (const auto &[id, child]: note->children) {
-        //     std::cout << id << " - " << child->title << "\n";
+        // auto it = note->children.begin();
+        // std::advance(it, page * pageSize);
+        //
+        // size_t count = 0;
+        // for (; it != note->children.end() && count < pageSize; ++it, ++count) {
+        //     std::cout << it->first << " - " << it->second->title << '\n';
         // }
-    }
+        //
+        // size_t total = note->children.size();
+        // size_t shown = std::min((page + 1) * pageSize, total);
+        //
+        // if (shown < total) {
+        //     std::cout << "[n]ext page / [q]uit: ";
+        //     std::string choice;
+        //     std::getline(std::cin, choice);
+        //     if (choice == "n") {
+        //         list(page + 1, pageSize);
+        //     }
+        }
 
     void NoteManager::remove(const std::string &id) {
         std::string fullId = currentPath == "/" ? "/" + id : currentPath + id;

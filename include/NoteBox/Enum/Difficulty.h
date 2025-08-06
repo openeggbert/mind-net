@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// brain-meter: Tool that asks the user questions.
+// note-box : Note management tool.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef QUESTION_IMPORTANCE_H
-#define QUESTION_IMPORTANCE_H
+#ifndef DIFFICULTY_H
+#define DIFFICULTY_H
 
 #include <string>
 
@@ -27,8 +27,8 @@ namespace NoteBox::Enums {
      *
      * @author robertvokac
      */
-    enum class QuestionImportance{
-        LOW = 1, MEDIUM = 2, HIGH = 3
+    enum class Difficulty {
+        EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
     };
 
 #endif

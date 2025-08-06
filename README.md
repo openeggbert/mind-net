@@ -16,20 +16,36 @@ For example: 34/acegfd
 
 ## Commands
 
-### add [NOTE_NAME]
+```
+add [NOTE_NAME] ... creates a notes as a child of the current one
 
-### cd [ID]
+cd [NOTE_ID] ... navigates to note with NOTE_ID
 
-### ls
+ls ... lists children
 
-### rm [ID]
+rm [NOTE_ID] ... removes note with given id
 
-### pwd
+pwd ... prints id of the current note
 
-### col
+col
 
-### exit
+exit ... exits the application
 
-### quit
+quit ... exits the application
 
-### help [COMMAND]
+help [COMMAND] ... prints info related to the given command
+
+rename
+
+search
+
+edit
+
+show
+
+help
+
+tree
+
+tag
+```

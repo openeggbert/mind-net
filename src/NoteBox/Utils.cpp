@@ -20,4 +20,9 @@ namespace NoteBox {
     void Utils::clearScreen() {
         std::cout << "\033[2J\033[H";
     }
+
+    std::string Utils::createJdbcUrl(const std::string& directoryWhereSqliteFileIs) {
+        return "jdbc:sqlite:" + directoryWhereSqliteFileIs + "/" + ".bitbackup.sqlite3?foreign_keys=on;";
+    }
+
 } // NoteBox

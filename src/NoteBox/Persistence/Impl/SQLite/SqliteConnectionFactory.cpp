@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// brain-meter: Tool that asks the user questions.
+// note-box : Note management tool.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -17,19 +17,30 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef QUESTION_DIFFICULTY_H
-#define QUESTION_DIFFICULTY_H
 
+
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+
+#include "NoteBox/Persistence/Impl/SQLite/SqliteConnectionFactory.h"
+
+#include "NoteBox/Persistence/Api/ConnectionFactory.h"
+#include "NoteBox/Persistence/Api/Connection.h"
+#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
+#include "NoteBox/Utils.h"
 #include <string>
 
-namespace NoteBox::Enums {
-    /**
-     *
-     * @author robertvokac
-     */
-    enum class QuestionDifficulty {
-        EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
-    };
+#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
 
-#endif
-} // namespace NoteBox::Enums
+namespace NoteBox::Persistence::Impl::SQLite {
+    Impl::SQLite::SqliteConnectionFactory::SqliteConnectionFactory(std::string& directoryWhereSqliteFileIsIn) {
+            this->jdbcUrl = Utils::createJdbcUrl(directoryWhereSqliteFileIsIn);
+            this->directoryWhereSqliteFileIs = directoryWhereSqliteFileIsIn;
+        }
+
+        Api::Connection* SqliteConnectionFactory::createConnection() {
+            return new SqliteConnection(directoryWhereSqliteFileIs);
+        }
+}

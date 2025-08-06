@@ -4,6 +4,7 @@
 
 #ifndef UTILS_H
 #define UTILS_H
+#include <string>
 
 namespace NoteBox {
 
@@ -15,6 +16,7 @@ private:
 public:
     static long long currentTimestamp();
     static void clearScreen();
+    static std::string createJdbcUrl(const std::string& directoryWhereSqliteFileIs);
 };
 
 } // NoteBox
