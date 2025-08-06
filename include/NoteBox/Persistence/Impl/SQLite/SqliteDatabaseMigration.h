@@ -40,7 +40,8 @@ public:
     SqliteDatabaseMigration& operator=(const SqliteDatabaseMigration&) = delete;
 
     static SqliteDatabaseMigration* getInstance();
-    bool migrate(std::string directoryWhereSqliteFileIs);
+    static void destroyInstance();
+    bool migrate();
 
 };
 

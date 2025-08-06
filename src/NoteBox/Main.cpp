@@ -11,7 +11,21 @@
 #include "NoteBox/Command/CommandFactory.h"
 #include "NoteBox/Manager/NoteManager.h"
 
+bool migrateSchemaIfNeeded() {
+    std::cout <<"Migrating schema, if needed.";
+
+
+    bool migrationResult = NoteBox::Persistence::Impl::Sqlite::SqliteDatabaseMigration::getInstance()->migrate();
+    if (migrationResult) {
+        std::cout << "Migrating schema: OK. Success." << std::endl;
+        return true;
+    }
+    std::cerr << "Migrating schema: KO. Failed." << std::endl;
+    return false;
+}
+
 int main() {
+    migrateSchemaIfNeeded();
     NoteBox::Manager::NoteManager mgr;
     NoteBox::Command::CommandFactory factory;
 

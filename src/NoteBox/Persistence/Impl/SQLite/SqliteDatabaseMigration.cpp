@@ -45,30 +45,22 @@ namespace NoteBox::Persistence::Impl::SQLite {
         return INSTANCE;
     }
 
+    void SqliteDatabaseMigration::destroyInstance() {
+        if (INSTANCE != nullptr) {
+            delete INSTANCE;
+            INSTANCE = nullptr;
+        }
+    }
+
     class DBMigration {
     private:
         std::string jdbcUrl;
-        std::string directoryWhereSqliteFileIs;
-        std::string installedBy;
-        std::string name;
-        std::string sqlDialect;
-        std::string sqlDialectImplClass;
 
     public:
         DBMigration(
-            std::string jdbcUrlIn,
-            std::string directoryWhereSqliteFileIsIn,
-            std::string installedByIn,
-            std::string nameIn,
-            std::string sqlDialectIn,
-            std::string sqlDialectImplClassIn
+            const std::string &jdbcUrlIn
         ) {
             this->jdbcUrl = jdbcUrlIn;
-            this->directoryWhereSqliteFileIs = directoryWhereSqliteFileIsIn;
-            this->installedBy = installedByIn;
-            this->name = nameIn;
-            this->sqlDialect = sqlDialectIn;
-            this->sqlDialectImplClass = sqlDialectImplClassIn;
         }
 
         bool executeSQL(SQLite::Database& db, std::string& sql, int number) {
@@ -83,33 +75,21 @@ namespace NoteBox::Persistence::Impl::SQLite {
         }
 
         bool createTable(SQLite::Database& db) {
-            std::string SQL_CREATE_TABLE_DB_MIGRATION_SCHEMA_HISTORY =
+            std::string SQL_CREATE_TABLE_MIGRATION =
                     R"(
-CREATE TABLE "DB_MIGRATION_SCHEMA_HISTORY" (
-                "ID" TEXT NOT NULL,
-                "MIGRATION_GROUP" TEXT NOT NULL,
-                "INSTALLED_RANK" INTEGER NOT NULL,
-                "VERSION" TEXT NOT NULL,
-                "DESCRIPTION" TEXT NOT NULL,
-                "TYPE" TEXT NOT NULL,
-                "SCRIPT" TEXT NOT NULL,
-                "HASH" TEXT NOT NULL UNIQUE,
-                "INSTALLED_BY" TEXT NOT NULL,
-                "INSTALLED_ON" TEXT NOT NULL,
-                "EXECUTION_TIME" INTEGER NOT NULL,
-                "SUCCESS" INTEGER NOT NULL,
-                PRIMARY KEY("ID"),
-                CONSTRAINT "DB_MIGRATION_SCHEMA_HISTORY_UNIQUE_CONSTRAINT_MIGRATION_GROUP_AND_INSTALLED_RANK" UNIQUE("MIGRATION_GROUP","INSTALLED_RANK"),
-                CONSTRAINT "DB_MIGRATION_SCHEMA_HISTORY_UNIQUE_CONSTRAINT_MIGRATION_GROUP_AND_VERSION" UNIQUE("MIGRATION_GROUP","VERSION")
+CREATE TABLE "MIGRATION" (
+                "ID" INTEGER NOT NULL,
+                "MAX_MIGRATION_NUMBER" INTEGER NOT NULL,
+                PRIMARY KEY("ID")
             );
 )";
-            return executeSQL(db, SQL_CREATE_TABLE_DB_MIGRATION_SCHEMA_HISTORY, 0);
+            return executeSQL(db, SQL_CREATE_TABLE_MIGRATION, 0);
         }
 
         bool validateTableExists(SQLite::Database& db) {
             bool doesTableExist = false;
             SQLite::Statement query(
-                db, std::string("SELECT * FROM ") + DBMigrationSchemaHistoryTable::TABLE_NAME);
+                db, std::string("SELECT * FROM ") + MigrationTable::TABLE_NAME);
             try {
                 query.executeStep();
                 doesTableExist = true;
@@ -238,7 +218,7 @@ CREATE TABLE "DB_MIGRATION_SCHEMA_HISTORY" (
         }
 
 
-        MigrationResult migrate() {
+        bool migrate() {
             try {
                 SQLite::Database db(directoryWhereSqliteFileIs, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
@@ -292,18 +272,12 @@ CREATE TABLE "DB_MIGRATION_SCHEMA_HISTORY" (
         }
     };
 
-    MigrationResult SqliteDatabaseMigration::migrate(std::string directoryWhereSqliteFileIs) {
+    bool SqliteDatabaseMigration::migrate() {
         using std::string;
-        string jdbcUrl = Core::Utils::createJdbcUrl(directoryWhereSqliteFileIs);
+        string jdbcUrl = Utils::createJdbcUrl(".");
         std::cerr << "jdbcUrl=" << jdbcUrl;
 
-        DBMigration dbMigration = DBMigration(
-            jdbcUrl,
-            directoryWhereSqliteFileIs,
-            "bitbackup-persistence-impl-sqlite",
-            "bitbackup",
-            "sqlite",
-            "BitBackup::Persistence::Impl::Sqlite.SqliteDatabaseMigration");
+        DBMigration dbMigration = DBMigration(jdbcUrl);
         return dbMigration.migrate();
     }
 }
