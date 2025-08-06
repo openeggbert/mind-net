@@ -17,14 +17,15 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef LITERATURESOURCE_H
+#define LITERATURESOURCE_H
 
-#ifndef QUESTION_H
-#define QUESTION_H
+
 #include <ostream>
 #include <string>
 #include "NoteBox/Helper.h"
 
-namespace NoteBox::Entity {
+namespace NoteBox::Enums {
 using std::string;
     struct Note {
         string id;
@@ -77,3 +78,4 @@ using std::string;
 }
 
 #endif
+#endif // LITERATURESOURCE_H

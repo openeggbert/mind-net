@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// bit-backup: Tool detecting bit rots in files.
-// Copyright (C) 2023-2025 the original author or authors.
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,32 +22,23 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-
+#ifndef HISTORYTABLE_H
+#define HISTORYTABLE_H
 
 namespace NoteBox::Persistence::Impl::Sqlite {
+    struct HistoryTable {
+        HistoryTable() = delete;
 
-struct LiteratureTable {
+        HistoryTable(const HistoryTable &) = delete;
 
+        HistoryTable &operator=(const HistoryTable &) = delete;
 
-    FileTable() = delete;
+        static constexpr const char *TABLE_NAME = "HISTORY";
 
-    FileTable(const FileTable&) = delete;
-    FileTable& operator=(const FileTable&) = delete;
-
-    static constexpr const char* TABLE_NAME = "FILE";
-    
-    static constexpr const char* ID = "ID";
-    static constexpr const char* NAME = "NAME";
-    static constexpr const char* ABSOLUTE_PATH = "ABSOLUTE_PATH";
-    static constexpr const char* LAST_MODIFICATION_DATE = "LAST_MODIFICATION_DATE";
-    static constexpr const char* LAST_CHECK_DATE = "LAST_CHECK_DATE";
-    //
-    static constexpr const char* HASH_SUM_VALUE = "HASH_SUM_VALUE";
-    static constexpr const char* HASH_SUM_ALGORITHM = "HASH_SUM_ALGORITHM";
-    static constexpr const char* SIZE = "SIZE";
-    static constexpr const char* LAST_CHECK_RESULT = "LAST_CHECK_RESULT";
-    
-
-};
+        static constexpr const char *ID = "ID";
+        static constexpr const char *NOTE_ID = "NOTE_ID";
+        static constexpr const char *ACTION = "ACTION";
+        static constexpr const char *TIMESTAMP = "TIMESTAMP";
+    };
 }
-
+#endif // HISTORYTABLE_H

@@ -48,4 +48,9 @@ help
 tree
 
 tag
+
+litls
+litadd
+litedit
+litshow
 ```

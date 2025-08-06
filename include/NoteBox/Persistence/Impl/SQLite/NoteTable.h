@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// bit-backup: Tool detecting bit rots in files.
-// Copyright (C) 2023-2025 the original author or authors.
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,32 +22,37 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
+#ifndef NOTETABLE_H
+#define NOTETABLE_H
 
 
 namespace NoteBox::Persistence::Impl::Sqlite {
 
-struct LiteratureTable {
+struct NoteTable {
 
 
-    FileTable() = delete;
+    NoteTable() = delete;
 
-    FileTable(const FileTable&) = delete;
-    FileTable& operator=(const FileTable&) = delete;
+    NoteTable(const NoteTable&) = delete;
+    NoteTable& operator=(const NoteTable&) = delete;
 
-    static constexpr const char* TABLE_NAME = "FILE";
+    static constexpr const char* TABLE_NAME = "NOTE";
     
-    static constexpr const char* ID = "ID";
-    static constexpr const char* NAME = "NAME";
-    static constexpr const char* ABSOLUTE_PATH = "ABSOLUTE_PATH";
-    static constexpr const char* LAST_MODIFICATION_DATE = "LAST_MODIFICATION_DATE";
-    static constexpr const char* LAST_CHECK_DATE = "LAST_CHECK_DATE";
-    //
-    static constexpr const char* HASH_SUM_VALUE = "HASH_SUM_VALUE";
-    static constexpr const char* HASH_SUM_ALGORITHM = "HASH_SUM_ALGORITHM";
-    static constexpr const char* SIZE = "SIZE";
-    static constexpr const char* LAST_CHECK_RESULT = "LAST_CHECK_RESULT";
-    
-
+static constexpr const char *ID = "ID";
+    static constexpr const char *PARENT_NOTE_ID = "PARENT_NOTE_ID";
+    static constexpr const char *TITLE = "TITLE";
+    static constexpr const char *CONTENT = "CONTENT";
+    static constexpr const char *QUESTION = "QUESTION";
+    static constexpr const char *NOTE_TYPE = "NOTE_TYPE";
+    static constexpr const char *CREATED_AT = "CREATED_AT";
+    static constexpr const char *UPDATED_AT = "UPDATED_AT";
+    static constexpr const char *LAST_SHOWN_AT = "LAST_SHOWN_AT";
+    static constexpr const char *LAST_REVIEWED_AT = "LAST_REVIEWED_AT";
+    static constexpr const char *REVIEW_IN_X_DAYS = "REVIEW_IN_X_DAYS";
+    static constexpr const char *IMPORTANCE = "IMPORTANCE";
+    static constexpr const char *DIFFICULTY = "DIFFICULTY";
+    static constexpr const char *SOURCE_ID = "SOURCE_ID";
 };
 }
 
+#endif // NOTETABLE_H

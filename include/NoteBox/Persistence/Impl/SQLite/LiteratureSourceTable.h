@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// bit-backup: Tool detecting bit rots in files.
-// Copyright (C) 2023-2025 the original author or authors.
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -45,7 +45,7 @@ struct LiteratureTable {
     static constexpr const char* PUBLICATION = "PUBLICATION";
     //
     static constexpr const char* URL = "URL";
-    static constexpr const char* NOTE_ID = "NOTE_ID";
+    static constexpr const char* CONTENT = "CONTENT";
     
 
 };

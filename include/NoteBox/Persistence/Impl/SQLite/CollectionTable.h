@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// bit-backup: Tool detecting bit rots in files.
-// Copyright (C) 2023-2025 the original author or authors.
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,32 +22,25 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
+#ifndef COLLECTIONTABLE_H
+#define COLLECTIONTABLE_H
 
 
 namespace NoteBox::Persistence::Impl::Sqlite {
+    struct CollectionTable {
+        CollectionTable() = delete;
 
-struct LiteratureTable {
+        CollectionTable(const CollectionTable &) = delete;
 
+        CollectionTable &operator=(const CollectionTable &) = delete;
 
-    FileTable() = delete;
+        static constexpr const char *TABLE_NAME = "COLLECTION";
 
-    FileTable(const FileTable&) = delete;
-    FileTable& operator=(const FileTable&) = delete;
-
-    static constexpr const char* TABLE_NAME = "FILE";
-    
-    static constexpr const char* ID = "ID";
-    static constexpr const char* NAME = "NAME";
-    static constexpr const char* ABSOLUTE_PATH = "ABSOLUTE_PATH";
-    static constexpr const char* LAST_MODIFICATION_DATE = "LAST_MODIFICATION_DATE";
-    static constexpr const char* LAST_CHECK_DATE = "LAST_CHECK_DATE";
-    //
-    static constexpr const char* HASH_SUM_VALUE = "HASH_SUM_VALUE";
-    static constexpr const char* HASH_SUM_ALGORITHM = "HASH_SUM_ALGORITHM";
-    static constexpr const char* SIZE = "SIZE";
-    static constexpr const char* LAST_CHECK_RESULT = "LAST_CHECK_RESULT";
-    
-
-};
+        static constexpr const char *ID = "ID";
+        static constexpr const char *PARENT_COLLECTION_ID = "PARENT_COLLECTION_ID";
+        static constexpr const char *NAME = "NAME";
+        static constexpr const char *DESCRIPTION = "DESCRIPTION";
+        static constexpr const char *ORDER_INDEX = "ORDER_INDEX";
+    };
 }
-
+#endif // COLLECTIONTABLE_H
