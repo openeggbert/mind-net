@@ -6,20 +6,28 @@
 
 #include "NoteBox/Command/AddCommand.h"
 #include "NoteBox/Command/CdCommand.h"
+#include "NoteBox/Command/HelpCommand.h"
 #include "NoteBox/Command/LsCommand.h"
 #include "NoteBox/Command/RmCommand.h"
 #include "NoteBox/Command/VersionCommand.h"
+#define add_command(key, clazz)         commands[#key] = std::make_shared<clazz##Command>();
 
-namespace NoteBox::Command {
-    CommandFactory::CommandFactory() {
-        commands["version"] = std::make_shared<VersionCommand>();
-        commands["add"] = std::make_shared<AddCommand>();
-        commands["cd"] = std::make_shared<CdCommand>();
-        commands["ls"] = std::make_shared<LsCommand>();
-        commands["rm"] = std::make_shared<RmCommand>();
+
+namespace NoteBox::Command
+{
+    CommandFactory::CommandFactory()
+    {
+
+        add_command(version, Version)
+        add_command(add, Add)
+        add_command(cd, Cd)
+        add_command(ls, Ls)
+        add_command(rm, Rm)
+        add_command(help, Help)
     }
 
-    std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string &name) {
+    std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string& name)
+    {
         return commands.count(name) ? commands[name] : nullptr;
     }
 }

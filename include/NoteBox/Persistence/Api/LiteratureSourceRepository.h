@@ -13,34 +13,37 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef LITERATURESOURCEREPOSITORY_H
+#define LITERATURESOURCEREPOSITORY_H
 
 
-/**
- *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
+#include "NoteBox/Entity/LiteratureSource.h"
+#include <vector>
 
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnectionFactory.h"
 
-#include "NoteBox/Persistence/Api/ConnectionFactory.h"
-#include "NoteBox/Persistence/Api/Connection.h"
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
-#include "NoteBox/Utils.h"
-#include <string>
+namespace NoteBox::Persistence::Api {
 
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
+    /**
+     *
+    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+     */
 
-namespace NoteBox::Persistence::Impl::SQLite {
-    Impl::SQLite::SqliteConnectionFactory::SqliteConnectionFactory(std::string& directoryWhereSqliteFileIsIn) {
-            this->jdbcUrl = Utils::createJdbcUrl(directoryWhereSqliteFileIsIn);
-            this->directoryWhereSqliteFileIs = directoryWhereSqliteFileIsIn;
-        }
+    class LiteratureSourceRepository {
 
-        Api::Connection* SqliteConnectionFactory::createConnection() {
-            return new SqliteConnection(directoryWhereSqliteFileIs);
-        }
+    public:
+        virtual ~LiteratureSourceRepository() = default;
+
+        virtual void create(const Entity::LiteratureSource& literature_source) = 0;
+        virtual std::vector<Entity::LiteratureSource> list() = 0;
+        virtual void remove(const Entity::LiteratureSource& literature_source) = 0;
+        virtual void update(Entity::LiteratureSource& literature_source) = 0;
+
+    };
+
 }
+
+#endif // LITERATURESOURCEREPOSITORY_H

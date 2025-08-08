@@ -2,7 +2,7 @@
 // Created by robertvokac on 4/26/25.
 //
 
-#include "NoteBox/Core/ProgressTracker.h"
+#include "NoteBox/ProgressTracker.h"
 
 #include <iostream>
 #include <iomanip>

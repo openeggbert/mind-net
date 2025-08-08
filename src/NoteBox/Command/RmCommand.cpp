@@ -10,4 +10,7 @@ namespace NoteBox::Command {
     void RmCommand::execute(Manager::NoteManager &mgr, const std::string &args) {
         mgr.remove(args);
     }
+    void RmCommand::help() {
+        std::cout << "help to be implemented" << std::endl;
+    }
 }

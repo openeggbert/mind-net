@@ -24,7 +24,7 @@
 
 #include "NoteBox/Utils.h"
 
-namespace NoteBox::Persistence::Impl::SQLite {
+namespace NoteBox::Persistence::Impl::Sqlite {
 
 /**
  *

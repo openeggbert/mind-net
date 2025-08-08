@@ -30,7 +30,7 @@
 
 #include "NoteBox/Persistence/Api/Connection.h"
 
-namespace NoteBox::Persistence::Impl::SQLite {
+namespace NoteBox::Persistence::Impl::Sqlite {
 class SqliteConnection : public Api::Connection {
 private:
     std::string directoryWhereSqliteFileIs;

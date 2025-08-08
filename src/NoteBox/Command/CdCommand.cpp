@@ -11,4 +11,7 @@ namespace NoteBox::Command {
         mgr.cd(args);
         std::cout << ":" << mgr.getCurrentPath() << "\n";
     }
+    void CdCommand::help() {
+        std::cout << "help to be implemented" << std::endl;
+    }
 }

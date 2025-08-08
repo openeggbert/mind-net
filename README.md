@@ -27,12 +27,12 @@ rm [NOTE_ID] ... removes note with given id
 
 pwd ... prints id of the current note
 
-colls
-coladd
-coledit
-colshow
-colpwd
-colcd
+col ls
+col add
+col edit
+col show
+col pwd
+col cd
 
 exit ... exits the application
 
@@ -54,8 +54,8 @@ tree
 
 tag
 
-litls
-litadd
-litedit
-litshow
+lit ls
+lit add
+lit edit
+lit show
 ```

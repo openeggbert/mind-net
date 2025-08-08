@@ -16,7 +16,9 @@ private:
 public:
     static long long currentTimestamp();
     static void clearScreen();
-    static std::string createJdbcUrl(const std::string& directoryWhereSqliteFileIs);
+    static void log(const char* message);
+    static void log(const std::string& message);
+    static void trace(const char* message);
 };
 
 } // NoteBox

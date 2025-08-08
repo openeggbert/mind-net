@@ -8,13 +8,19 @@
 
 #include "NoteBox/Entity/Note.h"
 
+namespace NoteBox::Persistence
+{
+    class DB;
+}
+
 namespace NoteBox::Manager {
     class NoteManager {
     private:
         std::string currentPath; // e.g., "/1a/2b"
+        std::shared_ptr<Persistence::DB> db;
 
     public:
-        NoteManager();
+        NoteManager(const std::shared_ptr<Persistence::DB>& db);
 
         const std::string &getCurrentPath() const;
 

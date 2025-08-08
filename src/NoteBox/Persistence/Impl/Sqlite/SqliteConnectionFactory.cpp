@@ -23,26 +23,23 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SQLITECONNECTIONFACTORY_H
-#define SQLITECONNECTIONFACTORY_H
+
+#include "NoteBox/Persistence/Impl/SQLite/SqliteConnectionFactory.h"
 
 #include "NoteBox/Persistence/Api/ConnectionFactory.h"
 #include "NoteBox/Persistence/Api/Connection.h"
+#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
 #include "NoteBox/Utils.h"
 #include <string>
 
 #include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
 
 namespace NoteBox::Persistence::Impl::Sqlite {
-    class SqliteConnectionFactory : public Persistence::Api::ConnectionFactory {
-    private:
-        std::string directoryWhereSqliteFileIs;
+    Impl::Sqlite::SqliteConnectionFactory::SqliteConnectionFactory(std::string& directoryWhereSqliteFileIsIn) {
+            this->directoryWhereSqliteFileIs = directoryWhereSqliteFileIsIn;
+        }
 
-    public:
-        SqliteConnectionFactory(std::string& directoryWhereSqliteFileIs);
-
-        Api::Connection* createConnection();
-
-    };
+        Api::Connection* SqliteConnectionFactory::createConnection() {
+            return new SqliteConnection(directoryWhereSqliteFileIs);
+        }
 }
-#endif // SQLITECONNECTIONFACTORY_H

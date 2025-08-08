@@ -8,7 +8,7 @@
 #include <memory>
 #include <string>
 
-#include "ICommand.h"
+#include "NoteBox/Command/ICommand.h"
 
 
 namespace NoteBox::Command {

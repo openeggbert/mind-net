@@ -5,7 +5,7 @@
 #include "NoteBox/Manager/NoteManager.h"
 
 namespace NoteBox::Manager {
-    NoteManager::NoteManager() : currentPath("/") {
+    NoteManager::NoteManager(const std::shared_ptr<Persistence::DB>& db) : currentPath("/") {
     }
 
     const std::string &NoteManager::getCurrentPath() const { return currentPath; }

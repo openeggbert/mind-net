@@ -8,7 +8,7 @@
 
 
 namespace NoteBox::Persistence::Impl::Sqlite {
-    constexpr int MIGRATION_COUNT = 10;
+    constexpr int MIGRATION_COUNT = 9;
     inline std::string migrations[MIGRATION_COUNT] = {
 
         R"(
@@ -22,7 +22,7 @@ CREATE TABLE LITERATURE_SOURCE (
     NOTE_ID TEXT,
     CONTENT TEXT,
 
-    UNIQUE(TITLE, AUTHOR),
+    UNIQUE(TITLE, AUTHOR)
 );
 
 
