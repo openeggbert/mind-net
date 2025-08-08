@@ -36,6 +36,7 @@ namespace NoteBox::Persistence::Api {
     public:
         virtual ~NoteRepository() = default;
 
+        virtual bool does_id_exist(const std::string& id) = 0;
         virtual void create(const Entity::Note& note) = 0;
         virtual Entity::Note read(const std::string& id) = 0;
         virtual void update(const Entity::Note& note) = 0;

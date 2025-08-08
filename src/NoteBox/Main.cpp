@@ -15,6 +15,8 @@
 #include "NoteBox/Manager/NoteManager.h"
 #include "NoteBox/Persistence/DB.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/NoteRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Tables/MigrationTable.h"
 
@@ -78,7 +80,6 @@ bool create_session_if_does_not_yet_exist(NoteBox::Manager::NoteBoxManager note_
 
 int main()
 {
-
     NoteBox::start_time = NoteBox::Utils::currentUnixTimestamp();
     print_logo();
     bool migrated = migrateSchemaIfNeeded();
@@ -91,9 +92,13 @@ int main()
 
     NoteBox::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
     NoteBox::Impl::Sqlite::Repositories::SessionRepositoryImplSqlite session_repository{};
+    NoteBox::Impl::Sqlite::Repositories::ContentRepositoryImplSqlite content_repository{};
+    NoteBox::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
 
     db->literature_source_repository = &literature_source_repository;
     db->session_repository = &session_repository;
+    db->note_repository = &note_repository;
+    db->content_repository = &content_repository;
 
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 

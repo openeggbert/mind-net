@@ -2,6 +2,11 @@
 
 #include "NoteBox/Manager/NoteManager.h"
 
+#include <iostream>
+
+#include "NoteBox/Utils.h"
+#include "NoteBox/Persistence/DB.h"
+
 namespace NoteBox::Manager {
 
     NoteManager::NoteManager(const std::shared_ptr<Persistence::DB>& db)
@@ -12,14 +17,23 @@ namespace NoteBox::Manager {
     }
 
     void NoteManager::cd(const std::string& path) {
-        if (path == "..") {
-            if (currentPath != "/") {
-                auto pos = currentPath.find_last_of("/");
-                currentPath = currentPath.substr(0, pos == 0 ? 1 : pos);
-            }
-        } else {
-            currentPath = (currentPath == "/" ? "/" + path : currentPath + "/" + path);
+        if (path.empty())
+        {
+            currentPath = "";
+            return;
         }
+        if (path == "..") {
+            auto parts = Utils::note_id_to_vector(path);
+            parts.pop_back();
+            currentPath = Utils::vector_to_note_id(parts);
+            return;
+        }
+        if (!db->note_repository->does_id_exist(path))
+        {
+            std::cerr << "Note with id " << path << " does not exist" << std::endl;
+            return;
+        }
+        currentPath =  path;
     }
 
     void NoteManager::createNote(const std::string& title) {

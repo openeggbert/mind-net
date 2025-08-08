@@ -41,6 +41,33 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     NoteRepositoryImplSqlite::~NoteRepositoryImplSqlite() = default;
 
+    bool NoteRepositoryImplSqlite::does_id_exist(const std::string& id)
+    {
+        std::string sql = "SELECT count(*) as C FROM NOTE WHERE ID = ?";
+
+        SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Statement query(db, sql);
+
+        try
+        {
+            bool exists = false;
+            query.bind(1, id);
+
+            while (query.executeStep())
+            {
+                exists = query.getColumn(0).getInt() > 0;
+                break;
+            }
+
+            return exists;
+        }
+        catch (SQLite::Exception& e)
+        {
+            std::cerr << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            throw std::runtime_error(e.what());
+        }
+    }
+
     void NoteRepositoryImplSqlite::create(const Entity::Note& note)
     {
         std::string sql = "INSERT INTO NOTE (ID, PARENT_NOTE_ID, TITLE, CONTENT_ID, QUESTION, CREATED_AT, UPDATED_AT, "

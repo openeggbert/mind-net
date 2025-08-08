@@ -33,7 +33,7 @@ namespace NoteBox::Entity
         string id;
         string value;
 
-        Content();
+        Content() = default;
         Content(string& id_, string& value_) :
             id(std::move(id_)),
             value(std::move(value_))

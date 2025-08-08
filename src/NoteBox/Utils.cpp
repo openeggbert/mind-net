@@ -165,4 +165,16 @@ namespace NoteBox
         return result;
     }
 
+    std::string Utils::vector_to_note_id(const std::vector<std::string>& vector)
+    {
+        if (vector.empty())
+            return "";
+
+        std::string result;
+        for (const auto& part : vector)
+        {
+            result += part;
+        }
+        return result;
+    }
 }

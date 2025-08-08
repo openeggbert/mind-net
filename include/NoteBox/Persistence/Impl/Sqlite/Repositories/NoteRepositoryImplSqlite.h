@@ -40,6 +40,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         NoteRepositoryImplSqlite();
         ~NoteRepositoryImplSqlite() override;
 
+        bool does_id_exist(const std::string& id) override;
         void create(const Entity::Note& note) override;
         Entity::Note read(const std::string& id) override;
         void update(const Entity::Note& note) override;

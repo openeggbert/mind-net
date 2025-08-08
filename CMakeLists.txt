@@ -4,7 +4,7 @@ project(note_box)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(ENABLE_TESTS "Enable unit tests" OFF)
+option(ENABLE_TESTS "Enable unit tests" ON)
 option(MAKE_VERBOSE_MAKEFILE "" ON)
 
 # Enable submodule dependencies

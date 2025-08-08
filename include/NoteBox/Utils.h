@@ -43,6 +43,7 @@ namespace NoteBox
      * @throws std::runtime_error If the provided note_id is empty or does not start with a digit.
      */
         static std::vector<std::string> note_id_to_vector(const std::string& note_id);
+        static std::string vector_to_note_id(const std::vector<std::string>& vector);
     };
 } // NoteBox
 

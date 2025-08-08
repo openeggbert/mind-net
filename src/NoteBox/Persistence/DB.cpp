@@ -6,7 +6,5 @@
 
 namespace NoteBox::Persistence
 {
-    DB::DB() : literature_source_repository(nullptr)
-    {
-    }
+    DB::DB() = default;
 }
