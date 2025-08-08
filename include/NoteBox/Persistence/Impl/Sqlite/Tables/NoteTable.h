@@ -26,7 +26,7 @@
 #define NOTETABLE_H
 
 
-namespace NoteBox::Persistence::Impl::Sqlite {
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
 
 struct NoteTable {
 

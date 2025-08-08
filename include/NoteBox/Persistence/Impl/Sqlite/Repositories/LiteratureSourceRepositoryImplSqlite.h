@@ -26,7 +26,7 @@
 #define LITERATURESOURCEREPOSITORYIMPLSQLITE_H
 
 #include "NoteBox/Persistence/Api/LiteratureSourceRepository.h"
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnectionFactory.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnectionFactory.h"
 #include "NoteBox/Entity/LiteratureSource.h"
 #include <string>
 #include <vector>

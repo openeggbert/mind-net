@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,9 +24,14 @@
  */
 
 #include "NoteBox/Persistence/Api/LiteratureSourceRepository.h"
-#include "NoteBox/Persistence/Impl/SQLite/Repositories/LiteratureSourceRepositoryImplSqlite.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/LiteratureSourceRepositoryImplSqlite.h"
+
+#include <iostream>
 #include <string>
 #include <vector>
+
+#include "NoteBox/Persistence/Impl/Sqlite/Tables/LiteratureSourceTable.h"
+#include "SQLiteCpp/Database.h"
 
 namespace NoteBox::Impl::Sqlite::Repositories {
     using std::vector;
@@ -40,85 +45,42 @@ namespace NoteBox::Impl::Sqlite::Repositories {
 
 
         void LiteratureSourceRepositoryImplSqlite::create(const Entity::LiteratureSource& literature_source){
-            // if (files.empty()) {
-            //     return;
-            // }
-            // if (files.size() > 100) {
-            //     List<Entity::FsFile> tmpList = new ArrayList<>();
-            //     for (int i = 0; i < files.size(); i++) {
-            //         Entity::FsFile e = files.get(i);
-            //         tmpList.add(e);
-            //         if (tmpList.size() >= 100) {
-            //             create(tmpList);
-            //             tmpList.clear();
-            //         }
-            //     }
-            //     if (!tmpList.isEmpty()) {
-            //         create(tmpList);
-            //         tmpList.clear();
-            //     }
-            //     return;
-            // }
-            //
-            // StringBuilder sb = new StringBuilder();
-            // sb
-            //         .append("INSERT INTO ")
-            //         .append(FileTable.TABLE_NAME)
-            //         .append("(")
-            //         .append(FileTable.ID).append(",")
-            //         .append(FileTable.NAME).append(",")
-            //         .append(FileTable.ABSOLUTE_PATH).append(",")
-            //         .append(FileTable.LAST_MODIFICATION_DATE).append(",")
-            //         .append(FileTable.LAST_CHECK_DATE).append(",")
-            //         //
-            //         .append(FileTable.HASH_SUM_VALUE).append(",")
-            //         .append(FileTable.HASH_SUM_ALGORITHM).append(",")
-            //         .append(FileTable.SIZE).append(",")
-            //         .append(FileTable.LAST_CHECK_RESULT).append("");
-            //
-            // sb.append(") VALUES ");
-            //
-            // int index = 0;
-            // for (Entity::FsFile f : files) {
-            //     sb.append(" (?,?,?,?,?, ?,?,?,?)");
-            //     boolean lastFile = index == (files.size() - 1);
-            //     if (!lastFile) {
-            //         sb.append(",");
-            //     }
-            //     index = index + 1;
-            // }
-            //
-            // String sql = sb.toString();
-            // //System.err.println(sql);
-            // try (
-            //         Connection connection = createConnection(); PreparedStatement stmt = connection.prepareStatement(sql);) {
-            //             int i = 0;
-            //
-            //             for (Entity::FsFile f : files) {
-            //                 stmt.setString(++i, f.getId());
-            //                 stmt.setString(++i, f.getName());
-            //                 stmt.setString(++i, f.getAbsolutePath());
-            //                 stmt.setString(++i, f.getLastModificationDate());
-            //                 //
-            //                 stmt.setString(++i, f.getLastCheckDate());
-            //                 //
-            //                 stmt.setString(++i, f.getHashSumValue());
-            //                 stmt.setString(++i, f.getHashSumAlgorithm());
-            //                 stmt.setLong(++i, f.getSize());
-            //                 stmt.setString(++i, f.getLastCheckResult());
-            //
-            //             }
-            //             //
-            //             stmt.execute();
-            //             //System.out.println(stmt.toString());
-            //
-            //         } catch (SQLException e) {
-            //             System.out.println(e.getMessage());
-            //             throw new RuntimeException(e);
-            //         } catch (ClassNotFoundException ex) {
-            //             Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
-            //         }
 
+            std::string sql = "INSERT INTO " +
+                              std::string(Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::TABLE_NAME) +
+                    "(" +
+                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::TITLE) + "," +
+                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::AUTHOR) + "," +
+                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::YEAR) + "," +
+                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::PUBLICATION) + "," +
+                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::URL) + "," +
+                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::CONTENT);
+
+            sql+= ")";
+            sql+=" VALUES (?,?,?,?,?,?)";
+
+            SQLite::Database db(sqliteConnectionFactory->createConnection()->getName(), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+
+            SQLite::Statement query(db, sql);
+            std::cerr << sql << std::endl;
+            try {
+
+                int i = 0;
+                query.bind(++i, literature_source.title);
+                query.bind(++i, literature_source.author);
+                query.bind(++i, literature_source.year);
+                query.bind(++i, literature_source.publication);
+                query.bind(++i, literature_source.url);
+                query.bind(++i, literature_source.author);
+
+                //
+                query.exec();
+
+            } catch (SQLite::Exception &e) {
+
+                std::cerr << "Exception happened during of execution of SQLite SQL statement  " << sql << ": " << e.what() << " " << std::endl;
+                std::cerr << "Error.";
+            }
         }
         vector<Entity::LiteratureSource> LiteratureSourceRepositoryImplSqlite::list()  {
             return vector<Entity::LiteratureSource>{};

@@ -22,23 +22,23 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef HISTORYTABLE_H
-#define HISTORYTABLE_H
+#ifndef REFERENCETABLE_H
+#define REFERENCETABLE_H
 
-namespace NoteBox::Persistence::Impl::Sqlite {
-    struct HistoryTable {
-        HistoryTable() = delete;
 
-        HistoryTable(const HistoryTable &) = delete;
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
+    struct ReferenceTable {
+        ReferenceTable() = delete;
 
-        HistoryTable &operator=(const HistoryTable &) = delete;
+        ReferenceTable(const ReferenceTable &) = delete;
 
-        static constexpr const char *TABLE_NAME = "HISTORY";
+        ReferenceTable &operator=(const ReferenceTable &) = delete;
 
-        static constexpr const char *ID = "ID";
-        static constexpr const char *NOTE_ID = "NOTE_ID";
-        static constexpr const char *ACTION = "ACTION";
-        static constexpr const char *TIMESTAMP = "TIMESTAMP";
+        static constexpr const char *TABLE_NAME = "REFERENCE";
+
+        static constexpr const char *FROM_NOTE_ID = "FROM_NOTE_ID";
+        static constexpr const char *TO_NOTE_ID = "TO_NOTE_ID";
+        static constexpr const char *LINK_TYPE = "LINK_TYPE";
     };
 }
-#endif // HISTORYTABLE_H
+#endif // REFERENCETABLE_H

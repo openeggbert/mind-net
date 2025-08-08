@@ -31,20 +31,18 @@ namespace NoteBox::Entity {
         int id;
         string title;
         string author;
-        string year;
+        ushort year;
         string publication;
         string url;
-        string noteId;
         string content;
 
-        LiteratureSource(int id_, string title_, string author_, string year_, string publication_,
-                         string url_, string noteId_, string content_) : id(id_),
+        LiteratureSource(int id_, string& title_, string& author_, ushort year_, string& publication_,
+                         string& url_, const string& noteId_, string& content_) : id(id_),
                                                                          title(std::move(title_)),
                                                                          author(std::move(author_)),
-                                                                         year(std::move(year_)),
+                                                                         year(year_),
                                                                          publication(std::move(publication_)),
                                                                          url(std::move(url_)),
-                                                                         noteId(std::move(noteId_)),
                                                                          content(std::move(content_)) {
         }
 
@@ -55,7 +53,6 @@ namespace NoteBox::Entity {
                     << ", year: " << source.year
                     << ", publication: " << source.publication
                     << ", url: " << source.url
-                    << ", noteId: " << source.noteId
                     << "}";
             return os;
         }

@@ -24,15 +24,15 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnectionFactory.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnectionFactory.h"
 
 #include "NoteBox/Persistence/Api/ConnectionFactory.h"
 #include "NoteBox/Persistence/Api/Connection.h"
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnection.h"
 #include "NoteBox/Utils.h"
 #include <string>
 
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnection.h"
 
 namespace NoteBox::Persistence::Impl::Sqlite {
     Impl::Sqlite::SqliteConnectionFactory::SqliteConnectionFactory(std::string& directoryWhereSqliteFileIsIn) {

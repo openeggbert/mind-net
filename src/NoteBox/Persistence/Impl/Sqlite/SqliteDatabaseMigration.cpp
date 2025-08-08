@@ -21,13 +21,13 @@
 #include <iostream>
 #include <string>
 
-#include "NoteBox/Persistence/Impl/SQLite/SqliteDatabaseMigration.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #include "NoteBox/ProgressTracker.h"
 #include "NoteBox/Utils.h"
-#include "NoteBox/Persistence/Impl/SQLite/Migrations.h"
-#include "NoteBox/Persistence/Impl/SQLite/Tables/MigrationTable.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Migrations.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Tables/MigrationTable.h"
 #include <openssl/sha.h>
 #include <iomanip>
 
@@ -125,7 +125,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             try
             {
                 SQLite::Statement query(
-                    db, std::string("SELECT * FROM ") + MigrationTable::TABLE_NAME);
+                    db, std::string("SELECT * FROM ") + Tables::MigrationTable::TABLE_NAME);
                 query.executeStep();
                 doesTableExist = true;
             }
@@ -135,7 +135,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             }
             if (!doesTableExist)
             {
-                std::cerr << "Table " << MigrationTable::TABLE_NAME << " does not exist." << std::endl;
+                std::cerr << "Table " << Tables::MigrationTable::TABLE_NAME << " does not exist." << std::endl;
                 return false;
             }
             return true;
@@ -149,22 +149,22 @@ INSERT INTO "MIGRATION" VALUES (1,0)
                 bool created = createTable(db);
                 if (created)
                 {
-                    std::cout << "Table " << MigrationTable::TABLE_NAME << " created." << std::endl;
+                    std::cout << "Table " << Tables::MigrationTable::TABLE_NAME << " created." << std::endl;
                     bool inited = initTable(db);
                     if (!inited)
                     {
-                        std::cerr << "Table " << MigrationTable::TABLE_NAME << " could not be initialized." <<
+                        std::cerr << "Table " << Tables::MigrationTable::TABLE_NAME << " could not be initialized." <<
                             std::endl;
                         return false;
                     }
                     else
                     {
-                        std::cout << "Table " << MigrationTable::TABLE_NAME << " initialized." << std::endl;
+                        std::cout << "Table " << Tables::MigrationTable::TABLE_NAME << " initialized." << std::endl;
                     }
                 }
                 else
                 {
-                    std::cerr << "Table " << MigrationTable::TABLE_NAME << " could not be created." << std::endl;
+                    std::cerr << "Table " << Tables::MigrationTable::TABLE_NAME << " could not be created." << std::endl;
                     return false;
                 }
             }
@@ -179,10 +179,10 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             SQLite::Statement query(
                 db, std::string(
                     std::string("SELECT ") +
-                    MigrationTable::MAX_MIGRATION_NUMBER +
+                    Tables::MigrationTable::MAX_MIGRATION_NUMBER +
                     std::string(" AS M FROM ") +
-                    MigrationTable::TABLE_NAME +
-                    " WHERE " + MigrationTable::ID + "=1"
+                    Tables::MigrationTable::TABLE_NAME +
+                    " WHERE " + Tables::MigrationTable::ID + "=1"
                 )
                 );
             try
@@ -206,8 +206,8 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             SQLite::Statement query(
                 db,
                 "UPDATE " +
-                std::string(MigrationTable::TABLE_NAME) +
-                " SET " + MigrationTable::MAX_MIGRATION_NUMBER +
+                std::string(Tables::MigrationTable::TABLE_NAME) +
+                " SET " + Tables::MigrationTable::MAX_MIGRATION_NUMBER +
                 " = ?"
             );
             int i = 0;

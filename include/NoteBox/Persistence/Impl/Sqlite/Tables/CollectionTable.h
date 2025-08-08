@@ -22,23 +22,25 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef REFERENCETABLE_H
-#define REFERENCETABLE_H
+#ifndef COLLECTIONTABLE_H
+#define COLLECTIONTABLE_H
 
 
-namespace NoteBox::Persistence::Impl::Sqlite {
-    struct ReferenceTable {
-        ReferenceTable() = delete;
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
+    struct CollectionTable {
+        CollectionTable() = delete;
 
-        ReferenceTable(const ReferenceTable &) = delete;
+        CollectionTable(const CollectionTable &) = delete;
 
-        ReferenceTable &operator=(const ReferenceTable &) = delete;
+        CollectionTable &operator=(const CollectionTable &) = delete;
 
-        static constexpr const char *TABLE_NAME = "REFERENCE";
+        static constexpr const char *TABLE_NAME = "COLLECTION";
 
-        static constexpr const char *FROM_NOTE_ID = "FROM_NOTE_ID";
-        static constexpr const char *TO_NOTE_ID = "TO_NOTE_ID";
-        static constexpr const char *LINK_TYPE = "LINK_TYPE";
+        static constexpr const char *ID = "ID";
+        static constexpr const char *PARENT_COLLECTION_ID = "PARENT_COLLECTION_ID";
+        static constexpr const char *NAME = "NAME";
+        static constexpr const char *DESCRIPTION = "DESCRIPTION";
+        static constexpr const char *ORDER_INDEX = "ORDER_INDEX";
     };
 }
-#endif // REFERENCETABLE_H
+#endif // COLLECTIONTABLE_H

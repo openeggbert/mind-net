@@ -22,22 +22,33 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef TAGTABLE_H
-#define TAGTABLE_H
+#ifndef LITERATURESOURCETABLE_H
+#define LITERATURESOURCETABLE_H
 
 
-namespace NoteBox::Persistence::Impl::Sqlite {
-    struct TagTable {
-        TagTable() = delete;
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
 
-        TagTable(const TagTable &) = delete;
+struct LiteratureSourceTable {
 
-        TagTable &operator=(const TagTable &) = delete;
 
-        static constexpr const char *TABLE_NAME = "TAG";
+    LiteratureSourceTable() = delete;
 
-        static constexpr const char *ID = "ID";
-        static constexpr const char *NAME = "NAME";
-    };
+    LiteratureSourceTable(const LiteratureSourceTable&) = delete;
+    LiteratureSourceTable& operator=(const LiteratureSourceTable&) = delete;
+
+    static constexpr const char* TABLE_NAME = "LITERATURE_SOURCE";
+    
+    static constexpr const char* ID = "ID";
+    static constexpr const char* TITLE = "TITLE";
+    static constexpr const char* AUTHOR = "AUTHOR";
+    static constexpr const char* YEAR = "YEAR";
+    static constexpr const char* PUBLICATION = "PUBLICATION";
+    //
+    static constexpr const char* URL = "URL";
+    static constexpr const char* CONTENT = "CONTENT";
+    
+
+};
 }
-#endif // TAGTABLE_H
+
+#endif // LITERATURESOURCETABLE_H

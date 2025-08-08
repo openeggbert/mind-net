@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// note-box : Note management tool.
-// Copyright (C) 2025-2025 the original author or authors.
+// bit-backup: Tool detecting bit rots in files.
+// Copyright (C) 2023-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,23 +22,21 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SESSIONTABLE_H
-#define SESSIONTABLE_H
+#ifndef MIGRATIONTABLE_H
+#define MIGRATIONTABLE_H
 
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
+    struct MigrationTable {
+        MigrationTable() = delete;
 
-namespace NoteBox::Persistence::Impl::Sqlite {
-    struct SessionTable {
-        SessionTable() = delete;
+        MigrationTable(const MigrationTable &) = delete;
 
-        SessionTable(const SessionTable &) = delete;
+        MigrationTable &operator=(const MigrationTable &) = delete;
 
-        SessionTable &operator=(const SessionTable &) = delete;
-
-        static constexpr const char *TABLE_NAME = "SESSION";
+        static constexpr const char *TABLE_NAME = "MIGRATION";
 
         static constexpr const char *ID = "ID";
-        static constexpr const char *CURRENT_PATH = "CURRENT_PATH";
-        static constexpr const char *LAST_OPENED = "LAST_OPENED";
+        static constexpr const char *MAX_MIGRATION_NUMBER = "MAX_MIGRATION_NUMBER";
     };
 }
-#endif // SESSIONTABLE_H
+#endif // MIGRATIONTABLE_H

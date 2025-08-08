@@ -25,7 +25,7 @@
  */
 
 #include "NoteBox/Persistence/Api/Connection.h"
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnection.h"
 
 #include "NoteBox/Utils.h"
 

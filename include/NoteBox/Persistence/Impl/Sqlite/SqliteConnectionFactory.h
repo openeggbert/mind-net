@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// bit-backup: Tool detecting bit rots in files.
-// Copyright (C) 2023-2025 the original author or authors.
+// note-box : Note management tool.
+// Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -18,25 +18,31 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+
 /**
  *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MIGRATIONTABLE_H
-#define MIGRATIONTABLE_H
+#ifndef SQLITECONNECTIONFACTORY_H
+#define SQLITECONNECTIONFACTORY_H
+
+#include "NoteBox/Persistence/Api/ConnectionFactory.h"
+#include "NoteBox/Persistence/Api/Connection.h"
+#include "NoteBox/Utils.h"
+#include <string>
+
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnection.h"
 
 namespace NoteBox::Persistence::Impl::Sqlite {
-    struct MigrationTable {
-        MigrationTable() = delete;
+    class SqliteConnectionFactory : public Persistence::Api::ConnectionFactory {
+    private:
+        std::string directoryWhereSqliteFileIs;
 
-        MigrationTable(const MigrationTable &) = delete;
+    public:
+        SqliteConnectionFactory(std::string& directoryWhereSqliteFileIs);
 
-        MigrationTable &operator=(const MigrationTable &) = delete;
+        Api::Connection* createConnection();
 
-        static constexpr const char *TABLE_NAME = "MIGRATION";
-
-        static constexpr const char *ID = "ID";
-        static constexpr const char *MAX_MIGRATION_NUMBER = "MAX_MIGRATION_NUMBER";
     };
 }
-#endif // MIGRATIONTABLE_H
+#endif // SQLITECONNECTIONFACTORY_H

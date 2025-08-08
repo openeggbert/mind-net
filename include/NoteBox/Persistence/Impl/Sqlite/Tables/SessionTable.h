@@ -18,31 +18,27 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-
 /**
  *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SQLITECONNECTIONFACTORY_H
-#define SQLITECONNECTIONFACTORY_H
+#ifndef SESSIONTABLE_H
+#define SESSIONTABLE_H
 
-#include "NoteBox/Persistence/Api/ConnectionFactory.h"
-#include "NoteBox/Persistence/Api/Connection.h"
-#include "NoteBox/Utils.h"
-#include <string>
 
-#include "NoteBox/Persistence/Impl/SQLite/SqliteConnection.h"
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
+    struct SessionTable {
+        SessionTable() = delete;
 
-namespace NoteBox::Persistence::Impl::Sqlite {
-    class SqliteConnectionFactory : public Persistence::Api::ConnectionFactory {
-    private:
-        std::string directoryWhereSqliteFileIs;
+        SessionTable(const SessionTable &) = delete;
 
-    public:
-        SqliteConnectionFactory(std::string& directoryWhereSqliteFileIs);
+        SessionTable &operator=(const SessionTable &) = delete;
 
-        Api::Connection* createConnection();
+        static constexpr const char *TABLE_NAME = "SESSION";
 
+        static constexpr const char *ID = "ID";
+        static constexpr const char *CURRENT_PATH = "CURRENT_PATH";
+        static constexpr const char *LAST_OPENED = "LAST_OPENED";
     };
 }
-#endif // SQLITECONNECTIONFACTORY_H
+#endif // SESSIONTABLE_H

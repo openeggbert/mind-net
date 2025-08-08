@@ -13,8 +13,8 @@
 #include "NoteBox/Entity/ExitStatus.h"
 #include "NoteBox/Manager/NoteManager.h"
 #include "NoteBox/Persistence/DB.h"
-#include "NoteBox/Persistence/Impl/SQLite/SqliteDatabaseMigration.h"
-#include "NoteBox/Persistence/Impl/SQLite/Tables/MigrationTable.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Tables/MigrationTable.h"
 
 bool migrateSchemaIfNeeded() {
     NoteBox::Utils::trace("Migrating schema, if needed:");

@@ -22,22 +22,22 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NOTETAGTABLE_H
-#define NOTETAGTABLE_H
+#ifndef TAGTABLE_H
+#define TAGTABLE_H
 
 
-namespace NoteBox::Persistence::Impl::Sqlite {
-    struct NoteTagTable {
-        NoteTagTable() = delete;
+namespace NoteBox::Persistence::Impl::Sqlite::Tables {
+    struct TagTable {
+        TagTable() = delete;
 
-        NoteTagTable(const NoteTagTable &) = delete;
+        TagTable(const TagTable &) = delete;
 
-        NoteTagTable &operator=(const NoteTagTable &) = delete;
+        TagTable &operator=(const TagTable &) = delete;
 
-        static constexpr const char *TABLE_NAME = "NOTE_TAG";
+        static constexpr const char *TABLE_NAME = "TAG";
 
-        static constexpr const char *NOTE_ID = "NOTE_ID";
-        static constexpr const char *TAG_ID = "TAG_ID";
+        static constexpr const char *ID = "ID";
+        static constexpr const char *NAME = "NAME";
     };
 }
-#endif // NOTETAGTABLE_H
+#endif // TAGTABLE_H
