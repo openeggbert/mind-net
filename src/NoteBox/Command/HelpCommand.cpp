@@ -19,8 +19,8 @@ namespace NoteBox::Command
 
         if (args.empty())
         {
-            std::cout << "Available commands:" << std::endl <<std::endl;
-            for (const std::string& cmd:this->help_printer->list_commands())
+            std::cout << "Available commands:" << std::endl << std::endl;
+            for (const std::string& cmd : this->help_printer->list_commands())
             {
                 std::cout << cmd << std::endl;
             }
@@ -28,7 +28,6 @@ namespace NoteBox::Command
         }
 
         help_printer->print(args);
-
     }
 
     void HelpCommand::help()
@@ -41,9 +40,10 @@ SYNOPSIS
        help [command]
 
 DESCRIPTION
-       help is the user's manual. The argument is the command, user wants to get the information about
+       help is the user's manual. The argument is the command, user wants to get the information about.
 
 EXAMPLES
+       help ... help without argument shows the list of all available commands
        help ls
        help help
        help show

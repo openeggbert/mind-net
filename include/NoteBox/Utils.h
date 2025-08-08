@@ -6,6 +6,8 @@
 #define UTILS_H
 #include <string>
 
+#include "Helper.h"
+
 namespace NoteBox {
 
 class Utils {
@@ -15,6 +17,10 @@ private:
     Utils& operator=(const Utils&) = delete;
 public:
     static long long currentTimestamp();
+    static long long currentUnixTimestamp();
+    static std::string unixToFormattedString(ll unixTimestamp);
+    // static ll formattedStringToUnix(const std::string& formattedTime);
+
     static void clearScreen();
     static void log(const char* message);
     static void log(const std::string& message);

@@ -4,10 +4,12 @@
 
 #ifndef GLOBAL_H
 #define GLOBAL_H
-#include <string>
+
+#include "Helper.h"
 
 namespace NoteBox {
-    extern std::string loggedInUser;
+    extern ll start_time;
+
 }
 
 

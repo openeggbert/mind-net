@@ -12,6 +12,7 @@
 #include <random>
 #include <filesystem>
 #include <stdexcept>
+#include <iomanip>
 
 namespace NoteBox
 {
@@ -23,6 +24,41 @@ namespace NoteBox
         strftime(buffer, sizeof(buffer), "%Y%m%d%H%M%S", now2);
         return atoll(buffer);
     }
+    long long Utils::currentUnixTimestamp()
+    {
+        return static_cast<long long>(std::time(nullptr));
+    }
+
+    std::string Utils::unixToFormattedString(ll unixTimestamp) {
+        std::time_t rawTime = static_cast<std::time_t>(unixTimestamp);
+        std::tm* timeInfo = std::localtime(&rawTime);
+
+        char buffer[16];
+        std::strftime(buffer, sizeof(buffer), "%Y%m%d%H%M%S", timeInfo);
+        return std::string(buffer);
+    }
+
+
+    // ll Utils::formattedStringToUnix(const std::string& formattedTime)
+    // {
+    //     std::tm timeInfo = {};
+    //     std::istringstream ss(formattedTime);
+    //     ss >> std::get_time(&timeInfo, "%Y%m%d%H%M%S");
+    //
+    //     if (ss.fail())
+    //     {
+    //         throw std::runtime_error("Invalid time format");
+    //     }
+    //
+    //     timeInfo.tm_isdst = -1; // Let system determine DST
+    //     auto time = std::mktime(&timeInfo);
+    //     if (time == -1)
+    //     {
+    //         throw std::runtime_error("Failed to convert time");
+    //     }
+    //     return static_cast<long long>(time);
+    // }
+
 
     void Utils::clearScreen()
     {

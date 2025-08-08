@@ -20,29 +20,44 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include <ostream>
+
+#include "ostream"
 #include <string>
 
-namespace NoteBox::Entity {
+#include "NoteBox/Helper.h"
+#include "NoteBox/Utils.h"
+
+namespace NoteBox::Entity
+{
     using std::string;
 
-    struct Session {
+    struct Session
+    {
         int id;
         string current_path;
-        string last_opened;
+        ll last_opened;
 
-        Session(int id_, string current_path_, string last_opened_) : id(id_),
+        Session(int id_, string current_path_, ll last_opened_) : id(id_),
                                                                       current_path(std::move(current_path_)),
-                                                                      last_opened(std::move(last_opened_)) {
+                                                                      last_opened(last_opened_)
+        {
         }
 
-        friend std::ostream &operator<<(std::ostream &os, const Session &session) {
+        friend std::ostream& operator<<(std::ostream& os, const Session& session)
+        {
             os << "Session{id: " << session.id
-                    << ", current_path: " << session.current_path
-                    << ", last_opened: " << session.last_opened
-                    << "}";
+                << ", current_path: " << session.current_path
+                << ", last_opened: " << Utils::unixToFormattedString(session.last_opened)
+                << "}";
             return os;
         }
 
-        bool operator==(const Session &other) const {
+        bool operator==(const Session& other) const
+        {
             return this->id == other.id &&
+                this->current_path == other.current_path &&
+                this->last_opened == other.last_opened;
+        }
+    };
+}
+#endif // SESSION_H

@@ -13,25 +13,32 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef SESSIONREPOSITORY_H
+#define SESSIONREPOSITORY_H
 
 
-/**
- *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-#ifndef SQLITEFILENAME_H
-#define SQLITEFILENAME_H
+#include "NoteBox/Entity/Session.h"
 
 
-#include <string>
-
-namespace NoteBox::Persistence::Impl::Sqlite
+namespace NoteBox::Persistence::Api
 {
-    inline std::string SQLITE_FILE_NAME = "./notebox.sqlite3";
-}
+    /**
+     *
+    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+     */
 
-#endif // SQLITEFILENAME_H
+    class SessionRepository
+    {
+    public:
+        virtual ~SessionRepository() = default;
+
+        virtual void create(const Entity::Session& session) = 0;
+        virtual Entity::Session get() = 0;
+        virtual void update(const Entity::Session& session) = 0;
+    };
+}
+#endif // SESSIONREPOSITORY_H

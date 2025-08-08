@@ -8,12 +8,14 @@
 #include <memory>
 
 #include "Api/LiteratureSourceRepository.h"
+#include "Api/SessionRepository.h"
 
 
 namespace NoteBox::Persistence {
     class DB {
     public:
-        NoteBox::Persistence::Api::LiteratureSourceRepository* literature_source_repository{};
+        Api::LiteratureSourceRepository* literature_source_repository{};
+        Api::SessionRepository* session_repository{};
 
         DB();
     };

@@ -6,6 +6,7 @@
 #define NOTEBOX_H
 #include "LiteratureSourceManager.h"
 #include "NoteManager.h"
+#include "SessionManager.h"
 
 
 namespace NoteBox::Persistence
@@ -18,6 +19,7 @@ namespace NoteBox::Manager {
     public:
         LiteratureSourceManager literature_source_manager;
         NoteManager note_manager;
+        SessionManager session_manager;
 
         NoteBoxManager(const std::shared_ptr<Persistence::DB>& db);
     };

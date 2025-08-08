@@ -11,7 +11,9 @@
 #include "NoteBox/Command/RmCommand.h"
 #include "NoteBox/Command/VersionCommand.h"
 #include "NoteBox/Command/LitCommand.h"
-#define add_command(key, clazz) commands[#key] = std::make_shared<clazz##Command>();commandNames.push_back(#key);
+#include "NoteBox/Command/PwdCommand.h"
+#include "NoteBox/Command/UptimeCommand.h"
+#define add(key, clazz) commands[#key] = std::make_shared<clazz##Command>();commandNames.push_back(#key);
 
 
 namespace NoteBox::Command
@@ -19,13 +21,15 @@ namespace NoteBox::Command
     CommandFactory::CommandFactory()
     {
 
-        add_command(version, Version)
-        add_command(add, Add)
-        add_command(cd, Cd)
-        add_command(ls, Ls)
-        add_command(rm, Rm)
-        add_command(help, Help)
-        add_command(lit, Lit)
+        add(version, Version)
+        add(add, Add)
+        add(cd, Cd)
+        add(ls, Ls)
+        add(rm, Rm)
+        add(help, Help)
+        add(lit, Lit)
+        add(pwd, Pwd)
+        add(uptime, Uptime)
     }
 
     std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string& name)

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// note-box : Note management tool.
+// note-box: Note management tool.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -18,20 +18,27 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-
 /**
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SQLITEFILENAME_H
-#define SQLITEFILENAME_H
+#ifndef SESSIONREPOSITORYIMPLSQLITE_H
+#define SESSIONREPOSITORYIMPLSQLITE_H
 
+#include "NoteBox/Persistence/Api/SessionRepository.h"
+#include "NoteBox/Entity/Session.h"
 
-#include <string>
-
-namespace NoteBox::Persistence::Impl::Sqlite
+namespace NoteBox::Impl::Sqlite::Repositories
 {
-    inline std::string SQLITE_FILE_NAME = "./notebox.sqlite3";
-}
+    class SessionRepositoryImplSqlite : public Persistence::Api::SessionRepository
+    {
+    public:
+        SessionRepositoryImplSqlite();
+        ~SessionRepositoryImplSqlite() override;
 
-#endif // SQLITEFILENAME_H
+        void create(const Entity::Session& session) override;
+        Entity::Session get() override;
+        void update(const Entity::Session& session) override;
+    };
+}
+#endif // SESSIONREPOSITORYIMPLSQLITE_H

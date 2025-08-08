@@ -88,7 +88,7 @@ CREATE TABLE REFERENCE (
 CREATE TABLE SESSION (
     ID INTEGER PRIMARY KEY CHECK (id = 1), -- always only one row
     CURRENT_PATH TEXT NOT NULL,
-    LAST_OPENED TEXT                      -- last exiting time
+    LAST_OPENED INTEGER                      -- last exiting time
 );
 
 
