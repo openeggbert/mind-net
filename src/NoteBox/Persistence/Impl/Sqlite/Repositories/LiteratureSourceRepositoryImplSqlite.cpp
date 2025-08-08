@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+#include "NoteBox/Global.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Tables/LiteratureSourceTable.h"
 #include "SQLiteCpp/Database.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteFileName.h"
@@ -63,7 +64,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
         SQLite::Statement query(db, sql);
-        std::cerr << sql << std::endl;
+        err << sql << std::endl;
         try
         {
             int i = 0;
@@ -80,9 +81,9 @@ namespace NoteBox::Impl::Sqlite::Repositories
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception happened during of execution of SQLite SQL statement  " << sql << ": " << e.what()
+            err << "Exception happened during of execution of SQLite SQL statement  " << sql << ": " << e.what()
                 << " " << std::endl;
-            std::cerr << "Error.";
+            err << "Error.";
         }
     }
 

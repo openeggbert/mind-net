@@ -29,7 +29,7 @@ bool migrateSchemaIfNeeded()
         NoteBox::Utils::trace("Migrating schema: OK. Success.");
         return true;
     }
-    std::cerr << "Migrating schema: KO. Failed." << std::endl;
+    NoteBox::err << "Migrating schema: KO. Failed." << std::endl;
     return false;
 }
 
@@ -83,7 +83,7 @@ int main()
 
     if (!migrateSchemaIfNeeded())
     {
-        std::cerr << "Failed to migrate schema. Exiting." << std::endl;
+        NoteBox::err << "Failed to migrate schema. Exiting." << std::endl;
         exit(NoteBox::ExitStatus::MIGRATION_FAILED);
     }
 
@@ -134,7 +134,7 @@ int main()
         }
         else if (!cmd.empty())
         {
-            std::cerr << "Unknown command: " << cmd << "\n";
+            NoteBox::err << "Unknown command: " << cmd << std::endl;
         }
 
         // Show path after the command

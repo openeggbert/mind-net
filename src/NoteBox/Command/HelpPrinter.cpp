@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "NoteBox/Global.h"
+
 namespace NoteBox::Command
 {
     HelpPrinter::HelpPrinter(NoteBox::Command::CommandFactory* factory_)
@@ -28,7 +30,7 @@ namespace NoteBox::Command
         }
         else
         {
-            std::cerr << "Unknown command: " << cmd << "\n";
+            err << "Unknown command: " << cmd << "\n";
         }
     }
 

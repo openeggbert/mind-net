@@ -9,6 +9,8 @@
 #include <chrono>
 #include <thread>
 
+#include "NoteBox/Global.h"
+
 namespace NoteBox {
     std::string ProgressTracker::getProgressBar() {
         std::string progressBar = "[";
@@ -52,7 +54,7 @@ namespace NoteBox {
         if (done < total) {
             ++done;
         } else {
-            std::cerr << "done is greater than total: done=" << done << ", total=" << total << std::endl;
+            err << "done is greater than total: done=" << done << ", total=" << total << std::endl;
         }
 
     }

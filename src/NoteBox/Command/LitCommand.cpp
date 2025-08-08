@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include "NoteBox/Global.h"
+
 //#define genif(cmd, method) if (args == #cmd){mgr.literature_source_manager.##method();return;}
 namespace NoteBox::Command
 {
@@ -14,7 +16,7 @@ namespace NoteBox::Command
         std::cout << "hello lit command" << std::endl;
         if (args.empty())
         {
-            std::cerr << "lit command requires an argument" << std::endl;
+            err << "lit command requires an argument" << std::endl;
             return;
         }
         if (args == "ls")
@@ -38,7 +40,7 @@ namespace NoteBox::Command
             return;
         }
 
-        std::cerr << "lit command " << args << " not implemented" << std::endl;
+        err << "lit command " << args << " not implemented" << std::endl;
     }
 
     void LitCommand::help()

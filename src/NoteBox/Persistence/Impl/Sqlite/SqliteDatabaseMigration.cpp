@@ -31,6 +31,8 @@
 #include <openssl/sha.h>
 #include <iomanip>
 
+#include "NoteBox/Global.h"
+
 namespace NoteBox::Persistence::Impl::Sqlite
 {
     SqliteDatabaseMigration::SqliteDatabaseMigration()
@@ -79,7 +81,7 @@ namespace NoteBox::Persistence::Impl::Sqlite
             }
             catch (SQLite::Exception& e)
             {
-                std::cerr << "Exception happened during SQLite migration # " << number << ": " << e.what() << " " <<
+                err << "Exception happened during SQLite migration # " << number << ": " << e.what() << " " <<
                     std::endl;
                 return false;
             }
@@ -112,7 +114,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             }
             catch (std::exception& e)
             {
-                std::cerr << "Exception happened during SQLite migration initTable(): " << e.what() << std::endl;
+                err << "Exception happened during SQLite migration initTable(): " << e.what() << std::endl;
                 throw;
             }
         }
@@ -135,7 +137,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             }
             if (!doesTableExist)
             {
-                std::cerr << "Table " << Tables::MigrationTable::TABLE_NAME << " does not exist." << std::endl;
+                err << "Table " << Tables::MigrationTable::TABLE_NAME << " does not exist." << std::endl;
                 return false;
             }
             return true;
@@ -153,7 +155,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
                     bool inited = initTable(db);
                     if (!inited)
                     {
-                        std::cerr << "Table " << Tables::MigrationTable::TABLE_NAME << " could not be initialized." <<
+                        err << "Table " << Tables::MigrationTable::TABLE_NAME << " could not be initialized." <<
                             std::endl;
                         return false;
                     }
@@ -164,7 +166,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
                 }
                 else
                 {
-                    std::cerr << "Table " << Tables::MigrationTable::TABLE_NAME << " could not be created." << std::endl;
+                    err << "Table " << Tables::MigrationTable::TABLE_NAME << " could not be created." << std::endl;
                     return false;
                 }
             }
@@ -194,7 +196,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             }
             catch (SQLite::Exception& e)
             {
-                std::cerr << "Exception happened during SQLite migration getNewestMigrationNumber(): " << e.what() <<
+                err << "Exception happened during SQLite migration getNewestMigrationNumber(): " << e.what() <<
                     std::endl;
                 return -1;
             }
@@ -219,7 +221,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
             }
             catch (SQLite::Exception& e)
             {
-                std::cerr
+                err
                     << "Exception happened during updating max_migrating_number to # "
                     << max_migration_number << ": " << e.what() << std::endl;
                 return false;
@@ -262,7 +264,7 @@ INSERT INTO "MIGRATION" VALUES (1,0)
                 }
                 else
                 {
-                    std::cerr << "Database validation failed." << std::endl;
+                    err << "Database validation failed." << std::endl;
                     return false;
                 }
                 Utils::trace("Going to find out the maxMigrationNumber");
@@ -288,21 +290,21 @@ INSERT INTO "MIGRATION" VALUES (1,0)
                         bool updated = updateMigration(db, migrationNumber);
                         if (!updated)
                         {
-                            std::cerr << "Migration " << migrationNumber <<
+                            err << "Migration " << migrationNumber <<
                                 " failed, it could not be updated in the database. " << std::endl;
                             return false;
                         }
                     }
                     else
                     {
-                        std::cerr << "Migration " << migrationNumber << " failed." << std::endl;
+                        err << "Migration " << migrationNumber << " failed." << std::endl;
                         return false;
                     }
                 }
             }
             catch (std::exception& e)
             {
-                std::cerr << "Exception happened during SQLite migration: " << e.what() << " " << std::endl;
+                err << "Exception happened during SQLite migration: " << e.what() << " " << std::endl;
                 return false;
             }
 

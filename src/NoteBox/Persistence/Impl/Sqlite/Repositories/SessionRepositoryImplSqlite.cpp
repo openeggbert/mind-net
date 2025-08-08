@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 
+#include "NoteBox/Global.h"
 #include "SQLiteCpp/Database.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteFileName.h"
 
@@ -58,7 +59,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             throw std::runtime_error(e.what());
         }
     }
@@ -80,12 +81,12 @@ namespace NoteBox::Impl::Sqlite::Repositories
                     static_cast<int64_t>(query.getColumn(2))
                 );
             }
-            std::cerr << ("No session found") << std::endl;
+            err << ("No session found") << std::endl;
             return Entity::Session(0, "", 0);
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             throw std::runtime_error(e.what());
         }
     }
@@ -107,7 +108,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             throw std::runtime_error(e.what());
         }
     }

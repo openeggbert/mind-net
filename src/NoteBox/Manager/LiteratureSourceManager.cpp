@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "NoteBox/Global.h"
 #include "NoteBox/Utils.h"
 
 namespace NoteBox::Manager
@@ -42,10 +43,10 @@ namespace NoteBox::Manager
             break;
         } catch (std::invalid_argument& e)
         {
-            std::cerr << "Invalid year, try again: " << year_str << std::endl;
+            err << "Invalid year, try again: " << year_str << std::endl;
             year_attempt++;
             if (year_attempt > 3) {
-                std::cerr << "Too many attempts, aborting." << std::endl;
+                err << "Too many attempts, aborting." << std::endl;
                 return;
             }
         }
