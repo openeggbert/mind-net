@@ -8,7 +8,7 @@
 
 namespace NoteBox::Command {
     void PwdCommand::execute(Manager::NoteBoxManager &mgr, const std::string &args) {
-        std::cout << ":" << mgr.session_manager.get().current_path << "\n";
+        std::cout << ":" << mgr.note_manager.pwd() << "\n";
     }
     void PwdCommand::help()     {
         std::cout << R"(
