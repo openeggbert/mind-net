@@ -12,13 +12,11 @@
 #include "NoteBox/Command/HelpPrinter.h"
 #include "../../include/NoteBox/ExitStatus.h"
 #include "NoteBox/Manager/NoteBoxManager.h"
-#include "NoteBox/Manager/NoteManager.h"
 #include "NoteBox/Persistence/DB.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/NoteRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
-#include "NoteBox/Persistence/Impl/Sqlite/Tables/MigrationTable.h"
 
 bool migrateSchemaIfNeeded()
 {
@@ -82,12 +80,13 @@ int main()
 {
     NoteBox::start_time = NoteBox::Utils::currentUnixTimestamp();
     print_logo();
-    bool migrated = migrateSchemaIfNeeded();
-    if (!migrated)
+
+    if (!migrateSchemaIfNeeded())
     {
         std::cerr << "Failed to migrate schema. Exiting." << std::endl;
         exit(NoteBox::ExitStatus::MIGRATION_FAILED);
     }
+
     std::shared_ptr<NoteBox::Persistence::DB> db = std::make_shared<NoteBox::Persistence::DB>();
 
     NoteBox::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
@@ -103,14 +102,19 @@ int main()
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 
     create_session_if_does_not_yet_exist(note_box_manager);
+
     NoteBox::Command::CommandFactory factory;
     NoteBox::Command::HelpPrinter help_printer(&factory);
     factory.getCommand("help")->setHelpPrinter(&help_printer);
 
     std::string line;
-    std::cout << ":" << note_box_manager.note_manager.pwd() << "\n";
-    while (std::cout << "> " && std::getline(std::cin, line))
+
+    while (true)
     {
+        std::cout << "> " << std::flush;
+
+        if (!std::getline(std::cin, line)) break;
+
         std::istringstream iss(line);
         std::string cmd, args;
         iss >> cmd;
@@ -126,20 +130,21 @@ int main()
         auto command = factory.getCommand(cmd);
         if (command)
         {
-            if (cmd == "help")
-            {
-                //command->factory = factory;
-            }
             command->execute(note_box_manager, args);
         }
-        else
+        else if (!cmd.empty())
         {
-            if (!cmd.empty()) std::cerr << "Unknown command: " << cmd << "\n";
+            std::cerr << "Unknown command: " << cmd << "\n";
         }
+
+        // Show path after the command
+        // std::cout << ":" << note_box_manager.note_manager.pwd() << "\n";
     }
+
     auto session = note_box_manager.session_manager.get();
     session.last_opened = NoteBox::Utils::currentUnixTimestamp();
     note_box_manager.session_manager.update(session);
 
     return 0;
 }
+

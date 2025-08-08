@@ -6,6 +6,7 @@
 
 namespace NoteBox {
     ll start_time = 0l;
+    NoteBox::RedCout err;
 
 }
 

@@ -6,9 +6,11 @@
 #define GLOBAL_H
 
 #include "Helper.h"
+#include "RedCout.h"
 
 namespace NoteBox {
     extern ll start_time;
+    extern NoteBox::RedCout err;
 
 }
 

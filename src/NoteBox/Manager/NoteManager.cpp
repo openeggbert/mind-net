@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+#include "NoteBox/Global.h"
+#include "NoteBox/RedCout.h"
 #include "NoteBox/Utils.h"
 #include "NoteBox/Persistence/DB.h"
 
@@ -30,7 +32,7 @@ namespace NoteBox::Manager {
         }
         if (!db->note_repository->does_id_exist(path))
         {
-            std::cerr << "Note with id " << path << " does not exist" << std::endl;
+            err << "Note with id " << path << " does not exist" << std::endl;
             return;
         }
         currentPath =  path;
