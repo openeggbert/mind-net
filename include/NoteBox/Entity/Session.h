@@ -35,10 +35,13 @@ namespace NoteBox::Entity
     {
         int id;
         string current_path;
+        string editor_path;
         unixtime last_opened;
 
-        Session(int id_, string current_path_, unixtime last_opened_) : id(id_),
+        Session(int id_, string current_path_,
+            const string& editor_path_, unixtime last_opened_) : id(id_),
                                                                       current_path(std::move(current_path_)),
+        editor_path(editor_path_),
                                                                       last_opened(last_opened_)
         {
         }
@@ -47,6 +50,7 @@ namespace NoteBox::Entity
         {
             os << "Session{id: " << session.id
                 << ", current_path: " << session.current_path
+                << ", editor_path: " << session.editor_path
                 << ", last_opened: " << Utils::unixToFormattedString(session.last_opened)
                 << "}";
             return os;
@@ -56,6 +60,7 @@ namespace NoteBox::Entity
         {
             return this->id == other.id &&
                 this->current_path == other.current_path &&
+                this->editor_path == other.editor_path &&
                 this->last_opened == other.last_opened;
         }
     };

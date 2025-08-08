@@ -13,6 +13,7 @@
 #include "NoteBox/Command/LitCommand.h"
 #include "NoteBox/Command/PwdCommand.h"
 #include "NoteBox/Command/UptimeCommand.h"
+#include "NoteBox/Command/EditorCommand.h"
 #define add(key, clazz) commands[#key] = std::make_shared<clazz##Command>();commandNames.push_back(#key);
 
 
@@ -30,6 +31,7 @@ namespace NoteBox::Command
         add(lit, Lit)
         add(pwd, Pwd)
         add(uptime, Uptime)
+        add(editor, Editor)
     }
 
     std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string& name)

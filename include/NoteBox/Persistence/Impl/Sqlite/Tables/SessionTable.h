@@ -38,6 +38,7 @@ namespace NoteBox::Persistence::Impl::Sqlite::Tables {
 
         static constexpr const char *ID = "ID";
         static constexpr const char *CURRENT_PATH = "CURRENT_PATH";
+        static constexpr const char *EDITOR_PATH = "EDITOR_PATH";
         static constexpr const char *LAST_OPENED = "LAST_OPENED";
     };
 }

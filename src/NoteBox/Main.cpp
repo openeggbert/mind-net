@@ -5,6 +5,7 @@
 
 #include "NoteBox/Utils.h"
 #include <memory>
+#include <optional>
 #include <sstream>
 
 #include "NoteBox/Global.h"
@@ -75,6 +76,45 @@ bool create_session_if_does_not_yet_exist(NoteBox::Manager::NoteBoxManager note_
 }
 
 
+int levenshtein(const std::string& a, const std::string& b)
+{
+    int m = a.size();
+    int n = b.size();
+    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
+
+    for (int i = 0; i <= m; ++i) dp[i][0] = i;
+    for (int j = 0; j <= n; ++j) dp[0][j] = j;
+
+    for (int i = 1; i <= m; ++i)
+        for (int j = 1; j <= n; ++j)
+            dp[i][j] = std::min(std::min(
+                                    dp[i - 1][j] + 1, // deletion
+                                    dp[i][j - 1] + 1), // insertion
+                                dp[i - 1][j - 1] + (a[i - 1] != b[j - 1]) // substitution
+            );
+
+    return dp[m][n];
+}
+
+std::optional<std::string> findClosestCommand(const std::string& input, const std::vector<std::string>& commands,
+                                              int max_distance = 3)
+{
+    int minDistance = INT_MAX;
+    std::string closest;
+
+    for (const auto& cmd : commands)
+    {
+        int dist = levenshtein(input, cmd);
+        if (dist < minDistance)
+        {
+            minDistance = dist;
+            closest = cmd;
+        }
+    }
+
+    return minDistance <= max_distance ? std::make_optional(closest) : std::nullopt;
+}
+
 
 int main()
 {
@@ -103,6 +143,32 @@ int main()
 
     create_session_if_does_not_yet_exist(note_box_manager);
 
+
+    while (db->session_repository->get().editor_path.empty())
+    {
+        NoteBox::err << "Please set the editor path. It must be a valid program." << std::endl;
+        std::cout << "Editor path: ";
+        std::string editor_path;
+        std::getline(std::cin, editor_path);
+        db->session_repository->get().editor_path = editor_path;
+        if (editor_path.empty())
+        {
+            NoteBox::err << "Editor path cannot be empty." << std::endl;
+            if (!NoteBox::Utils::ask_yes_no("Do you want to type the editor path?"))
+            {
+                std::cout << "Exiting application" << std::endl;
+                return NoteBox::ExitStatus::EDITOR_PATH_NOT_SET;
+            }
+        }
+        else
+        {
+            auto current_session = db->session_repository->get();
+            current_session.editor_path = editor_path;
+            db->session_repository->update(current_session);
+            break;
+        }
+        std::cin.clear();
+    }
     NoteBox::Command::CommandFactory factory;
     NoteBox::Command::HelpPrinter help_printer(&factory);
     factory.getCommand("help")->setHelpPrinter(&help_printer);
@@ -134,7 +200,19 @@ int main()
         }
         else if (!cmd.empty())
         {
-            NoteBox::err << "Unknown command: " << cmd << std::endl;
+            NoteBox::err << cmd << " is not a notebox command. See 'help'." << std::endl;
+            auto suggestion = findClosestCommand(cmd, factory.list_commands());
+            if (suggestion.has_value())
+            {
+                std::cout << "The most similar command is" << std::endl << "        " << suggestion.value() << std::endl;
+                bool use_suggested_command = NoteBox::Utils::ask_yes_no("Do you want to use the command " + suggestion.value() + "?");
+                if (use_suggested_command)
+                {
+                    command = factory.getCommand(suggestion.value());
+                    command->execute(note_box_manager, args);
+                }
+
+            }
         }
 
         // Show path after the command
@@ -147,4 +225,3 @@ int main()
 
     return 0;
 }
-

@@ -38,8 +38,28 @@ namespace NoteBox::Manager {
         currentPath =  path;
     }
 
-    void NoteManager::createNote(const std::string& title) {
-        // TODO: Implement note creation logic
+    void NoteManager::createNote(const std::string& title)
+    {
+        Entity::Note note;
+        using std::cout;
+        using std::cin;
+        using std::endl;
+        typedef std::string s;
+
+
+        s current_path = pwd();
+        auto vector_path = Utils::note_id_to_vector(current_path);
+        if (!vector_path.empty()) {vector_path.pop_back();}
+        auto parent_id = Utils::vector_to_note_id(vector_path);
+        //
+        Entity::Content content;
+        //
+
+        note.title = title;
+        note.parent_note_id = parent_id;
+        note.created_at = Utils::currentUnixTimestamp();
+        note.updated_at = note.created_at;
+        db->note_repository->create(note);
     }
 
     Entity::Note NoteManager::readNote(std::string& id) {

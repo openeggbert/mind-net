@@ -96,6 +96,7 @@ CREATE TABLE REFERENCE (
 CREATE TABLE SESSION (
     ID INTEGER PRIMARY KEY CHECK (id = 1), -- always only one row
     CURRENT_PATH TEXT NOT NULL,
+    EDITOR_PATH TEXT,
     LAST_OPENED INTEGER                      -- last exiting time
 );
 

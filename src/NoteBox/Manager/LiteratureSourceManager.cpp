@@ -56,7 +56,8 @@ namespace NoteBox::Manager
         cout << "Url: ";
         getline(cin,url);cin.clear();
         cin.clear();
-        content = Utils::editTextInEditor("", "featherpad");
+
+        content = Utils::editTextInEditor("", db->session_repository->get().editor_path);
         if (!NoteBox::Utils::ask_yes_no("Do you really want to create this new LiteratureSource?")) {return;}
         Entity::LiteratureSource literature_source = {0, title, author, year, publication, url, content};
 

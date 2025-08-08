@@ -44,7 +44,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     void SessionRepositoryImplSqlite::create(const Entity::Session& session)
     {
-        std::string sql = "INSERT INTO SESSION (ID, CURRENT_PATH, LAST_OPENED) VALUES (?, ?, ?)";
+        std::string sql = "INSERT INTO SESSION (ID, CURRENT_PATH, EDITOR_PATH, LAST_OPENED) VALUES (?, ?, ?, ?)";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
@@ -53,7 +53,8 @@ namespace NoteBox::Impl::Sqlite::Repositories
         {
             query.bind(1, static_cast<int32_t>(session.id));
             query.bind(2, session.current_path);
-            query.bind(3, static_cast<int32_t>(session.last_opened));
+            query.bind(3, session.editor_path);
+            query.bind(4, static_cast<int32_t>(session.last_opened));
 
             query.exec();
         }
@@ -66,7 +67,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     Entity::Session SessionRepositoryImplSqlite::get()
     {
-        std::string sql = "SELECT ID, CURRENT_PATH, LAST_OPENED FROM SESSION WHERE ID = 1";
+        std::string sql = "SELECT ID, CURRENT_PATH, EDITOR_PATH, LAST_OPENED FROM SESSION WHERE ID = 1";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
@@ -78,11 +79,12 @@ namespace NoteBox::Impl::Sqlite::Repositories
                 return Entity::Session(
                     query.getColumn(0),
                     query.getColumn(1).getString(),
-                    static_cast<int64_t>(query.getColumn(2))
+                    query.getColumn(2).getString(),
+                    static_cast<int64_t>(query.getColumn(3))
                 );
             }
             err << ("No session found") << std::endl;
-            return Entity::Session(0, "", 0);
+            return Entity::Session(0, "", "", 0);
         }
         catch (SQLite::Exception& e)
         {
@@ -93,7 +95,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     void SessionRepositoryImplSqlite::update(const Entity::Session& session)
     {
-        std::string sql = "UPDATE SESSION SET CURRENT_PATH = ?, LAST_OPENED = ? WHERE ID = ?";
+        std::string sql = "UPDATE SESSION SET CURRENT_PATH = ?, EDITOR_PATH = ?, LAST_OPENED = ? WHERE ID = ?";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
@@ -101,8 +103,9 @@ namespace NoteBox::Impl::Sqlite::Repositories
         try
         {
             query.bind(1, session.current_path);
-            query.bind(2, static_cast<int64_t>(session.last_opened));
-            query.bind(3, static_cast<int32_t>(session.id));
+            query.bind(2, session.editor_path);
+            query.bind(3, static_cast<int64_t>(session.last_opened));
+            query.bind(4, static_cast<int32_t>(session.id));
 
             query.exec();
         }

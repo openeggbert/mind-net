@@ -8,7 +8,8 @@ namespace NoteBox
 {
     enum ExitStatus
     {
-        MIGRATION_FAILED = 1
+        MIGRATION_FAILED = 1,
+        EDITOR_PATH_NOT_SET = 2
     };
 }
 #endif // EXITSTATUS_H
