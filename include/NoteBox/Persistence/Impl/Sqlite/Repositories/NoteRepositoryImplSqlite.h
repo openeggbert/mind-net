@@ -45,7 +45,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         Entity::Note read(const std::string& id) override;
         void update(const Entity::Note& note) override;
         void remove(const std::string& id) override;
-        std::vector<Entity::Note> list(std::string& parent_note_id) override;
+        std::vector<Entity::Note> list(std::string& parent_note_id, size_t pageNumber, size_t pageSize) override;
     };
 }
 #endif // NOTEREPOSITORYIMPLSQLITE_H

@@ -140,7 +140,7 @@ namespace NoteBox
         if (note_id.empty())
             throw std::runtime_error("Empty note id is not valid");
         if (!std::isdigit(note_id[0]))
-            throw std::runtime_error("Note id must start with a digit");
+            throw std::runtime_error("Note id must start with a digit: " + note_id);
 
         std::vector<std::string> result;
         std::string current;

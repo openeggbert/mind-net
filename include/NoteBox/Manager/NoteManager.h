@@ -35,7 +35,7 @@ namespace NoteBox::Manager {
 
         void removeNote(const std::string &id);
 
-        void listNotes(size_t page = 0, size_t pageSize = 20) const;
+        void listNotes(std::string& parent_note_id) const;
 
         void createContent(const std::string& Content);
 

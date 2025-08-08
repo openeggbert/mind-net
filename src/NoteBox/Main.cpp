@@ -67,7 +67,7 @@ bool create_session_if_does_not_yet_exist(NoteBox::Manager::NoteBoxManager note_
     if (session.id == 0)
     {
         session.id = 1;
-        session.current_path = "/";
+        session.current_path = "";
         session.last_opened = NoteBox::Utils::currentUnixTimestamp();
         note_box_manager.session_manager.create(session);
         return true;

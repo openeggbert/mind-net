@@ -71,29 +71,37 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     void NoteRepositoryImplSqlite::create(const Entity::Note& note)
     {
-        std::string sql = "INSERT INTO NOTE (ID, PARENT_NOTE_ID, TITLE, CONTENT_ID, QUESTION, CREATED_AT, UPDATED_AT, "
-            "LAST_SHOWN_AT, LAST_REVIEWED_AT, REVIEW_IN_X_DAYS, EXPIRES_AT, IMPORTANCE, DIFFICULTY, SOURCE_ID) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        bool parent_is_root = note.parent_note_id.empty();
+        std::string sql = std::string("INSERT INTO NOTE (ID, ") +
+            (parent_is_root ? "" : "PARENT_NOTE_ID ,")
+        + "TITLE, CONTENT_ID, QUESTION, CREATED_AT, UPDATED_AT, "
+            "LAST_SHOWN_AT, LAST_REVIEWED_AT, REVIEW_IN_X_DAYS, EXPIRES_AT, IMPORTANCE, DIFFICULTY) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" +
+                (parent_is_root ? "" : ", ?")
+                +")";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
 
         try
         {
-            query.bind(1, note.id);
-            query.bind(2, note.parent_note_id);
-            query.bind(3, note.title);
-            query.bind(4, note.content_id);
-            query.bind(5, note.question);
-            query.bind(6, static_cast<int64_t>(note.created_at));
-            query.bind(7, static_cast<int64_t>(note.updated_at));
-            query.bind(8, static_cast<int64_t>(note.last_shown_at));
-            query.bind(9, static_cast<int64_t>(note.last_reviewed_at));
-            query.bind(10, note.review_in_x_days);
-            query.bind(11, static_cast<int64_t>(note.expires_at));
-            query.bind(12, note.importance);
-            query.bind(13, note.difficulty);
-            query.bind(14, note.source_id);
+            int i = 0;
+            query.bind(++i, note.id);
+            if (!parent_is_root) {
+            query.bind(++i, note.parent_note_id);
+        }
+            query.bind(++i, note.title);
+            query.bind(++i, note.content_id);
+            query.bind(++i, note.question);
+            query.bind(++i, static_cast<int64_t>(note.created_at));
+            query.bind(++i, static_cast<int64_t>(note.updated_at));
+            query.bind(++i, static_cast<int64_t>(note.last_shown_at));
+            query.bind(++i, static_cast<int64_t>(note.last_reviewed_at));
+            query.bind(++i, note.review_in_x_days);
+            query.bind(++i, static_cast<int64_t>(note.expires_at));
+            query.bind(++i, note.importance);
+            query.bind(++i, note.difficulty);
+            // query.bind(14, note.source_id);
 
             query.exec();
         }
@@ -148,18 +156,26 @@ namespace NoteBox::Impl::Sqlite::Repositories
         }
     }
 
-    std::vector<Entity::Note> NoteRepositoryImplSqlite::list(std::string& parent_note_id)
+    std::vector<Entity::Note> NoteRepositoryImplSqlite::list(std::string& parent_note_id, size_t pageNumber, size_t pageSize)
     {
-        std::string sql = "SELECT ID, PARENT_NOTE_ID, TITLE, CONTENT_ID, QUESTION, CREATED_AT, UPDATED_AT, "
+        std::cout << "list() notes" << std::endl;
+        bool parent_is_root = parent_note_id.empty();
+        std::cout << "parent_is_root: " << parent_is_root << std::endl;
+        std::cout << "parent_note_id: " << parent_note_id << std::endl;
+        std::string sql = std::string("SELECT ID, PARENT_NOTE_ID, TITLE, CONTENT_ID, QUESTION, CREATED_AT, UPDATED_AT, "
             "LAST_SHOWN_AT, LAST_REVIEWED_AT, REVIEW_IN_X_DAYS, EXPIRES_AT, IMPORTANCE, DIFFICULTY, SOURCE_ID "
-            "FROM NOTE WHERE PARENT_NOTE_ID = ?";
+            "FROM NOTE WHERE PARENT_NOTE_ID ") + (parent_is_root ? " IS NULL" : "= ?") + " LIMIT ? OFFSET ?";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
 
         try
         {
-            query.bind(1, parent_note_id);
+            int i = 1;
+            if (!parent_is_root) {query.bind(i++, parent_note_id);}
+            query.bind(i++, static_cast<int32_t>(pageSize));
+            query.bind(i++, static_cast<int32_t>(pageSize * pageNumber));
+            std::cout << query.getExpandedSQL() << std::endl;
             std::vector<Entity::Note> notes;
 
             while (query.executeStep())
@@ -170,7 +186,10 @@ namespace NoteBox::Impl::Sqlite::Repositories
                 string title = query.getColumn(2).getString();
                 string content_id = query.getColumn(3).getString();
 
-                Entity::Note note(note_id, title, content_id);
+                Entity::Note note{};
+                note.id = note_id;
+                note.title = title;
+                note.content_id = content_id;
                 note.parent_note_id = query.getColumn(1).getString();
                 note.question = query.getColumn(4).getString();
                 note.created_at = query.getColumn(5).getInt64();

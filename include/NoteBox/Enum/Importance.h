@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace NoteBox::Enums {
+namespace NoteBox::Enum {
     /**
      *
      * @author robertvokac
