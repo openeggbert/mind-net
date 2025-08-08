@@ -113,7 +113,14 @@ namespace NoteBox::Manager
         while (true)
         {
             auto list = db->note_repository->list(parent_note_id, page, page_size);
-            if (list.empty()) { break; }
+            if (list.empty())
+            {
+                if (page == 0)
+                {
+                    std::cout << "No notes found" << std::endl;
+                }
+                break;
+            }
             for (Entity::Note& e : list)
             {
                 std::cout << note_number_as_child << " | " << e.id << " | " << e.title << std::endl;
