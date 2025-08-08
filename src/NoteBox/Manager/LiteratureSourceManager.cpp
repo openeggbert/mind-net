@@ -27,11 +27,11 @@ namespace NoteBox::Manager
         using std::cout;
         using std::cin;
         using std::endl;
-        cout << endl << "Title: ";
+        cout << "Title: ";
         getline(cin,title);cin.clear();
-        cout << endl << "Author: ";
+        cout << "Author: ";
         getline(cin,author);cin.clear();
-        cout << endl << "Year: ";
+        cout << "Year: ";
         string year_str;
         int year_attempt = 0;
         while (true) {
@@ -50,12 +50,13 @@ namespace NoteBox::Manager
             }
         }
     }
-        cout << endl << "Publication: ";
+        cout << "Publication: ";
         getline(cin,publication);cin.clear();
-        cout << endl << "Url: ";
+        cout << "Url: ";
         getline(cin,url);cin.clear();
-        if (!NoteBox::Utils::ask_yes_no("Do you really want to create this new LiteratureSource?")) {return;}
         cin.clear();
+        content = Utils::editTextInEditor("", "featherpad");
+        if (!NoteBox::Utils::ask_yes_no("Do you really want to create this new LiteratureSource?")) {return;}
         Entity::LiteratureSource literature_source = {0, title, author, year, publication, url, content};
 
         db->literature_source_repository->create(literature_source);
@@ -63,7 +64,8 @@ namespace NoteBox::Manager
 
     std::vector<Entity::LiteratureSource> LiteratureSourceManager::list()
     {
-        return db->literature_source_repository->list();
+        std::string title_like = std::string("");
+        return db->literature_source_repository->list(title_like);
     }
 
     void LiteratureSourceManager::remove(const Entity::LiteratureSource& literature_source)

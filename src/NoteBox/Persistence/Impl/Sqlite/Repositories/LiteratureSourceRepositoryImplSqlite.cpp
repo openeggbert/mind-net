@@ -34,180 +34,184 @@
 #include "SQLiteCpp/Database.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteFileName.h"
 
-namespace NoteBox::Impl::Sqlite::Repositories {
+namespace NoteBox::Impl::Sqlite::Repositories
+{
     using std::vector;
+    using Persistence::Impl::Sqlite::Tables::LiteratureSourceTable;
+    using Persistence::Impl::Sqlite::SQLITE_FILE_NAME;
 
-        LiteratureSourceRepositoryImplSqlite::LiteratureSourceRepositoryImplSqlite() = default;
+    LiteratureSourceRepositoryImplSqlite::LiteratureSourceRepositoryImplSqlite() = default;
 
-        LiteratureSourceRepositoryImplSqlite::~LiteratureSourceRepositoryImplSqlite() = default;
+    LiteratureSourceRepositoryImplSqlite::~LiteratureSourceRepositoryImplSqlite() = default;
 
 
-        void LiteratureSourceRepositoryImplSqlite::create(const Entity::LiteratureSource& literature_source){
+    void LiteratureSourceRepositoryImplSqlite::create(const Entity::LiteratureSource& literature_source)
+    {
+        std::string sql = "INSERT INTO " +
+            std::string(LiteratureSourceTable::TABLE_NAME) +
+            "(" +
+            std::string(LiteratureSourceTable::TITLE) + "," +
+            std::string(LiteratureSourceTable::AUTHOR) + "," +
+            std::string(LiteratureSourceTable::YEAR) + "," +
+            std::string(LiteratureSourceTable::PUBLICATION) + "," +
+            std::string(LiteratureSourceTable::URL) + "," +
+            std::string(LiteratureSourceTable::CONTENT);
 
-            std::string sql = "INSERT INTO " +
-                              std::string(Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::TABLE_NAME) +
-                    "(" +
-                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::TITLE) + "," +
-                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::AUTHOR) + "," +
-                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::YEAR) + "," +
-                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::PUBLICATION) + "," +
-                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::URL) + "," +
-                    std::string(NoteBox::Persistence::Impl::Sqlite::Tables::LiteratureSourceTable::CONTENT);
+        sql += ")";
+        sql += " VALUES (?,?,?,?,?,?)";
 
-            sql+= ")";
-            sql+=" VALUES (?,?,?,?,?,?)";
+        SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
-            SQLite::Database db(NoteBox::Persistence::Impl::Sqlite::SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Statement query(db, sql);
+        std::cerr << sql << std::endl;
+        try
+        {
+            int i = 0;
+            query.bind(++i, literature_source.title);
+            query.bind(++i, literature_source.author);
+            query.bind(++i, literature_source.year);
+            query.bind(++i, literature_source.publication);
+            query.bind(++i, literature_source.url);
+            query.bind(++i, literature_source.content);
 
-            SQLite::Statement query(db, sql);
-            std::cerr << sql << std::endl;
-            try {
+            //
+            query.exec();
+            //std::cout << query.getExpandedSQL() << std::endl;
+        }
+        catch (SQLite::Exception& e)
+        {
+            std::cerr << "Exception happened during of execution of SQLite SQL statement  " << sql << ": " << e.what()
+                << " " << std::endl;
+            std::cerr << "Error.";
+        }
+    }
 
-                int i = 0;
-                query.bind(++i, literature_source.title);
-                query.bind(++i, literature_source.author);
-                query.bind(++i, literature_source.year);
-                query.bind(++i, literature_source.publication);
-                query.bind(++i, literature_source.url);
-                query.bind(++i, literature_source.content);
+    Entity::LiteratureSource extractLiteratureSourceFromResultSet(const SQLite::Statement& query)
+    {
+        int i = 1;
+        Entity::LiteratureSource result;
+        result.id = query.getColumn(i++);
+        result.title = query.getColumn(i++).getString();
+        result.author = query.getColumn(i++).getString();
+        result.year = query.getColumn(i++);
+        result.publication = query.getColumn(i++).getString();
+        result.url = query.getColumn(i++).getString();
+        result.content = query.getColumn(i++).getString();
+        return result;
+    }
 
-                //
-                query.exec();
-                std::cout << query.getExpandedSQL() << std::endl;
+    vector<Entity::LiteratureSource> LiteratureSourceRepositoryImplSqlite::list(std::string& title_like)
+    {
+        vector<Entity::LiteratureSource> result{};
 
-            } catch (SQLite::Exception &e) {
 
-                std::cerr << "Exception happened during of execution of SQLite SQL statement  " << sql << ": " << e.what() << " " << std::endl;
-                std::cerr << "Error.";
+        std::string sql =
+            "SELECT * FROM " + std::string(LiteratureSourceTable::TABLE_NAME);
+        if (!title_like.empty())
+        {
+            sql = sql + " WHERE " + LiteratureSourceTable::TITLE + " like '%?%";
+        };
+        SQLite::Database db(SQLITE_FILE_NAME,
+                            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+
+        SQLite::Statement query(db, sql);
+
+        int i = 0;
+
+        try
+        {
+            if (!title_like.empty())
+            {
+                query.bind(++i, title_like);
             }
+
+            while (query.executeStep())
+            {
+                result.push_back(extractLiteratureSourceFromResultSet(query));
+            }
+            return result;
         }
-        vector<Entity::LiteratureSource> LiteratureSourceRepositoryImplSqlite::list()  {
-            return vector<Entity::LiteratureSource>{};
-
-            //         List<FsFile> result = new ArrayList<>();
-            //         StringBuilder sb = new StringBuilder();
-            //         sb
-            //                 .append("SELECT * FROM ")
-            //                 .append(FileTable.TABLE_NAME);
-            //
-            //         String sql = sb.toString();
-            // //        System.err.println(sql);
-            //         int i = 0;
-            //         ResultSet rs = null;
-            //         try (
-            //                 Connection connection = createConnection(); PreparedStatement stmt = connection.prepareStatement(sql);) {
-            //
-            //             System.err.println(stmt.toString());
-            //             rs = stmt.executeQuery();
-            //
-            //             while (rs.next()) {
-            //                 result.add(extractFileFromResultSet(rs));
-            //             }
-            //         } catch (SQLException e) {
-            //             System.out.println(e.getMessage());
-            //             throw new RuntimeException(e);
-            //         } catch (ClassNotFoundException ex) {
-            //             Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
-            //         } finally {
-            //             try {
-            //                 if (rs != null) {
-            //                     rs.close();
-            //                 }
-            //             } catch (SQLException ex) {
-            //                 Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
-            //             }
-            //         }
-            //         return result;
+        catch (SQLite::Exception& e)
+        {
+            std::cout << e.what();
+            throw std::runtime_error(e.what());
         }
+    }
 
 
-        void LiteratureSourceRepositoryImplSqlite::remove(const Entity::LiteratureSource& literature_source)  {
-
-            // StringBuilder sb = new StringBuilder();
-            // sb
-            //         .append("DELETE FROM ")
-            //         .append(FileTable.TABLE_NAME);
-            // sb.append(" WHERE ");
-            //
-            // sb.append(FileTable.ID);
-            // sb.append("=?");
-            // String sql = sb.toString();
-            // //System.err.println("SQL::" + sql);
-            // int i = 0;
-            //
-            // try (
-            //         Connection connection = createConnection(); PreparedStatement stmt = connection.prepareStatement(sql);) {
-            //
-            //     stmt.setString(++i, file.getId());
-            //
-            //     //System.err.println(stmt.toString());
-            //     stmt.execute();
-            //
-            // } catch (SQLException e) {
-            //     System.out.println(e.getMessage());
-            //     throw new RuntimeException(e);
-            // } catch (ClassNotFoundException ex) {
-            //     Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
-            // }
-        }
-
-        // private Connection createConnection() throws ClassNotFoundException {
-        //     return sqliteConnectionFactory.createConnection();
+    void LiteratureSourceRepositoryImplSqlite::remove(const Entity::LiteratureSource& literature_source)
+    {
+        // StringBuilder sb = new StringBuilder();
+        // sb
+        //         .append("DELETE FROM ")
+        //         .append(FileTable.TABLE_NAME);
+        // sb.append(" WHERE ");
+        //
+        // sb.append(FileTable.ID);
+        // sb.append("=?");
+        // String sql = sb.toString();
+        // //System.err.println("SQL::" + sql);
+        // int i = 0;
+        //
+        // try (
+        //         Connection connection = createConnection(); PreparedStatement stmt = connection.prepareStatement(sql);) {
+        //
+        //     stmt.setString(++i, file.getId());
+        //
+        //     //System.err.println(stmt.toString());
+        //     stmt.execute();
+        //
+        // } catch (SQLException e) {
+        //     System.out.println(e.getMessage());
+        //     throw new RuntimeException(e);
+        // } catch (ClassNotFoundException ex) {
+        //     Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
         // }
+    }
 
-
-        void LiteratureSourceRepositoryImplSqlite::update(Entity::LiteratureSource& literature_source)  {
-
-            // StringBuilder sb = new StringBuilder();
-            // sb
-            //         .append("UPDATE ")
-            //         .append(FileTable.TABLE_NAME)
-            //         .append(" SET ")
-            //         .append(FileTable.LAST_MODIFICATION_DATE).append("=?, ")
-            //         .append(FileTable.LAST_CHECK_DATE).append("=?, ")
-            //         .append(FileTable.HASH_SUM_VALUE).append("=?, ")
-            //         .append(FileTable.HASH_SUM_ALGORITHM).append("=?, ")
-            //         .append(FileTable.SIZE).append("=?, ")
-            //         .append(FileTable.LAST_CHECK_RESULT).append("=? ")
-            //         .append(" WHERE ").append(FileTable.ID).append("=?");
-            //
-            // String sql = sb.toString();
-            // //System.err.println(sql);
-            // try (
-            //         Connection connection = createConnection(); PreparedStatement stmt = connection.prepareStatement(sql);) {
-            //     int i = 0;
-            //     stmt.setString(++i, file.getLastModificationDate());
-            //     stmt.setString(++i, file.getLastCheckDate());
-            //     stmt.setString(++i, file.getHashSumValue());
-            //     stmt.setString(++i, file.getHashSumAlgorithm());
-            //     stmt.setLong(++i, file.getSize());
-            //     stmt.setString(++i, file.getLastCheckResult());
-            //
-            //     stmt.setString(++i, file.getId());
-            //
-            //     int numberOfUpdatedRows = stmt.executeUpdate();
-            //     //System.out.println("numberOfUpdatedRows=" + numberOfUpdatedRows);
-            // } catch (SQLException e) {
-            //     System.out.println(e.getMessage());
-            //     throw new RuntimeException(e);
-            // } catch (ClassNotFoundException ex) {
-            //     Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
-            // }
-        }
-
-    // private: Entity::FsFile extractFileFromResultSet(const ResultSet rs) {
-    //     return new Entity::FsFile(
-    //             rs.getString(FileTable.ID),
-    //             rs.getString(FileTable.NAME),
-    //             rs.getString(FileTable.ABSOLUTE_PATH),
-    //             rs.getString(FileTable.LAST_MODIFICATION_DATE),
-    //             rs.getString(FileTable.LAST_CHECK_DATE),
-    //             rs.getString(FileTable.HASH_SUM_VALUE),
-    //             rs.getString(FileTable.HASH_SUM_ALGORITHM),
-    //             rs.getLong(FileTable.SIZE),
-    //             rs.getString(FileTable.LAST_CHECK_RESULT)
-    //     );
+    // private Connection createConnection() throws ClassNotFoundException {
+    //     return sqliteConnectionFactory.createConnection();
     // }
+
+
+    void LiteratureSourceRepositoryImplSqlite::update(Entity::LiteratureSource& literature_source)
+    {
+        // StringBuilder sb = new StringBuilder();
+        // sb
+        //         .append("UPDATE ")
+        //         .append(FileTable.TABLE_NAME)
+        //         .append(" SET ")
+        //         .append(FileTable.LAST_MODIFICATION_DATE).append("=?, ")
+        //         .append(FileTable.LAST_CHECK_DATE).append("=?, ")
+        //         .append(FileTable.HASH_SUM_VALUE).append("=?, ")
+        //         .append(FileTable.HASH_SUM_ALGORITHM).append("=?, ")
+        //         .append(FileTable.SIZE).append("=?, ")
+        //         .append(FileTable.LAST_CHECK_RESULT).append("=? ")
+        //         .append(" WHERE ").append(FileTable.ID).append("=?");
+        //
+        // String sql = sb.toString();
+        // //System.err.println(sql);
+        // try (
+        //         Connection connection = createConnection(); PreparedStatement stmt = connection.prepareStatement(sql);) {
+        //     int i = 0;
+        //     stmt.setString(++i, file.getLastModificationDate());
+        //     stmt.setString(++i, file.getLastCheckDate());
+        //     stmt.setString(++i, file.getHashSumValue());
+        //     stmt.setString(++i, file.getHashSumAlgorithm());
+        //     stmt.setLong(++i, file.getSize());
+        //     stmt.setString(++i, file.getLastCheckResult());
+        //
+        //     stmt.setString(++i, file.getId());
+        //
+        //     int numberOfUpdatedRows = stmt.executeUpdate();
+        //     //System.out.println("numberOfUpdatedRows=" + numberOfUpdatedRows);
+        // } catch (SQLException e) {
+        //     System.out.println(e.getMessage());
+        //     throw new RuntimeException(e);
+        // } catch (ClassNotFoundException ex) {
+        //     Logger.getLogger(FileRepositoryImplSqlite.class.getName()).log(Level.SEVERE, null, ex);
+        // }
+    }
 
 
     ;

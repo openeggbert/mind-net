@@ -42,7 +42,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         ~LiteratureSourceRepositoryImplSqlite() override;
 
         void create(const Entity::LiteratureSource& literature_source) override;
-        vector<Entity::LiteratureSource> list() override;
+        vector<Entity::LiteratureSource> list(std::string& title_like) override;
 
         void remove(const Entity::LiteratureSource& literature_source) override;
 

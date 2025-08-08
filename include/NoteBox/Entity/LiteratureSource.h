@@ -36,15 +36,15 @@ namespace NoteBox::Entity {
         string url;
         string content;
 
-        LiteratureSource(int id_, string& title_, string& author_, ushort year_, string& publication_,
-                         string& url_, string& content_) : id(id_),
-                                                                         title(std::move(title_)),
-                                                                         author(std::move(author_)),
-                                                                         year(year_),
-                                                                         publication(std::move(publication_)),
-                                                                         url(std::move(url_)),
-                                                                         content(std::move(content_)) {
-        }
+        // LiteratureSource(int id_, string& title_, string& author_, ushort year_, string& publication_,
+        //                  string& url_, string& content_) : id(id_),
+        //                                                                  title(std::move(title_)),
+        //                                                                  author(std::move(author_)),
+        //                                                                  year(year_),
+        //                                                                  publication(std::move(publication_)),
+        //                                                                  url(std::move(url_)),
+        //                                                                  content(std::move(content_)) {
+        // }
 
         friend std::ostream &operator<<(std::ostream &os, const LiteratureSource &source) {
             os << "LiteratureSource{id: " << source.id

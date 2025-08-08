@@ -38,7 +38,7 @@ namespace NoteBox::Persistence::Api {
         virtual ~LiteratureSourceRepository() = default;
 
         virtual void create(const Entity::LiteratureSource& literature_source) = 0;
-        virtual std::vector<Entity::LiteratureSource> list() = 0;
+        virtual std::vector<Entity::LiteratureSource> list(std::string& title_like) = 0;
         virtual void remove(const Entity::LiteratureSource& literature_source) = 0;
         virtual void update(Entity::LiteratureSource& literature_source) = 0;
 
