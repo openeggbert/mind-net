@@ -32,16 +32,14 @@
 
 #include "NoteBox/Persistence/Impl/Sqlite/Tables/LiteratureSourceTable.h"
 #include "SQLiteCpp/Database.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteFileName.h"
 
 namespace NoteBox::Impl::Sqlite::Repositories {
     using std::vector;
 
-        LiteratureSourceRepositoryImplSqlite::LiteratureSourceRepositoryImplSqlite(Persistence::Impl::Sqlite::SqliteConnectionFactory* sqliteConnectionFactoryIn): sqliteConnectionFactory(sqliteConnectionFactoryIn) {
+        LiteratureSourceRepositoryImplSqlite::LiteratureSourceRepositoryImplSqlite() = default;
 
-        }
-
-        LiteratureSourceRepositoryImplSqlite::~LiteratureSourceRepositoryImplSqlite() {
-        }
+        LiteratureSourceRepositoryImplSqlite::~LiteratureSourceRepositoryImplSqlite() = default;
 
 
         void LiteratureSourceRepositoryImplSqlite::create(const Entity::LiteratureSource& literature_source){
@@ -59,7 +57,7 @@ namespace NoteBox::Impl::Sqlite::Repositories {
             sql+= ")";
             sql+=" VALUES (?,?,?,?,?,?)";
 
-            SQLite::Database db(sqliteConnectionFactory->createConnection()->getName(), SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+            SQLite::Database db(NoteBox::Persistence::Impl::Sqlite::SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
             SQLite::Statement query(db, sql);
             std::cerr << sql << std::endl;

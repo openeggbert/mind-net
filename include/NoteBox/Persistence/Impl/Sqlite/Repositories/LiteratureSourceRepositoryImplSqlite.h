@@ -26,7 +26,6 @@
 #define LITERATURESOURCEREPOSITORYIMPLSQLITE_H
 
 #include "NoteBox/Persistence/Api/LiteratureSourceRepository.h"
-#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnectionFactory.h"
 #include "NoteBox/Entity/LiteratureSource.h"
 #include <string>
 #include <vector>
@@ -37,12 +36,9 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     class LiteratureSourceRepositoryImplSqlite : public Persistence::Api::LiteratureSourceRepository
     {
-    private:
-        Persistence::Impl::Sqlite::SqliteConnectionFactory* sqliteConnectionFactory;
 
     public:
-        LiteratureSourceRepositoryImplSqlite(
-            Persistence::Impl::Sqlite::SqliteConnectionFactory* sqliteConnectionFactoryIn);
+        LiteratureSourceRepositoryImplSqlite();
         ~LiteratureSourceRepositoryImplSqlite() override;
 
         void create(const Entity::LiteratureSource& literature_source) override;

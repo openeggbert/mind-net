@@ -4,8 +4,8 @@
 
 #ifndef NOTEBOX_H
 #define NOTEBOX_H
+#include "LiteratureSourceManager.h"
 #include "NoteManager.h"
-#include "NoteBox/Persistence/Api/ConnectionFactory.h"
 
 
 namespace NoteBox::Persistence
@@ -14,11 +14,12 @@ namespace NoteBox::Persistence
 }
 
 namespace NoteBox::Manager {
-    class NoteBox {
+    class NoteBoxManager {
     public:
-        NoteManager notes;
+        LiteratureSourceManager literature_source_manager;
+        NoteManager note_manager;
 
-        NoteBox(const std::shared_ptr<Persistence::DB>& db);
+        NoteBoxManager(const std::shared_ptr<Persistence::DB>& db);
     };
 
 }

@@ -1,34 +1,34 @@
 //
 // Created by robertvokac on 8/4/25.
 //
-#ifndef LITERATUREMANAGER_H
-#define LITERATUREMANAGER_H
+#ifndef LITERATURESOURCEMANAGER_H
+#define LITERATURESOURCEMANAGER_H
+
 
 #include <memory>
+#include <vector>
 
-#include "NoteBox/Entity/Note.h"
+#include "NoteBox/Entity/LiteratureSource.h"
+#include "NoteBox/Persistence/DB.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/LiteratureSourceRepositoryImplSqlite.h"
 
-namespace NoteBox::Manager {
-    class NoteManager {
+namespace NoteBox::Manager
+{
+    class LiteratureSourceManager
+    {
     private:
-        std::string currentPath; // e.g., "/1a/2b"
-
+        std::shared_ptr<Persistence::DB> db;
     public:
-        NoteManager();
+        LiteratureSourceManager(const std::shared_ptr<Persistence::DB>& db);
 
-        const std::string &getCurrentPath() const;
+        void create(const Entity::LiteratureSource& literature_source);
 
-        std::shared_ptr<Enums::Note> getCurrentNote();
+        std::vector<Entity::LiteratureSource> list();
 
-        void cd(const std::string &path);
+        void remove(const Entity::LiteratureSource& literature_source);
 
-        void addNote(const std::string &title);
-
-        void list(size_t page = 0, size_t pageSize = 20) const;
-
-        void remove(const std::string &id);
+        void update(Entity::LiteratureSource& literature_source);
     };
 }
 
-
-#endif // LITERATUREMANAGER_H
+#endif // LITERATURESOURCEMANAGER_H

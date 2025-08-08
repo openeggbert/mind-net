@@ -23,18 +23,13 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
+#ifndef SQLITECONNECTION_H
+#define SQLITECONNECTION_H
 
-#include "NoteBox/Persistence/Api/Connection.h"
-#include "NoteBox/Persistence/Impl/Sqlite/SqliteConnection.h"
+#include <string>
 
-#include "NoteBox/Utils.h"
-
-namespace NoteBox::Persistence::Impl::Sqlite {
-    Impl::Sqlite::SqliteConnection::SqliteConnection(std::string &directoryWhereSqliteFileIsIn) {
-        this->directoryWhereSqliteFileIs = directoryWhereSqliteFileIsIn;
-    }
-
-    std::string SqliteConnection::getName() {
-        return directoryWhereSqliteFileIs;
-    }
+namespace NoteBox::Persistence::Impl::Sqlite
+{
+    std::string SQLITE_FILE_NAME = "./notebox.sqlite3";
 }
+#endif // SQLITECONNECTION_H

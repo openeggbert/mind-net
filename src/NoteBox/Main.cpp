@@ -11,6 +11,7 @@
 #include "NoteBox/Command/CommandFactory.h"
 #include "NoteBox/Command/HelpPrinter.h"
 #include "NoteBox/Entity/ExitStatus.h"
+#include "NoteBox/Manager/NoteBoxManager.h"
 #include "NoteBox/Manager/NoteManager.h"
 #include "NoteBox/Persistence/DB.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
@@ -29,7 +30,8 @@ bool migrateSchemaIfNeeded() {
     return false;
 }
 
-int main() {
+void print_logo()
+{
     std::cout << R"(
  _   _       _         ____
 | \ | | ___ | |_ ___  | __ )  _____  __
@@ -37,6 +39,10 @@ int main() {
 | |\  | (_) | ||  __/ | |_) | (_) >  <
 |_| \_|\___/ \__\___| |____/ \___/_/\_\
         )" << std::endl;
+}
+
+int main() {
+    print_logo();
     bool migrated = migrateSchemaIfNeeded();
     if (!migrated)
     {
@@ -44,13 +50,17 @@ int main() {
         exit(NoteBox::ExitStatus::MIGRATION_FAILED);
     }
     std::shared_ptr<NoteBox::Persistence::DB> db = std::make_shared<NoteBox::Persistence::DB>();
-    NoteBox::Manager::NoteManager mgr(db);
+
+    NoteBox::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
+
+    NoteBox::Manager::NoteBoxManager note_box_manager(db);
+
     NoteBox::Command::CommandFactory factory;
     NoteBox::Command::HelpPrinter help_printer(&factory);
     factory.getCommand("help")->setHelpPrinter(&help_printer);
 
     std::string line;
-    std::cout << ":" << mgr.getCurrentPath() << "\n";
+    std::cout << ":" << note_box_manager.note_manager.getCurrentPath() << "\n";
     while (std::cout << "> " && std::getline(std::cin, line)) {
         std::istringstream iss(line);
         std::string cmd, args;
@@ -69,7 +79,7 @@ int main() {
             {
                 //command->factory = factory;
             }
-            command->execute(mgr, args);
+            command->execute(note_box_manager.note_manager, args);
         } else {
             std::cerr << "Unknown command: " << cmd << "\n";
         }
