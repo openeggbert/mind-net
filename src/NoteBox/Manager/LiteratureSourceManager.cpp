@@ -65,7 +65,12 @@ namespace NoteBox::Manager
     std::vector<Entity::LiteratureSource> LiteratureSourceManager::list()
     {
         std::string title_like = std::string("");
-        return db->literature_source_repository->list(title_like);
+        auto list = db->literature_source_repository->list(title_like);
+        for (Entity::LiteratureSource& e:list)
+        {
+            std::cout << e.id << " | " << e.title << std::endl;
+        }
+        return list;
     }
 
     void LiteratureSourceManager::remove(const Entity::LiteratureSource& literature_source)

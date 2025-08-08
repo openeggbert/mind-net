@@ -88,7 +88,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     Entity::LiteratureSource extractLiteratureSourceFromResultSet(const SQLite::Statement& query)
     {
-        int i = 1;
+        int i = 0;
         Entity::LiteratureSource result;
         result.id = query.getColumn(i++);
         result.title = query.getColumn(i++).getString();
