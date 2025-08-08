@@ -13,37 +13,48 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NOTEREPOSITORY_H
-#define NOTEREPOSITORY_H
+#ifndef CONTENT_H
+#define CONTENT_H
 
-#include "NoteBox/Entity/Note.h"
+#include <ostream>
 #include <string>
-#include <vector>
+#include "NoteBox/Helper.h"
 
-namespace NoteBox::Persistence::Api {
+namespace NoteBox::Entity
+{
+    using std::string;
 
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
+    struct Content
+    {
+        string id;
+        string value;
 
-    class NoteRepository {
+        Content();
+        Content(string& id_, string& value_) :
+            id(std::move(id_)),
+            value(std::move(value_))
+        {
+        }
 
-    public:
-        virtual ~NoteRepository() = default;
+        friend std::ostream& operator<<(std::ostream& os, const Content& content)
+        {
+            os << "Content{id: " << content.id
+                << ", value: " << content.value
+                << "}";
+            return os;
+        }
 
-        virtual void create(const Entity::Note& note) = 0;
-        virtual Entity::Note read(const std::string& id) = 0;
-        virtual void update(const Entity::Note& note) = 0;
-        virtual void remove(const std::string& id) = 0;
-        virtual std::vector<Entity::Note> list(std::string& parent_note_id) = 0;
-
+        bool operator==(const Content& other) const
+        {
+            return
+                this->id == other.id &&
+                this->value == other.value;
+        }
     };
-
 }
 
-#endif // NOTEREPOSITORY_H
+#endif // CONTENT_H

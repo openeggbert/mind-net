@@ -32,36 +32,38 @@ namespace NoteBox::Entity {
         string id;
         string parent_note_id;
         string title;
-        string content;
+        string content_id;
         string question;
-        string note_type;
-        string created_at;
-        string updated_at;
-        string last_shown_at;
-        string last_reviewed_at;
+        unixtime created_at;
+        unixtime updated_at;
+        unixtime last_shown_at;
+        unixtime last_reviewed_at;
+        unixtime expires_at;
         int review_in_x_days;
         int importance;
         int difficulty;
         int source_id;
 
-        Note(string id_, string title_, string content_) : id(std::move(id_)), title(std::move(title_)),
-                                                           content(std::move(content_)),
-                                                           note_type("standard"), review_in_x_days(0), importance(0),
-                                                           difficulty(0), source_id(0) {
-        }
+        // Note();
+        //
+        // Note(string& id_, string& title_, const string& content_) : id(std::move(id_)), title(std::move(title_)),
+        //                                                    content_id(std::move(content_id)),
+        //                                                    review_in_x_days(0), importance(0),
+        //                                                    difficulty(0), source_id(0) {
+        // }
 
         friend std::ostream &operator<<(std::ostream &os, const Note &note) {
             os << "Note{id: " << note.id
                     << ", parent_note_id: " << note.parent_note_id
                     << ", title: " << note.title
-                    << ", content: " << note.content
+                    << ", content_id: " << note.content_id
                     << ", question: " << note.question
-                    << ", note_type: " << note.note_type
                     << ", created_at: " << note.created_at
                     << ", updated_at: " << note.updated_at
                     << ", last_shown_at: " << note.last_shown_at
                     << ", last_reviewed_at: " << note.last_reviewed_at
                     << ", review_in_x_days: " << note.review_in_x_days
+                    << ", expires_at: " << note.expires_at
                     << ", importance: " << note.importance
                     << ", difficulty: " << note.difficulty
                     << ", source_id: " << note.source_id
@@ -74,14 +76,14 @@ namespace NoteBox::Entity {
                     this->id == other.id &&
                     this->parent_note_id == other.parent_note_id &&
                     this->title == other.title &&
-                    this->content == other.content &&
+                    this->content_id == other.content_id &&
                     this->question == other.question &&
-                    this->note_type == other.note_type &&
                     this->created_at == other.created_at &&
                     this->updated_at == other.updated_at &&
                     this->last_shown_at == other.last_shown_at &&
                     this->last_reviewed_at == other.last_reviewed_at &&
                     this->review_in_x_days == other.review_in_x_days &&
+                    this->expires_at == other.expires_at &&
                     this->importance == other.importance &&
                     this->difficulty == other.difficulty &&
                     this->source_id == other.source_id;

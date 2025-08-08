@@ -8,7 +8,7 @@
 
 namespace NoteBox::Command {
     void AddCommand::execute(Manager::NoteBoxManager &mgr, const std::string &args) {
-        mgr.note_manager.addNote(args);
+        mgr.note_manager.createNote(args);
     }
     void AddCommand::help() {
         std::cout << "help to be implemented" << std::endl;

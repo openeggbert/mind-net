@@ -6,5 +6,6 @@
 #define HELPER_H
 
 typedef long long ll;
+typedef ll unixtime;
 typedef unsigned short ushort;
 #endif //HELPER_H

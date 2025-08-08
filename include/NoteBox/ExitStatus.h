@@ -4,7 +4,6 @@
 #ifndef EXITSTATUS_H
 #define EXITSTATUS_H
 
-
 namespace NoteBox
 {
     enum ExitStatus

@@ -35,9 +35,9 @@ namespace NoteBox::Entity
     {
         int id;
         string current_path;
-        ll last_opened;
+        unixtime last_opened;
 
-        Session(int id_, string current_path_, ll last_opened_) : id(id_),
+        Session(int id_, string current_path_, unixtime last_opened_) : id(id_),
                                                                       current_path(std::move(current_path_)),
                                                                       last_opened(last_opened_)
         {

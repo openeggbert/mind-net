@@ -17,12 +17,14 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NOTEREPOSITORY_H
-#define NOTEREPOSITORY_H
+#ifndef CONTENTREPOSITORY_H
+#define CONTENTREPOSITORY_H
 
-#include "NoteBox/Entity/Note.h"
+
+#include "NoteBox/Entity/Content.h"
 #include <string>
 #include <vector>
+
 
 namespace NoteBox::Persistence::Api {
 
@@ -31,19 +33,17 @@ namespace NoteBox::Persistence::Api {
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class NoteRepository {
+    class ContentRepository {
 
     public:
-        virtual ~NoteRepository() = default;
+        virtual ~ContentRepository() = default;
 
-        virtual void create(const Entity::Note& note) = 0;
-        virtual Entity::Note read(const std::string& id) = 0;
-        virtual void update(const Entity::Note& note) = 0;
-        virtual void remove(const std::string& id) = 0;
-        virtual std::vector<Entity::Note> list(std::string& parent_note_id) = 0;
-
+        virtual void create(const Entity::Content& content) = 0;
+        virtual Entity::Content read(std::string& id) = 0;
+        virtual void update(Entity::Content& file) = 0;
+        virtual void remove(std::string& id) = 0;
     };
 
 }
 
-#endif // NOTEREPOSITORY_H
+#endif // CONTENTREPOSITORY_H

@@ -10,7 +10,7 @@
 #include "NoteBox/Global.h"
 #include "NoteBox/Command/CommandFactory.h"
 #include "NoteBox/Command/HelpPrinter.h"
-#include "NoteBox/Entity/ExitStatus.h"
+#include "../../include/NoteBox/ExitStatus.h"
 #include "NoteBox/Manager/NoteBoxManager.h"
 #include "NoteBox/Manager/NoteManager.h"
 #include "NoteBox/Persistence/DB.h"
@@ -79,7 +79,7 @@ bool create_session_if_does_not_yet_exist(NoteBox::Manager::NoteBoxManager note_
 int main()
 {
 
-    NoteBox::start_time = NoteBox::Utils::currentUnixTimestamp() - 384600;
+    NoteBox::start_time = NoteBox::Utils::currentUnixTimestamp();
     print_logo();
     bool migrated = migrateSchemaIfNeeded();
     if (!migrated)
@@ -103,7 +103,7 @@ int main()
     factory.getCommand("help")->setHelpPrinter(&help_printer);
 
     std::string line;
-    std::cout << ":" << note_box_manager.note_manager.getCurrentPath() << "\n";
+    std::cout << ":" << note_box_manager.note_manager.pwd() << "\n";
     while (std::cout << "> " && std::getline(std::cin, line))
     {
         std::istringstream iss(line);

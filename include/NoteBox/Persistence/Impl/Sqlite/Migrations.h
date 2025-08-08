@@ -8,7 +8,7 @@
 
 
 namespace NoteBox::Persistence::Impl::Sqlite {
-    constexpr int MIGRATION_COUNT = 9;
+    constexpr int MIGRATION_COUNT = 10;
     inline std::string migrations[MIGRATION_COUNT] = {
 
         R"(
@@ -24,27 +24,35 @@ CREATE TABLE LITERATURE_SOURCE (
     UNIQUE(TITLE, AUTHOR)
 );
 
+        )",
 
+        R"(
+CREATE TABLE CONTENT (
+    ID TEXT PRIMARY KEY,
+    VALUE TEXT
+);
 
         )",
+
 
         R"(
 CREATE TABLE NOTE (
     ID TEXT PRIMARY KEY,           -- for example '/1a', '/1a2b', etc.
-    PARENT_NOTE_ID TEXT,                --
+    PARENT_NOTE_ID TEXT,
     TITLE TEXT NOT NULL,
-    CONTENT TEXT,
+    CONTENT_ID TEXT,
     QUESTION TEXT,
-    NOTE_TYPE TEXT DEFAULT 'standard', -- 'standard', 'index', 'literature'
-    CREATED_AT TEXT,               -- ISO datetime (for example '2025-08-04T19:10:00Z')
-    UPDATED_AT TEXT,
-    LAST_SHOWN_AT TEXT,               -- ISO datetime (for example '2025-08-04T19:10:00Z')
-    LAST_REVIEWED_AT TEXT,               -- ISO datetime (for example '2025-08-04T19:10:00Z')
+    CREATED_AT INTEGER,
+    UPDATED_AT INTEGER,
+    LAST_SHOWN_AT INTEGER,
+    LAST_REVIEWED_AT INTEGER,
     REVIEW_IN_X_DAYS INTEGER,
+    EXPIRES_AT INTEGER,
     IMPORTANCE INTEGER,
     DIFFICULTY INTEGER,
     SOURCE_ID INTEGER,                -- FK for LITERATURE_SOURCE
     FOREIGN KEY(PARENT_NOTE_ID) REFERENCES NOTE(ID),
+    FOREIGN KEY(CONTENT_ID) REFERENCES CONTENT_ID(ID),
     FOREIGN KEY(SOURCE_ID) REFERENCES LITERATURE_SOURCE(ID)
 );
 

@@ -59,3 +59,16 @@ lit add
 lit edit
 lit show
 ```
+
+## Development
+
+### Example of Classes
+
+```
+Note
+NoteManager
+NoteRepository
+NoteRepositoryImplSqlite
+NoteTable
+Migrations
+```

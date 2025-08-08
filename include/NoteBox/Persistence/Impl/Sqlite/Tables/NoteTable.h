@@ -25,7 +25,6 @@
 #ifndef NOTETABLE_H
 #define NOTETABLE_H
 
-
 namespace NoteBox::Persistence::Impl::Sqlite::Tables {
 
 struct NoteTable {
@@ -41,14 +40,14 @@ struct NoteTable {
 static constexpr const char *ID = "ID";
     static constexpr const char *PARENT_NOTE_ID = "PARENT_NOTE_ID";
     static constexpr const char *TITLE = "TITLE";
-    static constexpr const char *CONTENT = "CONTENT";
+    static constexpr const char *CONTENT_ID = "CONTENT_ID";
     static constexpr const char *QUESTION = "QUESTION";
-    static constexpr const char *NOTE_TYPE = "NOTE_TYPE";
     static constexpr const char *CREATED_AT = "CREATED_AT";
     static constexpr const char *UPDATED_AT = "UPDATED_AT";
     static constexpr const char *LAST_SHOWN_AT = "LAST_SHOWN_AT";
     static constexpr const char *LAST_REVIEWED_AT = "LAST_REVIEWED_AT";
     static constexpr const char *REVIEW_IN_X_DAYS = "REVIEW_IN_X_DAYS";
+    static constexpr const char *EXPIRES_AT = "EXPIRES_AT";
     static constexpr const char *IMPORTANCE = "IMPORTANCE";
     static constexpr const char *DIFFICULTY = "DIFFICULTY";
     static constexpr const char *SOURCE_ID = "SOURCE_ID";

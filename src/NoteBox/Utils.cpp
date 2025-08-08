@@ -133,4 +133,36 @@ namespace NoteBox
         return modifiedText;
     }
 
+
+    std::vector<std::string> Utils::note_id_to_vector(const std::string& note_id)
+    {
+        if (note_id.empty())
+            throw std::runtime_error("Empty note id is not valid");
+        if (!std::isdigit(note_id[0]))
+            throw std::runtime_error("Note id must start with a digit");
+
+        std::vector<std::string> result;
+        std::string current;
+        bool is_digit = std::isdigit(note_id[0]);
+
+        for (char c : note_id)
+        {
+            if (std::isdigit(c) == is_digit)
+            {
+                current += c;
+            }
+            else
+            {
+                result.push_back(current);
+                current = c;
+                is_digit = !is_digit;
+            }
+        }
+
+        if (!current.empty())
+            result.push_back(current);
+
+        return result;
+    }
+
 }
