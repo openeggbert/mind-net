@@ -4,6 +4,7 @@
 #ifndef IHELPPRINTER_H
 #define IHELPPRINTER_H
 #include <string>
+#include <vector>
 
 namespace NoteBox::Command
 {
@@ -11,6 +12,7 @@ namespace NoteBox::Command
     {
     public:
         virtual void print(const std::string& command) = 0;
+        virtual std::vector<std::string> list_commands() = 0;
         virtual ~IHelpPrinter() = default;
     };
 }

@@ -16,6 +16,7 @@ namespace NoteBox::Command {
         HelpPrinter(NoteBox::Command::CommandFactory* factory);
         ~HelpPrinter() override;  // ✅ Declare the destructor
         void print(const std::string& command) override;
+        std::vector<std::string> list_commands() override;
 
     };
 }

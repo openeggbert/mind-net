@@ -14,11 +14,13 @@
 namespace NoteBox::Command {
     class CommandFactory {
         std::map<std::string, std::shared_ptr<ICommand> > commands;
+        std::vector<std::string> commandNames;
 
     public:
         CommandFactory();
 
         std::shared_ptr<ICommand> getCommand(const std::string &name);
+        std::vector<std::string>& list_commands();
     };
 }
 

@@ -22,10 +22,18 @@ namespace NoteBox::Command
             throw std::runtime_error("factory is not set");
         }
         auto command = factory->getCommand(cmd);
-        if (command) {
+        if (command)
+        {
             command->help();
-        } else {
+        }
+        else
+        {
             std::cerr << "Unknown command: " << cmd << "\n";
         }
+    }
+
+    std::vector<std::string> HelpPrinter::list_commands()
+    {
+        return this->factory->list_commands();
     }
 }
