@@ -7,7 +7,7 @@
 #include <iostream>
 
 namespace NoteBox::Command {
-    void VersionCommand::execute(Manager::NoteManager &mgr, const std::string &args) {
+    void VersionCommand::execute(Manager::NoteBoxManager &mgr, const std::string &args) {
         std::cout << "0.0.0-SNAPSHOT" << std::endl;
     }
     void VersionCommand::help() {

@@ -37,4 +37,12 @@ namespace NoteBox
     {
         //std::cout << "[TRACE] " << message << std::endl;
     }
+
+    bool Utils::ask_yes_no(const std::string& question)
+    {
+        std::cout << question << " [y/n] ";
+        char choice;
+        std::cin >> choice;
+        return choice == 'y';
+    }
 }

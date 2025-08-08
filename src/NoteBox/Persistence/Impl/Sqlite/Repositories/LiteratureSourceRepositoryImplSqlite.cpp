@@ -69,10 +69,11 @@ namespace NoteBox::Impl::Sqlite::Repositories {
                 query.bind(++i, literature_source.year);
                 query.bind(++i, literature_source.publication);
                 query.bind(++i, literature_source.url);
-                query.bind(++i, literature_source.author);
+                query.bind(++i, literature_source.content);
 
                 //
                 query.exec();
+                std::cout << query.getExpandedSQL() << std::endl;
 
             } catch (SQLite::Exception &e) {
 

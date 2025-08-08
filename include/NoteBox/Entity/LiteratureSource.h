@@ -37,7 +37,7 @@ namespace NoteBox::Entity {
         string content;
 
         LiteratureSource(int id_, string& title_, string& author_, ushort year_, string& publication_,
-                         string& url_, const string& noteId_, string& content_) : id(id_),
+                         string& url_, string& content_) : id(id_),
                                                                          title(std::move(title_)),
                                                                          author(std::move(author_)),
                                                                          year(year_),

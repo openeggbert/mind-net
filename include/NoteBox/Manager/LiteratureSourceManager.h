@@ -21,7 +21,7 @@ namespace NoteBox::Manager
     public:
         LiteratureSourceManager(const std::shared_ptr<Persistence::DB>& db);
 
-        void create(const Entity::LiteratureSource& literature_source);
+        void create();
 
         std::vector<Entity::LiteratureSource> list();
 

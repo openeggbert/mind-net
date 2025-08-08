@@ -7,9 +7,9 @@
 #include <iostream>
 
 namespace NoteBox::Command {
-    void CdCommand::execute(Manager::NoteManager &mgr, const std::string &args) {
-        mgr.cd(args);
-        std::cout << ":" << mgr.getCurrentPath() << "\n";
+    void CdCommand::execute(Manager::NoteBoxManager &mgr, const std::string &args) {
+        mgr.note_manager.cd(args);
+        std::cout << ":" << mgr.note_manager.getCurrentPath() << "\n";
     }
     void CdCommand::help() {
         std::cout << "help to be implemented" << std::endl;

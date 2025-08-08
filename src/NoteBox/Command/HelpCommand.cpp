@@ -8,7 +8,7 @@
 
 namespace NoteBox::Command
 {
-    void HelpCommand::execute(Manager::NoteManager& mgr, const std::string& args)
+    void HelpCommand::execute(Manager::NoteBoxManager& mgr, const std::string& args)
     {
         //std::cout << "help command has argument \"" << args << "\"" << std::endl;
 

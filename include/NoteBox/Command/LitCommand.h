@@ -1,17 +1,17 @@
 //
 // Created by robertvokac on 8/4/25.
 //
+#ifndef LITCOMMAND_H
+#define LITCOMMAND_H
 
-#ifndef VERSIONCOMMAND_H
-#define VERSIONCOMMAND_H
 #include "ICommand.h"
+#include "NoteBox/Manager/LiteratureSourceManager.h"
 
 namespace NoteBox::Command {
-    class VersionCommand : public ICommand {
+    class LitCommand : public ICommand {
     public:
         void execute(Manager::NoteBoxManager& mgr, const std::string& args) override;
         void help() override;
     };
 }
-
-#endif //VERSIONCOMMAND_H
+#endif // LITCOMMAND_H

@@ -10,6 +10,7 @@
 #include "NoteBox/Command/LsCommand.h"
 #include "NoteBox/Command/RmCommand.h"
 #include "NoteBox/Command/VersionCommand.h"
+#include "NoteBox/Command/LitCommand.h"
 #define add_command(key, clazz)         commands[#key] = std::make_shared<clazz##Command>();
 
 
@@ -24,6 +25,7 @@ namespace NoteBox::Command
         add_command(ls, Ls)
         add_command(rm, Rm)
         add_command(help, Help)
+        add_command(lit, Lit)
     }
 
     std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string& name)

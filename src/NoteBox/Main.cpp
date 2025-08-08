@@ -52,6 +52,7 @@ int main() {
     std::shared_ptr<NoteBox::Persistence::DB> db = std::make_shared<NoteBox::Persistence::DB>();
 
     NoteBox::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
+    db->literature_source_repository = &literature_source_repository;
 
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 
@@ -79,9 +80,9 @@ int main() {
             {
                 //command->factory = factory;
             }
-            command->execute(note_box_manager.note_manager, args);
+            command->execute(note_box_manager, args);
         } else {
-            std::cerr << "Unknown command: " << cmd << "\n";
+            if (!cmd.empty()) std::cerr << "Unknown command: " << cmd << "\n";
         }
     }
     return 0;

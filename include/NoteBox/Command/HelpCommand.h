@@ -11,7 +11,7 @@ namespace NoteBox::Command {
     private:
         IHelpPrinter* help_printer = nullptr;
     public:
-        void execute(Manager::NoteManager& mgr, const std::string& args) override;
+        void execute(Manager::NoteBoxManager& mgr, const std::string& args) override;
         void help() override;
 
         void setHelpPrinter(IHelpPrinter* factory) override;
