@@ -57,7 +57,13 @@ namespace NoteBox::Command
         return read(STDIN_FILENO, &out, 1);
     }
 
-    void prompt_user_to_continue() {
+    void print_title(const char title[])
+    {
+        //std::cout << title << std::endl << std::string("-", 80) << std::endl;
+    }
+
+    void prompt_user_to_continue()
+    {
         std::cout << "Press any key to continue." << std::endl;
         std::cin.get();
     }
@@ -67,30 +73,8 @@ namespace NoteBox::Command
         helper->execute(mgr, "show", "");
     }
 
-    char getch() {
-        char buf = 0;
-        struct termios old = {0};
-        if (tcgetattr(0, &old) < 0)
-            perror("tcsetattr()");
-        old.c_lflag &= ~ICANON;
-        old.c_lflag &= ~ECHO;
-        old.c_cc[VMIN] = 1;
-        old.c_cc[VTIME] = 0;
-        if (tcsetattr(0, TCSANOW, &old) < 0)
-            perror("tcsetattr ICANON");
-        if (read(0, &buf, 1) < 0)
-            perror ("read()");
-        old.c_lflag |= ICANON;
-        old.c_lflag |= ECHO;
-        if (tcsetattr(0, TCSADRAIN, &old) < 0)
-            perror ("tcsetattr ~ICANON");
-        return (buf);
-    }
-
     void WalkCommand::execute(Manager::NoteBoxManager& mgr, const std::string& args)
     {
-
-
         TermiosGuard tg;
         tg.enableRaw();
 
@@ -115,9 +99,18 @@ namespace NoteBox::Command
             {
             case 'e':
                 {
-
                     tg.disable();
-                    Utils::clearScreen();
+                    print_title("Edit content");
+                    helper->execute(mgr, "edit", "");
+
+                    tg.enableRaw();
+                    break;
+                }
+            case 'g':
+                {
+                    tg.disable();
+
+                    print_title("Go to");
                     helper->execute(mgr, "edit", "");
 
                     tg.enableRaw();
@@ -126,8 +119,11 @@ namespace NoteBox::Command
             case 'h':
                 {
                     tg.disable();
-std::cout << R"(
+
+                    print_title("Help");
+                    std::cout << R"(
 e ... edit content
+g ... go to a Note from the list
 h ... show this help
 i ... show info about current Note
 r ... run a command
@@ -136,48 +132,70 @@ q ... exit the Walking mode
 
 )";
                     prompt_user_to_continue();
+                    tg.enableRaw();
                     break;
                 }
             case 'i':
                 {
                     helper->execute(mgr, "info", "");
+                    tg.disable();
+
+                    print_title("Show information");
                     prompt_user_to_continue();
+                    tg.enableRaw();
                     break;
                 }
             case 'r':
                 {
                     tg.disable();
+                    print_title("Run command");
                     std::string command;
-                    std::cout << "Command to be executed: ";
-                    std::getline(std::cin, command);
 
-                    if (command.empty())
+                    std::cout << "How to return to Walking mode: type exit" << std::endl << std::endl;
+
+                    while (true)
                     {
-                        break;
-                    }
-                    int index = 0;
-                    for (int i = 0; i < command.size(); i++)
-                    {
-                        if (command[i] == ' ')
+                        std::cout << "Command: ";
+                        std::getline(std::cin, command);
+
+                        if (command.empty() || command == "exit")
                         {
-                            index = i;
                             break;
                         }
+                        if (command == "walk")
+                        {
+                            std::cout << "You can't run walk command, because you are already walking" << std::endl;
+                            continue;
+                        }
+                        int index = 0;
+                        for (int i = 0; i < command.size(); i++)
+                        {
+                            if (command[i] == ' ')
+                            {
+                                index = i;
+                                break;
+                            }
+                        }
+                        std::string cmd = index == 0 ? command : command.substr(0, index);
+                        std::string arguments = index == 0 ? "" : command.substr(index + 1);
+                        helper->execute(mgr, cmd, arguments);
+
+                        //prompt_user_to_continue();
                     }
-                    std::string cmd = index == 0 ? command : command.substr(0, index);
-                    std::string arguments = index == 0 ? "" : command.substr(index + 1);
-                    helper->execute(mgr, cmd, arguments);
-                    prompt_user_to_continue();
+
+
                     tg.enableRaw();
                     break;
                 }
             case 's':
                 {
+                    print_title("Show content");
                     helper->execute(mgr, "show", "");
                     break;
                 }
             case 'x':
                 {
+                    print_title("Exit \"Walking mode\"");
                     std::cout << "Exiting walking." << std::endl;
                     return;
                 }

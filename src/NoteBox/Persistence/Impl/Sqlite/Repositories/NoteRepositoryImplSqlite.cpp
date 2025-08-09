@@ -214,10 +214,10 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
         std::vector<Entity::Note> NoteRepositoryImplSqlite::list(std::string& parent_note_id, size_t pageNumber, size_t pageSize)
     {
-        std::cout << "list() notes" << std::endl;
+        // std::cout << "list() notes" << std::endl;
         bool parent_is_root = parent_note_id.empty();
-        std::cout << "parent_is_root: " << parent_is_root << std::endl;
-        std::cout << "parent_note_id: " << parent_note_id << std::endl;
+        // std::cout << "parent_is_root: " << parent_is_root << std::endl;
+        // std::cout << "parent_note_id: " << parent_note_id << std::endl;
         std::string sql = std::string("SELECT ID, PARENT_NOTE_ID, TITLE, CONTENT_ID, QUESTION, CREATED_AT, UPDATED_AT, "
             "LAST_SHOWN_AT, LAST_REVIEWED_AT, REVIEW_IN_X_DAYS, EXPIRES_AT, IMPORTANCE, DIFFICULTY, SOURCE_ID "
             "FROM NOTE WHERE PARENT_NOTE_ID ") + (parent_is_root ? " IS NULL" : "= ?") + " LIMIT ? OFFSET ?";
@@ -231,7 +231,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
             if (!parent_is_root) {query.bind(i++, parent_note_id);}
             query.bind(i++, static_cast<int32_t>(pageSize));
             query.bind(i++, static_cast<int32_t>(pageSize * pageNumber));
-            std::cout << query.getExpandedSQL() << std::endl;
+            //std::cout << query.getExpandedSQL() << std::endl;
             std::vector<Entity::Note> notes;
 
             while (query.executeStep())

@@ -10,9 +10,10 @@
 
 namespace NoteBox::Command
 {
-    CommandHelper::CommandHelper(NoteBox::Command::CommandFactory* factory_)
+    CommandHelper::CommandHelper(NoteBox::Command::CommandFactory* factory_, std::shared_ptr<Persistence::DB>* db_)
     {
         this->factory = factory_;
+        this->db = db_;
     }
 
     CommandHelper::~CommandHelper() = default;
@@ -54,5 +55,10 @@ namespace NoteBox::Command
         {
             err << "Unknown command: " << cmd << "\n";
         }
+    }
+
+    std::shared_ptr<Persistence::DB>* CommandHelper::getDB()
+    {
+        return db;
     }
 }

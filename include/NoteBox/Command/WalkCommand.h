@@ -11,6 +11,7 @@ namespace NoteBox::Command {
     class WalkCommand : public ICommand {
         ICommandHelper* helper = nullptr;
 
+
     public:
         void execute(Manager::NoteBoxManager& mgr, const std::string& args) override;
         void help() override;

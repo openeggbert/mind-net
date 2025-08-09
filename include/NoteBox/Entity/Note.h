@@ -38,8 +38,9 @@ namespace NoteBox::Entity {
         unixtime created_at;
         unixtime updated_at;
         unixtime last_shown_at;
-        unixtime last_reviewed_at;
+
         unixtime expires_at;
+        unixtime last_reviewed_at;
         int review_in_x_days;
         int importance;
         int difficulty;
@@ -65,8 +66,8 @@ namespace NoteBox::Entity {
                     << ", updated_at: " << note.updated_at
                     << ", last_shown_at: " << note.last_shown_at
                     << ", last_reviewed_at: " << note.last_reviewed_at
-                    << ", review_in_x_days: " << note.review_in_x_days
                     << ", expires_at: " << note.expires_at
+                    << ", review_in_x_days: " << note.review_in_x_days
                     << ", importance: " << note.importance
                     << ", difficulty: " << note.difficulty
                     << ", source_id: " << note.source_id

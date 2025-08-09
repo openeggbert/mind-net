@@ -212,7 +212,7 @@ int main()
     int exit_status;
     if (set_editor_if_needed(db, exit_status)) return exit_status;
     NoteBox::Command::CommandFactory factory;
-    NoteBox::Command::CommandHelper command_helper(&factory);
+    NoteBox::Command::CommandHelper command_helper(&factory, &db);
     factory.getCommand("help")->setCommandHelper(&command_helper);
     factory.getCommand("walk")->setCommandHelper(&command_helper);
     factory.getCommand("cd")->execute(note_box_manager, note_box_manager.session_manager.get().current_path);
