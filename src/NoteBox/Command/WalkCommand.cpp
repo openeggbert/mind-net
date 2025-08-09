@@ -236,7 +236,7 @@ x ... exit the Walking mode
 
                     while (true)
                     {
-                        std::cout << "Command: ";
+                        std::cout << "> ";
                         std::getline(std::cin, command);
 
                         if (command.empty() || command == "exit")
