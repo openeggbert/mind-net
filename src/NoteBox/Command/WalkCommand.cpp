@@ -11,6 +11,7 @@
 #include <cctype>   // tolower
 #include <cerrno>
 #include <cstring>  // strerror
+#include <limits>
 
 
 namespace NoteBox::Command
@@ -108,57 +109,42 @@ namespace NoteBox::Command
                 }
             case 'g':
                 {
-                    // tg.disable();
-
-                    std::cout << "Go mode" << std::endl;
-                    bool exit = false;
-                    while (!exit) {
                     int page_size = 10;
                     int page_number = 0;
-                    auto current_path = mgr.note_manager.pwd();
+                    bool exit = false;
 
                     while (!exit)
                     {
                         Utils::clearScreen();
-                        current_path = mgr.note_manager.pwd();
+                        auto current_path = mgr.note_manager.pwd();
+
                         tg.disable();
                         std::cout << "Current path: " << current_path << std::endl;
-                        std::cout << std::string("-", 80) << std::endl;
+                        std::cout << std::string(80, '-') << std::endl;
                         tg.enableRaw();
-                        auto list =  helper->getDB()->get()->note_repository->list(current_path, page_number, page_size);
-                        // if (list.empty())
-                        // {
-                        //     //if (page_number == 0)
-                        //     {
-                        //         std::cout << "No notes found for page number " << page_number << std::endl;
-                        //         tg.disable();
-                        //         prompt_user_to_continue();
-                        //         tg.enableRaw();
-                        //     }
-                        //     break;
-                        // }
+
+                        auto list = helper->getDB()->get()->note_repository->list(current_path, page_number, page_size);
+
                         char option = 'a';
-                        std::cout << 'z' << " | " << ".." << " " << std::endl;
-                        for (auto& e : list)
+                        if (!current_path.empty()) {std::cout << "z | .." << std::endl;}
+                        for (const auto& e : list)
                         {
                             std::cout << option << " | " << e.title << " " << e.id << std::endl;
                             option++;
                         }
 
-                        readByte(c);
-                        choice = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-                        //std::cout << "Choice via go mode: " << choice << "\n" << std::flush;
-                        char end_letter= 'j';
+                        unsigned char c;
+                        if (readByte(c) <= 0) continue;
+                        char choice = static_cast<char>(std::tolower(c));
+                        char end_letter = 'a' + list.size() - 1;
 
                         if (choice >= 'a' && choice <= end_letter)
                         {
                             helper->execute(mgr, "cd", "/" + list[choice - 'a'].id);
-                            break;
                         }
-
                         else if (choice == 'm')
                         {
-                            if (page_number > 0) { page_number--; };
+                            if (page_number > 0) page_number--;
                         }
                         else if (choice == 'n')
                         {
@@ -168,47 +154,49 @@ namespace NoteBox::Command
                         {
                             tg.disable();
                             std::cout << "New page number: ";
-                            std::cin >>page_number;
-                            tg.enableRaw();
+                            std::cin >> page_number;
 
+                            if (std::cin.fail())
+                            {
+                                std::cin.clear();
+                                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                                std::cout << "Invalid input. Try again." << std::endl;
+                                page_number = 0;
+                            }
+                            tg.enableRaw();
                         }
                         else if (choice == 'q')
                         {
                             tg.disable();
                             std::cout << R"(
-a-j ... go to a Note from the list
-m ... go to previous page
-n ... go to next page
-p ... go to a specific page
+a-z ... go to a Note from the list
+m ... previous page
+n ... next page
+p ... go to specific page
 q ... show this help
-x ... exit the Walking mode
+x ... exit Walking mode
 z ... go to parent directory
-)";
-
+)" << std::endl;
+                            prompt_user_to_continue();
                             tg.enableRaw();
-
                         }
-
                         else if (choice == 'x')
                         {
                             exit = true;
                         }
-                        else if (choice == 'z')
+                        else if (choice == 'z' && !current_path.empty())
                         {
                             helper->execute(mgr, "cd", "..");
-                            break;
-                        } else
+                        }
+                        else
                         {
-                            err << "Unknown command: " << choice << "\n";
+                            err << "Unknown command: " << choice << std::endl;
                         }
                     }
-                    }
 
-                    // helper->execute(mgr, "edit", "");
-
-                    //tg.enableRaw();
                     break;
                 }
+
             case 'h':
                 {
                     tg.disable();
