@@ -174,7 +174,7 @@ m ... previous page
 n ... next page
 p ... go to specific page
 q ... show this help
-x ... exit Walking mode
+x ... exit Go mode
 z ... go to parent directory
 )" << std::endl;
                             prompt_user_to_continue();
@@ -209,7 +209,7 @@ h ... show this help
 i ... show info about current Note
 r ... run a command
 s ... show content of the current Note
-q ... exit the Walking mode
+x ... exit the Walking mode
 
 )";
                     prompt_user_to_continue();
