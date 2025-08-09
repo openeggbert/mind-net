@@ -20,6 +20,8 @@ namespace NoteBox::Manager
 
     const std::string& NoteManager::pwd() const
     {
+        auto y = db->note_repository->find_youngest_child_note_id(currentPath);
+        std::cout << "Youngest child: " << (y.has_value() ? y.value() : "none") << std::endl;
         return currentPath;
     }
 
@@ -47,6 +49,13 @@ namespace NoteBox::Manager
 
     void NoteManager::createNote(const std::string& title)
     {
+        if (title.empty()) {throw std::runtime_error("title cannot be empty");}
+        bool fast_adding = title[0] == '#';
+        std::string updated_title = title;
+        if (fast_adding)
+        {
+            updated_title = updated_title.substr(1, title.size() - 1);
+        }
         Entity::Note note;
         using std::cout;
         using std::cin;
@@ -54,24 +63,32 @@ namespace NoteBox::Manager
         typedef std::string s;
 
 
-        s current_path = pwd();
-        auto vector_path = current_path.empty() ? std::vector<std::string>{} : Utils::note_id_to_vector(current_path);
-        if (!vector_path.empty()) { vector_path.pop_back(); }
-        auto parent_note_id = Utils::vector_to_note_id(vector_path);
+        // s current_path = pwd();
+        // auto vector_path = current_path.empty() ? std::vector<std::string>{} : Utils::note_id_to_vector(current_path);
+        // if (!vector_path.empty()) { vector_path.pop_back(); }
+        // auto parent_note_id = Utils::vector_to_note_id(vector_path);
         //
         Entity::Content content;
         s question;
-        cout << "Question: ";
-        getline(cin,question); cin.clear();
+        if (!fast_adding)
+        {
+            cout << "Question: ";
+            getline(cin,question); cin.clear();
+        }
+
 
         //
 
-        note.id = "";//todo
+
+        auto parent_note_id = currentPath;
+        auto youngest_child_id = db->note_repository->find_youngest_child_note_id(parent_note_id);
+        std::string next_id = Utils::next_note_id(parent_note_id, youngest_child_id.value_or(""));
+        note.id = next_id;
         note.parent_note_id = parent_note_id;
-        note.title = title;
+        note.title = updated_title;
         //
         content.id = note.id;
-        content.value = Utils::editTextInEditor(content.value, db->session_repository->get().editor_path);
+        content.value = fast_adding ? "" : Utils::editTextInEditor(content.value, db->session_repository->get().editor_path);
         note.content_id = content.id;
         db->content_repository->create(content);
         //
@@ -84,7 +101,7 @@ namespace NoteBox::Manager
         note.review_in_x_days = 0;
         note.importance = static_cast<int>(NoteBox::Enum::Importance::MEDIUM);
         note.difficulty = static_cast<int>(NoteBox::Enum::Difficulty::MEDIUM);
-        if (!NoteBox::Utils::ask_yes_no("Do you really want to create this new Note?")) {return;}
+        if (!fast_adding && !NoteBox::Utils::ask_yes_no("Do you really want to create this new Note?")) {return;}
         db->note_repository->create(note);
     }
 
@@ -121,9 +138,10 @@ namespace NoteBox::Manager
                 }
                 break;
             }
+            std::cout << "#" << " | " << "ID" << " | " << "Title" << " | " << "Parent Note ID" << std::endl;
             for (Entity::Note& e : list)
             {
-                std::cout << note_number_as_child << " | " << e.id << " | " << e.title << std::endl;
+                std::cout << note_number_as_child << " | " << e.id << " | " << e.title << " | " << e.parent_note_id << std::endl;
                 ++note_number_as_child;
             }
             ++page;

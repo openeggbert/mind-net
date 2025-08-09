@@ -24,12 +24,14 @@ namespace NoteBox
         strftime(buffer, sizeof(buffer), "%Y%m%d%H%M%S", now2);
         return atoll(buffer);
     }
+
     long long Utils::currentUnixTimestamp()
     {
         return static_cast<long long>(std::time(nullptr));
     }
 
-    std::string Utils::unixToFormattedString(ll unixTimestamp) {
+    std::string Utils::unixToFormattedString(ll unixTimestamp)
+    {
         std::time_t rawTime = static_cast<std::time_t>(unixTimestamp);
         std::tm* timeInfo = std::localtime(&rawTime);
 
@@ -89,15 +91,18 @@ namespace NoteBox
     }
 
 
-    std::string Utils::editTextInEditor(const std::string& inputText, const std::string& editorPath) {
+    std::string Utils::editTextInEditor(const std::string& inputText, const std::string& editorPath)
+    {
         // Generate a random filename in /tmp/
         std::string filename = "/tmp/tmp_edit_XXXXXX.txt";
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, 25);
 
-        for (auto& ch : filename) {
-            if (ch == 'X') {
+        for (auto& ch : filename)
+        {
+            if (ch == 'X')
+            {
                 ch = 'a' + dis(gen);
             }
         }
@@ -105,7 +110,8 @@ namespace NoteBox
         // Write input text to the file
         {
             std::ofstream outFile(filename);
-            if (!outFile) {
+            if (!outFile)
+            {
                 throw std::runtime_error("Failed to create temporary file: " + filename);
             }
             outFile << inputText;
@@ -114,14 +120,16 @@ namespace NoteBox
         // Launch editorPath in blocking mode
         std::string command = editorPath + std::string(" ") + filename;
         int result = std::system(command.c_str());
-        if (result != 0) {
+        if (result != 0)
+        {
             std::filesystem::remove(filename);
             throw std::runtime_error(editorPath + " returned non-zero exit code.");
         }
 
         // Read modified contents
         std::ifstream inFile(filename);
-        if (!inFile) {
+        if (!inFile)
+        {
             std::filesystem::remove(filename);
             throw std::runtime_error("Failed to read temporary file after editing.");
         }
@@ -177,5 +185,132 @@ namespace NoteBox
             result += part;
         }
         return result;
+    }
+    // Convert single letter 'a'-'z' to number 0-25
+    int Utils::letterToDecimal(char letter) {
+        if (letter < 'a' || letter > 'z') {
+            throw std::invalid_argument("letterToDecimal: input must be a-z");
+        }
+        return letter - 'a';
+    }
+
+    // Convert number 0-25 to single letter 'a'-'z'
+    char Utils::decimalToLetter(int number) {
+        if (number < 0 || number > 25) {
+            throw std::out_of_range("decimalToLetter: input must be 0-25");
+        }
+        return static_cast<char>('a' + number);
+    }
+
+    // Convert base-26 string (a-z) to decimal integer
+    // "a" -> 0, "b" -> 1, ..., "z" -> 25, "aa" -> 26, etc.
+    int Utils::base26ToDecimal(const std::string& text) {
+        if (text.empty())
+            throw std::invalid_argument("Empty string not allowed");
+
+        for (char c : text) {
+            if (c < 'a' || c > 'z')
+                throw std::invalid_argument("Only lowercase a-z allowed");
+        }
+
+        int len = static_cast<int>(text.size());
+        int value = 0;
+
+        // Step 1: Add all strings with fewer letters
+        int shorter_count = 26;
+        for (int i = 1; i < len; ++i) {
+            value += shorter_count;
+            shorter_count *= 26;
+        }
+
+        // Step 2: Calculate index within same-length strings
+        int offset = 0;
+        for (char c : text) {
+            offset = offset * 26 + letterToDecimal(c);
+        }
+
+        return value + offset;
+    }
+
+
+
+    // Convert decimal integer to base-26 string (a=0, b=1, ..., z=25, aa=26, etc.)
+    std::string Utils::decimalToBase26(int number) {
+        if (number < 0)
+            throw std::invalid_argument("Negative numbers not allowed");
+
+        std::string result;
+        int length = 1;
+
+        // Find how many letters are needed
+        int count = 26;
+        int remaining = number;
+        while (remaining >= count) {
+            remaining -= count;
+            length++;
+            count *= 26;
+        }
+
+        // Build string from remaining number
+        for (int i = 0; i < length; ++i) {
+            int power = length - i - 1;
+            int idx = remaining / static_cast<int>(std::pow(26, power));
+            result.push_back(decimalToLetter(idx));
+            remaining %= static_cast<int>(std::pow(26, power));
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Generates new Note ID in the ZettelKasten system.
+     * The note ID is composed of alternating numbers and lowercase letters.
+     * Root notes are just numbers (1, 2, 3...).
+     * Child notes append letters and numbers to their parent's ID.
+     * For example: 1a1, 1a2, 1b1, 2a1, etc.
+     * 
+     * @param parent_note_id The ID of the parent note. Empty string means root level.
+     * @param youngest_child_note_id The ID of the youngest (most recently created) child note.
+     *                              Empty string means no existing children.
+     * @return The generated ID for the new note
+     */
+    std::string Utils::next_note_id(const std::string& parent_note_id, const std::string& youngest_child_note_id)
+    {
+        std::cout << "Generating next note ID for parent note " << parent_note_id << " with youngest child " << youngest_child_note_id << std::endl;
+        bool parent_is_root = parent_note_id.empty();
+        bool parent_has_children = !youngest_child_note_id.empty();
+        if (parent_is_root)
+        {
+            if (parent_has_children)
+            {
+                int i = stoi(youngest_child_note_id) + 1;
+                return std::to_string(i);
+            }
+            return "1";
+        }
+        //parent is not root
+        if (parent_has_children)
+        {
+            auto v = note_id_to_vector(youngest_child_note_id);
+            auto last_part = v.back();
+            v.pop_back();
+            if (isdigit(last_part[0]))
+            {
+                last_part = std::to_string(stoi(last_part) + 1);
+            }
+            else
+            {
+                last_part = decimalToBase26(base26ToDecimal(last_part)+1);
+            }
+            v.push_back(last_part);
+            return vector_to_note_id(v);
+        }
+        else
+        {
+            auto v = note_id_to_vector(parent_note_id);
+            bool digit = isdigit(v.back()[0]);
+            return parent_note_id + (digit ? "a" : "1");
+        }
     }
 }

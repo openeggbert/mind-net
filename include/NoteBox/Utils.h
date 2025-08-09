@@ -30,6 +30,21 @@ namespace NoteBox
         static void trace(const char* message);
         static bool ask_yes_no(const std::string& question);
         static std::string editTextInEditor(const std::string& inputText, const std::string& editorPath);
+
+        // Convert single letter 'a'-'z' to number 0-25
+        static int letterToDecimal(char letter);
+
+        // Convert number 0-25 to single letter 'a'-'z'
+        static char decimalToLetter(int number);
+
+        // Convert base-26 string (a-z) to decimal integer
+        // "a" -> 0, "b" -> 1, ..., "z" -> 25, "aa" -> 26, etc.
+        static int base26ToDecimal(const std::string& text);
+
+        // Convert decimal integer to base-26 string (a-z)
+        static std::string decimalToBase26(int number);
+
+
         /**
      * Converts a note identifier string into a vector of string components.
      * The note ID is split into alternating sections of digits and letters.
@@ -44,6 +59,7 @@ namespace NoteBox
      */
         static std::vector<std::string> note_id_to_vector(const std::string& note_id);
         static std::string vector_to_note_id(const std::vector<std::string>& vector);
+        static std::string next_note_id(const std::string& parent_note_id, const std::string& youngest_child_note_id);
     };
 } // NoteBox
 

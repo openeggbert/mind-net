@@ -76,6 +76,21 @@ bool create_session_if_does_not_yet_exist(NoteBox::Manager::NoteBoxManager note_
 }
 
 
+/**
+ * Calculates the Levenshtein distance between two strings.
+ *
+ * The Levenshtein distance is a measure of the similarity between two strings,
+ * defined as the minimum number of single-character edits required to transform
+ * one string into the other. The allowed operations are insertion, deletion, and
+ * substitution of characters.
+ *
+ * This function uses dynamic programming to efficiently compute the distance in
+ * O(m * n) time, where `m` and `n` are the lengths of the two input strings.
+ *
+ * @param a The first string to compare.
+ * @param b The second string to compare.
+ * @return The calculated Levenshtein distance between the two strings.
+ */
 int levenshtein(const std::string& a, const std::string& b)
 {
     int m = a.size();
@@ -96,6 +111,23 @@ int levenshtein(const std::string& a, const std::string& b)
     return dp[m][n];
 }
 
+/**
+ * Finds the closest matching command to the given input within a specified
+ * maximum Levenshtein distance.
+ *
+ * This function iterates through a list of commands and calculates the
+ * Levenshtein distance between the input string and each command string. It
+ * identifies the command with the smallest distance, provided it is less than
+ * or equal to the given maximum distance. If no command meets the criteria,
+ * the function returns an empty optional.
+ *
+ * @param input The user-provided input string to match against the command list.
+ * @param commands A vector containing the list of available commands.
+ * @param max_distance The maximum allowable Levenshtein distance for a match
+ *                     to be considered valid. Defaults to 3.
+ * @return An optional containing the closest matching command if a valid
+ *         match is found, or an empty optional if no such match exists.
+ */
 std::optional<std::string> findClosestCommand(const std::string& input, const std::vector<std::string>& commands,
                                               int max_distance = 3)
 {
@@ -115,6 +147,37 @@ std::optional<std::string> findClosestCommand(const std::string& input, const st
     return minDistance <= max_distance ? std::make_optional(closest) : std::nullopt;
 }
 
+
+bool set_editor_if_needed(const std::shared_ptr<NoteBox::Persistence::DB>& db, int& exit_status)
+{
+    while (db->session_repository->get().editor_path.empty())
+    {
+        NoteBox::err << "Please set the editor path. It must be a valid program." << std::endl;
+        std::cout << "Editor path: ";
+        std::string editor_path;
+        std::getline(std::cin, editor_path);
+        db->session_repository->get().editor_path = editor_path;
+        if (editor_path.empty())
+        {
+            NoteBox::err << "Editor path cannot be empty." << std::endl;
+            if (!NoteBox::Utils::ask_yes_no("Do you want to type the editor path?"))
+            {
+                std::cout << "Exiting application" << std::endl;
+                exit_status = NoteBox::ExitStatus::EDITOR_PATH_NOT_SET;
+                return true;
+            }
+        }
+        else
+        {
+            auto current_session = db->session_repository->get();
+            current_session.editor_path = editor_path;
+            db->session_repository->update(current_session);
+            break;
+        }
+        std::cin.clear();
+    }
+    return false;
+}
 
 int main()
 {
@@ -143,35 +206,12 @@ int main()
 
     create_session_if_does_not_yet_exist(note_box_manager);
 
-
-    while (db->session_repository->get().editor_path.empty())
-    {
-        NoteBox::err << "Please set the editor path. It must be a valid program." << std::endl;
-        std::cout << "Editor path: ";
-        std::string editor_path;
-        std::getline(std::cin, editor_path);
-        db->session_repository->get().editor_path = editor_path;
-        if (editor_path.empty())
-        {
-            NoteBox::err << "Editor path cannot be empty." << std::endl;
-            if (!NoteBox::Utils::ask_yes_no("Do you want to type the editor path?"))
-            {
-                std::cout << "Exiting application" << std::endl;
-                return NoteBox::ExitStatus::EDITOR_PATH_NOT_SET;
-            }
-        }
-        else
-        {
-            auto current_session = db->session_repository->get();
-            current_session.editor_path = editor_path;
-            db->session_repository->update(current_session);
-            break;
-        }
-        std::cin.clear();
-    }
+    int exit_status;
+    if (set_editor_if_needed(db, exit_status)) return exit_status;
     NoteBox::Command::CommandFactory factory;
     NoteBox::Command::HelpPrinter help_printer(&factory);
     factory.getCommand("help")->setHelpPrinter(&help_printer);
+    factory.getCommand("cd")->execute(note_box_manager, note_box_manager.session_manager.get().current_path);
 
     std::string line;
 

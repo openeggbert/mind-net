@@ -46,6 +46,8 @@ namespace NoteBox::Impl::Sqlite::Repositories
         void update(const Entity::Note& note) override;
         void remove(const std::string& id) override;
         std::vector<Entity::Note> list(std::string& parent_note_id, size_t pageNumber, size_t pageSize) override;
+        std::optional<std::string> find_youngest_child_note_id(const std::string& parent_note_id);
+
     };
 }
 #endif // NOTEREPOSITORYIMPLSQLITE_H

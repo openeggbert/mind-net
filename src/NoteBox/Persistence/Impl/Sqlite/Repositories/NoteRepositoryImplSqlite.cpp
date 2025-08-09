@@ -156,7 +156,62 @@ namespace NoteBox::Impl::Sqlite::Repositories
         }
     }
 
-    std::vector<Entity::Note> NoteRepositoryImplSqlite::list(std::string& parent_note_id, size_t pageNumber, size_t pageSize)
+    void NoteRepositoryImplSqlite::remove(const std::string& id)
+    {
+        std::string sql = "DELETE FROM NOTE WHERE ID = ?";
+
+        SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Statement query(db, sql);
+
+        try
+        {
+            query.bind(1, id);
+            query.exec();
+        }
+        catch (SQLite::Exception& e)
+        {
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            throw std::runtime_error(e.what());
+        }
+    }
+
+    void NoteRepositoryImplSqlite::update(const Entity::Note& note)
+    {
+        std::string sql = "UPDATE NOTE SET PARENT_NOTE_ID = ?, TITLE = ?, CONTENT_ID = ?, QUESTION = ?, "
+            "CREATED_AT = ?, UPDATED_AT = ?, LAST_SHOWN_AT = ?, LAST_REVIEWED_AT = ?, "
+            "REVIEW_IN_X_DAYS = ?, EXPIRES_AT = ?, IMPORTANCE = ?, DIFFICULTY = ?, SOURCE_ID = ? "
+            "WHERE ID = ?";
+
+        SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Statement query(db, sql);
+
+        try
+        {
+            query.bind(1, note.parent_note_id);
+            query.bind(2, note.title);
+            query.bind(3, note.content_id);
+            query.bind(4, note.question);
+            query.bind(5, static_cast<int64_t>(note.created_at));
+            query.bind(6, static_cast<int64_t>(note.updated_at));
+            query.bind(7, static_cast<int64_t>(note.last_shown_at));
+            query.bind(8, static_cast<int64_t>(note.last_reviewed_at));
+            query.bind(9, note.review_in_x_days);
+            query.bind(10, static_cast<int64_t>(note.expires_at));
+            query.bind(11, note.importance);
+            query.bind(12, note.difficulty);
+            query.bind(13, note.source_id);
+            query.bind(14, note.id);
+
+            query.exec();
+        }
+        catch (SQLite::Exception& e)
+        {
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            throw std::runtime_error(e.what());
+        }
+    }
+
+        std::vector<Entity::Note> NoteRepositoryImplSqlite::list(std::string& parent_note_id, size_t pageNumber, size_t pageSize)
     {
         std::cout << "list() notes" << std::endl;
         bool parent_is_root = parent_note_id.empty();
@@ -214,58 +269,37 @@ namespace NoteBox::Impl::Sqlite::Repositories
         }
     }
 
-    void NoteRepositoryImplSqlite::remove(const std::string& id)
+    std::optional<std::string> NoteRepositoryImplSqlite::find_youngest_child_note_id(const std::string& parent_note_id)
     {
-        std::string sql = "DELETE FROM NOTE WHERE ID = ?";
+
+        bool parent_is_root = parent_note_id.empty();
+
+        std::string sql = std::string("SELECT id FROM NOTE WHERE PARENT_NOTE_ID ") +
+            (parent_is_root ? " IS NULL" : " = ? ") +
+        " ORDER BY CREATED_AT DESC LIMIT 1";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
 
         try
         {
-            query.bind(1, id);
-            query.exec();
+            int i = 1;
+            if (!parent_is_root) {query.bind(i++, parent_note_id);}
+            //std::cout << query.getExpandedSQL() << std::endl;
+            std::vector<Entity::Note> notes;
+
+            while (query.executeStep())
+            {
+                return std::optional(query.getColumn(0).getString());
+            }
+
+            return  std::nullopt;
         }
         catch (SQLite::Exception& e)
         {
             err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             throw std::runtime_error(e.what());
         }
-    }
 
-    void NoteRepositoryImplSqlite::update(const Entity::Note& note)
-    {
-        std::string sql = "UPDATE NOTE SET PARENT_NOTE_ID = ?, TITLE = ?, CONTENT_ID = ?, QUESTION = ?, "
-            "CREATED_AT = ?, UPDATED_AT = ?, LAST_SHOWN_AT = ?, LAST_REVIEWED_AT = ?, "
-            "REVIEW_IN_X_DAYS = ?, EXPIRES_AT = ?, IMPORTANCE = ?, DIFFICULTY = ?, SOURCE_ID = ? "
-            "WHERE ID = ?";
-
-        SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-        SQLite::Statement query(db, sql);
-
-        try
-        {
-            query.bind(1, note.parent_note_id);
-            query.bind(2, note.title);
-            query.bind(3, note.content_id);
-            query.bind(4, note.question);
-            query.bind(5, static_cast<int64_t>(note.created_at));
-            query.bind(6, static_cast<int64_t>(note.updated_at));
-            query.bind(7, static_cast<int64_t>(note.last_shown_at));
-            query.bind(8, static_cast<int64_t>(note.last_reviewed_at));
-            query.bind(9, note.review_in_x_days);
-            query.bind(10, static_cast<int64_t>(note.expires_at));
-            query.bind(11, note.importance);
-            query.bind(12, note.difficulty);
-            query.bind(13, note.source_id);
-            query.bind(14, note.id);
-
-            query.exec();
-        }
-        catch (SQLite::Exception& e)
-        {
-            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
-            throw std::runtime_error(e.what());
-        }
     }
 }
