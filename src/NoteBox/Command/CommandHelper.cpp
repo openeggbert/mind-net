@@ -10,7 +10,7 @@
 
 namespace NoteBox::Command
 {
-    CommandHelper::CommandHelper(NoteBox::Command::CommandFactory* factory_, std::shared_ptr<Persistence::DB>* db_)
+    CommandHelper::CommandHelper(NoteBox::Command::CommandFactory* factory_, std::shared_ptr<NoteBox::Persistence::DB>* db_)
     {
         this->factory = factory_;
         this->db = db_;
@@ -57,7 +57,7 @@ namespace NoteBox::Command
         }
     }
 
-    std::shared_ptr<Persistence::DB>* CommandHelper::getDB()
+    std::shared_ptr<NoteBox::Persistence::DB>* CommandHelper::getDB()
     {
         return db;
     }

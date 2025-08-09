@@ -148,7 +148,7 @@ namespace NoteBox::Manager
                 }
                 break;
             }
-            int hash_length = std::to_string(note_number_as_child).size() + 1;
+            int hash_length = std::to_string(note_number_as_child).size() + 2;
             int id_length = 0;
             {
                 for (Entity::Note& e : list)

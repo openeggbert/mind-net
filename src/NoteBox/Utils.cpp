@@ -302,7 +302,7 @@ namespace NoteBox
      */
     std::string Utils::next_note_id(const std::string& parent_note_id, const std::string& youngest_child_note_id)
     {
-        std::cout << "Generating next note ID for parent note " << parent_note_id << " with youngest child " << youngest_child_note_id << std::endl;
+        //std::cout << "Generating next note ID for parent note " << parent_note_id << " with youngest child " << youngest_child_note_id << std::endl;
         bool parent_is_root = parent_note_id.empty();
         bool parent_has_children = !youngest_child_note_id.empty();
         if (parent_is_root)
