@@ -17,6 +17,8 @@
 #include "NoteBox/Command/NameCommand.h"
 #include "NoteBox/Command/InfoCommand.h"
 #include "NoteBox/Command/ShowCommand.h"
+#include "NoteBox/Command/WalkCommand.h"
+#include "NoteBox/Command/EditCommand.h"
 #define add(key, clazz) commands[#key] = std::make_shared<clazz##Command>();commandNames.push_back(#key);
 
 
@@ -25,19 +27,21 @@ namespace NoteBox::Command
     CommandFactory::CommandFactory()
     {
 
-        add(version, Version)
-        add(add, Add)
-        add(cd, Cd)
-        add(ls, Ls)
-        add(rm, Rm)
         add(help, Help)
-        add(lit, Lit)
-        add(pwd, Pwd)
-        add(uptime, Uptime)
-        add(editor, Editor)
+        add(version, Version)
+        add(walk, Walk)
+        add(add, Add)
         add(name, Name)
         add(info, Info)
         add(show, Show)
+        add(edit, Edit)
+        add(lit, Lit)
+        add(rm, Rm)
+        add(cd, Cd)
+        add(ls, Ls)
+        add(pwd, Pwd)
+        add(uptime, Uptime)
+        add(editor, Editor)
     }
 
     std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string& name)

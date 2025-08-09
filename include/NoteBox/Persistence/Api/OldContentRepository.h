@@ -17,11 +17,11 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
+#ifndef OLDCONTENTREPOSITORY_H
+#define OLDCONTENTREPOSITORY_H
 
 
-#include "NoteBox/Entity/Content.h"
+#include <NoteBox/Entity/OldContent.h>
 #include <string>
 #include <vector>
 
@@ -33,17 +33,19 @@ namespace NoteBox::Persistence::Api {
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class ContentRepository {
+    class OldContentRepository {
 
     public:
-        virtual ~ContentRepository() = default;
+        virtual ~OldContentRepository() = default;
 
-        virtual void create(const Entity::Content& content) = 0;
-        virtual Entity::Content read(std::string& id) = 0;
-        virtual void update(Entity::Content& content) = 0;
-        virtual void remove(std::string& id) = 0;
+        virtual void create(const Entity::OldContent& content) = 0;
+        virtual Entity::OldContent read(std::string& id, unixtime added_at) = 0;
+
+        virtual void remove(std::string& id, unixtime added_at) = 0;
+        virtual std::vector<unixtime> list_timestamps(std::string& id) = 0;
+
     };
 
 }
 
-#endif // CONTENTREPOSITORY_H
+#endif // OLDCONTENTREPOSITORY_H

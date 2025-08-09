@@ -39,7 +39,7 @@ namespace NoteBox::Manager {
 
         Entity::Content readContent(std::string& id);
 
-        void updateContent(Entity::Content& note);
+        void updateContent(Entity::Content& note, std::string& old_value);
 
         void removeContent(const std::string &id);
 

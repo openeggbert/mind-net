@@ -13,37 +13,48 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
+#ifndef OLDCONTENT_H
+#define OLDCONTENT_H
 
 
-#include "NoteBox/Entity/Content.h"
+#include <ostream>
 #include <string>
-#include <vector>
+
+#include "NoteBox/Helper.h"
+
+namespace NoteBox::Entity
+{
+    using std::string;
+
+    struct OldContent
+    {
+        string id;
+        string value;
+        unixtime added_at = 0ll;
+
+        OldContent() = default;
 
 
-namespace NoteBox::Persistence::Api {
+        friend std::ostream& operator<<(std::ostream& os, const OldContent& content)
+        {
+            os << "Content{id: " << content.id
+                << ", value: " << content.value
+                << ", added: " << content.added_at
+                << "}";
+            return os;
+        }
 
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
-
-    class ContentRepository {
-
-    public:
-        virtual ~ContentRepository() = default;
-
-        virtual void create(const Entity::Content& content) = 0;
-        virtual Entity::Content read(std::string& id) = 0;
-        virtual void update(Entity::Content& content) = 0;
-        virtual void remove(std::string& id) = 0;
+        bool operator==(const OldContent& other) const
+        {
+            return
+                this->id == other.id &&
+                this->value == other.value &&
+                this->added_at == other.added_at;
+        }
     };
-
 }
-
-#endif // CONTENTREPOSITORY_H
+#endif // OLDCONTENT_H

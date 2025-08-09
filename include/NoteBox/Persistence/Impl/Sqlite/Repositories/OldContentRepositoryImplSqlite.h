@@ -13,37 +13,37 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
 
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef OLDCONTENTREPOSITORYIMPLSQLITE_H
+#define OLDCONTENTREPOSITORYIMPLSQLITE_H
 
-#include "NoteBox/Entity/Content.h"
+#include "NoteBox/Persistence/Api/OldContentRepository.h"
+#include "NoteBox/Entity/OldContent.h"
 #include <string>
 #include <vector>
 
+namespace NoteBox::Impl::Sqlite::Repositories
+{
+    using std::vector;
 
-namespace NoteBox::Persistence::Api {
-
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
-
-    class ContentRepository {
-
+    class OldContentRepositoryImplSqlite : public Persistence::Api::OldContentRepository
+    {
     public:
-        virtual ~ContentRepository() = default;
+        OldContentRepositoryImplSqlite();
+        ~OldContentRepositoryImplSqlite() override;
 
-        virtual void create(const Entity::Content& content) = 0;
-        virtual Entity::Content read(std::string& id) = 0;
-        virtual void update(Entity::Content& content) = 0;
-        virtual void remove(std::string& id) = 0;
+        void create(const Entity::OldContent& content) override;
+        Entity::OldContent read(std::string& id, unixtime added_at) override;
+        void remove(std::string& id, unixtime added_at) override;
+        std::vector<unixtime> list_timestamps(std::string& id) override;
     };
-
 }
-
-#endif // CONTENTREPOSITORY_H
+#endif // OLDCONTENTREPOSITORYIMPLSQLITE_H

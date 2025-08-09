@@ -8,7 +8,7 @@
 
 
 namespace NoteBox::Persistence::Impl::Sqlite {
-    constexpr int MIGRATION_COUNT = 10;
+    constexpr int MIGRATION_COUNT = 11;
     inline std::string migrations[MIGRATION_COUNT] = {
 
         R"(
@@ -142,6 +142,17 @@ CREATE TABLE COLLECTION_NOTE (
     PRIMARY KEY(COLLECTION_ID, NOTE_ID),
     FOREIGN KEY(COLLECTION_ID) REFERENCES COLLECTION(ID),
     FOREIGN KEY(NOTE_ID) REFERENCES NOTE(ID)
+);
+
+        )",
+
+        R"(
+CREATE TABLE OLD_CONTENT (
+    ID TEXT NOT NULL,
+    VALUE TEXT NOT NULL,
+    ADDED_AT INTEGER NOTE NULL,
+    PRIMARY KEY(ID, ADDED_AT),
+    FOREIGN KEY(ID) REFERENCES NOTE(ID)
 );
 
         )",

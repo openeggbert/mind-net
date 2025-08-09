@@ -10,13 +10,14 @@
 
 #include "NoteBox/Global.h"
 #include "NoteBox/Command/CommandFactory.h"
-#include "NoteBox/Command/HelpPrinter.h"
+#include "NoteBox/Command/CommandHelper.h"
 #include "../../include/NoteBox/ExitStatus.h"
 #include "NoteBox/Manager/NoteBoxManager.h"
 #include "NoteBox/Persistence/DB.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/NoteRepositoryImplSqlite.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldContentRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
 
 bool migrateSchemaIfNeeded()
@@ -195,12 +196,14 @@ int main()
     NoteBox::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
     NoteBox::Impl::Sqlite::Repositories::SessionRepositoryImplSqlite session_repository{};
     NoteBox::Impl::Sqlite::Repositories::ContentRepositoryImplSqlite content_repository{};
+    NoteBox::Impl::Sqlite::Repositories::OldContentRepositoryImplSqlite old_content_repository{};
     NoteBox::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
 
     db->literature_source_repository = &literature_source_repository;
     db->session_repository = &session_repository;
     db->note_repository = &note_repository;
     db->content_repository = &content_repository;
+    db->old_content_repository = &old_content_repository;
 
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 
@@ -209,8 +212,9 @@ int main()
     int exit_status;
     if (set_editor_if_needed(db, exit_status)) return exit_status;
     NoteBox::Command::CommandFactory factory;
-    NoteBox::Command::HelpPrinter help_printer(&factory);
-    factory.getCommand("help")->setHelpPrinter(&help_printer);
+    NoteBox::Command::CommandHelper command_helper(&factory);
+    factory.getCommand("help")->setCommandHelper(&command_helper);
+    factory.getCommand("walk")->setCommandHelper(&command_helper);
     factory.getCommand("cd")->execute(note_box_manager, note_box_manager.session_manager.get().current_path);
 
     std::string line;

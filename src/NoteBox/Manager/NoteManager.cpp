@@ -193,9 +193,14 @@ namespace NoteBox::Manager
 
     }
 
-    void NoteManager::updateContent(Entity::Content& note)
+    void NoteManager::updateContent(Entity::Content& content, std::string& old_value)
     {
-        // TODO: Implement content update logic
+        db->content_repository->update(content);
+        Entity::OldContent old_content;
+        old_content.id = content.id;
+        old_content.value = old_value;
+        old_content.added_at = Utils::currentUnixTimestamp();
+        db->old_content_repository->create(old_content);
     }
 
     void NoteManager::removeContent(const std::string& id)

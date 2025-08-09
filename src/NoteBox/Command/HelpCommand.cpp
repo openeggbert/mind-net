@@ -12,7 +12,7 @@ namespace NoteBox::Command
     {
         //std::cout << "help command has argument \"" << args << "\"" << std::endl;
 
-        if (this->help_printer == nullptr)
+        if (this->command_helper == nullptr)
         {
             throw std::runtime_error("help_printer is not set");
         }
@@ -20,14 +20,14 @@ namespace NoteBox::Command
         if (args.empty())
         {
             std::cout << "Available commands:" << std::endl << std::endl;
-            for (const std::string& cmd : this->help_printer->list_commands())
+            for (const std::string& cmd : this->command_helper->list_commands())
             {
                 std::cout << cmd << std::endl;
             }
             return;
         }
 
-        help_printer->print(args);
+        command_helper->print_help(args);
     }
 
     void HelpCommand::help()
@@ -51,13 +51,13 @@ EXAMPLES
 )" << std::endl;
     }
 
-    void HelpCommand::setHelpPrinter(IHelpPrinter* helpPrinter_)
+    void HelpCommand::setCommandHelper(ICommandHelper* command_helper_)
     {
-        help_printer = helpPrinter_;
+        command_helper = command_helper_;
     };
 
-    IHelpPrinter* HelpCommand::getHelpPrinter()
+    ICommandHelper* HelpCommand::get_command_helper()
     {
-        return help_printer;
+        return command_helper;
     }
 }

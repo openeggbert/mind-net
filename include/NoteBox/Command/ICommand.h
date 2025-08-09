@@ -4,7 +4,7 @@
 
 #ifndef ICOMMAND_H
 #define ICOMMAND_H
-#include "IHelpPrinter.h"
+#include "ICommandHelper.h"
 #include "NoteBox/Manager/NoteBoxManager.h"
 
 namespace NoteBox::Command {
@@ -13,8 +13,8 @@ namespace NoteBox::Command {
 
         virtual void execute(Manager::NoteBoxManager& mgr, const std::string& args) = 0;
         virtual void help() = 0;
-        virtual void setHelpPrinter(IHelpPrinter* factory) {};
-        virtual IHelpPrinter* getHelpPrinter() {return nullptr;};
+        virtual void setCommandHelper(ICommandHelper* factory) {};
+        virtual ICommandHelper* get_command_helper() {return nullptr;};
         virtual ~ICommand() = default;
     };
 

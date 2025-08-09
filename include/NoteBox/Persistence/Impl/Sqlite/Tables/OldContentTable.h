@@ -13,37 +13,34 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
+
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef OLDCONTENTTABLE_H
+#define OLDCONTENTTABLE_H
 
 
-#include "NoteBox/Entity/Content.h"
-#include <string>
-#include <vector>
+namespace NoteBox::Persistence::Impl::Sqlite::Tables
+{
+    struct OldContentTable
+    {
+        OldContentTable() = delete;
 
+        OldContentTable(const OldContentTable&) = delete;
+        OldContentTable& operator=(const OldContentTable&) = delete;
 
-namespace NoteBox::Persistence::Api {
+        static constexpr const char* TABLE_NAME = "OLD_CONTENT";
 
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
-
-    class ContentRepository {
-
-    public:
-        virtual ~ContentRepository() = default;
-
-        virtual void create(const Entity::Content& content) = 0;
-        virtual Entity::Content read(std::string& id) = 0;
-        virtual void update(Entity::Content& content) = 0;
-        virtual void remove(std::string& id) = 0;
+        static constexpr const char* ID = "ID";
+        static constexpr const char* VALUE = "VALUE";
+        static constexpr const char* ADDED_AT = "ADDED_AT";
     };
-
 }
 
-#endif // CONTENTREPOSITORY_H
+#endif // OLDCONTENTTABLE_H
