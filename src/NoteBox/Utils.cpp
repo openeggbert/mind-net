@@ -32,11 +32,15 @@ namespace NoteBox
 
     std::string Utils::unixToFormattedString(ll unixTimestamp)
     {
+        if (unixTimestamp == 0)
+        {
+            return "none";
+        }
         std::time_t rawTime = static_cast<std::time_t>(unixTimestamp);
         std::tm* timeInfo = std::localtime(&rawTime);
 
-        char buffer[16];
-        std::strftime(buffer, sizeof(buffer), "%Y%m%d%H%M%S", timeInfo);
+        char buffer[21];
+        std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeInfo);
         return std::string(buffer);
     }
 
@@ -260,6 +264,27 @@ namespace NoteBox
         }
 
         return result;
+    }
+
+    std::string Utils::remove_semicolon(std::string str)
+    {
+        int index = 0;
+        for (int i = str.size() - 1; i >= 0; i--)
+        {
+            if (str[i] == ';')
+            {
+                index = i;
+                break;
+            }
+        }
+        if (index == 0)
+        {
+            return str;
+        }
+        else
+        {
+            return str.substr(0, index) + str.substr(index + 1, str.size() - index - 1);
+        }
     }
 
 

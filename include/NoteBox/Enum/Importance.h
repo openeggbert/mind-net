@@ -22,14 +22,35 @@
 
 #include <string>
 
-namespace NoteBox::Enum {
+namespace NoteBox::Enum
+{
     /**
      *
      * @author robertvokac
      */
-    enum class Importance{
+    enum class Importance
+    {
         LOW = 1, MEDIUM = 2, HIGH = 3
     };
+
+    inline std::string importance_to_string(Importance importance)
+    {
+        switch (importance)
+        {
+        case Importance::LOW:
+            return "Low";
+        case Importance::MEDIUM:
+            return "Medium";
+        case Importance::HIGH:
+            return "High";
+        default:
+            return "Unknown";
+        }
+    }
+    inline std::string importance_to_string(int importance)
+    {
+        return importance_to_string(static_cast<Importance>(importance));
+    }
 
 #endif
 } // namespace NoteBox::Enums

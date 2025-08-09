@@ -37,9 +37,7 @@ namespace NoteBox::Manager {
 
         void listNotes(std::string& parent_note_id) const;
 
-        void createContent(const std::string& Content);
-
-        Entity::Note readContent(std::string& id);
+        Entity::Content readContent(std::string& id);
 
         void updateContent(Entity::Content& note);
 

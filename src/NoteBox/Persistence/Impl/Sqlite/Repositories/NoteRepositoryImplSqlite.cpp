@@ -128,11 +128,12 @@ namespace NoteBox::Impl::Sqlite::Repositories
             if (query.executeStep())
             {
                 using std::string;
-                string note_id = query.getColumn(0).getString();
-                string title = query.getColumn(2).getString();
-                string content_id = query.getColumn(3).getString();
 
-                Entity::Note note(note_id, title, content_id);
+
+                Entity::Note note{};
+                note.id = query.getColumn(0).getString();
+                note.title = query.getColumn(2).getString();
+                note.content_id = query.getColumn(3).getString();
                 note.parent_note_id = query.getColumn(1).getString();
                 note.question = query.getColumn(4).getString();
                 note.created_at = query.getColumn(5).getInt64();

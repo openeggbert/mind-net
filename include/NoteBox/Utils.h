@@ -43,6 +43,7 @@ namespace NoteBox
 
         // Convert decimal integer to base-26 string (a-z)
         static std::string decimalToBase26(int number);
+        static std::string remove_semicolon(std::string str);
 
 
         /**

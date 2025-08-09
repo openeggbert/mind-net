@@ -30,6 +30,26 @@ namespace NoteBox::Enum {
     enum class Difficulty {
         EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
     };
+    inline std::string difficulty_to_string(Difficulty difficulty) {
+        switch (difficulty)
+        {
+            case Difficulty::EASY:
+                return "Easy";
+            case Difficulty::MEDIUM:
+                return "Medium";
+            case Difficulty::HARD:
+                return "Hard";
+            case Difficulty::EXPERT:
+                return "Expert";
+            default:
+                return "Unknown";
+        }
+    }
+    inline std::string difficulty_to_string(int difficulty)
+    {
+        return difficulty_to_string(static_cast<Difficulty>(difficulty));
+    }
+
 
 #endif
 } // namespace NoteBox::Enums

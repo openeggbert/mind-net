@@ -2,6 +2,7 @@
 
 #include "NoteBox/Manager/NoteManager.h"
 
+#include <iomanip>
 #include <iostream>
 
 #include "NoteBox/Global.h"
@@ -21,30 +22,40 @@ namespace NoteBox::Manager
     const std::string& NoteManager::pwd() const
     {
         auto y = db->note_repository->find_youngest_child_note_id(currentPath);
-        std::cout << "Youngest child: " << (y.has_value() ? y.value() : "none") << std::endl;
+        // std::cout << "Youngest child: " << (y.has_value() ? y.value() : "none") << std::endl;
         return currentPath;
     }
 
     void NoteManager::cd(const std::string& path)
     {
-        if (path.empty())
+
+        std::string new_path = path;
+        if (new_path.empty())
         {
             currentPath = "";
             return;
         }
-        if (path == "..")
+        if (new_path == "..")
         {
             auto parts = Utils::note_id_to_vector(currentPath);
             parts.pop_back();
             currentPath = Utils::vector_to_note_id(parts);
             return;
         }
-        if (!db->note_repository->does_id_exist(path))
+        if (new_path[0] == '/')
         {
-            err << "Note with id " << path << " does not exist" << std::endl;
+            new_path = new_path.substr(1, new_path.size() - 1);
+        } else
+        {
+            new_path = currentPath + path;
+        }
+
+        if (!db->note_repository->does_id_exist(new_path))
+        {
+            err << "Note with id " << new_path << " does not exist" << std::endl;
             return;
         }
-        currentPath = path;
+        currentPath = new_path;
     }
 
     void NoteManager::createNote(const std::string& title)
@@ -107,8 +118,7 @@ namespace NoteBox::Manager
 
     Entity::Note NoteManager::readNote(std::string& id)
     {
-        // TODO: Implement note reading logic
-        return Entity::Note{};
+        return db->note_repository->read(id);
     }
 
     void NoteManager::updateNote(Entity::Note& note)
@@ -138,10 +148,35 @@ namespace NoteBox::Manager
                 }
                 break;
             }
-            std::cout << "#" << " | " << "ID" << " | " << "Title" << " | " << "Parent Note ID" << std::endl;
+            int hash_length = std::to_string(note_number_as_child).size() + 1;
+            int id_length = 0;
+            {
+                for (Entity::Note& e : list)
+                {
+                    int length = e.id.size();
+                    if (length > id_length)
+                    {
+                        id_length = length;
+                    }
+                }
+                id_length++;
+            }
+            std::cout
+            << std::left
+            << std::setw(hash_length + 1)
+            << "#"
+            << std::setw(id_length + 1)
+            <<"ID"
+            << "Title"
+            << std::endl;
             for (Entity::Note& e : list)
             {
-                std::cout << note_number_as_child << " | " << e.id << " | " << e.title << " | " << e.parent_note_id << std::endl;
+                std::cout
+                << "#"
+                << std::setw(hash_length)
+                << note_number_as_child
+                << std::setw(id_length)
+                << e.id /*e.parent_note_id + ":" + e.get_last_id_segment()*/ << " " << e.title << std::endl;
                 ++note_number_as_child;
             }
             ++page;
@@ -152,15 +187,10 @@ namespace NoteBox::Manager
         }
     }
 
-    void NoteManager::createContent(const std::string& content)
+    Entity::Content NoteManager::readContent(std::string& id)
     {
-        // TODO: Implement content creation logic
-    }
+        return db->content_repository->read(id);
 
-    Entity::Note NoteManager::readContent(std::string& id)
-    {
-        // TODO: Implement content reading logic
-        return {};
     }
 
     void NoteManager::updateContent(Entity::Content& note)

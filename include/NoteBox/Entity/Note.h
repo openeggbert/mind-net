@@ -24,6 +24,7 @@
 #include <ostream>
 #include <string>
 #include "NoteBox/Helper.h"
+#include "NoteBox/Utils.h"
 
 namespace NoteBox::Entity {
     using std::string;
@@ -44,14 +45,16 @@ namespace NoteBox::Entity {
         int difficulty;
         int source_id;
 
-        // Note();
-        //
-        // Note(string& id_, string& title_, const string& content_) : id(std::move(id_)), title(std::move(title_)),
-        //                                                    content_id(std::move(content_id)),
-        //                                                    review_in_x_days(0), importance(0),
-        //                                                    difficulty(0), source_id(0) {
-        // }
+        [[nodiscard]] std::string get_last_id_segment() const
+        {
+            if (id.empty())
+            {
+                return id;
+            }
+            auto vector = Utils::note_id_to_vector(id);
+            return vector.back();
 
+        }
         friend std::ostream &operator<<(std::ostream &os, const Note &note) {
             os << "Note{id: " << note.id
                     << ", parent_note_id: " << note.parent_note_id

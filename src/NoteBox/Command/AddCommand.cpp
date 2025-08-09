@@ -19,16 +19,21 @@ namespace NoteBox::Command {
             {
                 std::cout << "Title: ";
                 getline(std::cin,title); std::cin.clear();
+                if (title.empty())
+                {
+                    err << "Title cannot be empty." << std::endl;
+                    return;
+                }
             }
         }
-        std::cout << "Going to add new note with title \"" << args << "\"" << std::endl;
+        std::cout << "Going to add new note with title \"" << (title.empty() ? args : title) << "\"" << std::endl;
         mgr.note_manager.createNote(title.empty() ? args : title);
         if (args.empty() && Utils::ask_yes_no("Do you want to add another note?")) {
             execute(mgr, "");
         }
 
     }
-    void AddCommand::help() {{
+    void AddCommand::help() {
         std::cout << R"(
 NAME
        add
