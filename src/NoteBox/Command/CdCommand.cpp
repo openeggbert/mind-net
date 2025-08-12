@@ -9,9 +9,9 @@
 namespace NoteBox::Command {
     void CdCommand::execute(Manager::NoteBoxManager &mgr, const std::string &args) {
         mgr.note_manager.cd(args);
-        auto session = mgr.session_manager.get();
-        session.current_path = mgr.note_manager.pwd();
-        mgr.session_manager.update(session);
+        // auto session = mgr.session_manager.get();
+        // session.current_path = mgr.note_manager.pwd();
+        // mgr.session_manager.update(session);
         // std::cout << ":" << mgr.note_manager.pwd() << "\n";
     }
     void CdCommand::help() {

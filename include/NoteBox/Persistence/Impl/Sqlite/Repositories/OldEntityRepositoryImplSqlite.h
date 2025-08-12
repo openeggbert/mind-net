@@ -17,41 +17,36 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
 
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef OLDENTITYREPOSITORYIMPLSQLITE_H
+#define OLDENTITYREPOSITORYIMPLSQLITE_H
+
+
+#include "NoteBox/Persistence/Api/OldContentRepository.h"
 #include <string>
+#include <vector>
 
-namespace NoteBox::Enum
+#include "NoteBox/Entity/OldEntity.h"
+
+namespace NoteBox::Impl::Sqlite::Repositories
 {
-    /**
-     *
-     * @author robertvokac
-     */
-    enum class Importance
+    using std::vector;
+
+    class OldEntityRepositoryImplSqlite : public Persistence::Api::OldEntityRepository
     {
-        LOW = 1, MEDIUM = 2, HIGH = 3
+    public:
+        OldEntityRepositoryImplSqlite();
+        ~OldEntityRepositoryImplSqlite() override;
+
+         void create(const Entity::OldEntity& content) override;
+         Entity::OldEntity read(std::string& entity_name, unixtime added_at) override;
+
+         void remove(std::string& entity_name, unixtime added_at) override;
+         std::vector<unixtime> list_timestamps(std::string& entity_name, std::string& entity_id ) override;
     };
-
-    inline std::string importance_to_string(Importance importance)
-    {
-        switch (importance)
-        {
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
-        default:
-            return "Unknown";
-        }
-    }
-    inline std::string importance_to_string(int importance)
-    {
-        return importance_to_string(static_cast<Importance>(importance));
-    }
-
-
-} // namespace NoteBox::Enums
-#endif
+}
+#endif // OLDENTITYREPOSITORYIMPLSQLITE_H

@@ -13,45 +13,41 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+#ifndef OLDENTITYREPOSITORY_H
+#define OLDENTITYREPOSITORY_H
+
 
 #include <string>
+#include <vector>
 
-namespace NoteBox::Enum
-{
+#include "NoteBox/Helper.h"
+#include "NoteBox/Entity/OldEntity.h"
+
+
+namespace NoteBox::Persistence::Api {
+
     /**
      *
-     * @author robertvokac
+    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
-    enum class Importance
-    {
-        LOW = 1, MEDIUM = 2, HIGH = 3
+
+    class OldEntityRepository {
+
+    public:
+        virtual ~OldEntityRepository() = default;
+
+        virtual void create(const Entity::OldEntity& content) = 0;
+        virtual Entity::OldEntity read(std::string& entity_name, unixtime added_at) = 0;
+
+        virtual void remove(std::string& entity_name, unixtime added_at) = 0;
+        virtual std::vector<unixtime> list_timestamps(std::string& entity_name, std::string& entity_id) = 0;
+
     };
 
-    inline std::string importance_to_string(Importance importance)
-    {
-        switch (importance)
-        {
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
-        default:
-            return "Unknown";
-        }
-    }
-    inline std::string importance_to_string(int importance)
-    {
-        return importance_to_string(static_cast<Importance>(importance));
-    }
+}
 
-
-} // namespace NoteBox::Enums
-#endif
+#endif // OLDENTITYREPOSITORY_H

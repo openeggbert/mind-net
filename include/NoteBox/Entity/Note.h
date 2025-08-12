@@ -25,6 +25,8 @@
 #include <string>
 #include "NoteBox/Helper.h"
 #include "NoteBox/Utils.h"
+#include "NoteBox/Enum/Difficulty.h"
+#include "NoteBox/Enum/Importance.h"
 
 namespace NoteBox::Entity {
     using std::string;
@@ -41,10 +43,10 @@ namespace NoteBox::Entity {
 
         unixtime expires_at;
         unixtime last_reviewed_at;
-        int review_in_x_days;
-        int importance;
-        int difficulty;
-        int source_id;
+        unsigned short review_in_x_days;
+        unsigned char importance;
+        unsigned char difficulty;
+        unsigned short source_id;
 
         [[nodiscard]] std::string get_last_id_segment() const
         {
@@ -62,14 +64,14 @@ namespace NoteBox::Entity {
                     << ", title: " << note.title
                     << ", content_id: " << note.content_id
                     << ", question: " << note.question
-                    << ", created_at: " << note.created_at
-                    << ", updated_at: " << note.updated_at
-                    << ", last_shown_at: " << note.last_shown_at
-                    << ", last_reviewed_at: " << note.last_reviewed_at
-                    << ", expires_at: " << note.expires_at
+                    << ", created_at: " << Utils::unixToFormattedString(note.created_at)
+                    << ", updated_at: " << Utils::unixToFormattedString(note.updated_at)
+                    << ", last_shown_at: " << Utils::unixToFormattedString(note.last_shown_at)
+                    << ", last_reviewed_at: " << Utils::unixToFormattedString(note.last_reviewed_at)
+                    << ", expires_at: " << Utils::unixToFormattedString(note.expires_at)
                     << ", review_in_x_days: " << note.review_in_x_days
-                    << ", importance: " << note.importance
-                    << ", difficulty: " << note.difficulty
+                    << ", importance: " << Enum::importance_to_string(note.importance)
+                    << ", difficulty: " << Enum::difficulty_to_string(note.difficulty)
                     << ", source_id: " << note.source_id
                     << "}";
             return os;

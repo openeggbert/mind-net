@@ -22,7 +22,7 @@ namespace NoteBox::Manager
         LiteratureSourceManager(const std::shared_ptr<Persistence::DB>& db);
 
         void create();
-
+        Entity::LiteratureSource read(ushort id);
         std::vector<Entity::LiteratureSource> list();
 
         void remove(const Entity::LiteratureSource& literature_source);

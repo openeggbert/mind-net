@@ -26,10 +26,11 @@ namespace NoteBox::Command {
 
         }
 
-        std::cout << "Title: " << mgr.note_manager.readNote(path).title << std::endl;
-        std::cout << "ID: " << mgr.note_manager.readNote(path).id << std::endl;
+        std::cout << "Title: " << mgr.note_manager.read_note(path).title << std::endl;
+        std::cout << "ID: " << mgr.note_manager.read_note(path).id << std::endl;
         std::cout << std::string(80, '-') << std::endl;
-        auto text = mgr.note_manager.readContent(path).value;
+        auto text = mgr.note_manager.read_content(path).value;
+        std::cout << std::endl << std::string(80, '-') << std::endl;
         std::cout << text << std::endl;
 
     }

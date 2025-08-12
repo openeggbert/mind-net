@@ -51,5 +51,6 @@ namespace NoteBox::Enum {
     }
 
 
-#endif
+
 } // namespace NoteBox::Enums
+#endif

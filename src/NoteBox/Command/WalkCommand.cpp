@@ -76,81 +76,136 @@ namespace NoteBox::Command
 
     void WalkCommand::execute(Manager::NoteBoxManager& mgr, const std::string& args)
     {
+        enum class Mode { LIST, COMMAND };
+        auto reverse_mode = [](Mode& m)
+        {
+            m = m == Mode::LIST ? Mode::COMMAND : Mode::LIST;
+        };
+        Mode mode = Mode::LIST;
         TermiosGuard tg;
         tg.enableRaw();
 
-        while (true)
+        bool exit = false;
+        while (!exit)
         {
-            Utils::clearScreen();
-            show(mgr, helper);
+            //show(mgr, helper);
 
-            unsigned char c;
-            ssize_t n = readByte(c);
-            if (n <= 0)
-            {
-                if (n == -1 && errno == EINTR) continue;
-                break;
-            }
 
-            char choice = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
             //std::cout << "Choice: " << choice << "\n" << std::flush;
 
-            Utils::clearScreen();
-            switch (choice)
-            {
-            case 'e':
-                {
-                    tg.disable();
-                    print_title("Edit content");
-                    helper->execute(mgr, "edit", "");
+            int page_size = 26;
+            int page_number = 0;
 
-                    tg.enableRaw();
+            {
+                Utils::clearScreen();
+                auto current_path = mgr.note_manager.pwd();
+                auto root = current_path.empty();
+
+                tg.disable();
+                if (!root) {std::cout << "Title: " << mgr.note_manager.read_note(current_path).title << std::endl;}
+                std::cout << "ID:  " << current_path << std::endl;
+                std::cout << "Mode:  " << (mode == Mode::LIST ? "LIST" : "COMMAND") << std::endl;
+
+                std::cout << std::string(80, '-') << std::endl;
+                tg.enableRaw();
+
+                auto list = helper->getDB()->get()->note_repository->list(current_path, page_number, page_size);
+
+                char option = 'a';
+                if (!current_path.empty()) { std::cout << "/ | Go to parent " << std::endl; }
+                for (const auto& e : list)
+                {
+                    std::cout << option << " | " << e.title << " " << e.id << std::endl;
+                    option++;
+                }
+
+
+                unsigned char c;
+                ssize_t n = readByte(c);
+                if (n <= 0)
+                {
+                    if (n == -1 && errno == EINTR) continue;
                     break;
                 }
-            case 'g':
+
+                char choice = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+                err << choice;
+
+                Utils::clearScreen();
+
+                char end_letter = 'a' + list.size() - 1;
+                if (choice == '.')
                 {
-                    int page_size = 10;
-                    int page_number = 0;
-                    bool exit = false;
-
-                    while (!exit)
+                    reverse_mode(mode);
+                    continue;
+                }
+                if (mode == Mode::LIST)
+                {
+                    if (choice >= 'a' && choice <= end_letter)
                     {
-                        Utils::clearScreen();
-                        auto current_path = mgr.note_manager.pwd();
-
-                        tg.disable();
-                        std::cout << "Current path: " << current_path << std::endl;
-                        std::cout << std::string(80, '-') << std::endl;
-                        tg.enableRaw();
-
-                        auto list = helper->getDB()->get()->note_repository->list(current_path, page_number, page_size);
-
-                        char option = 'a';
-                        if (!current_path.empty()) {std::cout << "z | .." << std::endl;}
-                        for (const auto& e : list)
+                        helper->execute(mgr, "cd", "/" + list[choice - 'a'].id);
+                    }
+                    if (choice == '/' && !current_path.empty()) { helper->execute(mgr, "cd", ".."); }
+                    if (choice != '+' && choice != '-' && choice != '*' && choice != ';') {
+                    continue;
+                    }
+                }
+                if (mode == Mode::COMMAND || (choice == '+' || choice == '-' || choice == '*' || choice == ';'))
+                {
+                    switch (choice)
+                    {
+                    case '[': if (page_number > 0) page_number--;
+                        break;
+                    case ']': if (!list.empty()) { page_number++; };
+                        break;
+                    case '-':
+                    case 'e':
                         {
-                            std::cout << option << " | " << e.title << " " << e.id << std::endl;
-                            option++;
-                        }
+                            tg.disable();
+                            print_title("Edit content");
+                            helper->execute(mgr, "edit", "");
 
-                        unsigned char c;
-                        if (readByte(c) <= 0) continue;
-                        char choice = static_cast<char>(std::tolower(c));
-                        char end_letter = 'a' + list.size() - 1;
+                            tg.enableRaw();
+                        }
+                        break;
+                    case 'h':
 
-                        if (choice >= 'a' && choice <= end_letter)
                         {
-                            helper->execute(mgr, "cd", "/" + list[choice - 'a'].id);
+                            tg.disable();
+                            std::cout << R"(
+
+.   ... switch between modes LIST and COMMAND
+a-z ... go to a Note from the list
+/   ... go to parent directory
+[   ... previous page
+]   ... next page
+e - ... edit content
+h   ... show this help
+i * ... show info about current Note
+p   ... go to specific page
+r   ... run a command
+s + ... show content of the current Note
+u ; ... update current Note
+x   ... exit Walking mode
+
+                            )" << std::endl;
+                            prompt_user_to_continue();
+                            tg.enableRaw();
+                            break;
                         }
-                        else if (choice == 'm')
+                    case '*':
+                    case 'i':
                         {
-                            if (page_number > 0) page_number--;
+                            helper->execute(mgr, "info", "");
+                            tg.disable();
+
+                            print_title("Show information");
+                            std::cout << std::endl;
+                            prompt_user_to_continue();
+                            tg.enableRaw();
                         }
-                        else if (choice == 'n')
-                        {
-                            page_number++;
-                        }
-                        else if (choice == 'p')
+                        break;
+                    case 'p':
                         {
                             tg.disable();
                             std::cout << "New page number: ";
@@ -165,122 +220,76 @@ namespace NoteBox::Command
                             }
                             tg.enableRaw();
                         }
-                        else if (choice == 'q')
+                        break;
+                    case 'r':
                         {
                             tg.disable();
-                            std::cout << R"(
-a-z ... go to a Note from the list
-m ... previous page
-n ... next page
-p ... go to specific page
-q ... show this help
-x ... exit Go mode
-z ... go to parent directory
-)" << std::endl;
-                            prompt_user_to_continue();
+                            print_title("Run command");
+                            std::string command;
+
+                            std::cout << "How to return to Walking mode: type exit" << std::endl << std::endl;
+
+                            while (true)
+                            {
+                                std::cout << "> ";
+                                std::getline(std::cin, command);
+
+                                if (command.empty() || command == "exit")
+                                {
+                                    break;
+                                }
+                                if (command == "walk")
+                                {
+                                    std::cout << "You can't run walk command, because you are already walking" <<
+                                        std::endl;
+                                    continue;
+                                }
+                                int index = 0;
+                                for (int i = 0; i < command.size(); i++)
+                                {
+                                    if (command[i] == ' ')
+                                    {
+                                        index = i;
+                                        break;
+                                    }
+                                }
+                                std::string cmd = index == 0 ? command : command.substr(0, index);
+                                std::string arguments = index == 0 ? "" : command.substr(index + 1);
+                                helper->execute(mgr, cmd, arguments);
+
+                                //prompt_user_to_continue();
+                            }
+
+
                             tg.enableRaw();
                         }
-                        else if (choice == 'x')
+                        break;
+                    case '+':
+                    case 's':
                         {
-                            exit = true;
-                        }
-                        else if (choice == 'z' && !current_path.empty())
-                        {
-                            helper->execute(mgr, "cd", "..");
-                        }
-                        else
-                        {
-                            err << "Unknown command: " << choice << std::endl;
-                        }
-                    }
+                            print_title("Show content");
 
-                    break;
-                }
-
-            case 'h':
-                {
-                    tg.disable();
-
-                    print_title("Help");
-                    std::cout << R"(
-e ... edit content
-g ... go to a Note from the list
-h ... show this help
-i ... show info about current Note
-r ... run a command
-s ... show content of the current Note
-x ... exit the Walking mode
-
-)";
-                    prompt_user_to_continue();
-                    tg.enableRaw();
-                    break;
-                }
-            case 'i':
-                {
-                    helper->execute(mgr, "info", "");
-                    tg.disable();
-
-                    print_title("Show information");
-                    prompt_user_to_continue();
-                    tg.enableRaw();
-                    break;
-                }
-            case 'r':
-                {
-                    tg.disable();
-                    print_title("Run command");
-                    std::string command;
-
-                    std::cout << "How to return to Walking mode: type exit" << std::endl << std::endl;
-
-                    while (true)
-                    {
-                        std::cout << "> ";
-                        std::getline(std::cin, command);
-
-                        if (command.empty() || command == "exit")
-                        {
+                            helper->execute(mgr, "show", "");
+                            tg.disable();
+                            prompt_user_to_continue();
+                            tg.enableRaw();
                             break;
                         }
-                        if (command == "walk")
+                    case ';':
+                    case 'u':
                         {
-                            std::cout << "You can't run walk command, because you are already walking" << std::endl;
-                            continue;
+                            tg.disable();
+                            helper->execute(mgr, "update", "");
+                            tg.enableRaw();
                         }
-                        int index = 0;
-                        for (int i = 0; i < command.size(); i++)
+                        break;
+                    case 'x': exit = true;
+                        break;
                         {
-                            if (command[i] == ' ')
-                            {
-                                index = i;
-                                break;
-                            }
                         }
-                        std::string cmd = index == 0 ? command : command.substr(0, index);
-                        std::string arguments = index == 0 ? "" : command.substr(index + 1);
-                        helper->execute(mgr, cmd, arguments);
-
-                        //prompt_user_to_continue();
+                    default: err << "Unknown command: " << choice << std::endl;
                     }
-
-
-                    tg.enableRaw();
-                    break;
                 }
-            case 's':
-                {
-                    print_title("Show content");
-                    helper->execute(mgr, "show", "");
-                    break;
-                }
-            case 'x':
-                {
-                    print_title("Exit \"Walking mode\"");
-                    std::cout << "Exiting walking." << std::endl;
-                    return;
-                }
-            default: err << "Unknown command: " << choice << "\n";
             }
         }
     }

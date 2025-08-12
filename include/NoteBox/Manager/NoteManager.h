@@ -27,21 +27,21 @@ namespace NoteBox::Manager {
 
         void cd(const std::string &path);
 
-        void createNote(const std::string &title);
+        void create_note(const std::string &title);
 
-        Entity::Note readNote(std::string& id);
+        Entity::Note read_note(std::string& id);
 
-        void updateNote(Entity::Note& note);
+        void update_note(Entity::Note& note);
 
-        void removeNote(const std::string &id);
+        void remove_note(const std::string &id);
 
-        void listNotes(std::string& parent_note_id) const;
+        void list_notes(std::string& parent_note_id) const;
 
-        Entity::Content readContent(std::string& id);
+        Entity::Content read_content(std::string& id);
 
-        void updateContent(Entity::Content& note, std::string& old_value);
+        void update_content(Entity::Content& note, std::string& old_value);
 
-        void removeContent(const std::string &id);
+        void remove_content(const std::string &id);
 
     };
 }

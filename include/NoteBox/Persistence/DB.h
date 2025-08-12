@@ -11,6 +11,7 @@
 #include "Api/LiteratureSourceRepository.h"
 #include "Api/NoteRepository.h"
 #include "Api/OldContentRepository.h"
+#include "Api/OldEntityRepository.h"
 #include "Api/SessionRepository.h"
 
 
@@ -21,6 +22,7 @@ namespace NoteBox::Persistence {
         Api::SessionRepository* session_repository{};
         Api::ContentRepository* content_repository{};
         Api::OldContentRepository* old_content_repository{};
+        Api::OldEntityRepository* old_entity_repository{};
         Api::NoteRepository* note_repository{};
 
         DB();

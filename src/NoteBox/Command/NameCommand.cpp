@@ -16,7 +16,7 @@ namespace NoteBox::Command {
             err << "Cannot get name of root directory" << std::endl;
             return;
         }
-        std::cout << mgr.note_manager.readNote(current_path).title << "\n";
+        std::cout << mgr.note_manager.read_note(current_path).title << "\n";
     }
     void NameCommand::help()     {
         std::cout << R"(

@@ -17,41 +17,32 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
 
-#include <string>
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef OLDENTITYTABLE_H
+#define OLDENTITYTABLE_H
 
-namespace NoteBox::Enum
+
+namespace NoteBox::Persistence::Impl::Sqlite::Tables
 {
-    /**
-     *
-     * @author robertvokac
-     */
-    enum class Importance
+    struct OldEntityTable
     {
-        LOW = 1, MEDIUM = 2, HIGH = 3
+        OldEntityTable() = delete;
+
+        OldEntityTable(const OldEntityTable&) = delete;
+        OldEntityTable& operator=(const OldEntityTable&) = delete;
+
+        static constexpr const char* TABLE_NAME = "OLD_ENTITY";
+
+        static constexpr const char* ID = "ID";
+        static constexpr const char* ENTITY_NAME = "ENTITY_NAME";
+        static constexpr const char* ENTITY_ID = "ENTITY_ID";
+        static constexpr const char* VALUE = "VALUE";
+        static constexpr const char* ADDED_AT = "ADDED_AT";
     };
+}
 
-    inline std::string importance_to_string(Importance importance)
-    {
-        switch (importance)
-        {
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
-        default:
-            return "Unknown";
-        }
-    }
-    inline std::string importance_to_string(int importance)
-    {
-        return importance_to_string(static_cast<Importance>(importance));
-    }
-
-
-} // namespace NoteBox::Enums
-#endif
+#endif // OLDENTITYTABLE_H

@@ -26,12 +26,12 @@ namespace NoteBox::Command {
             path = current_path;
 
         }
-        auto content = mgr.note_manager.readContent(path);
+        auto content = mgr.note_manager.read_content(path);
         auto text = content.value;
         auto old_text = text;
         content.value = Utils::editTextInEditor(text, mgr.session_manager.get().editor_path);
         if (!Utils::ask_yes_no("Do you want to save the changes?")) {return;}
-        mgr.note_manager.updateContent(content, old_text);
+        mgr.note_manager.update_content(content, old_text);
 
     }
     void EditCommand::help() {

@@ -58,7 +58,7 @@ namespace NoteBox::Manager
         currentPath = new_path;
     }
 
-    void NoteManager::createNote(const std::string& title)
+    void NoteManager::create_note(const std::string& title)
     {
         if (title.empty()) {throw std::runtime_error("title cannot be empty");}
         bool fast_adding = title[0] == '#';
@@ -99,7 +99,7 @@ namespace NoteBox::Manager
         note.title = updated_title;
         //
         content.id = note.id;
-        content.value = fast_adding ? "" : Utils::editTextInEditor(content.value, db->session_repository->get().editor_path);
+        content.value = fast_adding ? "" : Utils::editTextInEditor("# " + note.title + "\n\n", db->session_repository->get().editor_path);
         note.content_id = content.id;
         db->content_repository->create(content);
         //
@@ -116,22 +116,22 @@ namespace NoteBox::Manager
         db->note_repository->create(note);
     }
 
-    Entity::Note NoteManager::readNote(std::string& id)
+    Entity::Note NoteManager::read_note(std::string& id)
     {
         return db->note_repository->read(id);
     }
 
-    void NoteManager::updateNote(Entity::Note& note)
+    void NoteManager::update_note(Entity::Note& note)
     {
-        // TODO: Implement note update logic
+        db->note_repository->update(note);
     }
 
-    void NoteManager::removeNote(const std::string& id)
+    void NoteManager::remove_note(const std::string& id)
     {
         // TODO: Implement note removal logic
     }
 
-    void NoteManager::listNotes(std::string& parent_note_id) const
+    void NoteManager::list_notes(std::string& parent_note_id) const
     {
         std::string title_like = std::string("");
         int page_size = 20;
@@ -187,13 +187,13 @@ namespace NoteBox::Manager
         }
     }
 
-    Entity::Content NoteManager::readContent(std::string& id)
+    Entity::Content NoteManager::read_content(std::string& id)
     {
         return db->content_repository->read(id);
 
     }
 
-    void NoteManager::updateContent(Entity::Content& content, std::string& old_value)
+    void NoteManager::update_content(Entity::Content& content, std::string& old_value)
     {
         db->content_repository->update(content);
         Entity::OldContent old_content;
@@ -203,7 +203,7 @@ namespace NoteBox::Manager
         db->old_content_repository->create(old_content);
     }
 
-    void NoteManager::removeContent(const std::string& id)
+    void NoteManager::remove_content(const std::string& id)
     {
         // TODO: Implement content removal logic
     }

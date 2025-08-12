@@ -18,6 +18,7 @@
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/NoteRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldContentRepositoryImplSqlite.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldEntityRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
 
 bool migrateSchemaIfNeeded()
@@ -197,6 +198,7 @@ int main()
     NoteBox::Impl::Sqlite::Repositories::SessionRepositoryImplSqlite session_repository{};
     NoteBox::Impl::Sqlite::Repositories::ContentRepositoryImplSqlite content_repository{};
     NoteBox::Impl::Sqlite::Repositories::OldContentRepositoryImplSqlite old_content_repository{};
+    NoteBox::Impl::Sqlite::Repositories::OldEntityRepositoryImplSqlite old_entity_repository{};
     NoteBox::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
 
     db->literature_source_repository = &literature_source_repository;
@@ -204,6 +206,7 @@ int main()
     db->note_repository = &note_repository;
     db->content_repository = &content_repository;
     db->old_content_repository = &old_content_repository;
+    db->old_entity_repository = &old_entity_repository;
 
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 

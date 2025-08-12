@@ -19,7 +19,7 @@ namespace NoteBox::Command {
             return;
         }
 
-        auto note = mgr.note_manager.readNote(current_path);
+        auto note = mgr.note_manager.read_note(current_path);
         std::cout << "ID: " << note.id << "\n"
             << "Parent Note ID: " << note.parent_note_id << "\n"
             << "Title: " << note.title << "\n"

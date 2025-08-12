@@ -64,6 +64,11 @@ namespace NoteBox::Manager
         db->literature_source_repository->create(literature_source);
     }
 
+    Entity::LiteratureSource LiteratureSourceManager::read(ushort id)
+    {
+        return db->literature_source_repository->read(id);
+    }
+
     std::vector<Entity::LiteratureSource> LiteratureSourceManager::list()
     {
         std::string title_like = std::string("");

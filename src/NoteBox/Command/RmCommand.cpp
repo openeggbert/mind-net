@@ -8,7 +8,7 @@
 
 namespace NoteBox::Command {
     void RmCommand::execute(Manager::NoteBoxManager &mgr, const std::string &args) {
-        mgr.note_manager.removeNote(args);
+        mgr.note_manager.remove_note(args);
     }
     void RmCommand::help() {
         std::cout << "help to be implemented" << std::endl;

@@ -101,6 +101,40 @@ namespace NoteBox::Impl::Sqlite::Repositories
         return result;
     }
 
+    Entity::LiteratureSource LiteratureSourceRepositoryImplSqlite::read(const ushort id)
+    {
+        vector<Entity::LiteratureSource> result{};
+
+
+        std::string sql =
+            "SELECT * FROM " + std::string(LiteratureSourceTable::TABLE_NAME)
+        + " WHERE " + LiteratureSourceTable::ID + " = ?";
+
+        SQLite::Database db(SQLITE_FILE_NAME,
+                            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+
+        SQLite::Statement query(db, sql);
+
+        int i = 0;
+
+        try
+        {
+                query.bind(++i, id);
+
+            while (query.executeStep())
+            {
+                return extractLiteratureSourceFromResultSet(query);
+            }
+            throw std::runtime_error("No such literature source");
+        }
+        catch (SQLite::Exception& e)
+        {
+            std::cout << e.what();
+            throw std::runtime_error(e.what());
+        }
+    }
+
+
     vector<Entity::LiteratureSource> LiteratureSourceRepositoryImplSqlite::list(std::string& title_like)
     {
         vector<Entity::LiteratureSource> result{};
