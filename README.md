@@ -56,6 +56,12 @@ lit ls
 lit add
 lit edit
 lit show
+
+term ls
+term add
+term edit
+term show
+term cat
 ```
 
 ## Development

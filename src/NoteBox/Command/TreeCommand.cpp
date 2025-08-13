@@ -8,8 +8,6 @@
 
 namespace NoteBox::Command
 {
-    using std::string;
-    typedef string str;
 
     void print_line_of_tree(str& note_id, const str& note_title, const std::string& prefix, bool is_last, Persistence::Api::NoteRepository*& note_repo)
     {

@@ -20,6 +20,7 @@
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldContentRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldEntityRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/TermRepositoryImplSqlite.h"
 
 bool migrateSchemaIfNeeded()
 {
@@ -200,6 +201,7 @@ int main()
     NoteBox::Impl::Sqlite::Repositories::OldContentRepositoryImplSqlite old_content_repository{};
     NoteBox::Impl::Sqlite::Repositories::OldEntityRepositoryImplSqlite old_entity_repository{};
     NoteBox::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
+    NoteBox::Impl::Sqlite::Repositories::TermRepositoryImplSqlite term_repository{};
 
     db->literature_source_repository = &literature_source_repository;
     db->session_repository = &session_repository;
@@ -207,6 +209,7 @@ int main()
     db->content_repository = &content_repository;
     db->old_content_repository = &old_content_repository;
     db->old_entity_repository = &old_entity_repository;
+    db->term_repository = &term_repository;
 
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 
@@ -219,6 +222,7 @@ int main()
     factory.getCommand("help")->setCommandHelper(&command_helper);
     factory.getCommand("walk")->setCommandHelper(&command_helper);
     factory.getCommand("tree")->setCommandHelper(&command_helper);
+    factory.getCommand("term")->setCommandHelper(&command_helper);
     factory.getCommand("cd")->execute(note_box_manager, note_box_manager.session_manager.get().current_path);
 
     std::string line;

@@ -92,7 +92,7 @@ namespace NoteBox
         std::cout << question << " [y/n] ";
         char choice;
         std::cin >> choice;
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Tohle je klíčové
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return choice == 'y';
     }
 

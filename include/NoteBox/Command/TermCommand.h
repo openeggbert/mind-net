@@ -1,13 +1,13 @@
 //
 // Created by robertvokac on 8/4/25.
 //
-#ifndef TREECOMMAND_H
-#define TREECOMMAND_H
+#ifndef TERMCOMMAND_H
+#define TERMCOMMAND_H
 
 #include "ICommand.h"
 
 namespace NoteBox::Command {
-    class TreeCommand : public ICommand {
+    class TermCommand : public ICommand {
 
         ICommandHelper* helper = nullptr;
 
@@ -18,4 +18,4 @@ namespace NoteBox::Command {
         ICommandHelper* get_command_helper() override;
     };
 }
-#endif // TREECOMMAND_H
+#endif // TERMCOMMAND_H
