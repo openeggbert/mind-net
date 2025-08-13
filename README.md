@@ -40,8 +40,6 @@ quit ... exits the application
 
 help [COMMAND] ... prints info related to the given command
 
-rename
-
 search
 
 edit
@@ -72,3 +70,7 @@ NoteRepositoryImplSqlite
 NoteTable
 Migrations
 ```
+
+### TODO
+
+- Text user interface via ncruses

@@ -61,6 +61,8 @@ namespace NoteBox
         static std::vector<std::string> note_id_to_vector(const std::string& note_id);
         static std::string vector_to_note_id(const std::vector<std::string>& vector);
         static std::string next_note_id(const std::string& parent_note_id, const std::string& youngest_child_note_id);
+        static bool get_note_id_from_args(std::string& current_path, const std::string& args, std::string& used_path);
+
     };
 } // NoteBox
 

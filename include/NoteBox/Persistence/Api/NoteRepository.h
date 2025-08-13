@@ -43,7 +43,7 @@ namespace NoteBox::Persistence::Api {
         virtual Entity::Note read(const std::string& id) = 0;
         virtual void update(const Entity::Note& note) = 0;
         virtual void remove(const std::string& id) = 0;
-        virtual std::vector<Entity::Note> list(std::string& parent_note_id, size_t page, size_t pageSize) = 0;
+        virtual std::vector<Entity::Note> list(std::string& parent_note_id, size_t page_number, size_t pageSize) = 0;
         virtual std::optional<std::string> find_youngest_child_note_id(const std::string& parent_note_id) = 0;
 
     };

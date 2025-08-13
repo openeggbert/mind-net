@@ -16,31 +16,14 @@
 
 namespace NoteBox::Command
 {
-    bool UpdateCommand::get_note_id_from_args(Manager::NoteBoxManager& mgr, const std::string& args, std::string& path)
-    {
-        if (!args.empty())
-        {
-            path = args;
-        }
-        else
-        {
-            auto current_path = mgr.note_manager.pwd();
-            if (current_path.empty())
-            {
-                err << "Cannot run command, because the current path is the root directory" << std::endl;
-                return true;
-            }
-            path = current_path;
-        }
-        return false;
-    }
 
     void UpdateCommand::execute(Manager::NoteBoxManager& mgr, const std::string& args)
     {
-        std::string path;
-        if (get_note_id_from_args(mgr, args, path)) return;
+        std::string used_path;
+        auto pwd = mgr.note_manager.pwd();
+        if (Utils::get_note_id_from_args(pwd, args, used_path)) return;
         bool exit = false;
-        while (true && !exit)
+        while (!exit)
         {
             Utils::clearScreen();
             std::cout << R"(
@@ -59,7 +42,7 @@ f Source id
             std::getline(std::cin, choice_line);
             char choice = choice_line.empty() ? '\0' : choice_line[0];
             std::cout << "Choice: " << choice << "\n" << std::flush;
-            Entity::Note note = mgr.note_manager.read_note(path);
+            Entity::Note note = mgr.note_manager.read_note(used_path);
 
             switch (choice)
             {
@@ -250,7 +233,7 @@ f Source id
 
 
 
-            Entity::Note original_note = mgr.note_manager.read_note(path);
+            Entity::Note original_note = mgr.note_manager.read_note(used_path);
             Entity::OldEntity old_entity;
             old_entity.entity_name = Persistence::Impl::Sqlite::Tables::NoteTable::TABLE_NAME;
             old_entity.entity_id = original_note.id;

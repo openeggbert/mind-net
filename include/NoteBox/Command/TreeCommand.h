@@ -1,18 +1,18 @@
 //
 // Created by robertvokac on 8/4/25.
 //
-#ifndef UPDATECOMMAND_H
-#define UPDATECOMMAND_H
-
 
 #include "ICommand.h"
 
 namespace NoteBox::Command {
-    class UpdateCommand : public ICommand {
+    class TreeCommand : public ICommand {
+
+        ICommandHelper* helper = nullptr;
+
     public:
         void execute(Manager::NoteBoxManager& mgr, const std::string& args) override;
         void help() override;
+        void setCommandHelper(ICommandHelper* factory) override;
+        ICommandHelper* get_command_helper() override;
     };
 }
-
-#endif // UPDATECOMMAND_H

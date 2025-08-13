@@ -218,6 +218,7 @@ int main()
     NoteBox::Command::CommandHelper command_helper(&factory, &db);
     factory.getCommand("help")->setCommandHelper(&command_helper);
     factory.getCommand("walk")->setCommandHelper(&command_helper);
+    factory.getCommand("tree")->setCommandHelper(&command_helper);
     factory.getCommand("cd")->execute(note_box_manager, note_box_manager.session_manager.get().current_path);
 
     std::string line;
@@ -268,6 +269,7 @@ int main()
 
     auto session = note_box_manager.session_manager.get();
     session.last_opened = NoteBox::Utils::currentUnixTimestamp();
+    session.current_path = note_box_manager.note_manager.pwd();
     note_box_manager.session_manager.update(session);
 
     return 0;

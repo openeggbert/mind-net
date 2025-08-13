@@ -14,6 +14,8 @@
 #include <stdexcept>
 #include <iomanip>
 
+#include "NoteBox/Global.h"
+
 namespace NoteBox
 {
     long long Utils::currentTimestamp()
@@ -338,4 +340,35 @@ namespace NoteBox
             return parent_note_id + (digit ? "a" : "1");
         }
     }
+
+    /**
+     * Determines which path to use based on provided arguments and current context.
+     * If arguments are provided, the `used_path` will be set to those arguments.
+     * If no arguments are provided, the current path will be used unless it is empty.
+     * If the current path is empty, an error message will be logged, and the function will return true.
+     *
+     * @param current_path Reference to the current path. An empty string indicates the root directory.
+     * @param args String containing path arguments. If not empty, this path will be prioritized.
+     * @param used_path Reference where the resulting path (based on arguments or current path) will be stored.
+     * @return Returns true if the current path is empty and no arguments are provided, indicating an error.
+     *         Otherwise, returns false.
+     */
+    bool Utils::get_note_id_from_args(std::string& current_path, const std::string& args, std::string& used_path)
+    {
+        if (!args.empty())
+        {
+            used_path = args;
+        }
+        else
+        {
+            if (current_path.empty())
+            {
+                err << "Cannot run command, because the current path is the root directory" << std::endl;
+                return true;
+            }
+            used_path = current_path;
+        }
+        return false;
+    }
+
 }
