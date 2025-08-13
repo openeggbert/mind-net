@@ -58,10 +58,13 @@ lit edit
 lit show
 
 term ls
+term ls [CATEGORY]
 term add
+term add [CATEGORY] [NAME]
 term edit
 term show
 term cat
+term rm [CATEGORY] [NAME]
 ```
 
 ## Development

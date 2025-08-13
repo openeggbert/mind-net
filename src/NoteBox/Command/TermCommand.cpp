@@ -3,42 +3,31 @@
 //
 
 #include "NoteBox/Command/TermCommand.h"
-
 #include <iostream>
-
 #include "NoteBox/Global.h"
+#include <string>
+#include <vector>
+#include <sstream>
 
 namespace NoteBox::Command
 {
-    Entity::Term validate_and_extract_term_details(str argument2)
-    {
-        if (argument2.empty())
-        {
-            err << "term add command requires a name as the argument" << std::endl;
-        }
-        str name;
-        str category;
-        bool name_is_finished = false;
-        for (int i = 0; i < argument2.size(); i++)
-        {
-            char ch = argument2[i];
-            if (ch == '|')
-            {
-                name = argument2.substr(0, i);
-                category = argument2.substr(i + 1, argument2.size() - i - 1);
-                name_is_finished = true;
-                break;
+
+    std::vector<std::string> splitByLines(const std::string& text) {
+        std::istringstream iss(text);
+        std::string line;
+        std::vector<std::string> lines;
+
+        while (std::getline(iss, line)) {
+            // Handle Windows-style "\r\n"
+            if (!line.empty() && line.back() == '\r') {
+                line.pop_back();
             }
+            lines.push_back(line);
         }
-        if (!name_is_finished)
-        {
-            err << "term add command requires a name as the argument" << std::endl;
-        }
-        Entity::Term term;
-        term.name = name;
-        term.category = category;
-        return term;
+
+        return lines;
     }
+
 
     void TermCommand::execute(Manager::NoteBoxManager& mgr, const std::string& args)
     {
@@ -58,28 +47,18 @@ namespace NoteBox::Command
             err << "term command requires an argument" << std::endl;
             return;
         }
-        str argument;
+        std::vector<str> arguments = Utils::split_with_quotes(args);
 
-        for (char ch : args)
+        const auto& argument1 = arguments[0];
+        auto argument2 = arguments.size() > 1 ? arguments[1] : "";
+        auto argument3 = arguments.size() > 2 ? arguments[2] : "";
+        if (argument1 == "ls")
         {
-            if (ch == ' ')
-            {
-                break;
-            }
-            argument += ch;
-        }
-        str argument2;
-        if (argument.size() < args.size())
-        {
-            argument2 = args.substr(argument.size() + 1, args.size() - argument.size() - 1);
-        }
-        if (argument == "ls")
-        {
-            if (argument2.empty())
-            {
-                err << "term ls command requires a category as the argument" << std::endl;
-                return;
-            }
+            // if (argument2.empty())
+            // {
+            //     err << "term ls command requires a category as the argument" << std::endl;
+            //     return;
+            // }
             int page_size = 50;
             int page_number = 0;
             while (true)
@@ -89,25 +68,128 @@ namespace NoteBox::Command
                 {
                     break;
                 }
+                std::cout << "ID | Category | Name | Note ID" << std::endl;
                 for (auto t : terms)
                 {
-                    std::cout << t.id << " | " << t.name << " | " << t.category << " | " << t.note_id << std::endl;
+                    std::cout << t.id << " | " << t.category << " | " << t.name << " | " << t.note_id << std::endl;
                 }
             }
         }
-        else if (argument == "add")
+        else if (argument1 == "add")
         {
-            Entity::Term term = validate_and_extract_term_details(argument2);
-            if (term.name.empty() || term.category.empty())
+            if (arguments.size() < 3)
+            {
+                //err << "term add command requires a name and category as the argument" << std::endl;
+                std::string category;
+
+                std::cout << "Category : ";
+                std::getline(std::cin, category);
+                if (category.empty())
+                {
+                 err << "Category cannot be empty" << std::endl;
+                    return;
+                }
+                std::string terms =
+                    Utils::editTextInEditor("#Please, add new terms. Each term for one line.\n\n\n\n\n",
+                        mgr.session_manager.get().editor_path);
+
+                std::vector<str> lines = splitByLines(terms);
+                for (auto l : lines)
+                {
+                    if (l.empty())
+                    {
+                        continue;
+                    }
+                    if (l[0] == '#')
+                    {
+                        continue;
+                    }
+
+                    Entity::Term term;
+                    term.name = l;
+                    term.category = category;
+                    try
+                    {
+                        helper->getDB()->get()->term_repository->create(term);
+                    } catch (std::exception& e)
+                    {
+                        err << "name and category must be unique" << std::endl;
+                        return;
+                    }
+                }
+                return;
+            }
+            const str& category = argument2;
+            const str& name = argument3;
+            if (name.empty() || category.empty())
             {
                 err << "term add command requires a name and category as the argument" << std::endl;
                 return;
             }
-            helper->getDB()->get()->term_repository->create(term);
+            Entity::Term term;
+            term.name = name;
+            term.category = category;
+            try
+            {
+                helper->getDB()->get()->term_repository->create(term);
+            } catch (std::exception& e)
+            {
+                err << "name and category must be unique" << std::endl;
+                return;
+            }
         }
-        else if (argument == "edit")
+        else if (argument1 == "rm")
         {
-            Entity::Term term = validate_and_extract_term_details(argument2);
+            if (arguments.size() < 3)
+            {
+                err << "term rm command requires a name and category as the argument" << std::endl;
+                return;
+            }
+            str& category = argument2;
+            str& name = argument3;
+            if (name.empty() || category.empty())
+            {
+                err << "term add command requires a name and category as the argument" << std::endl;
+                return;
+            }
+            Entity::Term term;
+            str term_id;
+            try
+            {
+                term_id = helper->getDB()->get()->term_repository->id_for_name_and_category(name, category);
+            } catch (std::exception& e)
+            {
+                err << "term rm command requires a name and category as the argument" << std::endl;
+                return;
+            }
+            helper->getDB()->get()->term_repository->remove(term_id);
+        }
+        else if (argument1 == "edit")
+        {
+            if (arguments.size() < 3)
+            {
+                err << "term rm command requires a name and category as the argument" << std::endl;
+                return;
+            }
+            str& category = argument2;
+            str& name = argument3;
+            if (name.empty() || category.empty())
+            {
+                err << "term add command requires a name and category as the argument" << std::endl;
+                return;
+            }
+
+            str term_id;
+            try
+            {
+                term_id = helper->getDB()->get()->term_repository->id_for_name_and_category(name, category);
+            } catch (std::exception& e)
+            {
+                err << "term rm command requires a name and category as the argument" << std::endl;
+                return;
+            }
+
+            Entity::Term term = helper->getDB()->get()->term_repository->read(term_id);
             std::cout << R"(
 What field do you want to update?
 0 exit
@@ -122,8 +204,8 @@ What field do you want to update?
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             switch (choice)
             {
-            case 0: return;
-            case 1:
+            case '0': return;
+            case '1':
                 {
                     std::string text;
 
@@ -133,7 +215,7 @@ What field do you want to update?
                 }
                 break;
 
-            case 2:
+            case '2':
                 {
                     std::string text;
 
@@ -144,7 +226,7 @@ What field do you want to update?
                 break;
 
 
-            case 3:
+            case '3':
                 {
                     std::string text;
 
@@ -164,38 +246,15 @@ What field do you want to update?
             }
             helper->getDB()->get()->term_repository->update(term);
         }
-        else if (argument == "show")
+        else if (argument1 == "cat")
         {
-            throw std::runtime_error("term show command not implemented");
-            // if (argument2.empty())
-            // {
-            //     err << "term ls command requires a category as the argument" << std::endl;
-            //     return;
-            // }
-            //
-            //
-            // auto term_id = helper->getDB()->get()->term_repository->id_for_name_and_category(term.name, category);
-            //     auto term = helper->getDB()->get()->term_repository->read(argument2, );
-            //     if (terms.empty())
-            //     {
-            //         break;
-            //     }
-            //     for (auto t : terms)
-            //     {
-            //         std::cout << t.id << " | " << t.name << " | " << t.category << " | " << t.note_id << std::endl;
-            //     }
-            // }
-        }
-        else if (argument == "cat")
-        {
-            for (auto c:helper->getDB()->get()->term_repository->list_categories())
+            for (const auto& c : helper->getDB()->get()->term_repository->list_categories())
             {
                 std::cout << c << std::endl;
             }
-        } else
-            err << "term command " << argument << " not implemented" << std::endl;
-
-
+        }
+        else
+            err << "term command " << argument1 << " not implemented" << std::endl;
     }
 
     void TermCommand::help()

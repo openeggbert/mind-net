@@ -87,7 +87,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
                 return term;
             }
-            throw std::runtime_error("Term not found");
+            throw std::runtime_error("read() Term not found");
         }
         catch (SQLite::Exception& e)
         {
@@ -98,7 +98,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     void TermRepositoryImplSqlite::update(const Entity::Term& term)
     {
-        std::string sql = "UPDATE TERM SET NAME = ?, NOTE_ID, CATEGORY = ?, "
+        std::string sql = "UPDATE TERM SET NAME = ?, NOTE_ID = ?, CATEGORY = ? "
             " WHERE ID = ?";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
@@ -109,7 +109,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
             query.bind(1, term.name);
             query.bind(2, term.note_id);
             query.bind(3, term.category);
-            query.bind(6, term.id);
+            query.bind(4, term.id);
 
             query.exec();
         }
@@ -142,7 +142,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
             }
 
             err << "Term not found" << std::endl;
-            throw std::runtime_error("Term not found");
+            throw std::runtime_error("id_for_name_and_category() Term not found");
         }
         catch (SQLite::Exception& e)
         {
@@ -200,8 +200,10 @@ namespace NoteBox::Impl::Sqlite::Repositories
     std::vector<Entity::Term> TermRepositoryImplSqlite::list(std::string& category, size_t pageNumber,
                                                              size_t pageSize)
     {
-        std::string sql = "SELECT ID, NAME, NOTE_ID, CATEGORY "
-            "FROM TERM WHERE CATEGORY=? LIMIT ? OFFSET ?";
+        std::string sql = std::string("SELECT ID, NAME, NOTE_ID, CATEGORY ") +
+            "FROM TERM " +
+                (category.empty() ? "" : "WHERE CATEGORY=? ") +
+                    "LIMIT ? OFFSET ?";
 
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
         SQLite::Statement query(db, sql);
@@ -209,7 +211,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         try
         {
             int i = 1;
-            query.bind(i++, category);
+            if (!category.empty()){query.bind(i++, category);}
             query.bind(i++, static_cast<int32_t>(pageSize));
             query.bind(i++, static_cast<int32_t>(pageSize * pageNumber));
 

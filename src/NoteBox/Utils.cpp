@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <iomanip>
+#include <regex>
 
 #include "NoteBox/Global.h"
 
@@ -192,17 +193,22 @@ namespace NoteBox
         }
         return result;
     }
+
     // Convert single letter 'a'-'z' to number 0-25
-    int Utils::letterToDecimal(char letter) {
-        if (letter < 'a' || letter > 'z') {
+    int Utils::letterToDecimal(char letter)
+    {
+        if (letter < 'a' || letter > 'z')
+        {
             throw std::invalid_argument("letterToDecimal: input must be a-z");
         }
         return letter - 'a';
     }
 
     // Convert number 0-25 to single letter 'a'-'z'
-    char Utils::decimalToLetter(int number) {
-        if (number < 0 || number > 25) {
+    char Utils::decimalToLetter(int number)
+    {
+        if (number < 0 || number > 25)
+        {
             throw std::out_of_range("decimalToLetter: input must be 0-25");
         }
         return static_cast<char>('a' + number);
@@ -210,11 +216,13 @@ namespace NoteBox
 
     // Convert base-26 string (a-z) to decimal integer
     // "a" -> 0, "b" -> 1, ..., "z" -> 25, "aa" -> 26, etc.
-    int Utils::base26ToDecimal(const std::string& text) {
+    int Utils::base26ToDecimal(const std::string& text)
+    {
         if (text.empty())
             throw std::invalid_argument("Empty string not allowed");
 
-        for (char c : text) {
+        for (char c : text)
+        {
             if (c < 'a' || c > 'z')
                 throw std::invalid_argument("Only lowercase a-z allowed");
         }
@@ -224,14 +232,16 @@ namespace NoteBox
 
         // Step 1: Add all strings with fewer letters
         int shorter_count = 26;
-        for (int i = 1; i < len; ++i) {
+        for (int i = 1; i < len; ++i)
+        {
             value += shorter_count;
             shorter_count *= 26;
         }
 
         // Step 2: Calculate index within same-length strings
         int offset = 0;
-        for (char c : text) {
+        for (char c : text)
+        {
             offset = offset * 26 + letterToDecimal(c);
         }
 
@@ -239,9 +249,9 @@ namespace NoteBox
     }
 
 
-
     // Convert decimal integer to base-26 string (a=0, b=1, ..., z=25, aa=26, etc.)
-    std::string Utils::decimalToBase26(int number) {
+    std::string Utils::decimalToBase26(int number)
+    {
         if (number < 0)
             throw std::invalid_argument("Negative numbers not allowed");
 
@@ -251,14 +261,16 @@ namespace NoteBox
         // Find how many letters are needed
         int count = 26;
         int remaining = number;
-        while (remaining >= count) {
+        while (remaining >= count)
+        {
             remaining -= count;
             length++;
             count *= 26;
         }
 
         // Build string from remaining number
-        for (int i = 0; i < length; ++i) {
+        for (int i = 0; i < length; ++i)
+        {
             int power = length - i - 1;
             int idx = remaining / static_cast<int>(std::pow(26, power));
             result.push_back(decimalToLetter(idx));
@@ -296,7 +308,7 @@ namespace NoteBox
      * Root notes are just numbers (1, 2, 3...).
      * Child notes append letters and numbers to their parent's ID.
      * For example: 1a1, 1a2, 1b1, 2a1, etc.
-     * 
+     *
      * @param parent_note_id The ID of the parent note. Empty string means root level.
      * @param youngest_child_note_id The ID of the youngest (most recently created) child note.
      *                              Empty string means no existing children.
@@ -328,7 +340,7 @@ namespace NoteBox
             }
             else
             {
-                last_part = decimalToBase26(base26ToDecimal(last_part)+1);
+                last_part = decimalToBase26(base26ToDecimal(last_part) + 1);
             }
             v.push_back(last_part);
             return vector_to_note_id(v);
@@ -371,4 +383,39 @@ namespace NoteBox
         return false;
     }
 
+    std::vector<std::string> Utils::split_with_quotes(const std::string& input)
+    {
+        std::vector<std::string> result;
+        std::string current;
+        bool in_quotes = false;
+
+        for (size_t i = 0; i < input.size(); ++i)
+        {
+            char c = input[i];
+
+            if (c == '"')
+            {
+                in_quotes = !in_quotes;
+            }
+            else if (std::isspace(static_cast<unsigned char>(c)) && !in_quotes)
+            {
+                if (!current.empty())
+                {
+                    result.push_back(current);
+                    current.clear();
+                }
+            }
+            else
+            {
+                current += c;
+            }
+        }
+
+        if (!current.empty())
+        {
+            result.push_back(current);
+        }
+
+        return result;
+    }
 }

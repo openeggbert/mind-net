@@ -8,6 +8,8 @@
 #include <vector>
 
 #include "Helper.h"
+#include "Entity/Content.h"
+#include "Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
 
 namespace NoteBox
 {
@@ -62,6 +64,7 @@ namespace NoteBox
         static std::string vector_to_note_id(const std::vector<std::string>& vector);
         static std::string next_note_id(const std::string& parent_note_id, const std::string& youngest_child_note_id);
         static bool get_note_id_from_args(std::string& current_path, const std::string& args, std::string& used_path);
+        static std::vector<std::string> split_with_quotes(const std::string& input);
 
     };
 } // NoteBox
