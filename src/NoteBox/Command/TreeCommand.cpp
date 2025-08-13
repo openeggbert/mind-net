@@ -11,29 +11,31 @@ namespace NoteBox::Command
     using std::string;
     typedef string str;
 
-    void print_line_of_tree(str& note_id, str& note_title, int depth, Persistence::Api::NoteRepository* & note_repo)
+    void print_line_of_tree(str& note_id, const str& note_title, const std::string& prefix, bool is_last, Persistence::Api::NoteRepository*& note_repo)
     {
         if (!note_id.empty())
         {
-            auto indent = depth == 0 ? "" : std::string(depth * 2-1, ' ') + "+";
-            std::cout << indent << "/" << note_id << " - " << note_title << std::endl;
+            std::cout << prefix;
+            std::cout << (is_last ? "└── " : "├── ");
+            std::cout << note_id << " - " << note_title << std::endl;
         }
-
 
         int page_number = 0;
         int page_size = 50;
+        std::vector<Entity::Note> children;
+
         while (true)
         {
             auto tmp = note_repo->list(note_id, page_number++, page_size);
-            if (tmp.empty())
-            {
-                break;
-            }
-            depth++;
-            for (auto& child : tmp)
-            {
-                print_line_of_tree(child.id, child.title, depth, note_repo);
-            }
+            if (tmp.empty()) break;
+            children.insert(children.end(), tmp.begin(), tmp.end());
+        }
+
+        for (size_t i = 0; i < children.size(); ++i)
+        {
+            bool last = (i == children.size() - 1);
+            std::string new_prefix = prefix + (is_last ? "    " : "│   ");
+            print_line_of_tree(children[i].id, children[i].title, new_prefix, last, note_repo);
         }
     }
 
@@ -63,7 +65,7 @@ namespace NoteBox::Command
         }
 
         auto note_repo = db->get()->note_repository;
-        print_line_of_tree(note_id, note_title, 0, note_repo);
+        print_line_of_tree(note_id, note_title, "" , true, note_repo);
     }
 
     void TreeCommand::help()
