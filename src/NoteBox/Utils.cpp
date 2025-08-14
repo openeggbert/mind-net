@@ -418,4 +418,64 @@ namespace NoteBox
 
         return result;
     }
+
+    str Utils::generate_insert_sql(const std::string& table_name, const std::vector<const char*>& columns, bool auto_increment)
+    {
+        str sql = "INSERT INTO " + table_name + " (";
+        for (int i = 0; i < columns.size(); ++i)
+        {
+            if (auto_increment && std::string(columns[i]) == "id")
+            {
+                continue;
+            }
+            sql += columns[i];
+            if (i < columns.size() - 1)
+            {
+                sql += ", ";
+            }
+        }
+        sql += ") VALUES (";
+        for (int i = 0; i < columns.size(); ++i)
+        {
+            if (auto_increment && std::string(columns[i]) == "id")
+            {
+                continue;
+            }
+            sql += "?";
+            if (i < columns.size() - 1)
+            {
+                sql += ", ";
+            }
+        }
+        sql += ")";
+        return sql;
+    }
+
+    template<class>
+    inline constexpr bool always_false = false;
+
+    void Utils::fill_sqlite_query(SQLite::Statement& query, const sql_values& values, bool auto_increment)
+    {
+        if (values.size() > static_cast<size_t>(query.getBindParameterCount())) {
+            throw std::out_of_range("More values provided than query parameters");
+        }
+
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            std::visit([&](auto&& val) -> void {
+                using T = std::decay_t<decltype(val)>;
+
+                if constexpr (std::is_same_v<T, std::string>) {
+                    query.bind(static_cast<int>(i + 1), val);
+                }
+                else if constexpr (std::is_same_v<T, int64_t>) {
+                    query.bind(static_cast<int>(i + 1), val);
+                }
+                else {
+                    static_assert(always_false<T>, "Unsupported type in SqlValue");
+                }
+            }, values[i]);
+        }
+    }
+
 }

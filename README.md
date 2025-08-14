@@ -69,6 +69,10 @@ term rm [CATEGORY] [NAME]
 
 ## Development
 
+```aiignore
+apt install libcurl4-openssl-dev
+```
+
 ### Example of Classes
 
 ```
@@ -83,3 +87,6 @@ Migrations
 ### TODO
 
 - Text user interface via ncruses
+- Desktop user interface via QT
+- Support for PostgreSQL storage
+- Crow web server producing REST API and serving pure html files

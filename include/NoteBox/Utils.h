@@ -8,11 +8,12 @@
 #include <vector>
 
 #include "Helper.h"
-#include "Entity/Content.h"
-#include "Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
+#include "SQLiteCpp/Statement.h"
 
 namespace NoteBox
 {
+    typedef std::variant<std::string, int64_t> sql_value;
+    typedef std::vector<sql_value> sql_values;
     class Utils
     {
     private:
@@ -65,6 +66,9 @@ namespace NoteBox
         static std::string next_note_id(const std::string& parent_note_id, const std::string& youngest_child_note_id);
         static bool get_note_id_from_args(std::string& current_path, const std::string& args, std::string& used_path);
         static std::vector<std::string> split_with_quotes(const std::string& input);
+
+        static str generate_insert_sql(const std::string& table_name, const std::vector<const char*>& columns, bool auto_increment = false);
+        static void fill_sqlite_query(SQLite::Statement& query, const sql_values& values, bool auto_increment = false);
 
     };
 } // NoteBox
