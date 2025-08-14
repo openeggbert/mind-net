@@ -10,6 +10,7 @@ option(MAKE_VERBOSE_MAKEFILE "" ON)
 # Enable submodule dependencies
 set(CCPSQLITE_DIR thirdparty/SQLiteCpp)
 add_subdirectory(${CCPSQLITE_DIR})
+add_subdirectory(thirdparty/nlohmann_json)
 
 # Collect sources
 file(GLOB_RECURSE ALL_SOURCES "src/*.cpp")
@@ -27,6 +28,7 @@ target_include_directories(note_box_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/incl
 target_link_libraries(note_box_core PUBLIC
         SQLiteCpp
         sqlite3
+        nlohmann_json::nlohmann_json
         pthread
         dl
 )

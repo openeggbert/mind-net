@@ -4,10 +4,8 @@
 #ifndef DB_H
 #define DB_H
 
-
-#include <memory>
-
 #include "Api/ContentRepository.h"
+#include "Api/IdeaRepository.h"
 #include "Api/LiteratureSourceRepository.h"
 #include "Api/NoteRepository.h"
 #include "Api/OldContentRepository.h"
@@ -26,6 +24,7 @@ namespace NoteBox::Persistence {
         Api::OldEntityRepository* old_entity_repository{};
         Api::NoteRepository* note_repository{};
         Api::TermRepository* term_repository{};
+        Api::IdeaRepository* idea_repository{};
 
         DB();
     };

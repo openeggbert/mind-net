@@ -19,19 +19,49 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef BASEENTITY_H
 #define BASEENTITY_H
+#include <nlohmann/json.hpp>
 
-
-#include <ostream>
 #include <string>
 
+#include "NoteBox/Utils.h"
+
 namespace NoteBox::Entity {
+
+    static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "ID";
+
     using std::string;
 
     struct BaseEntity {
-        virtual void to_json() = 0;
+
         virtual ~BaseEntity() = default;
-        virtual bool equals(const BaseEntity &other) const = 0;
-        virtual void print(std::ostream &os) const = 0;
+        virtual str get_entity_name() const = 0;
+        virtual entity_columns get_entity_columns() const = 0;
+        virtual entity_fields get_entity_fields() const = 0;
+        virtual bool should_be_id_auto_incremented() const = 0;
+
+        [[nodiscard]] JSON to_json() const
+        {
+            JSON json;
+            int index = 0;
+            entity_fields fields = get_entity_fields();
+            for (auto& field : get_entity_columns())
+            {
+                std::visit([&json, &field](const auto& value)
+                {
+                    json[field] = value;
+                }, fields[index]);
+                index++;
+            }
+            return json;
+        };
+        [[nodiscard]] bool equals(const BaseEntity &other) const
+        {
+            return to_json() == other.to_json();
+        };
+        void print(std::ostream &os) const
+        {
+            os << to_json();
+        };
     };
 }
 

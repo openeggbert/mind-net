@@ -22,40 +22,57 @@
 
 #include <ostream>
 #include <string>
+
+#include "BaseEntity.h"
 #include "NoteBox/Helper.h"
 #include "NoteBox/Utils.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Tables/IdeaTable.h"
 
 namespace NoteBox::Entity
 {
     using std::string;
 
-    struct Idea
+    struct Idea : BaseEntity
     {
         int id;
         string text;
         string category;
         unixtime created_at;
-        unixtime due_at;
+        unixtime due_date;
 
+        [[nodiscard]] str get_entity_name() const override
+        {
+            return Persistence::Impl::Sqlite::Tables::IdeaTable::TABLE_NAME;
+        };
+
+        entity_columns get_entity_columns() const override
+        {
+            return Persistence::Impl::Sqlite::Tables::IdeaTable::get_column_names();
+        };
+        entity_fields get_entity_fields() const override;
+        bool should_be_id_auto_incremented() const override {return true;}
         friend std::ostream& operator<<(std::ostream& os, const Idea& idea)
         {
-            os << "Idea{id: " << idea.id
-                << ", text: " << idea.text
-                << ", category: " << idea.category
-                << ", created_at: " << Utils::unixToFormattedString(idea.created_at)
-                << ", due_at: " << Utils::unixToFormattedString(idea.due_at)
-                << "}";
+            os << idea.to_json();
+            // << "Idea{id: " << idea.id
+            //     << ", text: " << idea.text
+            //     << ", category: " << idea.category
+            //     << ", created_at: " << Utils::unixToFormattedString(idea.created_at)
+            //     << ", due_at: " << Utils::unixToFormattedString(idea.due_at)
+            //     << "}";
+
             return os;
         }
 
         bool operator==(const Idea& other) const
         {
-            return
-                this->id == other.id &&
-                this->text == other.text &&
-                this->category == other.category &&
-                this->created_at == other.created_at &&
-                this->due_at == other.due_at;
+            return this->equals(other);
+            // return
+            //     this->id == other.id &&
+            //     this->text == other.text &&
+            //     this->category == other.category &&
+            //     this->created_at == other.created_at &&
+            //     this->due_at == other.due_at;
         }
     };
 }

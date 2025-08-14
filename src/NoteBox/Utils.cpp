@@ -12,13 +12,19 @@
 #include <random>
 #include <filesystem>
 #include <stdexcept>
-#include <iomanip>
 #include <regex>
 
 #include "NoteBox/Global.h"
+#include "NoteBox/Persistence/Impl/Sqlite/SqliteFileName.h"
+#include "SQLiteCpp/Database.h"
 
 namespace NoteBox
 {
+    namespace Entity
+    {
+        struct BaseEntity;
+    }
+
     long long Utils::currentTimestamp()
     {
         time_t now = time(nullptr);
@@ -301,6 +307,19 @@ namespace NoteBox
         }
     }
 
+    void Utils::sqlite_exec(SQLite::Statement& query)
+    {
+        try
+        {
+            query.exec();
+        }
+        catch (SQLite::Exception& e)
+        {
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            throw std::runtime_error(e.what());
+        }
+    }
+
 
     /**
      * Generates new Note ID in the ZettelKasten system.
@@ -424,7 +443,7 @@ namespace NoteBox
         str sql = "INSERT INTO " + table_name + " (";
         for (int i = 0; i < columns.size(); ++i)
         {
-            if (auto_increment && std::string(columns[i]) == "id")
+            if (auto_increment && std::string(columns[i]) == "ID")
             {
                 continue;
             }
@@ -437,7 +456,7 @@ namespace NoteBox
         sql += ") VALUES (";
         for (int i = 0; i < columns.size(); ++i)
         {
-            if (auto_increment && std::string(columns[i]) == "id")
+            if (auto_increment && std::string(columns[i]) == "ID")
             {
                 continue;
             }
@@ -454,22 +473,30 @@ namespace NoteBox
     template<class>
     inline constexpr bool always_false = false;
 
-    void Utils::fill_sqlite_query(SQLite::Statement& query, const sql_values& values, bool auto_increment)
+    void Utils::fill_sqlite_query(SQLite::Statement& query, const entity_fields& values, bool auto_increment)
     {
-        if (values.size() > static_cast<size_t>(query.getBindParameterCount())) {
+        std::size_t values_size = values.size();
+        if (auto_increment) {values_size--;}
+        if (values_size > static_cast<size_t>(query.getBindParameterCount())) {
+            err << "values().size " << values_size << " > query.getBindParameterCount() " << static_cast<size_t>(query.getBindParameterCount()) << std::endl;
             throw std::out_of_range("More values provided than query parameters");
         }
 
         for (size_t i = 0; i < values.size(); ++i)
         {
+            if (auto_increment && i == 0)
+            {
+                continue;
+            }
+            err << "binding index " << i << " with value " << std::endl;
             std::visit([&](auto&& val) -> void {
                 using T = std::decay_t<decltype(val)>;
 
                 if constexpr (std::is_same_v<T, std::string>) {
-                    query.bind(static_cast<int>(i + 1), val);
+                    query.bind(static_cast<int>(i + 1 + (auto_increment ? -1 : 0)), val);
                 }
                 else if constexpr (std::is_same_v<T, int64_t>) {
-                    query.bind(static_cast<int>(i + 1), val);
+                    query.bind(static_cast<int>(i + 1 + (auto_increment ? -1 : 0)), val);
                 }
                 else {
                     static_assert(always_false<T>, "Unsupported type in SqlValue");
@@ -477,5 +504,6 @@ namespace NoteBox
             }, values[i]);
         }
     }
+
 
 }

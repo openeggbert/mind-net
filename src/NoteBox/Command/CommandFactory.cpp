@@ -22,6 +22,7 @@
 #include "NoteBox/Command/UpdateCommand.h"
 #include "NoteBox/Command/TreeCommand.h"
 #include "NoteBox/Command/TermCommand.h"
+#include "NoteBox/Command/IdeaCommand.h"
 #define add(key, clazz) commands[#key] = std::make_shared<clazz##Command>();commandNames.push_back(#key);
 
 
@@ -48,6 +49,7 @@ namespace NoteBox::Command
         add(update, Update)
         add(tree, Tree)
         add(term, Term)
+        add(idea, Idea)
     }
 
     std::shared_ptr<ICommand> CommandFactory::getCommand(const std::string& name)

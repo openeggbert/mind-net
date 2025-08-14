@@ -44,31 +44,34 @@ namespace NoteBox::Impl::Sqlite::Repositories
 
     IdeaRepositoryImplSqlite::~IdeaRepositoryImplSqlite() = default;
 
-    void IdeaRepositoryImplSqlite::create(const Entity::Idea& idea)
+    void create_entity(const Entity::BaseEntity& entity)
     {
-        std::string sql = Utils::generate_insert_sql(IdeaTable::TABLE_NAME,IdeaTable::get_column_names());
+        auto columns = entity.get_entity_columns();
+        std::string sql = Utils::generate_insert_sql(
+            entity.get_entity_name(),
+            columns,
+            entity.should_be_id_auto_incremented()
+            );
+        std::cout << "Going to execute SQL: " << sql << std::endl;
 
-        SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Database db(
+            Persistence::Impl::Sqlite::SQLITE_FILE_NAME,
+            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
+            );
         SQLite::Statement query(db, sql);
 
-        try
-        {
-            Utils::fill_sqlite_query(query,
-                sql_values {
-                    idea.id,
-                    idea.text,
-                    static_cast<int64_t>(idea.created_at),
-                    static_cast<int64_t>(idea.due_at)
-                }
-                );
+        Utils::fill_sqlite_query(query, entity.get_entity_fields()
+            , entity.should_be_id_auto_incremented()
+    );
 
-            query.exec();
-        }
-        catch (SQLite::Exception& e)
-        {
-            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
-            throw std::runtime_error(e.what());
-        }
+        Utils::sqlite_exec(query);
+
+    }
+
+
+    void IdeaRepositoryImplSqlite::create(const Entity::Idea& idea)
+    {
+        create_entity(idea);
     }
 
     Entity::Idea IdeaRepositoryImplSqlite::read(int id)
@@ -88,7 +91,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
                 idea.id = query.getColumn(0).getInt();
                 idea.text = query.getColumn(1).getString();
                 idea.created_at = query.getColumn(2).getInt64();
-                idea.due_at = query.getColumn(3).getInt64();
+                idea.due_date = query.getColumn(3).getInt64();
 
                 return idea;
             }
@@ -112,7 +115,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
         {
             query.bind(1, idea.text);
             query.bind(2, static_cast<int64_t>(idea.created_at));
-            query.bind(3, static_cast<int64_t>(idea.due_at));
+            query.bind(3, static_cast<int64_t>(idea.due_date));
             query.bind(4, idea.id);
 
             query.exec();
@@ -163,7 +166,7 @@ namespace NoteBox::Impl::Sqlite::Repositories
                 idea.id = query.getColumn(0).getInt();
                 idea.text = query.getColumn(1).getString();
                 idea.created_at = query.getColumn(2).getInt64();
-                idea.due_at = query.getColumn(3).getInt64();
+                idea.due_date = query.getColumn(3).getInt64();
 
                 ideas.push_back(idea);
             }

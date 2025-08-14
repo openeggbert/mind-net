@@ -16,13 +16,14 @@
 #include "NoteBox/Persistence/DB.h"
 #include "NoteBox/Persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/ContentRepositoryImplSqlite.h"
+#include "NoteBox/Persistence/Impl/Sqlite/Repositories/IdeaRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/NoteRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldContentRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/OldEntityRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
 #include "NoteBox/Persistence/Impl/Sqlite/Repositories/TermRepositoryImplSqlite.h"
 
-bool migrateSchemaIfNeeded()
+bool migrate_schema_if_needed()
 {
     NoteBox::Utils::trace("Migrating schema, if needed:");
 
@@ -187,7 +188,7 @@ int main()
     NoteBox::start_time = NoteBox::Utils::currentUnixTimestamp();
     print_logo();
 
-    if (!migrateSchemaIfNeeded())
+    if (!migrate_schema_if_needed())
     {
         NoteBox::err << "Failed to migrate schema. Exiting." << std::endl;
         exit(NoteBox::ExitStatus::MIGRATION_FAILED);
@@ -202,6 +203,7 @@ int main()
     NoteBox::Impl::Sqlite::Repositories::OldEntityRepositoryImplSqlite old_entity_repository{};
     NoteBox::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
     NoteBox::Impl::Sqlite::Repositories::TermRepositoryImplSqlite term_repository{};
+    NoteBox::Impl::Sqlite::Repositories::IdeaRepositoryImplSqlite idea_repository{};
 
     db->literature_source_repository = &literature_source_repository;
     db->session_repository = &session_repository;
@@ -210,6 +212,7 @@ int main()
     db->old_content_repository = &old_content_repository;
     db->old_entity_repository = &old_entity_repository;
     db->term_repository = &term_repository;
+    db->idea_repository = &idea_repository;
 
     NoteBox::Manager::NoteBoxManager note_box_manager(db);
 

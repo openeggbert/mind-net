@@ -4,8 +4,6 @@
 
 #include "NoteBox/Manager/NoteBoxManager.h"
 
-
-
 namespace NoteBox::Manager
 {
     NoteBoxManager::NoteBoxManager(const std::shared_ptr<Persistence::DB>& db)
@@ -13,6 +11,7 @@ namespace NoteBox::Manager
     literature_source_manager(db),
     note_manager(db),
     session_manager(db),
+    idea_manager(db),
     db(db)
     //, tags(db), collections(db), references(db)
     {

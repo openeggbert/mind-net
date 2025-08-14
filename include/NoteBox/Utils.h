@@ -7,13 +7,14 @@
 #include <string>
 #include <vector>
 
+#include "Global.h"
 #include "Helper.h"
+#include "Entity/BaseEntity.h"
 #include "SQLiteCpp/Statement.h"
 
 namespace NoteBox
 {
-    typedef std::variant<std::string, int64_t> sql_value;
-    typedef std::vector<sql_value> sql_values;
+
     class Utils
     {
     private:
@@ -48,6 +49,8 @@ namespace NoteBox
         static std::string decimalToBase26(int number);
         static std::string remove_semicolon(std::string str);
 
+        static void sqlite_exec(SQLite::Statement& query);
+
 
         /**
      * Converts a note identifier string into a vector of string components.
@@ -68,7 +71,7 @@ namespace NoteBox
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
         static str generate_insert_sql(const std::string& table_name, const std::vector<const char*>& columns, bool auto_increment = false);
-        static void fill_sqlite_query(SQLite::Statement& query, const sql_values& values, bool auto_increment = false);
+        static void fill_sqlite_query(SQLite::Statement& query, const entity_fields& values, bool auto_increment = false);
 
     };
 } // NoteBox

@@ -17,48 +17,20 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-#ifndef IDEATABLE_H
-#define IDEATABLE_H
-#include <vector>
-
-#include "NoteBox/Utils.h"
+#ifndef BASETABLE_H
+#define BASETABLE_H
 
 
-namespace NoteBox::Persistence::Impl::Sqlite::Tables
-{
-    struct IdeaTable
-    {
-        IdeaTable() = delete;
+#include <ostream>
+#include <string>
 
-        IdeaTable(const IdeaTable&) = delete;
+namespace NoteBox::Entity {
+    using std::string;
 
-        IdeaTable& operator=(const IdeaTable&) = delete;
-
-        static constexpr const char* TABLE_NAME = "IDEA";
-
-        static constexpr const char* ID = "ID";
-        static constexpr const char* TEXT = "TEXT";
-        static constexpr const char* CATEGORY = "CATEGORY";
-        static constexpr const char* CREATED_AT = "CREATED_AT";
-        static constexpr const char* DUE_AT = "DUE_AT";
-
-        static const entity_columns& get_column_names()
-        {
-            static const entity_columns COLUMN_NAMES{
-                ID,
-                TEXT,
-                CATEGORY,
-                CREATED_AT,
-                DUE_AT
-            };
-            return COLUMN_NAMES;
-        }
-
+    struct BaseTable {
+        virtual ~BaseTable() = default;
     };
 }
-#endif // IDEATABLE_H
+
+
+#endif // BASETABLE_H
