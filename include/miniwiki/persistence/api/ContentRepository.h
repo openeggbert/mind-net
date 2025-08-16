@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki: Lightweight wiki inspired by MediaWiki.
+// mini-wiki : Lightweight wiki inspired by MediaWiki.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -13,28 +13,40 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
+#ifndef CONTENTREPOSITORY_H
+#define CONTENTREPOSITORY_H
 
 
-#include <ostream>
+#include "miniwiki/models/Content.h"
+#include <vector>
 
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
- */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
+#include "miniwiki/persistence/impl/sqlite/SqliteFileName.h"
+#include "SQLiteCpp/Database.h"
 
+
+namespace miniwiki::persistence::api {
+
+    /**
+     *
+    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+     */
+
+    class ContentRepository {
+
+    public:
+        virtual ~ContentRepository() = default;
+
+        virtual void create(const models::Content& content) = 0;
+        // virtual models::Content read(std::string& id) = 0;
+        // virtual void update(models::Content& content) = 0;
+        // virtual void remove(std::string& id) = 0;
+        // virtual std::vector<models::Content> list(size_t page_number, size_t pageSize) = 0;
     };
+
 }
 
-#endif // MIGRATION_H
+#endif // CONTENTREPOSITORY_H

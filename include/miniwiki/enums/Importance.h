@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki: Lightweight wiki inspired by MediaWiki.
+// mini-wiki : Lightweight wiki inspired by MediaWiki.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -17,24 +17,41 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
+#ifndef IMPORTANCE_H
+#define IMPORTANCE_H
 
+#include <string>
 
-#include <ostream>
-
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
- */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
-
+namespace miniwiki::Enum
+{
+    /**
+     *
+     * @author robertvokac
+     */
+    enum class Importance
+    {
+        LOW = 1, MEDIUM = 2, HIGH = 3
     };
-}
 
-#endif // MIGRATION_H
+    inline std::string importance_to_string(Importance importance)
+    {
+        switch (importance)
+        {
+        case Importance::LOW:
+            return "Low";
+        case Importance::MEDIUM:
+            return "Medium";
+        case Importance::HIGH:
+            return "High";
+        default:
+            return "Unknown";
+        }
+    }
+    inline std::string importance_to_string(int importance)
+    {
+        return importance_to_string(static_cast<Importance>(importance));
+    }
+
+
+} // namespace miniwiki::Enums
+#endif

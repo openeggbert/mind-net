@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki: Lightweight wiki inspired by MediaWiki.
+// mini-wiki : Lightweight wiki inspired by MediaWiki.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -17,24 +17,33 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
 
-
-#include <ostream>
-
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
+#ifndef CONTENTREPOSITORYIMPLSQLITE_H
+#define CONTENTREPOSITORYIMPLSQLITE_H
 
+#include "miniwiki/persistence/api/ContentRepository.h"
+#include "miniwiki/models/Content.h"
+#include <string>
+#include <vector>
+
+namespace miniwiki::impl::sqlite::repositories
+{
+    using std::vector;
+
+    class ContentRepositoryImplSqlite : public persistence::api::ContentRepository
+    {
+    public:
+        ContentRepositoryImplSqlite();
+        ~ContentRepositoryImplSqlite() override;
+
+        void create(const models::Content& content) override;
+        // models::Content read(std::string& id) override;
+        // void remove(std::string& id) override;
+        // void update(models::Content& content) override;
     };
 }
-
-#endif // MIGRATION_H
+#endif // CONTENTREPOSITORYIMPLSQLITE_H

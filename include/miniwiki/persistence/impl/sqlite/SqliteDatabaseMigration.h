@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // mini-wiki: Lightweight wiki inspired by MediaWiki.
-// Copyright (C) 2025-2025 the original author or authors.
+// Copyright (C) 2023-2023 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,28 +13,37 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
+#ifndef SQLITEDATABASEMIGRATION_H
+#define SQLITEDATABASEMIGRATION_H
 
+#include <string>
 
-#include <ostream>
+#include "miniwiki/Utils.h"
 
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
+namespace miniwiki::persistence::impl::sqlite {
+
+/**
+ *
+* @author <a href="mailto:mail@robertvokac.com">Robert Vokac</a>
  */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
+class SqliteDatabaseMigration {
+private:
+    //Not meant to be instantiated
+    SqliteDatabaseMigration();
 
-    };
+public:
+    SqliteDatabaseMigration(const SqliteDatabaseMigration&) = delete;
+    SqliteDatabaseMigration& operator=(const SqliteDatabaseMigration&) = delete;
+
+    static SqliteDatabaseMigration* getInstance();
+    static void destroyInstance();
+    bool migrate();
+
+};
+
 }
-
-#endif // MIGRATION_H
+#endif // SQLITEDATABASEMIGRATION_H

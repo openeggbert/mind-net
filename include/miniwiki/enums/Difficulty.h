@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki: Lightweight wiki inspired by MediaWiki.
+// mini-wiki : Lightweight wiki inspired by MediaWiki.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -17,24 +17,40 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
+#ifndef DIFFICULTY_H
+#define DIFFICULTY_H
 
+#include <string>
 
-#include <ostream>
-
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
- */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
-
+namespace miniwiki::Enum {
+    /**
+     *
+     * @author robertvokac
+     */
+    enum class Difficulty {
+        EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
     };
-}
+    inline std::string difficulty_to_string(Difficulty difficulty) {
+        switch (difficulty)
+        {
+            case Difficulty::EASY:
+                return "Easy";
+            case Difficulty::MEDIUM:
+                return "Medium";
+            case Difficulty::HARD:
+                return "Hard";
+            case Difficulty::EXPERT:
+                return "Expert";
+            default:
+                return "Unknown";
+        }
+    }
+    inline std::string difficulty_to_string(int difficulty)
+    {
+        return difficulty_to_string(static_cast<Difficulty>(difficulty));
+    }
 
-#endif // MIGRATION_H
+
+
+} // namespace miniwiki::Enums
+#endif

@@ -6,6 +6,7 @@
 
 #include "crow.h"
 #include "HttpUtils.h"
+#include "miniwiki/persistence/Persistence.h"
 
 namespace miniwiki::http
 {
@@ -13,15 +14,16 @@ namespace miniwiki::http
     {
 
     public:
-        HttpServer();
+        HttpServer(std::shared_ptr<persistence::Persistence> db);
         void run(int port = 8080);
         template<typename T>
         void register_controller(T* controller) {
-            controller->register_routes(crow_app);
+            controller->register_routes(crow_app, db_);
         }
 
     private:
         crow::SimpleApp crow_app;
+        std::shared_ptr<persistence::Persistence> db_;
 
     };
 }

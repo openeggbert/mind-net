@@ -17,24 +17,26 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
 
-
-#include <ostream>
-
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
+#ifndef MIGRATIONCOLUMNS_H
+#define MIGRATIONCOLUMNS_H
 
+namespace miniwiki::models::fields{
+    struct MigrationColumns {
+        MigrationColumns() = delete;
+
+        MigrationColumns(const MigrationColumns &) = delete;
+
+        MigrationColumns &operator=(const MigrationColumns &) = delete;
+
+        static constexpr const char *MODEL_NAME = "migration";
+
+        static constexpr const char *ID = "id";
+        static constexpr const char *MAX_MIGRATION_NUMBER = "max_migration_number";
     };
 }
-
-#endif // MIGRATION_H
+#endif // MIGRATIONCOLUMNS_H

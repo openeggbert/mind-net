@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki : Note management tool.
+// mini-wiki : Lightweight wiki inspired by MediaWiki.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -13,46 +13,63 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 #ifndef CONTENT_H
 #define CONTENT_H
 
-#include <ostream>
 #include <string>
+
+#include "BaseModel.h"
+#include "columns/ContentColumns.h"
+#include "crow/json.h"
 #include "miniwiki/Helper.h"
 
-namespace miniwiki::Entity
+namespace miniwiki::models
 {
-    using std::string;
-
-    struct Content
+    struct Content : BaseModel
     {
-        string id;
-        string value;
+        int id{};
+        str content;
+        str format;
+        unixtime created_at{};
 
-        Content() = default;
-        Content(string& id_, string& value_) :
-            id(std::move(id_)),
-            value(std::move(value_))
+
+        [[nodiscard]] str get_entity_name() const override
         {
+            return columns::ContentColumns::MODEL_NAME;
+        };
+
+        [[nodiscard]] entity_columns get_entity_columns() const override
+        {
+            return columns::ContentColumns::get_column_names();
         }
 
-        friend std::ostream& operator<<(std::ostream& os, const Content& content)
+        [[nodiscard]] entity_fields get_entity_fields() const override;
+        [[nodiscard]] bool should_be_id_auto_incremented() const override { return true; }
+
+        friend std::ostream& operator<<(std::ostream& os, const Content& idea)
         {
-            os << "Content{id: " << content.id
-                << ", value: " << content.value
-                << "}";
+            os << idea.to_json();
             return os;
         }
 
         bool operator==(const Content& other) const
         {
-            return
-                this->id == other.id &&
-                this->value == other.value;
+            return id == other.id && content == other.content && format == other.format && created_at == other.
+                created_at;
+        }
+
+        Content() = default;
+
+        Content(int i, const str& s, const str& string, int i1)
+        {
+            id = i;
+            content = s;
+            format = string;
+            created_at = i1;
         }
     };
 }

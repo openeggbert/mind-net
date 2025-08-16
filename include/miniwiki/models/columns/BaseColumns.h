@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki: Lightweight wiki inspired by MediaWiki.
+// mini-wiki : Lightweight wiki inspired by MediaWiki.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
@@ -17,24 +17,19 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MIGRATION_H
-#define MIGRATION_H
+#ifndef BASECOLUMNS_H
+#define BASECOLUMNS_H
 
 
-#include <ostream>
+#include "ostream"
+#include <string>
 
-namespace miniwiki::models {
-    struct DBMigrationSchemaHistory {
-        /**
- * UUID of migration.
- */
-        int id;
-        /**
-         * Order number.
-         */
-        int maxMigrationNumber;
+namespace miniwiki::models::columns {
+    using std::string;
 
+    struct BaseColumns {
+        virtual ~BaseColumns() = default;
     };
 }
 
-#endif // MIGRATION_H
+#endif // BASECOLUMNS_H

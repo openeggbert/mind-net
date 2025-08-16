@@ -2,8 +2,8 @@
 
 namespace miniwiki::http {
 
-    HttpServer::HttpServer() {
-        //
+    HttpServer::HttpServer(std::shared_ptr<persistence::Persistence> db) : db_(db)
+    {
     }
 
     void HttpServer::run(int port) {
