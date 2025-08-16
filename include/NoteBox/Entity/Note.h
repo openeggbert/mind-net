@@ -47,6 +47,12 @@ namespace NoteBox::Entity {
         unsigned char importance;
         unsigned char difficulty;
         unsigned short source_id;
+//         New columns:
+//         bool can_be_updated//default true
+//         bool can_be deleted//default false
+//         bool system
+//         bool archived
+//         bool concept
 
         [[nodiscard]] std::string get_last_id_segment() const
         {
