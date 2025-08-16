@@ -1,10 +1,10 @@
-# note-box
+# mini-wiki
 
-Note Box is a console application used to organize notes in the Zettelkasten like system.
+Mini Wiki is a lightweight wiki inspired by MediaWiki and written in the C++ programming language.
 
 Requirements:
-* Linux (Windows or other operating systems are not supported yet) 
-  * tested on Debian 13
+* Linux
+* Windows
 
 Used technologies:
 * C++17
@@ -12,70 +12,14 @@ Used technologies:
 * CMake
 
 Entities:
-* Notes - Tree structure via ID, for example: 34/acegfd
-* References
-* Collections
-* Tags
-
-## Commands
-* You can see the list of all commands by typing `help`.
-* You can see the help for a command by typing `help [COMMAND]`.
-
-```
-add [NOTE_NAME] ... creates a notes as a child of the current one
-
-cd [NOTE_ID] ... navigates to note with NOTE_ID
-
-ls ... lists children
-
-rm [NOTE_ID] ... removes note with given id
-
-pwd ... prints id of the current note
-
-col ls
-col add
-col edit
-col show
-col pwd
-col cd
-
-exit ... exits the application
-
-quit ... exits the application
-
-help [COMMAND] ... prints info related to the given command
-
-search
-
-edit
-
-show
-
-help
-
-tree
-
-tag
-
-lit ls
-lit add
-lit edit
-lit show
-
-term ls
-term ls [CATEGORY]
-term add
-term add [CATEGORY] [NAME]
-term edit
-term show
-term cat
-term rm [CATEGORY] [NAME]
-```
+* TODO
 
 ## How to build
 
+### How to build on Linux
+
 These are the instructions for Debian 13. 
-* For other distributions, you may need to install different packages.
+* For other Linuxdistributions , you may need to install different packages.
 
 
 ```aiignore
@@ -84,9 +28,9 @@ apt install cmake g++ libcurl4-openssl-dev
 # Install git
 apt install git
 # Clone the repository
-git clone https://github.com/openeggbert/note-box/
+git clone https://github.com/openeggbert/mini-wiki/
 # Go to the repository
-cd note-box
+cd mini-wiki
 # Switch to the develop branch
 git checkout develop
 # Create build directory
@@ -98,189 +42,16 @@ cmake -B . -S ..
 # Build
 cmake --build .
 # Run the application
-./note-box
-```
-
-### Example of Classes
-
-```
-Note
-NoteManager
-NoteRepository
-NoteRepositoryImplSqlite
-NoteTable
-Migrations
+./mini_wiki
 ```
 
 ## TODO
 
-- [ ] TODO-1 Text user interface via ncruses
-- [ ] TODO-2 Desktop user interface via QT
-- [ ] TODO-3 Support for PostgreSQL storage
-- [ ] TODO-4 Crow web server producing REST API and serving pure html files
-- [ ] TODO-5 New command ses - starts new subordinate session, user types some commands, typing exit returns user to the previous (parent) session
-- [ ] TODO-6 New command ref - manages references
-- [ ] TODO-7 New command tag - manages tags
-- [ ] TODO-8 New command col - manages collections of notes
-- [ ] TODO-9 New command review
-- [ ] TODO-10 Custom order of node siblings
-- [ ] TODO-11 New table NOTE_PROPERTY
-- [ ] TODO-12 New command import
-- [ ] TODO-13 New command export
-- [ ] TODO-13 New command quiz
-- [ ] TODO-14 Improve the main() function
-- [ ] TODO-15 New entity System - bool guest_users_are_allowed, bool user_can_self_register
-- [ ] TODO-16 Multi-user support
-- [ ] TODO-17 Modify table SESSION
-- [ ] TODO-18 New entity STARRED_NOTE:  id integer, owner_id integer, note_id integer, added_at integer, visible_to_other_users bool
+### Support for PostgreSQL storage
 
+### Crow web server producing REST API and serving pure html files
 
-
-
-
-
-```
-- [ ] TODO-? NAME
-```
-
-
-#### TODO-4 Crow web server producing REST API and serving pure html files
-
-New command server
-
-```aiignore
-note-box-web/
-├── index.html
-├── style.css
-└── app.js
-
-📄 index.html
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>NoteBox Web</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>NoteBox</h1>
-
-  <div id="login">
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-  </div>
-
-  <div id="note-form">
-    <textarea id="note-content" placeholder="Write a note..."></textarea>
-    <button onclick="createNote()">Create Note</button>
-  </div>
-
-  <div id="notes"></div>
-
-  <script src="app.js"></script>
-</body>
-</html>
-
-🎨 style.css
-
-body {
-  font-family: sans-serif;
-  margin: 20px;
-}
-
-textarea {
-  width: 100%;
-  height: 100px;
-  margin-bottom: 10px;
-}
-
-⚙️ app.js
-
-let token = null;
-
-function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  fetch("/api/login", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({username, password})
-  })
-  .then(res => res.json())
-  .then(data => {
-    token = data.token;
-    loadNotes();
-  });
-}
-
-function createNote() {
-  const content = document.getElementById("note-content").value;
-
-  fetch("/api/notes", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({content})
-  })
-  .then(() => loadNotes());
-}
-
-function loadNotes() {
-  fetch("/api/notes", {
-    headers: token ? {"Authorization": `Bearer ${token}`} : {}
-  })
-  .then(res => res.json())
-  .then(notes => {
-    const container = document.getElementById("notes");
-    container.innerHTML = "";
-    notes.forEach(note => {
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <p>${note.content}</p>
-        ${token ? `
-          <button onclick="updateNote(${note.id})">Update</button>
-          <button onclick="deleteNote(${note.id})">Delete</button>
-        ` : ""}
-      `;
-      container.appendChild(div);
-    });
-  });
-}
-
-function updateNote(id) {
-  const newContent = prompt("New content:");
-  if (!newContent) return;
-
-  fetch(`/api/notes/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${token}`
-    },
-    body: JSON.stringify({content: newContent})
-  })
-  .then(() => loadNotes());
-}
-
-function deleteNote(id) {
-  fetch(`/api/notes/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  })
-  .then(() => loadNotes());
-}
-
-```
-
-
-#### TODO-9 New command review
+### Review system
 
 * Shows the title of the note.
 * Shows: Press ENTER to show content, or type 's' to skip:
@@ -290,7 +61,7 @@ function deleteNote(id) {
 * Application updates REVIEW_IN_X_DAYS, EASINESS_FACTOR, REPETITION, EXPIRES_AT
 * Continues to the next note
 
-##### SM-2 (SuperMemo 2)
+#### SM-2 (SuperMemo 2)
 
 User defines the quality of the knowledge (0-5).
 
@@ -377,29 +148,12 @@ LAST_QUALITY
     Can be used for analysis or visualization
 ```
 
-# TODO-10 Custom order of node siblings
-
-* New commands pos
-* New column POSITION_SIBLING in the table NOTE, interval is 100
-
-# TODO-11 New table NOTE_PROPERTY
-
-New command prop
-
-```
-CREATE TABLE NOTE_PROPERTY (
-NOTE_ID TEXT NOT NULL,
-KEY TEXT NOT NULL,
-VALUE TEXT,
-PRIMARY KEY(NOTE_ID, KEY),
-FOREIGN KEY(NOTE_ID) REFERENCES NOTE(ID)
-);
-```
 
 
 
 
-#### TODO-14 Improve the main() function
+
+### Improve the main() function
 
 ```
    int main() {
@@ -407,7 +161,7 @@ FOREIGN KEY(NOTE_ID) REFERENCES NOTE(ID)
    if (!migrateSchemaIfNeeded()) return ExitStatus::MIGRATION_FAILED;
 
    auto db = initializeDatabase();
-   auto manager = initializeNoteBoxManager(db);
+   auto manager = initializeMiniWikiManager(db);
 
    if (set_editor_if_needed(db, exit_status)) return exit_status;
 
@@ -420,7 +174,7 @@ FOREIGN KEY(NOTE_ID) REFERENCES NOTE(ID)
 
 
 
-#### TODO-16 Multi-user support
+### Multi-user support
 
 ```
 CREATE TABLE USER (
@@ -438,7 +192,7 @@ mark_down_editor_path
 );
 
 Role descriptions:
-admin - can do anything, during first application launch note-box creates a user: role=admin username=admin password=admin, if user_can_self_register==false then only admin can create new users, the note-box application during first launch asks admin user to create a second user (password set to empty - not required) (enforcement that there won't be just admin user), then application changes current user to the second user
+admin - can do anything, during first application launch mini-wiki creates a user: role=admin username=admin password=admin, if user_can_self_register==false then only admin can create new users, the mini-wiki application during first launch asks admin user to create a second user (password set to empty - not required) (enforcement that there won't be just admin user), then application changes current user to the second user
 editor - can make edits
 reviewer - has permissions of both editor and moderator
 moderator - can only approve proposals from readers or other moderators, but cannot edit content directly  
@@ -490,109 +244,3 @@ FOREIGN KEY(REVIEWER_ID) REFERENCES USER(ID)
 );
 ```
 
-#### TODO-17 Modify table SESSION
-
-```
-CREATE TABLE SESSION (
-ID INTEGER PRIMARY KEY
-USER_ID INTEGER
-STARTED_AT INTEGER
-ENDED_AT INTEGER
-);
-```
-
-
-
-```
-#### TODO-? Text user interface via ncruses
-(Some details about task #1)
-```
-
-
-## Miscellaneous
-
-```aiignore
- CREATE TABLE TASK (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    TITLE TEXT NOT NULL,                    -- stručný název úkolu
-    COMMENT TEXT,                           -- popis úkolu
-    OWNER_ID INTEGER NOT NULL,              -- kdo úkol vytvořil
-    TEAM_ID INTEGER,                        -- tým, ke kterému úkol patří
-  CATEGORY TEXT,
-    NOTE_ID TEXT,                           -- odkaz na poznámku nebo dokument
-    CREATED_AT INTEGER NOT NULL,            -- timestamp vytvoření
-    DUE_DATE INTEGER,                       -- deadline
-    STATUS TEXT CHECK(STATUS IN ('todo', 'in_progress', 'done', 'archived')) DEFAULT 'todo',
-    PRIORITY INTEGER CHECK(PRIORITY BETWEEN 1 AND 5) DEFAULT 3,
-    ASSIGNEE_ID INTEGER,                    -- komu je úkol přiřazen
-    COMPLETED_AT INTEGER,                   -- kdy byl úkol dokončen
-    IS_PRIVATE BOOLEAN DEFAULT 0,           -- zda je úkol viditelný jen pro autora
-    TAGS TEXT,                              -- volitelné štítky (např. "urgent,backend")
-
-    FOREIGN KEY(OWNER_ID) REFERENCES USER(ID),
-    FOREIGN KEY(ASSIGNEE_ID) REFERENCES USER(ID),
-    FOREIGN KEY(TEAM_ID) REFERENCES TEAM(ID)
-);
-
-CREATE TABLE MESSAGE (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    OWNER_ID INTEGER NOT NULL,
-    SENDER_ID INTEGER NOT NULL,
-    RECIPIENT_ID INTEGER NOT NULL,
-    SUBJECT TEXT,
-    BODY TEXT NOT NULL,
-    SENT_AT INTEGER,
-    SYSTEM_MESSAGE BOOLEAN DEFAULT 0,
-    DRAFT BOOLEAN DEFAULT 0,
-    IS_READ BOOLEAN DEFAULT 0,
-    IN_TRASH BOOLEAN DEFAULT 0,
-    STARRED BOOLEAN DEFAULT 0,
-
-    FOREIGN KEY(SENDER_ID) REFERENCES USER(ID),
-    FOREIGN KEY(RECIPIENT_ID) REFERENCES USER(ID),
-    FOREIGN KEY(OWNER_ID) REFERENCES USER(ID)
-);
-
-CREATE TABLE TEAM (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    NAME TEXT NOT NULL,
-    DESCRIPTION TEXT,
-    CREATED_BY INTEGER NOT NULL,
-          LEADER_ID INTEGER NOT NULL,
-   CREATED_AT INTEGER NOT NULL,    
-   FOREIGN KEY(CREATED_BY) REFERENCES USER(ID) ); 
-
-CREATE TABLE TEAM_MEMBER (
-    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    TEAM_ID INTEGER NOT NULL,
-    USER_ID INTEGER NOT NULL,
-    ROLE TEXT DEFAULT 'member', -- např. 'admin', 'editor', 'viewer'
-    JOINED_AT INTEGER NOT NULL,
-    IS_ACTIVE BOOLEAN DEFAULT 1,
-    FOREIGN KEY(TEAM_ID) REFERENCES TEAM(ID),
-    FOREIGN KEY(USER_ID) REFERENCES USER(ID)
-);
-
-CREATE TABLE DISCUSSION (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  TEAM_ID INTEGER NOT NULL,
-  TITLE TEXT NOT NULL,
-  CREATED_BY INTEGER NOT NULL,
-  CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
-  IS_PINNED BOOLEAN DEFAULT 0,
-  FOREIGN KEY (TEAM_ID) REFERENCES TEAM(ID),
-  FOREIGN KEY (CREATED_BY) REFERENCES USER(ID)
-);
-
-CREATE TABLE COMMENT (
-  ID INTEGER PRIMARY KEY AUTOINCREMENT,
-  DISCUSSION_ID INTEGER NOT NULL,
-  USER_ID INTEGER NOT NULL,
-  CONTENT TEXT NOT NULL,
-  PARENT_ID INTEGER, 
-  CREATED_AT DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (DISCUSSION_ID) REFERENCES DISCUSSION(ID),
-  FOREIGN KEY (USER_ID) REFERENCES USER(ID)
-);
-
-```
