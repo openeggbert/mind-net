@@ -17,19 +17,22 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef BASECOLUMNS_H
-#define BASECOLUMNS_H
-
+#ifndef MODELDEFINITION_H
+#define MODELDEFINITION_H
 
 #include "ostream"
 #include <string>
 
-namespace miniwiki::models::columns {
+#include "miniwiki/Helper.h"
+
+namespace miniwiki::models {
     using std::string;
 
-    struct BaseColumns {
-        virtual ~BaseColumns() = default;
+    struct ModelDefinition {
+        str model_name;
+        bool auto_increment;
+        columns_definitions columns;
     };
 }
 
-#endif // BASECOLUMNS_H
+#endif // MODELDEFINITION_H

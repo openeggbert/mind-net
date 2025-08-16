@@ -12,7 +12,7 @@ namespace miniwiki::routes
     class ContentController
     {
     public:
-        void register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence> db);
+        void register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db);
     };
 }
 #endif // CONTENTCONTROLLER_H

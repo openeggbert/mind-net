@@ -49,8 +49,10 @@ namespace miniwiki
 
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
-        static str generate_insert_sql(const std::string& table_name, const std::vector<const char*>& columns,
-                                       bool auto_increment = false);
+        static str generate_select_one_sql(const std::string& table_name);
+
+        static str generate_insert_sql(const models::BaseModel& entity);
+
         static void fill_sqlite_query(SQLite::Statement& query, const entity_fields& values,
                                       bool auto_increment = false);
     };

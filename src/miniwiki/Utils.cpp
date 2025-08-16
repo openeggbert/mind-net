@@ -203,17 +203,22 @@ namespace miniwiki
         return result;
     }
 
-    str Utils::generate_insert_sql(const std::string& table_name, const std::vector<const char*>& columns,
-                                   bool auto_increment)
+    str Utils::generate_insert_sql(const models::BaseModel& entity)
+// const std::string& table_name, const std::vector<const char*>& columns,
+//                                    bool auto_increment)
     {
-        str sql = "INSERT INTO " + table_name + " (";
+        auto definition = entity.get_definition();
+
+        str sql = "INSERT INTO " + definition.model_name + " (";
+        auto columns = definition.columns;
         for (int i = 0; i < columns.size(); ++i)
         {
-            if (auto_increment && std::string(columns[i]) == PRIMARY_KEY_COLUMN_NAME)
+            auto& column = columns[i].first;
+            if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
             }
-            sql += columns[i];
+            sql += column;
             if (i < columns.size() - 1)
             {
                 sql += ", ";
@@ -222,7 +227,8 @@ namespace miniwiki
         sql += ") VALUES (";
         for (int i = 0; i < columns.size(); ++i)
         {
-            if (auto_increment && std::string(columns[i]) == PRIMARY_KEY_COLUMN_NAME)
+            auto column = columns[i].first;
+            if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
             }
@@ -235,6 +241,12 @@ namespace miniwiki
         sql += ")";
         return sql;
     }
+
+    str Utils::generate_select_one_sql(const std::string& table_name)
+    {
+        return "SELECT * FROM " + table_name + " WHERE id = ?";
+    }
+
 
     template <class>
     inline constexpr bool always_false = false;

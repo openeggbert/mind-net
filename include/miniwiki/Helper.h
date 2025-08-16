@@ -6,6 +6,7 @@
 #define HELPER_H
 #include <string>
 
+#include "enums/ColumnType.h"
 #include "nlohmann/json_fwd.hpp"
 
 typedef long long ll;
@@ -16,7 +17,10 @@ typedef std::string str;
 typedef nlohmann::json JSON;
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;
-typedef std::vector<const char*> entity_columns;
+
+typedef std::pair<str, miniwiki::enums::ColumnType> column_definition;
+typedef std::vector<column_definition> columns_definitions;
+
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";
 
 #endif //HELPER_H

@@ -23,15 +23,10 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "miniwiki/persistence/api/ContentRepository.h"
 #include "miniwiki/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "miniwiki/models/Content.h"
 
-#include <iostream>
 #include <string>
-#include <vector>
-
-#include "miniwiki/Global.h"
 #include "miniwiki/persistence/impl/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
 #include "miniwiki/persistence/impl/sqlite/SqliteFileName.h"
@@ -44,33 +39,36 @@ namespace miniwiki::impl::sqlite::repositories
 
     ContentRepositoryImplSqlite::~ContentRepositoryImplSqlite() = default;
 
-    void ContentRepositoryImplSqlite::create(const models::Content& content)
+    int ContentRepositoryImplSqlite::create(const models::Content& content)
     {
-        persistence::impl::sqlite::create_entity(content);
+        return persistence::impl::sqlite::create_model(content);
     }
 
-    // Entity::Content ContentRepositoryImplSqlite::read(std::string& id)
-    // {
-    //     std::string sql = "SELECT * FROM " + std::string(ContentTable::MODEL_NAME) +
-    //         " WHERE " + ContentTable::ID + "=?";
+    models::Content ContentRepositoryImplSqlite::read(const int id)
+    {
+        using models::columns::ContentColumns;
+        std::string sql = "SELECT * FROM " + std::string(ContentColumns::MODEL_NAME) +
+            " WHERE " + ContentColumns::ID + "=?";
+
+        SQLite::Database db(persistence::impl::sqlite::SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+        SQLite::Statement query(db, sql);
+
+        query.bind(1, id);
+
+        if (query.executeStep())
+        {
+            models::Content content;
+            content.id = query.getColumn(0);
+            content.content = query.getColumn(1).getString();
+            content.format = query.getColumn(2).getString();
+            content.created_at = static_cast<int64_t>(query.getColumn(2));
+            return content;
+        }
+
+        throw std::runtime_error("Content not found");
+    }
     //
-    //     SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    //     SQLite::Statement query(db, sql);
-    //
-    //     query.bind(1, id);
-    //
-    //     if (query.executeStep())
-    //     {
-    //         Entity::Content content;
-    //         content.id = query.getColumn(0).getString();
-    //         content.value = query.getColumn(1).getString();
-    //         return content;
-    //     }
-    //
-    //     throw std::runtime_error("Content not found");
-    // }
-    //
-    // void ContentRepositoryImplSqlite::remove(std::string& id)
+    // void ContentRepositoryImplSqlite::remove(int id)
     // {
     //     std::string sql = "DELETE FROM " + std::string(ContentTable::MODEL_NAME) +
     //         " WHERE " + ContentTable::ID + "=?";

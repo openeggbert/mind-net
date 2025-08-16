@@ -27,7 +27,6 @@
 
 #include "miniwiki/persistence/api/ContentRepository.h"
 #include "miniwiki/models/Content.h"
-#include <string>
 #include <vector>
 
 namespace miniwiki::impl::sqlite::repositories
@@ -40,9 +39,9 @@ namespace miniwiki::impl::sqlite::repositories
         ContentRepositoryImplSqlite();
         ~ContentRepositoryImplSqlite() override;
 
-        void create(const models::Content& content) override;
-        // models::Content read(std::string& id) override;
-        // void remove(std::string& id) override;
+        int create(const models::Content& content) override;
+        models::Content read(int id) override;
+        // void remove(int id) override;
         // void update(models::Content& content) override;
     };
 }

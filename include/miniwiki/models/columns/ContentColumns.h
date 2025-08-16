@@ -25,6 +25,7 @@
 #ifndef CONTENTCOLUMNS_H
 #define CONTENTCOLUMNS_H
 #include "miniwiki/Helper.h"
+#include "miniwiki/enums/ColumnType.h"
 
 
 namespace miniwiki::models::columns
@@ -42,17 +43,6 @@ namespace miniwiki::models::columns
         static constexpr const char* CONTENT = "content";
         static constexpr const char* FORMAT = "format";
         static constexpr const char* CREATED_AT = "created_at";
-
-        static const entity_columns& get_column_names()
-        {
-            static const entity_columns COLUMN_NAMES{
-                ID,
-                CONTENT,
-                FORMAT,
-                CREATED_AT
-            };
-            return COLUMN_NAMES;
-        }
 
     };
 }

@@ -7,7 +7,7 @@
 namespace miniwiki::models
 {
 
-    entity_fields Content::get_entity_fields() const
+    entity_fields Content::get_values() const
     {
         entity_fields result;
         result.push_back(id);

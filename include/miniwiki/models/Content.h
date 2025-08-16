@@ -29,26 +29,32 @@
 
 namespace miniwiki::models
 {
+
+    using enums::ColumnType;
+    using columns::ContentColumns;
+    static ModelDefinition CONTENT_DEFINITION = {
+        ContentColumns::MODEL_NAME,
+        true,
+        {
+            {ContentColumns::ID, ColumnType::INTEGER},
+            {ContentColumns::CONTENT, ColumnType::TEXT},
+            {ContentColumns::FORMAT, ColumnType::TEXT},
+            {ContentColumns::CREATED_AT, ColumnType::INTEGER},
+        }
+
+    };
     struct Content : BaseModel
     {
-        int id{};
         str content;
         str format;
         unixtime created_at{};
 
-
-        [[nodiscard]] str get_entity_name() const override
+        [[nodiscard]] inline ModelDefinition get_definition() const override
         {
-            return columns::ContentColumns::MODEL_NAME;
-        };
-
-        [[nodiscard]] entity_columns get_entity_columns() const override
-        {
-            return columns::ContentColumns::get_column_names();
+            return CONTENT_DEFINITION;
         }
 
-        [[nodiscard]] entity_fields get_entity_fields() const override;
-        [[nodiscard]] bool should_be_id_auto_incremented() const override { return true; }
+        [[nodiscard]] entity_fields get_values() const override;
 
         friend std::ostream& operator<<(std::ostream& os, const Content& idea)
         {

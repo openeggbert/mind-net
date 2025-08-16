@@ -24,6 +24,7 @@
 
 #include <string>
 
+#include "ModelDefinition.h"
 #include "miniwiki/Helper.h"
 
 namespace miniwiki::models {
@@ -32,19 +33,27 @@ namespace miniwiki::models {
 
     struct BaseModel {
 
+        int id{};
+
         virtual ~BaseModel() = default;
-        [[nodiscard]] virtual str get_entity_name() const = 0;
-        [[nodiscard]] virtual entity_columns get_entity_columns() const = 0;
-        [[nodiscard]] virtual entity_fields get_entity_fields() const = 0;
-        [[nodiscard]] virtual bool should_be_id_auto_incremented() const = 0;
+        [[nodiscard]] inline int get_id() const
+        {
+            return id;
+        }
+        [[nodiscard]] virtual ModelDefinition get_definition() const = 0;
+
+        [[nodiscard]] virtual entity_fields get_values() const = 0;
 
         [[nodiscard]] JSON to_json() const
         {
             JSON json;
             int index = 0;
-            entity_fields fields = get_entity_fields();
-            for (auto& field : get_entity_columns())
+            entity_fields fields = get_values();
+            auto definition = get_definition();
+
+            for (auto& e : definition.columns)
             {
+                auto field = e.first;
                 std::visit([&json, &field](const auto& value)
                 {
                     json[field] = value;

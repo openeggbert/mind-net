@@ -40,10 +40,10 @@ namespace miniwiki::persistence::api {
     public:
         virtual ~ContentRepository() = default;
 
-        virtual void create(const models::Content& content) = 0;
-        // virtual models::Content read(std::string& id) = 0;
+        virtual int create(const models::Content& content) = 0;
+        virtual models::Content read(int id) = 0;
         // virtual void update(models::Content& content) = 0;
-        // virtual void remove(std::string& id) = 0;
+        // virtual void remove(int id) = 0;
         // virtual std::vector<models::Content> list(size_t page_number, size_t pageSize) = 0;
     };
 
