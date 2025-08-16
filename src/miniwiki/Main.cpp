@@ -115,8 +115,11 @@ bool set_editor_if_needed(const std::shared_ptr<miniwiki::Persistence::DB>& db, 
 std::vector<std::string> main_args_to_vector(int argc, char** argv)
 {
     std::vector<std::string> result;
+    //std::cout << "Found " << argc << " arguments" << std::endl;
+    //std::cout << "First argument: " << argv[0] << std::endl;
     for (int i = 1; i < argc; ++i)
     {
+        //std::cout << "Found argument " << argv[i] << std::endl;
         result.push_back(argv[i]);
     }
     return result;
@@ -124,6 +127,8 @@ std::vector<std::string> main_args_to_vector(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
+    std::cout << "Starting miniwiki..." << std::endl;
+    //std::cout << "argc: " << argc << std::endl;
     std::vector<str> arguments = main_args_to_vector(argc, argv);
     if (arguments.size() == 0)
     {
@@ -133,6 +138,7 @@ int main(int argc, char** argv)
     auto arg0 = arguments[0];
     if (arg0 == "start")
     {
+        bool custom_port = false;
         int port = 8080;
         for (int i = 1; i < arguments.size(); ++i)
         {
@@ -147,7 +153,8 @@ int main(int argc, char** argv)
                 if (i + 1 < arguments.size())
                 {
                     try {
-                    port = std::stoi(arguments[i + 1]);
+                        port = std::stoi(arguments[i + 1]);
+                        custom_port = true;
                     }
                     catch (std::exception& e)
                     {
@@ -171,6 +178,14 @@ int main(int argc, char** argv)
 
         miniwiki::routes::ContentController content_controller;
         server.register_controller(&content_controller);
+        if (custom_port)
+        {
+            std::cout << "Custom port was provided: " << port << std::endl;
+        } else
+        {
+            std::cout << "Using default port: " << port << std::endl;
+        }
+        std::cout << "Starting server on port " << port << std::endl;
         server.run(port);
     }
     else if (arg0 == "help")
