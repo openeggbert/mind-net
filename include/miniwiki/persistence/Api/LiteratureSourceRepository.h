@@ -25,7 +25,7 @@
 #include <vector>
 
 
-namespace MiniWiki::Persistence::Api {
+namespace miniwiki::Persistence::Api {
 
     /**
      *

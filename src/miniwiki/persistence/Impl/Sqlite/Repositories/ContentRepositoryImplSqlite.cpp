@@ -36,7 +36,7 @@
 #include "SQLiteCpp/Database.h"
 #include "miniwiki/persistence/Impl/Sqlite/SqliteFileName.h"
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     using std::vector;
     using Persistence::Impl::Sqlite::Tables::ContentTable;

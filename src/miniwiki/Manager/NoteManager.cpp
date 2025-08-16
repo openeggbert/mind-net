@@ -12,7 +12,7 @@
 #include "miniwiki/Enum/Difficulty.h"
 #include "miniwiki/persistence/DB.h"
 
-namespace MiniWiki::Manager
+namespace miniwiki::Manager
 {
     NoteManager::NoteManager(const std::shared_ptr<Persistence::DB>& db)
         : currentPath(""), db(db)
@@ -110,9 +110,9 @@ namespace MiniWiki::Manager
         note.last_reviewed_at = 0l;
         note.expires_at = 0l;
         note.review_in_x_days = 0;
-        note.importance = static_cast<int>(MiniWiki::Enum::Importance::MEDIUM);
-        note.difficulty = static_cast<int>(MiniWiki::Enum::Difficulty::MEDIUM);
-        if (!fast_adding && !MiniWiki::Utils::ask_yes_no("Do you really want to create this new Note?")) {return;}
+        note.importance = static_cast<int>(miniwiki::Enum::Importance::MEDIUM);
+        note.difficulty = static_cast<int>(miniwiki::Enum::Difficulty::MEDIUM);
+        if (!fast_adding && !miniwiki::Utils::ask_yes_no("Do you really want to create this new Note?")) {return;}
         db->note_repository->create(note);
     }
 

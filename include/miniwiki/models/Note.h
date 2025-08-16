@@ -28,7 +28,7 @@
 #include "miniwiki/Enum/Difficulty.h"
 #include "miniwiki/Enum/Importance.h"
 
-namespace MiniWiki::Entity {
+namespace miniwiki::Entity {
     using std::string;
 
     struct Note {

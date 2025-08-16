@@ -6,7 +6,7 @@
 
 #include "ICommand.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class TermCommand : public ICommand {
 
         ICommandHelper* helper = nullptr;

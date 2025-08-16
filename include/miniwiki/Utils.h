@@ -12,7 +12,7 @@
 #include "models/BaseEntity.h"
 #include "SQLiteCpp/Statement.h"
 
-namespace MiniWiki
+namespace miniwiki
 {
 
     class Utils

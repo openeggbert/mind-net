@@ -9,7 +9,7 @@
 #include "miniwiki/Global.h"
 #include "miniwiki/Manager/MiniWikiManager.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void EditCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         std::string path;
         if (!args.empty())

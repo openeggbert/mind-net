@@ -11,7 +11,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki {
+namespace miniwiki {
     std::string ProgressTracker::getProgressBar() {
         std::string progressBar = "[";
         int percentProgress = static_cast<int>(getProgress() * 10);

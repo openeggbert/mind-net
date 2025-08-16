@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace MiniWiki
+namespace miniwiki
 {
     TEST(NoteIdToVectorTest, ValidInputs)
     {

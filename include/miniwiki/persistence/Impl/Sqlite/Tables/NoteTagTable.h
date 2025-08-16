@@ -26,7 +26,7 @@
 #define NOTETAGTABLE_H
 
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
     struct NoteTagTable {
         NoteTagTable() = delete;
 

@@ -25,7 +25,7 @@
 #ifndef HISTORYTABLE_H
 #define HISTORYTABLE_H
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
     struct HistoryTable {
         HistoryTable() = delete;
 

@@ -25,7 +25,7 @@
 #ifndef CONTENTTABLE_H
 #define CONTENTTABLE_H
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables
+namespace miniwiki::Persistence::Impl::Sqlite::Tables
 {
     struct ContentTable
     {

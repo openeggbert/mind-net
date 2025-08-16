@@ -1,7 +1,7 @@
 #ifndef COLLECTIONNOTETABLE_H
 #define COLLECTIONNOTETABLE_H
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
 {
     struct CollectionNoteTable
     {

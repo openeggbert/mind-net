@@ -24,7 +24,7 @@
 
 #include "miniwiki/Utils.h"
 
-namespace MiniWiki::Persistence::Impl::Sqlite {
+namespace miniwiki::Persistence::Impl::Sqlite {
 
 /**
  *

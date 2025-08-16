@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void LsCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         auto current_path = mgr.note_manager.pwd();
         mgr.note_manager.list_notes(current_path);

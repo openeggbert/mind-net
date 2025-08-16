@@ -35,7 +35,7 @@
 #include "miniwiki/persistence/Impl/Sqlite/SqliteFileName.h"
 #include "miniwiki/persistence/Impl/Sqlite/Tables/IdeaTable.h"
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     using Persistence::Impl::Sqlite::SQLITE_FILE_NAME;
     using Persistence::Impl::Sqlite::Tables::IdeaTable;

@@ -7,7 +7,7 @@
 
 #include "ICommand.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class WalkCommand : public ICommand {
         ICommandHelper* helper = nullptr;
 

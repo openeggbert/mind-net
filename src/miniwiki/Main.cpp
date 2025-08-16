@@ -5,14 +5,13 @@
 
 #include "miniwiki/Utils.h"
 #include <memory>
-#include <optional>
 #include <sstream>
 
 #include "miniwiki/Global.h"
 #include "miniwiki/Command/CommandFactory.h"
 #include "miniwiki/Command/CommandHelper.h"
 #include "miniwiki/ExitStatus.h"
-#include "miniwiki/core/HttpServer.h"
+#include "miniwiki/http/HttpServer.h"
 #include "miniwiki/Manager/MiniWikiManager.h"
 #include "miniwiki/persistence/DB.h"
 #include "miniwiki/persistence/Impl/Sqlite/SqliteDatabaseMigration.h"
@@ -23,19 +22,20 @@
 #include "miniwiki/persistence/Impl/Sqlite/Repositories/OldEntityRepositoryImplSqlite.h"
 #include "miniwiki/persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
 #include "miniwiki/persistence/Impl/Sqlite/Repositories/TermRepositoryImplSqlite.h"
+#include "miniwiki/controllers/ContentController.h"
 
 bool migrate_schema_if_needed()
 {
-    MiniWiki::Utils::trace("Migrating schema, if needed:");
+    miniwiki::Utils::trace("Migrating schema, if needed:");
 
-    bool migrationResult = MiniWiki::Persistence::Impl::
+    bool migrationResult = miniwiki::Persistence::Impl::
         Sqlite::SqliteDatabaseMigration::getInstance()->migrate();
     if (migrationResult)
     {
-        MiniWiki::Utils::trace("Migrating schema: OK. Success.");
+        miniwiki::Utils::trace("Migrating schema: OK. Success.");
         return true;
     }
-    MiniWiki::err << "Migrating schema: KO. Failed." << std::endl;
+    miniwiki::err << "Migrating schema: KO. Failed." << std::endl;
     return false;
 }
 
@@ -61,115 +61,42 @@ void print_logo()
  * and an ID value of 1. This new session is then saved using the session
  * manager's `create` function.
  *
- * @param note_box_manager An instance of MiniWiki::Manager::MiniWikiManager,
+ * @param note_box_manager An instance of miniwiki::Manager::MiniWikiManager,
  *                         which contains the session manager and is used
  *                         to manage session operations.
  * @return `true` if a new session was created; `false` if a session
  *         already exists.
  */
-bool create_session_if_does_not_yet_exist(MiniWiki::Manager::MiniWikiManager note_box_manager)
+bool create_session_if_does_not_yet_exist(miniwiki::Manager::MiniWikiManager note_box_manager)
 {
     auto session = note_box_manager.session_manager.get();
     if (session.id == 0)
     {
         session.id = 1;
         session.current_path = "";
-        session.last_opened = MiniWiki::Utils::currentUnixTimestamp();
+        session.last_opened = miniwiki::Utils::currentUnixTimestamp();
         note_box_manager.session_manager.create(session);
         return true;
     }
     else { return false; }
 }
 
-
-/**
- * Calculates the Levenshtein distance between two strings.
- *
- * The Levenshtein distance is a measure of the similarity between two strings,
- * defined as the minimum number of single-character edits required to transform
- * one string into the other. The allowed operations are insertion, deletion, and
- * substitution of characters.
- *
- * This function uses dynamic programming to efficiently compute the distance in
- * O(m * n) time, where `m` and `n` are the lengths of the two input strings.
- *
- * @param a The first string to compare.
- * @param b The second string to compare.
- * @return The calculated Levenshtein distance between the two strings.
- */
-int levenshtein(const std::string& a, const std::string& b)
-{
-    int m = a.size();
-    int n = b.size();
-    std::vector<std::vector<int>> dp(m + 1, std::vector<int>(n + 1));
-
-    for (int i = 0; i <= m; ++i) dp[i][0] = i;
-    for (int j = 0; j <= n; ++j) dp[0][j] = j;
-
-    for (int i = 1; i <= m; ++i)
-        for (int j = 1; j <= n; ++j)
-            dp[i][j] = std::min(std::min(
-                                    dp[i - 1][j] + 1, // deletion
-                                    dp[i][j - 1] + 1), // insertion
-                                dp[i - 1][j - 1] + (a[i - 1] != b[j - 1]) // substitution
-            );
-
-    return dp[m][n];
-}
-
-/**
- * Finds the closest matching command to the given input within a specified
- * maximum Levenshtein distance.
- *
- * This function iterates through a list of commands and calculates the
- * Levenshtein distance between the input string and each command string. It
- * identifies the command with the smallest distance, provided it is less than
- * or equal to the given maximum distance. If no command meets the criteria,
- * the function returns an empty optional.
- *
- * @param input The user-provided input string to match against the command list.
- * @param commands A vector containing the list of available commands.
- * @param max_distance The maximum allowable Levenshtein distance for a match
- *                     to be considered valid. Defaults to 3.
- * @return An optional containing the closest matching command if a valid
- *         match is found, or an empty optional if no such match exists.
- */
-std::optional<std::string> findClosestCommand(const std::string& input, const std::vector<std::string>& commands,
-                                              int max_distance = 3)
-{
-    int minDistance = INT_MAX;
-    std::string closest;
-
-    for (const auto& cmd : commands)
-    {
-        int dist = levenshtein(input, cmd);
-        if (dist < minDistance)
-        {
-            minDistance = dist;
-            closest = cmd;
-        }
-    }
-
-    return minDistance <= max_distance ? std::make_optional(closest) : std::nullopt;
-}
-
-
-bool set_editor_if_needed(const std::shared_ptr<MiniWiki::Persistence::DB>& db, int& exit_status)
+bool set_editor_if_needed(const std::shared_ptr<miniwiki::Persistence::DB>& db, int& exit_status)
 {
     while (db->session_repository->get().editor_path.empty())
     {
-        MiniWiki::err << "Please set the editor path. It must be a valid program." << std::endl;
+        miniwiki::err << "Please set the editor path. It must be a valid program." << std::endl;
         std::cout << "Editor path: ";
         std::string editor_path;
         std::getline(std::cin, editor_path);
         db->session_repository->get().editor_path = editor_path;
         if (editor_path.empty())
         {
-            MiniWiki::err << "Editor path cannot be empty." << std::endl;
-            if (!MiniWiki::Utils::ask_yes_no("Do you want to type the editor path?"))
+            miniwiki::err << "Editor path cannot be empty." << std::endl;
+            if (!miniwiki::Utils::ask_yes_no("Do you want to type the editor path?"))
             {
                 std::cout << "Exiting application" << std::endl;
-                exit_status = MiniWiki::ExitStatus::EDITOR_PATH_NOT_SET;
+                exit_status = miniwiki::ExitStatus::EDITOR_PATH_NOT_SET;
                 return true;
             }
         }
@@ -185,41 +112,98 @@ bool set_editor_if_needed(const std::shared_ptr<MiniWiki::Persistence::DB>& db, 
     return false;
 }
 
-int main()
+std::vector<std::string> main_args_to_vector(int argc, char** argv)
 {
-    miniwiki::core::HttpServer server;
-    server.run();
+    std::vector<std::string> result;
+    for (int i = 1; i < argc; ++i)
+    {
+        result.push_back(argv[i]);
+    }
+    return result;
+}
 
+int main(int argc, char** argv)
+{
+    std::vector<str> arguments = main_args_to_vector(argc, argv);
+    if (arguments.size() == 0)
+    {
+        miniwiki::err << "No arguments provided. Exiting." << std::endl;
+        return 1;
+    }
+    auto arg0 = arguments[0];
+    if (arg0 == "start")
+    {
+        int port = 8080;
+        for (int i = 1; i < arguments.size(); ++i)
+        {
+            auto argument = arguments[i];
+            if (argument[0] != '-')
+            {
+                miniwiki::err << "Option must start with \"-\": " << argument << std::endl;
+                return 1;
+            }
+            if (argument == "-p" || argument == "--port")
+            {
+                if (i + 1 < arguments.size())
+                {
+                    try {
+                    port = std::stoi(arguments[i + 1]);
+                    }
+                    catch (std::exception& e)
+                    {
+                        miniwiki::err << "Invalid port provided: " << arguments[i + 1] << std::endl;
+                        return 1;
+                    }
+                    ++i;
+                }
+                else
+                {
+                    miniwiki::err << "No port provided for option --port. Exiting." << std::endl;
+                    return 1;
+                }
+            } else
+            {
+                miniwiki::err << "Unknown option for start command: " << argument << std::endl;
+                return 1;
+            }
+        }
+        miniwiki::http::HttpServer server;
 
+        miniwiki::routes::ContentController content_controller;
+        server.register_controller(&content_controller);
+        server.run(port);
+    }
+    else if (arg0 == "help")
+    {
+        std::cout << "Help is not yet implemented." << std::endl;
+    }
+    else
+    {
+        miniwiki::err << "Unknown command: " << arg0 << std::endl;
+        return 1;
+    }
 
-    crow::SimpleApp app;
-
-    CROW_ROUTE(app, "/")([](){
-        return "Hello from mini_wiki!";
-    });
-
-    app.port(8080).multithreaded().run();
 
     return 0;
-    MiniWiki::start_time = MiniWiki::Utils::currentUnixTimestamp();
+    miniwiki::start_time = miniwiki::Utils::currentUnixTimestamp();
     print_logo();
 
     if (!migrate_schema_if_needed())
     {
-        MiniWiki::err << "Failed to migrate schema. Exiting." << std::endl;
-        exit(MiniWiki::ExitStatus::MIGRATION_FAILED);
+        miniwiki::err << "Failed to migrate schema. Exiting." << std::endl;
+        exit(miniwiki::ExitStatus::MIGRATION_FAILED);
     }
 
-    std::shared_ptr<MiniWiki::Persistence::DB> db = std::make_shared<MiniWiki::Persistence::DB>();
+    std::shared_ptr<miniwiki::Persistence::DB> db = std::make_shared<miniwiki::Persistence::DB>();
 
-    MiniWiki::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::SessionRepositoryImplSqlite session_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::ContentRepositoryImplSqlite content_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::OldContentRepositoryImplSqlite old_content_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::OldEntityRepositoryImplSqlite old_entity_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::TermRepositoryImplSqlite term_repository{};
-    MiniWiki::Impl::Sqlite::Repositories::IdeaRepositoryImplSqlite idea_repository{};
+    miniwiki::Impl::Sqlite::Repositories::LiteratureSourceRepositoryImplSqlite literature_source_repository{};
+    miniwiki::Impl::Sqlite::Repositories::SessionRepositoryImplSqlite session_repository{};
+    miniwiki::Impl::Sqlite::Repositories::ContentRepositoryImplSqlite content_repository{};
+    miniwiki::Impl::Sqlite::Repositories::OldContentRepositoryImplSqlite old_content_repository{};
+    miniwiki::Impl::Sqlite::Repositories::OldEntityRepositoryImplSqlite old_entity_repository{};
+    miniwiki::Impl::Sqlite::Repositories::NoteRepositoryImplSqlite note_repository{};
+    miniwiki::Impl::Sqlite::Repositories::TermRepositoryImplSqlite term_repository{};
+    miniwiki::Impl::Sqlite::Repositories::IdeaRepositoryImplSqlite idea_repository{};
 
     db->literature_source_repository = &literature_source_repository;
     db->session_repository = &session_repository;
@@ -230,14 +214,14 @@ int main()
     db->term_repository = &term_repository;
     db->idea_repository = &idea_repository;
 
-    MiniWiki::Manager::MiniWikiManager note_box_manager(db);
+    miniwiki::Manager::MiniWikiManager note_box_manager(db);
 
     create_session_if_does_not_yet_exist(note_box_manager);
 
     int exit_status;
     if (set_editor_if_needed(db, exit_status)) return exit_status;
-    MiniWiki::Command::CommandFactory factory;
-    MiniWiki::Command::CommandHelper command_helper(&factory, &db);
+    miniwiki::Command::CommandFactory factory;
+    miniwiki::Command::CommandHelper command_helper(&factory, &db);
     factory.getCommand("help")->setCommandHelper(&command_helper);
     factory.getCommand("walk")->setCommandHelper(&command_helper);
     factory.getCommand("tree")->setCommandHelper(&command_helper);
@@ -271,19 +255,7 @@ int main()
         }
         else if (!cmd.empty())
         {
-            MiniWiki::err << cmd << " is not a miniwiki command. See 'help'." << std::endl;
-            auto suggestion = findClosestCommand(cmd, factory.list_commands());
-            if (suggestion.has_value())
-            {
-                std::cout << "The most similar command is" << std::endl << "        " << suggestion.value() << std::endl;
-                bool use_suggested_command = MiniWiki::Utils::ask_yes_no("Do you want to use the command " + suggestion.value() + "?");
-                if (use_suggested_command)
-                {
-                    command = factory.getCommand(suggestion.value());
-                    command->execute(note_box_manager, args);
-                }
-
-            }
+            miniwiki::err << cmd << " is not a miniwiki command. See 'help'." << std::endl;
         }
 
         // Show path after the command
@@ -291,7 +263,7 @@ int main()
     }
 
     auto session = note_box_manager.session_manager.get();
-    session.last_opened = MiniWiki::Utils::currentUnixTimestamp();
+    session.last_opened = miniwiki::Utils::currentUnixTimestamp();
     session.current_path = note_box_manager.note_manager.pwd();
     note_box_manager.session_manager.update(session);
 

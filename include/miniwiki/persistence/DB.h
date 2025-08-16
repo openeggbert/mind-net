@@ -14,7 +14,7 @@
 #include "Api/TermRepository.h"
 
 
-namespace MiniWiki::Persistence {
+namespace miniwiki::Persistence {
     class DB {
     public:
         Api::LiteratureSourceRepository* literature_source_repository{};

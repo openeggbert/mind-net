@@ -10,9 +10,9 @@
 #include "miniwiki/Utils.h"
 #include "miniwiki/persistence/DB.h"
 
-namespace MiniWiki::Manager
+namespace miniwiki::Manager
 {
-    IdeaManager::IdeaManager(const std::shared_ptr<MiniWiki::Persistence::DB>& db_)
+    IdeaManager::IdeaManager(const std::shared_ptr<miniwiki::Persistence::DB>& db_)
         : db(db_)
     {
     }

@@ -7,7 +7,7 @@
 #include "ICommandHelper.h"
 #include "miniwiki/Manager/MiniWikiManager.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class ICommand {
     public:
 

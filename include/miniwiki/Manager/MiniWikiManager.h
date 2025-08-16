@@ -10,12 +10,12 @@
 #include "SessionManager.h"
 #include "miniwiki/models/OldEntity.h"
 
-namespace MiniWiki::Persistence
+namespace miniwiki::Persistence
 {
     class DB;
 }
 
-namespace MiniWiki::Manager {
+namespace miniwiki::Manager {
     class MiniWikiManager {
     private:
         std::shared_ptr<Persistence::DB> db;

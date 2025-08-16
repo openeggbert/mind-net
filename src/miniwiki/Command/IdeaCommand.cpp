@@ -8,7 +8,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
 #include <string>
 #include <ctime>

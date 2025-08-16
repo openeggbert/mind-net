@@ -9,7 +9,7 @@
 #include "miniwiki/persistence/DB.h"
 #include "miniwiki/persistence/Impl/Sqlite/Repositories/SessionRepositoryImplSqlite.h"
 
-namespace MiniWiki::Manager
+namespace miniwiki::Manager
 {
     class SessionManager
     {

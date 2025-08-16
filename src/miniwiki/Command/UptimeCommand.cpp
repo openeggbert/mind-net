@@ -8,7 +8,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
     namespace Labels
     {
@@ -29,7 +29,7 @@ namespace MiniWiki::Command
         static const int SECONDS_PER_MINUTE = 60;
 
         ll current_time = Utils::currentUnixTimestamp();
-        ll elapsed_seconds = current_time - MiniWiki::start_time;
+        ll elapsed_seconds = current_time - miniwiki::start_time;
         short days = 0;
         short hours = 0;
         short minutes = 0;

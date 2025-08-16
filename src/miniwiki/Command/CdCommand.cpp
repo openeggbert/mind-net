@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void CdCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         mgr.note_manager.cd(args);
         // auto session = mgr.session_manager.get();

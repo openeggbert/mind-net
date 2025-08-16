@@ -9,7 +9,7 @@
 
 #include "MiniWiki/Entity/Note.h"
 
-namespace MiniWiki::Manager {
+namespace miniwiki::Manager {
     class ReferenceManager {
     private:
         std::string currentPath; // e.g., "/1a/2b"

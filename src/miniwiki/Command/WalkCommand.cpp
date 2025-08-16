@@ -14,7 +14,7 @@
 #include <limits>
 
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
     // RAII guard pro termios
     class TermiosGuard

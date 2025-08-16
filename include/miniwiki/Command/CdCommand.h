@@ -6,7 +6,7 @@
 
 #include "ICommand.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class CdCommand : public ICommand {
     public:
         void execute(Manager::MiniWikiManager& mgr, const std::string& args) override;

@@ -21,7 +21,7 @@
 
 #include <ostream>
 
-namespace MiniWiki::Entity {
+namespace miniwiki::Entity {
     struct DBMigrationSchemaHistory {
         /**
  * UUID of migration.

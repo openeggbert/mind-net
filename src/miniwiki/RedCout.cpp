@@ -4,7 +4,7 @@
 
 #include "miniwiki/RedCout.h"
 
-namespace MiniWiki
+namespace miniwiki
 {
 
 }

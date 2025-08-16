@@ -8,7 +8,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void EditorCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         auto session = mgr.session_manager.get();
         std::cout << "Current editor: " << session.editor_path << std::endl;

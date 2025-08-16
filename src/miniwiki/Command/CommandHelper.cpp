@@ -8,9 +8,9 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
-    CommandHelper::CommandHelper(MiniWiki::Command::CommandFactory* factory_, std::shared_ptr<MiniWiki::Persistence::DB>* db_)
+    CommandHelper::CommandHelper(miniwiki::Command::CommandFactory* factory_, std::shared_ptr<miniwiki::Persistence::DB>* db_)
     {
         this->factory = factory_;
         this->db = db_;
@@ -57,7 +57,7 @@ namespace MiniWiki::Command
         }
     }
 
-    std::shared_ptr<MiniWiki::Persistence::DB>* CommandHelper::getDB()
+    std::shared_ptr<miniwiki::Persistence::DB>* CommandHelper::getDB()
     {
         return db;
     }

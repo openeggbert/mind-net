@@ -33,7 +33,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Persistence::Impl::Sqlite
+namespace miniwiki::Persistence::Impl::Sqlite
 {
     SqliteDatabaseMigration::SqliteDatabaseMigration()
     {

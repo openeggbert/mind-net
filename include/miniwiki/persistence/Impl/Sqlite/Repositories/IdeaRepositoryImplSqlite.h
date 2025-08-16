@@ -28,7 +28,7 @@
 #include "miniwiki/persistence/Api/IdeaRepository.h"
 #include "miniwiki/models/Idea.h"
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     class IdeaRepositoryImplSqlite : public Persistence::Api::IdeaRepository
     {

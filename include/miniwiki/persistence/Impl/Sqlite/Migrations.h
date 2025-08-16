@@ -7,7 +7,7 @@
 #include <string>
 
 
-namespace MiniWiki::Persistence::Impl::Sqlite {
+namespace miniwiki::Persistence::Impl::Sqlite {
     constexpr int MIGRATION_COUNT = 14;
     inline std::string migrations[MIGRATION_COUNT] = {
 

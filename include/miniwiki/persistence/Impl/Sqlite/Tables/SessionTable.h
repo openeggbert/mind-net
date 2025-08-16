@@ -26,7 +26,7 @@
 #define SESSIONTABLE_H
 
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
     struct SessionTable {
         SessionTable() = delete;
 

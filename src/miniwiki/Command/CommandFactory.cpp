@@ -26,7 +26,7 @@
 #define add(key, clazz) commands[#key] = std::make_shared<clazz##Command>();commandNames.push_back(#key);
 
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
     CommandFactory::CommandFactory()
     {

@@ -11,7 +11,7 @@
 #include "miniwiki/Command/ICommand.h"
 
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class CommandFactory {
         std::map<std::string, std::shared_ptr<ICommand> > commands;
         std::vector<std::string> commandNames;

@@ -10,7 +10,7 @@
 #include "miniwiki/Enum/Difficulty.h"
 #include "miniwiki/Enum/Importance.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void InfoCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         auto current_path = mgr.note_manager.pwd();
         if (current_path.empty())

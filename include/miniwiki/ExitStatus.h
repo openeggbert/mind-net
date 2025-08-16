@@ -4,7 +4,7 @@
 #ifndef EXITSTATUS_H
 #define EXITSTATUS_H
 
-namespace MiniWiki
+namespace miniwiki
 {
     enum ExitStatus
     {

@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
     void HelpCommand::execute(Manager::MiniWikiManager& mgr, const std::string& args)
     {

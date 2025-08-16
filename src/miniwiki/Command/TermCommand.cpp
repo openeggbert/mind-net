@@ -9,7 +9,7 @@
 #include <vector>
 #include <sstream>
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
 
     std::vector<std::string> splitByLines(const std::string& text) {

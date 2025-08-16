@@ -7,7 +7,7 @@
 #include "ICommand.h"
 #include "miniwiki/Manager/LiteratureSourceManager.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class LitCommand : public ICommand {
     public:
         void execute(Manager::MiniWikiManager& mgr, const std::string& args) override;

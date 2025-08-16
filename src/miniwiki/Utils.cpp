@@ -18,7 +18,7 @@
 #include "miniwiki/persistence/Impl/Sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
-namespace MiniWiki
+namespace miniwiki
 {
     namespace Entity
     {

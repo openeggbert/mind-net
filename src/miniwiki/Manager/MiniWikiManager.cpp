@@ -4,7 +4,7 @@
 
 #include "miniwiki/Manager/MiniWikiManager.h"
 
-namespace MiniWiki::Manager
+namespace miniwiki::Manager
 {
     MiniWikiManager::MiniWikiManager(const std::shared_ptr<Persistence::DB>& db)
         :

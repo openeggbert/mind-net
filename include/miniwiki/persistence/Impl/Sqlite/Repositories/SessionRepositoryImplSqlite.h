@@ -28,7 +28,7 @@
 #include "miniwiki/persistence/Api/SessionRepository.h"
 #include "miniwiki/models/Session.h"
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     class SessionRepositoryImplSqlite : public Persistence::Api::SessionRepository
     {

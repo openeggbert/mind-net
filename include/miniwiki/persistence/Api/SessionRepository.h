@@ -24,7 +24,7 @@
 #include "miniwiki/models/Session.h"
 
 
-namespace MiniWiki::Persistence::Api
+namespace miniwiki::Persistence::Api
 {
     /**
      *

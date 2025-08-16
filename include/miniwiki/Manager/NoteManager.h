@@ -9,12 +9,12 @@
 #include "miniwiki/models/Content.h"
 #include "miniwiki/models/Note.h"
 
-namespace MiniWiki::Persistence
+namespace miniwiki::Persistence
 {
     class DB;
 }
 
-namespace MiniWiki::Manager {
+namespace miniwiki::Manager {
     class NoteManager {
     private:
         std::string currentPath; // e.g., "/1a/2b"

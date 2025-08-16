@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <string>
 
-namespace MiniWiki {
+namespace miniwiki {
     class ProgressTracker {
     private:
         std::chrono::high_resolution_clock::time_point startTime;

@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Manager
+namespace miniwiki::Manager
 {
     SessionManager::SessionManager(const std::shared_ptr<Persistence::DB>& db_) : db(db_)
     {

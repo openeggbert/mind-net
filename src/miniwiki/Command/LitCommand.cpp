@@ -9,7 +9,7 @@
 #include "miniwiki/Global.h"
 
 //#define genif(cmd, method) if (args == #cmd){mgr.literature_source_manager.##method();return;}
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
     void LitCommand::execute(Manager::MiniWikiManager& mgr, const std::string& args)
     {

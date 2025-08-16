@@ -28,7 +28,7 @@
 #include "miniwiki/Utils.h"
 #include "miniwiki/persistence/Impl/Sqlite/Tables/IdeaTable.h"
 
-namespace MiniWiki::Entity
+namespace miniwiki::Entity
 {
     using std::string;
 

@@ -30,7 +30,7 @@
 #include <string>
 #include <vector>
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     using std::vector;
 

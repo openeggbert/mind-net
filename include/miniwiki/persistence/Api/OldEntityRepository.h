@@ -28,7 +28,7 @@
 #include "miniwiki/models/OldEntity.h"
 
 
-namespace MiniWiki::Persistence::Api {
+namespace miniwiki::Persistence::Api {
 
     /**
      *

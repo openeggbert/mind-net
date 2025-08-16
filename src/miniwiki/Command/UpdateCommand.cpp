@@ -14,7 +14,7 @@
 #include "miniwiki/Manager/MiniWikiManager.h"
 #include "miniwiki/persistence/Impl/Sqlite/Tables/NoteTable.h"
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
 
     void UpdateCommand::execute(Manager::MiniWikiManager& mgr, const std::string& args)

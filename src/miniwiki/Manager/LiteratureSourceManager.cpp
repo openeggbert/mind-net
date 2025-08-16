@@ -9,7 +9,7 @@
 #include "miniwiki/Global.h"
 #include "miniwiki/Utils.h"
 
-namespace MiniWiki::Manager
+namespace miniwiki::Manager
 {
     LiteratureSourceManager::LiteratureSourceManager(const std::shared_ptr<Persistence::DB>& db_) : db(db_)
     {
@@ -58,7 +58,7 @@ namespace MiniWiki::Manager
         cin.clear();
 
         content = Utils::editTextInEditor("", db->session_repository->get().editor_path);
-        if (!MiniWiki::Utils::ask_yes_no("Do you really want to create this new LiteratureSource?")) {return;}
+        if (!miniwiki::Utils::ask_yes_no("Do you really want to create this new LiteratureSource?")) {return;}
         Entity::LiteratureSource literature_source = {0, title, author, year, publication, url, content};
 
         db->literature_source_repository->create(literature_source);

@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace MiniWiki::Enum {
+namespace miniwiki::Enum {
     /**
      *
      * @author robertvokac
@@ -52,5 +52,5 @@ namespace MiniWiki::Enum {
 
 
 
-} // namespace MiniWiki::Enums
+} // namespace miniwiki::Enums
 #endif

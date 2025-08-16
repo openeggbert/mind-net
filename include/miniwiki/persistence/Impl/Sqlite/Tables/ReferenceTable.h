@@ -26,7 +26,7 @@
 #define REFERENCETABLE_H
 
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
     struct ReferenceTable {
         ReferenceTable() = delete;
 

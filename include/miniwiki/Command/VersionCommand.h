@@ -6,7 +6,7 @@
 #define VERSIONCOMMAND_H
 #include "ICommand.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class VersionCommand : public ICommand {
     public:
         void execute(Manager::MiniWikiManager& mgr, const std::string& args) override;

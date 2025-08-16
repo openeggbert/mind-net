@@ -37,7 +37,7 @@
 #include "miniwiki/persistence/Impl/Sqlite/SqliteFileName.h"
 #include "miniwiki/persistence/Impl/Sqlite/Tables/OldContentTable.h"
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     using std::vector;
     using Persistence::Impl::Sqlite::Tables::OldContentTable;

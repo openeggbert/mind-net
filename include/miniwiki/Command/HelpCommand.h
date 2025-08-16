@@ -6,7 +6,7 @@
 
 #include "ICommand.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class HelpCommand : public ICommand {
     private:
         ICommandHelper* command_helper = nullptr;

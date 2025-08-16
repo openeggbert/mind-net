@@ -8,7 +8,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void AddCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args)
     {
         std::string title;

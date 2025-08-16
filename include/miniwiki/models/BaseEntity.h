@@ -25,7 +25,7 @@
 
 #include "miniwiki/Utils.h"
 
-namespace MiniWiki::Entity {
+namespace miniwiki::Entity {
 
     static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "ID";
 

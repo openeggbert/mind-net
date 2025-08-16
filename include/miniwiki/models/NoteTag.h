@@ -23,7 +23,7 @@
 #include <string>
 #include "MiniWiki/Helper.h"
 
-namespace MiniWiki::Entity {
+namespace miniwiki::Entity {
     using std::string;
 
     struct NoteTag {

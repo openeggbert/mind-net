@@ -9,12 +9,12 @@
 
 #include "miniwiki/models/Idea.h"
 
-namespace MiniWiki::Persistence
+namespace miniwiki::Persistence
 {
     class DB;
 }
 
-namespace MiniWiki::Manager {
+namespace miniwiki::Manager {
     class IdeaManager {
     private:
         std::shared_ptr<Persistence::DB> db;

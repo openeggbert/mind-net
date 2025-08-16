@@ -29,7 +29,7 @@
 #include "miniwiki/Utils.h"
 
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables
+namespace miniwiki::Persistence::Impl::Sqlite::Tables
 {
     struct IdeaTable
     {

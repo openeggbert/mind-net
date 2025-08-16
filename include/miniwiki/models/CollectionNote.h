@@ -23,7 +23,7 @@
 #include <ostream>
 #include "MiniWiki/Entity/Note.h"
 
-namespace MiniWiki::Entity {
+namespace miniwiki::Entity {
     struct CollectionNote {
         int collection_id;
         string note_id;

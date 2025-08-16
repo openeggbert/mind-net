@@ -25,7 +25,7 @@
 #ifndef TERMTABLE_H
 #define TERMTABLE_H
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables
+namespace miniwiki::Persistence::Impl::Sqlite::Tables
 {
     struct TermTable
     {

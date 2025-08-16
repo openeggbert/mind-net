@@ -25,7 +25,7 @@
 #include "miniwiki/Helper.h"
 #include "miniwiki/Utils.h"
 
-namespace MiniWiki::Entity
+namespace miniwiki::Entity
 {
     using std::string;
 

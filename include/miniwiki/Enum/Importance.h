@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace MiniWiki::Enum
+namespace miniwiki::Enum
 {
     /**
      *
@@ -53,5 +53,5 @@ namespace MiniWiki::Enum
     }
 
 
-} // namespace MiniWiki::Enums
+} // namespace miniwiki::Enums
 #endif

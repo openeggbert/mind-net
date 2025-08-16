@@ -4,9 +4,9 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki {
+namespace miniwiki {
     ll start_time = 0l;
-    MiniWiki::RedCout err;
+    miniwiki::RedCout err;
 
 }
 

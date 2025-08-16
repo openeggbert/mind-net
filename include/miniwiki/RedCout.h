@@ -6,7 +6,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace MiniWiki
+namespace miniwiki
 {
     class RedCout
     {

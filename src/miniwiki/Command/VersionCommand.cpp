@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void VersionCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         std::cout << "0.0.0-SNAPSHOT" << std::endl;
     }

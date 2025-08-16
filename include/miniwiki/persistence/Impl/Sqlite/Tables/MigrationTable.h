@@ -25,7 +25,7 @@
 #ifndef MIGRATIONTABLE_H
 #define MIGRATIONTABLE_H
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
     struct MigrationTable {
         MigrationTable() = delete;
 

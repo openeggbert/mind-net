@@ -24,7 +24,7 @@
 #include <ostream>
 #include <string>
 
-namespace MiniWiki::Entity {
+namespace miniwiki::Entity {
     using std::string;
 
     struct BaseTable {

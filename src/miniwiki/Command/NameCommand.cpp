@@ -8,7 +8,7 @@
 
 #include "miniwiki/Global.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void NameCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         auto current_path = mgr.note_manager.pwd();
         if (current_path.empty())

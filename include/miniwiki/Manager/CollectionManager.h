@@ -8,7 +8,7 @@
 
 #include "MiniWiki/Entity/Note.h"
 
-namespace MiniWiki::Manager {
+namespace miniwiki::Manager {
     class CollectionManager {
     private:
         std::string currentPath; // e.g., "/1a/2b"

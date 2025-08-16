@@ -29,7 +29,7 @@
 
 #include <string>
 
-namespace MiniWiki::Persistence::Impl::Sqlite
+namespace miniwiki::Persistence::Impl::Sqlite
 {
     inline std::string SQLITE_FILE_NAME = "./miniwiki.sqlite3";
 }

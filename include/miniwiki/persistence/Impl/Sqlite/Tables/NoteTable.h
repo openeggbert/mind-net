@@ -25,7 +25,7 @@
 #ifndef NOTETABLE_H
 #define NOTETABLE_H
 
-namespace MiniWiki::Persistence::Impl::Sqlite::Tables {
+namespace miniwiki::Persistence::Impl::Sqlite::Tables {
 
 struct NoteTable {
 

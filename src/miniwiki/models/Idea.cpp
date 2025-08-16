@@ -4,7 +4,7 @@
 
 #include "miniwiki/models/Idea.h"
 
-namespace MiniWiki::Entity
+namespace miniwiki::Entity
 {
     using Persistence::Impl::Sqlite::Tables::IdeaTable;
 

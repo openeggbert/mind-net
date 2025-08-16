@@ -7,7 +7,7 @@
 
 #include "ICommand.h"
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     class InfoCommand : public ICommand {
     public:
         void execute(Manager::MiniWikiManager& mgr, const std::string& args) override;

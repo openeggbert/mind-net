@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void PwdCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         std::cout << "/" << mgr.note_manager.pwd() << "\n";
     }

@@ -32,7 +32,7 @@
 
 #include "miniwiki/models/OldEntity.h"
 
-namespace MiniWiki::Impl::Sqlite::Repositories
+namespace miniwiki::Impl::Sqlite::Repositories
 {
     using std::vector;
 

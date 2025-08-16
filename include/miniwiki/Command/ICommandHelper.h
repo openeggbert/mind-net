@@ -8,7 +8,7 @@
 
 #include "miniwiki/Manager/MiniWikiManager.h"
 
-namespace MiniWiki::Command
+namespace miniwiki::Command
 {
     class ICommandHelper
     {
@@ -16,7 +16,7 @@ namespace MiniWiki::Command
         virtual void print_help(const std::string& command) = 0;
         virtual std::vector<std::string> list_commands() = 0;
         virtual void execute(Manager::MiniWikiManager &mgr, const std::string& cmd, const std::string& args) = 0;
-        virtual std::shared_ptr<MiniWiki::Persistence::DB>* getDB() = 0;
+        virtual std::shared_ptr<Persistence::DB>* getDB() = 0;
 
         virtual ~ICommandHelper() = default;
     };

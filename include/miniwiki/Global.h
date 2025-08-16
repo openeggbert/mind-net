@@ -8,9 +8,9 @@
 #include "Helper.h"
 #include "RedCout.h"
 
-namespace MiniWiki {
+namespace miniwiki {
     extern ll start_time;
-    extern MiniWiki::RedCout err;
+    extern RedCout err;
 
 }
 

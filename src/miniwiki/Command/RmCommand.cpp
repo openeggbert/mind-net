@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-namespace MiniWiki::Command {
+namespace miniwiki::Command {
     void RmCommand::execute(Manager::MiniWikiManager &mgr, const std::string &args) {
         mgr.note_manager.remove_note(args);
     }

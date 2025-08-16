@@ -4,7 +4,7 @@
 
 #include "miniwiki/persistence/DB.h"
 
-namespace MiniWiki::Persistence
+namespace miniwiki::Persistence
 {
     DB::DB() = default;
 }
