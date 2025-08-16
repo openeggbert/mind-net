@@ -7,3 +7,9 @@
 [submodule "thirdparty/nlohmann_json"]
 	path = thirdparty/nlohmann_json
 	url = https://github.com/nlohmann/json.git
+[submodule "thirdparty/crow"]
+	path = thirdparty/crow
+	url = https://github.com/crowcpp/crow.git
+[submodule "thirdparty/asio"]
+	path = thirdparty/asio
+	url = https://github.com/chriskohlhoff/asio

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "MiniWiki/Utils.h"
+#include "miniwiki/Utils.h"
 #include <vector>
 #include <string>
 #include <stdexcept>

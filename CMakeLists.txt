@@ -16,15 +16,29 @@ add_subdirectory(thirdparty/nlohmann_json)
 file(GLOB_RECURSE ALL_SOURCES "src/*.cpp")
 
 # Separate main.cpp from core sources
-set(MAIN_SOURCE "src/MiniWiki/Main.cpp")
+set(MAIN_SOURCE "src/miniwiki/Main.cpp")
 list(REMOVE_ITEM ALL_SOURCES ${MAIN_SOURCE})
+
+# Add Crow dependency
+set(CROW_DIR thirdparty/crow)
+
+# Add Boost Asio dependency
+set(ASIO_DIR thirdparty/asio)
+set(ASIO_INCLUDE_DIR ${ASIO_DIR}/asio/include)
+include_directories(${ASIO_INCLUDE_DIR})
+
 
 # Core library target
 add_library(mini_wiki_core STATIC
         ${ALL_SOURCES}
 )
 
-target_include_directories(mini_wiki_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(mini_wiki_core PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/crow/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/asio/asio/include
+)
+
 target_link_libraries(mini_wiki_core PUBLIC
         SQLiteCpp
         sqlite3

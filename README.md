@@ -28,11 +28,13 @@ These are the instructions for Debian 13.
 
 ```aiignore
 # Install dependencies
-apt install cmake g++ libcurl4-openssl-dev
+apt install build-essential libboost-all-dev cmake g++ libcurl4-openssl-dev
 # Install git
 apt install git
 # Clone the repository
 git clone https://github.com/openeggbert/mini-wiki/
+# Init git submodules
+git submodule update --init --recursive
 # Go to the repository
 cd mini-wiki
 # Switch to the develop branch
