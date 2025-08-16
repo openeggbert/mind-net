@@ -120,7 +120,7 @@ int main(int argc, char** argv)
         miniwiki::http::HttpServer server{db};
 
         miniwiki::routes::ContentController content_controller;
-        server.register_controller(&content_controller);
+        server.register_controller(&content_controller, miniwiki::models::CONTENT_DEFINITION);
         if (custom_port)
         {
             std::cout << "Custom port was provided: " << port << std::endl;

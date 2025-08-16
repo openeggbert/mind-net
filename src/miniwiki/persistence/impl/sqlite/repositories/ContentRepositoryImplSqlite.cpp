@@ -61,7 +61,7 @@ namespace miniwiki::impl::sqlite::repositories
             content.id = query.getColumn(0);
             content.content = query.getColumn(1).getString();
             content.format = query.getColumn(2).getString();
-            content.created_at = static_cast<int64_t>(query.getColumn(2));
+            content.created_at = static_cast<int64_t>(query.getColumn(3));
             return content;
         }
 

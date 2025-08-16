@@ -9,34 +9,41 @@
 
 namespace miniwiki::routes
 {
-    void ContentController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db)
+    crow::json::wvalue model_to_wvalue(entity_fields& values, const models::ModelDefinition& def)
     {
-        typedef models::columns::ContentColumns c;
-        CROW_ROUTE(app, "/content/<int>")
-        ([db](int id)
+        crow::json::wvalue res;
+        auto columns = def.columns;
+
+        for (int i = 0; i < columns.size(); i++)
         {
-            models::Content c;
-            try {
-            c = db->content_repository->read(id);
-            } catch (std::runtime_error& e) {return crow::response(404, "The content with id " + std::to_string(id) + " was not found.");}
+            auto column_name = columns[i].first;
+            auto value = values[i];
 
-            crow::json::wvalue res;
-            res["id"] = c.id;
-            res["content"] = c.content;
-            res["format"] = c.format;
-            res["created_at"] = c.created_at;
-            return crow::response(201, res);
+            std::visit([&res, &column_name](auto&& val)
+            {
+                res[column_name] = crow::json::wvalue(val);
+            }, values[i]);
+        }
+        return res;
+    }
 
-        });
 
-        CROW_ROUTE(app, "/content").methods(crow::HTTPMethod::POST)
+    void ContentController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
+                                            models::ModelDefinition& def)
+    {
+        typedef models::columns::ContentColumns cols;
+
+        //CREATE
+        app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::POST)
         ([db](const crow::request& req)
         {
             auto body = crow::json::load(req.body);
-            if (!body || !body.has(c::CONTENT) || !body.has(c::FORMAT))
+            if (!body || !body.has(cols::CONTENT) || !body.has(cols::FORMAT))
                 return crow::response(400, "Invalid input");
 
-            models::Content c{0, body[c::CONTENT].s(), body[c::FORMAT].s(),static_cast<int>(Utils::currentUnixTimestamp())};
+            models::Content c{
+                0, body[cols::CONTENT].s(), body[cols::FORMAT].s(), static_cast<int>(Utils::currentUnixTimestamp())
+            };
             auto last_inserted_id = db.get()->content_repository->create(c);
 
             crow::json::wvalue res;
@@ -44,7 +51,26 @@ namespace miniwiki::routes
             res["content"] = c.content;
             res["format"] = c.format;
             res["created_at"] = c.created_at;
-            return crow::response(201, res);
+            return crow::response(200, res);
+        });
+
+        //READ
+        app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::GET)
+        ([&db, &def](int id)
+        {
+            entity_fields values;
+            try
+            {
+                values = db->content_repository->read(id).get_values();
+            }
+            catch (std::runtime_error& e)
+            {
+                return crow::response(
+                    404, "The " + def.model_name + " with id " + std::to_string(id) + " was not found.");
+            }
+
+            crow::json::wvalue res = model_to_wvalue(values, def);
+            return crow::response(200, res);
         });
     }
 }
