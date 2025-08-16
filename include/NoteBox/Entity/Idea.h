@@ -54,12 +54,7 @@ namespace NoteBox::Entity
         friend std::ostream& operator<<(std::ostream& os, const Idea& idea)
         {
             os << idea.to_json();
-            // << "Idea{id: " << idea.id
-            //     << ", text: " << idea.text
-            //     << ", category: " << idea.category
-            //     << ", created_at: " << Utils::unixToFormattedString(idea.created_at)
-            //     << ", due_at: " << Utils::unixToFormattedString(idea.due_at)
-            //     << "}";
+
 
             return os;
         }
@@ -67,12 +62,7 @@ namespace NoteBox::Entity
         bool operator==(const Idea& other) const
         {
             return this->equals(other);
-            // return
-            //     this->id == other.id &&
-            //     this->text == other.text &&
-            //     this->category == other.category &&
-            //     this->created_at == other.created_at &&
-            //     this->due_at == other.due_at;
+
         }
     };
 }

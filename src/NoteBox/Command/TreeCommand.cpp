@@ -66,9 +66,22 @@ namespace NoteBox::Command
         print_line_of_tree(note_id, note_title, "" , true, note_repo);
     }
 
-    void TreeCommand::help()
-    {
-        std::cout << "help to be implemented" << std::endl;
+    void TreeCommand::help(){
+        std::cout << R"(
+NAME
+       tree
+
+SYNOPSIS
+       tree [NOTE_ID]
+
+DESCRIPTION
+       Show the tree structure of the Note.
+
+EXAMPLES
+       tree ... shows the tree of the current Note ID.
+       tree 3kd43 ... shows the tree of the Note with ID 3kd43.
+
+)" << std::endl;
     }
 
     void TreeCommand::setCommandHelper(ICommandHelper* command_helper_)
