@@ -18,8 +18,14 @@ typedef nlohmann::json JSON;
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;
 
-typedef std::pair<str, miniwiki::enums::ColumnType> column_definition;
-typedef std::vector<column_definition> columns_definitions;
+struct ColumnDefinition
+{
+    str column_name;
+    miniwiki::enums::ColumnType column_type;
+    bool mandatory = true;
+};
+typedef ColumnDefinition column_definition;
+typedef std::vector<column_definition> column_definitions;
 
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";
 

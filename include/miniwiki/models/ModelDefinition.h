@@ -31,7 +31,7 @@ namespace miniwiki::models {
     struct ModelDefinition {
         str model_name;
         bool auto_increment;
-        columns_definitions columns;
+        column_definitions columns;
     };
 }
 

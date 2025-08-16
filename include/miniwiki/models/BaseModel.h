@@ -53,7 +53,7 @@ namespace miniwiki::models {
 
             for (auto& e : definition.columns)
             {
-                auto field = e.first;
+                auto field = e.column_name;
                 std::visit([&json, &field](const auto& value)
                 {
                     json[field] = value;

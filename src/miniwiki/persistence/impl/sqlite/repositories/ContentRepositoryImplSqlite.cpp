@@ -41,7 +41,14 @@ namespace miniwiki::impl::sqlite::repositories
 
     int ContentRepositoryImplSqlite::create(const models::Content& content)
     {
-        return persistence::impl::sqlite::create_model(content);
+        try
+        {
+            return persistence::impl::sqlite::create_model(content);
+        }
+        catch (std::exception& e)
+        {
+            return -1;
+        }
     }
 
     models::Content ContentRepositoryImplSqlite::read(const int id)

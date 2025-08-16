@@ -36,10 +36,10 @@ namespace miniwiki::models
         ContentColumns::MODEL_NAME,
         true,
         {
-            {ContentColumns::ID, ColumnType::INTEGER},
-            {ContentColumns::CONTENT, ColumnType::TEXT},
-            {ContentColumns::FORMAT, ColumnType::TEXT},
-            {ContentColumns::CREATED_AT, ColumnType::INTEGER},
+            {ContentColumns::ID, ColumnType::INTEGER, true},
+            {ContentColumns::CONTENT, ColumnType::TEXT, true},
+            {ContentColumns::FORMAT, ColumnType::TEXT, true},
+            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
         }
 
     };

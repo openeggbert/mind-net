@@ -213,7 +213,7 @@ namespace miniwiki
         auto columns = definition.columns;
         for (int i = 0; i < columns.size(); ++i)
         {
-            auto& column = columns[i].first;
+            auto& column = columns[i].column_name;
             if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
@@ -227,7 +227,7 @@ namespace miniwiki
         sql += ") VALUES (";
         for (int i = 0; i < columns.size(); ++i)
         {
-            auto column = columns[i].first;
+            auto column = columns[i].column_name;
             if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
