@@ -15,7 +15,7 @@ namespace miniwiki::persistence::impl::sqlite {
 CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	content TEXT NOT NULL,
-	format TEXT,
+	format INTEGER,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -34,7 +34,11 @@ CREATE TABLE namespace (
 CREATE TABLE user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	username TEXT NOT NULL UNIQUE,
-	password_hash TEXT NOT NULL
+	password_hash TEXT NOT NULL,
+    email TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    active BOOL DEFAULT 0,
+    token TEXT
 );
 
 
@@ -56,15 +60,23 @@ CREATE TABLE user_role (
 	FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE,
 	FOREIGN KEY(role_id) REFERENCES role(id) ON DELETE CASCADE
 );
+        )",
 
-
+    	R"(
+CREATE TABLE infobox (
+	id INTEGER PRIMARY KEY,
+	data JSON NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
         )",
+
         R"(
 CREATE TABLE revision (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	article_id INTEGER NOT NULL,
 	content_id INTEGER NOT NULL,
+    infobox_id INTEGER,
 	user_id INTEGER,
 	comment TEXT,
 	deleted BOOLEAN DEFAULT 0,
@@ -74,6 +86,7 @@ CREATE TABLE revision (
 
 	FOREIGN KEY (article_id) REFERENCES article(id) ON DELETE CASCADE,
 	FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE,
+	FOREIGN KEY (infobox_id) REFERENCES infobox(id) ON DELETE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE SET NULL,
 	FOREIGN KEY (reverted_from_revision_id) REFERENCES revision(id) ON DELETE SET NULL
 );
@@ -91,6 +104,7 @@ CREATE TABLE article (
 	is_redirect BOOLEAN DEFAULT 0,
 	redirect_article_id INTEGER,
 	redirect_reason TEXT,
+    language TEXT,
 	CHECK ( (is_redirect = 0 AND redirect_article_id IS NULL) OR (is_redirect = 1 AND redirect_article_id IS NOT NULL) ),
 	UNIQUE(namespace_id, title),
 
@@ -116,16 +130,7 @@ CREATE TABLE wanted_article (
 
 
         )",
-        R"(
-CREATE TABLE infobox (
-	article_id INTEGER PRIMARY KEY,
-	data JSON NOT NULL,
-	FOREIGN KEY (article_id) REFERENCES article(id) ON DELETE CASCADE
-);
 
-
-
-        )",
         R"(
 CREATE TABLE article_property(
 	article_id INTEGER,
