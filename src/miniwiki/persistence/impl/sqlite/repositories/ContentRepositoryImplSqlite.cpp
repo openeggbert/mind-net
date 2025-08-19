@@ -53,26 +53,11 @@ namespace miniwiki::impl::sqlite::repositories
 
     models::Content ContentRepositoryImplSqlite::read(const int id)
     {
-        using models::columns::ContentColumns;
-        std::string sql = "SELECT * FROM " + std::string(ContentColumns::MODEL_NAME) +
-            " WHERE " + ContentColumns::ID + "=?";
+        entity_fields values = persistence::impl::sqlite::read_model(models::CONTENT_DEFINITION, id);
+        models::Content content;
+        content.from_values(values);
+        return content;
 
-        SQLite::Database db(persistence::impl::sqlite::SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-        SQLite::Statement query(db, sql);
-
-        query.bind(1, id);
-
-        if (query.executeStep())
-        {
-            models::Content content;
-            content.id = query.getColumn(0);
-            content.content = query.getColumn(1).getString();
-            content.format = query.getColumn(2).getString();
-            content.created_at = static_cast<int64_t>(query.getColumn(3));
-            return content;
-        }
-
-        throw std::runtime_error("Content not found");
     }
     //
     // void ContentRepositoryImplSqlite::remove(int id)

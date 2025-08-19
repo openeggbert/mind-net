@@ -40,9 +40,14 @@ namespace miniwiki::models {
         {
             return id;
         }
+        inline void set_id(int id_)
+        {
+            id = id_;
+        }
         [[nodiscard]] virtual ModelDefinition get_definition() const = 0;
 
         [[nodiscard]] virtual entity_fields get_values() const = 0;
+        virtual void from_values(const entity_fields& values) = 0;
 
         [[nodiscard]] JSON to_json() const
         {

@@ -29,8 +29,8 @@
 #include "miniwiki/persistence/impl/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
-namespace miniwiki::persistence::impl::sqlite {
-
+namespace miniwiki::persistence::impl::sqlite
+{
     using std::vector;
     using models::columns::ContentColumns;
     using sqlite::SQLITE_FILE_NAME;
@@ -44,49 +44,63 @@ namespace miniwiki::persistence::impl::sqlite {
         SQLite::Database db(
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
-            );
+        );
         SQLite::Statement query(db, sql);
 
         Utils::fill_sqlite_query(query, entity.get_values()
-            , definition.auto_increment
-    );
+                                 , definition.auto_increment
+        );
 
         Utils::sqlite_exec(query);
         return db.getLastInsertRowid();
-
     }
 
-    inline entity_fields read_model(str& model_name, const int id)
+    inline entity_fields read_model(models::ModelDefinition& def, const int id)
     {
+        std::string sql = Utils::generate_select_one_sql(def.model_name);
+        std::cout << "Going to execute SQL: " << sql << std::endl;
+
+        SQLite::Database db(
+            SQLITE_FILE_NAME,
+            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
+        );
+        SQLite::Statement query(db, sql);
+
         entity_fields result;
-        return result;
+        auto columns = def.columns;
+        query.bind(1, id);
 
-    //     std::string sql = Utils::generate_select_one_sql(model_name);
-    //     std::cout << "Going to execute SQL: " << sql << std::endl;
-    //
-    //     SQLite::Database db(
-    //         SQLITE_FILE_NAME,
-    //         SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
-    //     );
-    //     SQLite::Statement query(db, sql);
-    //
-    //     entity_fields result;
-    //     auto columns = entity.get_entity_columns();
-    //
-    //
-    //
-    //
-    //
-    //     Utils::fill_sqlite_query(query, entity.get_entity_fields()
-    //         , entity.should_be_id_auto_incremented()
-    // );
-    //
-    //     Utils::sqlite_exec(query);
 
+        if (query.executeStep())
+        {
+            int i = 0;
+            for (const auto& column : def.columns)
+            {
+                switch (column.column_type)
+                {
+                case enums::ColumnType::TEXT:
+                    {
+                        str text = query.getColumn(i).getString();
+                        result.push_back(text);
+                    }
+                    break;
+                case enums::ColumnType::INTEGER:
+                    {
+                        int number = query.getColumn(i);
+                        result.push_back(number);
+                    }
+                    break;
+                default: throw std::runtime_error("Unknown type");
+
+                }
+                i++;
+            }
+            return result;
+        }
+
+
+        throw std::runtime_error(def.model_name + " not found");
     }
-
-
-
 }
 
 #endif // BASEREPOSITORY_H

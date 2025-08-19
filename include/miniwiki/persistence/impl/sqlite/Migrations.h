@@ -5,6 +5,7 @@
 #ifndef MIGRATIONS_H
 #define MIGRATIONS_H
 #include <string>
+#include <climits>
 
 
 namespace miniwiki::persistence::impl::sqlite {
@@ -79,10 +80,11 @@ CREATE TABLE revision (
     infobox_id INTEGER,
 	user_id INTEGER,
 	comment TEXT,
-	deleted BOOLEAN DEFAULT 0,
-	minor_edit BOOLEAN DEFAULT 0,
+	deleted BOOL DEFAULT 0,
+	minor_edit BOOL DEFAULT 0,
 	edited_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	reverted_from_revision_id INTEGER,
+    concept BOOL DEFAULT 1,
 
 	FOREIGN KEY (article_id) REFERENCES article(id) ON DELETE CASCADE,
 	FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE,
@@ -105,6 +107,8 @@ CREATE TABLE article (
 	redirect_article_id INTEGER,
 	redirect_reason TEXT,
     language TEXT,
+    importance INTEGER,
+    difficulty INTEGER,
 	CHECK ( (is_redirect = 0 AND redirect_article_id IS NULL) OR (is_redirect = 1 AND redirect_article_id IS NOT NULL) ),
 	UNIQUE(namespace_id, title),
 

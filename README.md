@@ -1,5 +1,6 @@
 # mini-wiki
 
+
 Mini Wiki is a lightweight wiki inspired by MediaWiki and written in the C++ programming language:
 * No hierarchy of articles. Each article is in the root
 * One article can be in more categories

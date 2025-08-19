@@ -55,6 +55,7 @@ namespace miniwiki::models
         }
 
         [[nodiscard]] entity_fields get_values() const override;
+        void from_values(const entity_fields& values) override;
 
         friend std::ostream& operator<<(std::ostream& os, const Content& idea)
         {
