@@ -34,16 +34,15 @@
 namespace mindnet::impl::sqlite::repositories
 {
 
-
     MapRepositoryImplSqlite::MapRepositoryImplSqlite() = default;
 
     MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
 
-    int MapRepositoryImplSqlite::create(const models::Map& content)
+    int MapRepositoryImplSqlite::create(const models::Map& map)
     {
         try
         {
-            return persistence::impl::sqlite::create_model(content);
+            return persistence::impl::sqlite::create_model(map);
         }
         catch (std::exception& e)
         {

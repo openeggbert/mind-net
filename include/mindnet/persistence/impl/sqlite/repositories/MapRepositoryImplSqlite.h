@@ -38,7 +38,7 @@ namespace mindnet::impl::sqlite::repositories
         MapRepositoryImplSqlite();
         ~MapRepositoryImplSqlite() override;
 
-        int create(const models::Map& content) override;
+        int create(const models::Map& map) override;
         models::Map read(int id) override;
         // void remove(int id) override;
         // void update(models::Map& content) override;
