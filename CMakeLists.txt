@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25.1)
-project(mini_wiki)
+project(mind_net)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,7 +16,7 @@ add_subdirectory(thirdparty/nlohmann_json)
 file(GLOB_RECURSE ALL_SOURCES "src/*.cpp")
 
 # Separate main.cpp from core sources
-set(MAIN_SOURCE "src/miniwiki/Main.cpp")
+set(MAIN_SOURCE "src/mindnet/Main.cpp")
 list(REMOVE_ITEM ALL_SOURCES ${MAIN_SOURCE})
 
 # Add Crow dependency
@@ -29,17 +29,17 @@ include_directories(${ASIO_INCLUDE_DIR})
 
 
 # Core library target
-add_library(mini_wiki_core STATIC
+add_library(mind_net_core STATIC
         ${ALL_SOURCES}
 )
 
-target_include_directories(mini_wiki_core PUBLIC
+target_include_directories(mind_net_core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/crow/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/asio/asio/include
 )
 
-target_link_libraries(mini_wiki_core PUBLIC
+target_link_libraries(mind_net_core PUBLIC
         SQLiteCpp
         sqlite3
         nlohmann_json::nlohmann_json
@@ -48,8 +48,8 @@ target_link_libraries(mini_wiki_core PUBLIC
 )
 
 # Executable using core library
-add_executable(mini_wiki ${MAIN_SOURCE})
-target_link_libraries(mini_wiki PRIVATE mini_wiki_core)
+add_executable(mind_net ${MAIN_SOURCE})
+target_link_libraries(mind_net PRIVATE mind_net_core)
 
 # GoogleTest setup
 add_subdirectory(thirdparty/googletest)
@@ -63,7 +63,7 @@ target_include_directories(Tests PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/googletest/googletest/include
 )
 
-target_link_libraries(Tests PRIVATE mini_wiki_core gtest_main)
+target_link_libraries(Tests PRIVATE mind_net_core gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(Tests)
