@@ -13,30 +13,40 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef MAPREPOSITORY_H
+#define MAPREPOSITORY_H
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-#ifndef MIGRATIONCOLUMNS_H
-#define MIGRATIONCOLUMNS_H
 
-namespace mindnet::models::fields{
-    struct MigrationColumns {
-        MigrationColumns() = delete;
+#include "mindnet/models/Map.h"
+#include <vector>
 
-        MigrationColumns(const MigrationColumns &) = delete;
+#include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
+#include "SQLiteCpp/Database.h"
 
-        MigrationColumns &operator=(const MigrationColumns &) = delete;
 
-        static constexpr const char *MODEL_NAME = "migration";
+namespace mindnet::persistence::api {
 
-        static constexpr const char *ID = "id";
-        static constexpr const char *MAX_MIGRATION_NUMBER = "max_migration_number";
+    /**
+     *
+    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+     */
+
+    class MapRepository {
+
+    public:
+        virtual ~MapRepository() = default;
+
+        virtual int create(const models::Map& content) = 0;
+        virtual models::Map read(int id) = 0;
+        // virtual void update(models::Map& content) = 0;
+        // virtual void remove(int id) = 0;
+        // virtual std::vector<models::Map> list(size_t page_number, size_t pageSize) = 0;
     };
+
 }
-#endif // MIGRATIONCOLUMNS_H
+
+#endif // MAPREPOSITORY_H

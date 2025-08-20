@@ -22,21 +22,29 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MIGRATIONCOLUMNS_H
-#define MIGRATIONCOLUMNS_H
+#ifndef MAPCOLUMNS_H
+#define MAPCOLUMNS_H
 
-namespace mindnet::models::fields{
-    struct MigrationColumns {
-        MigrationColumns() = delete;
+#include "mindnet/Helper.h"
+#include "mindnet/enums/ColumnType.h"
 
-        MigrationColumns(const MigrationColumns &) = delete;
 
-        MigrationColumns &operator=(const MigrationColumns &) = delete;
+namespace mindnet::models::columns
+{
+    struct MapColumns
+    {
+        MapColumns() = delete;
 
-        static constexpr const char *MODEL_NAME = "migration";
+        MapColumns(const MapColumns&) = delete;
+        MapColumns& operator=(const MapColumns&) = delete;
 
-        static constexpr const char *ID = "id";
-        static constexpr const char *MAX_MIGRATION_NUMBER = "max_migration_number";
+        static constexpr const char* MODEL_NAME = "map";
+
+        static constexpr const char* ID = "id";
+        static constexpr const char* NAME = "name";
+        static constexpr const char* DESCRIPTION = "description";
+        static constexpr const char* CREATED_AT = "created_at";
+
     };
 }
-#endif // MIGRATIONCOLUMNS_H
+#endif // MAPCOLUMNS_H

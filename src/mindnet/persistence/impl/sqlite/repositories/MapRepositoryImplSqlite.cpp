@@ -23,8 +23,8 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
-#include "mindnet/models/Content.h"
+#include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
+#include "mindnet/models/Map.h"
 
 #include <string>
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
@@ -35,11 +35,11 @@ namespace mindnet::impl::sqlite::repositories
 {
 
 
-    ContentRepositoryImplSqlite::ContentRepositoryImplSqlite() = default;
+    MapRepositoryImplSqlite::MapRepositoryImplSqlite() = default;
 
-    ContentRepositoryImplSqlite::~ContentRepositoryImplSqlite() = default;
+    MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
 
-    int ContentRepositoryImplSqlite::create(const models::Content& content)
+    int MapRepositoryImplSqlite::create(const models::Map& content)
     {
         try
         {
@@ -47,23 +47,24 @@ namespace mindnet::impl::sqlite::repositories
         }
         catch (std::exception& e)
         {
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             return -1;
         }
     }
 
-    models::Content ContentRepositoryImplSqlite::read(const int id)
+    models::Map MapRepositoryImplSqlite::read(const int id)
     {
-        entity_fields values = persistence::impl::sqlite::read_model(models::CONTENT_DEFINITION, id);
-        models::Content content;
+        entity_fields values = persistence::impl::sqlite::read_model(models::MAP_DEFINITION, id);
+        models::Map content;
         content.from_values(values);
         return content;
 
     }
     //
-    // void ContentRepositoryImplSqlite::remove(int id)
+    // void MapRepositoryImplSqlite::remove(int id)
     // {
-    //     std::string sql = "DELETE FROM " + std::string(ContentTable::MODEL_NAME) +
-    //         " WHERE " + ContentTable::ID + "=?";
+    //     std::string sql = "DELETE FROM " + std::string(MapTable::MODEL_NAME) +
+    //         " WHERE " + MapTable::ID + "=?";
     //
     //     SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     //     SQLite::Statement query(db, sql);
@@ -80,11 +81,11 @@ namespace mindnet::impl::sqlite::repositories
     //     }
     // }
     //
-    // void ContentRepositoryImplSqlite::update(Entity::Content& content)
+    // void MapRepositoryImplSqlite::update(Entity::Map& content)
     // {
-    //     std::string sql = "UPDATE " + std::string(ContentTable::MODEL_NAME) +
-    //         " SET " + ContentTable::VALUE + "=?" +
-    //         " WHERE " + ContentTable::ID + "=?";
+    //     std::string sql = "UPDATE " + std::string(MapTable::MODEL_NAME) +
+    //         " SET " + MapTable::VALUE + "=?" +
+    //         " WHERE " + MapTable::ID + "=?";
     //
     //     SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
     //     SQLite::Statement query(db, sql);

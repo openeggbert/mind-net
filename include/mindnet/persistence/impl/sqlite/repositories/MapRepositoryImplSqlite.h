@@ -20,23 +20,27 @@
 
 /**
  *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MIGRATIONCOLUMNS_H
-#define MIGRATIONCOLUMNS_H
 
-namespace mindnet::models::fields{
-    struct MigrationColumns {
-        MigrationColumns() = delete;
 
-        MigrationColumns(const MigrationColumns &) = delete;
+#include "mindnet/persistence/api/MapRepository.h"
+#include "mindnet/models/Map.h"
+#include <vector>
 
-        MigrationColumns &operator=(const MigrationColumns &) = delete;
+namespace mindnet::impl::sqlite::repositories
+{
+    using std::vector;
 
-        static constexpr const char *MODEL_NAME = "migration";
+    class MapRepositoryImplSqlite : public persistence::api::MapRepository
+    {
+    public:
+        MapRepositoryImplSqlite();
+        ~MapRepositoryImplSqlite() override;
 
-        static constexpr const char *ID = "id";
-        static constexpr const char *MAX_MIGRATION_NUMBER = "max_migration_number";
+        int create(const models::Map& content) override;
+        models::Map read(int id) override;
+        // void remove(int id) override;
+        // void update(models::Map& content) override;
     };
 }
-#endif // MIGRATIONCOLUMNS_H

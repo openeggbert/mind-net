@@ -17,68 +17,67 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENT_H
-#define CONTENT_H
+#ifndef MAP_H
+#define MAP_H
+
 
 #include <string>
 
 #include "BaseModel.h"
-#include "columns/ContentColumns.h"
+#include "columns/MapColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 
 namespace mindnet::models
 {
-
     using enums::ColumnType;
-    using columns::ContentColumns;
-    static ModelDefinition CONTENT_DEFINITION = {
-        ContentColumns::MODEL_NAME,
+    using columns::MapColumns;
+    static ModelDefinition MAP_DEFINITION = {
+        columns::MapColumns::MODEL_NAME,
         true,
         {
-            {ContentColumns::ID, ColumnType::INTEGER, true},
-            {ContentColumns::CONTENT, ColumnType::TEXT, true},
-            {ContentColumns::FORMAT, ColumnType::TEXT, true},
-            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {MapColumns::ID, ColumnType::INTEGER, true},
+            {MapColumns::NAME, ColumnType::TEXT, true},
+            {MapColumns::DESCRIPTION, ColumnType::TEXT, true},
+            {MapColumns::CREATED_AT, ColumnType::INTEGER, false},
         }
 
     };
-    struct Content : BaseModel
+
+    struct Map : BaseModel
     {
-        str content;
-        str format;
+        str name;
+        str description;
         unixtime created_at{};
 
-        [[nodiscard]] inline ModelDefinition get_definition() const override
+        [[nodiscard]] ModelDefinition get_definition() const override
         {
-            return CONTENT_DEFINITION;
+            return MAP_DEFINITION;
         }
 
         [[nodiscard]] entity_fields get_values() const override;
         void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const Content& idea)
+        friend std::ostream& operator<<(std::ostream& os, const Map& map)
         {
-            os << idea.to_json();
+            os << map.to_json();
             return os;
         }
 
-        bool operator==(const Content& other) const
+        bool operator==(const Map& other) const
         {
-            return id == other.id && content == other.content && format == other.format && created_at == other.
+            return id == other.id && name == other.name && description == other.description && created_at == other.
                 created_at;
         }
 
-        Content() = default;
+        Map() = default;
 
-        Content(int i, const str& s, const str& string, int i1)
+        Map(int id_, const str& name_, const str& description_, unixtime created_at_)
+            : name(name_), description(description_), created_at(created_at_)
         {
-            id = i;
-            content = s;
-            format = string;
-            created_at = i1;
+            id = id_;
         }
     };
 }
 
-#endif // CONTENT_H
+#endif // MAP_H

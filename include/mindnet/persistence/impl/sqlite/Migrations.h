@@ -15,27 +15,15 @@ namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 9;
 CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL UNIQUE,
-	description TEXT
+	description TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
         )",
 
     	R"(
-CREATE TABLE content (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	content TEXT NOT NULL,
-	format INTEGER,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    node_id INTEGER,
-    reverted_from_content_id INTEGER,
-
-	FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE,
-	FOREIGN KEY (reverted_from_content_id) REFERENCES content(id) ON DELETE CASCADE
-);
-)",
-
-        R"(
 CREATE TABLE node (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL UNIQUE,
 	map_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 	content_id INTEGER,
@@ -56,6 +44,22 @@ CREATE TABLE node (
 );
 
         )",
+
+    	R"(
+CREATE TABLE content (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	content TEXT NOT NULL,
+	format INTEGER,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    node_id INTEGER,
+    reverted_from_content_id INTEGER,
+
+	FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE,
+	FOREIGN KEY (reverted_from_content_id) REFERENCES content(id) ON DELETE CASCADE
+);
+)",
+
+
 
         R"(
 CREATE TABLE node_property(

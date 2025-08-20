@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// mini-wiki : Lightweight wiki inspired by MediaWiki.
+// mind-net : Mind map software.
 // Copyright (C) 2025-2025 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or

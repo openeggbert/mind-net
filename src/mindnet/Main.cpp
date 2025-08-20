@@ -13,7 +13,9 @@
 #include "mindnet/persistence/Persistence.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/controllers/ContentController.h"
+#include "mindnet/controllers/MapController.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 
 bool migrate_schema_if_needed()
 {
@@ -33,11 +35,11 @@ bool migrate_schema_if_needed()
 void print_logo()
 {
     std::cout << R"(
-  __  __ _       _  __        ___ _    _
- |  \/  (_)_ __ (_) \ \      / (_) | _(_)
- | |\/| | | '_ \| |  \ \ /\ / /| | |/ / |
- | |  | | | | | | |   \ V  V / | |   <| |
- |_|  |_|_|_| |_|_|    \_/\_/  |_|_|\_\_|
+  __  __ _           _   _   _      _
+ |  \/  (_)_ __   __| | | \ | | ___| |_
+ | |\/| | | '_ \ / _` | |  \| |/ _ \ __|
+ | |  | | | | | | (_| | | |\  |  __/ |_
+ |_|  |_|_|_| |_|\__,_| |_| \_|\___|\__|
 
         )" << std::endl;
 }
@@ -76,7 +78,10 @@ int main(int argc, char** argv)
 
     std::shared_ptr<mindnet::persistence::Persistence> db = std::make_shared<mindnet::persistence::Persistence>();
     mindnet::impl::sqlite::repositories::ContentRepositoryImplSqlite content_repository{};
+    mindnet::impl::sqlite::repositories::MapRepositoryImplSqlite map_repository{};
+    db->map_repository = &map_repository;
     db->content_repository = &content_repository;
+
 
     auto arg0 = arguments[0];
     if (arg0 == "start")
@@ -119,8 +124,11 @@ int main(int argc, char** argv)
         }
         mindnet::http::HttpServer server{db};
 
+        mindnet::routes::MapController map_controller;
         mindnet::routes::ContentController content_controller;
-        server.register_controller(&content_controller, mindnet::models::CONTENT_DEFINITION);
+
+        server.register_controller(&map_controller, mindnet::models::MAP_DEFINITION);
+        //server.register_controller(&content_controller, mindnet::models::CONTENT_DEFINITION);
         if (custom_port)
         {
             std::cout << "Custom port was provided: " << port << std::endl;
