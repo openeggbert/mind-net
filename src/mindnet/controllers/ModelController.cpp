@@ -81,6 +81,19 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
+        auto delete_lambda_function = [&db, &def](int id)
+        {
+            bool success = db->remove(id, def);
+
+            if (!success)
+            {
+                return crow::response(404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
+            }
+
+            return crow::response(200, def.model_name + " with id " + std::to_string(id) + " was deleted.");
+        };
+
+
 
         //CREATE
         app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::POST)
@@ -94,6 +107,10 @@ namespace mindnet::routes
         // UPDATE
         app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::PUT)
         (update_lambda_function);
+
+        // DELETE
+        app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::DELETE)
+        (delete_lambda_function);
 
     }
 }

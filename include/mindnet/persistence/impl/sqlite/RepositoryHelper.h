@@ -123,7 +123,36 @@ namespace mindnet::persistence::impl::sqlite
             Utils::sqlite_exec(query);
             std::cout << "Update successful" << std::endl;
             return true;
-        } catch (std::exception& e)
+        }
+        catch (std::exception& e)
+        {
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            return false;
+        }
+    }
+
+    inline bool delete_model(models::ModelDefinition& def, const int id)
+    {
+        str sql = Utils::generate_delete_sql(def);
+        std::cout << "Going to execute delete SQL: " << sql << std::endl;
+
+        SQLite::Database db(
+            SQLITE_FILE_NAME,
+            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
+        );
+        SQLite::Statement query(db, sql);
+
+
+        entity_fields fields;
+        fields.push_back(id);
+        Utils::fill_sqlite_query(query, fields, false);
+        try
+        {
+            Utils::sqlite_exec(query);
+            std::cout << "Delete successful" << std::endl;
+            return true;
+        }
+        catch (std::exception& e)
         {
             err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             return false;

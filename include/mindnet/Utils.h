@@ -53,6 +53,7 @@ namespace mindnet
 
         static str generate_insert_sql(const models::ModelDefinition& definition);
         static str generate_update_sql(const models::ModelDefinition& definition);
+        static str generate_delete_sql(const models::ModelDefinition& definition);
 
 
 

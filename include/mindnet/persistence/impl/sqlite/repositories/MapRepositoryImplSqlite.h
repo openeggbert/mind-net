@@ -47,7 +47,7 @@ namespace mindnet::impl::sqlite::repositories
         models::ModelDefinition& get_model_definition() override;
         entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) override;
 
-        // void remove(int id) override;
+        bool remove(int id) override;
         // void update(models::Map& content) override;
     };
 }

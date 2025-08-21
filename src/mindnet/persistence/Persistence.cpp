@@ -53,6 +53,10 @@ namespace mindnet::persistence
     {
         return get_repository(def.model_name)->update(id, fields);
     }
+    bool Persistence::remove(int id, models::ModelDefinition& def)
+    {
+        return get_repository(def.model_name)->remove(id);
+    }
 
     entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, models::ModelDefinition& def)
     {

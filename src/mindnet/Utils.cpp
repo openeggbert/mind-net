@@ -259,6 +259,12 @@ namespace mindnet
         return sql;
     }
 
+    str Utils::generate_delete_sql(const models::ModelDefinition& definition)
+    {
+        return "DELETE FROM " + definition.model_name + " WHERE id = ?";
+
+    }
+
     str Utils::generate_select_one_sql(const std::string& table_name)
     {
         return "SELECT * FROM " + table_name + " WHERE id = ?";

@@ -74,26 +74,9 @@ namespace mindnet::impl::sqlite::repositories
         return persistence::impl::sqlite::update_model(id, get_model_definition(), fields);
     }
 
-    //
-    // void MapRepositoryImplSqlite::remove(int id)
-    // {
-    //     std::string sql = "DELETE FROM " + std::string(MapTable::MODEL_NAME) +
-    //         " WHERE " + MapTable::ID + "=?";
-    //
-    //     SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    //     SQLite::Statement query(db, sql);
-    //
-    //     try
-    //     {
-    //         query.bind(1, id);
-    //         query.exec();
-    //     }
-    //     catch (SQLite::Exception& e)
-    //     {
-    //         err << "Exception during SQLite statement execution: " << sql << ": " << e.what() << std::endl;
-    //         throw std::runtime_error(e.what());
-    //     }
-    // }
-    //
+    bool MapRepositoryImplSqlite::remove(int id)
+    {
+        return persistence::impl::sqlite::delete_model(get_model_definition(), id);
+    }
 
 }
