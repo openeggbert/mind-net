@@ -41,7 +41,7 @@ namespace mindnet::models {
     public:
         virtual int create(const entity_fields& fields) = 0;
         virtual entity_fields read(int id) = 0;
-        // virtual void update(models::BaseModel& content) = 0;
+        virtual bool update(int id, entity_fields& fields) = 0;
         // virtual void remove(int id) = 0;
         // virtual std::vector<models::BaseModel> list(size_t page_number, size_t pageSize) = 0;
         //

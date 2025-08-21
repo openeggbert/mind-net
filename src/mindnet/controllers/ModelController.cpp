@@ -57,6 +57,30 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
+        auto update_lambda_function = [&db, &def](const crow::request& req, int id)
+        {
+            crow::json::rvalue body = crow::json::load(req.body);
+            if (!body)
+                return crow::response(400, "Invalid input. Body is missing or not valid.");
+
+            auto body_check_result = RestHelper::check_body_is_valid(body, def, true); // true = allow partial update?
+            if (!body_check_result.empty())
+                return crow::response(400, "Invalid input. " + body_check_result);
+
+            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, def);
+
+            bool success = db->update(id, fields, def);
+            if (!success)
+            {
+                return crow::response(404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
+            }
+
+            crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
+            res["id"] = id;
+
+            return crow::response(200, res);
+        };
+
 
         //CREATE
         app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::POST)
@@ -66,5 +90,10 @@ namespace mindnet::routes
         //READ
         app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::GET)
         ( read_lambda_function);
+
+        // UPDATE
+        app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::PUT)
+        (update_lambda_function);
+
     }
 }

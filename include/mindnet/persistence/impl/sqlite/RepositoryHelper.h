@@ -37,9 +37,8 @@ namespace mindnet::persistence::impl::sqlite
 
     inline int create_model(const entity_fields& fields, const models::ModelDefinition& definition)
     {
-
         std::string sql = Utils::generate_insert_sql(definition);
-        std::cout << "Going to execute SQL: " << sql << std::endl;
+        std::cout << "Going to execute insert SQL: " << sql << std::endl;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -58,7 +57,7 @@ namespace mindnet::persistence::impl::sqlite
     inline entity_fields read_model(models::ModelDefinition& def, const int id)
     {
         std::string sql = Utils::generate_select_one_sql(def.model_name);
-        std::cout << "Going to execute SQL: " << sql << std::endl;
+        std::cout << "Going to execute select SQL: " << sql << std::endl;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -91,7 +90,6 @@ namespace mindnet::persistence::impl::sqlite
                     }
                     break;
                 default: throw std::runtime_error("Unknown type");
-
                 }
                 i++;
             }
@@ -100,6 +98,36 @@ namespace mindnet::persistence::impl::sqlite
 
 
         throw std::runtime_error(def.model_name + " not found");
+    }
+
+    inline bool update_model(int id, models::ModelDefinition& def, entity_fields& fields)
+    {
+        std::string sql = Utils::generate_update_sql(def);
+        std::cout << "Going to execute update SQL: " << sql << std::endl;
+
+        SQLite::Database db(
+            SQLITE_FILE_NAME,
+            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
+        );
+        SQLite::Statement query(db, sql);
+
+        if (!fields.empty())
+        {
+            fields.erase(fields.begin());
+        }
+        fields.push_back(id);
+
+        Utils::fill_sqlite_query(query, fields, false);
+        try
+        {
+            Utils::sqlite_exec(query);
+            std::cout << "Update successful" << std::endl;
+            return true;
+        } catch (std::exception& e)
+        {
+            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            return false;
+        }
     }
 }
 

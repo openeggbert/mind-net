@@ -10,12 +10,10 @@
 #include <string>
 #include <fstream>
 #include <random>
-#include <filesystem>
 #include <stdexcept>
 #include <regex>
 
 #include "mindnet/Global.h"
-#include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet
@@ -204,8 +202,8 @@ namespace mindnet
     }
 
     str Utils::generate_insert_sql(const models::ModelDefinition& definition)
-// const std::string& table_name, const std::vector<const char*>& columns,
-//                                    bool auto_increment)
+    // const std::string& table_name, const std::vector<const char*>& columns,
+    //                                    bool auto_increment)
     {
         str sql = "INSERT INTO " + definition.model_name + " (";
         auto columns = definition.columns;
@@ -237,6 +235,27 @@ namespace mindnet
             }
         }
         sql += ")";
+        return sql;
+    }
+
+    str Utils::generate_update_sql(const models::ModelDefinition& definition)
+    {
+        std::string sql = "UPDATE " + definition.model_name + " SET ";
+        for (int i = 0; i < definition.columns.size(); ++i)
+        {
+            auto column = definition.columns[i].column_name;
+            if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
+            {
+                continue;
+            }
+            sql += column + "=?";
+            if (i < definition.columns.size() - 1)
+            {
+                sql += ", ";
+            }
+        }
+
+        sql += " WHERE ID = ?";
         return sql;
     }
 
@@ -275,7 +294,6 @@ namespace mindnet
                 if constexpr (std::is_same_v<T, std::string>)
                 {
                     query.bind(static_cast<int>(i + 1 + (auto_increment ? -1 : 0)), val);
-
                 }
                 else if constexpr (std::is_same_v<T, int64_t>)
                 {

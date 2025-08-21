@@ -48,7 +48,7 @@ namespace mindnet::impl::sqlite::repositories
         }
     }
 
-    entity_fields MapRepositoryImplSqlite::read(const int id)
+    entity_fields MapRepositoryImplSqlite::read(int id)
     {
         return persistence::impl::sqlite::read_model(get_model_definition(), id);
     }
@@ -67,6 +67,11 @@ namespace mindnet::impl::sqlite::repositories
         fields.push_back(body[cols::DESCRIPTION].s());
         fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
         return fields;
+    }
+
+    bool MapRepositoryImplSqlite::update(int id, entity_fields& fields)
+    {
+        return persistence::impl::sqlite::update_model(id, get_model_definition(), fields);
     }
 
     //
@@ -90,26 +95,5 @@ namespace mindnet::impl::sqlite::repositories
     //     }
     // }
     //
-    // void MapRepositoryImplSqlite::update(Entity::Map& content)
-    // {
-    //     std::string sql = "UPDATE " + std::string(MapTable::MODEL_NAME) +
-    //         " SET " + MapTable::VALUE + "=?" +
-    //         " WHERE " + MapTable::ID + "=?";
-    //
-    //     SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    //     SQLite::Statement query(db, sql);
-    //
-    //     try
-    //     {
-    //         int i = 0;
-    //         query.bind(++i, content.value);
-    //         query.bind(++i, content.id);
-    //         query.exec();
-    //     }
-    //     catch (SQLite::Exception& e)
-    //     {
-    //         err << "Exception during SQLite statement execution: " << sql << ": " << e.what() << std::endl;
-    //         throw std::runtime_error(e.what());
-    //     }
-    // }
+
 }

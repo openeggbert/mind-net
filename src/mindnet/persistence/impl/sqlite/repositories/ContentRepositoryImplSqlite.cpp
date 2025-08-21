@@ -67,6 +67,11 @@ namespace mindnet::impl::sqlite::repositories
         throw std::runtime_error("Not implemented");
     }
 
+    bool ContentRepositoryImplSqlite::update(int id, entity_fields& fields)
+    {
+        return persistence::impl::sqlite::update_model(id, get_model_definition(), fields);
+    }
+
     //
     // void ContentRepositoryImplSqlite::remove(int id)
     // {
@@ -88,26 +93,6 @@ namespace mindnet::impl::sqlite::repositories
     //     }
     // }
     //
-    // void ContentRepositoryImplSqlite::update(Entity::Content& content)
-    // {
-    //     std::string sql = "UPDATE " + std::string(ContentTable::MODEL_NAME) +
-    //         " SET " + ContentTable::VALUE + "=?" +
-    //         " WHERE " + ContentTable::ID + "=?";
-    //
-    //     SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
-    //     SQLite::Statement query(db, sql);
-    //
-    //     try
-    //     {
-    //         int i = 0;
-    //         query.bind(++i, content.value);
-    //         query.bind(++i, content.id);
-    //         query.exec();
-    //     }
-    //     catch (SQLite::Exception& e)
-    //     {
-    //         err << "Exception during SQLite statement execution: " << sql << ": " << e.what() << std::endl;
-    //         throw std::runtime_error(e.what());
-    //     }
-    // }
+
+
 }

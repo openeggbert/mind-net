@@ -52,6 +52,9 @@ namespace mindnet
         static str generate_select_one_sql(const std::string& table_name);
 
         static str generate_insert_sql(const models::ModelDefinition& definition);
+        static str generate_update_sql(const models::ModelDefinition& definition);
+
+
 
         static void fill_sqlite_query(SQLite::Statement& query, const entity_fields& values,
                                       bool auto_increment = false);
