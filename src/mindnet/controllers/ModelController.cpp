@@ -12,10 +12,8 @@ namespace mindnet::routes
     using controllers::RestHelper;
 
     void ModelController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
-                                            models::ModelDefinition& def)
+                                          models::ModelDefinition& def)
     {
-
-
         auto create_lambda_function = [&db, &def](const crow::request& req)
         {
             crow::json::rvalue body = crow::json::load(req.body);
@@ -40,7 +38,7 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
-        auto  read_lambda_function = [&db, &def](int id)
+        auto read_lambda_function = [&db, &def](int id)
         {
             entity_fields values;
             try
@@ -72,7 +70,8 @@ namespace mindnet::routes
             bool success = db->update(id, fields, def);
             if (!success)
             {
-                return crow::response(404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
+                return crow::response(
+                    404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
@@ -87,30 +86,69 @@ namespace mindnet::routes
 
             if (!success)
             {
-                return crow::response(404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
+                return crow::response(
+                    404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
             }
 
             return crow::response(200, def.model_name + " with id " + std::to_string(id) + " was deleted.");
         };
 
+        auto list_lambda_function = [&db, &def](const crow::request& req)
+        {
+            int page_number = req.url_params.get("page_number") ? std::stoi(req.url_params.get("page_number")) : 1;
+            int page_size = req.url_params.get("page_size") ? std::stoi(req.url_params.get("page_size")) : 20;
+            if (page_number <= 0)
+            {
+                return crow::response(400, "Invalid page number. It must be positive");
+            }
+            if (page_size <= 0)
+            {
+                return crow::response(400, "Invalid page size. It must be positive");
+            }
+
+            std::vector<entity_fields> all_records;
+            try
+            {
+                all_records = db->list(page_number, page_size, def);
+            }
+            catch (std::runtime_error& e)
+            {
+                return crow::response(500, "Failed to list " + def.model_name + " records.");
+            }
+
+            crow::json::wvalue res;
+            std::vector<crow::json::wvalue> items;
+
+            for (const auto& record : all_records)
+            {
+                items.push_back(RestHelper::model_to_wvalue(record, def));
+            }
+
+            res["items"] = std::move(items);
+
+            return crow::response(200, res);
+        };
 
 
         //CREATE
         app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::POST)
-        (create_lambda_function);
+            (create_lambda_function);
 
 
         //READ
         app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::GET)
-        ( read_lambda_function);
+            (read_lambda_function);
 
         // UPDATE
         app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::PUT)
-        (update_lambda_function);
+            (update_lambda_function);
 
         // DELETE
         app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::DELETE)
-        (delete_lambda_function);
+            (delete_lambda_function);
 
+        // LIST
+        app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::GET)
+            (list_lambda_function);
     }
 }

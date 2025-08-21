@@ -24,6 +24,7 @@
 #include "mindnet/models/Content.h"
 #include <vector>
 
+#include "IRepository.h"
 #include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
@@ -35,7 +36,7 @@ namespace mindnet::persistence::api {
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class ContentRepository {
+    class ContentRepository : public models::IRepository {
 
     public:
         virtual ~ContentRepository() = default;
@@ -44,6 +45,7 @@ namespace mindnet::persistence::api {
         virtual entity_fields read(int id) = 0;
         virtual bool update(int id, entity_fields& fields) = 0;
         virtual bool remove(int id) = 0;
+        virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;
 
         //
         virtual models::ModelDefinition& get_model_definition() = 0;

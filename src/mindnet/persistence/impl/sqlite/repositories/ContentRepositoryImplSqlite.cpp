@@ -27,6 +27,8 @@
 #include "mindnet/models/Content.h"
 
 #include <string>
+
+#include "mindnet/models/columns/MapColumns.h"
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
 #include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
@@ -64,7 +66,16 @@ namespace mindnet::impl::sqlite::repositories
 
     entity_fields ContentRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body)
     {
-        throw std::runtime_error("Not implemented");
+        {
+            typedef models::columns::ContentColumns cols;
+            entity_fields fields;
+            fields.push_back(0);
+            fields.push_back(body[cols::CONTENT].s());
+            fields.push_back(body[cols::FORMAT].s());
+            fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+            return fields;
+        }
+
     }
 
     bool ContentRepositoryImplSqlite::update(int id, entity_fields& fields)
@@ -76,6 +87,11 @@ namespace mindnet::impl::sqlite::repositories
     bool ContentRepositoryImplSqlite::remove(int id)
     {
         return persistence::impl::sqlite::delete_model(get_model_definition(), id);
+    }
+
+    std::vector<entity_fields> ContentRepositoryImplSqlite::list(size_t page_number, size_t pageSize)
+    {
+        return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize);
     }
 
 

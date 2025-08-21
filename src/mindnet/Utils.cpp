@@ -270,6 +270,11 @@ namespace mindnet
         return "SELECT * FROM " + table_name + " WHERE id = ?";
     }
 
+    str Utils::generate_select_all_sql(const std::string& table_name)
+    {
+        return "SELECT * FROM " + table_name + " LIMIT ? OFFSET ?";
+    }
+
 
     template <class>
     inline constexpr bool always_false = false;

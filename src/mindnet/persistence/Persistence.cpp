@@ -7,6 +7,8 @@
 #include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 #include <memory>
 
+#include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
+
 #define add_repository(key, clazz) repositories[#key] = \
     std::make_shared<clazz##RepositoryImplSqlite>(); \
     repositoryNames.push_back(#key);
@@ -19,6 +21,9 @@ namespace mindnet::persistence
     {
         models::IRepository* map_repo = new MapRepositoryImplSqlite();
         repositories["map"] = map_repo;
+        //
+        models::IRepository* content_repo = new ContentRepositoryImplSqlite();
+        repositories["content"] = content_repo;
     }
 
     Persistence::~Persistence()
@@ -56,6 +61,11 @@ namespace mindnet::persistence
     bool Persistence::remove(int id, models::ModelDefinition& def)
     {
         return get_repository(def.model_name)->remove(id);
+    }
+
+    std::vector<entity_fields> Persistence::list(size_t page_number, size_t pageSize, models::ModelDefinition& def)
+    {
+        return get_repository(def.model_name)->list(page_number, pageSize);
     }
 
     entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, models::ModelDefinition& def)

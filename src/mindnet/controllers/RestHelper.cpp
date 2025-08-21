@@ -15,7 +15,7 @@
 
 namespace mindnet::controllers
 {
-    crow::json::wvalue RestHelper::model_to_wvalue(entity_fields& values, const models::ModelDefinition& def)
+    crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values, const models::ModelDefinition& def)
     {
         crow::json::wvalue res;
         auto columns = def.columns;

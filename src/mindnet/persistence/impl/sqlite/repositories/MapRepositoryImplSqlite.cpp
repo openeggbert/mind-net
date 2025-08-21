@@ -79,4 +79,8 @@ namespace mindnet::impl::sqlite::repositories
         return persistence::impl::sqlite::delete_model(get_model_definition(), id);
     }
 
+    std::vector<entity_fields> MapRepositoryImplSqlite::list(size_t page_number, size_t pageSize)
+    {
+        return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize);
+    }
 }

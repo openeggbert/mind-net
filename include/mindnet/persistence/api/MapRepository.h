@@ -46,6 +46,7 @@ namespace mindnet::persistence::api {
         virtual entity_fields read(int id) = 0;
         virtual bool update(int id, entity_fields& fields) = 0;
         virtual bool remove(int id) = 0;
+        virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;
 
         //
         virtual models::ModelDefinition& get_model_definition() = 0;

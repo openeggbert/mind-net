@@ -15,6 +15,8 @@
 #include "mindnet/controllers/ModelController.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
+#define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
+
 
 bool migrate_schema_if_needed()
 {
@@ -120,7 +122,8 @@ int main(int argc, char** argv)
 
         mindnet::routes::ModelController controller;
 
-        server.register_controller(&controller, mindnet::models::MAP_DEFINITION);
+        add_controller(MAP)
+        add_controller(CONTENT)
 
         if (custom_port)
         {

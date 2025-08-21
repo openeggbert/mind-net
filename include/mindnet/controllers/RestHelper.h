@@ -21,7 +21,7 @@ namespace mindnet::controllers
         RestHelper& operator=(const RestHelper&) = delete;
 
     public:
-        static crow::json::wvalue model_to_wvalue(entity_fields& values, const models::ModelDefinition& def);
+        static crow::json::wvalue model_to_wvalue(const entity_fields& values, const models::ModelDefinition& def);
 
         static str check_body_is_valid(const crow::json::rvalue& body, const models::ModelDefinition& def,
                                        bool id_wanted = true);

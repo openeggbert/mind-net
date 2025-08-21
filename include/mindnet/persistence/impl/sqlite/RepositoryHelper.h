@@ -57,7 +57,7 @@ namespace mindnet::persistence::impl::sqlite
     inline entity_fields read_model(models::ModelDefinition& def, const int id)
     {
         std::string sql = Utils::generate_select_one_sql(def.model_name);
-        std::cout << "Going to execute select SQL: " << sql << std::endl;
+        std::cout << "Going to execute select one SQL: " << sql << std::endl;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -157,6 +157,52 @@ namespace mindnet::persistence::impl::sqlite
             err << "Exception during SQLite statement execution: " << e.what() << std::endl;
             return false;
         }
+    }
+
+    inline std::vector<entity_fields> list_models(models::ModelDefinition& def, size_t page_number, size_t page_size)
+    {
+        std::string sql = Utils::generate_select_all_sql(def.model_name);
+        std::cout << "Going to execute select all SQL: " << sql << std::endl;
+
+        SQLite::Database db(
+            SQLITE_FILE_NAME,
+            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
+        );
+        SQLite::Statement query(db, sql);
+        std::cout << "Page size: " << page_size << std::endl;
+        std::cout << "Page number: " << page_number << std::endl;
+        query.bind(1, static_cast<int32_t>(page_size));
+        query.bind(2, static_cast<int32_t>(page_size * (page_number - 1)));
+
+        std::vector<entity_fields> results;
+        while (query.executeStep())
+        {
+            entity_fields result;
+            int i = 0;
+            for (const auto& column : def.columns)
+            {
+                //std::cout << "Found entity with id: " << query.getColumn(1) << std::endl;
+                switch (column.column_type)
+                {
+                case enums::ColumnType::TEXT:
+                    {
+                        str text = query.getColumn(i).getString();
+                        result.push_back(text);
+                    }
+                    break;
+                case enums::ColumnType::INTEGER:
+                    {
+                        int number = query.getColumn(i);
+                        result.push_back(number);
+                    }
+                    break;
+                default: throw std::runtime_error("Unknown type");
+                }
+                i++;
+            }
+            results.push_back(result);
+        }
+        return results;
     }
 }
 

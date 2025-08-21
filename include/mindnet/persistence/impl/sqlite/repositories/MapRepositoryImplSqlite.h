@@ -43,11 +43,13 @@ namespace mindnet::impl::sqlite::repositories
         int create(const entity_fields& fields) override;
         entity_fields read(int id) override;
         bool update(int id, entity_fields& fields) override;
+        bool remove(int id) override;
+        std::vector<entity_fields> list(size_t page_number, size_t pageSize) override;
         //
         models::ModelDefinition& get_model_definition() override;
         entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) override;
 
-        bool remove(int id) override;
+
         // void update(models::Map& content) override;
     };
 }

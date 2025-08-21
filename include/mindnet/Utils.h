@@ -50,6 +50,7 @@ namespace mindnet
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
         static str generate_select_one_sql(const std::string& table_name);
+        static str generate_select_all_sql(const std::string& table_name);
 
         static str generate_insert_sql(const models::ModelDefinition& definition);
         static str generate_update_sql(const models::ModelDefinition& definition);
