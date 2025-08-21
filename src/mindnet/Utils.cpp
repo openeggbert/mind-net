@@ -203,12 +203,10 @@ namespace mindnet
         return result;
     }
 
-    str Utils::generate_insert_sql(const models::BaseModel& entity)
+    str Utils::generate_insert_sql(const models::ModelDefinition& definition)
 // const std::string& table_name, const std::vector<const char*>& columns,
 //                                    bool auto_increment)
     {
-        auto definition = entity.get_definition();
-
         str sql = "INSERT INTO " + definition.model_name + " (";
         auto columns = definition.columns;
         for (int i = 0; i < columns.size(); ++i)

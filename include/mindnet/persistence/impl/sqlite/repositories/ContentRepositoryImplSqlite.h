@@ -39,8 +39,11 @@ namespace mindnet::impl::sqlite::repositories
         ContentRepositoryImplSqlite();
         ~ContentRepositoryImplSqlite() override;
 
-        int create(const models::Content& content) override;
-        models::Content read(int id) override;
+        int create(const entity_fields& fields) override;
+        entity_fields read(int id) override;
+        models::ModelDefinition& get_model_definition() override;
+        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) override;
+
         // void remove(int id) override;
         // void update(models::Content& content) override;
     };

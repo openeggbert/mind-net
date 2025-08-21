@@ -39,11 +39,11 @@ namespace mindnet::impl::sqlite::repositories
 
     ContentRepositoryImplSqlite::~ContentRepositoryImplSqlite() = default;
 
-    int ContentRepositoryImplSqlite::create(const models::Content& content)
+    int ContentRepositoryImplSqlite::create(const entity_fields& fields)
     {
         try
         {
-            return persistence::impl::sqlite::create_model(content);
+            return persistence::impl::sqlite::create_model(fields, get_model_definition());
         }
         catch (std::exception& e)
         {
@@ -51,14 +51,22 @@ namespace mindnet::impl::sqlite::repositories
         }
     }
 
-    models::Content ContentRepositoryImplSqlite::read(const int id)
+    entity_fields ContentRepositoryImplSqlite::read(const int id)
     {
-        entity_fields values = persistence::impl::sqlite::read_model(models::CONTENT_DEFINITION, id);
-        models::Content content;
-        content.from_values(values);
-        return content;
+        return persistence::impl::sqlite::read_model(get_model_definition(), id);
 
     }
+
+    models::ModelDefinition& ContentRepositoryImplSqlite::get_model_definition()
+    {
+        return models::CONTENT_DEFINITION;
+    }
+
+    entity_fields ContentRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body)
+    {
+        throw std::runtime_error("Not implemented");
+    }
+
     //
     // void ContentRepositoryImplSqlite::remove(int id)
     // {

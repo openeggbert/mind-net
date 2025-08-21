@@ -35,10 +35,10 @@ namespace mindnet::persistence::impl::sqlite
     using models::columns::ContentColumns;
     using sqlite::SQLITE_FILE_NAME;
 
-    inline int create_model(const models::BaseModel& entity)
+    inline int create_model(const entity_fields& fields, const models::ModelDefinition& definition)
     {
-        auto definition = entity.get_definition();
-        std::string sql = Utils::generate_insert_sql(entity);
+
+        std::string sql = Utils::generate_insert_sql(definition);
         std::cout << "Going to execute SQL: " << sql << std::endl;
 
         SQLite::Database db(
@@ -47,7 +47,7 @@ namespace mindnet::persistence::impl::sqlite
         );
         SQLite::Statement query(db, sql);
 
-        Utils::fill_sqlite_query(query, entity.get_values()
+        Utils::fill_sqlite_query(query, fields
                                  , definition.auto_increment
         );
 

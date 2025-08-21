@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/16/25.
 //
 
-#include "mindnet/controllers/MapController.h"
+#include "mindnet/controllers/ModelController.h"
 #include "crow.h"
 #include "mindnet/Utils.h"
 #include "mindnet/controllers/RestHelper.h"
@@ -11,14 +11,14 @@ namespace mindnet::routes
 {
     using controllers::RestHelper;
 
-    void MapController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
+    void ModelController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
                                             models::ModelDefinition& def)
     {
-        typedef models::columns::MapColumns cols;
+
 
         auto create_lambda_function = [&db, &def](const crow::request& req)
         {
-            auto body = crow::json::load(req.body);
+            crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
                 return crow::response(400, "Invalid input. Body is missing or not valid.");
 
@@ -26,10 +26,9 @@ namespace mindnet::routes
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            models::Map c{
-                0, body[cols::NAME].s(), body[cols::DESCRIPTION].s(), static_cast<unixtime>(Utils::currentUnixTimestamp())
-            };
-            auto last_inserted_id = db.get()->create(c);
+            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, def);
+
+            auto last_inserted_id = db.get()->create(def, fields);
             if (last_inserted_id == -1)
             {
                 return crow::response(500, "Saving the " + def.model_name + " failed.");

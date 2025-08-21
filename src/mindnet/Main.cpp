@@ -12,8 +12,7 @@
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/persistence/Persistence.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
-#include "mindnet/controllers/ContentController.h"
-#include "mindnet/controllers/MapController.h"
+#include "mindnet/controllers/ModelController.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 
@@ -119,11 +118,10 @@ int main(int argc, char** argv)
         }
         mindnet::http::HttpServer server{db};
 
-        mindnet::routes::MapController map_controller;
-        mindnet::routes::ContentController content_controller;
+        mindnet::routes::ModelController controller;
 
-        server.register_controller(&map_controller, mindnet::models::MAP_DEFINITION);
-        //server.register_controller(&content_controller, mindnet::models::CONTENT_DEFINITION);
+        server.register_controller(&controller, mindnet::models::MAP_DEFINITION);
+
         if (custom_port)
         {
             std::cout << "Custom port was provided: " << port << std::endl;

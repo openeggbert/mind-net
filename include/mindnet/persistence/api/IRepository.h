@@ -39,13 +39,15 @@ namespace mindnet::models {
         IRepository() = default;
 
     public:
-        virtual int create(const models::BaseModel& content) = 0;
-        virtual entity_fields read(int id, ModelDefinition& def) = 0;
+        virtual int create(const entity_fields& fields) = 0;
+        virtual entity_fields read(int id) = 0;
         // virtual void update(models::BaseModel& content) = 0;
         // virtual void remove(int id) = 0;
         // virtual std::vector<models::BaseModel> list(size_t page_number, size_t pageSize) = 0;
         //
         virtual models::ModelDefinition& get_model_definition() = 0;
+        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) = 0;
+
 
     };
 }

@@ -35,11 +35,11 @@ namespace mindnet::impl::sqlite::repositories
 {
 
     MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
-    int MapRepositoryImplSqlite::create(const models::BaseModel& map)
+    int MapRepositoryImplSqlite::create(const entity_fields& fields)
     {
         try
         {
-            return persistence::impl::sqlite::create_model(map);
+            return persistence::impl::sqlite::create_model(fields, get_model_definition());
         }
         catch (std::exception& e)
         {
@@ -48,7 +48,7 @@ namespace mindnet::impl::sqlite::repositories
         }
     }
 
-    entity_fields MapRepositoryImplSqlite::read(const int id, models::ModelDefinition& def)
+    entity_fields MapRepositoryImplSqlite::read(const int id)
     {
         return persistence::impl::sqlite::read_model(get_model_definition(), id);
     }
@@ -56,6 +56,17 @@ namespace mindnet::impl::sqlite::repositories
     models::ModelDefinition& MapRepositoryImplSqlite::get_model_definition()
     {
         return models::MAP_DEFINITION;
+    }
+
+    entity_fields MapRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body)
+    {
+        typedef models::columns::MapColumns cols;
+        entity_fields fields;
+        fields.push_back(0);
+        fields.push_back(body[cols::NAME].s());
+        fields.push_back(body[cols::DESCRIPTION].s());
+        fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+        return fields;
     }
 
     //

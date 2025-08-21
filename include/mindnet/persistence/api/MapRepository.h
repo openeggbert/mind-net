@@ -42,10 +42,11 @@ namespace mindnet::persistence::api {
         MapRepository() = default;
         virtual ~MapRepository() = default;
 
-        virtual int create(const models::BaseModel& content) = 0;
-        virtual entity_fields read(int id, models::ModelDefinition& def) = 0;
+        virtual int create(const entity_fields& fields) = 0;
+        virtual entity_fields read(int id) = 0;
 
         virtual models::ModelDefinition& get_model_definition() = 0;
+        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) = 0;
 
 
     public:

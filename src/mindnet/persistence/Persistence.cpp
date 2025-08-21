@@ -39,13 +39,17 @@ namespace mindnet::persistence
         return repositoryNames;
     }
 
-    int Persistence::create(const models::BaseModel& model)
+    int Persistence::create(const models::ModelDefinition& def, entity_fields& fields)
     {
-        return get_repository(model.get_definition().model_name)->create(model);
+        return get_repository(def.model_name)->create(fields);
     }
 
     entity_fields Persistence::read(int id, models::ModelDefinition& def)
     {
-        return get_repository(def.model_name)->read(id, def);
+        return get_repository(def.model_name)->read(id);
+    }
+    entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, models::ModelDefinition& def)
+    {
+        return get_repository(def.model_name)->convert_crow_json_rvalue_to_entity_fields(body);
     }
 }

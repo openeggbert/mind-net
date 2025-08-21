@@ -26,8 +26,10 @@ namespace mindnet::persistence {
 
         std::vector<std::string>& list_repositories();
 
-        int create(const models::BaseModel& content);
+        int create(const models::ModelDefinition& def, entity_fields& fields);
         entity_fields read(int id, models::ModelDefinition& def);
+        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, models::ModelDefinition& def);
+
 
     };
 
