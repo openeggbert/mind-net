@@ -77,11 +77,6 @@ int main(int argc, char** argv)
     }
 
     std::shared_ptr<mindnet::persistence::Persistence> db = std::make_shared<mindnet::persistence::Persistence>();
-    mindnet::impl::sqlite::repositories::ContentRepositoryImplSqlite content_repository{};
-    mindnet::impl::sqlite::repositories::MapRepositoryImplSqlite map_repository{};
-    db->map_repository = &map_repository;
-    db->content_repository = &content_repository;
-
 
     auto arg0 = arguments[0];
     if (arg0 == "start")

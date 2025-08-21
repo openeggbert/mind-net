@@ -17,35 +17,37 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-#ifndef MAPREPOSITORYIMPLSQLITE_H
-#define MAPREPOSITORYIMPLSQLITE_H
+#ifndef IREPOSITORY_H
+#define IREPOSITORY_H
 
 
-#include "mindnet/persistence/api/MapRepository.h"
-#include "mindnet/models/Map.h"
-#include <vector>
+#include <nlohmann/json.hpp>
 
-namespace mindnet::impl::sqlite::repositories
-{
-    using std::vector;
+#include <string>
 
-    class MapRepositoryImplSqlite : public persistence::api::MapRepository
-    {
+#include "mindnet/Helper.h"
+#include "mindnet/models/BaseModel.h"
+
+namespace mindnet::models {
+
+    using std::string;
+
+    class IRepository {
+
     public:
-        MapRepositoryImplSqlite() = default;
-        ~MapRepositoryImplSqlite() override;
+        virtual ~IRepository() = default;
+        IRepository() = default;
 
-        int create(const models::BaseModel& map) override;
-        entity_fields read(int id, models::ModelDefinition& def) override;
-        models::ModelDefinition& get_model_definition() override;
+    public:
+        virtual int create(const models::BaseModel& content) = 0;
+        virtual entity_fields read(int id, ModelDefinition& def) = 0;
+        // virtual void update(models::BaseModel& content) = 0;
+        // virtual void remove(int id) = 0;
+        // virtual std::vector<models::BaseModel> list(size_t page_number, size_t pageSize) = 0;
+        //
+        virtual models::ModelDefinition& get_model_definition() = 0;
 
-        // void remove(int id) override;
-        // void update(models::Map& content) override;
     };
 }
-#endif // MAPREPOSITORYIMPLSQLITE_H
+
+#endif // IREPOSITORY_H

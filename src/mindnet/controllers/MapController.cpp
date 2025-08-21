@@ -6,7 +6,6 @@
 #include "crow.h"
 #include "mindnet/Utils.h"
 #include "mindnet/controllers/RestHelper.h"
-#include "mindnet/models/Map.h"
 
 namespace mindnet::routes
 {
@@ -17,9 +16,7 @@ namespace mindnet::routes
     {
         typedef models::columns::MapColumns cols;
 
-        //CREATE
-        app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::POST)
-        ([&db, &def](const crow::request& req)
+        auto create_lambda_function = [&db, &def](const crow::request& req)
         {
             auto body = crow::json::load(req.body);
             if (!body)
@@ -32,7 +29,7 @@ namespace mindnet::routes
             models::Map c{
                 0, body[cols::NAME].s(), body[cols::DESCRIPTION].s(), static_cast<unixtime>(Utils::currentUnixTimestamp())
             };
-            auto last_inserted_id = db.get()->map_repository->create(c);
+            auto last_inserted_id = db.get()->create(c);
             if (last_inserted_id == -1)
             {
                 return crow::response(500, "Saving the " + def.model_name + " failed.");
@@ -42,16 +39,14 @@ namespace mindnet::routes
             res["id"] = last_inserted_id;
 
             return crow::response(200, res);
-        });
+        };
 
-        //READ
-        app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::GET)
-        ([&db, &def](int id)
+        auto  read_lambda_function = [&db, &def](int id)
         {
             entity_fields values;
             try
             {
-                values = db->map_repository->read(id).get_values();
+                values = db->read(id, def);
             }
             catch (std::runtime_error& e)
             {
@@ -61,6 +56,16 @@ namespace mindnet::routes
 
             crow::json::wvalue res = RestHelper::model_to_wvalue(values, def);
             return crow::response(200, res);
-        });
+        };
+
+
+        //CREATE
+        app.route_dynamic(str("/") + def.model_name).methods(crow::HTTPMethod::POST)
+        (create_lambda_function);
+
+
+        //READ
+        app.route_dynamic(str("/") + def.model_name + "/<int>").methods(crow::HTTPMethod::GET)
+        ( read_lambda_function);
     }
 }

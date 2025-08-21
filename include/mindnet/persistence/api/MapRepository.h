@@ -24,6 +24,7 @@
 #include "mindnet/models/Map.h"
 #include <vector>
 
+#include "IRepository.h"
 #include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
@@ -35,13 +36,23 @@ namespace mindnet::persistence::api {
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class MapRepository {
+    class MapRepository : public models::IRepository {
 
     public:
+        MapRepository() = default;
         virtual ~MapRepository() = default;
 
-        virtual int create(const models::Map& content) = 0;
-        virtual models::Map read(int id) = 0;
+        virtual int create(const models::BaseModel& content) = 0;
+        virtual entity_fields read(int id, models::ModelDefinition& def) = 0;
+
+        virtual models::ModelDefinition& get_model_definition() = 0;
+
+
+    public:
+
+    private:
+
+
         // virtual void update(models::Map& content) = 0;
         // virtual void remove(int id) = 0;
         // virtual std::vector<models::Map> list(size_t page_number, size_t pageSize) = 0;

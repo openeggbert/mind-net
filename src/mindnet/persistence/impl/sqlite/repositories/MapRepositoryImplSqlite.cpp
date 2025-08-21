@@ -34,11 +34,8 @@
 namespace mindnet::impl::sqlite::repositories
 {
 
-    MapRepositoryImplSqlite::MapRepositoryImplSqlite() = default;
-
     MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
-
-    int MapRepositoryImplSqlite::create(const models::Map& map)
+    int MapRepositoryImplSqlite::create(const models::BaseModel& map)
     {
         try
         {
@@ -51,14 +48,16 @@ namespace mindnet::impl::sqlite::repositories
         }
     }
 
-    models::Map MapRepositoryImplSqlite::read(const int id)
+    entity_fields MapRepositoryImplSqlite::read(const int id, models::ModelDefinition& def)
     {
-        entity_fields values = persistence::impl::sqlite::read_model(models::MAP_DEFINITION, id);
-        models::Map content;
-        content.from_values(values);
-        return content;
-
+        return persistence::impl::sqlite::read_model(get_model_definition(), id);
     }
+
+    models::ModelDefinition& MapRepositoryImplSqlite::get_model_definition()
+    {
+        return models::MAP_DEFINITION;
+    }
+
     //
     // void MapRepositoryImplSqlite::remove(int id)
     // {
