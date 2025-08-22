@@ -45,9 +45,9 @@ namespace mindnet::impl::sqlite::repositories
         add_int(MAP_ID);
         add_int(NODE_ID);
         add_string(KEY);
-        add_string(VALUE);
-        add_int(VALUE_TYPE);
-        add_int(IS_INDEXED);
+        add_optional_string(VALUE, "");
+        add_optional_int(VALUE_TYPE, 0);
+        add_optional_int(IS_INDEXED, 0);
         return fields;
     }
 

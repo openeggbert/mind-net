@@ -46,18 +46,22 @@ namespace mindnet::impl::sqlite::repositories
         add_int(MAP_ID);
         add_int(SIBLING_POSITION);
         add_string(TITLE);
-        add_int(CONTENT_ID);
-        add_int(PARENT_NODE_ID);
-        add_int(TYPE);
-        add_int(VISIBILITY);
-        add_string(LAST_SHOWN_AT);
-        add_string(EXPIRES_AT);
-        add_int(IS_FAVORITE);
-        add_int(IS_REDIRECT);
-        add_int(REDIRECT_NODE_ID);
-        add_string(REDIRECT_REASON);
-        add_int(IMPORTANCE);
-        add_int(DIFFICULTY);
+
+        add_int_foreign_key(CONTENT_ID)
+        add_int_foreign_key(PARENT_NODE_ID)
+
+        add_optional_int(TYPE, 0);
+        add_optional_int(VISIBILITY, 0);
+        add_int(LAST_SHOWN_AT);
+        add_optional_int(EXPIRES_AT, 0);
+        add_optional_int(IS_FAVORITE, 0);
+        add_optional_int(IS_REDIRECT, 0);
+
+        add_int_foreign_key(REDIRECT_NODE_ID)
+
+        add_optional_string(REDIRECT_REASON, "");
+        add_optional_int(IMPORTANCE, 0);
+        add_optional_int(DIFFICULTY, 0);
         return fields;
     }
 

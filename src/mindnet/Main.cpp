@@ -13,8 +13,16 @@
 #include "mindnet/persistence/Persistence.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/controllers/ModelController.h"
+#include "mindnet/models/History.h"
+#include "mindnet/models/Tag.h"
+#include "mindnet/models/Map.h"
+#include "mindnet/models/Content.h"
+#include "mindnet/models/Node.h"
+#include "mindnet/models/ExternalLink.h"
+#include "mindnet/models/NodeLink.h"
+#include "mindnet/models/NodeTag.h"
+#include "mindnet/models/NodeProperty.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
-#include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
 
 void migrate_schema_if_needed()
@@ -64,27 +72,26 @@ bool check_args(std::vector<str>& arguments)
 
 void load_args(int argc, char** argv, std::vector<std::string>& arguments)
 {
-    std::vector<std::string> result;
     //std::cout << "Found " << argc << " arguments" << std::endl;
     //std::cout << "First argument: " << argv[0] << std::endl;
     for (int i = 1; i < argc; ++i)
     {
         //std::cout << "Found argument " << argv[i] << std::endl;
-        result.push_back(argv[i]);
+        arguments.push_back(argv[i]);
     }
-    if (!check_args(result)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
+    if (!check_args(arguments)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
 }
 
 bool commands_function_start(
-    std::vector<std::string> arguments,
-    std::shared_ptr<mindnet::persistence::Persistence> db,
+    std::vector<std::string>& arguments,
+    std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
     bool custom_port = false;
     int port = 8080;
     for (int i = 1; i < arguments.size(); ++i)
     {
-        auto argument = arguments[i];
+        const auto& argument = arguments[i];
         if (argument[0] != '-')
         {
             mindnet::err << "Option must start with \"-\": " << argument << std::endl;
@@ -124,8 +131,15 @@ bool commands_function_start(
 
     mindnet::routes::ModelController controller;
 
+    add_controller(HISTORY)
     add_controller(MAP)
     add_controller(CONTENT)
+    add_controller(NODE)
+    add_controller(TAG)
+    add_controller(EXTERNAL_LINK)
+    add_controller(NODE_LINK)
+    add_controller(NODE_TAG)
+    add_controller(NODE_PROPERTY)
 
     if (custom_port)
     {
@@ -141,8 +155,8 @@ bool commands_function_start(
 }
 
 bool commands_function_help(
-    std::vector<std::string> arguments,
-    std::shared_ptr<mindnet::persistence::Persistence> db,
+    std::vector<std::string>& arguments,
+    std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
     std::cout << "Help is not yet implemented." << std::endl;
@@ -150,23 +164,28 @@ bool commands_function_help(
 }
 
 bool commands_function_unknown(
-    std::vector<std::string> arguments,
-    std::shared_ptr<mindnet::persistence::Persistence> db,
+    std::vector<std::string>& arguments,
+    std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
     mindnet::err << "Unknown command: " << arguments[0] << std::endl;
     return false;
 }
 
+void log(const char* msg)
+{
+    std::cout << "Phase: " << msg << std::endl;
+}
+
 bool run_command(
-    std::vector<std::string> arguments,
-    std::shared_ptr<mindnet::persistence::Persistence> db)
+    std::vector<std::string>& arguments,
+    std::shared_ptr<mindnet::persistence::Persistence>& db)
 {
     int exit_status = 0;
     auto arg0 = arguments[0];
     typedef bool (*commands_function)(
-        std::vector<std::string>,
-        std::shared_ptr<mindnet::persistence::Persistence> db,
+        std::vector<std::string>&,
+        std::shared_ptr<mindnet::persistence::Persistence>& db,
         int&
     );
 

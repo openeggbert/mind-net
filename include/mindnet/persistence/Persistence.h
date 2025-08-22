@@ -4,19 +4,19 @@
 #ifndef DB_H
 #define DB_H
 
-#include "api/ContentRepository.h"
 #include "api/IRepository.h"
-#include "api/MapRepository.h"
+#include "crow/json.h"
+#include "mindnet/models/misc/ModelDefinition.h"
 
 
 
 namespace mindnet::persistence {
+    using mindnet::models::misc::ModelDefinition;
+
     class Persistence {
     private:
         std::map<std::string, models::IRepository* > repositories;
         std::vector<std::string> repositoryNames;
-
-
 
     public:
         Persistence();
@@ -26,15 +26,15 @@ namespace mindnet::persistence {
 
         std::vector<std::string>& list_repositories();
 
-        int create(const models::ModelDefinition& def, entity_fields& fields);
-        entity_fields read(int id, const models::ModelDefinition& def);
-        bool update(int id, entity_fields& fields, models::ModelDefinition& def);
-        bool remove(int id, models::ModelDefinition& def);
+        int create(const ModelDefinition& def, entity_fields& fields);
+        entity_fields read(int id, const ModelDefinition& def);
+        bool update(int id, entity_fields& fields, ModelDefinition& def);
+        bool remove(int id, ModelDefinition& def);
 
-        std::vector<entity_fields> list(size_t page_number, size_t pageSize, models::ModelDefinition& def);
+        std::vector<entity_fields> list(size_t page_number, size_t pageSize, ModelDefinition& def);
 
         //
-        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl, models::ModelDefinition& def);
+        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl, ModelDefinition& def);
 
 
     };

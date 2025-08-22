@@ -20,6 +20,8 @@
 #ifndef MODELDEFINITION_H
 #define MODELDEFINITION_H
 
+#include <set>
+
 #include "ostream"
 #include <string>
 
@@ -32,6 +34,7 @@ namespace mindnet::models::misc {
         str model_name;
         bool auto_increment;
         column_definitions columns;
+        std::set<str> optional_foreign_key_column_names;
     };
 }
 

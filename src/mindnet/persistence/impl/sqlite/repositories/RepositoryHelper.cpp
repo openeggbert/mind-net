@@ -39,11 +39,13 @@ namespace mindnet::persistence::impl::sqlite
     {
         db.exec("PRAGMA foreign_keys = ON;");
     }
-    void set_temp_store_pragma(SQLite::Database& db) {
+
+    void set_temp_store_pragma(SQLite::Database& db)
+    {
         db.exec("PRAGMA temp_store = MEMORY;");
     }
 
-    int create_model(const entity_fields& fields, const models::ModelDefinition& definition)
+    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition)
     {
         std::string sql = Utils::generate_insert_sql(definition);
         std::cout << "Going to execute insert SQL: " << sql << std::endl;
@@ -63,7 +65,7 @@ namespace mindnet::persistence::impl::sqlite
         return db.getLastInsertRowid();
     }
 
-    entity_fields read_model(models::ModelDefinition& def, const int id)
+    entity_fields read_model(models::misc::ModelDefinition& def, const int id)
     {
         std::string sql = Utils::generate_select_one_sql(def.model_name);
         std::cout << "Going to execute select one SQL: " << sql << std::endl;
@@ -111,7 +113,7 @@ namespace mindnet::persistence::impl::sqlite
         throw std::runtime_error(def.model_name + " not found");
     }
 
-    bool update_model(int id, models::ModelDefinition& def, entity_fields& fields)
+    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields)
     {
         std::string sql = Utils::generate_update_sql(def);
         std::cout << "Going to execute update SQL: " << sql << std::endl;
@@ -144,7 +146,7 @@ namespace mindnet::persistence::impl::sqlite
         }
     }
 
-    bool delete_model(models::ModelDefinition& def, const int id)
+    bool delete_model(models::misc::ModelDefinition& def, const int id)
     {
         str sql = Utils::generate_delete_sql(def);
         std::cout << "Going to execute delete SQL: " << sql << std::endl;
@@ -164,6 +166,12 @@ namespace mindnet::persistence::impl::sqlite
         try
         {
             Utils::sqlite_exec(query);
+            auto number_of_deleted_rows = db.getChanges();
+            if (number_of_deleted_rows != 1)
+            {
+                err << "Expected to delete 1 row, but deleted " << number_of_deleted_rows << std::endl;
+                return false;
+            }
             std::cout << "Delete successful" << std::endl;
             return true;
         }
@@ -174,7 +182,7 @@ namespace mindnet::persistence::impl::sqlite
         }
     }
 
-    std::vector<entity_fields> list_models(models::ModelDefinition& def, size_t page_number, size_t page_size)
+    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size)
     {
         std::string sql = Utils::generate_select_all_sql(def.model_name);
         std::cout << "Going to execute select all SQL: " << sql << std::endl;

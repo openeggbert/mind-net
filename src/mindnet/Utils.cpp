@@ -279,7 +279,10 @@ namespace mindnet
     template <class>
     inline constexpr bool always_false = false;
 
-    void Utils::fill_sqlite_query(SQLite::Statement& query, const entity_fields& values, bool auto_increment)
+    void Utils::fill_sqlite_query(
+        SQLite::Statement& query,
+        const entity_fields& values,
+        bool auto_increment)
     {
         std::size_t values_size = values.size();
         if (auto_increment) { values_size--; }
@@ -306,17 +309,23 @@ namespace mindnet
             }
             std::visit([&](auto&& val) -> void
             {
-                err << "binding index " << i << " with value \"" << val << "\"" << std::endl;
-
                 using T = std::decay_t<decltype(val)>;
 
+                err << "binding index " << i << " with value \"" << val << "\"" << std::endl;
+
+                int index = static_cast<int>(i + 1 + (auto_increment ? -1 : 0));
                 if constexpr (std::is_same_v<T, std::string>)
                 {
-                    query.bind(static_cast<int>(i + 1 + (auto_increment ? -1 : 0)), val);
+                    if (FOREIGN_KEY_NULL == val)
+                    {
+                        query.bind(index, nullptr);
+                    } else {
+                        query.bind(index, val);
+                    }
                 }
                 else if constexpr (std::is_same_v<T, int64_t>)
                 {
-                    query.bind(static_cast<int>(i + 1 + (auto_increment ? -1 : 0)), val);
+                    query.bind(index, val);
                 }
                 else
                 {

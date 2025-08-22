@@ -56,11 +56,37 @@ namespace mindnet
         static str generate_update_sql(const models::misc::ModelDefinition& definition);
         static str generate_delete_sql(const models::misc::ModelDefinition& definition);
 
-
-
         static void fill_sqlite_query(SQLite::Statement& query, const entity_fields& values,
                                       bool auto_increment = false);
     };
+
+    enum EscapeColor
+    {
+        Black = 0, Red = 1, Green = 2, Yellow = 3, Blue = 4, Magenta = 5, Cyan = 6, White = 7,
+        BrightBlack = 8, BrightRed = 9, BrightGreen = 10, BrightYellow = 11, BrightBlue = 12, BrightMagenta = 13, BrightCyan = 14, BrightWhite = 15,
+    };
+
+    struct TextColour
+    {
+        int foreground = -1;
+        int background = -1;
+    };
+    inline void set_text_colour(TextColour colour)
+    {
+        if (colour.foreground >=0) printf("\033[38;5;%dm", colour.foreground);
+        if (colour.background >=0) printf("\033[48;5;%dm", colour.background);
+    }
+
+    inline void set_text_colour(EscapeColor foreground, EscapeColor background)
+    {
+        set_text_colour({foreground, background});
+    }
+    inline void set_text_colour(EscapeColor foreground)
+    {
+        set_text_colour({foreground, -1});
+    }
+
+
 } // MiniWiki
 
 #endif //UTILS_H

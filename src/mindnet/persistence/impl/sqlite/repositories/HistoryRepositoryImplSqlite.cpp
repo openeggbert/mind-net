@@ -46,7 +46,7 @@ namespace mindnet::impl::sqlite::repositories
         add_int(RECORD_ID);
         add_int(OPERATION);
         add_string(PAYLOAD);
-        add_string(REASON);
+        add_optional_string(REASON, "");
         return fields;
     }
 

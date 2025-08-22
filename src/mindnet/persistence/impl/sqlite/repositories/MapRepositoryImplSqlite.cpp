@@ -43,8 +43,8 @@ namespace mindnet::impl::sqlite::repositories
         start_of_convert_crow_json_rvalue_to_entity_fields(Map)
 
         add_string(NAME);
-        add_int(DESCRIPTION);
-        add_string(CATEGORY);
+        add_optional_string(DESCRIPTION, "");
+        add_optional_string(CATEGORY, "");
         return fields;
     }
 

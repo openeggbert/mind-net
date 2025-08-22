@@ -37,15 +37,15 @@ namespace mindnet::persistence::impl::sqlite
 
     void set_foreign_key_pragma(SQLite::Database& db);
 
-    int create_model(const entity_fields& fields, const models::ModelDefinition& definition);
+    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition);
 
-    entity_fields read_model(models::ModelDefinition& def, int id);
+    entity_fields read_model(models::misc::ModelDefinition& def, int id);
 
-    bool update_model(int id, models::ModelDefinition& def, entity_fields& fields);
+    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields);
 
-    bool delete_model(models::ModelDefinition& def, int id);
+    bool delete_model(models::misc::ModelDefinition& def, int id);
 
-    std::vector<entity_fields> list_models(models::ModelDefinition& def, size_t page_number, size_t page_size);
+    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size);
 }
 
 #endif // BASEREPOSITORY_H

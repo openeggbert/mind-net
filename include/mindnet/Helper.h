@@ -30,5 +30,6 @@ typedef ColumnDefinition column_definition;
 typedef std::vector<column_definition> column_definitions;
 
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";
+static constexpr const char* FOREIGN_KEY_NULL = "FOREIGN_KEY_NULL";
 
 #endif //HELPER_H

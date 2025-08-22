@@ -25,16 +25,19 @@
 
 #include <string>
 
+#include "crow/json.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/Crudl.h"
 #include "mindnet/models/misc/BaseModel.h"
+#include "mindnet/models/misc/ModelDefinition.h"
+
 #define def_virtual_irepository_api_h_methods \
 virtual int create(const entity_fields& fields) = 0;\
 virtual entity_fields read(int id) = 0;\
 virtual bool update(int id, entity_fields& fields) = 0;\
 virtual bool remove(int id) = 0;\
 virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;\
-virtual models::ModelDefinition& get_model_definition() = 0;\
+virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;\
 virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
 #define def_virtual_irepository_impl_h_methods \
@@ -43,7 +46,7 @@ entity_fields read(int id) override;\
 bool update(int id, entity_fields& fields) override;\
 bool remove(int id) override;\
 std::vector<entity_fields> list(size_t page_number, size_t pageSize) override;\
-models::ModelDefinition& get_model_definition() override;\
+models::misc::ModelDefinition& get_model_definition() override;\
 entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
 
 #define def_virtual_irepository_impl_cpp_methods(Model, MODEL) \
@@ -79,7 +82,7 @@ std::vector<entity_fields> Model##RepositoryImplSqlite::list(size_t page_number,
     {\
         return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize);\
     }\
-models::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
+models::misc::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
     {\
         return models::MODEL##_DEFINITION;\
     }\
@@ -88,6 +91,25 @@ models::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
 #define int_for(COLUMN) cast64(body[cols::COLUMN])
 #define add_string(COLUMN) fields.push_back(string_for(COLUMN));
 #define add_int(COLUMN) fields.push_back(int_for(COLUMN));
+
+#define add_optional_string(COLUMN, DEFAULT_VALUE) \
+    if (body.has(cols::COLUMN)) {fields.push_back(string_for(COLUMN));}\
+    else{fields.push_back(DEFAULT_VALUE);}
+
+#define add_optional_int(COLUMN, DEFAULT_VALUE) \
+if (body.has(cols::COLUMN)) {fields.push_back(int_for(COLUMN));}\
+else{fields.push_back(DEFAULT_VALUE);}
+
+#define add_int_foreign_key(COLUMN)\
+if (\
+    body.has(cols::COLUMN) &&\
+    body[cols::COLUMN] != 0)\
+{\
+    add_int(COLUMN);\
+} else\
+{\
+    fields.push_back(FOREIGN_KEY_NULL);\
+}\
 
 
 
@@ -110,7 +132,7 @@ if (create)\
 }\
 else\
 {\
-    fields.push_back(body[cols::CREATED_AT].s());\
+    fields.push_back(cast64(body[cols::CREATED_AT]));\
 }\
 fields.push_back(cast64(Utils::currentUnixTimestamp()));
 

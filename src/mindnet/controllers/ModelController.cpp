@@ -12,7 +12,7 @@ namespace mindnet::routes
     using controllers::RestHelper;
 
     void ModelController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
-                                          models::ModelDefinition& def)
+                                          models::misc::ModelDefinition& def)
     {
         auto create_lambda_function = [&db, &def](const crow::request& req)
         {

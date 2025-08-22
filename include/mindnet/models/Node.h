@@ -55,7 +55,7 @@ namespace mindnet::models
             {NodeColumns::PARENT_NODE_ID, ColumnType::INTEGER, false},
             {NodeColumns::TYPE, ColumnType::INTEGER, false},
             {NodeColumns::VISIBILITY, ColumnType::INTEGER, false},
-            {NodeColumns::LAST_SHOWN_AT, ColumnType::INTEGER, false},
+            {NodeColumns::LAST_SHOWN_AT, ColumnType::INTEGER, true},
             {NodeColumns::EXPIRES_AT, ColumnType::INTEGER, false},
             {NodeColumns::IS_FAVORITE, ColumnType::INTEGER, false},
             {NodeColumns::IS_REDIRECT, ColumnType::INTEGER, false},
@@ -63,6 +63,11 @@ namespace mindnet::models
             {NodeColumns::REDIRECT_REASON, ColumnType::TEXT, false},
             {NodeColumns::IMPORTANCE, ColumnType::INTEGER, false},
             {NodeColumns::DIFFICULTY, ColumnType::INTEGER, false},
+        },
+        {
+            NodeColumns::CONTENT_ID,
+            NodeColumns::PARENT_NODE_ID,
+            NodeColumns::REDIRECT_NODE_ID
         }
     };
 

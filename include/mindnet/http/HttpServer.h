@@ -17,7 +17,7 @@ namespace mindnet::http
         HttpServer(std::shared_ptr<persistence::Persistence> db);
         void run(int port = 8080);
         template<typename T>
-        void register_controller(T* controller, models::ModelDefinition& definition) {
+        void register_controller(T* controller, models::misc::ModelDefinition& definition) {
             controller->register_routes(crow_app, db_, definition);
         }
 

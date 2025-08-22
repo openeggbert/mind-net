@@ -44,7 +44,7 @@ namespace mindnet::models
             {ContentColumns::UPDATED_AT, ColumnType::INTEGER, false},
             {ContentColumns::CONTENT, ColumnType::TEXT, true},
             {ContentColumns::FORMAT, ColumnType::TEXT, true},
-            {ContentColumns::VERSION, ColumnType::INTEGER, false},
+            {ContentColumns::VERSION, ColumnType::INTEGER, true},
             {ContentColumns::NODE_ID, ColumnType::INTEGER, true},
         }
 
