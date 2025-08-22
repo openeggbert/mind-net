@@ -35,6 +35,8 @@ bool migrate_schema_if_needed()
 
 void print_logo()
 {
+    std::cout << "Starting Mind Net..." << std::endl;
+
     std::cout << R"(
   __  __ _           _   _   _      _
  |  \/  (_)_ __   __| | | \ | | ___| |_
@@ -58,94 +60,139 @@ std::vector<std::string> main_args_to_vector(int argc, char** argv)
     return result;
 }
 
-int main(int argc, char** argv)
+
+/**
+ * Validates the provided arguments based on predefined constraints or conditions.
+ *
+ * @param args A vector of strings representing the arguments to validate.
+ * @return A boolean value indicating whether all arguments meet the validation criteria (true if valid, false otherwise).
+ */
+bool check_args(std::vector<str>& arguments)
 {
-    std::cout << "Starting mindnet..." << std::endl;
-
-    print_logo();
-    //std::cout << "argc: " << argc << std::endl;
-    std::vector<str> arguments = main_args_to_vector(argc, argv);
-    if (arguments.size() == 0)
+    if (arguments.empty())
     {
-        mindnet::err << "No arguments provided. Exiting." << std::endl;
-        return 1;
+        mindnet::err << static_cast<const char*>("No arguments provided. Exiting.") << std::endl;
+        return false;
     }
+    return true;
+}
 
-    if (!migrate_schema_if_needed())
+
+bool commands_function_start(
+    std::vector<std::string> arguments,
+    std::shared_ptr<mindnet::persistence::Persistence> db,
+    int& exit_status)
+{
+    bool custom_port = false;
+    int port = 8080;
+    for (int i = 1; i < arguments.size(); ++i)
     {
-        mindnet::err << "Failed to migrate schema. Exiting." << std::endl;
-        exit(mindnet::ExitStatus::MIGRATION_FAILED);
-    }
-
-    std::shared_ptr<mindnet::persistence::Persistence> db = std::make_shared<mindnet::persistence::Persistence>();
-
-    auto arg0 = arguments[0];
-    if (arg0 == "start")
-    {
-        bool custom_port = false;
-        int port = 8080;
-        for (int i = 1; i < arguments.size(); ++i)
+        auto argument = arguments[i];
+        if (argument[0] != '-')
         {
-            auto argument = arguments[i];
-            if (argument[0] != '-')
-            {
-                mindnet::err << "Option must start with \"-\": " << argument << std::endl;
-                return 1;
-            }
-            if (argument == "-p" || argument == "--port")
-            {
-                if (i + 1 < arguments.size())
-                {
-                    try {
-                        port = std::stoi(arguments[i + 1]);
-                        custom_port = true;
-                    }
-                    catch (std::exception& e)
-                    {
-                        mindnet::err << "Invalid port provided: " << arguments[i + 1] << std::endl;
-                        return 1;
-                    }
-                    ++i;
-                }
-                else
-                {
-                    mindnet::err << "No port provided for option --port. Exiting." << std::endl;
-                    return 1;
-                }
-            } else
-            {
-                mindnet::err << "Unknown option for start command: " << argument << std::endl;
-                return 1;
-            }
+            mindnet::err << "Option must start with \"-\": " << argument << std::endl;
+            exit_status = 1;
+            return true;
         }
-        mindnet::http::HttpServer server{db};
-
-        mindnet::routes::ModelController controller;
-
-        add_controller(MAP)
-        add_controller(CONTENT)
-
-        if (custom_port)
+        if (argument == "-p" || argument == "--port")
         {
-            std::cout << "Custom port was provided: " << port << std::endl;
+            if (i + 1 < arguments.size())
+            {
+                try {
+                    port = std::stoi(arguments[i + 1]);
+                    custom_port = true;
+                }
+                catch (std::exception& e)
+                {
+                    mindnet::err << "Invalid port provided: " << arguments[i + 1] << std::endl;
+                    exit_status = 1;
+                    return true;
+                }
+                ++i;
+            }
+            else
+            {
+                mindnet::err << "No port provided for option --port. Exiting." << std::endl;
+                exit_status = 1;
+                return true;
+            }
         } else
         {
-            std::cout << "Using default port: " << port << std::endl;
+            mindnet::err << "Unknown option for start command: " << argument << std::endl;
+            exit_status = 1;
+            return true;
         }
-        std::cout << "Starting server on port " << port << std::endl;
-        mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
-        server.run(port);
     }
-    else if (arg0 == "help")
+    mindnet::http::HttpServer server{db};
+
+    mindnet::routes::ModelController controller;
+
+    add_controller(MAP)
+    add_controller(CONTENT)
+
+    if (custom_port)
     {
-        std::cout << "Help is not yet implemented." << std::endl;
+        std::cout << "Custom port was provided: " << port << std::endl;
+    } else
+    {
+        std::cout << "Using default port: " << port << std::endl;
     }
-    else
+    std::cout << "Starting server on port " << port << std::endl;
+    mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
+    server.run(port);
+    return false;
+}
+
+bool commands_function_help(
+    std::vector<std::string> arguments,
+    std::shared_ptr<mindnet::persistence::Persistence> db,
+    int& exit_status)
+{
+    std::cout << "Help is not yet implemented." << std::endl;
+    return false;
+}
+
+bool commands_function_unknown(
+    std::vector<std::string> arguments,
+    std::shared_ptr<mindnet::persistence::Persistence> db,
+    int& exit_status)
+{
+    mindnet::err << "Unknown command: " << arguments[0] << std::endl;
+    return false;
+}
+
+int main(int argc, char** argv)
+{
+    print_logo();
+
+    auto arguments = main_args_to_vector(argc, argv);
+    if (!check_args(arguments)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
+    if (!migrate_schema_if_needed()) exit(mindnet::ExitStatus::MIGRATION_FAILED);
+
+    auto db = std::make_shared<mindnet::persistence::Persistence>();
+
+    int exit_status = 0;
+
+    auto arg0 = arguments[0];
+
+    typedef bool (*commands_function)(
+        std::vector<std::string>,
+        std::shared_ptr<mindnet::persistence::Persistence> db,
+        int&
+        );
+
+    std::map<std::string, commands_function> commands;
+    commands["start"] = commands_function_start;
+    commands["help"] = commands_function_help;
+
+    if (commands.find(arg0) == commands.end())
     {
-        mindnet::err << "Unknown command: " << arg0 << std::endl;
-        return 1;
+        commands_function_unknown(arguments, db, exit_status);
+        return exit_status;
     }
 
+    commands_function command = commands[arg0];
+    command(arguments, db, exit_status);
 
     return 0;
 

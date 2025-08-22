@@ -8,15 +8,30 @@
 #include <climits>
 
 
-namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 9;
+namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 10;
     inline std::string migrations[MIGRATION_COUNT] = {
+
+    	R"(
+    	CREATE TABLE history (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	table_name TEXT NOT NULL,
+	record_id INTEGER NOT NULL,
+	operation TEXT NOT NULL CHECK (operation IN ('create', 'update', 'delete')),
+	payload TEXT NOT NULL,
+	performed_by TEXT,
+	performed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+        )",
+
+
 
         R"(
 CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
         )",
 
@@ -31,6 +46,7 @@ CREATE TABLE node (
     type TEXT DEFAULT 'generic', -- for example: 'term', 'concept', 'category', 'redirect'
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    shown_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	is_redirect BOOLEAN DEFAULT 0,
 	redirect_node_id INTEGER,
 	redirect_reason TEXT,
@@ -51,6 +67,7 @@ CREATE TABLE content (
 	content TEXT NOT NULL,
 	format INTEGER,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     node_id INTEGER,
     reverted_from_content_id INTEGER,
 
