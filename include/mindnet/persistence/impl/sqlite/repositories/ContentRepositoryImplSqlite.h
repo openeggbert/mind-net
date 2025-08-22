@@ -41,17 +41,8 @@ namespace mindnet::impl::sqlite::repositories
         ContentRepositoryImplSqlite();
         ~ContentRepositoryImplSqlite() override;
 
-        int create(const entity_fields& fields) override;
-        entity_fields read(int id) override;
-        bool update(int id, entity_fields& fields) override;
-        bool remove(int id) override;
-        std::vector<entity_fields> list(size_t page_number, size_t pageSize) override;
+        def_virtual_irepository_impl_h_methods
 
-        models::ModelDefinition& get_model_definition() override;
-        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
-
-
-        // void update(models::Content& content) override;
     };
 }
 #endif // CONTENTREPOSITORYIMPLSQLITE_H

@@ -26,74 +26,28 @@
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/models/Content.h"
 
-#include <string>
-
 #include "mindnet/models/columns/MapColumns.h"
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
-#include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 
 namespace mindnet::impl::sqlite::repositories
 {
-
-
     ContentRepositoryImplSqlite::ContentRepositoryImplSqlite() = default;
 
     ContentRepositoryImplSqlite::~ContentRepositoryImplSqlite() = default;
 
-    int ContentRepositoryImplSqlite::create(const entity_fields& fields)
+    def_virtual_irepository_impl_cpp_methods(Content, CONTENT)
+
+    entity_fields ContentRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+        crow::json::rvalue& body, enums::Crudl crudl)
     {
-        try
-        {
-            return persistence::impl::sqlite::create_model(fields, get_model_definition());
-        }
-        catch (std::exception& e)
-        {
-            return -1;
-        }
+        start_of_convert_crow_json_rvalue_to_entity_fields(Content)
+
+        add_string(CONTENT);
+        add_int(FORMAT);
+        add_int(VERSION);
+        add_int(NODE_ID);
+
+        return fields;
     }
-
-    entity_fields ContentRepositoryImplSqlite::read(const int id)
-    {
-        return persistence::impl::sqlite::read_model(get_model_definition(), id);
-
-    }
-
-    models::ModelDefinition& ContentRepositoryImplSqlite::get_model_definition()
-    {
-        return models::CONTENT_DEFINITION;
-    }
-
-    entity_fields ContentRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl)
-    {
-        {
-            typedef models::columns::ContentColumns cols;
-            entity_fields fields;
-            fields.push_back(0);
-            fields.push_back(body[cols::CONTENT].s());
-            fields.push_back(body[cols::FORMAT].s());
-            fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
-            return fields;
-        }
-
-    }
-
-    bool ContentRepositoryImplSqlite::update(int id, entity_fields& fields)
-    {
-        return persistence::impl::sqlite::update_model(id, get_model_definition(), fields);
-    }
-
-
-    bool ContentRepositoryImplSqlite::remove(int id)
-    {
-        return persistence::impl::sqlite::delete_model(get_model_definition(), id);
-    }
-
-    std::vector<entity_fields> ContentRepositoryImplSqlite::list(size_t page_number, size_t pageSize)
-    {
-        return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize);
-    }
-
-
-
 }

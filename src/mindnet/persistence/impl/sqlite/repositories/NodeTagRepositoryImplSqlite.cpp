@@ -17,29 +17,35 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODETAGREPOSITORY_H
-#define NODETAGREPOSITORY_H
 
-#include "mindnet/models/NodeTag.h"
-#include <vector>
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
 
-#include "IRepository.h"
+#include "mindnet/persistence/impl/sqlite/repositories/NodeTagRepositoryImplSqlite.h"
 
-namespace mindnet::persistence::api
+#include <string>
+
+#include "mindnet/enums/Crudl.h"
+#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
+#include "SQLiteCpp/Database.h"
+
+namespace mindnet::impl::sqlite::repositories
 {
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
+    NodeTagRepositoryImplSqlite::~NodeTagRepositoryImplSqlite() = default;
 
-    class NodeTagRepository : public models::IRepository
+    def_virtual_irepository_impl_cpp_methods(NodeTag, NODE_TAG)
+
+    entity_fields NodeTagRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+        crow::json::rvalue& body, enums::Crudl crudl)
     {
-    public:
-        NodeTagRepository() = default;
-        virtual ~NodeTagRepository() = default;
+        start_of_convert_crow_json_rvalue_to_entity_fields(NodeTag)
 
-        def_virtual_irepository_api_h_methods
-    };
+        add_string(NAME);
+        add_int(DESCRIPTION);
+        add_string(CATEGORY);
+        return fields;
+    }
+
 }
-
-#endif // NODETAGREPOSITORY_H

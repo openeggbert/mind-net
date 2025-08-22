@@ -38,7 +38,7 @@ namespace mindnet::persistence::api
         NodeRepository() = default;
         virtual ~NodeRepository() = default;
 
-        def_virtual_irepository_methods
+        def_virtual_irepository_api_h_methods
     };
 }
 

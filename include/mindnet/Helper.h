@@ -9,6 +9,8 @@
 #include "enums/ColumnType.h"
 #include "nlohmann/json_fwd.hpp"
 
+#define cast64 static_cast<int64_t>
+
 typedef long long ll;
 typedef unsigned long long ull;
 typedef ull unixtime;

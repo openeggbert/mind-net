@@ -37,7 +37,7 @@ namespace mindnet::persistence::api {
     public:
         virtual ~ContentRepository() = default;
 
-        def_virtual_irepository_methods
+        def_virtual_irepository_api_h_methods
     };
 
 }

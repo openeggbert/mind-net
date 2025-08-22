@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,28 +22,43 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MAPREPOSITORYIMPLSQLITE_H
-#define MAPREPOSITORYIMPLSQLITE_H
 
+#include "mindnet/persistence/impl/sqlite/repositories/NodeRepositoryImplSqlite.h"
 
-#include "mindnet/persistence/api/MapRepository.h"
-#include "mindnet/models/Map.h"
-#include <vector>
+#include <string>
 
 #include "mindnet/enums/Crudl.h"
+#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
+#include "SQLiteCpp/Database.h"
 
 namespace mindnet::impl::sqlite::repositories
 {
-    using std::vector;
+    NodeRepositoryImplSqlite::~NodeRepositoryImplSqlite() = default;
 
-    class MapRepositoryImplSqlite : public persistence::api::MapRepository
+    def_virtual_irepository_impl_cpp_methods(Node, NODE)
+
+    entity_fields NodeRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+        crow::json::rvalue& body, enums::Crudl crudl)
     {
-    public:
-        MapRepositoryImplSqlite() = default;
-        ~MapRepositoryImplSqlite() override;
+        start_of_convert_crow_json_rvalue_to_entity_fields(Node)
 
-        def_virtual_irepository_impl_h_methods
-    };
+        add_string(UUID);
+        add_int(MAP_ID);
+        add_int(SIBLING_POSITION);
+        add_string(TITLE);
+        add_int(CONTENT_ID);
+        add_int(PARENT_NODE_ID);
+        add_int(TYPE);
+        add_int(VISIBILITY);
+        add_string(LAST_SHOWN_AT);
+        add_string(EXPIRES_AT);
+        add_int(IS_FAVORITE);
+        add_int(IS_REDIRECT);
+        add_int(REDIRECT_NODE_ID);
+        add_string(REDIRECT_REASON);
+        add_int(IMPORTANCE);
+        add_int(DIFFICULTY);
+        return fields;
+    }
+
 }
-// MAPREPOSITORYIMPLSQLITE_H
-#endif // MAPREPOSITORYIMPLSQLITE_H

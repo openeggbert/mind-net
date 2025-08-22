@@ -13,33 +13,37 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODETAGREPOSITORY_H
-#define NODETAGREPOSITORY_H
 
-#include "mindnet/models/NodeTag.h"
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef EXTERNALLINKREPOSITORYIMPLSQLITE_H
+#define EXTERNALLINKREPOSITORYIMPLSQLITE_H
+
+
+#include "mindnet/persistence/api/ExternalLinkRepository.h"
+#include "mindnet/models/ExternalLink.h"
 #include <vector>
 
-#include "IRepository.h"
+#include "mindnet/enums/Crudl.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::impl::sqlite::repositories
 {
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
+    using std::vector;
 
-    class NodeTagRepository : public models::IRepository
+    class ExternalLinkRepositoryImplSqlite : public persistence::api::ExternalLinkRepository
     {
     public:
-        NodeTagRepository() = default;
-        virtual ~NodeTagRepository() = default;
+        ExternalLinkRepositoryImplSqlite() = default;
+        ~ExternalLinkRepositoryImplSqlite() override;
 
-        def_virtual_irepository_api_h_methods
+        def_virtual_irepository_impl_h_methods
     };
 }
-
-#endif // NODETAGREPOSITORY_H
+// MAPREPOSITORYIMPLSQLITE_H
+#endif // EXTERNALLINKREPOSITORYIMPLSQLITE_H

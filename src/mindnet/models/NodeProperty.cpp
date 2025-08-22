@@ -10,13 +10,13 @@ namespace mindnet::models
     {
         entity_fields result;
         result.push_back(id);
-        result.push_back(static_cast<int64_t>(created_at));
-        result.push_back(static_cast<int64_t>(updated_at));
+        result.push_back(cast64(created_at));
+        result.push_back(cast64(updated_at));
         result.push_back(map_id);
         result.push_back(node_id);
         result.push_back(key);
         result.push_back(value);
-        result.push_back(static_cast<int64_t>(value_type));
+        result.push_back(cast64(value_type));
         result.push_back(is_indexed);
         return result;
     }

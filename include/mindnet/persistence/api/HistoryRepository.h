@@ -39,7 +39,7 @@ namespace mindnet::persistence::api
         HistoryRepository() = default;
         virtual ~HistoryRepository() = default;
 
-        def_virtual_irepository_methods
+        def_virtual_irepository_api_h_methods
 
     public:
 

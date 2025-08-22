@@ -11,10 +11,10 @@ namespace mindnet::models
     {
         entity_fields result;
         result.push_back(id);
-        result.push_back(static_cast<int64_t>(created_at));
-        result.push_back(static_cast<int64_t>(updated_at));
+        result.push_back(cast64(created_at));
+        result.push_back(cast64(updated_at));
         result.push_back(content);
-        result.push_back(static_cast<int64_t>(format));
+        result.push_back(cast64(format));
         result.push_back(version);
         result.push_back(node_id);
         return result;

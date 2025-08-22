@@ -10,24 +10,24 @@ namespace mindnet::models
     {
         entity_fields result;
         result.push_back(id);
-        result.push_back(static_cast<int64_t>(created_at));
-        result.push_back(static_cast<int64_t>(updated_at));
+        result.push_back(cast64(created_at));
+        result.push_back(cast64(updated_at));
         result.push_back(uuid);
         result.push_back(map_id);
         result.push_back(sibling_position);
         result.push_back(title);
         result.push_back(content_id);
         result.push_back(parent_node_id);
-        result.push_back(static_cast<int64_t>(type));
-        result.push_back(static_cast<int64_t>(visibility));
-        result.push_back(static_cast<int64_t>(last_shown_at));
-        result.push_back(static_cast<int64_t>(expires_at));
+        result.push_back(cast64(type));
+        result.push_back(cast64(visibility));
+        result.push_back(cast64(last_shown_at));
+        result.push_back(cast64(expires_at));
         result.push_back(is_favorite);
         result.push_back(is_redirect);
         result.push_back(redirect_node_id);
         result.push_back(redirect_reason);
-        result.push_back(static_cast<int64_t>(importance));
-        result.push_back(static_cast<int64_t>(difficulty));
+        result.push_back(cast64(importance));
+        result.push_back(cast64(difficulty));
         return result;
     }
 
