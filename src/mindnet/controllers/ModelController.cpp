@@ -71,7 +71,7 @@ namespace mindnet::routes
             if (!body)
                 return crow::response(400, "Invalid input. Body is missing or not valid.");
 
-            auto body_check_result = RestHelper::check_body_is_valid(body, def, true); // true = allow partial update?
+            auto body_check_result = RestHelper::check_body_is_valid(body, def, false); // true = allow partial update?
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
