@@ -17,8 +17,9 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+#ifndef CONTENTFORMAT_H
+#define CONTENTFORMAT_H
+
 
 #include <string>
 
@@ -28,32 +29,29 @@ namespace mindnet::Enum
      *
      * @author robertvokac
      */
-    enum class Importance
+    enum class ContentFormat
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        MARKDOWN = 0, HTML = 1, PLAIN = 2
     };
 
-    inline std::string importance_to_string(Importance importance)
+    inline std::string content_format_to_string(ContentFormat format)
     {
-        switch (importance)
+        switch (format)
         {
-        case Importance::UNDEFINED:
-            return "Undefined";
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
+        case ContentFormat::MARKDOWN:
+            return "Markdown";
+        case ContentFormat::HTML:
+            return "HTML";
+        case ContentFormat::PLAIN:
+            return "Plain";
         default:
             return "Unknown";
         }
     }
-    inline std::string importance_to_string(int importance)
+
+    inline std::string content_format_to_string(int format)
     {
-        return importance_to_string(static_cast<Importance>(importance));
+        return content_format_to_string(static_cast<ContentFormat>(format));
     }
-
-
 } // namespace mindnet::Enums
-#endif
+#endif // CONTENTFORMAT_H

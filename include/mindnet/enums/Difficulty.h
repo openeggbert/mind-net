@@ -28,11 +28,13 @@ namespace mindnet::Enum {
      * @author robertvokac
      */
     enum class Difficulty {
-        EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
+        UNDEFINED = 0, EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
     };
     inline std::string difficulty_to_string(Difficulty difficulty) {
         switch (difficulty)
         {
+            case Difficulty::UNDEFINED:
+                return "Undefined";
             case Difficulty::EASY:
                 return "Easy";
             case Difficulty::MEDIUM:

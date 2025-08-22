@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+#ifndef VALUETYPE_H
+#define VALUETYPE_H
 
 #include <string>
 
@@ -28,32 +28,31 @@ namespace mindnet::Enum
      *
      * @author robertvokac
      */
-    enum class Importance
+    enum class ValueType
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        STRING = 0, NUMBER = 1, BOOLEAN = 2, DATE = 3
     };
 
-    inline std::string importance_to_string(Importance importance)
+    inline std::string value_type_to_string(ValueType type)
     {
-        switch (importance)
+        switch (type)
         {
-        case Importance::UNDEFINED:
-            return "Undefined";
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
+        case ValueType::STRING:
+            return "String";
+        case ValueType::NUMBER:
+            return "Number";
+        case ValueType::BOOLEAN:
+            return "Boolean";
+        case ValueType::DATE:
+            return "Date";
         default:
             return "Unknown";
         }
     }
-    inline std::string importance_to_string(int importance)
+
+    inline std::string value_type_to_string(int type)
     {
-        return importance_to_string(static_cast<Importance>(importance));
+        return value_type_to_string(static_cast<ValueType>(type));
     }
-
-
 } // namespace mindnet::Enums
 #endif

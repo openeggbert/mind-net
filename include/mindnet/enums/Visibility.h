@@ -17,8 +17,7 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+
 
 #include <string>
 
@@ -28,32 +27,30 @@ namespace mindnet::Enum
      *
      * @author robertvokac
      */
-    enum class Importance
+    enum class Visibility
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        PUBLIC = 0, PRIVATE = 1, DRAFT = 2, ARCHIVED = 3
     };
 
-    inline std::string importance_to_string(Importance importance)
+    inline std::string visibility_to_string(Visibility visibility)
     {
-        switch (importance)
+        switch (visibility)
         {
-        case Importance::UNDEFINED:
-            return "Undefined";
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
+        case Visibility::PUBLIC:
+            return "Public";
+        case Visibility::PRIVATE:
+            return "Private";
+        case Visibility::DRAFT:
+            return "Draft";
+        case Visibility::ARCHIVED:
+            return "Archived";
         default:
             return "Unknown";
         }
     }
-    inline std::string importance_to_string(int importance)
+
+    inline std::string visibility_to_string(int visibility)
     {
-        return importance_to_string(static_cast<Importance>(importance));
+        return visibility_to_string(static_cast<Visibility>(visibility));
     }
-
-
 } // namespace mindnet::Enums
-#endif

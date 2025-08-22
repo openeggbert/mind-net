@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+#ifndef CRUDL_H
+#define CRUDL_H
 
 #include <string>
 
@@ -28,32 +28,36 @@ namespace mindnet::Enum
      *
      * @author robertvokac
      */
-    enum class Importance
+    enum class Crudl
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        UNDEFINED = 0, CREATE = 1, READ = 2, UPDATE = 3, DELETE = 4, LIST = 5
     };
 
-    inline std::string importance_to_string(Importance importance)
+    inline std::string crudl_to_string(Crudl difficulty)
     {
-        switch (importance)
+        switch (difficulty)
         {
-        case Importance::UNDEFINED:
+        case Crudl::UNDEFINED:
             return "Undefined";
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
+        case Crudl::CREATE:
+            return "Create";
+        case Crudl::READ:
+            return "Read";
+        case Crudl::UPDATE:
+            return "Update";
+        case Crudl::DELETE:
+            return "Delete";
+        case Crudl::LIST:
+            return "List";
         default:
             return "Unknown";
         }
     }
-    inline std::string importance_to_string(int importance)
+
+    inline std::string crudl_to_string(int crudl)
     {
-        return importance_to_string(static_cast<Importance>(importance));
+        return crudl_to_string(static_cast<Crudl>(crudl));
     }
-
-
 } // namespace mindnet::Enums
-#endif
+
+#endif // CRUDL_H

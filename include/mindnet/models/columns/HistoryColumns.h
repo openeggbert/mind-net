@@ -17,43 +17,37 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
 
-#include <string>
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef HISTORYCOLUMNS_H
+#define HISTORYCOLUMNS_H
 
-namespace mindnet::Enum
+
+#include "mindnet/Helper.h"
+#include "mindnet/enums/ColumnType.h"
+
+
+namespace mindnet::models::columns
 {
-    /**
-     *
-     * @author robertvokac
-     */
-    enum class Importance
+    struct HistoryColumns
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        HistoryColumns() = delete;
+
+        HistoryColumns(const HistoryColumns&) = delete;
+        HistoryColumns& operator=(const HistoryColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "history";
+
+        static constexpr const char* ID = "id";
+        static constexpr const char* CREATED_AT = "created_at";
+        static constexpr const char* UPDATED_AT = "updated_at";
+        static constexpr const char* TABLE_NAME = "table_name";
+        static constexpr const char* RECORD_ID = "record_id";
+        static constexpr const char* OPERATION = "operation";
+        static constexpr const char* PAYLOAD = "payload";
     };
-
-    inline std::string importance_to_string(Importance importance)
-    {
-        switch (importance)
-        {
-        case Importance::UNDEFINED:
-            return "Undefined";
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
-        default:
-            return "Unknown";
-        }
-    }
-    inline std::string importance_to_string(int importance)
-    {
-        return importance_to_string(static_cast<Importance>(importance));
-    }
-
-
-} // namespace mindnet::Enums
-#endif
+}
+#endif // HISTORYCOLUMNS_H

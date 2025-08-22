@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+#ifndef NODETYPE_H
+#define NODETYPE_H
 
 #include <string>
 
@@ -28,30 +28,26 @@ namespace mindnet::Enum
      *
      * @author robertvokac
      */
-    enum class Importance
+    enum class NodeType
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        GENERIC = 0, TERM = 1
     };
 
-    inline std::string importance_to_string(Importance importance)
+    inline std::string node_type_to_string(NodeType type)
     {
-        switch (importance)
+        switch (type)
         {
-        case Importance::UNDEFINED:
-            return "Undefined";
-        case Importance::LOW:
-            return "Low";
-        case Importance::MEDIUM:
-            return "Medium";
-        case Importance::HIGH:
-            return "High";
+        case NodeType::GENERIC:
+            return "Generic";
+        case NodeType::TERM:
+            return "Term";
         default:
             return "Unknown";
         }
     }
-    inline std::string importance_to_string(int importance)
+    inline std::string node_type_to_string(int type)
     {
-        return importance_to_string(static_cast<Importance>(importance));
+        return node_type_to_string(static_cast<NodeType>(type));
     }
 
 

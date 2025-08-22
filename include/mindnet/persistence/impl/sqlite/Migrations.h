@@ -12,14 +12,15 @@ namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 10
     inline std::string migrations[MIGRATION_COUNT] = {
 
     	R"(
-    	CREATE TABLE history (
+CREATE TABLE history (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	table_name TEXT NOT NULL,
 	record_id INTEGER NOT NULL,
-	operation TEXT NOT NULL CHECK (operation IN ('create', 'update', 'delete')),
+	operation INTEGER NOT NULL CHECK (operation IN (1, 2, 3, 4, 5)),
 	payload TEXT NOT NULL,
-	performed_by TEXT,
-	performed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    reason TEXT DEFAULT NULL
 );
         )",
 
@@ -28,33 +29,40 @@ namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 10
         R"(
 CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    category TEXT DEFAULT NULL
 );
         )",
 
     	R"(
 CREATE TABLE node (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     uuid TEXT NOT NULL UNIQUE,
 	map_id INTEGER NOT NULL,
+    sibling_position INTEGER NOT NULL,
 	title TEXT NOT NULL,
 	content_id INTEGER,
     parent_node_id INTEGER,
-    type TEXT DEFAULT 'generic', -- for example: 'term', 'concept', 'category', 'redirect'
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    shown_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    type INTEGER DEFAULT 0 CHECK (type IN (0,1)),
+    visibility INTEGER DEFAULT 0 CHECK (visibility IN (0, 1, 2, 3)),
+    last_shown_at DATETIME DEFAULT NULL,
+    expires_at DATETIME DEFAULT NULL,
+    is_favorite BOOLEAN DEFAULT 0,
 	is_redirect BOOLEAN DEFAULT 0,
 	redirect_node_id INTEGER,
 	redirect_reason TEXT,
+    importance INTEGER DEFAULT 0 CHECK (importance IN (0, 1, 2, 3)),
+    difficulty INTEGER DEFAULT 0 CHECK (difficulty IN (0, 1, 2, 3, 4)),
 	CHECK ( (is_redirect = 0 AND redirect_node_id IS NULL) OR (is_redirect = 1 AND redirect_node_id IS NOT NULL) ),
 
     FOREIGN KEY (map_id) REFERENCES map(id) ON DELETE CASCADE,
 	FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE SET NULL,
-    FOREIGN KEY (parent_node_id) REFERENCES node(id) ON DELETE SET NULL,
+    FOREIGN KEY (parent_node_id) REFERENCES node(id) ON DELETE CASCADE,
 	FOREIGN KEY (redirect_node_id) REFERENCES node(id) ON DELETE SET NULL
 
 );
@@ -64,15 +72,14 @@ CREATE TABLE node (
     	R"(
 CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	content TEXT NOT NULL,
-	format INTEGER,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	content TEXT NOT NULL,
+	format INTEGER CHECK (format IN (0, 1, 2)),
+    version INTEGER DEFAULT 1,
     node_id INTEGER,
-    reverted_from_content_id INTEGER,
 
-	FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE,
-	FOREIGN KEY (reverted_from_content_id) REFERENCES content(id) ON DELETE CASCADE
+	FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE
 );
 )",
 
@@ -80,13 +87,15 @@ CREATE TABLE content (
 
         R"(
 CREATE TABLE node_property(
-    id INTEGER PRIMARY KEY,
-    map_id INTEGER,
-	node_id INTEGER,
-	key TEXT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    map_id INTEGER NOT NULL,
+	node_id INTEGER NOT NULL,
+	key TEXT NOT NULL,
 	value TEXT,
-    value_type TEXT DEFAULT 'string', -- for example: 'string', 'number', 'boolean', 'date'
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    value_type INTEGER DEFAULT 0 CHECK (value_type in (0, 1, 2, 3)),
+    is_indexed BOOLEAN DEFAULT 0,
 	FOREIGN KEY (map_id) REFERENCES map(id) ON DELETE CASCADE,
     FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE,
 	unique (map_id, node_id, key)
@@ -97,9 +106,11 @@ CREATE TABLE node_property(
         R"(
 CREATE TABLE tag (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    map_id INTEGER,
-	title TEXT NOT NULL UNIQUE,
-	FOREIGN KEY (map_id) REFERENCES MAP(id) ON DELETE SET NULL,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    map_id INTEGER NOT NULL,
+	title TEXT NOT NULL,
+	FOREIGN KEY (map_id) REFERENCES map(id) ON DELETE CASCADE,
     UNIQUE(map_id, title)
 );
 
@@ -108,6 +119,8 @@ CREATE TABLE tag (
         R"(
 CREATE TABLE node_tag (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	node_id INTEGER NOT NULL,
 	tag_id INTEGER NOT NULL,
 	UNIQUE (node_id, tag_id),
@@ -119,13 +132,17 @@ CREATE TABLE node_tag (
         )",
         R"(
 CREATE TABLE node_link(
-	from_node_id INTEGER,
-	to_node_id INTEGER,
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	from_node_id INTEGER NOT NULL,
+	to_node_id INTEGER NOT NULL,
     label TEXT,
 	CHECK (from_node_id <> to_node_id),
+    UNIQUE (from_node_id, to_node_id),
 	FOREIGN KEY (from_node_id) REFERENCES node(id) ON DELETE CASCADE,
-	FOREIGN KEY (to_node_id) REFERENCES node(id) ON DELETE CASCADE,
-	PRIMARY KEY(from_node_id, to_node_id)
+	FOREIGN KEY (to_node_id) REFERENCES node(id) ON DELETE CASCADE
+
 );
 
 
@@ -134,8 +151,10 @@ CREATE TABLE node_link(
         R"(
 CREATE TABLE external_link(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	from_node_id INTEGER,
-	to_url TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	from_node_id INTEGER NOT NULL,
+	to_url TEXT NOT NULL,
 	UNIQUE(from_node_id, to_url),
 	FOREIGN KEY (from_node_id) REFERENCES node(id) ON DELETE CASCADE
 );
@@ -148,8 +167,18 @@ CREATE TABLE external_link(
     	CREATE INDEX idx_content_node_id ON content(node_id);
     	CREATE INDEX idx_node_tag_node_id ON node_tag(node_id);
     	CREATE INDEX idx_node_type ON node(type);
-    	CREATE INDEX idx_node_status ON node(status);
     	CREATE INDEX idx_node_property_key ON node_property(key);
+        CREATE INDEX idx_history_operation ON history(operation);
+
+CREATE INDEX idx_node_parent_id ON node(parent_node_id);
+CREATE INDEX idx_node_shown_expires ON node(last_shown_at, expires_at);
+CREATE INDEX idx_node_title ON node(title);
+CREATE INDEX idx_tag_title ON tag(title);
+CREATE INDEX idx_node_property_value ON node_property(value);
+CREATE INDEX idx_node_property_key_value ON node_property(key, value);
+CREATE INDEX idx_node_link_from_to ON node_link(from_node_id, to_node_id);
+CREATE INDEX idx_external_link_url ON external_link(to_url);
+
 
 		        )",
 
