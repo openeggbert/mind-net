@@ -17,13 +17,15 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENT_H
-#define CONTENT_H
+#ifndef EXTERNAL_LINK_H
+#define EXTERNAL_LINK_H
+
 
 #include <string>
+#include <utility>
 
 #include "misc/BaseModel.h"
-#include "columns/ContentColumns.h"
+#include "columns/ExternalLinkColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 
@@ -32,65 +34,58 @@ namespace mindnet::models
     using enums::ColumnType;
     using misc::BaseModel;
     using misc::ModelDefinition;
-    using columns::ContentColumns;
+    using columns::ExternalLinkColumns;
 
-    static ModelDefinition CONTENT_DEFINITION = {
-        ContentColumns::MODEL_NAME,
+    static ModelDefinition EXTERNAL_LINK_DEFINITION = {
+        ExternalLinkColumns::MODEL_NAME,
         true,
         {
-            {ContentColumns::ID, ColumnType::INTEGER, true},
-            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {ContentColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {ContentColumns::CONTENT, ColumnType::TEXT, true},
-            {ContentColumns::FORMAT, ColumnType::TEXT, true},
-            {ContentColumns::VERSION, ColumnType::INTEGER, false},
-            {ContentColumns::NODE_ID, ColumnType::INTEGER, true},
+            {ExternalLinkColumns::ID, ColumnType::INTEGER, true},
+            {ExternalLinkColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {ExternalLinkColumns::UPDATED_AT, ColumnType::INTEGER, false},
+            {ExternalLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
+            {ExternalLinkColumns::TO_URL, ColumnType::TEXT, true},
         }
-
     };
 
-    struct Content : BaseModel
+    struct ExternalLink : BaseModel
     {
-        str content;
-        str format;
-        str version;
-        str node_id;
+        int from_node_id;
+        str to_url;
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {
-            return CONTENT_DEFINITION;
+            return EXTERNAL_LINK_DEFINITION;
         }
 
         [[nodiscard]] entity_fields get_values() const override;
         void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const Content& idea)
+        friend std::ostream& operator<<(std::ostream& os, const ExternalLink& map)
         {
-            os << idea.to_json();
+            os << map.to_json();
             return os;
         }
 
-        bool operator==(const Content& other) const
+        bool operator==(const ExternalLink& other) const
         {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                content == other.content &&
-                format == other.format &&
-                version == other.version &&
-                node_id == other.node_id;
+            return id == other.id && from_node_id == other.from_node_id && to_url == other.to_url &&
+                created_at == other.created_at && updated_at == other.updated_at;
         }
 
-        Content() = default;
+        ExternalLink() = default;
 
-        Content(const str& content, const str& format, const str& version, const str& node_id)
-            : content(content),
-              format(format),
-              version(version),
-              node_id(node_id)
+        ExternalLink(int id_, int from_node_id_, str to_url_,
+                     unixtime created_at_,
+                     unixtime updated_at_
+        )
+            : from_node_id(from_node_id_), to_url(std::move(to_url_))
         {
+            id = id_;
+            created_at = created_at_;
+            updated_at = updated_at_;
         }
     };
 }
 
-#endif // CONTENT_H
+#endif // EXTERNAL_LINK_H

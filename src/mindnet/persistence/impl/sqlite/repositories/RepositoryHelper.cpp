@@ -39,6 +39,9 @@ namespace mindnet::persistence::impl::sqlite
     {
         db.exec("PRAGMA foreign_keys = ON;");
     }
+    void set_temp_store_pragma(SQLite::Database& db) {
+        db.exec("PRAGMA temp_store = MEMORY;");
+    }
 
     int create_model(const entity_fields& fields, const models::ModelDefinition& definition)
     {
@@ -70,6 +73,7 @@ namespace mindnet::persistence::impl::sqlite
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
         set_foreign_key_pragma(db);
+        set_temp_store_pragma(db);
         SQLite::Statement query(db, sql);
 
         entity_fields result;
@@ -117,6 +121,7 @@ namespace mindnet::persistence::impl::sqlite
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
         set_foreign_key_pragma(db);
+        set_temp_store_pragma(db);
         SQLite::Statement query(db, sql);
 
         if (!fields.empty())
@@ -149,6 +154,7 @@ namespace mindnet::persistence::impl::sqlite
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
         set_foreign_key_pragma(db);
+        set_temp_store_pragma(db);
         SQLite::Statement query(db, sql);
 
 

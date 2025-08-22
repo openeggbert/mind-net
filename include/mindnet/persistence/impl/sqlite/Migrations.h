@@ -96,6 +96,7 @@ CREATE TABLE node_property(
 	value TEXT,
     value_type INTEGER DEFAULT 0 CHECK (value_type in (0, 1, 2, 3)),
     is_indexed BOOLEAN DEFAULT 0,
+
 	FOREIGN KEY (map_id) REFERENCES map(id) ON DELETE CASCADE,
     FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE,
 	unique (map_id, node_id, key)

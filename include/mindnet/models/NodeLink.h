@@ -17,13 +17,15 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENT_H
-#define CONTENT_H
+#ifndef NODE_LINK_H
+#define NODE_LINK_H
+
 
 #include <string>
+#include <utility>
 
 #include "misc/BaseModel.h"
-#include "columns/ContentColumns.h"
+#include "columns/NodeLinkColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 
@@ -32,65 +34,60 @@ namespace mindnet::models
     using enums::ColumnType;
     using misc::BaseModel;
     using misc::ModelDefinition;
-    using columns::ContentColumns;
+    using columns::NodeLinkColumns;
 
-    static ModelDefinition CONTENT_DEFINITION = {
-        ContentColumns::MODEL_NAME,
+    static ModelDefinition NODE_LINK_DEFINITION = {
+        NodeLinkColumns::MODEL_NAME,
         true,
         {
-            {ContentColumns::ID, ColumnType::INTEGER, true},
-            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {ContentColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {ContentColumns::CONTENT, ColumnType::TEXT, true},
-            {ContentColumns::FORMAT, ColumnType::TEXT, true},
-            {ContentColumns::VERSION, ColumnType::INTEGER, false},
-            {ContentColumns::NODE_ID, ColumnType::INTEGER, true},
+            {NodeLinkColumns::ID, ColumnType::INTEGER, true},
+            {NodeLinkColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {NodeLinkColumns::UPDATED_AT, ColumnType::INTEGER, false},
+            {NodeLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
+            {NodeLinkColumns::TO_NODE_ID, ColumnType::INTEGER, true},
+            {NodeLinkColumns::LABEL, ColumnType::TEXT, false},
         }
-
     };
 
-    struct Content : BaseModel
+    struct NodeLink : BaseModel
     {
-        str content;
-        str format;
-        str version;
-        str node_id;
+        int from_node_id;
+        int to_node_id;
+        str label;
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {
-            return CONTENT_DEFINITION;
+            return NODE_LINK_DEFINITION;
         }
 
         [[nodiscard]] entity_fields get_values() const override;
         void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const Content& idea)
+        friend std::ostream& operator<<(std::ostream& os, const NodeLink& map)
         {
-            os << idea.to_json();
+            os << map.to_json();
             return os;
         }
 
-        bool operator==(const Content& other) const
+        bool operator==(const NodeLink& other) const
         {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                content == other.content &&
-                format == other.format &&
-                version == other.version &&
-                node_id == other.node_id;
+            return id == other.id && from_node_id == other.from_node_id && to_node_id == other.to_node_id &&
+                label == other.label && created_at == other.created_at && updated_at == other.updated_at;
         }
 
-        Content() = default;
+        NodeLink() = default;
 
-        Content(const str& content, const str& format, const str& version, const str& node_id)
-            : content(content),
-              format(format),
-              version(version),
-              node_id(node_id)
+        NodeLink(int id_, int from_node_id_, int to_node_id_, str label_,
+                 unixtime created_at_,
+                 unixtime updated_at_
+        )
+            : from_node_id(from_node_id_), to_node_id(to_node_id_), label(std::move(label_))
         {
+            id = id_;
+            created_at = created_at_;
+            updated_at = updated_at_;
         }
     };
 }
 
-#endif // CONTENT_H
+#endif // NODE_LINK_H
