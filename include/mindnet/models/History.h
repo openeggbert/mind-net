@@ -1,0 +1,100 @@
+///////////////////////////////////////////////////////////////////////////////////////////////
+// mind-net : Mind map software.
+// Copyright (C) 2025-2025 the original author or authors.
+//
+// This program is free software: you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see
+// <https://www.gnu.org/licenses/> or write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef HISTORY_H
+#define HISTORY_H
+
+#include <string>
+
+#include "BaseModel.h"
+#include "crow/json.h"
+#include "mindnet/Helper.h"
+
+namespace mindnet::models
+{
+    using enums::ColumnType;
+
+    static ModelDefinition HISTORY_DEFINITION = {
+        "history",
+        true,
+        {
+            {"id", ColumnType::INTEGER, true},
+            {"created_at", ColumnType::INTEGER, false},
+            {"updated_at", ColumnType::INTEGER, false},
+            {"table_name", ColumnType::TEXT, true},
+            {"record_id", ColumnType::INTEGER, true},
+            {"operation", ColumnType::INTEGER, true},
+            {"payload", ColumnType::TEXT, true},
+            {"reason", ColumnType::TEXT, false}
+        }
+    };
+
+    struct History : BaseModel
+    {
+        unixtime created_at{};
+        unixtime updated_at{};
+        str table_name;
+        int record_id{};
+        int operation{};
+        str payload;
+        str reason;
+
+        [[nodiscard]] inline ModelDefinition get_definition() const override
+        {
+            return HISTORY_DEFINITION;
+        }
+
+        [[nodiscard]] entity_fields get_values() const override;
+        void from_values(const entity_fields& values) override;
+
+        friend std::ostream& operator<<(std::ostream& os, const History& history)
+        {
+            os << history.to_json();
+            return os;
+        }
+
+        bool operator==(const History& other) const
+        {
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                table_name == other.table_name &&
+                record_id == other.record_id &&
+                operation == other.operation &&
+                payload == other.payload &&
+                reason == other.reason;
+        }
+
+        History() = default;
+
+        History(int i, unixtime cat, unixtime uat, const str& tn, int rid, int op, const str& pl, const str& r)
+        {
+            id = i;
+            created_at = cat;
+            updated_at = uat;
+            table_name = tn;
+            record_id = rid;
+            operation = op;
+            payload = pl;
+            reason = r;
+        }
+    };
+}
+
+#endif // HISTORY_H
