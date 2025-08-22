@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace mindnet::Enum
+namespace mindnet::enums
 {
     /**
      *
@@ -54,5 +54,5 @@ namespace mindnet::Enum
     {
         return value_type_to_string(static_cast<ValueType>(type));
     }
-} // namespace mindnet::Enums
+} // namespace mindnet::enumss
 #endif

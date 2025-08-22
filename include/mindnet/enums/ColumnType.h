@@ -1,9 +1,9 @@
 //
 // Created by robertvokac on 8/16/25.
 //
+#ifndef COLUMNTYPE_H
+#define COLUMNTYPE_H
 
-#ifndef MINI_WIKI_COLUMNTYPE_H
-#define MINI_WIKI_COLUMNTYPE_H
 
 namespace mindnet::enums
 {
@@ -15,4 +15,5 @@ namespace mindnet::enums
         BLOB
     };
 }
-#endif //MINI_WIKI_COLUMNTYPE_H
+
+#endif // COLUMNTYPE_H

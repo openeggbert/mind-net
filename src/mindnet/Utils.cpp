@@ -285,9 +285,17 @@ namespace mindnet
         if (auto_increment) { values_size--; }
         if (values_size > static_cast<size_t>(query.getBindParameterCount()))
         {
+            err << "Expected: " << query.getBindParameterCount() << " values, got: " << values_size << std::endl;
             err << "values().size " << values_size << " > query.getBindParameterCount() " << static_cast<size_t>(query.
                 getBindParameterCount()) << std::endl;
             throw std::out_of_range("More values provided than query parameters");
+        }
+        if (values_size < static_cast<size_t>(query.getBindParameterCount()))
+        {
+            err << "Expected: " << query.getBindParameterCount() << " values, got: " << values_size << std::endl;
+            err << "values().size " << values_size << " < query.getBindParameterCount() " << static_cast<size_t>(query.
+                getBindParameterCount()) << std::endl;
+            throw std::out_of_range("Less values provided than query parameters");
         }
 
         for (size_t i = 0; i < values.size(); ++i)

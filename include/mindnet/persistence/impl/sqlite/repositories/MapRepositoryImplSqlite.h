@@ -30,6 +30,8 @@
 #include "mindnet/models/Map.h"
 #include <vector>
 
+#include "mindnet/enums/Crudl.h"
+
 namespace mindnet::impl::sqlite::repositories
 {
     using std::vector;
@@ -47,7 +49,7 @@ namespace mindnet::impl::sqlite::repositories
         std::vector<entity_fields> list(size_t page_number, size_t pageSize) override;
         //
         models::ModelDefinition& get_model_definition() override;
-        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) override;
+        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
 
 
         // void update(models::Map& content) override;

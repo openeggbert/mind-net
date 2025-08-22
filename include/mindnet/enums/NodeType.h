@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace mindnet::Enum
+namespace mindnet::enums
 {
     /**
      *
@@ -51,5 +51,5 @@ namespace mindnet::Enum
     }
 
 
-} // namespace mindnet::Enums
+} // namespace mindnet::enumss
 #endif

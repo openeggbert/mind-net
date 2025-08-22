@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace mindnet::Enum {
+namespace mindnet::enums {
     /**
      *
      * @author robertvokac
@@ -54,5 +54,5 @@ namespace mindnet::Enum {
 
 
 
-} // namespace mindnet::Enums
+} // namespace mindnet::enumss
 #endif

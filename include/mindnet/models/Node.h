@@ -28,6 +28,10 @@
 #include "columns/NodeColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
+#include "mindnet/enums/Difficulty.h"
+#include "mindnet/enums/Importance.h"
+#include "mindnet/enums/NodeType.h"
+#include "mindnet/enums/Visibility.h"
 
 namespace mindnet::models
 {
@@ -44,7 +48,7 @@ namespace mindnet::models
             {NodeColumns::CREATED_AT, ColumnType::INTEGER, false},
             {NodeColumns::UPDATED_AT, ColumnType::INTEGER, false},
             {NodeColumns::UUID, ColumnType::TEXT, true},
-            {NodeColumns::NODE_ID, ColumnType::INTEGER, true},
+            {NodeColumns::MAP_ID, ColumnType::INTEGER, true},
             {NodeColumns::SIBLING_POSITION, ColumnType::INTEGER, true},
             {NodeColumns::TITLE, ColumnType::TEXT, true},
             {NodeColumns::CONTENT_ID, ColumnType::INTEGER, false},
@@ -70,16 +74,16 @@ namespace mindnet::models
         str title;
         int content_id;
         int parent_node_id;
-        int type;
-        int visibility;
+        enums::NodeType type;
+        enums::Visibility visibility;
         unixtime last_shown_at;
         unixtime expires_at;
         bool is_favorite;
         bool is_redirect;
         int redirect_node_id;
         str redirect_reason;
-        int importance;
-        int difficulty;
+        enums::Importance importance;
+        enums::Difficulty difficulty;
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {
@@ -117,12 +121,13 @@ namespace mindnet::models
              int importance_, int difficulty_,
              unixtime created_at_, unixtime updated_at_
         )
-            : uuid(std::move(uuid_)), map_id(map_id_), sibling_position(sibling_position_),
+            : BaseModel(), uuid(std::move(uuid_)), map_id(map_id_), sibling_position(sibling_position_),
               title(std::move(title_)), content_id(content_id_), parent_node_id(parent_node_id_),
-              type(type_), visibility(visibility_), last_shown_at(last_shown_at_),
-              expires_at(expires_at_), is_favorite(is_favorite_), is_redirect(is_redirect_),
-              redirect_node_id(redirect_node_id_), redirect_reason(std::move(redirect_reason_)),
-              importance(importance_), difficulty(difficulty_)
+              type(static_cast<enums::NodeType>(type_)), visibility(static_cast<enums::Visibility>(visibility_)),
+              last_shown_at(last_shown_at_), expires_at(expires_at_), is_favorite(is_favorite_),
+              is_redirect(is_redirect_), redirect_node_id(redirect_node_id_),
+              redirect_reason(std::move(redirect_reason_)), importance(static_cast<enums::Importance>(importance_)),
+              difficulty(static_cast<enums::Difficulty>(difficulty_))
         {
             id = id_;
             created_at = created_at_;

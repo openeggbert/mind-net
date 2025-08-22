@@ -27,14 +27,14 @@ namespace mindnet::persistence {
         std::vector<std::string>& list_repositories();
 
         int create(const models::ModelDefinition& def, entity_fields& fields);
-        entity_fields read(int id, models::ModelDefinition& def);
+        entity_fields read(int id, const models::ModelDefinition& def);
         bool update(int id, entity_fields& fields, models::ModelDefinition& def);
         bool remove(int id, models::ModelDefinition& def);
 
         std::vector<entity_fields> list(size_t page_number, size_t pageSize, models::ModelDefinition& def);
 
         //
-        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, models::ModelDefinition& def);
+        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl, models::ModelDefinition& def);
 
 
     };

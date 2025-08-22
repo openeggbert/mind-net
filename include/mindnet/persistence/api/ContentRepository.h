@@ -49,7 +49,7 @@ namespace mindnet::persistence::api {
 
         //
         virtual models::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) = 0;
+        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
         // virtual std::vector<models::Content> list(size_t page_number, size_t pageSize) = 0;
     };

@@ -27,14 +27,16 @@
 #include "mindnet/models/Map.h"
 
 #include <string>
+
+#include "mindnet/enums/Crudl.h"
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
 #include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 
 namespace mindnet::impl::sqlite::repositories
 {
-
     MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
+
     int MapRepositoryImplSqlite::create(const entity_fields& fields)
     {
         try
@@ -58,14 +60,34 @@ namespace mindnet::impl::sqlite::repositories
         return models::MAP_DEFINITION;
     }
 
-    entity_fields MapRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body)
+    entity_fields MapRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+        crow::json::rvalue& body, enums::Crudl crudl)
     {
         typedef models::columns::MapColumns cols;
         entity_fields fields;
+
+        bool create = crudl == enums::Crudl::CREATE;
+        bool update = crudl == enums::Crudl::UPDATE;
+        if (!create && !update)
+        {
+            return fields;
+        }
+
         fields.push_back(0);
+
+        if (create)
+        {
+            fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+        }
+        else
+        {
+            fields.push_back(body[cols::CREATED_AT].s());
+        }
+        fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+
         fields.push_back(body[cols::NAME].s());
         fields.push_back(body[cols::DESCRIPTION].s());
-        fields.push_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+        fields.push_back(body[cols::CATEGORY].s());
         return fields;
     }
 

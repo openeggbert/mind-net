@@ -24,7 +24,11 @@ namespace mindnet::routes
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, def);
+            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::CREATE, def);
+            if (fields.size() != def.columns.size())
+            {
+                return crow::response(500, "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model " + def.model_name+ ".");
+            }
 
             auto last_inserted_id = db.get()->create(def, fields);
             if (last_inserted_id == -1)
@@ -65,7 +69,11 @@ namespace mindnet::routes
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, def);
+            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::UPDATE, def);
+            if (fields.size() != def.columns.size())
+            {
+                return crow::response(500, "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model " + def.model_name+ ".");
+            }
 
             bool success = db->update(id, fields, def);
             if (!success)

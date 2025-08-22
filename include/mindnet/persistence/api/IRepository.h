@@ -26,6 +26,7 @@
 #include <string>
 
 #include "mindnet/Helper.h"
+#include "mindnet/enums/Crudl.h"
 #include "mindnet/models/misc/BaseModel.h"
 
 namespace mindnet::models {
@@ -47,7 +48,7 @@ namespace mindnet::models {
 
         //
         virtual models::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body) = 0;
+        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
 
     };

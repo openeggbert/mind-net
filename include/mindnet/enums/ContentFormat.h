@@ -23,7 +23,7 @@
 
 #include <string>
 
-namespace mindnet::Enum
+namespace mindnet::enums
 {
     /**
      *
@@ -53,5 +53,5 @@ namespace mindnet::Enum
     {
         return content_format_to_string(static_cast<ContentFormat>(format));
     }
-} // namespace mindnet::Enums
+} // namespace mindnet::enumss
 #endif // CONTENTFORMAT_H

@@ -17,11 +17,13 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef VISIBILITY_H
+#define VISIBILITY_H
 
 
 #include <string>
 
-namespace mindnet::Enum
+namespace mindnet::enums
 {
     /**
      *
@@ -53,4 +55,5 @@ namespace mindnet::Enum
     {
         return visibility_to_string(static_cast<Visibility>(visibility));
     }
-} // namespace mindnet::Enums
+} // namespace mindnet::enumss
+#endif // VISIBILITY_H

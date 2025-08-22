@@ -26,6 +26,16 @@
 
 #include "mindnet/models/misc/ModelDefinition.h"
 #include "mindnet/Helper.h"
+#define def_helper_lambdas()\
+auto number = [&values, &i]\
+{\
+    return std::get<std::int64_t>(values[i++]);\
+};\
+\
+auto text = [&values, &i]\
+{\
+    return std::get<std::string>(values[i++]);\
+};\
 
 namespace mindnet::models::misc {
 

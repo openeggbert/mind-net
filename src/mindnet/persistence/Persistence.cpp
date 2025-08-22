@@ -49,7 +49,7 @@ namespace mindnet::persistence
         return get_repository(def.model_name)->create(fields);
     }
 
-    entity_fields Persistence::read(int id, models::ModelDefinition& def)
+    entity_fields Persistence::read(const int id, const models::ModelDefinition& def)
     {
         return get_repository(def.model_name)->read(id);
     }
@@ -68,9 +68,9 @@ namespace mindnet::persistence
         return get_repository(def.model_name)->list(page_number, pageSize);
     }
 
-    entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, models::ModelDefinition& def)
+    entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, const enums::Crudl crudl, models::ModelDefinition& def)
     {
-        return get_repository(def.model_name)->convert_crow_json_rvalue_to_entity_fields(body);
+        return get_repository(def.model_name)->convert_crow_json_rvalue_to_entity_fields(body, crudl);
     }
 
 }

@@ -22,7 +22,7 @@
 
 #include <string>
 
-namespace mindnet::Enum
+namespace mindnet::enums
 {
     /**
      *
@@ -58,6 +58,6 @@ namespace mindnet::Enum
     {
         return crudl_to_string(static_cast<Crudl>(crudl));
     }
-} // namespace mindnet::Enums
+} // namespace mindnet::enumss
 
 #endif // CRUDL_H

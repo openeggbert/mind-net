@@ -55,7 +55,7 @@ namespace mindnet::models
     {
         str table_name;
         int record_id{};
-        Enum::Crudl operation{};
+        enums::Crudl operation{};
         str payload;
         str reason;
 
@@ -94,7 +94,7 @@ namespace mindnet::models
             updated_at = uat;
             table_name = tn;
             record_id = rid;
-            operation = static_cast<Enum::Crudl>(op);
+            operation = static_cast<enums::Crudl>(op);
             payload = pl;
             reason = r;
         }

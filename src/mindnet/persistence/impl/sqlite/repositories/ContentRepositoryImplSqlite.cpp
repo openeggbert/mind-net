@@ -64,7 +64,7 @@ namespace mindnet::impl::sqlite::repositories
         return models::CONTENT_DEFINITION;
     }
 
-    entity_fields ContentRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body)
+    entity_fields ContentRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl)
     {
         {
             typedef models::columns::ContentColumns cols;
