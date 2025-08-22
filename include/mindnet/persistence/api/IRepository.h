@@ -28,6 +28,14 @@
 #include "mindnet/Helper.h"
 #include "mindnet/enums/Crudl.h"
 #include "mindnet/models/misc/BaseModel.h"
+#define def_virtual_irepository_methods \
+virtual int create(const entity_fields& fields) = 0;\
+virtual entity_fields read(int id) = 0;\
+virtual bool update(int id, entity_fields& fields) = 0;\
+virtual bool remove(int id) = 0;\
+virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;\
+virtual models::ModelDefinition& get_model_definition() = 0;\
+virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
 namespace mindnet::models {
 
@@ -40,16 +48,7 @@ namespace mindnet::models {
         IRepository() = default;
 
     public:
-        virtual int create(const entity_fields& fields) = 0;
-        virtual entity_fields read(int id) = 0;
-        virtual bool update(int id, entity_fields& fields) = 0;
-        virtual bool remove(int id) = 0;
-        virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;
-
-        //
-        virtual models::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
-
+        def_virtual_irepository_methods
 
     };
 }

@@ -17,7 +17,6 @@
 #include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
 
-
 void migrate_schema_if_needed()
 {
     mindnet::Utils::trace("Migrating schema, if needed:");

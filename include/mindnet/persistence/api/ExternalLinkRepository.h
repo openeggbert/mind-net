@@ -17,29 +17,29 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
+#ifndef EXTERNALLINKREPOSITORY_H
+#define EXTERNALLINKREPOSITORY_H
 
-#include "mindnet/models/Content.h"
+#include "mindnet/models/ExternalLink.h"
 #include <vector>
 
 #include "IRepository.h"
 
-namespace mindnet::persistence::api {
-
+namespace mindnet::persistence::api
+{
     /**
      *
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class ContentRepository : public models::IRepository {
-
+    class ExternalLinkRepository : public models::IRepository
+    {
     public:
-        virtual ~ContentRepository() = default;
+        ExternalLinkRepository() = default;
+        virtual ~ExternalLinkRepository() = default;
 
         def_virtual_irepository_methods
     };
-
 }
 
-#endif // CONTENTREPOSITORY_H
+#endif // EXTERNALLINKREPOSITORY_H

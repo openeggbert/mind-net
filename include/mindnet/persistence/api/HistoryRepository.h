@@ -17,29 +17,35 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
+#ifndef HISTORYREPOSITORY_H
+#define HISTORYREPOSITORY_H
 
-#include "mindnet/models/Content.h"
+
+#include "mindnet/models/History.h"
 #include <vector>
 
 #include "IRepository.h"
 
-namespace mindnet::persistence::api {
-
+namespace mindnet::persistence::api
+{
     /**
      *
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class ContentRepository : public models::IRepository {
-
+    class HistoryRepository : public models::IRepository
+    {
     public:
-        virtual ~ContentRepository() = default;
+        HistoryRepository() = default;
+        virtual ~HistoryRepository() = default;
 
         def_virtual_irepository_methods
-    };
 
+    public:
+
+    private:
+        // virtual std::vector<models::History> list(size_t page_number, size_t pageSize) = 0;
+    };
 }
 
-#endif // CONTENTREPOSITORY_H
+#endif // HISTORYREPOSITORY_H

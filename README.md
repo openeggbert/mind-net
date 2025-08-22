@@ -1,6 +1,5 @@
 # mind-net
 
-
 Mind Net is a mind map storage written in the C++ programming language:
 
 Requirements:

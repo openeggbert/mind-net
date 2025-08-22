@@ -17,29 +17,29 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONTENTREPOSITORY_H
-#define CONTENTREPOSITORY_H
+#ifndef NODETAGREPOSITORY_H
+#define NODETAGREPOSITORY_H
 
-#include "mindnet/models/Content.h"
+#include "mindnet/models/NodeTag.h"
 #include <vector>
 
 #include "IRepository.h"
 
-namespace mindnet::persistence::api {
-
+namespace mindnet::persistence::api
+{
     /**
      *
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class ContentRepository : public models::IRepository {
-
+    class NodeTagRepository : public models::IRepository
+    {
     public:
-        virtual ~ContentRepository() = default;
+        NodeTagRepository() = default;
+        virtual ~NodeTagRepository() = default;
 
         def_virtual_irepository_methods
     };
-
 }
 
-#endif // CONTENTREPOSITORY_H
+#endif // NODETAGREPOSITORY_H

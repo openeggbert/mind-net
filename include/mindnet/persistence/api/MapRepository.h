@@ -20,14 +20,10 @@
 #ifndef MAPREPOSITORY_H
 #define MAPREPOSITORY_H
 
-
 #include "mindnet/models/Map.h"
 #include <vector>
 
 #include "IRepository.h"
-#include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
-#include "SQLiteCpp/Database.h"
-
 
 namespace mindnet::persistence::api {
 
@@ -42,22 +38,7 @@ namespace mindnet::persistence::api {
         MapRepository() = default;
         virtual ~MapRepository() = default;
 
-        virtual int create(const entity_fields& fields) = 0;
-        virtual entity_fields read(int id) = 0;
-        virtual bool update(int id, entity_fields& fields) = 0;
-        virtual bool remove(int id) = 0;
-        virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;
-
-        //
-        virtual models::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
-
-
-    public:
-
-    private:
-
-        // virtual std::vector<models::Map> list(size_t page_number, size_t pageSize) = 0;
+        def_virtual_irepository_methods
     };
 
 }
