@@ -22,34 +22,42 @@
 
 #include <string>
 
-#include "BaseModel.h"
+#include "misc/BaseModel.h"
 #include "columns/ContentColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 
 namespace mindnet::models
 {
-
     using enums::ColumnType;
+    using misc::BaseModel;
+    using misc::ModelDefinition;
     using columns::ContentColumns;
+
     static ModelDefinition CONTENT_DEFINITION = {
         ContentColumns::MODEL_NAME,
         true,
         {
             {ContentColumns::ID, ColumnType::INTEGER, true},
+            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {ContentColumns::UPDATED_AT, ColumnType::INTEGER, false},
             {ContentColumns::CONTENT, ColumnType::TEXT, true},
             {ContentColumns::FORMAT, ColumnType::TEXT, true},
-            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {ContentColumns::VERSION, ColumnType::INTEGER, false},
+            {ContentColumns::NODE_ID, ColumnType::INTEGER, true},
+
         }
 
     };
+
     struct Content : BaseModel
     {
         str content;
         str format;
-        unixtime created_at{};
+        str version;
+        str node_id;
 
-        [[nodiscard]] inline ModelDefinition get_definition() const override
+        [[nodiscard]] ModelDefinition get_definition() const override
         {
             return CONTENT_DEFINITION;
         }
@@ -65,18 +73,23 @@ namespace mindnet::models
 
         bool operator==(const Content& other) const
         {
-            return id == other.id && content == other.content && format == other.format && created_at == other.
-                created_at;
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                content == other.content &&
+                format == other.format &&
+                version == other.version &&
+                node_id == other.node_id;
         }
 
         Content() = default;
 
-        Content(int i, const str& s, const str& string, int i1)
+        Content(const str& content, const str& format, const str& version, const str& node_id)
+            : content(content),
+              format(format),
+              version(version),
+              node_id(node_id)
         {
-            id = i;
-            content = s;
-            format = string;
-            created_at = i1;
         }
     };
 }

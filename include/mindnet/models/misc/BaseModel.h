@@ -24,27 +24,33 @@
 
 #include <string>
 
-#include "ModelDefinition.h"
+#include "mindnet/models/misc/ModelDefinition.h"
 #include "mindnet/Helper.h"
 
-namespace mindnet::models {
+namespace mindnet::models::misc {
 
     using std::string;
 
     struct BaseModel {
 
+    protected:
         int id{};
+        unixtime created_at{};
+        unixtime updated_at{};
+
+    public:
 
         virtual ~BaseModel() = default;
-        [[nodiscard]] inline int get_id() const
+        [[nodiscard]] int get_id() const
         {
             return id;
         }
-        inline void set_id(int id_)
+
+        void set_id(const int id_)
         {
             id = id_;
         }
-        [[nodiscard]] virtual ModelDefinition get_definition() const = 0;
+        [[nodiscard]] virtual misc::ModelDefinition get_definition() const = 0;
 
         [[nodiscard]] virtual entity_fields get_values() const = 0;
         virtual void from_values(const entity_fields& values) = 0;

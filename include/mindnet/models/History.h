@@ -22,40 +22,44 @@
 
 #include <string>
 
-#include "BaseModel.h"
+#include "misc/BaseModel.h"
+#include "columns/HistoryColumns.h"
+#include "columns/MapColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
+#include "mindnet/enums/Crudl.h"
 
 namespace mindnet::models
 {
     using enums::ColumnType;
+    using misc::BaseModel;
+    using misc::ModelDefinition;
+    using columns::HistoryColumns;
 
     static ModelDefinition HISTORY_DEFINITION = {
-        "history",
+        HistoryColumns::MODEL_NAME,
         true,
         {
-            {"id", ColumnType::INTEGER, true},
-            {"created_at", ColumnType::INTEGER, false},
-            {"updated_at", ColumnType::INTEGER, false},
-            {"table_name", ColumnType::TEXT, true},
-            {"record_id", ColumnType::INTEGER, true},
-            {"operation", ColumnType::INTEGER, true},
-            {"payload", ColumnType::TEXT, true},
-            {"reason", ColumnType::TEXT, false}
+            {HistoryColumns::ID, ColumnType::INTEGER, true},
+            {HistoryColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {HistoryColumns::UPDATED_AT, ColumnType::INTEGER, false},
+            {HistoryColumns::TABLE_NAME, ColumnType::TEXT, true},
+            {HistoryColumns::RECORD_ID, ColumnType::INTEGER, true},
+            {HistoryColumns::OPERATION, ColumnType::INTEGER, true},
+            {HistoryColumns::PAYLOAD, ColumnType::TEXT, true},
+            {HistoryColumns::REASON, ColumnType::TEXT, false}
         }
     };
 
     struct History : BaseModel
     {
-        unixtime created_at{};
-        unixtime updated_at{};
         str table_name;
         int record_id{};
-        int operation{};
+        Enum::Crudl operation{};
         str payload;
         str reason;
 
-        [[nodiscard]] inline ModelDefinition get_definition() const override
+        [[nodiscard]] ModelDefinition get_definition() const override
         {
             return HISTORY_DEFINITION;
         }
@@ -90,7 +94,7 @@ namespace mindnet::models
             updated_at = uat;
             table_name = tn;
             record_id = rid;
-            operation = op;
+            operation = static_cast<Enum::Crudl>(op);
             payload = pl;
             reason = r;
         }

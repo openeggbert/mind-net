@@ -25,7 +25,7 @@
 
 #include "mindnet/Helper.h"
 
-namespace mindnet::models {
+namespace mindnet::models::misc {
     using std::string;
 
     struct ModelDefinition {

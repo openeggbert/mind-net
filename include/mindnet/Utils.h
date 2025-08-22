@@ -9,7 +9,7 @@
 
 #include "Global.h"
 #include "Helper.h"
-#include "models/BaseModel.h"
+#include "models/misc/BaseModel.h"
 #include "SQLiteCpp/Statement.h"
 
 namespace mindnet
@@ -52,9 +52,9 @@ namespace mindnet
         static str generate_select_one_sql(const std::string& table_name);
         static str generate_select_all_sql(const std::string& table_name);
 
-        static str generate_insert_sql(const models::ModelDefinition& definition);
-        static str generate_update_sql(const models::ModelDefinition& definition);
-        static str generate_delete_sql(const models::ModelDefinition& definition);
+        static str generate_insert_sql(const models::misc::ModelDefinition& definition);
+        static str generate_update_sql(const models::misc::ModelDefinition& definition);
+        static str generate_delete_sql(const models::misc::ModelDefinition& definition);
 
 
 

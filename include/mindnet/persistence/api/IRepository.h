@@ -26,7 +26,7 @@
 #include <string>
 
 #include "mindnet/Helper.h"
-#include "mindnet/models/BaseModel.h"
+#include "mindnet/models/misc/BaseModel.h"
 
 namespace mindnet::models {
 

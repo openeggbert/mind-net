@@ -11,11 +11,11 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/Helper.h"
-#include "mindnet/models/ModelDefinition.h"
+#include "../../../include/mindnet/models/misc/ModelDefinition.h"
 
 namespace mindnet::controllers
 {
-    crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values, const models::ModelDefinition& def)
+    crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values, const models::misc::ModelDefinition& def)
     {
         crow::json::wvalue res;
         auto columns = def.columns;
@@ -33,7 +33,7 @@ namespace mindnet::controllers
         return res;
     }
 
-    str RestHelper::check_body_is_valid(const crow::json::rvalue& body, const models::ModelDefinition& def, const bool id_wanted)
+    str RestHelper::check_body_is_valid(const crow::json::rvalue& body, const models::misc::ModelDefinition& def, const bool id_wanted)
     {
         for (auto e : def.columns)
         {

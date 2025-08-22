@@ -26,7 +26,7 @@
 
 #include "mindnet/Utils.h"
 #include "mindnet/persistence/impl/sqlite/Migrations.h"
-#include "mindnet/models/columns/MigrationColumns.h"
+#include "../../../../../include/mindnet/persistence/impl/sqlite/MigrationColumns.h"
 #include <openssl/sha.h>
 #include <iomanip>
 
@@ -177,7 +177,7 @@ INSERT INTO "migration" VALUES (1,0)
             return true;
         }
 
-        int getNewestMigrationNumber(SQLite::Database& db)
+        int get_newest_migration_number(SQLite::Database& db)
         {
             Utils::trace("getNewestMigrationNumber()");
             SQLite::Statement query(
@@ -204,7 +204,7 @@ INSERT INTO "migration" VALUES (1,0)
             }
         }
 
-        bool updateMigration(SQLite::Database& db, int max_migration_number)
+        bool update_migration_number(SQLite::Database& db, int max_migration_number)
         {
             Utils::trace("updateMigration()");
             SQLite::Statement query(
@@ -230,7 +230,7 @@ INSERT INTO "migration" VALUES (1,0)
             }
         }
 
-        std::string getCurrentDateTime()
+        std::string get_current_datetime()
         {
             Utils::trace("getCurrentDateTime()");
             using namespace std::chrono;
@@ -270,7 +270,7 @@ INSERT INTO "migration" VALUES (1,0)
                     return false;
                 }
                 Utils::trace("Going to find out the maxMigrationNumber");
-                int maxMigrationNumber = getNewestMigrationNumber(db);
+                int maxMigrationNumber = get_newest_migration_number(db);
                 Utils::trace(std::string(std::string("maxMigrationNumber=") + std::to_string(maxMigrationNumber)).c_str());
                 if (maxMigrationNumber == -1) return false;
                 for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <= MIGRATION_COUNT; migrationNumber++)
@@ -289,7 +289,7 @@ INSERT INTO "migration" VALUES (1,0)
 
                     if (migrated)
                     {
-                        bool updated = updateMigration(db, migrationNumber);
+                        bool updated = update_migration_number(db, migrationNumber);
                         if (!updated)
                         {
                             err << "Migration " << migrationNumber <<

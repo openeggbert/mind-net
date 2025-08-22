@@ -201,7 +201,7 @@ namespace mindnet
         return result;
     }
 
-    str Utils::generate_insert_sql(const models::ModelDefinition& definition)
+    str Utils::generate_insert_sql(const models::misc::ModelDefinition& definition)
     // const std::string& table_name, const std::vector<const char*>& columns,
     //                                    bool auto_increment)
     {
@@ -238,7 +238,7 @@ namespace mindnet
         return sql;
     }
 
-    str Utils::generate_update_sql(const models::ModelDefinition& definition)
+    str Utils::generate_update_sql(const models::misc::ModelDefinition& definition)
     {
         std::string sql = "UPDATE " + definition.model_name + " SET ";
         for (int i = 0; i < definition.columns.size(); ++i)
@@ -259,7 +259,7 @@ namespace mindnet
         return sql;
     }
 
-    str Utils::generate_delete_sql(const models::ModelDefinition& definition)
+    str Utils::generate_delete_sql(const models::misc::ModelDefinition& definition)
     {
         return "DELETE FROM " + definition.model_name + " WHERE id = ?";
 

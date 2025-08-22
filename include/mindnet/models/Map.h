@@ -22,8 +22,9 @@
 
 
 #include <string>
+#include <utility>
 
-#include "BaseModel.h"
+#include "misc/BaseModel.h"
 #include "columns/MapColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
@@ -31,24 +32,28 @@
 namespace mindnet::models
 {
     using enums::ColumnType;
+    using misc::BaseModel;
+    using misc::ModelDefinition;
     using columns::MapColumns;
+
     static ModelDefinition MAP_DEFINITION = {
-        columns::MapColumns::MODEL_NAME,
+        MapColumns::MODEL_NAME,
         true,
         {
             {MapColumns::ID, ColumnType::INTEGER, true},
-            {MapColumns::NAME, ColumnType::TEXT, true},
-            {MapColumns::DESCRIPTION, ColumnType::TEXT, true},
             {MapColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {MapColumns::UPDATED_AT, ColumnType::INTEGER, false},
+            {MapColumns::NAME, ColumnType::TEXT, true},
+            {MapColumns::DESCRIPTION, ColumnType::TEXT, false},
+            {MapColumns::CATEGORY, ColumnType::TEXT, false},
         }
-
     };
 
     struct Map : BaseModel
     {
         str name;
         str description;
-        unixtime created_at{};
+        str category;
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {
@@ -66,16 +71,21 @@ namespace mindnet::models
 
         bool operator==(const Map& other) const
         {
-            return id == other.id && name == other.name && description == other.description && created_at == other.
-                created_at;
+            return id == other.id && name == other.name && description == other.description && category == other.
+                category && created_at == other.created_at && updated_at == other.updated_at;
         }
 
         Map() = default;
 
-        Map(int id_, const str& name_, const str& description_, unixtime created_at_)
-            : name(name_), description(description_), created_at(created_at_)
+        Map(int id_, str name_, str description_, str category_,
+            unixtime created_at_,
+            unixtime updated_at_
+        )
+            : name(std::move(name_)), description(std::move(description_)), category(std::move(category_))
         {
             id = id_;
+            created_at = created_at_;
+            updated_at = updated_at_;
         }
     };
 }
