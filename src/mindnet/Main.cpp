@@ -18,7 +18,7 @@
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
 
 
-bool migrate_schema_if_needed()
+void migrate_schema_if_needed()
 {
     mindnet::Utils::trace("Migrating schema, if needed:");
 
@@ -27,10 +27,10 @@ bool migrate_schema_if_needed()
     if (migrationResult)
     {
         mindnet::Utils::trace("Migrating schema: OK. Success.");
-        return true;
+        return;
     }
     mindnet::err << "Migrating schema: KO. Failed." << std::endl;
-    return false;
+    exit(mindnet::ExitStatus::MIGRATION_FAILED);
 }
 
 void print_logo()
@@ -46,20 +46,6 @@ void print_logo()
 
         )" << std::endl;
 }
-
-std::vector<std::string> main_args_to_vector(int argc, char** argv)
-{
-    std::vector<std::string> result;
-    //std::cout << "Found " << argc << " arguments" << std::endl;
-    //std::cout << "First argument: " << argv[0] << std::endl;
-    for (int i = 1; i < argc; ++i)
-    {
-        //std::cout << "Found argument " << argv[i] << std::endl;
-        result.push_back(argv[i]);
-    }
-    return result;
-}
-
 
 /**
  * Validates the provided arguments based on predefined constraints or conditions.
@@ -77,6 +63,18 @@ bool check_args(std::vector<str>& arguments)
     return true;
 }
 
+void load_args(int argc, char** argv, std::vector<std::string>& arguments)
+{
+    std::vector<std::string> result;
+    //std::cout << "Found " << argc << " arguments" << std::endl;
+    //std::cout << "First argument: " << argv[0] << std::endl;
+    for (int i = 1; i < argc; ++i)
+    {
+        //std::cout << "Found argument " << argv[i] << std::endl;
+        result.push_back(argv[i]);
+    }
+    if (!check_args(result)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
+}
 
 bool commands_function_start(
     std::vector<std::string> arguments,
@@ -161,25 +159,17 @@ bool commands_function_unknown(
     return false;
 }
 
-int main(int argc, char** argv)
+bool run_command(
+    std::vector<std::string> arguments,
+    std::shared_ptr<mindnet::persistence::Persistence> db)
 {
-    print_logo();
-
-    auto arguments = main_args_to_vector(argc, argv);
-    if (!check_args(arguments)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
-    if (!migrate_schema_if_needed()) exit(mindnet::ExitStatus::MIGRATION_FAILED);
-
-    auto db = std::make_shared<mindnet::persistence::Persistence>();
-
     int exit_status = 0;
-
     auto arg0 = arguments[0];
-
     typedef bool (*commands_function)(
         std::vector<std::string>,
         std::shared_ptr<mindnet::persistence::Persistence> db,
         int&
-        );
+    );
 
     std::map<std::string, commands_function> commands;
     commands["start"] = commands_function_start;
@@ -188,12 +178,21 @@ int main(int argc, char** argv)
     if (commands.find(arg0) == commands.end())
     {
         commands_function_unknown(arguments, db, exit_status);
-        return exit_status;
+        return true;
     }
 
     commands_function command = commands[arg0];
     command(arguments, db, exit_status);
+    return exit_status;
+}
 
-    return 0;
+int main(int argc, char** argv)
+{
+    print_logo();
+    std::vector<std::string> arguments;
+    load_args(argc, argv, arguments);
+    migrate_schema_if_needed();
+    auto db = std::make_shared<mindnet::persistence::Persistence>();
 
+    return run_command(arguments, db);
 }

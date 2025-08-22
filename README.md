@@ -56,23 +56,3 @@ cmake --build .
 
 ### Support for export to static HTML files
 
-
-### Improve the main() function
-
-```
-   int main() {
-   print_logo();
-   if (!migrateSchemaIfNeeded()) return ExitStatus::MIGRATION_FAILED;
-
-   auto db = initializeDatabase();
-   auto manager = initializeMiniWikiManager(db);
-
-   if (set_editor_if_needed(db, exit_status)) return exit_status;
-
-   runCommandLoop(manager, factory);
-   updateSession(manager);
-
-   return 0;
-   }
-```
-
