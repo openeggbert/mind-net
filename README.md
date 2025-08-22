@@ -34,6 +34,8 @@ git clone https://github.com/openeggbert/mind-net/
 git submodule update --init --recursive
 # Go to the repository
 cd mind-net
+# Enable FTS5 feature of SQLite : edit third_party/sqlite/CMakeLists.txt
+# - add target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5) to 
 # Switch to the develop branch
 git checkout develop
 # Create build directory

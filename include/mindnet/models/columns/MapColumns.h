@@ -25,13 +25,14 @@
 #ifndef MAPCOLUMNS_H
 #define MAPCOLUMNS_H
 
+#include "BaseColumns.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ColumnType.h"
 
 
 namespace mindnet::models::columns
 {
-    struct MapColumns
+    struct MapColumns : public BaseColumns
     {
         MapColumns() = delete;
 
@@ -40,11 +41,9 @@ namespace mindnet::models::columns
 
         static constexpr const char* MODEL_NAME = "map";
 
-        static constexpr const char* ID = "id";
         static constexpr const char* NAME = "name";
         static constexpr const char* DESCRIPTION = "description";
-        static constexpr const char* CREATED_AT = "created_at";
-
+        static constexpr const char* CATEGORY = "category";
     };
 }
 #endif // MAPCOLUMNS_H

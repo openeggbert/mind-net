@@ -24,13 +24,14 @@
  */
 #ifndef CONTENTCOLUMNS_H
 #define CONTENTCOLUMNS_H
+#include "BaseColumns.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ColumnType.h"
 
 
 namespace mindnet::models::columns
 {
-    struct ContentColumns
+    struct ContentColumns : public BaseColumns
     {
         ContentColumns() = delete;
 
@@ -39,11 +40,10 @@ namespace mindnet::models::columns
 
         static constexpr const char* MODEL_NAME = "content";
 
-        static constexpr const char* ID = "id";
         static constexpr const char* CONTENT = "content";
         static constexpr const char* FORMAT = "format";
-        static constexpr const char* CREATED_AT = "created_at";
-
+        static constexpr const char* VERSION = "version";
+        static constexpr const char* NODE_ID = "node_id";
     };
 }
 #endif // CONTENTCOLUMNS_H

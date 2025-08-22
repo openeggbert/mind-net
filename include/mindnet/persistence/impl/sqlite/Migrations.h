@@ -8,7 +8,7 @@
 #include <climits>
 
 
-namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 10;
+namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 11;
     inline std::string migrations[MIGRATION_COUNT] = {
 
     	R"(
@@ -181,7 +181,30 @@ CREATE INDEX idx_external_link_url ON external_link(to_url);
 
 
 		        )",
+R"(
+CREATE VIRTUAL TABLE content_fts USING fts5(
+    content,
+    format UNINDEXED,
+    version UNINDEXED,
+    node_id UNINDEXED,
+    content='content',
+    tokenize = 'unicode61'
+);
 
+CREATE TRIGGER content_ai AFTER INSERT ON content BEGIN
+  INSERT INTO content_fts(rowid, content) VALUES (new.id, new.content);
+END;
+
+CREATE TRIGGER content_ad AFTER DELETE ON content BEGIN
+  DELETE FROM content_fts WHERE rowid = old.id;
+END;
+
+CREATE TRIGGER content_au AFTER UPDATE ON content BEGIN
+  UPDATE content_fts SET content = new.content WHERE rowid = old.id;
+END;
+
+
+)",
 
 
 

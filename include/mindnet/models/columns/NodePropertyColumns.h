@@ -22,31 +22,29 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef HISTORYCOLUMNS_H
-#define HISTORYCOLUMNS_H
-
+#ifndef NODEPROPERTYCOLUMNS_H
+#define NODEPROPERTYCOLUMNS_H
 
 #include "BaseColumns.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/ColumnType.h"
 
 
 namespace mindnet::models::columns
 {
-    struct HistoryColumns : public BaseColumns
+    struct NodePropertyColumns : public BaseColumns
     {
-        HistoryColumns() = delete;
+        NodePropertyColumns() = delete;
 
-        HistoryColumns(const HistoryColumns&) = delete;
-        HistoryColumns& operator=(const HistoryColumns&) = delete;
+        NodePropertyColumns(const NodePropertyColumns&) = delete;
+        NodePropertyColumns& operator=(const NodePropertyColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "history";
+        static constexpr const char* MODEL_NAME = "node_property";
 
-        static constexpr const char* TABLE_NAME = "table_name";
-        static constexpr const char* RECORD_ID = "record_id";
-        static constexpr const char* OPERATION = "operation";
-        static constexpr const char* PAYLOAD = "payload";
-        static constexpr const char* REASON = "reason";
+        static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* NODE_ID = "node_id";
+        static constexpr const char* KEY = "key";
+        static constexpr const char* VALUE = "value";
+        static constexpr const char* VALUE_TYPE = "value_type";
+        static constexpr const char* IS_INDEXED = "is_indexed";
     };
 }
-#endif // HISTORYCOLUMNS_H
+#endif // NODEPROPERTYCOLUMNS_H

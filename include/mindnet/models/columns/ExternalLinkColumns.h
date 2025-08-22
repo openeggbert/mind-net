@@ -22,9 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef HISTORYCOLUMNS_H
-#define HISTORYCOLUMNS_H
-
+#ifndef EXTERNALLINKCOLUMNS_H
+#define EXTERNALLINKCOLUMNS_H
 
 #include "BaseColumns.h"
 #include "mindnet/Helper.h"
@@ -33,20 +32,17 @@
 
 namespace mindnet::models::columns
 {
-    struct HistoryColumns : public BaseColumns
+    struct ExternalLinkColumns : public BaseColumns
     {
-        HistoryColumns() = delete;
+        ExternalLinkColumns() = delete;
 
-        HistoryColumns(const HistoryColumns&) = delete;
-        HistoryColumns& operator=(const HistoryColumns&) = delete;
+        ExternalLinkColumns(const ExternalLinkColumns&) = delete;
+        ExternalLinkColumns& operator=(const ExternalLinkColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "history";
+        static constexpr const char* MODEL_NAME = "external_link";
 
-        static constexpr const char* TABLE_NAME = "table_name";
-        static constexpr const char* RECORD_ID = "record_id";
-        static constexpr const char* OPERATION = "operation";
-        static constexpr const char* PAYLOAD = "payload";
-        static constexpr const char* REASON = "reason";
+        static constexpr const char* FROM_NODE_ID = "from_node_id";
+        static constexpr const char* TO_URL = "to_url";
     };
 }
-#endif // HISTORYCOLUMNS_H
+#endif // EXTERNALLINKCOLUMNS_H

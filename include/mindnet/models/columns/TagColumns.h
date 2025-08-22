@@ -22,9 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef HISTORYCOLUMNS_H
-#define HISTORYCOLUMNS_H
-
+#ifndef TAGCOLUMNS_H
+#define TAGCOLUMNS_H
 
 #include "BaseColumns.h"
 #include "mindnet/Helper.h"
@@ -33,20 +32,17 @@
 
 namespace mindnet::models::columns
 {
-    struct HistoryColumns : public BaseColumns
+    struct TagColumns : public BaseColumns
     {
-        HistoryColumns() = delete;
+        TagColumns() = delete;
 
-        HistoryColumns(const HistoryColumns&) = delete;
-        HistoryColumns& operator=(const HistoryColumns&) = delete;
+        TagColumns(const TagColumns&) = delete;
+        TagColumns& operator=(const TagColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "history";
+        static constexpr const char* MODEL_NAME = "tag";
 
-        static constexpr const char* TABLE_NAME = "table_name";
-        static constexpr const char* RECORD_ID = "record_id";
-        static constexpr const char* OPERATION = "operation";
-        static constexpr const char* PAYLOAD = "payload";
-        static constexpr const char* REASON = "reason";
+        static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* TITLE = "title";
     };
 }
-#endif // HISTORYCOLUMNS_H
+#endif // TAGCOLUMNS_H
