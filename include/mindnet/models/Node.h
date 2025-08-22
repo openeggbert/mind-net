@@ -64,11 +64,6 @@ namespace mindnet::models
             {NodeColumns::IMPORTANCE, ColumnType::INTEGER, false},
             {NodeColumns::DIFFICULTY, ColumnType::INTEGER, false},
         },
-        {
-            NodeColumns::CONTENT_ID,
-            NodeColumns::PARENT_NODE_ID,
-            NodeColumns::REDIRECT_NODE_ID
-        }
     };
 
     struct Node : BaseModel

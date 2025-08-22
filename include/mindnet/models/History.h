@@ -48,7 +48,8 @@ namespace mindnet::models
             {HistoryColumns::OPERATION, ColumnType::INTEGER, true},
             {HistoryColumns::PAYLOAD, ColumnType::TEXT, true},
             {HistoryColumns::REASON, ColumnType::TEXT, false}
-        }
+        },
+{enums::Crudl::READ,enums::Crudl::LIST}
     };
 
     struct History : BaseModel

@@ -46,7 +46,8 @@ namespace mindnet::models
             {NodeLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
             {NodeLinkColumns::TO_NODE_ID, ColumnType::INTEGER, true},
             {NodeLinkColumns::LABEL, ColumnType::TEXT, false},
-        }
+        },
+{enums::Crudl::READ,enums::Crudl::LIST}
     };
 
     struct NodeLink : BaseModel

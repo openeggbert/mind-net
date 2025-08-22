@@ -45,7 +45,8 @@ namespace mindnet::models
             {ExternalLinkColumns::UPDATED_AT, ColumnType::INTEGER, false},
             {ExternalLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
             {ExternalLinkColumns::TO_URL, ColumnType::TEXT, true},
-        }
+        },
+        {enums::Crudl::READ,enums::Crudl::LIST}
     };
 
     struct ExternalLink : BaseModel

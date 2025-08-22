@@ -26,6 +26,7 @@
 #include <string>
 
 #include "mindnet/Helper.h"
+#include "mindnet/enums/Crudl.h"
 
 namespace mindnet::models::misc {
     using std::string;
@@ -34,7 +35,7 @@ namespace mindnet::models::misc {
         str model_name;
         bool auto_increment;
         column_definitions columns;
-        std::set<str> optional_foreign_key_column_names;
+        std::set<enums::Crudl> allowed_crudl_rest_operations;
     };
 }
 
