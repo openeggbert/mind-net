@@ -58,6 +58,6 @@ namespace mindnet::enums
     {
         return crudl_to_string(static_cast<Crudl>(crudl));
     }
-} // namespace mindnet::enumss
+} // namespace mindnet::enums
 
 #endif // CRUDL_H

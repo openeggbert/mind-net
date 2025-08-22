@@ -55,5 +55,5 @@ namespace mindnet::enums
     {
         return visibility_to_string(static_cast<Visibility>(visibility));
     }
-} // namespace mindnet::enumss
+} // namespace mindnet::enums
 #endif // VISIBILITY_H

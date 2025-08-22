@@ -10,7 +10,7 @@
 
 
 namespace mindnet::http {
-    inline const std::string& methodToString(crow::HTTPMethod method) {
+    inline const std::string& http_method_to_string(crow::HTTPMethod method) {
         static const std::string methodNames[] = {
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
         };

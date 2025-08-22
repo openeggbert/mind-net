@@ -53,5 +53,5 @@ namespace mindnet::enums
     {
         return content_format_to_string(static_cast<ContentFormat>(format));
     }
-} // namespace mindnet::enumss
+} // namespace mindnet::enums
 #endif // CONTENTFORMAT_H

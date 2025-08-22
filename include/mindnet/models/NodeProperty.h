@@ -27,6 +27,7 @@
 #include "columns/NodePropertyColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
+#include "mindnet/enums/ValueType.h"
 
 namespace mindnet::models
 {
@@ -57,7 +58,7 @@ namespace mindnet::models
         int node_id;
         str key;
         str value;
-        int value_type{};
+        enums::ValueType value_type{};
         bool is_indexed{};
 
         [[nodiscard]] ModelDefinition get_definition() const override
@@ -88,7 +89,7 @@ namespace mindnet::models
                      unixtime updated_at_
         )
             : map_id(map_id_), node_id(node_id_), key(std::move(key_)), value(std::move(value_)),
-              value_type(value_type_), is_indexed(is_indexed_)
+              value_type(static_cast<enums::ValueType>(value_type_)), is_indexed(is_indexed_)
         {
             id = id_;
             created_at = created_at_;

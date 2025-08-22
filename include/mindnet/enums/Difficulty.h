@@ -54,5 +54,5 @@ namespace mindnet::enums {
 
 
 
-} // namespace mindnet::enumss
+} // namespace mindnet::enums
 #endif

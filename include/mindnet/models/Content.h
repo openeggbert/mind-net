@@ -26,6 +26,7 @@
 #include "columns/ContentColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
+#include "mindnet/enums/ContentFormat.h"
 
 namespace mindnet::models
 {
@@ -52,7 +53,7 @@ namespace mindnet::models
     struct Content : BaseModel
     {
         str content;
-        str format;
+        enums::ContentFormat format;
         str version;
         str node_id;
 
@@ -83,9 +84,9 @@ namespace mindnet::models
 
         Content() = default;
 
-        Content(const str& content, const str& format, const str& version, const str& node_id)
+        Content(const str& content, const int& format, const str& version, const str& node_id)
             : content(content),
-              format(format),
+              format(static_cast<enums::ContentFormat>(format)),
               version(version),
               node_id(node_id)
         {

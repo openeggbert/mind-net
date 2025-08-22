@@ -54,5 +54,5 @@ namespace mindnet::enums
     {
         return value_type_to_string(static_cast<ValueType>(type));
     }
-} // namespace mindnet::enumss
+} // namespace mindnet::enums
 #endif

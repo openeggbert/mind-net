@@ -117,6 +117,7 @@ CREATE TABLE tag (
     --
     map_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
+
 	FOREIGN KEY (map_id) REFERENCES map(id) ON DELETE CASCADE,
     UNIQUE(map_id, title)
 );
@@ -131,6 +132,7 @@ CREATE TABLE node_tag (
     --
 	node_id INTEGER NOT NULL,
 	tag_id INTEGER NOT NULL,
+
 	UNIQUE (node_id, tag_id),
 	FOREIGN KEY (node_id) REFERENCES node(id) ON DELETE CASCADE,
 	FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE
@@ -147,6 +149,7 @@ CREATE TABLE node_link(
 	from_node_id INTEGER NOT NULL,
 	to_node_id INTEGER NOT NULL,
     label TEXT,
+
 	CHECK (from_node_id <> to_node_id),
     UNIQUE (from_node_id, to_node_id),
 	FOREIGN KEY (from_node_id) REFERENCES node(id) ON DELETE CASCADE,
@@ -165,6 +168,7 @@ CREATE TABLE external_link(
     --
 	from_node_id INTEGER NOT NULL,
 	to_url TEXT NOT NULL,
+
 	UNIQUE(from_node_id, to_url),
 	FOREIGN KEY (from_node_id) REFERENCES node(id) ON DELETE CASCADE
 );

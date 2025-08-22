@@ -2,25 +2,22 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/models/Content.h"
+#include "mindnet/models/NodeTag.h"
 
 namespace mindnet::models
 {
-
-    entity_fields Content::get_values() const
+    entity_fields NodeTag::get_values() const
     {
         entity_fields result;
         result.push_back(id);
         result.push_back(static_cast<int64_t>(created_at));
         result.push_back(static_cast<int64_t>(updated_at));
-        result.push_back(content);
-        result.push_back(static_cast<int64_t>(format));
-        result.push_back(version);
         result.push_back(node_id);
+        result.push_back(tag_id);
         return result;
     }
 
-    void Content::from_values(const entity_fields& values)
+    void NodeTag::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -29,11 +26,7 @@ namespace mindnet::models
         set_id(number());
         created_at = number();
         updated_at = number();
-        //
-        content = text();
-        format = static_cast<enums::ContentFormat>(number());
-        version = number();
         node_id = number();
-    }
-;
+        tag_id = number();
+    };
 }
