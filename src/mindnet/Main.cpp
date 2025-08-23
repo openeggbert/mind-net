@@ -89,6 +89,7 @@ bool commands_function_start(
 {
     bool custom_port = false;
     int port = 8080;
+    str static_directory = "static";
     for (int i = 1; i < arguments.size(); ++i)
     {
         const auto& argument = arguments[i];
@@ -102,7 +103,8 @@ bool commands_function_start(
         {
             if (i + 1 < arguments.size())
             {
-                try {
+                try
+                {
                     port = std::stoi(arguments[i + 1]);
                     custom_port = true;
                 }
@@ -120,14 +122,29 @@ bool commands_function_start(
                 exit_status = 1;
                 return true;
             }
-        } else
+        }
+        else if (argument == "-s" || argument == "--static-directory")
+        {
+            if (i + 1 < arguments.size())
+            {
+                static_directory = arguments[i + 1];
+                ++i;
+            }
+            else
+            {
+                mindnet::err << "No path provided for option --static-directory. Exiting." << std::endl;
+                exit_status = 1;
+                return true;
+            }
+        }
+        else
         {
             mindnet::err << "Unknown option for start command: " << argument << std::endl;
             exit_status = 1;
             return true;
         }
     }
-    mindnet::http::HttpServer server{db};
+    mindnet::http::HttpServer server{db, static_directory};
 
     mindnet::routes::ModelController controller;
 
@@ -144,7 +161,8 @@ bool commands_function_start(
     if (custom_port)
     {
         std::cout << "Custom port was provided: " << port << std::endl;
-    } else
+    }
+    else
     {
         std::cout << "Using default port: " << port << std::endl;
     }

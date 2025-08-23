@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🧠 Mind Net</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    nav a {
+      color: #ecf0f1;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    nav a:hover {
+      background: #34495e;
+    }
+
+    .submenu {
+      background: #ecf0f1;
+      padding: 0.5rem 1rem;
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid #ccc;
+      flex-wrap: wrap;
+    }
+
+    .submenu a {
+      text-decoration: none;
+      color: #2c3e50;
+      font-weight: bold;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+    }
+
+    .submenu a:hover {
+      background: #d0d0ff;
+    }
+
+    main {
+      padding: 2rem;
+    }
+
+    .entity-title {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      color: #2c3e50;
+    }
+
+    .content-area {
+      background: white;
+      border-radius: 6px;
+      padding: 1rem;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      min-height: 200px;
+      transition: all 0.3s ease;
+    }
+
+    .content-area.empty {
+      opacity: 0.6;
+      font-style: italic;
+      color: #888;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #3498db;
+      color: white;
+    }
+
+    tr:hover {
+      background: #f0f8ff;
+    }
+
+    .actions a {
+      margin-right: 0.5rem;
+      color: #3498db;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    input, button {
+      margin: 0.3rem;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🧠 Mind Net</h1>
+    <nav id="entityNav"></nav>
+  </header>
+
+  <div class="submenu" id="crudMenu"></div>
+
+  <main>
+    <div class="entity-title" id="entityTitle">Select an entity to begin</div>
+    <div class="content-area empty" id="contentArea">No action selected.</div>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:8888/api";
+
+    const entities = [
+      'Map', 'Node', 'Content', 'Node Property',
+      'Tag', 'Node Tag', 'Node Link', 'External Link'
+    ];
+    const actions = ['➕ Create', '📋 List'];
+
+    let selectedEntity = null;
+
+    const entityNav = document.getElementById('entityNav');
+    const crudMenu = document.getElementById('crudMenu');
+    const entityTitle = document.getElementById('entityTitle');
+    const contentArea = document.getElementById('contentArea');
+
+    // Render entity navigation
+    entities.forEach(entity => {
+      const link = document.createElement('a');
+      link.href = '#';
+      link.textContent = entity;
+      link.onclick = () => {
+        selectedEntity = entity;
+        entityTitle.textContent = `${entity} – Choose an action`;
+        contentArea.classList.add('empty');
+        contentArea.innerHTML = 'No action selected.';
+        renderCrudMenu();
+      };
+      entityNav.appendChild(link);
+    });
+
+    function renderCrudMenu() {
+      crudMenu.innerHTML = '';
+      actions.forEach(action => {
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = action;
+        link.onclick = () => handleAction(action);
+        crudMenu.appendChild(link);
+      });
+    }
+
+    async function handleAction(action) {
+      contentArea.classList.remove('empty');
+      if (selectedEntity === 'Map') {
+        if (action === '📋 List') {
+          renderMapList();
+        } else if (action === '➕ Create') {
+          renderMapForm();
+        }
+      } else {
+        contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p>(not implemented yet)</p>`;
+      }
+    }
+
+    // MAP CRUD IMPLEMENTATION
+    async function renderMapList() {
+      const res = await fetch(`${API_BASE}/map`);
+      const json = await res.json();
+      const maps = json.items;
+
+      let html = `
+        <h3>Map List</h3>
+        <table>
+          <thead>
+            <tr><th>ID</th><th>Name</th><th>Description</th><th>Category</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+      `;
+      maps.forEach(m => {
+        html += `
+          <tr>
+            <td>${m.id}</td>
+            <td>${m.name}</td>
+            <td>${m.description ?? ""}</td>
+            <td>${m.category ?? ""}</td>
+            <td class="actions">
+              <a onclick="editMap(${m.id}, '${m.name}', '${m.description ?? ""}', '${m.category ?? ""}')">✏️ Edit</a>
+              <a onclick="deleteMap(${m.id})">🗑️ Delete</a>
+            </td>
+          </tr>`;
+      });
+      html += `</tbody></table>`;
+      contentArea.innerHTML = html;
+    }
+
+    function renderMapForm(map = null) {
+      contentArea.innerHTML = `
+        <h3>${map ? "Edit Map" : "Create Map"}</h3>
+        <form id="mapForm">
+          <input type="hidden" id="mapId" value="${map?.id ?? ""}">
+          <input type="text" id="mapName" placeholder="Name" required value="${map?.name ?? ""}">
+          <input type="text" id="mapDesc" placeholder="Description" value="${map?.description ?? ""}">
+          <input type="text" id="mapCategory" placeholder="Category" value="${map?.category ?? ""}">
+          <button type="submit">Save</button>
+        </form>
+      `;
+
+      document.getElementById("mapForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const id = document.getElementById("mapId").value;
+        const map = {
+          name: document.getElementById("mapName").value,
+          description: document.getElementById("mapDesc").value,
+          category: document.getElementById("mapCategory").value
+        };
+        if (id) {
+          await fetch(`${API_BASE}/map/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(map)
+          });
+        } else {
+          await fetch(`${API_BASE}/map`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(map)
+          });
+        }
+        handleAction('📋 List');
+      });
+    }
+
+    // Helpers for table actions
+    window.editMap = (id, name, desc, category) => {
+      renderMapForm({ id, name, description: desc, category });
+    };
+
+    window.deleteMap = async (id) => {
+      await fetch(`${API_BASE}/map/${id}`, { method: "DELETE" });
+      renderMapList();
+    };
+  </script>
+</body>
+</html>

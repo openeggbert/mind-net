@@ -10,11 +10,17 @@
 
 namespace mindnet::http
 {
+
+    struct CachedFile {
+        std::string content;
+        std::filesystem::file_time_type last_modified;
+    };
+
     class HttpServer
     {
 
     public:
-        HttpServer(std::shared_ptr<persistence::Persistence> db);
+        HttpServer(std::shared_ptr<persistence::Persistence> db, const std::string& directory_for_static_files = std::string("static"));
         void run(int port = 8080);
         template<typename T>
         void register_controller(T* controller, models::misc::ModelDefinition& definition) {
@@ -24,6 +30,7 @@ namespace mindnet::http
     private:
         crow::SimpleApp crow_app;
         std::shared_ptr<persistence::Persistence> db_;
+        std::unordered_map<std::string, CachedFile> file_cache;
 
     };
 }
