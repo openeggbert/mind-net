@@ -65,13 +65,14 @@ namespace mindnet::routes
 
         auto update_lambda_function = [&db, &def](const crow::request& req, int id)
         {
+            std::cout << "Update lambda function called" << std::endl;
             if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::UPDATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
                 return crow::response(400, "Invalid input. Body is missing or not valid.");
 
-            auto body_check_result = RestHelper::check_body_is_valid(body, def, false); // true = allow partial update?
+            auto body_check_result = RestHelper::check_body_is_valid(body, def, true); // true = allow partial update?
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
@@ -111,6 +112,7 @@ namespace mindnet::routes
 
         auto list_lambda_function = [&db, &def](const crow::request& req)
         {
+            std::cout << "List lambda function called" << std::endl;
             if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::LIST))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             int page_number = req.url_params.get("page_number") ? std::stoi(req.url_params.get("page_number")) : 1;
