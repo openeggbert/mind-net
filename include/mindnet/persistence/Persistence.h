@@ -26,7 +26,7 @@ namespace mindnet::persistence {
 
         std::vector<std::string>& list_repositories();
 
-        int create(const ModelDefinition& def, entity_fields& fields);
+        int create(const ModelDefinition& def, entity_fields& fields, str& error);
         entity_fields read(int id, const ModelDefinition& def);
         bool update(int id, entity_fields& fields, ModelDefinition& def);
         bool remove(int id, ModelDefinition& def);

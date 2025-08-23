@@ -214,14 +214,34 @@ function renderEntityForm(entity, data = {}) {
         const formData = new FormData(e.target);
         const payload = {};
 
-        formData.forEach((value, key) => {
-            if (!(key === "id" && !value)) {
-                payload[key] = value;
+// First process checkboxes according to schema
+        entitySchemas[selectedEntity].fields.forEach(field => {
+            if (field.type === "checkbox") {
+                payload[field.name] = document.getElementById(field.name).checked ? 1 : 0;
             }
         });
 
+// Then iterate through FormData for other field types
+        formData.forEach((value, key) => {
+            if (!(key === "id" && !value)) {
+                const fieldSchema = entitySchemas[selectedEntity].fields.find(f => f.name === key);
+                if (!fieldSchema) return;
+
+                // Checkboxy už jsme zpracovali, přeskočíme je
+                if (fieldSchema.type === "checkbox") return;
+
+                // Číselná pole: pokud je prázdné, pošleme 0
+                if (fieldSchema.type === "number" && value === "") {
+                    payload[key] = 0;
+                } else {
+                    payload[key] = value;
+                }
+            }
+        });
+
+
         const method = payload.id ? "PUT" : "POST";
-        const url = payload.id ? `${API_BASE}/${entity}/${payload.id}` : `${API_BASE}/${entity}`;
+        const url = payload.id ? `${API_BASE}/${selectedEntity}/${payload.id}` : `${API_BASE}/${selectedEntity}`;
 
         try {
             const res = await fetch(url, {
@@ -241,6 +261,7 @@ function renderEntityForm(entity, data = {}) {
             showError(`Network error: ${err.message}`);
         }
     });
+
 
 }
 
@@ -309,13 +330,22 @@ async function renderEntityList(entity) {
             html += `<tr><td>${item.id}</td>`;
             listFields.forEach(f => html += `<td>${item[f.name] ?? ""}</td>`);
             html += `<td class="actions">
-                        <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a>
-                        <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
-                        <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
-                        
-                     </td></tr>`;
+                    <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
+                       onclick="readEntity('${entity}', ${item.id})">
+                      <span>📖</span><span>Read</span>
+                    </a>
+                    <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
+                       onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                      <span>✏️</span><span>Update</span>
+                    </a>
+                    <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
+                       onclick="deleteEntity('${entity}', ${item.id})">
+                      <span>🗑️</span><span>Delete</span>
+                    </a>
+                 </td></tr>`;
         });
     }
+
 
     html += `</tbody></table>`;
     contentArea.innerHTML = html;

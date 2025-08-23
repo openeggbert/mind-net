@@ -45,7 +45,7 @@ namespace mindnet::persistence::impl::sqlite
         db.exec("PRAGMA temp_store = MEMORY;");
     }
 
-    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition)
+    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, str& error)
     {
         std::string sql = Utils::generate_insert_sql(definition);
         std::cout << "Going to execute insert SQL: " << sql << std::endl;
@@ -61,7 +61,14 @@ namespace mindnet::persistence::impl::sqlite
                                  , definition.auto_increment
         );
 
-        Utils::sqlite_exec(query);
+        try
+        {
+            Utils::sqlite_exec(query);
+        } catch (std::exception& e)
+        {
+            error = e.what();
+            throw;
+        }
         return db.getLastInsertRowid();
     }
 

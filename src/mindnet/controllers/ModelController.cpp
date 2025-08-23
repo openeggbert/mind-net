@@ -32,10 +32,11 @@ namespace mindnet::routes
                 return crow::response(500, "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model " + def.model_name+ ".");
             }
 
-            auto last_inserted_id = db.get()->create(def, fields);
+            str error;
+            auto last_inserted_id = db.get()->create(def, fields, error);
             if (last_inserted_id == -1)
             {
-                return crow::response(500, "Saving the " + def.model_name + " failed.");
+                return crow::response(500, "Saving the " + def.model_name + " failed. Error: " + error);
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);

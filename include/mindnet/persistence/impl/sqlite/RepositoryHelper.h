@@ -37,7 +37,7 @@ namespace mindnet::persistence::impl::sqlite
 
     void set_foreign_key_pragma(SQLite::Database& db);
 
-    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition);
+    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, str& error);
 
     entity_fields read_model(models::misc::ModelDefinition& def, int id);
 

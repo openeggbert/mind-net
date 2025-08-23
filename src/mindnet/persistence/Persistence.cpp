@@ -56,9 +56,9 @@ namespace mindnet::persistence
         return repositoryNames;
     }
 
-    int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields)
+    int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, str& error)
     {
-        return get_repository(def.model_name)->create(fields);
+        return get_repository(def.model_name)->create(fields, error);
     }
 
     entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def)

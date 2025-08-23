@@ -32,7 +32,7 @@
 #include "mindnet/models/misc/ModelDefinition.h"
 
 #define def_virtual_irepository_api_h_methods \
-virtual int create(const entity_fields& fields) = 0;\
+virtual int create(const entity_fields& fields, str& error) = 0;\
 virtual entity_fields read(int id) = 0;\
 virtual bool update(int id, entity_fields& fields) = 0;\
 virtual bool remove(int id) = 0;\
@@ -41,7 +41,7 @@ virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;\
 virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
 #define def_virtual_irepository_impl_h_methods \
-int create(const entity_fields& fields) override;\
+int create(const entity_fields& fields, str& error) override;\
 entity_fields read(int id) override;\
 bool update(int id, entity_fields& fields) override;\
 bool remove(int id) override;\
@@ -50,11 +50,11 @@ models::misc::ModelDefinition& get_model_definition() override;\
 entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
 
 #define def_virtual_irepository_impl_cpp_methods(Model, MODEL) \
-int Model##RepositoryImplSqlite::create(const entity_fields& fields)\
+int Model##RepositoryImplSqlite::create(const entity_fields& fields, str& error)\
     {\
         try\
         {\
-            return persistence::impl::sqlite::create_model(fields, get_model_definition());\
+            return persistence::impl::sqlite::create_model(fields, get_model_definition(), error);\
         }\
         catch (std::exception& e)\
         {\
