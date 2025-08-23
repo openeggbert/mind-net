@@ -101,7 +101,7 @@ th, td {
 th {
     background: linear-gradient(to right, #3498db, #2980b9);
     color: white;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
     letter-spacing: 1px;
 }
 
@@ -203,3 +203,15 @@ form button:hover {
     50% { opacity: 1; }
     100% { opacity: 0.5; }
 }
+
+table th:first-child,
+table td:first-child {
+    width: 1%; /* minimizes column width */
+    min-width: 200px;
+    white-space: nowrap; /* prevents text wrapping */
+}
+
+table td:last-child {
+    word-wrap: break-word;
+}
+

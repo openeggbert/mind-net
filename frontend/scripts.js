@@ -24,7 +24,7 @@ const entitySchemas = {
             { name: "title", type: "text", required: true },
             { name: "content_id", type: "number" },
             { name: "parent_node_id", type: "number" },
-            { name: "type", type: "number" },
+            { name: "type", type: "number", required: true },
             { name: "visibility", type: "number", list: false },
             { name: "last_shown_at", type: "datetime", list: false },
             { name: "expires_at", type: "datetime", list: false },
@@ -244,6 +244,25 @@ function renderEntityForm(entity, data = {}) {
 
 }
 
+async function renderEntityRead(entity, id) {
+    contentArea.innerHTML = `<p class="loading">Loading...</p>`;
+    const json = await apiFetch(`${API_BASE}/${entity}/${id}`);
+    if (!json) return;
+
+    const schema = entitySchemas[entity];
+    if (!schema) return;
+
+    let html = `<h3>Read ${schema.label}</h3><table>`;
+    schema.fields.forEach(f => {
+        html += `<tr>
+                    <th>${toLabel(f.name)}</th>
+                    <td>${json[f.name] ?? ""}</td>
+                 </tr>`;
+    });
+    html += `</table>`;
+    contentArea.innerHTML = html;
+}
+
 
 async function apiFetch(url, options = {}) {
     try {
@@ -268,11 +287,10 @@ function showError(msg) {
     //contentArea.innerHTML = `<p style="color:red; font-weight:bold;">${msg}</p>`;
 }
 
-
 async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}`);
-    if (!json) return; // chyba už byla zobrazena
+    if (!json) return;
     const items = json.items || [];
     const schema = entitySchemas[entity];
     if (!schema) return;
@@ -291,8 +309,10 @@ async function renderEntityList(entity) {
             html += `<tr><td>${item.id}</td>`;
             listFields.forEach(f => html += `<td>${item[f.name] ?? ""}</td>`);
             html += `<td class="actions">
+                        <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a>
                         <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
                         <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
+                        
                      </td></tr>`;
         });
     }
@@ -301,7 +321,17 @@ async function renderEntityList(entity) {
     contentArea.innerHTML = html;
 }
 
+window.readEntity = (entity, id) => {
+    selectedEntity = entity;
+    selectedAction = "read";
+    const newUrl = `?entity=${encodeURIComponent(entity)}&action=read&id=${encodeURIComponent(id)}`;
+    history.pushState({}, '', newUrl);
 
+    renderCrudMenu();
+    updateActiveMenu();
+    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+    renderEntityRead(entity, id);
+};
 
 function updateActiveMenu() {
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
@@ -347,14 +377,11 @@ function selectEntity(entity) {
     selectAction(selectedAction); // auto-load list
 }
 
-
-// Select action
 function selectAction(action) {
     selectedAction = action;
 
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
     const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[action]);
-
     if (activeLink) activeLink.classList.add('active');
 
     const actionLabel = actionLabels[selectedAction];
@@ -366,10 +393,16 @@ function selectAction(action) {
         renderEntityList(selectedEntity);
     } else if (action === "create") {
         renderEntityForm(selectedEntity);
+    } else if (action === "read") {
+        const params = getQueryParams();
+        if (params.others.id) {
+            renderEntityRead(selectedEntity, params.others.id);
+        } else {
+            contentArea.innerHTML = `<p style="color:red;">No ID provided for Read action.</p>`;
+        }
     } else {
         contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
     }
-
 }
 
 // Helpers for table actions
