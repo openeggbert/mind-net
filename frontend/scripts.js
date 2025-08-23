@@ -26,7 +26,7 @@ const entities = [
     'history'
 ];
 
-const actions = ['list', 'create', 'read', 'update', 'delete'];
+const actions = ['list', 'create', 'read', 'update'];
 
 const entityLabels = {
     map: 'Map',
@@ -44,8 +44,7 @@ const actionLabels = {
     list: '📋 List',
     create: '➕ Create',
     read: '📖 Read',
-    update: '✏️ Update',
-    delete: '🗑️ Delete'
+    update: '✏️ Update'
 };
 
 let selectedEntity = null;
@@ -102,7 +101,7 @@ function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
 
-    let html = `<h3>${data.id ? "Edit" : "Create"} ${schema.label}</h3><form id="entityForm">`;
+    let html = `<h3>${data.id ? "Update" : "Create"} ${schema.label}</h3><form id="entityForm">`;
     html += `<input type="hidden" name="id" value="${data.id ?? ""}">`;
 
     schema.fields.forEach(field => {
@@ -164,7 +163,7 @@ async function renderEntityList(entity) {
             html += `<td>${item[f.name] ?? ""}</td>`;
         });
         html += `<td class="actions">
-      <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Edit</a>
+      <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
       <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
     </td></tr>`;
     });
@@ -173,14 +172,30 @@ async function renderEntityList(entity) {
     contentArea.innerHTML = html;
 }
 
+function updateActiveMenu() {
+    [...crudMenu.children].forEach(el => el.classList.remove('active'));
+    const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[selectedAction]);
+    if (activeLink) activeLink.classList.add('active');
+}
+
 window.editEntity = (entity, data) => {
+    selectedEntity = entity;
+    selectedAction = "update";
+
+    renderCrudMenu();
+    updateActiveMenu();
+    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
     renderEntityForm(entity, data);
 };
 
 window.deleteEntity = async (entity, id) => {
-    await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
+    const confirmed = window.confirm("Do you really want to delete this record?");
+    if (!confirmed) return;
+
+    await fetch(`${API_BASE}/${entity}/${id}`, { method: "DELETE" });
     renderEntityList(entity);
 };
+
 
 // Select entity
 function selectEntity(entity) {
