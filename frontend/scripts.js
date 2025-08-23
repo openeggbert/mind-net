@@ -352,6 +352,7 @@ function renderEntityForm(entity, data = {}) {
 
 
 }
+
 async function renderEntityRead(entity, id) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}/${id}`);
@@ -363,11 +364,20 @@ async function renderEntityRead(entity, id) {
     let html = `<h3>Read ${schema.label}</h3><table>`;
     for (const f of schema.fields) {
         let value = json[f.name];
+
         if (f.enum && value in f.enum) {
             value = f.enum[value];
         } else if (f.foreignKey) {
-            value = await resolveForeignKeyValue(f.foreignKey, value);
+            const fkEntity = f.foreignKey;
+            const fkId = value;
+            if (fkId) {
+                const fkTitle = await resolveForeignKeyValue(fkEntity, fkId);
+                value = `<a href="#" onclick="readEntity('${fkEntity}', ${fkId}); return false;">${fkTitle}</a>`;
+            } else {
+                value = "";
+            }
         }
+
         html += `<tr><th>${toLabel(f.name)}</th><td>${value ?? ""}</td></tr>`;
     }
     html += `</table>`;
@@ -412,6 +422,7 @@ async function resolveForeignKeyValue(fkEntity, id) {
         return id;
     }
 }
+
 async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}`);
@@ -437,14 +448,21 @@ async function renderEntityList(entity) {
                 if (f.enum && value in f.enum) {
                     value = f.enum[value];
                 } else if (f.foreignKey) {
-                    value = await resolveForeignKeyValue(f.foreignKey, value);
+                    // pokud je foreignKey, udělat klikatelné
+                    const fkEntity = f.foreignKey;
+                    const fkId = value;
+                    if (fkId) {
+                        value = `<a href="#" onclick="readEntity('${fkEntity}', ${fkId}); return false;">${await resolveForeignKeyValue(fkEntity, fkId)}</a>`;
+                    } else {
+                        value = "";
+                    }
                 }
                 html += `<td>${value ?? ""}</td>`;
             }
             html += `<td class="actions">
-                <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a>
-                <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
-                <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
+                <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a><br>
+                <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a><br>
+                <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a><br>
             </td></tr>`;
         }
     }
@@ -453,17 +471,14 @@ async function renderEntityList(entity) {
     contentArea.innerHTML = html;
 }
 
+
 window.readEntity = (entity, id) => {
-    selectedEntity = entity;
-    selectedAction = "read";
+    selectEntity(entity, "read");
     const newUrl = `?entity=${encodeURIComponent(entity)}&action=read&id=${encodeURIComponent(id)}`;
     history.pushState({}, '', newUrl);
-
-    renderCrudMenu();
-    updateActiveMenu();
-    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
     renderEntityRead(entity, id);
 };
+
 
 function updateActiveMenu() {
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
@@ -495,9 +510,13 @@ window.deleteEntity = async (entity, id) => {
 
 
 // Select entity
-function selectEntity(entity) {
+function selectEntity(entity, action = null) {
     selectedEntity = entity;
-    selectedAction = 'list'; // default action
+    if (action) {
+        selectedAction = action;
+    } else {
+        selectedAction = 'list'; // default action
+    }
 
     [...entityNav.children].forEach(el => el.classList.remove('active'));
     const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[entity]);
@@ -506,8 +525,9 @@ function selectEntity(entity) {
     entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
     contentArea.classList.remove('empty');
     renderCrudMenu();
-    selectAction(selectedAction); // auto-load list
+    selectAction(selectedAction);
 }
+
 
 function selectAction(action) {
     selectedAction = action;
