@@ -130,7 +130,7 @@ let pageSize = 10;
 let totalPages = 1;
 
 // ========================================
-// 4. Helper funkce
+// 4. Helper functions
 // ========================================
 
 function getQueryParams() {
@@ -171,7 +171,7 @@ async function resolveForeignKeyValue(fkEntity, id) {
 }
 
 // ========================================
-// 5. CRUD render funkce
+// 5. CRUD render functions
 // ========================================
 
 async function renderEntityForm(entity, data={}) {
