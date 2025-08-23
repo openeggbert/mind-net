@@ -90,6 +90,13 @@ const entitySchemas = {
     }
 };
 
+const Importance = {
+    0: "Undefined",
+    1: "Low",
+    2: "Medium",
+    3: "High"
+};
+const ImportanceValues = Object.keys(Importance).map(k => Number(k));
 
 
 const entities = [
@@ -221,24 +228,32 @@ function renderEntityForm(entity, data = {}) {
             }
         });
 
-// Then iterate through FormData for other field types
         formData.forEach((value, key) => {
             if (!(key === "id" && !value)) {
                 const fieldSchema = entitySchemas[selectedEntity].fields.find(f => f.name === key);
-                if (!fieldSchema) return;
 
-                // Checkboxy už jsme zpracovali, přeskočíme je
-                if (fieldSchema.type === "checkbox") return;
-
-                // Číselná pole: pokud je prázdné, pošleme 0
-                if (fieldSchema.type === "number" && value === "") {
-                    payload[key] = 0;
+                if (fieldSchema) {
+                    switch (fieldSchema.type) {
+                        case "number":
+                            // if empty or not a number, set to 0
+                            payload[key] = (value === "" || isNaN(value)) ? 0 : Number(value);
+                            break;
+                        case "checkbox":
+                            // checkbox → 1 if checked, otherwise 0
+                            payload[key] = (value === "on" || value === "1" || value === true) ? 1 : 0;
+                            break;
+                        case "text":
+                        case "textarea":
+                        case "datetime":
+                        default:
+                            payload[key] = value ?? "";
+                            break;
+                    }
                 } else {
-                    payload[key] = value;
+                    payload[key] = value ?? "";
                 }
             }
         });
-
 
         const method = payload.id ? "PUT" : "POST";
         const url = payload.id ? `${API_BASE}/${selectedEntity}/${payload.id}` : `${API_BASE}/${selectedEntity}`;
