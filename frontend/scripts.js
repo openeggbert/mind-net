@@ -1,5 +1,25 @@
 const API_BASE = "http://localhost:8888/api";
 
+const entitySchemas = {
+  map: {
+    label: "Map",
+    fields: [
+      { name: "name", type: "text", required: true },
+      { name: "description", type: "text" },
+      { name: "category", type: "text" }
+    ]
+  },
+  tag: {
+    label: "Tag",
+    fields: [
+      { name: "map_id", type: "number", required: true },
+      { name: "title", type: "text", required: true }
+    ]
+  },
+  // Add more entities as needed
+};
+
+
 const entities = [
   'map', 'node', 'content', 'node_property',
   'tag', 'node_tag', 'node_link', 'external_link',
@@ -78,6 +98,81 @@ function renderCrudMenu() {
   });
 }
 
+function renderEntityForm(entity, data = {}) {
+  const schema = entitySchemas[entity];
+  if (!schema) return;
+
+  let html = `<h3>${data.id ? "Edit" : "Create"} ${schema.label}</h3><form id="entityForm">`;
+  html += `<input type="hidden" name="id" value="${data.id ?? ""}">`;
+
+  schema.fields.forEach(field => {
+    html += `
+      <label>${field.name}</label>
+      <input type="${field.type}" name="${field.name}"
+             value="${data[field.name] ?? ""}"
+             ${field.required ? "required" : ""}>
+    `;
+  });
+
+  html += `<button type="submit">Save</button></form>`;
+  contentArea.innerHTML = html;
+
+  document.getElementById("entityForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const payload = {};
+    formData.forEach((value, key) => payload[key] = value);
+
+    const method = payload.id ? "PUT" : "POST";
+    const url = payload.id ? `${API_BASE}/${entity}/${payload.id}` : `${API_BASE}/${entity}`;
+
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    selectAction("list");
+  });
+}
+
+async function renderEntityList(entity) {
+  contentArea.innerHTML = `<p class="loading">Loading...</p>`;
+  const res = await fetch(`${API_BASE}/${entity}`);
+  const json = await res.json();
+  const items = json.items;
+  const schema = entitySchemas[entity];
+  if (!schema) return;
+
+  let html = `<h3>${schema.label} List</h3><table><thead><tr>`;
+  html += `<th>ID</th>`;
+  schema.fields.forEach(f => html += `<th>${f.name}</th>`);
+  html += `<th>Actions</th></tr></thead><tbody>`;
+
+  items.forEach(item => {
+    html += `<tr><td>${item.id}</td>`;
+    schema.fields.forEach(f => {
+      html += `<td>${item[f.name] ?? ""}</td>`;
+    });
+    html += `<td class="actions">
+      <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Edit</a>
+      <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
+    </td></tr>`;
+  });
+
+  html += `</tbody></table>`;
+  contentArea.innerHTML = html;
+}
+
+window.editEntity = (entity, data) => {
+  renderEntityForm(entity, data);
+};
+
+window.deleteEntity = async (entity, id) => {
+  await fetch(`${API_BASE}/${entity}/${id}`, { method: "DELETE" });
+  renderEntityList(entity);
+};
+
 // Select entity
 function selectEntity(entity) {
   selectedEntity = entity;
@@ -108,88 +203,14 @@ function selectAction(action) {
   entityTitle.textContent = `${entityLabel} – ${actionLabel}`;
   contentArea.classList.remove('empty');
 
-  if (selectedEntity === 'map') {
-    if (action === 'list') {
-      renderMapList();
-    } else if (action === 'create') {
-      renderMapCreate();
-    } else {
-      contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for Map.</p>`;
-    }
-  } else {
-    contentArea.innerHTML = `<h3>${actionLabel} ${entityLabel}</h3><p style="color:red;">Not yet implemented (Action: ${actionLabel}, Model: ${entityLabel})</p>`;
-  }
+if (action === "list") {
+  renderEntityList(selectedEntity);
+} else if (action === "create") {
+  renderEntityForm(selectedEntity);
+} else {
+  contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
 }
 
-// MAP CRUD IMPLEMENTATION
-async function renderMapList() {
-    contentArea.innerHTML = `<p class="loading">Loading...</p>`;
-//   setTimeout(async () => {
- const res = await fetch(`${API_BASE}/map`);
-  const json = await res.json();
-  const maps = json.items;
-
-  let html = `
-    <h3>Map List</h3>
-    <table>
-      <thead>
-        <tr><th>ID</th><th>Name</th><th>Description</th><th>Category</th><th>Actions</th></tr>
-      </thead>
-      <tbody>
-  `;
-  maps.forEach(m => {
-    html += `
-      <tr>
-        <td>${m.id}</td>
-        <td>${m.name}</td>
-        <td>${m.description ?? ""}</td>
-        <td>${m.category ?? ""}</td>
-        <td class="actions">
-          <a href="#" onclick="editMap(${m.id}, '${m.name}', '${m.description ?? ""}', '${m.category ?? ""}')">✏️ Edit</a>
-          <a href="#" onclick="deleteMap(${m.id})">🗑️ Delete</a>
-        </td>
-      </tr>`;
-  });
-  html += `</tbody></table>`;
-  contentArea.innerHTML = html;
-//   },Math.floor(Math.random() * 2001));
-}
-
-function renderMapCreate(map = null) {
-  contentArea.innerHTML = `
-    <h3>${map ? "Edit Map" : "Create Map"}</h3>
-    <form id="mapForm">
-      <input type="hidden" id="mapId" value="${map?.id ?? ""}">
-      <input type="text" id="mapName" placeholder="Name" required value="${map?.name ?? ""}">
-      <input type="text" id="mapDesc" placeholder="Description" value="${map?.description ?? ""}">
-      <input type="text" id="mapCategory" placeholder="Category" value="${map?.category ?? ""}">
-      <button type="submit">Save</button>
-    </form>
-  `;
-
-  document.getElementById("mapForm").addEventListener("submit", async e => {
-    e.preventDefault();
-    const id = document.getElementById("mapId").value;
-    const map = {
-      name: document.getElementById("mapName").value,
-      description: document.getElementById("mapDesc").value,
-      category: document.getElementById("mapCategory").value
-    };
-    if (id) {
-      await fetch(`${API_BASE}/map/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(map)
-      });
-    } else {
-      await fetch(`${API_BASE}/map`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(map)
-      });
-    }
-    selectAction('list');
-  });
 }
 
 // Helpers for table actions
