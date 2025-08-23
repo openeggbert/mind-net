@@ -182,11 +182,15 @@ window.editEntity = (entity, data) => {
     selectedEntity = entity;
     selectedAction = "update";
 
+    const newUrl = `?entity=${encodeURIComponent(entity)}&action=update&id=${encodeURIComponent(data.id)}`;
+    history.pushState({}, '', newUrl);
+
     renderCrudMenu();
     updateActiveMenu();
     entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
     renderEntityForm(entity, data);
 };
+
 
 window.deleteEntity = async (entity, id) => {
     const confirmed = window.confirm("Do you really want to delete this record?");
