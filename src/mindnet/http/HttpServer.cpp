@@ -13,9 +13,10 @@ namespace mindnet::http
         : db_(std::move(db))
     {
         CROW_ROUTE(crow_app, "/web/<string>")
-        ([directory_for_static_files, this](const crow::request&, crow::response& res, const std::string& filename)
+        ([directory_for_static_files, this](const crow::request& req, crow::response& res, const std::string& final_file_name)
         {
-            if (filename.find("..") != std::string::npos)
+            std::string file_name = final_file_name;
+            if (file_name.find("..") != std::string::npos)
             {
                 res.code = 403;
                 res.write("Path traversal attempt blocked");
@@ -24,10 +25,17 @@ namespace mindnet::http
             }
 
             static const std::unordered_set<std::string> allowed_files = {
-                "index.html", "styles.css", "scripts.js"
+                "index.html", "styles.css", "scripts.js",
+                "indexrest.html",
             };
 
-            if (allowed_files.find(filename) == allowed_files.end())
+            bool test = req.url_params.get("test") ? true : false;
+            if (test && file_name == "index.html")
+            {
+                file_name = "indexrest.html";
+            }
+
+            if (allowed_files.find(file_name) == allowed_files.end())
             {
                 res.code = 403;
                 res.write("Access denied");
@@ -38,7 +46,7 @@ namespace mindnet::http
             namespace fs = std::filesystem;
             {
                 fs::path base_path = fs::canonical(directory_for_static_files);
-                fs::path requested_path = fs::weakly_canonical(base_path / filename);
+                fs::path requested_path = fs::weakly_canonical(base_path / file_name);
 
 
                 if (requested_path.string().find(base_path.string()) != 0)
@@ -49,7 +57,7 @@ namespace mindnet::http
                     return;
                 }
             }
-            std::string full_path = directory_for_static_files + "/" + filename;
+            std::string full_path = directory_for_static_files + "/" + file_name;
             fs::path file_path(full_path);
 
             if (!fs::exists(file_path))
@@ -61,16 +69,16 @@ namespace mindnet::http
             }
 
             auto last_mod = fs::last_write_time(file_path);
-            auto it = file_cache.find(filename);
+            auto it = file_cache.find(file_name);
 
             if (it != file_cache.end() && it->second.last_modified == last_mod)
             {
                 // Serve from cache
-                if (filename.ends_with(".css"))
+                if (file_name.ends_with(".css"))
                 {
                     res.set_header("Content-Type", "text/css");
                 }
-                else if (filename.ends_with(".js"))
+                else if (file_name.ends_with(".js"))
                 {
                     res.set_header("Content-Type", "application/javascript");
                 }
@@ -98,13 +106,13 @@ namespace mindnet::http
             content << file.rdbuf();
             std::string file_content = content.str();
 
-            file_cache[filename] = CachedFile{file_content, last_mod};
+            file_cache[file_name] = CachedFile{file_content, last_mod};
 
-            if (filename.ends_with(".css"))
+            if (file_name.ends_with(".css"))
             {
                 res.set_header("Content-Type", "text/css");
             }
-            else if (filename.ends_with(".js"))
+            else if (file_name.ends_with(".js"))
             {
                 res.set_header("Content-Type", "application/javascript");
             }

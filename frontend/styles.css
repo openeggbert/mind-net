@@ -30,6 +30,12 @@
       background: #34495e;
     }
 
+    nav a.active,
+    .submenu a.active {
+        background: #1abc9c;
+        color: white;
+    }
+
     .submenu {
       background: #ecf0f1;
       padding: 0.5rem 1rem;

@@ -1,11 +1,13 @@
 const entities = [
       'Map', 'Node', 'Content', 'Node Property',
-      'Tag', 'Node Tag', 'Node Link', 'External Link'
+      'Tag', 'Node Tag', 'Node Link', 'External Link',
+      'History'
     ];
 
     const actions = ['➕ Create', '📖 Read', '✏️ Update', '🗑️ Delete', '📋 List', '🔍 Search'];
 
     let selectedEntity = null;
+    let selectedAction = null;
 
     const entityNav = document.getElementById('entityNav');
     const crudMenu = document.getElementById('crudMenu');
@@ -19,6 +21,12 @@ const entities = [
       link.textContent = entity;
       link.onclick = () => {
         selectedEntity = entity;
+        selectedAction = null;
+
+        // Remove .active from all actions
+        [...entityNav.children].forEach(el => el.classList.remove('active'));
+        link.classList.add('active');
+
         entityTitle.textContent = `${entity} – Choose an action`;
         contentArea.classList.add('empty');
         contentArea.innerHTML = 'No action selected.';
@@ -35,9 +43,18 @@ const entities = [
         link.href = '#';
         link.textContent = action;
         link.onclick = () => {
+          selectedAction = action;
+
+          // Remove .active from all actions
+          [...crudMenu.children].forEach(el => el.classList.remove('active'));
+          link.classList.add('active');
+
+          entityTitle.textContent = `${selectedEntity} – ${action}`;
+
           contentArea.classList.remove('empty');
-          contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p>Form or data will appear here.</p>`;
+          contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p style="color:red;">Not yet implemented (Action: ${action}, Model: ${selectedEntity})</p>`;
         };
         crudMenu.appendChild(link);
       });
     }
+
