@@ -151,4 +151,45 @@
         color: #2c3e50;
     }
 
+    table {
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    th {
+        background: linear-gradient(to right, #3498db, #2980b9);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    form {
+        background: #f9f9f9;
+        padding: 1rem;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    input[type="text"] {
+        background: #fff;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        background: linear-gradient(to right, #3498db, #2980b9);
+    }
+
+    .loading {
+        font-style: italic;
+        color: #888;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% { opacity: 0.5; }
+        50% { opacity: 1; }
+        100% { opacity: 0.5; }
+    }
+
+
 

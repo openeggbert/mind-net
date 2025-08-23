@@ -1,12 +1,32 @@
 const API_BASE = "http://localhost:8888/api";
 
 const entities = [
-  'Map', 'Node', 'Content', 'Node Property',
-  'Tag', 'Node Tag', 'Node Link', 'External Link',
-  'History'
+  'map', 'node', 'content', 'node_property',
+  'tag', 'node_tag', 'node_link', 'external_link',
+  'history'
 ];
 
-const actions = ['📋 List', '➕ Create', '📖 Read', '✏️ Update', '🗑️ Delete'];
+const actions = ['list', 'create', 'read', 'update', 'delete'];
+
+const entityLabels = {
+  map: 'Map',
+  node: 'Node',
+  content: 'Content',
+  node_property: 'Node Property',
+  tag: 'Tag',
+  node_tag: 'Node Tag',
+  node_link: 'Node Link',
+  external_link: 'External Link',
+  history: 'History'
+};
+
+const actionLabels = {
+  list: '📋 List',
+  create: '➕ Create',
+  read: '📖 Read',
+  update: '✏️ Update',
+  delete: '🗑️ Delete'
+};
 
 let selectedEntity = null;
 let selectedAction = null;
@@ -32,7 +52,7 @@ function renderEntityNav() {
   entities.forEach(entity => {
     const link = document.createElement('a');
     link.href = `?entity=${encodeURIComponent(entity)}`;
-    link.textContent = entity;
+    link.textContent = entityLabels[entity];
     link.onclick = (e) => {
       e.preventDefault();
       selectEntity(entity);
@@ -48,7 +68,7 @@ function renderCrudMenu() {
   actions.forEach(action => {
     const link = document.createElement('a');
     link.href = `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
-    link.textContent = action;
+    link.textContent = actionLabels[action];
     link.onclick = (e) => {
       e.preventDefault();
       selectAction(action);
@@ -61,13 +81,13 @@ function renderCrudMenu() {
 // Select entity
 function selectEntity(entity) {
   selectedEntity = entity;
-  selectedAction = '📋 List'; // default action
+  selectedAction = 'list'; // default action
 
   [...entityNav.children].forEach(el => el.classList.remove('active'));
-  const activeLink = [...entityNav.children].find(el => el.textContent === entity);
+  const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[entity]);
   if (activeLink) activeLink.classList.add('active');
 
-  entityTitle.textContent = `${entity} – ${selectedAction}`;
+  entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
   contentArea.classList.remove('empty');
   renderCrudMenu();
   selectAction(selectedAction); // auto-load list
@@ -79,28 +99,36 @@ function selectAction(action) {
   selectedAction = action;
 
   [...crudMenu.children].forEach(el => el.classList.remove('active'));
-  const activeLink = [...crudMenu.children].find(el => el.textContent === action);
+  const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[action]);
+
   if (activeLink) activeLink.classList.add('active');
 
-  entityTitle.textContent = `${selectedEntity} – ${action}`;
+  const actionLabel = actionLabels[selectedAction];
+  const entityLabel = entityLabels[selectedEntity];
+  entityTitle.textContent = `${entityLabel} – ${actionLabel}`;
   contentArea.classList.remove('empty');
 
-  if (selectedEntity === 'Map') {
-    if (action === '📋 List') {
+  if (selectedEntity === 'map') {
+    if (action === 'list') {
       renderMapList();
-    } else if (action === '➕ Create') {
+    } else if (action === 'create') {
       renderMapForm();
     } else {
-      contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${action}</span> not implemented for Map.</p>`;
+      contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for Map.</p>`;
     }
   } else {
-    contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p style="color:red;">Not yet implemented (Action: ${action}, Model: ${selectedEntity})</p>`;
+    contentArea.innerHTML = `<h3>${actionLabel} ${entityLabel}</h3><p style="color:red;">Not yet implemented (Action: ${actionLabel}, Model: ${entityLabel})</p>`;
   }
 }
 
 // MAP CRUD IMPLEMENTATION
 async function renderMapList() {
-  const res = await fetch(`${API_BASE}/map`);
+    contentArea.innerHTML = `<p class="loading">Loading...</p>`;
+
+
+//   setTimeout(async () => {
+
+ const res = await fetch(`${API_BASE}/map`);
   const json = await res.json();
   const maps = json.items;
 
@@ -127,6 +155,10 @@ async function renderMapList() {
   });
   html += `</tbody></table>`;
   contentArea.innerHTML = html;
+
+//   },Math.floor(Math.random() * 2001));
+
+
 }
 
 function renderMapForm(map = null) {
@@ -162,7 +194,7 @@ function renderMapForm(map = null) {
         body: JSON.stringify(map)
       });
     }
-    selectAction('📋 List');
+    selectAction('list');
   });
 }
 
