@@ -1,94 +1,4 @@
 const API_BASE = "http://localhost:8888/api";
-const entitySchemas = {
-    map: {
-        label: "Map",
-        fields: [
-            { name: "name", type: "text", required: true },
-            { name: "description", type: "text" },
-            { name: "category", type: "text" }
-        ]
-    },
-    tag: {
-        label: "Tag",
-        fields: [
-            { name: "map_id", type: "number", required: true },
-            { name: "title", type: "text", required: true }
-        ]
-    },
-    node: {
-        label: "Node",
-        fields: [
-            { name: "uuid", type: "text", required: true },
-            { name: "map_id", type: "number", required: true },
-            { name: "sibling_position", type: "number", required: true },
-            { name: "title", type: "text", required: true },
-            { name: "content_id", type: "number" },
-            { name: "parent_node_id", type: "number" },
-            { name: "type", type: "number", required: true },
-            { name: "visibility", type: "number", list: false },
-            { name: "last_shown_at", type: "datetime", list: false },
-            { name: "expires_at", type: "datetime", list: false },
-            { name: "is_favorite", type: "checkbox" },
-            { name: "is_redirect", type: "checkbox", list: false },
-            { name: "redirect_node_id", type: "number", list: false },
-            { name: "redirect_reason", type: "text", list: false },
-            { name: "importance", type: "number" },
-            { name: "difficulty", type: "number" }
-        ]
-    },
-    content: {
-        label: "Content",
-        fields: [
-            { name: "content", type: "textarea", required: true },
-            { name: "format", type: "number" },
-            { name: "version", type: "number" },
-            { name: "node_id", type: "number" }
-        ]
-    },
-    node_property: {
-        label: "Node Property",
-        fields: [
-            { name: "map_id", type: "number", required: true },
-            { name: "node_id", type: "number", required: true },
-            { name: "key", type: "text", required: true },
-            { name: "value", type: "text" },
-            { name: "value_type", type: "number" },
-            { name: "is_indexed", type: "checkbox" }
-        ]
-    },
-    node_tag: {
-        label: "Node Tag",
-        fields: [
-            { name: "node_id", type: "number", required: true },
-            { name: "tag_id", type: "number", required: true }
-        ]
-    },
-    node_link: {
-        label: "Node Link",
-        fields: [
-            { name: "from_node_id", type: "number", required: true },
-            { name: "to_node_id", type: "number", required: true },
-            { name: "label", type: "text" }
-        ]
-    },
-    external_link: {
-        label: "External Link",
-        fields: [
-            { name: "from_node_id", type: "number", required: true },
-            { name: "to_url", type: "text", required: true }
-        ]
-    },
-    history: {
-        label: "History",
-        fields: [
-            { name: "table_name", type: "text", required: true },
-            { name: "record_id", type: "number", required: true },
-            { name: "operation", type: "number", required: true },
-            { name: "payload", type: "textarea", required: true },
-            { name: "reason", type: "text" }
-        ]
-    }
-};
 
 const Importance = {
     0: "Undefined",
@@ -97,6 +7,147 @@ const Importance = {
     3: "High"
 };
 const ImportanceValues = Object.keys(Importance).map(k => Number(k));
+
+const Difficulty = {
+    0: "Undefined",
+    1: "Easy",
+    2: "Medium",
+    3: "Hard",
+    4: "Expert"
+};
+const DifficultyValues = Object.keys(Difficulty).map(k => Number(k));
+
+const ContentFormat = {
+    0: "Markdown",
+    1: "HTML",
+    2: "Plain"
+};
+const ContentFormatValues = Object.keys(ContentFormat).map(k => Number(k));
+
+const NodeType = {
+    0: "Generic",
+    1: "Term"
+};
+const NodeTypeValues = Object.keys(NodeType).map(k => Number(k));
+
+const ValueType = {
+    0: "String",
+    1: "Number",
+    2: "Boolean",
+    3: "Date"
+};
+const ValueTypeValues = Object.keys(ValueType).map(k => Number(k));
+const Crudl = {
+    0: "Undefined",
+    1: "Create",
+    2: "Read",
+    3: "Update",
+    4: "Delete",
+    5: "List"
+};
+
+const CrudlValues = Object.keys(Crudl).map(k => Number(k));
+
+const Visibility = {
+    0: "Public",
+    1: "Private",
+    2: "Draft",
+    3: "Archived"
+};
+
+const VisibilityValues = Object.keys(Visibility).map(k => Number(k));
+
+
+const entitySchemas = {
+    map: {
+        label: "Map",
+        fields: [
+            {name: "name", type: "text", required: true},
+            {name: "description", type: "text"},
+            {name: "category", type: "text"}
+        ]
+    },
+    tag: {
+        label: "Tag",
+        fields: [
+            {name: "map_id", type: "number", required: true},
+            {name: "title", type: "text", required: true}
+        ]
+    },
+    node: {
+        label: "Node",
+        fields: [
+            {name: "uuid", type: "text", required: true},
+            {name: "map_id", type: "number", required: true},
+            {name: "sibling_position", type: "number", required: true},
+            {name: "title", type: "text", required: true},
+            {name: "content_id", type: "number"},
+            {name: "parent_node_id", type: "number"},
+            {name: "type", type: "number", required: true, enum: NodeType},
+            {name: "visibility", type: "number", list: false, enum: Visibility},
+            {name: "last_shown_at", type: "datetime", list: false},
+            {name: "expires_at", type: "datetime", list: false},
+            {name: "is_favorite", type: "checkbox"},
+            {name: "is_redirect", type: "checkbox", list: false},
+            {name: "redirect_node_id", type: "number", list: false},
+            {name: "redirect_reason", type: "text", list: false},
+            {name: "importance", type: "number", enum: Importance},
+            {name: "difficulty", type: "number", enum: Difficulty},
+        ]
+    },
+    content: {
+        label: "Content",
+        fields: [
+            {name: "content", type: "textarea", required: true},
+            {name: "format", type: "number", enum: ContentFormat},
+            {name: "version", type: "number"},
+            {name: "node_id", type: "number"}
+        ]
+    },
+    node_property: {
+        label: "Node Property",
+        fields: [
+            {name: "map_id", type: "number", required: true},
+            {name: "node_id", type: "number", required: true},
+            {name: "key", type: "text", required: true},
+            {name: "value", type: "text"},
+            {name: "value_type", type: "number",  enum: ValueType},
+            {name: "is_indexed", type: "checkbox"}
+        ]
+    },
+    node_tag: {
+        label: "Node Tag",
+        fields: [
+            {name: "node_id", type: "number", required: true},
+            {name: "tag_id", type: "number", required: true}
+        ]
+    },
+    node_link: {
+        label: "Node Link",
+        fields: [
+            {name: "from_node_id", type: "number", required: true},
+            {name: "to_node_id", type: "number", required: true},
+            {name: "label", type: "text"}
+        ]
+    },
+    external_link: {
+        label: "External Link",
+        fields: [
+            {name: "from_node_id", type: "number", required: true},
+            {name: "to_url", type: "text", required: true}
+        ]
+    },
+    history: {
+        label: "History",
+        fields: [
+            {name: "table_name", type: "text", required: true},
+            {name: "record_id", type: "number", required: true},
+            {name: "operation", type: "number", required: true, enum: Crudl},
+            {name: "payload", type: "textarea", required: true},
+            {name: "reason", type: "text"}
+        ]
+    }
+};
 
 
 const entities = [
@@ -200,7 +251,19 @@ function renderEntityForm(entity, data = {}) {
             usedType = "text";
         }
 
-        html += `
+        if (field.enum) {
+            html += `
+        <div class="form-row">
+            <label for="${field.name}">${toLabel(field.name)}${field.required ? ' <span style="color:red;">*</span>' : ''}</label>
+            <select id="${field.name}" name="${field.name}" ${field.required ? 'required' : ''}>
+                ${Object.entries(field.enum).map(([value, label]) => `
+                    <option value="${value}" ${data[field.name] == value ? 'selected' : ''}>${label}</option>
+                `).join('')}
+            </select>
+        </div>
+        `;
+        } else {
+            html += `
       <div class="form-row">
         <label for="${field.name}">
           ${toLabel(field.name)}
@@ -211,6 +274,7 @@ function renderEntityForm(entity, data = {}) {
                ${field.required ? "required" : ""}>
       </div>
     `;
+        }
     });
 
     html += `<button type="submit" style="text-align:left; padding-left: 20px;">Save</button></form>`;
@@ -290,11 +354,16 @@ async function renderEntityRead(entity, id) {
 
     let html = `<h3>Read ${schema.label}</h3><table>`;
     schema.fields.forEach(f => {
+        let value = json[f.name];
+        if (f.enum && value in f.enum) {
+            value = f.enum[value];
+        }
         html += `<tr>
-                    <th>${toLabel(f.name)}</th>
-                    <td>${json[f.name] ?? ""}</td>
-                 </tr>`;
+                <th>${toLabel(f.name)}</th>
+                <td>${value ?? ""}</td>
+             </tr>`;
     });
+
     html += `</table>`;
     contentArea.innerHTML = html;
 }
@@ -343,22 +412,30 @@ async function renderEntityList(entity) {
     } else {
         items.forEach(item => {
             html += `<tr><td>${item.id}</td>`;
-            listFields.forEach(f => html += `<td>${item[f.name] ?? ""}</td>`);
+            listFields.forEach(f => {
+                let value = item[f.name];
+                // Pokud pole má enum, zobraz text
+                if (f.enum && value in f.enum) {
+                    value = f.enum[value];
+                }
+                html += `<td>${value ?? ""}</td>`;
+            });
             html += `<td class="actions">
-                    <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
-                       onclick="readEntity('${entity}', ${item.id})">
-                      <span>📖</span><span>Read</span>
-                    </a>
-                    <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
-                       onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                      <span>✏️</span><span>Update</span>
-                    </a>
-                    <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
-                       onclick="deleteEntity('${entity}', ${item.id})">
-                      <span>🗑️</span><span>Delete</span>
-                    </a>
-                 </td></tr>`;
+            <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
+               onclick="readEntity('${entity}', ${item.id})">
+              <span>📖</span><span>Read</span>
+            </a>
+            <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
+               onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
+              <span>✏️</span><span>Update</span>
+            </a>
+            <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
+               onclick="deleteEntity('${entity}', ${item.id})">
+              <span>🗑️</span><span>Delete</span>
+            </a>
+         </td></tr>`;
         });
+
     }
 
 
@@ -402,7 +479,7 @@ window.deleteEntity = async (entity, id) => {
     const confirmed = window.confirm("Do you really want to delete this record?");
     if (!confirmed) return;
 
-    await fetch(`${API_BASE}/${entity}/${id}`, { method: "DELETE" });
+    await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
     renderEntityList(entity);
 };
 
