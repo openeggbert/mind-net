@@ -107,14 +107,17 @@ function renderEntityForm(entity, data = {}) {
 
     schema.fields.forEach(field => {
         html += `
-      <label>${field.name}</label>
-      <input type="${field.type}" name="${field.name}"
-             value="${data[field.name] ?? ""}"
-             ${field.required ? "required" : ""}>
+      <div class="form-row">
+        <label for="${field.name}">${field.name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</label>
+        <input type="${field.type}" id="${field.name}" name="${field.name}"
+               value="${data[field.name] ?? ""}"
+               ${field.required ? "required" : ""}>
+      </div>
     `;
     });
 
-    html += `<button type="submit">Save</button></form>`;
+
+    html += `<button type="submit" style="text-align:left; padding-left: 20px;">Save</button></form>`;
     contentArea.innerHTML = html;
 
     document.getElementById("entityForm").addEventListener("submit", async e => {
@@ -234,12 +237,27 @@ window.deleteMap = async (id) => {
 function initializeFromURL() {
     const {entity, action} = getQueryParams();
     renderEntityNav();
+
     if (entity && entities.includes(entity)) {
-        selectEntity(entity);
+        selectedEntity = entity;
+
         if (action && actions.includes(action)) {
-            selectAction(action);
+            selectedAction = action;
+        } else {
+            selectedAction = 'list'; // fallback
         }
+
+        [...entityNav.children].forEach(el => el.classList.remove('active'));
+        const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[selectedEntity]);
+        if (activeLink) activeLink.classList.add('active');
+
+        entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+        contentArea.classList.remove('empty');
+
+        renderCrudMenu();
+        selectAction(selectedAction);
     }
 }
+
 
 initializeFromURL();

@@ -191,5 +191,22 @@
         100% { opacity: 0.5; }
     }
 
+    .form-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .form-row label {
+        min-width: 120px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .form-row input {
+        flex: 1;
+    }
+
 
 
