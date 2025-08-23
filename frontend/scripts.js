@@ -223,14 +223,25 @@ function renderEntityForm(entity, data = {}) {
         const method = payload.id ? "PUT" : "POST";
         const url = payload.id ? `${API_BASE}/${entity}/${payload.id}` : `${API_BASE}/${entity}`;
 
-        await fetch(url, {
-            method,
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(payload)
-        });
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload)
+            });
 
-        selectAction("list");
+            if (!res.ok) {
+                const text = await res.text();
+                showError(`Error ${res.status}: ${text || res.statusText}`);
+                return;
+            }
+
+            selectAction("list");
+        } catch (err) {
+            showError(`Network error: ${err.message}`);
+        }
     });
+
 }
 
 
@@ -252,9 +263,9 @@ async function apiFetch(url, options = {}) {
 
 function showError(msg) {
     // Alert
-    // alert(msg);
+    alert(msg);
 
-    contentArea.innerHTML = `<p style="color:red; font-weight:bold;">${msg}</p>`;
+    //contentArea.innerHTML = `<p style="color:red; font-weight:bold;">${msg}</p>`;
 }
 
 
