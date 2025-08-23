@@ -112,7 +112,7 @@ function selectAction(action) {
     if (action === 'list') {
       renderMapList();
     } else if (action === 'create') {
-      renderMapForm();
+      renderMapCreate();
     } else {
       contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for Map.</p>`;
     }
@@ -124,10 +124,7 @@ function selectAction(action) {
 // MAP CRUD IMPLEMENTATION
 async function renderMapList() {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
-
-
 //   setTimeout(async () => {
-
  const res = await fetch(`${API_BASE}/map`);
   const json = await res.json();
   const maps = json.items;
@@ -155,13 +152,10 @@ async function renderMapList() {
   });
   html += `</tbody></table>`;
   contentArea.innerHTML = html;
-
 //   },Math.floor(Math.random() * 2001));
-
-
 }
 
-function renderMapForm(map = null) {
+function renderMapCreate(map = null) {
   contentArea.innerHTML = `
     <h3>${map ? "Edit Map" : "Create Map"}</h3>
     <form id="mapForm">
@@ -200,13 +194,16 @@ function renderMapForm(map = null) {
 
 // Helpers for table actions
 window.editMap = (id, name, desc, category) => {
-  renderMapForm({ id, name, description: desc, category });
+  renderMapCreate({ id, name, description: desc, category });
 };
 
 window.deleteMap = async (id) => {
   await fetch(`${API_BASE}/map/${id}`, { method: "DELETE" });
   renderMapList();
 };
+
+
+
 
 // Initialize from URL
 function initializeFromURL() {

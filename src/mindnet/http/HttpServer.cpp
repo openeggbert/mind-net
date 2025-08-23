@@ -13,9 +13,8 @@ namespace mindnet::http
         : db_(std::move(db))
     {
         CROW_ROUTE(crow_app, "/web/<string>")
-        ([directory_for_static_files, this](const crow::request& req, crow::response& res, const std::string& final_file_name)
+        ([directory_for_static_files, this](const crow::request& req, crow::response& res, const std::string& file_name)
         {
-            std::string file_name = final_file_name;
             if (file_name.find("..") != std::string::npos)
             {
                 res.code = 403;
@@ -25,7 +24,7 @@ namespace mindnet::http
             }
 
             static const std::unordered_set<std::string> allowed_files = {
-                "index.html", "styles.css", "scripts.js"
+                "index.html", "styles.css", "scripts.js", "favicon.png"
             };
 
             if (allowed_files.find(file_name) == allowed_files.end())
@@ -75,6 +74,11 @@ namespace mindnet::http
                 {
                     res.set_header("Content-Type", "application/javascript");
                 }
+                else if (file_name.ends_with(".png"))
+                {
+                    res.set_header("Content-Type", "image/png");
+                }
+
                 else
                 {
                     res.set_header("Content-Type", "text/html");
