@@ -176,30 +176,35 @@ function toLabel(fieldName) {
         .replace(/\b\w/g, c => c.toUpperCase()); // capitalize first letter of each word
 }
 
-
 function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
 
-    let html = `<h3>${data.id ? "Update" : "Create"} ${schema.label}</h3><form id="entityForm">`;
+    let html = `<h3>${data.id ? "Update" : "Create"} ${schema.label}</h3>
+                <form id="entityForm">`;
     html += `<input type="hidden" name="id" value="${data.id ?? ""}">`;
 
+
+    html += `<p style="color: red; font-size: 0.9rem;">* Required fields</p>`;
+
     schema.fields.forEach(field => {
-        var usedType = field.type;
+        let usedType = field.type;
         if (usedType === "datetime") {
             usedType = "text";
         }
 
         html += `
       <div class="form-row">
-        <label for="${field.name}">${toLabel(field.name)}</label>
+        <label for="${field.name}">
+          ${toLabel(field.name)}
+          ${field.required ? '<span style="color:red;">*</span>' : ''}
+        </label>
         <input type="${usedType}" id="${field.name}" name="${field.name}"
                value="${data[field.name] ?? ""}"
                ${field.required ? "required" : ""}>
       </div>
     `;
     });
-
 
     html += `<button type="submit" style="text-align:left; padding-left: 20px;">Save</button></form>`;
     contentArea.innerHTML = html;
@@ -215,7 +220,6 @@ function renderEntityForm(entity, data = {}) {
             }
         });
 
-
         const method = payload.id ? "PUT" : "POST";
         const url = payload.id ? `${API_BASE}/${entity}/${payload.id}` : `${API_BASE}/${entity}`;
 
@@ -229,10 +233,35 @@ function renderEntityForm(entity, data = {}) {
     });
 }
 
+
+async function apiFetch(url, options = {}) {
+    try {
+        const res = await fetch(url, options);
+        if (!res.ok) { // status mimo 200–299
+            const text = await res.text();
+            showError(`Error ${res.status}: ${text || res.statusText}`);
+            return null;
+        }
+        return res.json();
+    } catch (err) {
+        showError(`Network error: ${err.message}`);
+        return null;
+    }
+}
+
+
+function showError(msg) {
+    // Alert
+    // alert(msg);
+
+    contentArea.innerHTML = `<p style="color:red; font-weight:bold;">${msg}</p>`;
+}
+
+
 async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
-    const res = await fetch(`${API_BASE}/${entity}`);
-    const json = await res.json();
+    const json = await apiFetch(`${API_BASE}/${entity}`);
+    if (!json) return; // chyba už byla zobrazena
     const items = json.items || [];
     const schema = entitySchemas[entity];
     if (!schema) return;
@@ -249,20 +278,17 @@ async function renderEntityList(entity) {
     } else {
         items.forEach(item => {
             html += `<tr><td>${item.id}</td>`;
-            listFields.forEach(f => {
-                html += `<td>${item[f.name] ?? ""}</td>`;
-            });
+            listFields.forEach(f => html += `<td>${item[f.name] ?? ""}</td>`);
             html += `<td class="actions">
-              <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
-              <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
-            </td></tr>`;
+                        <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
+                        <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
+                     </td></tr>`;
         });
     }
 
     html += `</tbody></table>`;
     contentArea.innerHTML = html;
 }
-
 
 
 
