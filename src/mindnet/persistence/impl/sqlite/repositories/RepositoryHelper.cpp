@@ -130,6 +130,10 @@ namespace mindnet::persistence::impl::sqlite
         {
             fields.erase(fields.begin());
         }
+        if (!fields.empty())
+        {
+            fields.erase(fields.begin());
+        }
         fields.push_back(id);
 
         Utils::fill_sqlite_query(query, fields, false);

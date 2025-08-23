@@ -132,7 +132,7 @@ if (create)\
 }\
 else\
 {\
-    fields.push_back(cast64(body[cols::CREATED_AT]));\
+    fields.push_back(cast64(0));\
 }\
 fields.push_back(cast64(Utils::currentUnixTimestamp()));
 

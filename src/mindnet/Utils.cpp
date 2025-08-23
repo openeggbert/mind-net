@@ -14,6 +14,7 @@
 #include <regex>
 
 #include "mindnet/Global.h"
+#include "mindnet/models/Node.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet
@@ -246,6 +247,11 @@ namespace mindnet
             auto column = definition.columns[i].column_name;
             if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
+                continue;
+            }
+            if (std::string(column) == models::columns::BaseColumns::CREATED_AT)
+            {
+                //created_at won't be changed in any case
                 continue;
             }
             sql += column + "=?";
