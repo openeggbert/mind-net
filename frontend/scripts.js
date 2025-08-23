@@ -1,23 +1,95 @@
 const API_BASE = "http://localhost:8888/api";
-
 const entitySchemas = {
     map: {
         label: "Map",
         fields: [
-            {name: "name", type: "text", required: true},
-            {name: "description", type: "text"},
-            {name: "category", type: "text"}
+            { name: "name", type: "text", required: true },
+            { name: "description", type: "text" },
+            { name: "category", type: "text" }
         ]
     },
     tag: {
         label: "Tag",
         fields: [
-            {name: "map_id", type: "number", required: true},
-            {name: "title", type: "text", required: true}
+            { name: "map_id", type: "number", required: true },
+            { name: "title", type: "text", required: true }
         ]
     },
-    // Add more entities as needed
+    node: {
+        label: "Node",
+        fields: [
+            { name: "uuid", type: "text", required: true },
+            { name: "map_id", type: "number", required: true },
+            { name: "sibling_position", type: "number", required: true },
+            { name: "title", type: "text", required: true },
+            { name: "content_id", type: "number" },
+            { name: "parent_node_id", type: "number" },
+            { name: "type", type: "number" },
+            { name: "visibility", type: "number", list: false },
+            { name: "last_shown_at", type: "datetime", list: false },
+            { name: "expires_at", type: "datetime", list: false },
+            { name: "is_favorite", type: "checkbox" },
+            { name: "is_redirect", type: "checkbox", list: false },
+            { name: "redirect_node_id", type: "number", list: false },
+            { name: "redirect_reason", type: "text", list: false },
+            { name: "importance", type: "number" },
+            { name: "difficulty", type: "number" }
+        ]
+    },
+    content: {
+        label: "Content",
+        fields: [
+            { name: "content", type: "textarea", required: true },
+            { name: "format", type: "number" },
+            { name: "version", type: "number" },
+            { name: "node_id", type: "number" }
+        ]
+    },
+    node_property: {
+        label: "Node Property",
+        fields: [
+            { name: "map_id", type: "number", required: true },
+            { name: "node_id", type: "number", required: true },
+            { name: "key", type: "text", required: true },
+            { name: "value", type: "text" },
+            { name: "value_type", type: "number" },
+            { name: "is_indexed", type: "checkbox" }
+        ]
+    },
+    node_tag: {
+        label: "Node Tag",
+        fields: [
+            { name: "node_id", type: "number", required: true },
+            { name: "tag_id", type: "number", required: true }
+        ]
+    },
+    node_link: {
+        label: "Node Link",
+        fields: [
+            { name: "from_node_id", type: "number", required: true },
+            { name: "to_node_id", type: "number", required: true },
+            { name: "label", type: "text" }
+        ]
+    },
+    external_link: {
+        label: "External Link",
+        fields: [
+            { name: "from_node_id", type: "number", required: true },
+            { name: "to_url", type: "text", required: true }
+        ]
+    },
+    history: {
+        label: "History",
+        fields: [
+            { name: "table_name", type: "text", required: true },
+            { name: "record_id", type: "number", required: true },
+            { name: "operation", type: "number", required: true },
+            { name: "payload", type: "textarea", required: true },
+            { name: "reason", type: "text" }
+        ]
+    }
 };
+
 
 
 const entities = [
@@ -97,6 +169,14 @@ function renderCrudMenu() {
     });
 }
 
+function toLabel(fieldName) {
+    return fieldName
+        .replace(/_id$/, '')               // remove trailing "_id" if present
+        .replace(/_/g, ' ')                // replace underscores with spaces
+        .replace(/\b\w/g, c => c.toUpperCase()); // capitalize first letter of each word
+}
+
+
 function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
@@ -105,10 +185,15 @@ function renderEntityForm(entity, data = {}) {
     html += `<input type="hidden" name="id" value="${data.id ?? ""}">`;
 
     schema.fields.forEach(field => {
+        var usedType = field.type;
+        if (usedType === "datetime") {
+            usedType = "text";
+        }
+
         html += `
       <div class="form-row">
-        <label for="${field.name}">${field.name.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</label>
-        <input type="${field.type}" id="${field.name}" name="${field.name}"
+        <label for="${field.name}">${toLabel(field.name)}</label>
+        <input type="${usedType}" id="${field.name}" name="${field.name}"
                value="${data[field.name] ?? ""}"
                ${field.required ? "required" : ""}>
       </div>
@@ -148,29 +233,38 @@ async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const res = await fetch(`${API_BASE}/${entity}`);
     const json = await res.json();
-    const items = json.items;
+    const items = json.items || [];
     const schema = entitySchemas[entity];
     if (!schema) return;
 
+    const listFields = schema.fields.filter(f => f.list !== false);
+
     let html = `<h3>${schema.label} List</h3><table><thead><tr>`;
     html += `<th>ID</th>`;
-    schema.fields.forEach(f => html += `<th>${f.name}</th>`);
+    listFields.forEach(f => html += `<th>${toLabel(f.name)}</th>`);
     html += `<th>Actions</th></tr></thead><tbody>`;
 
-    items.forEach(item => {
-        html += `<tr><td>${item.id}</td>`;
-        schema.fields.forEach(f => {
-            html += `<td>${item[f.name] ?? ""}</td>`;
+    if (items.length === 0) {
+        html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center; color:gray;">No records found.</td></tr>`;
+    } else {
+        items.forEach(item => {
+            html += `<tr><td>${item.id}</td>`;
+            listFields.forEach(f => {
+                html += `<td>${item[f.name] ?? ""}</td>`;
+            });
+            html += `<td class="actions">
+              <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
+              <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
+            </td></tr>`;
         });
-        html += `<td class="actions">
-      <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
-      <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
-    </td></tr>`;
-    });
+    }
 
     html += `</tbody></table>`;
     contentArea.innerHTML = html;
 }
+
+
+
 
 function updateActiveMenu() {
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
