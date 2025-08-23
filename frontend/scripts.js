@@ -1,60 +1,101 @@
 const entities = [
-      'Map', 'Node', 'Content', 'Node Property',
-      'Tag', 'Node Tag', 'Node Link', 'External Link',
-      'History'
-    ];
+  'Map', 'Node', 'Content', 'Node Property',
+  'Tag', 'Node Tag', 'Node Link', 'External Link',
+  'History'
+];
 
-    const actions = ['➕ Create', '📖 Read', '✏️ Update', '🗑️ Delete', '📋 List', '🔍 Search'];
+const actions = ['➕ Create', '📖 Read', '✏️ Update', '🗑️ Delete', '📋 List', '🔍 Search'];
 
-    let selectedEntity = null;
-    let selectedAction = null;
+let selectedEntity = null;
+let selectedAction = null;
 
-    const entityNav = document.getElementById('entityNav');
-    const crudMenu = document.getElementById('crudMenu');
-    const entityTitle = document.getElementById('entityTitle');
-    const contentArea = document.getElementById('contentArea');
+const entityNav = document.getElementById('entityNav');
+const crudMenu = document.getElementById('crudMenu');
+const entityTitle = document.getElementById('entityTitle');
+const contentArea = document.getElementById('contentArea');
 
-    // Render entity navigation
-    entities.forEach(entity => {
-      const link = document.createElement('a');
-      link.href = '#';
-      link.textContent = entity;
-      link.onclick = () => {
-        selectedEntity = entity;
-        selectedAction = null;
+// Parse URL parameters
+function getQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    entity: params.get('entity'),
+    action: params.get('action'),
+    others: Object.fromEntries(params.entries())
+  };
+}
 
-        // Remove .active from all actions
-        [...entityNav.children].forEach(el => el.classList.remove('active'));
-        link.classList.add('active');
+// Render entity navigation
+function renderEntityNav() {
+  entityNav.innerHTML = '';
+  entities.forEach(entity => {
+    const link = document.createElement('a');
+    link.href = `?entity=${encodeURIComponent(entity)}`;
+    link.textContent = entity;
+    link.onclick = (e) => {
+      e.preventDefault();
+      selectEntity(entity);
+      history.pushState({}, '', `?entity=${encodeURIComponent(entity)}`);
+    };
+    entityNav.appendChild(link);
+  });
+}
 
-        entityTitle.textContent = `${entity} – Choose an action`;
-        contentArea.classList.add('empty');
-        contentArea.innerHTML = 'No action selected.';
-        renderCrudMenu();
-      };
-      entityNav.appendChild(link);
-    });
+// Render CRUD submenu
+function renderCrudMenu() {
+  crudMenu.innerHTML = '';
+  actions.forEach(action => {
+    const link = document.createElement('a');
+    link.href = `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
+    link.textContent = action;
+    link.onclick = (e) => {
+      e.preventDefault();
+      selectAction(action);
+      history.pushState({}, '', `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`);
+    };
+    crudMenu.appendChild(link);
+  });
+}
 
-    // Render CRUD submenu
-    function renderCrudMenu() {
-      crudMenu.innerHTML = '';
-      actions.forEach(action => {
-        const link = document.createElement('a');
-        link.href = '#';
-        link.textContent = action;
-        link.onclick = () => {
-          selectedAction = action;
+// Select entity
+function selectEntity(entity) {
+  selectedEntity = entity;
+  selectedAction = null;
 
-          // Remove .active from all actions
-          [...crudMenu.children].forEach(el => el.classList.remove('active'));
-          link.classList.add('active');
+  [...entityNav.children].forEach(el => el.classList.remove('active'));
+  const activeLink = [...entityNav.children].find(el => el.textContent === entity);
+  if (activeLink) activeLink.classList.add('active');
 
-          entityTitle.textContent = `${selectedEntity} – ${action}`;
+  entityTitle.textContent = `${entity} – Choose an action`;
+  contentArea.classList.add('empty');
+  contentArea.innerHTML = 'No action selected.';
+  renderCrudMenu();
+}
 
-          contentArea.classList.remove('empty');
-          contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p style="color:red;">Not yet implemented (Action: ${action}, Model: ${selectedEntity})</p>`;
-        };
-        crudMenu.appendChild(link);
-      });
+// Select action
+function selectAction(action) {
+  selectedAction = action;
+
+  [...crudMenu.children].forEach(el => el.classList.remove('active'));
+  const activeLink = [...crudMenu.children].find(el => el.textContent === action);
+  if (activeLink) activeLink.classList.add('active');
+
+  entityTitle.textContent = `${selectedEntity} – ${action}`;
+  contentArea.classList.remove('empty');
+  contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p style="color:red;">Not yet implemented (Action: ${action}, Model: ${selectedEntity})</p>`;
+}
+
+// Initialize from URL
+function initializeFromURL() {
+  const { entity, action } = getQueryParams();
+  if (entity && entities.includes(entity)) {
+    selectEntity(entity);
+    if (action && actions.includes(action)) {
+      selectAction(action);
     }
+  } else {
+    renderEntityNav();
+  }
+}
 
+renderEntityNav();
+initializeFromURL();
