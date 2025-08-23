@@ -5,31 +5,31 @@
 const API_BASE = "http://localhost:8888/api";
 
 // Importance
-const Importance = {0:"Undefined",1:"Low",2:"Medium",3:"High"};
+const Importance = {0: "Undefined", 1: "Low", 2: "Medium", 3: "High"};
 const ImportanceValues = Object.keys(Importance).map(Number);
 
 // Difficulty
-const Difficulty = {0:"Undefined",1:"Easy",2:"Medium",3:"Hard",4:"Expert"};
+const Difficulty = {0: "Undefined", 1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"};
 const DifficultyValues = Object.keys(Difficulty).map(Number);
 
 // ContentFormat
-const ContentFormat = {0:"Markdown",1:"HTML",2:"Plain"};
+const ContentFormat = {0: "Markdown", 1: "HTML", 2: "Plain"};
 const ContentFormatValues = Object.keys(ContentFormat).map(Number);
 
 // NodeType
-const NodeType = {0:"Generic",1:"Term"};
+const NodeType = {0: "Generic", 1: "Term"};
 const NodeTypeValues = Object.keys(NodeType).map(Number);
 
 // ValueType
-const ValueType = {0:"String",1:"Number",2:"Boolean",3:"Date"};
+const ValueType = {0: "String", 1: "Number", 2: "Boolean", 3: "Date"};
 const ValueTypeValues = Object.keys(ValueType).map(Number);
 
 // Crudl
-const Crudl = {0:"Undefined",1:"Create",2:"Read",3:"Update",4:"Delete",5:"List"};
+const Crudl = {0: "Undefined", 1: "Create", 2: "Read", 3: "Update", 4: "Delete", 5: "List"};
 const CrudlValues = Object.keys(Crudl).map(Number);
 
 // Visibility
-const Visibility = {0:"Public",1:"Private",2:"Draft",3:"Archived"};
+const Visibility = {0: "Public", 1: "Private", 2: "Draft", 3: "Archived"};
 const VisibilityValues = Object.keys(Visibility).map(Number);
 
 // ========================================
@@ -37,83 +37,101 @@ const VisibilityValues = Object.keys(Visibility).map(Number);
 // ========================================
 
 const entitySchemas = {
-    map: {label:"Map", titleField:"name", fields:[
-            {name:"name", type:"text", required:true},
-            {name:"description", type:"text"},
-            {name:"category", type:"text"}
-        ]},
-    tag: {label:"Tag", titleField:"title", fields:[
-            {name:"map_id", type:"number", required:true, foreignKey:"map"},
-            {name:"title", type:"text", required:true}
-        ]},
-    node: {label:"Node", titleField:"title", fields:[
-            {name:"uuid", type:"text", required:true},
-            {name:"map_id", type:"number", required:true, foreignKey:"map"},
-            {name:"sibling_position", type:"number", required:true},
-            {name:"title", type:"text", required:true},
-            {name:"content_id", type:"number", foreignKey:"content"},
-            {name:"parent_node_id", type:"number", foreignKey:"node"},
-            {name:"type", type:"number", required:true, enum:NodeType},
-            {name:"visibility", type:"number", list:false, enum:Visibility},
-            {name:"last_shown_at", type:"datetime", list:false},
-            {name:"expires_at", type:"datetime", list:false},
-            {name:"is_favorite", type:"checkbox"},
-            {name:"is_redirect", type:"checkbox", list:false},
-            {name:"redirect_node_id", type:"number", list:false, foreignKey:"node"},
-            {name:"redirect_reason", type:"text", list:false},
-            {name:"importance", type:"number", enum:Importance},
-            {name:"difficulty", type:"number", enum:Difficulty}
-        ]},
-    content: {label:"Content", titleField:"version", fields:[
-            {name:"content", type:"textarea", required:true},
-            {name:"format", type:"number", enum:ContentFormat},
-            {name:"version", type:"number"},
-            {name:"node_id", type:"number", foreignKey:"node"}
-        ]},
-    node_property: {label:"Node Property", titleField:"key", fields:[
-            {name:"map_id", type:"number", required:true, foreignKey:"map"},
-            {name:"node_id", type:"number", required:true, foreignKey:"node"},
-            {name:"key", type:"text", required:true},
-            {name:"value", type:"text"},
-            {name:"value_type", type:"number", enum:ValueType},
-            {name:"is_indexed", type:"checkbox"}
-        ]},
-    node_tag: {label:"Node Tag", titleField:"id", fields:[
-            {name:"node_id", type:"number", required:true, foreignKey:"node"},
-            {name:"tag_id", type:"number", required:true, foreignKey:"tag"}
-        ]},
-    node_link: {label:"Node Link", titleField:"label", fields:[
-            {name:"from_node_id", type:"number", required:true, foreignKey:"node"},
-            {name:"to_node_id", type:"number", required:true, foreignKey:"node"},
-            {name:"label", type:"text"}
-        ]},
-    external_link: {label:"External Link", titleField:"to_url", fields:[
-            {name:"from_node_id", type:"number", required:true, foreignKey:"node"},
-            {name:"to_url", type:"text", required:true}
-        ]},
-    history: {label:"History", titleField:"operation", fields:[
-            {name:"table_name", type:"text", required:true},
-            {name:"record_id", type:"number", required:true},
-            {name:"operation", type:"number", required:true, enum:Crudl},
-            {name:"payload", type:"textarea", required:true},
-            {name:"reason", type:"text"}
-        ]}
+    map: {
+        label: "Map", titleField: "name", fields: [
+            {name: "name", type: "text", required: true},
+            {name: "description", type: "text"},
+            {name: "category", type: "text"}
+        ]
+    },
+    tag: {
+        label: "Tag", titleField: "title", fields: [
+            {name: "map_id", type: "number", required: true, foreignKey: "map"},
+            {name: "title", type: "text", required: true}
+        ]
+    },
+    node: {
+        label: "Node", titleField: "title", fields: [
+            {name: "uuid", type: "text", required: true},
+            {name: "map_id", type: "number", required: true, foreignKey: "map"},
+            {name: "sibling_position", type: "number", required: true},
+            {name: "title", type: "text", required: true},
+            {name: "content_id", type: "number", foreignKey: "content"},
+            {name: "parent_node_id", type: "number", foreignKey: "node"},
+            {name: "type", type: "number", required: true, enum: NodeType},
+            {name: "visibility", type: "number", list: false, enum: Visibility},
+            {name: "last_shown_at", type: "datetime", list: false},
+            {name: "expires_at", type: "datetime", list: false},
+            {name: "is_favorite", type: "checkbox"},
+            {name: "is_redirect", type: "checkbox", list: false},
+            {name: "redirect_node_id", type: "number", list: false, foreignKey: "node"},
+            {name: "redirect_reason", type: "text", list: false},
+            {name: "importance", type: "number", enum: Importance},
+            {name: "difficulty", type: "number", enum: Difficulty}
+        ]
+    },
+    content: {
+        label: "Content", titleField: "version", fields: [
+            {name: "content", type: "textarea", required: true},
+            {name: "format", type: "number", enum: ContentFormat},
+            {name: "version", type: "number"},
+            {name: "node_id", type: "number", foreignKey: "node"}
+        ]
+    },
+    node_property: {
+        label: "Node Property", titleField: "key", fields: [
+            {name: "map_id", type: "number", required: true, foreignKey: "map"},
+            {name: "node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "key", type: "text", required: true},
+            {name: "value", type: "text"},
+            {name: "value_type", type: "number", enum: ValueType},
+            {name: "is_indexed", type: "checkbox"}
+        ]
+    },
+    node_tag: {
+        label: "Node Tag", titleField: "id", fields: [
+            {name: "node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "tag_id", type: "number", required: true, foreignKey: "tag"}
+        ]
+    },
+    node_link: {
+        label: "Node Link", titleField: "label", fields: [
+            {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "to_node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "label", type: "text"}
+        ]
+    },
+    external_link: {
+        label: "External Link", titleField: "to_url", fields: [
+            {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "to_url", type: "text", required: true}
+        ]
+    },
+    history: {
+        label: "History", titleField: "operation", fields: [
+            {name: "table_name", type: "text", required: true},
+            {name: "record_id", type: "number", required: true},
+            {name: "operation", type: "number", required: true, enum: Crudl},
+            {name: "payload", type: "textarea", required: true},
+            {name: "reason", type: "text"}
+        ]
+    }
 };
 
 // ========================================
 // 3. Global state a DOM reference
 // ========================================
 
-const entities = ['map','node','content','node_property','tag','node_tag','node_link','external_link','history'];
-const actions = ['list','create','read','update','explore'];
+const entities = ['map', 'node', 'content', 'node_property', 'tag', 'node_tag', 'node_link', 'external_link', 'history'];
+const actions = ['list', 'create', 'read', 'update', 'explore'];
 
 const entityLabels = {
-    map:'Map', node:'Node', content:'Content', node_property:'Node Property',
-    tag:'Tag', node_tag:'Node Tag', node_link:'Node Link', external_link:'External Link', history:'History'
+    map: 'Map', node: 'Node', content: 'Content', node_property: 'Node Property',
+    tag: 'Tag', node_tag: 'Node Tag', node_link: 'Node Link', external_link: 'External Link', history: 'History'
 };
 
 const actionLabels = {
-    list:'📋 List', create:'➕ Create', read:'📖 Read', update:'✏️ Update', explore:'🗺️ Explore'
+    list: '📋 List', create: '➕ Create', read: '📖 Read', update: '✏️ Update', explore: '🗺️ Explore'
 };
 
 let selectedEntity = null;
@@ -139,14 +157,14 @@ function getQueryParams() {
 }
 
 function toLabel(fieldName) {
-    return fieldName.replace(/_id$/,'').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+    return fieldName.replace(/_id$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 function showError(msg) {
     alert(msg);
 }
 
-async function apiFetch(url, options={}) {
+async function apiFetch(url, options = {}) {
     try {
         const res = await fetch(url, options);
         if (!res.ok) {
@@ -155,7 +173,7 @@ async function apiFetch(url, options={}) {
             return null;
         }
         return res.json();
-    } catch(err) {
+    } catch (err) {
         showError(`Network error: ${err.message}`);
         return null;
     }
@@ -174,7 +192,7 @@ async function resolveForeignKeyValue(fkEntity, id) {
 // 5. CRUD render functions
 // ========================================
 
-async function renderEntityForm(entity, data={}) {
+async function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
 
@@ -185,131 +203,151 @@ async function renderEntityForm(entity, data={}) {
     schema.fields.forEach(f => {
         let type = f.type === "datetime" ? "text" : f.type;
         if (f.enum) {
-            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required?' *':''}</label>
-                <select id="${f.name}" name="${f.name}" ${f.required?'required':''}>
-                    ${Object.entries(f.enum).map(([v,l])=>`<option value="${v}" ${data[f.name]==v?'selected':''}>${l}</option>`).join('')}
+            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' *' : ''}</label>
+                <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
+                    ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
                 </select></div>`;
         } else {
-            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required?' *':''}</label>
-                <input type="${type}" id="${f.name}" name="${f.name}" value="${data[f.name]??""}" ${f.required?"required":""}></div>`;
+            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' *' : ''}</label>
+                <input type="${type}" id="${f.name}" name="${f.name}" value="${data[f.name] ?? ""}" ${f.required ? "required" : ""}></div>`;
         }
     });
 
     html += `<button type="submit">Save</button></form>`;
     contentArea.innerHTML = html;
 
-    document.getElementById("entityForm").addEventListener("submit", async e=>{
+    document.getElementById("entityForm").addEventListener("submit", async e => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const payload = {};
 
-        schema.fields.forEach(f=>{
-            if(f.type==="checkbox") payload[f.name]=document.getElementById(f.name).checked?1:0;
+        schema.fields.forEach(f => {
+            if (f.type === "checkbox") payload[f.name] = document.getElementById(f.name).checked ? 1 : 0;
         });
 
-        formData.forEach((value,key)=>{
-            if (!(key==="id" && !value)) {
-                const f = schema.fields.find(ff=>ff.name===key);
-                if(f) {
-                    switch(f.type){
-                        case "number": payload[key]=(value===""||isNaN(value))?0:Number(value); break;
-                        case "checkbox": payload[key]=(value==="on"||value==="1"||value===true)?1:0; break;
-                        default: payload[key]=value??""; break;
+        formData.forEach((value, key) => {
+            if (!(key === "id" && !value)) {
+                const f = schema.fields.find(ff => ff.name === key);
+                if (f) {
+                    switch (f.type) {
+                        case "number":
+                            payload[key] = (value === "" || isNaN(value)) ? 0 : Number(value);
+                            break;
+                        case "checkbox":
+                            payload[key] = (value === "on" || value === "1" || value === true) ? 1 : 0;
+                            break;
+                        default:
+                            payload[key] = value ?? "";
+                            break;
                     }
-                } else payload[key]=value??"";
+                } else payload[key] = value ?? "";
             }
         });
 
-        const method = payload.id?"PUT":"POST";
-        const url = payload.id?`${API_BASE}/${entity}/${payload.id}`:`${API_BASE}/${entity}`;
+        const method = payload.id ? "PUT" : "POST";
+        const url = payload.id ? `${API_BASE}/${entity}/${payload.id}` : `${API_BASE}/${entity}`;
 
-        try{
-            const res = await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-            if(!res.ok){ const t=await res.text(); showError(`Error ${res.status}: ${t||res.statusText}`); return;}
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(payload)
+            });
+            if (!res.ok) {
+                const t = await res.text();
+                showError(`Error ${res.status}: ${t || res.statusText}`);
+                return;
+            }
             selectAction("list");
-        } catch(err){ showError(`Network error: ${err.message}`);}
+        } catch (err) {
+            showError(`Network error: ${err.message}`);
+        }
     });
 }
 
-async function renderEntityRead(entity,id) {
-    contentArea.innerHTML=`<p class="loading">Loading...</p>`;
+async function renderEntityRead(entity, id) {
+    contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}/${id}`);
-    if(!json) return;
-    const schema = entitySchemas[entity]; if(!schema) return;
+    if (!json) return;
+    const schema = entitySchemas[entity];
+    if (!schema) return;
 
-    let html=`<h3>Read ${schema.label}</h3><table>`;
-    for(const f of schema.fields){
-        let value=json[f.name];
-        if(f.enum && value in f.enum) value=f.enum[value];
-        else if(f.foreignKey && value){
-            const fkTitle=await resolveForeignKeyValue(f.foreignKey,value);
-            value=`<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
+    let html = `<h3>Read ${schema.label}</h3><table>`;
+    for (const f of schema.fields) {
+        let value = json[f.name];
+        if (f.enum && value in f.enum) value = f.enum[value];
+        else if (f.foreignKey && value) {
+            const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
+            value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
         }
-        html+=`<tr><th>${toLabel(f.name)}</th><td>${value??""}</td></tr>`;
+        html += `<tr><th>${toLabel(f.name)}</th><td>${value ?? ""}</td></tr>`;
     }
-    html+="</table>";
-    contentArea.innerHTML=html;
+    html += "</table>";
+    contentArea.innerHTML = html;
 }
 
 // ========================================
 // 6. List + Pagination
 // ========================================
 
-async function renderEntityList(entity){
-    contentArea.innerHTML=`<p class="loading">Loading...</p>`;
+async function renderEntityList(entity) {
+    contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const url = new URL(`${API_BASE}/${entity}`);
-    url.searchParams.set("page_number",currentPage);
-    url.searchParams.set("page_size",pageSize);
+    url.searchParams.set("page_number", currentPage);
+    url.searchParams.set("page_size", pageSize);
 
     const json = await apiFetch(url.toString());
-    if(!json) return;
+    if (!json) return;
     const items = json.items || [];
-    const schema = entitySchemas[entity]; if(!schema) return;
+    const schema = entitySchemas[entity];
+    if (!schema) return;
 
-    totalPages = json.total_pages||1;
-    const listFields = schema.fields.filter(f=>f.list!==false);
+    totalPages = json.total_pages || 1;
+    const listFields = schema.fields.filter(f => f.list !== false);
 
-    let html=`<h3>${schema.label} List</h3>`;
-    html+=`<div style="margin-bottom:10px;"><label>Items per page:</label>
-        <select id="pageSizeSelect">${[5,10,20,50,100].map(s=>`<option value="${s}" ${pageSize===s?'selected':''}>${s}</option>`).join('')}</select></div>`;
+    let html = `<h3>${schema.label} List</h3>`;
+    html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
+        <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${pageSize === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
-    html+=`<table><thead><tr><th>ID</th>${listFields.map(f=>`<th>${toLabel(f.name)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>`;
-    if(items.length===0) html+=`<tr><td colspan="${listFields.length+2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
-    else for(const item of items){
-        html+=`<tr><td>${item.id}</td>`;
-        for(const f of listFields){
-            let value=item[f.name];
-            if(f.enum && value in f.enum) value=f.enum[value];
-            else if(f.foreignKey && value) value=`<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey,value)}</a>`;
-            html+=`<td>${value??""}</td>`;
+    html += `<table><thead><tr><th>ID</th>${listFields.map(f => `<th>${toLabel(f.name)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>`;
+    if (items.length === 0) html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
+    else for (const item of items) {
+        html += `<tr><td>${item.id}</td>`;
+        for (const f of listFields) {
+            let value = item[f.name];
+            if (f.enum && value in f.enum) value = f.enum[value];
+            else if (f.foreignKey && value) value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
+            html += `<td>${value ?? ""}</td>`;
         }
-        html+=`<td class="actions">
+        html += `<td class="actions">
         <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>
-        <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g,'&quot;')})">✏️ Update</a>
+        <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
         <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>`;
 
         // 👉 jen pro map přidáme Explore
-        if(entity === "map"){
-            html+=` <a href="?entity=map&action=explore&id=${item.id}" target="_blank">🗺️ Explore</a>`;
+        if (entity === "map") {
+            html += ` <a href="?entity=map&action=explore&id=${item.id}" target="_blank">🗺️ Explore</a>`;
             // if you want in the same tab instead of a new one:
             // html+=` <a href="#" onclick="selectEntity('map','explore'); renderMapExplore(${item.id}); return false;">🗺️ Explore</a>`;
         }
 
-        html+=`</td></tr>`;
+        html += `</td></tr>`;
     }
-    html+=`</tbody></table>`;
-    html+=`<div style="margin-top:10px;text-align:center;">
-        <button ${currentPage<=1?'disabled':''} onclick="changePage(${currentPage-1})">Previous</button>
+    html += `</tbody></table>`;
+    html += `<div style="margin-top:10px;text-align:center;">
+        <button ${currentPage <= 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">Previous</button>
         Page ${currentPage} of ${totalPages}
-        <button ${currentPage>=totalPages?'disabled':''} onclick="changePage(${currentPage+1})">Next</button>
+        <button ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Next</button>
     </div>`;
-    contentArea.innerHTML=html;
+    contentArea.innerHTML = html;
 
-    document.getElementById("pageSizeSelect").addEventListener("change",e=>{
-        pageSize=Number(e.target.value); currentPage=1; renderEntityList(entity);
+    document.getElementById("pageSizeSelect").addEventListener("change", e => {
+        pageSize = Number(e.target.value);
+        currentPage = 1;
+        renderEntityList(entity);
     });
-    
-    
+
+
 }
 
 // ========================================
@@ -325,205 +363,305 @@ async function renderMapExplore(mapId) {
     </div>`;
 
     const mapJson = await apiFetch(`${API_BASE}/map/${mapId}`);
-    if(!mapJson) return;
+    if (!mapJson) return;
 
     if (!currentCenterNodeId) {
-        const nodes = new vis.DataSet([{id:"map_"+mapJson.id, label:mapJson.name, color:"#1abc9c"}]);
+        const nodes = new vis.DataSet([
+            {id: "map_" + mapJson.id, label: mapJson.name, color: "#1abc9c", level: 0}
+        ]);
         const edges = new vis.DataSet([]);
         drawNetwork(nodes, edges, mapId);
-        currentCenterNodeId = "map_"+mapJson.id;
-        loadChildren(mapId, currentCenterNodeId);
+        currentCenterNodeId = "map_" + mapJson.id;
+        //loadChildren(mapId, currentCenterNodeId);
+        loadTestNodes(mapId, currentCenterNodeId);
     }
 }
 
 
 async function loadChildren(mapId, parentId) {
     let url = `${API_BASE}/node?map_id=${mapId}`;
-    if(parentId.startsWith("node_")){
-        const nodeId = parentId.replace("node_","");
+    if (parentId.startsWith("node_")) {
+        const nodeId = parentId.replace("node_", "");
         url += `&parent_node_id=${nodeId}`;
     } else {
         // děti mapy (root nodes)
         url += `&parent_node_id=0`;
     }
     const json = await apiFetch(url);
-    if(!json) return;
+    if (!json) return;
 
     const nodes = network.body.data.nodes;
     const edges = network.body.data.edges;
 
-    json.items.forEach(n=>{
-        if(!nodes.get("node_"+n.id)){
-            nodes.add({id:"node_"+n.id, label:n.title, color:"#3498db"});
-            edges.add({from:parentId,to:"node_"+n.id});
+    json.items.forEach(n => {
+        if (!nodes.get("node_" + n.id)) {
+            nodes.add({id: "node_" + n.id, label: n.title, color: "#3498db", parentId});
+
+            edges.add({from: parentId, to: "node_" + n.id});
         }
     });
     network.fit();
 }
 
-let network=null;
-
-function drawNetwork(nodes, edges, mapId){
-    const container=document.getElementById('network');
-    const data={nodes,edges};
+function replaceSpacesWithUnderscores(text) {
+    return text.replace(/ /g, "_");
+}
 
 
-    const options={physics:{stabilization:true},interaction:{hover:true}};
-    network=new vis.Network(container,data,options);
+function add_node_and_edges(label, color, id_of_parent, level = null) {
+    let id_of_new_node = replaceSpacesWithUnderscores(label);
+    const nodeData = {id: id_of_new_node, label: label, color: color};
+    if (level !== null) nodeData.level = level;  // přidá level jen pokud je zadán
+    network.body.data.nodes.add(nodeData);
+    network.body.data.edges.add({from: id_of_parent, to: id_of_new_node});
+}
 
 
-    // const options = {
-    //     physics: {
-    //         enabled: true,
-    //         stabilization: {
-    //             enabled: true,
-    //             iterations: 100,
-    //             updateInterval: 10
-    //         }
-    //     },
-    //     layout: {
-    //         improvedLayout: true
-    //     },
-    //     interaction: {
-    //         hover: true
-    //     }
-    // };
-    //
-    // network = new vis.Network(container, data, options);
+async function loadTestNodes(mapId, parentId) {
 
-    // network.once("stabilizationIterationsDone", () => {
-    //     network.setOptions({ physics: false });
-    // });
+    add_node_and_edges("ACTIONS", "#8f8484", parentId, 1);
+    add_node_and_edges("PARENT", "#8f8484", "ACTIONS", 2);
+    add_node_and_edges("CREATE", "#8f8484", "ACTIONS", 2);
+    add_node_and_edges("READ", "#8f8484", "ACTIONS", 2);
+    add_node_and_edges("UPDATE", "#8f8484", "ACTIONS", 2);
+    add_node_and_edges("DELETE", "#8f8484", "ACTIONS", 2);
+    add_node_and_edges("History", "#3498db", parentId, 1);
+    add_node_and_edges("Basics", "#3498db", parentId, 1);
+    add_node_and_edges("Syntax rules", "#3498db", parentId, 1);
+    add_node_and_edges("Data types", "#3498db", parentId, 1);
+    add_node_and_edges("Operators", "#3498db", parentId, 1);
+    add_node_and_edges("OTHER", "#8f8484", parentId, 1);
+
+    add_node_and_edges("content", "#d5db34", "OTHER", 2);
+    add_node_and_edges("properties", "#8c5d52", "OTHER", 2);
+    add_node_and_edges("tags", "#4cdcbc", "OTHER", 2);
+    add_node_and_edges("node_links", "#7e55b3", "OTHER", 2);
+    add_node_and_edges("external_links", "#ba6379", "OTHER", 2);
+
+    add_node_and_edges("CREATE.", "#8f8484", "properties", 3);
+    add_node_and_edges("colour", "#8c5d52", "properties", 3);
+    add_node_and_edges("importance", "#8c5d52", "properties", 3);
+    add_node_and_edges("price", "#8c5d52", "properties", 3);
 
 
+    add_node_and_edges("UPDATE P", "#8f8484", "price", 5);
+    add_node_and_edges("DELETE P", "#8f8484", "price", 5);
+    add_node_and_edges("key=price", "#8c5d52", "price", 5);
+    add_node_and_edges("value=400", "#8c5d52", "price", 5);
+    add_node_and_edges("value type=STRING", "#8c5d52", "price", 5);
 
-    network.on("click",params=>{
-        if(params.nodes.length>0){
-            const nodeId=params.nodes[0];
-            if(nodeId!==currentCenterNodeId){
+    network.fit();
+}
+
+
+let network = null;
+
+function drawNetwork(nodes, edges, mapId) {
+    const container = document.getElementById('network');
+    const data = {nodes, edges};
+
+
+    let o = 2;
+    switch (o) {
+        case 1: {
+            const options = {physics: {stabilization: true}, interaction: {hover: true}};
+            network = new vis.Network(container, data, options);
+        }
+            break;
+
+        case 2: {
+            const options = {
+                layout: {
+                    hierarchical: {
+                        direction: "UD",
+                        sortMethod: "directed", // nebo 'hubsize'
+                        levelSeparation: 80,
+                        nodeSpacing: 100
+                    }
+                },
+                physics: {enabled: false}
+            };
+
+
+            network = new vis.Network(container, data, options);
+        }
+            break;
+        case 3: {
+            const options = {
+                physics: {
+                    enabled: true,
+                    stabilization: {
+                        enabled: true,
+                        iterations: 100,
+                        updateInterval: 10
+                    }
+                },
+                layout: {
+                    improvedLayout: true
+                },
+                interaction: {
+                    hover: true
+                }
+            };
+
+            network = new vis.Network(container, data, options);
+
+            network.once("stabilizationIterationsDone", () => {
+                network.setOptions({physics: false});
+            });
+        }
+    }
+
+
+    network.on("click", params => {
+        if (params.nodes.length > 0) {
+            const nodeId = params.nodes[0];
+            if (nodeId !== currentCenterNodeId) {
                 parentStack.push(currentCenterNodeId);
-                currentCenterNodeId=nodeId;
-                document.getElementById("backBtn").disabled=false;
-                loadChildren(mapId,nodeId);  // ✅ správné mapId
+                currentCenterNodeId = nodeId;
+                document.getElementById("backBtn").disabled = false;
+                loadChildren(mapId, nodeId);
             }
         }
     });
 
 
-    document.getElementById("backBtn").onclick=()=>{
-        if(parentStack.length>0){
-            currentCenterNodeId=parentStack.pop();
-            if(parentStack.length===0) document.getElementById("backBtn").disabled=true;
+    document.getElementById("backBtn").onclick = () => {
+        if (parentStack.length > 0) {
+            currentCenterNodeId = parentStack.pop();
+            if (parentStack.length === 0) document.getElementById("backBtn").disabled = true;
             renderMapExplore(1);
         }
     };
 }
 
 
-function changePage(page){ if(page<1)page=1; if(page>totalPages)page=totalPages; currentPage=page; renderEntityList(selectedEntity); }
+function changePage(page) {
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+    currentPage = page;
+    renderEntityList(selectedEntity);
+}
 
 // ========================================
 // 7. Navigation a menu
 // ========================================
 
-function renderEntityNav(){
-    entityNav.innerHTML="";
-    entities.forEach(entity=>{
-        const link=document.createElement('a');
-        link.href=`?entity=${encodeURIComponent(entity)}`;
-        link.textContent=entityLabels[entity];
-        link.onclick=e=>{e.preventDefault(); selectEntity(entity); history.pushState({},"",`?entity=${encodeURIComponent(entity)}`);}
+function renderEntityNav() {
+    entityNav.innerHTML = "";
+    entities.forEach(entity => {
+        const link = document.createElement('a');
+        link.href = `?entity=${encodeURIComponent(entity)}`;
+        link.textContent = entityLabels[entity];
+        link.onclick = e => {
+            e.preventDefault();
+            selectEntity(entity);
+            history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
+        }
         entityNav.appendChild(link);
     });
 }
 
-function renderCrudMenu(){
-    crudMenu.innerHTML="";
-    actions.forEach(action=>{
+function renderCrudMenu() {
+    crudMenu.innerHTML = "";
+    actions.forEach(action => {
         // Explore is only for map
-        if(action==="explore" && selectedEntity!=="map") return;
+        if (action === "explore" && selectedEntity !== "map") return;
 
-        const link=document.createElement('a');
-        link.href=`?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
-        link.textContent=actionLabels[action];
-        link.onclick=e=>{
+        const link = document.createElement('a');
+        link.href = `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
+        link.textContent = actionLabels[action];
+        link.onclick = e => {
             e.preventDefault();
             selectAction(action);
-            history.pushState({},"",`?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`);
+            history.pushState({}, "", `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`);
         }
         crudMenu.appendChild(link);
     });
 }
 
 
-function updateActiveMenu(){
-    [...crudMenu.children].forEach(el=>el.classList.remove('active'));
-    const activeLink=[...crudMenu.children].find(el=>el.textContent===actionLabels[selectedAction]);
-    if(activeLink) activeLink.classList.add('active');
+function updateActiveMenu() {
+    [...crudMenu.children].forEach(el => el.classList.remove('active'));
+    const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[selectedAction]);
+    if (activeLink) activeLink.classList.add('active');
 }
 
-function selectEntity(entity, action=null){
-    selectedEntity=entity;
-    selectedAction=action||'list';
-    [...entityNav.children].forEach(el=>el.classList.remove('active'));
-    const activeLink=[...entityNav.children].find(el=>el.textContent===entityLabels[entity]);
-    if(activeLink) activeLink.classList.add('active');
-    entityTitle.textContent=`${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+function selectEntity(entity, action = null) {
+    selectedEntity = entity;
+    selectedAction = action || 'list';
+    [...entityNav.children].forEach(el => el.classList.remove('active'));
+    const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[entity]);
+    if (activeLink) activeLink.classList.add('active');
+    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
     contentArea.classList.remove('empty');
     renderCrudMenu();
     selectAction(selectedAction);
 }
 
-function selectAction(action){
-    selectedAction=action;
-    [...crudMenu.children].forEach(el=>el.classList.remove('active'));
-    const activeLink=[...crudMenu.children].find(el=>el.textContent===actionLabels[action]);
-    if(activeLink) activeLink.classList.add('active');
+function selectAction(action) {
+    selectedAction = action;
+    [...crudMenu.children].forEach(el => el.classList.remove('active'));
+    const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[action]);
+    if (activeLink) activeLink.classList.add('active');
 
-    entityTitle.textContent=`${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
     contentArea.classList.remove('empty');
 
-    if(action==="list") renderEntityList(selectedEntity);
-    else if(action==="create") renderEntityForm(selectedEntity);
-    else if(action==="read"){
-        const params=getQueryParams();
-        if(params.others.id) renderEntityRead(selectedEntity,params.others.id);
-        else contentArea.innerHTML=`<p style="color:red;">No ID provided for Read action.</p>`;
-    }else if(action==="explore") {
+    if (action === "list") renderEntityList(selectedEntity);
+    else if (action === "create") renderEntityForm(selectedEntity);
+    else if (action === "read") {
+        const params = getQueryParams();
+        if (params.others.id) renderEntityRead(selectedEntity, params.others.id);
+        else contentArea.innerHTML = `<p style="color:red;">No ID provided for Read action.</p>`;
+    } else if (action === "explore") {
         const params = getQueryParams();
         if (params.others.id) {
             renderMapExplore(params.others.id);
         } else {
-            contentArea.innerHTML=`<p style="color:red;">No ID provided for Explore action.</p>`;
+            contentArea.innerHTML = `<p style="color:red;">No ID provided for Explore action.</p>`;
         }
-    }
-
-
-    else contentArea.innerHTML=`<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
+    } else contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
 }
 
 // ========================================
 // 8. Global action helpers
 // ========================================
 
-window.readEntity=(entity,id)=>{ selectEntity(entity,"read"); history.pushState({},"",`?entity=${encodeURIComponent(entity)}&action=read&id=${encodeURIComponent(id)}`); renderEntityRead(entity,id);}
-window.editEntity=(entity,data)=>{ selectedEntity=entity; selectedAction="update"; history.pushState({},"",`?entity=${encodeURIComponent(entity)}&action=update&id=${encodeURIComponent(data.id)}`); renderCrudMenu(); updateActiveMenu(); entityTitle.textContent=`${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`; renderEntityForm(entity,data);}
-window.deleteEntity=async(entity,id)=>{if(!confirm("Do you really want to delete this record?"))return; await fetch(`${API_BASE}/${entity}/${id}`,{method:"DELETE"}); renderEntityList(entity);}
+window.readEntity = (entity, id) => {
+    selectEntity(entity, "read");
+    history.pushState({}, "", `?entity=${encodeURIComponent(entity)}&action=read&id=${encodeURIComponent(id)}`);
+    renderEntityRead(entity, id);
+}
+window.editEntity = (entity, data) => {
+    selectedEntity = entity;
+    selectedAction = "update";
+    history.pushState({}, "", `?entity=${encodeURIComponent(entity)}&action=update&id=${encodeURIComponent(data.id)}`);
+    renderCrudMenu();
+    updateActiveMenu();
+    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+    renderEntityForm(entity, data);
+}
+window.deleteEntity = async (entity, id) => {
+    if (!confirm("Do you really want to delete this record?")) return;
+    await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
+    renderEntityList(entity);
+}
 
 // ========================================
 // 9. Initialization
 // ========================================
 
-function initializeFromURL(){
+function initializeFromURL() {
     renderEntityNav();
-    const {entity,action}=getQueryParams();
-    if(entity && entities.includes(entity)){
-        selectedEntity=entity;
-        selectedAction=action && actions.includes(action)?action:'list';
-        [...entityNav.children].forEach(el=>el.classList.remove('active'));
-        const activeLink=[...entityNav.children].find(el=>el.textContent===entityLabels[selectedEntity]);
-        if(activeLink) activeLink.classList.add('active');
-        entityTitle.textContent=`${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+    const {entity, action} = getQueryParams();
+    if (entity && entities.includes(entity)) {
+        selectedEntity = entity;
+        selectedAction = action && actions.includes(action) ? action : 'list';
+        [...entityNav.children].forEach(el => el.classList.remove('active'));
+        const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[selectedEntity]);
+        if (activeLink) activeLink.classList.add('active');
+        entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
         contentArea.classList.remove('empty');
         renderCrudMenu();
         selectAction(selectedAction);
