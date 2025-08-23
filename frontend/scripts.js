@@ -423,17 +423,40 @@ async function resolveForeignKeyValue(fkEntity, id) {
     }
 }
 
+let currentPage = 1;
+let pageSize = 10; // default
+let totalPages = 1;
+
 async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
-    const json = await apiFetch(`${API_BASE}/${entity}`);
+
+    const url = new URL(`${API_BASE}/${entity}`);
+    url.searchParams.set("page_number", currentPage);
+    url.searchParams.set("page_size", pageSize);
+
+    const json = await apiFetch(url.toString());
     if (!json) return;
+
     const items = json.items || [];
     const schema = entitySchemas[entity];
     if (!schema) return;
 
+    totalPages = json.total_pages || 1;
+
     const listFields = schema.fields.filter(f => f.list !== false);
 
-    let html = `<h3>${schema.label} List</h3><table><thead><tr>`;
+    let html = `<h3>${schema.label} List</h3>`;
+
+    // Page size selector
+    html += `<div style="margin-bottom:10px;">
+        <label for="pageSizeSelect">Items per page:</label>
+        <select id="pageSizeSelect">`;
+    [5,10,20,50,100].forEach(size => {
+        html += `<option value="${size}" ${pageSize===size?'selected':''}>${size}</option>`;
+    });
+    html += `</select></div>`;
+
+    html += `<table><thead><tr>`;
     html += `<th>ID</th>`;
     listFields.forEach(f => html += `<th>${toLabel(f.name)}</th>`);
     html += `<th>Actions</th></tr></thead><tbody>`;
@@ -448,7 +471,6 @@ async function renderEntityList(entity) {
                 if (f.enum && value in f.enum) {
                     value = f.enum[value];
                 } else if (f.foreignKey) {
-                    // pokud je foreignKey, udělat klikatelné
                     const fkEntity = f.foreignKey;
                     const fkId = value;
                     if (fkId) {
@@ -460,16 +482,38 @@ async function renderEntityList(entity) {
                 html += `<td>${value ?? ""}</td>`;
             }
             html += `<td class="actions">
-                <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a><br>
-                <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a><br>
-                <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a><br>
+                <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a>
+                <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
+                <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
             </td></tr>`;
         }
     }
 
     html += `</tbody></table>`;
+
+    // Pagination controls
+    html += `<div style="margin-top:10px; text-align:center;">`;
+    html += `<button ${currentPage <= 1 ? 'disabled' : ''} onclick="changePage(${currentPage-1})">Previous</button>`;
+    html += ` Page ${currentPage} of ${totalPages} `;
+    html += `<button ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage+1})">Next</button>`;
+    html += `</div>`;
+
     contentArea.innerHTML = html;
+
+    document.getElementById("pageSizeSelect").addEventListener("change", e => {
+        pageSize = Number(e.target.value);
+        currentPage = 1;
+        renderEntityList(entity);
+    });
 }
+
+function changePage(page) {
+    if (page < 1) page = 1;
+    if (page > totalPages) page = totalPages;
+    currentPage = page;
+    renderEntityList(selectedEntity);
+}
+
 
 
 window.readEntity = (entity, id) => {

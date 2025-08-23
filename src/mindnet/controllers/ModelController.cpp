@@ -122,9 +122,13 @@ namespace mindnet::routes
             {
                 return crow::response(400, "Invalid page number. It must be positive");
             }
-            if (page_size <= 0)
+            if (page_size < 5)
             {
-                return crow::response(400, "Invalid page size. It must be positive");
+                return crow::response(400, "Invalid page size. It must be 5 at least");
+            }
+            if (page_size > 100)
+            {
+                return crow::response(400, "Invalid page size. It must be 100 at most");
             }
 
             std::vector<entity_fields> all_records;
