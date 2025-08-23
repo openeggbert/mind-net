@@ -61,6 +61,7 @@ const VisibilityValues = Object.keys(Visibility).map(k => Number(k));
 const entitySchemas = {
     map: {
         label: "Map",
+        titleField: "name",
         fields: [
             {name: "name", type: "text", required: true},
             {name: "description", type: "text"},
@@ -69,27 +70,29 @@ const entitySchemas = {
     },
     tag: {
         label: "Tag",
+        titleField: "title",
         fields: [
-            {name: "map_id", type: "number", required: true},
+            {name: "map_id", type: "number", required: true, foreignKey: "map"},
             {name: "title", type: "text", required: true}
         ]
     },
     node: {
         label: "Node",
+        titleField: "title",
         fields: [
             {name: "uuid", type: "text", required: true},
-            {name: "map_id", type: "number", required: true},
+            {name: "map_id", type: "number", required: true, foreignKey: "map"},
             {name: "sibling_position", type: "number", required: true},
             {name: "title", type: "text", required: true},
-            {name: "content_id", type: "number"},
-            {name: "parent_node_id", type: "number"},
+            {name: "content_id", type: "number", foreignKey: "content"},
+            {name: "parent_node_id", type: "number", foreignKey: "node"},
             {name: "type", type: "number", required: true, enum: NodeType},
             {name: "visibility", type: "number", list: false, enum: Visibility},
             {name: "last_shown_at", type: "datetime", list: false},
             {name: "expires_at", type: "datetime", list: false},
             {name: "is_favorite", type: "checkbox"},
             {name: "is_redirect", type: "checkbox", list: false},
-            {name: "redirect_node_id", type: "number", list: false},
+            {name: "redirect_node_id", type: "number", list: false, foreignKey: "node"},
             {name: "redirect_reason", type: "text", list: false},
             {name: "importance", type: "number", enum: Importance},
             {name: "difficulty", type: "number", enum: Difficulty},
@@ -97,18 +100,20 @@ const entitySchemas = {
     },
     content: {
         label: "Content",
+        titleField: "version",
         fields: [
             {name: "content", type: "textarea", required: true},
             {name: "format", type: "number", enum: ContentFormat},
             {name: "version", type: "number"},
-            {name: "node_id", type: "number"}
+            {name: "node_id", type: "number", foreignKey: "node"}
         ]
     },
     node_property: {
         label: "Node Property",
+        titleField: "key",
         fields: [
-            {name: "map_id", type: "number", required: true},
-            {name: "node_id", type: "number", required: true},
+            {name: "map_id", type: "number", required: true, foreignKey: "map"},
+            {name: "node_id", type: "number", required: true, foreignKey: "node"},
             {name: "key", type: "text", required: true},
             {name: "value", type: "text"},
             {name: "value_type", type: "number",  enum: ValueType},
@@ -117,28 +122,32 @@ const entitySchemas = {
     },
     node_tag: {
         label: "Node Tag",
+        titleField: "id",
         fields: [
-            {name: "node_id", type: "number", required: true},
-            {name: "tag_id", type: "number", required: true}
+            {name: "node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "tag_id", type: "number", required: true, foreignKey: "tag"}
         ]
     },
     node_link: {
         label: "Node Link",
+        titleField: "label",
         fields: [
-            {name: "from_node_id", type: "number", required: true},
-            {name: "to_node_id", type: "number", required: true},
+            {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "to_node_id", type: "number", required: true, foreignKey: "node"},
             {name: "label", type: "text"}
         ]
     },
     external_link: {
         label: "External Link",
+        titleField: "to_url",
         fields: [
-            {name: "from_node_id", type: "number", required: true},
+            {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
             {name: "to_url", type: "text", required: true}
         ]
     },
     history: {
         label: "History",
+        titleField: "operation",
         fields: [
             {name: "table_name", type: "text", required: true},
             {name: "record_id", type: "number", required: true},
@@ -343,7 +352,6 @@ function renderEntityForm(entity, data = {}) {
 
 
 }
-
 async function renderEntityRead(entity, id) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}/${id}`);
@@ -353,17 +361,15 @@ async function renderEntityRead(entity, id) {
     if (!schema) return;
 
     let html = `<h3>Read ${schema.label}</h3><table>`;
-    schema.fields.forEach(f => {
+    for (const f of schema.fields) {
         let value = json[f.name];
         if (f.enum && value in f.enum) {
             value = f.enum[value];
+        } else if (f.foreignKey) {
+            value = await resolveForeignKeyValue(f.foreignKey, value);
         }
-        html += `<tr>
-                <th>${toLabel(f.name)}</th>
-                <td>${value ?? ""}</td>
-             </tr>`;
-    });
-
+        html += `<tr><th>${toLabel(f.name)}</th><td>${value ?? ""}</td></tr>`;
+    }
     html += `</table>`;
     contentArea.innerHTML = html;
 }
@@ -392,6 +398,20 @@ function showError(msg) {
     //contentArea.innerHTML = `<p style="color:red; font-weight:bold;">${msg}</p>`;
 }
 
+async function resolveForeignKeyValue(fkEntity, id) {
+    if (!id) return "";
+    const schema = entitySchemas[fkEntity];
+    if (!schema) return id;
+
+    try {
+        const json = await apiFetch(`${API_BASE}/${fkEntity}/${id}`);
+        if (!json) return id;
+        const titleField = schema.titleField || "id";
+        return json[titleField] ?? id;
+    } catch (err) {
+        return id;
+    }
+}
 async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}`);
@@ -410,34 +430,24 @@ async function renderEntityList(entity) {
     if (items.length === 0) {
         html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center; color:gray;">No records found.</td></tr>`;
     } else {
-        items.forEach(item => {
+        for (const item of items) {
             html += `<tr><td>${item.id}</td>`;
-            listFields.forEach(f => {
+            for (const f of listFields) {
                 let value = item[f.name];
-                // Pokud pole má enum, zobraz text
                 if (f.enum && value in f.enum) {
                     value = f.enum[value];
+                } else if (f.foreignKey) {
+                    value = await resolveForeignKeyValue(f.foreignKey, value);
                 }
                 html += `<td>${value ?? ""}</td>`;
-            });
+            }
             html += `<td class="actions">
-            <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
-               onclick="readEntity('${entity}', ${item.id})">
-              <span>📖</span><span>Read</span>
-            </a>
-            <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
-               onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
-              <span>✏️</span><span>Update</span>
-            </a>
-            <a href="#" style="display:inline-flex; align-items:center; gap:4px; word-break:break-word;"
-               onclick="deleteEntity('${entity}', ${item.id})">
-              <span>🗑️</span><span>Delete</span>
-            </a>
-         </td></tr>`;
-        });
-
+                <a href="#" onclick="readEntity('${entity}', ${item.id})">📖 Read</a>
+                <a href="#" onclick="editEntity('${entity}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
+                <a href="#" onclick="deleteEntity('${entity}', ${item.id})">🗑️ Delete</a>
+            </td></tr>`;
+        }
     }
-
 
     html += `</tbody></table>`;
     contentArea.innerHTML = html;
