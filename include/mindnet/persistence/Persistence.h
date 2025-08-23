@@ -31,7 +31,7 @@ namespace mindnet::persistence {
         bool update(int id, entity_fields& fields, ModelDefinition& def);
         bool remove(int id, ModelDefinition& def);
 
-        std::vector<entity_fields> list(size_t page_number, size_t pageSize, ModelDefinition& def);
+        std::vector<entity_fields> list(size_t page_number, size_t pageSize, int& total_items, ModelDefinition& def);
 
         //
         entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl, ModelDefinition& def);

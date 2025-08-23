@@ -36,7 +36,7 @@ virtual int create(const entity_fields& fields, str& error) = 0;\
 virtual entity_fields read(int id) = 0;\
 virtual bool update(int id, entity_fields& fields) = 0;\
 virtual bool remove(int id) = 0;\
-virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize) = 0;\
+virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize, int& total_items) = 0;\
 virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;\
 virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
@@ -45,7 +45,7 @@ int create(const entity_fields& fields, str& error) override;\
 entity_fields read(int id) override;\
 bool update(int id, entity_fields& fields) override;\
 bool remove(int id) override;\
-std::vector<entity_fields> list(size_t page_number, size_t pageSize) override;\
+std::vector<entity_fields> list(size_t page_number, size_t pageSize, int& total_items) override;\
 models::misc::ModelDefinition& get_model_definition() override;\
 entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
 
@@ -78,9 +78,9 @@ bool Model##RepositoryImplSqlite::remove(int id)\
         return persistence::impl::sqlite::delete_model(get_model_definition(), id);\
     }\
 \
-std::vector<entity_fields> Model##RepositoryImplSqlite::list(size_t page_number, size_t pageSize)\
+std::vector<entity_fields> Model##RepositoryImplSqlite::list(size_t page_number, size_t pageSize, int& total_items)\
     {\
-        return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize);\
+        return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize, total_items);\
     }\
 models::misc::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
     {\

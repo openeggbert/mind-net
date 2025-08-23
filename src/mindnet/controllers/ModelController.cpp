@@ -132,9 +132,10 @@ namespace mindnet::routes
             }
 
             std::vector<entity_fields> all_records;
+            int total_items = 0;
             try
             {
-                all_records = db->list(page_number, page_size, def);
+                all_records = db->list(page_number, page_size, total_items, def);
             }
             catch (std::runtime_error& e)
             {
@@ -150,6 +151,15 @@ namespace mindnet::routes
             }
 
             res["items"] = std::move(items);
+            res["total_items"] = total_items;
+            res["page_number"] = page_number;
+            res["page_size"] = page_size;
+            int total_pages = total_items / page_size;
+            if (total_items % page_size != 0)
+            {
+                ++total_pages;
+            }
+            res["total_pages"] = total_pages;
 
             return crow::response(200, res);
         };

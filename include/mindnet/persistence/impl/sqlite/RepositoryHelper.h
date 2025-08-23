@@ -45,7 +45,7 @@ namespace mindnet::persistence::impl::sqlite
 
     bool delete_model(models::misc::ModelDefinition& def, int id);
 
-    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size);
+    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size, int& total_items);
 }
 
 #endif // BASEREPOSITORY_H

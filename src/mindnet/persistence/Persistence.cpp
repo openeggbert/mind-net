@@ -76,9 +76,9 @@ namespace mindnet::persistence
         return get_repository(def.model_name)->remove(id);
     }
 
-    std::vector<entity_fields> Persistence::list(size_t page_number, size_t pageSize, models::misc::ModelDefinition& def)
+    std::vector<entity_fields> Persistence::list(size_t page_number, size_t pageSize, int& total_items, models::misc::ModelDefinition& def)
     {
-        return get_repository(def.model_name)->list(page_number, pageSize);
+        return get_repository(def.model_name)->list(page_number, pageSize, total_items);
     }
 
     entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(

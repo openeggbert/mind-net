@@ -64,7 +64,8 @@ namespace mindnet::persistence::impl::sqlite
         try
         {
             Utils::sqlite_exec(query);
-        } catch (std::exception& e)
+        }
+        catch (std::exception& e)
         {
             error = e.what();
             throw;
@@ -193,9 +194,12 @@ namespace mindnet::persistence::impl::sqlite
         }
     }
 
-    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size)
+    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size,
+                                           int& total_items)
     {
-        std::string sql = Utils::generate_select_all_sql(def.model_name);
+        std::string sql = Utils::generate_select_all_sql(def.model_name);\
+        std::string sql_count = Utils::generate_select_count_sql(def.model_name);\
+
         std::cout << "Going to execute select all SQL: " << sql << std::endl;
 
         SQLite::Database db(
@@ -236,6 +240,13 @@ namespace mindnet::persistence::impl::sqlite
                 i++;
             }
             results.push_back(result);
+        }
+        SQLite::Statement query_count(db, sql_count);
+
+        while (query_count.executeStep())
+        {
+            total_items = query_count.getColumn(0);
+            break;
         }
         return results;
     }

@@ -268,7 +268,6 @@ namespace mindnet
     str Utils::generate_delete_sql(const models::misc::ModelDefinition& definition)
     {
         return "DELETE FROM " + definition.model_name + " WHERE id = ?";
-
     }
 
     str Utils::generate_select_one_sql(const std::string& table_name)
@@ -279,6 +278,11 @@ namespace mindnet
     str Utils::generate_select_all_sql(const std::string& table_name)
     {
         return "SELECT * FROM " + table_name + " LIMIT ? OFFSET ?";
+    }
+
+    str Utils::generate_select_count_sql(const std::string& table_name)
+    {
+        return "SELECT count(*) as c FROM " + table_name;
     }
 
 
@@ -325,7 +329,9 @@ namespace mindnet
                     if (FOREIGN_KEY_NULL == val)
                     {
                         query.bind(index, nullptr);
-                    } else {
+                    }
+                    else
+                    {
                         query.bind(index, val);
                     }
                 }
