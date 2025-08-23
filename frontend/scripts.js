@@ -105,7 +105,7 @@ const entitySchemas = {
 // ========================================
 
 const entities = ['map','node','content','node_property','tag','node_tag','node_link','external_link','history'];
-const actions = ['list','create','read','update'];
+const actions = ['list','create','read','update','explore'];
 
 const entityLabels = {
     map:'Map', node:'Node', content:'Content', node_property:'Node Property',
@@ -113,7 +113,7 @@ const entityLabels = {
 };
 
 const actionLabels = {
-    list:'📋 List', create:'➕ Create', read:'📖 Read', update:'✏️ Update'
+    list:'📋 List', create:'➕ Create', read:'📖 Read', update:'✏️ Update', explore:'🗺️ Explore'
 };
 
 let selectedEntity = null;
@@ -284,10 +284,18 @@ async function renderEntityList(entity){
             html+=`<td>${value??""}</td>`;
         }
         html+=`<td class="actions">
-            <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>
-            <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g,'&quot;')})">✏️ Update</a>
-            <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>
-        </td></tr>`;
+        <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>
+        <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g,'&quot;')})">✏️ Update</a>
+        <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>`;
+
+        // 👉 jen pro map přidáme Explore
+        if(entity === "map"){
+            html+=` <a href="?entity=map&action=explore&id=${item.id}" target="_blank">🗺️ Explore</a>`;
+            // if you want in the same tab instead of a new one:
+            // html+=` <a href="#" onclick="selectEntity('map','explore'); renderMapExplore(${item.id}); return false;">🗺️ Explore</a>`;
+        }
+
+        html+=`</td></tr>`;
     }
     html+=`</tbody></table>`;
     html+=`<div style="margin-top:10px;text-align:center;">
@@ -300,7 +308,117 @@ async function renderEntityList(entity){
     document.getElementById("pageSizeSelect").addEventListener("change",e=>{
         pageSize=Number(e.target.value); currentPage=1; renderEntityList(entity);
     });
+    
+    
 }
+
+// ========================================
+// ?. Explore
+// ========================================
+let currentCenterNodeId = null;
+let parentStack = [];
+
+async function renderMapExplore(mapId) {
+    contentArea.innerHTML = `<div id="network" style="height:600px;border:1px solid #ccc;border-radius:8px;"></div>
+    <div style="margin-top:10px;">
+      <button id="backBtn" disabled>⬅️ Back</button>
+    </div>`;
+
+    const mapJson = await apiFetch(`${API_BASE}/map/${mapId}`);
+    if(!mapJson) return;
+
+    if (!currentCenterNodeId) {
+        const nodes = new vis.DataSet([{id:"map_"+mapJson.id, label:mapJson.name, color:"#1abc9c"}]);
+        const edges = new vis.DataSet([]);
+        drawNetwork(nodes, edges, mapId);
+        currentCenterNodeId = "map_"+mapJson.id;
+        loadChildren(mapId, currentCenterNodeId);
+    }
+}
+
+
+async function loadChildren(mapId, parentId) {
+    let url = `${API_BASE}/node?map_id=${mapId}`;
+    if(parentId.startsWith("node_")){
+        const nodeId = parentId.replace("node_","");
+        url += `&parent_node_id=${nodeId}`;
+    } else {
+        // děti mapy (root nodes)
+        url += `&parent_node_id=0`;
+    }
+    const json = await apiFetch(url);
+    if(!json) return;
+
+    const nodes = network.body.data.nodes;
+    const edges = network.body.data.edges;
+
+    json.items.forEach(n=>{
+        if(!nodes.get("node_"+n.id)){
+            nodes.add({id:"node_"+n.id, label:n.title, color:"#3498db"});
+            edges.add({from:parentId,to:"node_"+n.id});
+        }
+    });
+    network.fit();
+}
+
+let network=null;
+
+function drawNetwork(nodes, edges, mapId){
+    const container=document.getElementById('network');
+    const data={nodes,edges};
+
+
+    const options={physics:{stabilization:true},interaction:{hover:true}};
+    network=new vis.Network(container,data,options);
+
+
+    // const options = {
+    //     physics: {
+    //         enabled: true,
+    //         stabilization: {
+    //             enabled: true,
+    //             iterations: 100,
+    //             updateInterval: 10
+    //         }
+    //     },
+    //     layout: {
+    //         improvedLayout: true
+    //     },
+    //     interaction: {
+    //         hover: true
+    //     }
+    // };
+    //
+    // network = new vis.Network(container, data, options);
+
+    // network.once("stabilizationIterationsDone", () => {
+    //     network.setOptions({ physics: false });
+    // });
+
+
+
+    network.on("click",params=>{
+        if(params.nodes.length>0){
+            const nodeId=params.nodes[0];
+            if(nodeId!==currentCenterNodeId){
+                parentStack.push(currentCenterNodeId);
+                currentCenterNodeId=nodeId;
+                document.getElementById("backBtn").disabled=false;
+                loadChildren(mapId,nodeId);  // ✅ správné mapId
+            }
+        }
+    });
+
+
+    document.getElementById("backBtn").onclick=()=>{
+        if(parentStack.length>0){
+            currentCenterNodeId=parentStack.pop();
+            if(parentStack.length===0) document.getElementById("backBtn").disabled=true;
+            renderMapExplore(1);
+        }
+    };
+}
+
 
 function changePage(page){ if(page<1)page=1; if(page>totalPages)page=totalPages; currentPage=page; renderEntityList(selectedEntity); }
 
@@ -322,13 +440,21 @@ function renderEntityNav(){
 function renderCrudMenu(){
     crudMenu.innerHTML="";
     actions.forEach(action=>{
+        // Explore is only for map
+        if(action==="explore" && selectedEntity!=="map") return;
+
         const link=document.createElement('a');
         link.href=`?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
         link.textContent=actionLabels[action];
-        link.onclick=e=>{e.preventDefault(); selectAction(action); history.pushState({},"",`?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`);}
+        link.onclick=e=>{
+            e.preventDefault();
+            selectAction(action);
+            history.pushState({},"",`?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`);
+        }
         crudMenu.appendChild(link);
     });
 }
+
 
 function updateActiveMenu(){
     [...crudMenu.children].forEach(el=>el.classList.remove('active'));
@@ -363,7 +489,16 @@ function selectAction(action){
         const params=getQueryParams();
         if(params.others.id) renderEntityRead(selectedEntity,params.others.id);
         else contentArea.innerHTML=`<p style="color:red;">No ID provided for Read action.</p>`;
+    }else if(action==="explore") {
+        const params = getQueryParams();
+        if (params.others.id) {
+            renderMapExplore(params.others.id);
+        } else {
+            contentArea.innerHTML=`<p style="color:red;">No ID provided for Explore action.</p>`;
+        }
     }
+
+
     else contentArea.innerHTML=`<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
 }
 
