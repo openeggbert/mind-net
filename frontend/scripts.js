@@ -1,10 +1,12 @@
+const API_BASE = "http://localhost:8888/api";
+
 const entities = [
   'Map', 'Node', 'Content', 'Node Property',
   'Tag', 'Node Tag', 'Node Link', 'External Link',
   'History'
 ];
 
-const actions = ['➕ Create', '📖 Read', '✏️ Update', '🗑️ Delete', '📋 List', '🔍 Search'];
+const actions = ['📋 List', '➕ Create', '📖 Read', '✏️ Update', '🗑️ Delete'];
 
 let selectedEntity = null;
 let selectedAction = null;
@@ -59,17 +61,18 @@ function renderCrudMenu() {
 // Select entity
 function selectEntity(entity) {
   selectedEntity = entity;
-  selectedAction = null;
+  selectedAction = '📋 List'; // default action
 
   [...entityNav.children].forEach(el => el.classList.remove('active'));
   const activeLink = [...entityNav.children].find(el => el.textContent === entity);
   if (activeLink) activeLink.classList.add('active');
 
-  entityTitle.textContent = `${entity} – Choose an action`;
-  contentArea.classList.add('empty');
-  contentArea.innerHTML = 'No action selected.';
+  entityTitle.textContent = `${entity} – ${selectedAction}`;
+  contentArea.classList.remove('empty');
   renderCrudMenu();
+  selectAction(selectedAction); // auto-load list
 }
+
 
 // Select action
 function selectAction(action) {
@@ -81,21 +84,108 @@ function selectAction(action) {
 
   entityTitle.textContent = `${selectedEntity} – ${action}`;
   contentArea.classList.remove('empty');
-  contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p style="color:red;">Not yet implemented (Action: ${action}, Model: ${selectedEntity})</p>`;
+
+  if (selectedEntity === 'Map') {
+    if (action === '📋 List') {
+      renderMapList();
+    } else if (action === '➕ Create') {
+      renderMapForm();
+    } else {
+      contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${action}</span> not implemented for Map.</p>`;
+    }
+  } else {
+    contentArea.innerHTML = `<h3>${action} ${selectedEntity}</h3><p style="color:red;">Not yet implemented (Action: ${action}, Model: ${selectedEntity})</p>`;
+  }
 }
+
+// MAP CRUD IMPLEMENTATION
+async function renderMapList() {
+  const res = await fetch(`${API_BASE}/map`);
+  const json = await res.json();
+  const maps = json.items;
+
+  let html = `
+    <h3>Map List</h3>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Description</th><th>Category</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+  `;
+  maps.forEach(m => {
+    html += `
+      <tr>
+        <td>${m.id}</td>
+        <td>${m.name}</td>
+        <td>${m.description ?? ""}</td>
+        <td>${m.category ?? ""}</td>
+        <td class="actions">
+          <a href="#" onclick="editMap(${m.id}, '${m.name}', '${m.description ?? ""}', '${m.category ?? ""}')">✏️ Edit</a>
+          <a href="#" onclick="deleteMap(${m.id})">🗑️ Delete</a>
+        </td>
+      </tr>`;
+  });
+  html += `</tbody></table>`;
+  contentArea.innerHTML = html;
+}
+
+function renderMapForm(map = null) {
+  contentArea.innerHTML = `
+    <h3>${map ? "Edit Map" : "Create Map"}</h3>
+    <form id="mapForm">
+      <input type="hidden" id="mapId" value="${map?.id ?? ""}">
+      <input type="text" id="mapName" placeholder="Name" required value="${map?.name ?? ""}">
+      <input type="text" id="mapDesc" placeholder="Description" value="${map?.description ?? ""}">
+      <input type="text" id="mapCategory" placeholder="Category" value="${map?.category ?? ""}">
+      <button type="submit">Save</button>
+    </form>
+  `;
+
+  document.getElementById("mapForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const id = document.getElementById("mapId").value;
+    const map = {
+      name: document.getElementById("mapName").value,
+      description: document.getElementById("mapDesc").value,
+      category: document.getElementById("mapCategory").value
+    };
+    if (id) {
+      await fetch(`${API_BASE}/map/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(map)
+      });
+    } else {
+      await fetch(`${API_BASE}/map`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(map)
+      });
+    }
+    selectAction('📋 List');
+  });
+}
+
+// Helpers for table actions
+window.editMap = (id, name, desc, category) => {
+  renderMapForm({ id, name, description: desc, category });
+};
+
+window.deleteMap = async (id) => {
+  await fetch(`${API_BASE}/map/${id}`, { method: "DELETE" });
+  renderMapList();
+};
 
 // Initialize from URL
 function initializeFromURL() {
   const { entity, action } = getQueryParams();
+  renderEntityNav();
   if (entity && entities.includes(entity)) {
     selectEntity(entity);
     if (action && actions.includes(action)) {
       selectAction(action);
     }
-  } else {
-    renderEntityNav();
   }
 }
 
-renderEntityNav();
 initializeFromURL();

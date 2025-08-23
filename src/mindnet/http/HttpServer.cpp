@@ -25,15 +25,8 @@ namespace mindnet::http
             }
 
             static const std::unordered_set<std::string> allowed_files = {
-                "index.html", "styles.css", "scripts.js",
-                "indexrest.html",
+                "index.html", "styles.css", "scripts.js"
             };
-
-            bool test = req.url_params.get("test") ? true : false;
-            if (test && file_name == "index.html")
-            {
-                file_name = "indexrest.html";
-            }
 
             if (allowed_files.find(file_name) == allowed_files.end())
             {
