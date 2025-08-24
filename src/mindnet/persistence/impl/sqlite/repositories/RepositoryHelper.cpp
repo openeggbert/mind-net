@@ -49,7 +49,7 @@ namespace mindnet::persistence::impl::sqlite
     int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, str& error)
     {
         std::string sql = Utils::generate_insert_sql(definition);
-        std::cout << "Going to execute insert SQL: " << sql << std::endl;
+        debug << "Going to execute insert SQL: " << sql << commit;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -77,7 +77,7 @@ namespace mindnet::persistence::impl::sqlite
     entity_fields read_model(models::misc::ModelDefinition& def, const int id)
     {
         std::string sql = Utils::generate_select_one_sql(def.model_name);
-        std::cout << "Going to execute select one SQL: " << sql << std::endl;
+        debug << "Going to execute select one SQL: " << sql << commit;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -125,7 +125,7 @@ namespace mindnet::persistence::impl::sqlite
     bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields)
     {
         std::string sql = Utils::generate_update_sql(def);
-        std::cout << "Going to execute update SQL: " << sql << std::endl;
+        debug << "Going to execute update SQL: " << sql << commit;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -149,7 +149,7 @@ namespace mindnet::persistence::impl::sqlite
         try
         {
             Utils::sqlite_exec(query);
-            std::cout << "Update successful" << std::endl;
+            debug << "Update successful" << std::endl;
             return true;
         }
         catch (std::exception& e)
@@ -162,7 +162,7 @@ namespace mindnet::persistence::impl::sqlite
     bool delete_model(models::misc::ModelDefinition& def, const int id)
     {
         str sql = Utils::generate_delete_sql(def);
-        std::cout << "Going to execute delete SQL: " << sql << std::endl;
+        debug << "Going to execute delete SQL: " << sql << commit;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -185,7 +185,7 @@ namespace mindnet::persistence::impl::sqlite
                 err << "Expected to delete 1 row, but deleted " << number_of_deleted_rows << std::endl;
                 return false;
             }
-            std::cout << "Delete successful" << std::endl;
+            debug << "Delete successful" << std::endl;
             return true;
         }
         catch (std::exception& e)
@@ -248,7 +248,7 @@ namespace mindnet::persistence::impl::sqlite
         std::string sql = Utils::generate_select_all_sql(def.model_name, query_params);
         std::string sql_count = Utils::generate_select_count_sql(def.model_name, query_params);
 
-        std::cout << "Going to execute select all SQL: " << sql << std::endl;
+        debug << "Going to execute select all SQL: " << sql << commit;
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
@@ -277,10 +277,9 @@ namespace mindnet::persistence::impl::sqlite
             delete query_ptr;
             return {};
         }
-        trace << "after query" << commit;
 
-        std::cout << "Page size: " << query_params.page_size << std::endl;
-        std::cout << "Page number: " << query_params.page_number << std::endl;
+        debug << "Page size: " << query_params.page_size << commit;
+        debug << "Page number: " << query_params.page_number << commit;
         int bind_index = 1;
         bind_query_filters(def, query_params, *query_ptr, bind_index);
         // if (query_params.sort.has_value())
@@ -305,7 +304,6 @@ namespace mindnet::persistence::impl::sqlite
                 int i = 0;
                 for (const auto& column : def.columns)
                 {
-                    //std::cout << "Found entity with id: " << query.getColumn(1) << std::endl;
                     switch (column.column_type)
                     {
                     case enums::ColumnType::TEXT:

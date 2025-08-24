@@ -42,7 +42,7 @@ namespace mindnet::controllers
     {
         for (auto e : def.columns)
         {
-            std::cout << "Checking " << e.column_name << std::endl;
+            debug << "Checking " << e.column_name << std::endl;
             if (e.column_name == "id")
             {
                 if (!id_wanted && body.has(e.column_name))
@@ -66,7 +66,7 @@ namespace mindnet::controllers
                 return msg;
             }
         }
-        std::cout << "Body is valid" << std::endl;
+        debug << "Body is valid" << std::endl;
         return "";
     }
 

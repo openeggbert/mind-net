@@ -45,7 +45,7 @@ void migrate_schema_if_needed()
 
 void print_logo()
 {
-    std::cout << "Starting Mind Net..." << std::endl;
+    mindnet::info << "Starting Mind Net..." << std::endl;
 
     std::cout << R"(
   __  __ _           _   _   _      _
@@ -163,13 +163,13 @@ bool commands_function_start(
 
     if (custom_port)
     {
-        std::cout << "Custom port was provided: " << port << std::endl;
+        mindnet::debug << "Custom port was provided: " << port << commit;
     }
     else
     {
-        std::cout << "Using default port: " << port << std::endl;
+        mindnet::debug << "Using default port: " << port << commit;
     }
-    std::cout << "Starting server on port " << port << std::endl;
+    mindnet::info << "Starting server on port " << port << commit;
     mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
     server.run(port);
     return false;
@@ -180,7 +180,7 @@ bool commands_function_help(
     std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
-    std::cout << "Help is not yet implemented." << commit;
+    mindnet::warn << "Help is not yet implemented." << commit;
     return false;
 }
 
@@ -191,11 +191,6 @@ bool commands_function_unknown(
 {
     mindnet::err << "Unknown command: " << arguments[0] << commit;
     return false;
-}
-
-void log(const char* msg)
-{
-    std::cout << "Phase: " << msg << std::endl;
 }
 
 bool run_command(

@@ -152,7 +152,7 @@ INSERT INTO "migration" VALUES (1,0)
                 bool created = createTable(db);
                 if (created)
                 {
-                    std::cout << "Table " << MigrationColumns::MODEL_NAME << " created." << std::endl;
+                    info << "Table " << MigrationColumns::MODEL_NAME << " created." << std::endl;
                     bool inited = initTable(db);
                     if (!inited)
                     {
@@ -161,7 +161,7 @@ INSERT INTO "migration" VALUES (1,0)
                     }
                     else
                     {
-                        std::cout << "Table " << MigrationColumns::MODEL_NAME << " initialized." << std::endl;
+                        info << "Table " << MigrationColumns::MODEL_NAME << " initialized." << std::endl;
                     }
                 }
                 else
@@ -273,17 +273,15 @@ INSERT INTO "migration" VALUES (1,0)
                 if (maxMigrationNumber == -1) return false;
                 for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <= MIGRATION_COUNT; migrationNumber++)
                 {
-                    std::cout << "Going to migrate migration " << migrationNumber << std::endl;
+                    debug << "Going to migrate migration " << migrationNumber << std::endl;
                     if (migrationNumber <= maxMigrationNumber)
                     {
-                        std::cout << "Skipping already finished migration " << migrationNumber << std::endl;
+                        debug << "Skipping already finished migration " << migrationNumber << std::endl;
                         continue;
                     }
                     std::string sql = migrations[migrationNumber - 1];
 
-
                     bool migrated = executeSQL(db, sql, migrationNumber);
-
 
                     if (migrated)
                     {

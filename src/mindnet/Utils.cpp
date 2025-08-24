@@ -291,7 +291,7 @@ namespace mindnet
                 }
             }
         }
-        if (!count && query_params.sort.has_value())
+        if (!count && query_params.sort.has_value() && !query_params.sort.value().empty())
         {
             sql += " ORDER BY " + query_params.sort.value() + " ";
             if (query_params.order.has_value())
