@@ -6,11 +6,21 @@
 #define GLOBAL_H
 
 #include "Helper.h"
-#include "RedCout.h"
+#include "ConsolePrinter.h"
+#include "Logger.h"
+#include "Utils.h"
 
 namespace mindnet {
     extern ll start_time;
-    extern RedCout err;
+    extern Logger fatal;
+    extern Logger err;
+    extern Logger warn;
+    extern Logger info;
+    extern Logger debug;
+    extern Logger trace;
+    extern Logger test;
+    //
+    extern Logger& log;
 
 }
 

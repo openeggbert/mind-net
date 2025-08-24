@@ -30,13 +30,14 @@
 #include "mindnet/enums/Crudl.h"
 #include "mindnet/models/misc/BaseModel.h"
 #include "mindnet/models/misc/ModelDefinition.h"
+#include "mindnet/http/QueryParams.h"
 
 #define def_virtual_irepository_api_h_methods \
 virtual int create(const entity_fields& fields, str& error) = 0;\
 virtual entity_fields read(int id) = 0;\
 virtual bool update(int id, entity_fields& fields) = 0;\
 virtual bool remove(int id) = 0;\
-virtual std::vector<entity_fields> list(size_t page_number, size_t pageSize, int& total_items) = 0;\
+virtual std::vector<entity_fields> list(http::QueryParams& query_params, str& error) = 0;\
 virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;\
 virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
@@ -45,7 +46,7 @@ int create(const entity_fields& fields, str& error) override;\
 entity_fields read(int id) override;\
 bool update(int id, entity_fields& fields) override;\
 bool remove(int id) override;\
-std::vector<entity_fields> list(size_t page_number, size_t pageSize, int& total_items) override;\
+std::vector<entity_fields> list(http::QueryParams& query_params, str& error) override;\
 models::misc::ModelDefinition& get_model_definition() override;\
 entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
 
@@ -78,9 +79,9 @@ bool Model##RepositoryImplSqlite::remove(int id)\
         return persistence::impl::sqlite::delete_model(get_model_definition(), id);\
     }\
 \
-std::vector<entity_fields> Model##RepositoryImplSqlite::list(size_t page_number, size_t pageSize, int& total_items)\
+std::vector<entity_fields> Model##RepositoryImplSqlite::list(http::QueryParams& query_params, str& error)\
     {\
-        return persistence::impl::sqlite::list_models(get_model_definition(), page_number, pageSize, total_items);\
+        return persistence::impl::sqlite::list_models(get_model_definition(), query_params, error);\
     }\
 models::misc::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
     {\

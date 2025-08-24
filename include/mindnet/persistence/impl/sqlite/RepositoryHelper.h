@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef BASEREPOSITORY_H
-#define BASEREPOSITORY_H
+#ifndef REPOSITORYHELPER_H
+#define REPOSITORYHELPER_H
 
 #include <iostream>
 
@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "mindnet/Utils.h"
+#include "mindnet/http/QueryParams.h"
 #include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
@@ -45,7 +46,11 @@ namespace mindnet::persistence::impl::sqlite
 
     bool delete_model(models::misc::ModelDefinition& def, int id);
 
-    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size, int& total_items);
+    std::vector<entity_fields> list_models(
+        models::misc::ModelDefinition& def,
+        mindnet::http::QueryParams& query_params,
+        str& error
+        );
 }
 
-#endif // BASEREPOSITORY_H
+#endif // REPOSITORYHELPER_H

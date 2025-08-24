@@ -6,17 +6,34 @@
 #include "crow.h"
 #include "mindnet/Utils.h"
 #include "mindnet/controllers/RestHelper.h"
+#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
 
 namespace mindnet::routes
 {
     using controllers::RestHelper;
     using enums::Crudl;
+
     void ModelController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
                                           models::misc::ModelDefinition& def)
     {
+        auto split_string_by_commas = [](const str& string_, std::set<std::string>& result)
+        {
+            if (!string_.empty())
+            {
+                std::stringstream ss(string_);
+                std::string field_entry;
+
+                while (std::getline(ss, field_entry, ','))
+                {
+                    result.insert(field_entry);
+                }
+            }
+
+        };
         auto create_lambda_function = [&db, &def](const crow::request& req)
         {
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::CREATE))
+            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
+                                                                   contains(Crudl::CREATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
@@ -29,7 +46,10 @@ namespace mindnet::routes
             entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::CREATE, def);
             if (fields.size() != def.columns.size())
             {
-                return crow::response(500, "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model " + def.model_name+ ".");
+                return crow::response(
+                    500,
+                    "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model "
+                    + def.model_name + ".");
             }
 
             str error;
@@ -45,7 +65,7 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
-        auto read_lambda_function = [&db, &def](int id)
+        auto read_lambda_function = [&db, &def, &split_string_by_commas](const crow::request& req, int id)
         {
             if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::READ))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
@@ -60,14 +80,19 @@ namespace mindnet::routes
                     404, "The " + def.model_name + " with id " + std::to_string(id) + " was not found.");
             }
 
-            crow::json::wvalue res = RestHelper::model_to_wvalue(values, def);
+            str fields = req.url_params.get("fields") ? req.url_params.get("fields"): "";
+            std::set<std::string> fields_set_filter{};
+            split_string_by_commas(fields, fields_set_filter);
+
+            crow::json::wvalue res = RestHelper::model_to_wvalue(values, def, fields_set_filter);
             return crow::response(200, res);
         };
 
         auto update_lambda_function = [&db, &def](const crow::request& req, int id)
         {
             std::cout << "Update lambda function called" << std::endl;
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::UPDATE))
+            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
+                                                                   contains(Crudl::UPDATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
@@ -80,7 +105,10 @@ namespace mindnet::routes
             entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::UPDATE, def);
             if (fields.size() != def.columns.size())
             {
-                return crow::response(500, "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model " + def.model_name+ ".");
+                return crow::response(
+                    500,
+                    "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model "
+                    + def.model_name + ".");
             }
 
             bool success = db->update(id, fields, def);
@@ -98,7 +126,8 @@ namespace mindnet::routes
 
         auto delete_lambda_function = [&db, &def](int id)
         {
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::DELETE))
+            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
+                                                                   contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             bool success = db->remove(id, def);
 
@@ -111,7 +140,7 @@ namespace mindnet::routes
             return crow::response(200, def.model_name + " with id " + std::to_string(id) + " was deleted.");
         };
 
-        auto list_lambda_function = [&db, &def](const crow::request& req)
+        auto list_lambda_function = [&db, &def, &split_string_by_commas](const crow::request& req)
         {
             std::cout << "List lambda function called" << std::endl;
             if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::LIST))
@@ -130,16 +159,42 @@ namespace mindnet::routes
             {
                 return crow::response(400, "Invalid page size. It must be 100 at most");
             }
+            str sort = req.url_params.get("sort") ? req.url_params.get("sort"): "";
+            str order = req.url_params.get("order") ? req.url_params.get("order"): "";
+            str fields = req.url_params.get("fields") ? req.url_params.get("fields"): "";
 
             std::vector<entity_fields> all_records;
-            int total_items = 0;
-            try
+
+            http::QueryParams query_params;
+            query_params.page_number = page_number;
+            query_params.page_size = page_size;
+            query_params.total_items = 0;
+            query_params.sort = sort;
+            query_params.order = order.empty() ? http::Order::ASC : http::string_to_order(order);
+
+
+            split_string_by_commas(fields, query_params.fields);
+
+            for (auto& f : query_params.fields)
             {
-                all_records = db->list(page_number, page_size, total_items, def);
+                test << "field: " << f << commit;
             }
-            catch (std::runtime_error& e)
+            str error;
+            for (const auto& column : def.columns)
             {
-                return crow::response(500, "Failed to list " + def.model_name + " records.");
+                if (!req.url_params.get(column.column_name))
+                {
+                    continue;
+                }
+                str value = req.url_params.get(column.column_name);
+                query_params.add_filter(column.column_name, value);
+
+            }
+
+            all_records = db->list(query_params, def, error);
+            if (!error.empty())
+            {
+                return crow::response(500, "Failed to list " + def.model_name + " records. " + "Error: " + error);
             }
 
             crow::json::wvalue res;
@@ -147,15 +202,15 @@ namespace mindnet::routes
 
             for (const auto& record : all_records)
             {
-                items.push_back(RestHelper::model_to_wvalue(record, def));
+                items.push_back(RestHelper::model_to_wvalue(record, def, query_params.fields));
             }
 
             res["items"] = std::move(items);
-            res["total_items"] = total_items;
+            res["total_items"] = query_params.total_items;
             res["page_number"] = page_number;
             res["page_size"] = page_size;
-            int total_pages = total_items / page_size;
-            if (total_items % page_size != 0)
+            int total_pages = query_params.total_items / page_size;
+            if (query_params.total_items % page_size != 0)
             {
                 ++total_pages;
             }
@@ -163,7 +218,6 @@ namespace mindnet::routes
 
             return crow::response(200, res);
         };
-
 
         //CREATE
         app.route_dynamic(str("/api/") + def.model_name).methods(crow::HTTPMethod::POST)

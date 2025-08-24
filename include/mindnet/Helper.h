@@ -19,6 +19,7 @@ typedef std::string str;
 typedef nlohmann::json JSON;
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;
+using std::endl;
 
 struct ColumnDefinition
 {

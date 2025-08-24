@@ -73,7 +73,7 @@ namespace mindnet::persistence::impl::sqlite
 
         bool executeSQL(SQLite::Database& db, std::string& sql, int number)
         {
-            Utils::log("executeSQL()");
+            log << "executeSQL()";
             SQLite::Statement query(db, sql);
             try
             {
@@ -82,16 +82,15 @@ namespace mindnet::persistence::impl::sqlite
             }
             catch (SQLite::Exception& e)
             {
-                err << "Exception happened during SQLite migration # " << number << ": " << e.what() << " " <<
-                    std::endl;
-                err << "SQL: " << sql << std::endl;
+                err << "Exception happened during SQLite migration # " << number << ": " << e.what() << " " << commit;
+                err << "SQL: " << sql << commit;
                 return false;
             }
         }
 
         bool createTable(SQLite::Database& db)
         {
-            Utils::trace("createTable()");
+            trace << "createTable()" << commit;
             std::string SQL_CREATE_TABLE_MIGRATION =
                 R"(
 CREATE TABLE "migration" (
@@ -105,7 +104,7 @@ CREATE TABLE "migration" (
 
         bool initTable(SQLite::Database& db)
         {
-            Utils::trace("initTable()");
+            trace << "initTable()" << commit;
             std::string SQL_INSERT_INTO_TABLE_MIGRATION =
                 R"(
 INSERT INTO "migration" VALUES (1,0)
@@ -124,7 +123,7 @@ INSERT INTO "migration" VALUES (1,0)
 
         bool validateTableExists(SQLite::Database& db)
         {
-            Utils::trace("validateTableExists()");
+            trace << "validateTableExists()" << commit;
             bool doesTableExist = false;
             try
             {
@@ -139,7 +138,7 @@ INSERT INTO "migration" VALUES (1,0)
             }
             if (!doesTableExist)
             {
-                err << "Table " << models::fields::MigrationColumns::MODEL_NAME << " does not exist." << std::endl;
+                err << "Table " << models::fields::MigrationColumns::MODEL_NAME << " does not exist." << commit;
                 return false;
             }
             return true;
@@ -147,7 +146,7 @@ INSERT INTO "migration" VALUES (1,0)
 
         bool validate(SQLite::Database& db)
         {
-            Utils::trace("validate()");
+            trace << "validate()" << commit;
             if (!validateTableExists(db))
             {
                 bool created = createTable(db);
@@ -157,8 +156,7 @@ INSERT INTO "migration" VALUES (1,0)
                     bool inited = initTable(db);
                     if (!inited)
                     {
-                        err << "Table " << MigrationColumns::MODEL_NAME << " could not be initialized." <<
-                            std::endl;
+                        err << "Table " << MigrationColumns::MODEL_NAME << " could not be initialized."  << commit;
                         return false;
                     }
                     else
@@ -168,7 +166,7 @@ INSERT INTO "migration" VALUES (1,0)
                 }
                 else
                 {
-                    err << "Table " << MigrationColumns::MODEL_NAME << " could not be created." << std::endl;
+                    err << "Table " << MigrationColumns::MODEL_NAME << " could not be created."  << commit;
                     return false;
                 }
             }
@@ -179,7 +177,7 @@ INSERT INTO "migration" VALUES (1,0)
 
         int get_newest_migration_number(SQLite::Database& db)
         {
-            Utils::trace("getNewestMigrationNumber()");
+            trace << "getNewestMigrationNumber()" << commit;
             SQLite::Statement query(
                 db, std::string(
                     std::string("SELECT ") +
@@ -199,14 +197,14 @@ INSERT INTO "migration" VALUES (1,0)
             catch (SQLite::Exception& e)
             {
                 err << "Exception happened during SQLite migration getNewestMigrationNumber(): " << e.what() <<
-                    std::endl;
+                    commit;
                 return -1;
             }
         }
 
         bool update_migration_number(SQLite::Database& db, int max_migration_number)
         {
-            Utils::trace("updateMigration()");
+            trace << "updateMigration()" << commit;
             SQLite::Statement query(
                 db,
                 "UPDATE " +
@@ -225,14 +223,14 @@ INSERT INTO "migration" VALUES (1,0)
             {
                 err
                     << "Exception happened during updating max_migrating_number to # "
-                    << max_migration_number << ": " << e.what() << std::endl;
+                    << max_migration_number << ": " << e.what() << commit;
                 return false;
             }
         }
 
         std::string get_current_datetime()
         {
-            Utils::trace("getCurrentDateTime()");
+            trace << "getCurrentDateTime()" << commit;
             using namespace std::chrono;
 
             // Get current time point
@@ -250,28 +248,28 @@ INSERT INTO "migration" VALUES (1,0)
 
         bool migrate()
         {
-            Utils::trace("migrate()");
+            trace << "migrate()" << commit;
             try
             {
-                Utils::trace("Opening SQLite database");
+                trace << "Opening SQLite database" << commit;
 
                 SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
 
-                Utils::trace("SQLite database opened.");
-                Utils::trace("Going to validate database");
+                trace << "SQLite database opened." << commit;
+                trace << "Going to validate database" << commit;
                 bool validated = validate(db);
                 if (validated)
                 {
-                    Utils::trace("Database validated.");
+                    trace << "Database validated." << commit;
                 }
                 else
                 {
-                    err << "Database validation failed." << std::endl;
+                    err << "Database validation failed." << commit;
                     return false;
                 }
-                Utils::trace("Going to find out the maxMigrationNumber");
+                trace << "Going to find out the maxMigrationNumber" << commit;
                 int maxMigrationNumber = get_newest_migration_number(db);
-                Utils::trace(std::string(std::string("maxMigrationNumber=") + std::to_string(maxMigrationNumber)).c_str());
+                trace << std::string(std::string("maxMigrationNumber=") + std::to_string(maxMigrationNumber)).c_str() << commit;
                 if (maxMigrationNumber == -1) return false;
                 for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <= MIGRATION_COUNT; migrationNumber++)
                 {
@@ -293,20 +291,20 @@ INSERT INTO "migration" VALUES (1,0)
                         if (!updated)
                         {
                             err << "Migration " << migrationNumber <<
-                                " failed, it could not be updated in the database. " << std::endl;
+                                " failed, it could not be updated in the database. " << commit;
                             return false;
                         }
                     }
                     else
                     {
-                        err << "Migration " << migrationNumber << " failed." << std::endl;
+                        err << "Migration " << migrationNumber << " failed." << commit;
                         return false;
                     }
                 }
             }
             catch (std::exception& e)
             {
-                err << "Exception happened during SQLite migration: " << e.what() << " " << std::endl;
+                err << "Exception happened during SQLite migration: " << e.what() << " " << commit;
                 return false;
             }
 

@@ -15,13 +15,18 @@
 
 namespace mindnet::controllers
 {
-    crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values, const models::misc::ModelDefinition& def)
+    crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values, const models::misc::ModelDefinition& def, std::set<std::string> fields_vector_filter)
     {
         crow::json::wvalue res;
         auto columns = def.columns;
 
+        bool filter_by_fields = !fields_vector_filter.empty();
         for (int i = 0; i < columns.size(); i++)
         {
+            if (filter_by_fields && !fields_vector_filter.contains(columns[i].column_name))
+            {
+                continue;
+            }
             auto column_name = columns[i].column_name;
             auto value = values[i];
 

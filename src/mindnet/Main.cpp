@@ -25,18 +25,21 @@
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
 
+
+using mindnet::commit;
+
 void migrate_schema_if_needed()
 {
-    mindnet::Utils::trace("Migrating schema, if needed:");
+    mindnet::trace << "Migrating schema, if needed" << commit;
 
     bool migrationResult = mindnet::persistence::impl::
         sqlite::SqliteDatabaseMigration::getInstance()->migrate();
     if (migrationResult)
     {
-        mindnet::Utils::trace("Migrating schema: OK. Success.");
+        mindnet::trace << "Migrating schema: OK. Success." << commit;
         return;
     }
-    mindnet::err << "Migrating schema: KO. Failed." << std::endl;
+    mindnet::err << "Migrating schema: KO. Failed." << commit;
     exit(mindnet::ExitStatus::MIGRATION_FAILED);
 }
 
@@ -64,7 +67,7 @@ bool check_args(std::vector<str>& arguments)
 {
     if (arguments.empty())
     {
-        mindnet::err << static_cast<const char*>("No arguments provided. Exiting.") << std::endl;
+        mindnet::fatal << static_cast<const char*>("No arguments provided. Exiting.") << commit;
         return false;
     }
     return true;
@@ -95,7 +98,7 @@ bool commands_function_start(
         const auto& argument = arguments[i];
         if (argument[0] != '-')
         {
-            mindnet::err << "Option must start with \"-\": " << argument << std::endl;
+            mindnet::fatal << "Option must start with \"-\": " << argument << commit;
             exit_status = 1;
             return true;
         }
@@ -110,7 +113,7 @@ bool commands_function_start(
                 }
                 catch (std::exception& e)
                 {
-                    mindnet::err << "Invalid port provided: " << arguments[i + 1] << std::endl;
+                    mindnet::fatal << "Invalid port provided: " << arguments[i + 1] << commit;
                     exit_status = 1;
                     return true;
                 }
@@ -118,7 +121,7 @@ bool commands_function_start(
             }
             else
             {
-                mindnet::err << "No port provided for option --port. Exiting." << std::endl;
+                mindnet::fatal << "No port provided for option --port. Exiting." << commit;
                 exit_status = 1;
                 return true;
             }
@@ -132,14 +135,14 @@ bool commands_function_start(
             }
             else
             {
-                mindnet::err << "No path provided for option --static-directory. Exiting." << std::endl;
+                mindnet::fatal << "No path provided for option --static-directory. Exiting." << commit;
                 exit_status = 1;
                 return true;
             }
         }
         else
         {
-            mindnet::err << "Unknown option for start command: " << argument << std::endl;
+            mindnet::fatal << "Unknown option for start command: " << argument << commit;
             exit_status = 1;
             return true;
         }
@@ -177,7 +180,7 @@ bool commands_function_help(
     std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
-    std::cout << "Help is not yet implemented." << std::endl;
+    std::cout << "Help is not yet implemented." << commit;
     return false;
 }
 
@@ -186,7 +189,7 @@ bool commands_function_unknown(
     std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
-    mindnet::err << "Unknown command: " << arguments[0] << std::endl;
+    mindnet::err << "Unknown command: " << arguments[0] << commit;
     return false;
 }
 
@@ -224,6 +227,12 @@ bool run_command(
 
 int main(int argc, char** argv)
 {
+    mindnet::fatal.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    mindnet::err.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    mindnet::warn.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    mindnet::info.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    mindnet::debug.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    mindnet::trace.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
     print_logo();
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);

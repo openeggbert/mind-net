@@ -55,3 +55,4 @@ cmake --build .
 
 ### Support for export to static HTML files
 
+### Replace std::cout by custom loggers

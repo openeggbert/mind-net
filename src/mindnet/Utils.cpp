@@ -14,16 +14,12 @@
 #include <regex>
 
 #include "mindnet/Global.h"
+#include "mindnet/http/QueryParams.h"
 #include "mindnet/models/Node.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet
 {
-    namespace Entity
-    {
-        struct BaseModel;
-    }
-
     long long Utils::currentTimestamp()
     {
         time_t now = time(nullptr);
@@ -52,18 +48,9 @@ namespace mindnet
         return std::string(buffer);
     }
 
-    void Utils::log(const std::string& msg)
+    str Utils::print_current_timestamp()
     {
-        std::cout << "[INFO] " << msg << std::endl;
-    }
-
-    void Utils::log(const char* message)
-    {
-        log(std::string(message));
-    } // MiniWiki
-    void Utils::trace(const char* message)
-    {
-        //std::cout << "[TRACE] " << message << std::endl;
+        return Utils::unixToFormattedString(Utils::currentUnixTimestamp());
     }
 
     // Convert single letter 'a'-'z' to number 0-25
@@ -164,7 +151,6 @@ namespace mindnet
             throw std::runtime_error(e.what());
         }
     }
-
 
     std::vector<std::string> Utils::split_with_quotes(const std::string& input)
     {
@@ -275,16 +261,53 @@ namespace mindnet
         return "SELECT * FROM " + table_name + " WHERE id = ?";
     }
 
-    str Utils::generate_select_all_sql(const std::string& table_name)
+    /**
+     * Generates a SQL query to select all rows from a specified table, with optional filtering, sorting, and pagination.
+     *
+     * @param table_name The name of the table to query.
+     * @param query_params An object containing the filtering, sorting, and pagination parameters for the query.
+     *                     - `filters`: A map of column-value pairs used as filters in the WHERE clause.
+     *                     - `sort`: An optional field to specify the column for sorting.
+     *                     - `order`: An optional field to specify the sort order (e.g., ASC or DESC).
+     * @param count A boolean flag. If true, modifies the query to ignore sorting and pagination, suitable for row count queries. Default is false.
+     * @return The constructed SQL query as a string.
+     */
+    str Utils::generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params, bool count)
     {
-        return "SELECT * FROM " + table_name + " LIMIT ? OFFSET ?";
+        auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
+        if (!query_params.filters.empty())
+        {
+            auto filter = query_params.filters;
+            sql += " WHERE ";
+            int filter_count = filter.size();
+            int filter_index = 1;
+            for (auto& filter_item : filter)
+            {
+                sql += filter_item.first + " = ?";
+                filter_index++;
+                if (filter_index < filter_count)
+                {
+                    sql += " AND ";
+                }
+            }
+        }
+        if (!count && query_params.sort.has_value())
+        {
+            sql += " ORDER BY " + query_params.sort.value() + " ";
+            if (query_params.order.has_value())
+            {
+                sql += order_to_string(query_params.order.value());
+            }
+        }
+
+        if (!count) { sql += " LIMIT ? OFFSET ?"; };
+        return sql;
     }
 
-    str Utils::generate_select_count_sql(const std::string& table_name)
+    str Utils::generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params)
     {
-        return "SELECT count(*) as c FROM " + table_name;
+        return generate_select_all_sql(table_name, query_params, true);
     }
-
 
     template <class>
     inline constexpr bool always_false = false;

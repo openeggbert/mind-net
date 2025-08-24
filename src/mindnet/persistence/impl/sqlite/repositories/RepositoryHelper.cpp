@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "mindnet/Utils.h"
+#include "mindnet/http/QueryParams.h"
 #include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
@@ -194,11 +195,58 @@ namespace mindnet::persistence::impl::sqlite
         }
     }
 
-    std::vector<entity_fields> list_models(models::misc::ModelDefinition& def, size_t page_number, size_t page_size,
-                                           int& total_items)
+    void bind_query_filters(
+        models::misc::ModelDefinition& def,
+        http::QueryParams& query_params,
+        SQLite::Statement& query,
+        int& bind_index)
     {
-        std::string sql = Utils::generate_select_all_sql(def.model_name);\
-        std::string sql_count = Utils::generate_select_count_sql(def.model_name);\
+        if (!query_params.filters.empty())
+        {
+            for (auto& filter : query_params.filters)
+            {
+                auto key = filter.first;
+                auto value = filter.second;
+                enums::ColumnType column_type{enums::ColumnType::TEXT};
+                bool column_type_found = false;
+                for (auto& column : def.columns)
+                {
+                    if (column.column_name == key)
+                    {
+                        column_type = column.column_type;
+                        column_type_found = true;
+                        break;
+                    }
+                }
+                if (!column_type_found)
+                {
+                    err << "Filter column " << key << " not found in model " << def.model_name << std::endl;
+                    throw std::runtime_error("Filter column not found: " + key);
+                }
+                switch (column_type)
+                {
+                case enums::ColumnType::TEXT:
+                    query.bind(bind_index++, value);
+                    break;
+                case enums::ColumnType::INTEGER:
+                    query.bind(bind_index++, stoi(value));
+                    break;
+                default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
+                }
+
+            }
+        }
+    }
+
+    std::vector<entity_fields> list_models(
+        models::misc::ModelDefinition& def,
+        http::QueryParams& query_params,
+        str& error
+        )
+    {
+        trace << "list_models()" << commit;
+        std::string sql = Utils::generate_select_all_sql(def.model_name, query_params);
+        std::string sql_count = Utils::generate_select_count_sql(def.model_name, query_params);
 
         std::cout << "Going to execute select all SQL: " << sql << std::endl;
 
@@ -207,47 +255,103 @@ namespace mindnet::persistence::impl::sqlite
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
         set_foreign_key_pragma(db);
-        SQLite::Statement query(db, sql);
-        std::cout << "Page size: " << page_size << std::endl;
-        std::cout << "Page number: " << page_number << std::endl;
-        query.bind(1, static_cast<int32_t>(page_size));
-        query.bind(2, static_cast<int32_t>(page_size * (page_number - 1)));
+
+
+        SQLite::Statement* query_ptr = nullptr;
+
+        try {
+            query_ptr = new SQLite::Statement(db, sql);
+        } catch (const SQLite::Exception& e) {
+            error = e.what();
+            delete query_ptr;
+            return {};
+        }
+
+        try
+        {
+            SQLite::Statement query(db, sql);
+        }
+        catch (SQLite::Exception& e)
+        {
+            error = e.what();
+            delete query_ptr;
+            return {};
+        }
+        trace << "after query" << commit;
+
+        std::cout << "Page size: " << query_params.page_size << std::endl;
+        std::cout << "Page number: " << query_params.page_number << std::endl;
+        int bind_index = 1;
+        bind_query_filters(def, query_params, *query_ptr, bind_index);
+        // if (query_params.sort.has_value())
+        // {
+        //     (*query_ptr).bind(bind_index++, query_params.sort.value());
+        //     if (query_params.order.has_value())
+        //     {
+        //         (*query_ptr).bind(bind_index++, order_to_string(query_params.order.value()));
+        //     }
+        // }
+        test << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) << commit;
+        (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size));
+        test << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size * (query_params.page_number - 1)) << commit;
+        (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size * (query_params.page_number - 1)));
 
         std::vector<entity_fields> results;
-        while (query.executeStep())
+        try
         {
-            entity_fields result;
-            int i = 0;
-            for (const auto& column : def.columns)
+            while ((*query_ptr).executeStep())
             {
-                //std::cout << "Found entity with id: " << query.getColumn(1) << std::endl;
-                switch (column.column_type)
+                entity_fields result;
+                int i = 0;
+                for (const auto& column : def.columns)
                 {
-                case enums::ColumnType::TEXT:
+                    //std::cout << "Found entity with id: " << query.getColumn(1) << std::endl;
+                    switch (column.column_type)
                     {
-                        str text = query.getColumn(i).getString();
-                        result.push_back(text);
+                    case enums::ColumnType::TEXT:
+                        {
+                            str text = (*query_ptr).getColumn(i).getString();
+                            result.push_back(text);
+                        }
+                        break;
+                    case enums::ColumnType::INTEGER:
+                        {
+                            int number = (*query_ptr).getColumn(i);
+                            result.push_back(number);
+                        }
+                        break;
+                    default: throw std::runtime_error("Unknown type");
                     }
-                    break;
-                case enums::ColumnType::INTEGER:
-                    {
-                        int number = query.getColumn(i);
-                        result.push_back(number);
-                    }
-                    break;
-                default: throw std::runtime_error("Unknown type");
+                    i++;
                 }
-                i++;
+                results.push_back(result);
             }
-            results.push_back(result);
-        }
-        SQLite::Statement query_count(db, sql_count);
-
-        while (query_count.executeStep())
+        } catch (SQLite::Exception& e)
         {
-            total_items = query_count.getColumn(0);
-            break;
+            error = e.what();
+            delete query_ptr;
+            return results;
         }
+
+        SQLite::Statement query_count(db, sql_count);
+        bind_index = 1;
+        bind_query_filters(def, query_params, query_count, bind_index);
+
+        try
+        {
+            while (query_count.executeStep())
+            {
+                query_params.total_items = static_cast<int>(query_count.getColumn(0));
+                break;
+            }
+        }
+        catch (SQLite::Exception& e)
+        {
+            error = e.what();
+            delete query_ptr;
+            return results;
+        }
+        delete query_ptr;
         return results;
     }
 }

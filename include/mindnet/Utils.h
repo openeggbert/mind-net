@@ -9,6 +9,7 @@
 
 #include "Global.h"
 #include "Helper.h"
+#include "http/QueryParams.h"
 #include "models/misc/BaseModel.h"
 #include "SQLiteCpp/Statement.h"
 
@@ -25,11 +26,8 @@ namespace mindnet
         static long long currentTimestamp();
         static long long currentUnixTimestamp();
         static std::string unixToFormattedString(ll unixTimestamp);
+        static str print_current_timestamp();
         // static ll formattedStringToUnix(const std::string& formattedTime);
-
-        static void log(const char* message);
-        static void log(const std::string& message);
-        static void trace(const char* message);
 
         // Convert single letter 'a'-'z' to number 0-25
         static int letterToDecimal(char letter);
@@ -50,8 +48,8 @@ namespace mindnet
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
         static str generate_select_one_sql(const std::string& table_name);
-        static str generate_select_all_sql(const std::string& table_name);
-        static str generate_select_count_sql(const std::string& table_name);
+        static str generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params, bool count = false);
+        static str generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params);
 
         static str generate_insert_sql(const models::misc::ModelDefinition& definition);
         static str generate_update_sql(const models::misc::ModelDefinition& definition);
@@ -87,7 +85,6 @@ namespace mindnet
         set_text_colour({foreground, -1});
     }
 
-
-} // MiniWiki
+}
 
 #endif //UTILS_H

@@ -4,9 +4,18 @@
 
 #include "mindnet/Global.h"
 
-namespace mindnet {
+namespace mindnet
+{
     ll start_time = 0l;
-    mindnet::RedCout err;
+
+    Logger fatal(FATAL);
+    Logger err(ERROR);
+    Logger warn(WARN);
+    Logger info(INFO);
+    Logger debug(DEBUG);
+    Logger trace(TRACE);
+    Logger test(TEST);
+    //
+    Logger& log = info;
 
 }
-

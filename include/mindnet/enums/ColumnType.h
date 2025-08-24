@@ -4,6 +4,7 @@
 #ifndef COLUMNTYPE_H
 #define COLUMNTYPE_H
 
+#include <string>
 
 namespace mindnet::enums
 {
@@ -14,6 +15,28 @@ namespace mindnet::enums
         REAL,
         BLOB
     };
+
+    inline std::string column_type_to_string(ColumnType column_type)
+    {
+        switch (column_type)
+        {
+        case ColumnType::TEXT:
+            return "TEXT";
+        case ColumnType::INTEGER:
+            return "INTEGER";
+        case ColumnType::REAL:
+            return "REAL";
+        case ColumnType::BLOB:
+            return "BLOB";
+        default:
+            return "UNKNOWN";
+        }
+    }
+
+    inline std::string column_type_to_string(int column_type)
+    {
+        return column_type_to_string(static_cast<ColumnType>(column_type));
+    }
 }
 
 #endif // COLUMNTYPE_H
