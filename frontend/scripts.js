@@ -122,13 +122,28 @@ const entitySchemas = {
 // 3. Global state a DOM reference
 // ========================================
 
-const entities = ['map', 'node', 'content', 'node_property', 'tag', 'node_tag', 'node_link', 'external_link', 'history'];
+const entities = [
+    'map', 'node', 'content', 'node_property', 'tag', 'node_tag', 'node_link', 'external_link', 'history',
+    'user', 'message', 'team', 'team_member', 'discussion', 'comment',
+    'suggestion', 'suggestion_review', 'collection', 'collection_node',
+    'question', 'question_review', 'question_sm2_state', 'manual_link', 'parsed_link', 'flag'
+];
+const mainEntities = ['map', 'node', 'node_tag', 'flag', 'node_property'];
 const actions = ['list', 'create', 'read', 'update', 'explore'];
 
 const entityLabels = {
     map: 'Map', node: 'Node', content: 'Content', node_property: 'Node Property',
-    tag: 'Tag', node_tag: 'Node Tag', node_link: 'Node Link', external_link: 'External Link', history: 'History'
+    tag: 'Tag', node_tag: 'Node Tag', node_link: 'Node Link', external_link: 'External Link', history: 'History',
+    user: 'User', message: 'Message', team: 'Team', team_member: 'Team Member', discussion: 'Discussion', comment: 'Comment',
+    suggestion: 'Suggestion', suggestion_review: 'Suggestion Review', collection: 'Collection', collection_node: 'Collection Node',
+    question: 'Question', question_review: 'Question Review', question_sm2_state: 'Question SM2 State',
+    manual_link: 'Manual Link', parsed_link: 'Parsed Link', flag: 'Flag'
 };
+
+
+
+
+
 
 const actionLabels = {
     list: '📋 List', create: '➕ Create', read: '📖 Read', update: '✏️ Update', explore: '🗺️ Explore'
@@ -549,7 +564,17 @@ function changePage(page) {
 
 function renderEntityNav() {
     entityNav.innerHTML = "";
-    entities.forEach(entity => {
+
+    // Prepare main entities
+    let shownMainEntities = [...mainEntities];
+
+    // If the selected entity is in Other Entities, add it at the top of main menu
+    if (selectedEntity && !mainEntities.includes(selectedEntity)) {
+        shownMainEntities = [selectedEntity, ...mainEntities];
+    }
+
+    // Main menu
+    shownMainEntities.forEach(entity => {
         const link = document.createElement('a');
         link.href = `?entity=${encodeURIComponent(entity)}`;
         link.textContent = entityLabels[entity];
@@ -557,10 +582,50 @@ function renderEntityNav() {
             e.preventDefault();
             selectEntity(entity);
             history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
+            renderEntityNav();
         }
+        if (entity === selectedEntity) link.classList.add('active');
         entityNav.appendChild(link);
     });
+
+    // Dropdown for other entities
+    const otherEntities = entities.filter(e => !mainEntities.includes(e) && e !== selectedEntity);
+    if (otherEntities.length > 0) {
+        const moreWrapper = document.createElement('div');
+        moreWrapper.className = "dropdown";
+
+        const moreButton = document.createElement('a');
+        moreButton.href = "#";
+        moreButton.textContent = "Other Entities ▼";
+        moreButton.onclick = e => {
+            e.preventDefault();
+            dropdownContent.classList.toggle('show'); // toggle dropdown visibility
+        };
+
+        const dropdownContent = document.createElement('div');
+        dropdownContent.className = "dropdown-content";
+
+        otherEntities.forEach(entity => {
+            const link = document.createElement('a');
+            link.href = `?entity=${encodeURIComponent(entity)}`;
+            link.textContent = entityLabels[entity];
+            link.onclick = e => {
+                e.preventDefault();
+                selectEntity(entity);
+                dropdownContent.classList.remove('show'); // collapse dropdown after selection
+                history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
+                renderEntityNav(); // re-render to highlight selected entity
+            }
+            dropdownContent.appendChild(link);
+        });
+
+        moreWrapper.appendChild(moreButton);
+        moreWrapper.appendChild(dropdownContent);
+        entityNav.appendChild(moreWrapper);
+    }
 }
+
+
 
 function renderCrudMenu() {
     crudMenu.innerHTML = "";

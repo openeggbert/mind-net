@@ -13,41 +13,47 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
+#ifndef DECISIONSTATUS_H
+#define DECISIONSTATUS_H
 
-/**
- *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-
-#include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
 
 #include <string>
 
-#include "mindnet/enums/Crudl.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
-#include "SQLiteCpp/Database.h"
-
-namespace mindnet::impl::sqlite::repositories
+namespace mindnet::enums
 {
-    HistoryRepositoryImplSqlite::~HistoryRepositoryImplSqlite() = default;
-
-    def_virtual_irepository_impl_cpp_methods(History, HISTORY)
-
-    entity_fields HistoryRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl)
+    enum class DecisionStatus
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(History)
+        APPROVED = 2,
+        REJECTED = 3,
+        CANCELLED = 4,
+        REQUESTS_FEEDBACK = 5
+    };
 
-        add_string(TABLE_NAME);
-        add_int(RECORD_ID);
-        add_int(OPERATION);
-        add_string(DATA_JSON);
-        add_optional_string(REASON, "");
-        return fields;
+    inline std::string decision_status_to_string(const DecisionStatus status)
+    {
+        switch (status)
+        {
+        case DecisionStatus::APPROVED:
+            return "approved";
+        case DecisionStatus::REJECTED:
+            return "rejected";
+        case DecisionStatus::CANCELLED:
+            return "cancelled";
+        case DecisionStatus::REQUESTS_FEEDBACK:
+            return "requests_feedback";
+        default:
+            return "unknown";
+        }
     }
 
-}
+    inline std::string decision_status_to_string(int status)
+    {
+        return decision_status_to_string(static_cast<DecisionStatus>(status));
+    }
+} // namespace mindnet::enums
+
+#endif // DECISIONSTATUS_H

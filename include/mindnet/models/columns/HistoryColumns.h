@@ -43,7 +43,7 @@ namespace mindnet::models::columns
         static constexpr const char* TABLE_NAME = "table_name";
         static constexpr const char* RECORD_ID = "record_id";
         static constexpr const char* OPERATION = "operation";
-        static constexpr const char* PAYLOAD = "payload";
+        static constexpr const char* DATA_JSON = "data_json";
         static constexpr const char* REASON = "reason";
     };
 }

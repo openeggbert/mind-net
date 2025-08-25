@@ -13,41 +13,38 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
+#ifndef SM2RESULTCOLUMNS_H
+#define SM2RESULTCOLUMNS_H
 
-#include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
 
-#include <string>
+#include "BaseColumns.h"
+#include "mindnet/Helper.h"
+#include "mindnet/enums/ColumnType.h"
 
-#include "mindnet/enums/Crudl.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
-#include "SQLiteCpp/Database.h"
 
-namespace mindnet::impl::sqlite::repositories
+namespace mindnet::models::columns
 {
-    HistoryRepositoryImplSqlite::~HistoryRepositoryImplSqlite() = default;
-
-    def_virtual_irepository_impl_cpp_methods(History, HISTORY)
-
-    entity_fields HistoryRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl)
+    struct SM2StateColumns : public BaseColumns
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(History)
+        SM2StateColumns() = delete;
 
-        add_string(TABLE_NAME);
-        add_int(RECORD_ID);
-        add_int(OPERATION);
-        add_string(DATA_JSON);
-        add_optional_string(REASON, "");
-        return fields;
-    }
+        SM2StateColumns(const SM2StateColumns&) = delete;
+        SM2StateColumns& operator=(const SM2StateColumns&) = delete;
 
+        static constexpr const char* MODEL_NAME = "sm2_result";
+
+        static constexpr const char* INTERVAL = "interval";
+        static constexpr const char* EF_TIMES_100 = "ef_times_100";
+        static constexpr const char* REPETITION = "repetition";
+    };
 }
+#endif // SM2RESULTCOLUMNS_H

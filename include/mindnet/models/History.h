@@ -46,7 +46,7 @@ namespace mindnet::models
             {HistoryColumns::TABLE_NAME, ColumnType::TEXT, true},
             {HistoryColumns::RECORD_ID, ColumnType::INTEGER, true},
             {HistoryColumns::OPERATION, ColumnType::INTEGER, true},
-            {HistoryColumns::PAYLOAD, ColumnType::TEXT, true},
+            {HistoryColumns::DATA_JSON, ColumnType::TEXT, true},
             {HistoryColumns::REASON, ColumnType::TEXT, false}
         },
 {enums::Crudl::READ,enums::Crudl::LIST}
@@ -57,7 +57,7 @@ namespace mindnet::models
         str table_name;
         int record_id{};
         enums::Crudl operation{};
-        str payload;
+        str data_json;
         str reason;
 
         [[nodiscard]] ModelDefinition get_definition() const override
@@ -82,7 +82,7 @@ namespace mindnet::models
                 table_name == other.table_name &&
                 record_id == other.record_id &&
                 operation == other.operation &&
-                payload == other.payload &&
+                data_json == other.data_json &&
                 reason == other.reason;
         }
 
@@ -96,7 +96,7 @@ namespace mindnet::models
             table_name = tn;
             record_id = rid;
             operation = static_cast<enums::Crudl>(op);
-            payload = pl;
+            data_json = pl;
             reason = r;
         }
     };

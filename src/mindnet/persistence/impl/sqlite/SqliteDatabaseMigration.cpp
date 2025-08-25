@@ -254,6 +254,7 @@ INSERT INTO "migration" VALUES (1,0)
                 trace << "Opening SQLite database" << commit;
 
                 SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+                db.exec("PRAGMA foreign_keys = ON;");
 
                 trace << "SQLite database opened." << commit;
                 trace << "Going to validate database" << commit;
@@ -273,7 +274,7 @@ INSERT INTO "migration" VALUES (1,0)
                 if (maxMigrationNumber == -1) return false;
                 for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <= MIGRATION_COUNT; migrationNumber++)
                 {
-                    debug << "Going to migrate migration " << migrationNumber << std::endl;
+                    debug << "Going to migrate migration " << migrationNumber << commit;
                     if (migrationNumber <= maxMigrationNumber)
                     {
                         debug << "Skipping already finished migration " << migrationNumber << std::endl;

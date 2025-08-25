@@ -13,41 +13,46 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-
-#include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
+#ifndef QUESTIONTYPE_H
+#define QUESTIONTYPE_H
 
 #include <string>
 
-#include "mindnet/enums/Crudl.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
-#include "SQLiteCpp/Database.h"
-
-namespace mindnet::impl::sqlite::repositories
+namespace mindnet::enums
 {
-    HistoryRepositoryImplSqlite::~HistoryRepositoryImplSqlite() = default;
-
-    def_virtual_irepository_impl_cpp_methods(History, HISTORY)
-
-    entity_fields HistoryRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl)
+    enum class QuestionType
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(History)
+        SINGLE = 0,
+        MULTI = 1,
+        TRUEFALSE = 2,
+        TEXT = 3
+    };
 
-        add_string(TABLE_NAME);
-        add_int(RECORD_ID);
-        add_int(OPERATION);
-        add_string(DATA_JSON);
-        add_optional_string(REASON, "");
-        return fields;
+    inline std::string question_type_to_string(const QuestionType type)
+    {
+        switch (type)
+        {
+        case QuestionType::SINGLE:
+            return "single";
+        case QuestionType::MULTI:
+            return "multi";
+        case QuestionType::TRUEFALSE:
+            return "truefalse";
+        case QuestionType::TEXT:
+            return "text";
+        default:
+            return "unknown";
+        }
     }
 
-}
+    inline std::string question_type_to_string(int type)
+    {
+        return question_type_to_string(static_cast<QuestionType>(type));
+    }
+} // namespace mindnet::enums
+
+#endif // QUESTIONTYPE_H

@@ -15,6 +15,30 @@
 
 namespace mindnet
 {
+    /**
+ * @brief Result structure for SuperMemo 2 (SM-2) algorithm calculations
+ *
+ * This structure holds the calculated values for next review scheduling:
+ * - new_interval: Number of days until next review
+ * - new_ef: New easiness factor (minimum 1.3)
+ * - new_repetition: Number of successful reviews + 1 (reset to 0 on quality < 3)
+ *
+ * The values are used to update question_sm2_state:
+ * question_sm2_state.repetitions = result.new_repetition;
+ * question_sm2_state.interval = result.new_interval;
+ * question_sm2_state.ef_times_100 = result.new_ef * 100.0;
+ * question_sm2_state.next_review = now + result.new_interval * 86400; // in seconds
+ * question_sm2_state.last_review = now;
+ * question_sm2_state.last_quality = quality;
+ */
+
+    struct SM2Result
+    {
+        int new_interval;
+        double new_ef;
+        int new_repetition;
+    };
+
     class Utils
     {
     private:
@@ -23,6 +47,7 @@ namespace mindnet
         Utils& operator=(const Utils&) = delete;
 
     public:
+        static SM2Result calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef);
         static long long currentTimestamp();
         static long long currentUnixTimestamp();
         static std::string unixToFormattedString(ll unixTimestamp);

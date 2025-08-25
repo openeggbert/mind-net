@@ -75,11 +75,9 @@ bool check_args(std::vector<str>& arguments)
 
 void load_args(int argc, char** argv, std::vector<std::string>& arguments)
 {
-    //std::cout << "Found " << argc << " arguments" << std::endl;
-    //std::cout << "First argument: " << argv[0] << std::endl;
+
     for (int i = 1; i < argc; ++i)
     {
-        //std::cout << "Found argument " << argv[i] << std::endl;
         arguments.push_back(argv[i]);
     }
     if (!check_args(arguments)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
@@ -222,12 +220,13 @@ bool run_command(
 
 int main(int argc, char** argv)
 {
-    mindnet::fatal.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
-    mindnet::err.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
-    mindnet::warn.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
-    mindnet::info.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
-    mindnet::debug.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
-    mindnet::trace.set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    auto loggers = { &mindnet::fatal, &mindnet::err, &mindnet::warn,
+                 &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::test };
+
+    for (auto* logger : loggers) {
+        logger->set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+    }
+
     print_logo();
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);

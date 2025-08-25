@@ -6,7 +6,6 @@
 
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
 #include <string>
 #include <fstream>
 #include <random>
@@ -20,6 +19,36 @@
 
 namespace mindnet
 {
+    SM2Result Utils::calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef) {
+        SM2Result result{};
+
+        if (quality < 3) {
+            result.new_repetition = 0;
+            result.new_interval = 1;
+        } else {
+            result.new_repetition = current_repetition + 1;
+            if (current_repetition == 0) {
+                result.new_interval = 1;
+            } else if (current_repetition == 1) {
+                result.new_interval = 6;
+            } else {
+                result.new_interval = static_cast<int>(current_interval * current_ef);
+            }
+        }
+
+        // Update of EF based on the quality
+        double new_ef = current_ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
+        if (new_ef < 1.3) new_ef = 1.3;
+
+        result.new_ef = new_ef;
+        return result;
+
+        //example auto result = calculate_sm2(4, 2, 10, 2.5);
+        // result.new_interval = 25
+        // result.next_ef = 2.46
+        // result.new_repetition = 3
+    }
+
     long long Utils::currentTimestamp()
     {
         time_t now = time(nullptr);

@@ -15,7 +15,7 @@ namespace mindnet::models
         result.push_back(table_name);
         result.push_back(cast64(record_id));
         result.push_back(cast64(operation));
-        result.push_back(payload);
+        result.push_back(data_json);
         result.push_back(reason);
         return result;
     }
@@ -32,7 +32,7 @@ namespace mindnet::models
         table_name = text();
         record_id = number();
         operation = static_cast<enums::Crudl>(number());
-        payload = text();
+        data_json = text();
         reason = text();
     }
 }
