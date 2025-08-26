@@ -55,5 +55,12 @@ namespace mindnet::enums
     {
         return visibility_to_string(static_cast<Visibility>(visibility));
     }
+
+    inline models::misc::EnumDefinition visibility_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            visibility_to_string, 4, 0, 1, 2, 3
+        };
+    }
 } // namespace mindnet::enums
 #endif // VISIBILITY_H

@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     /**
@@ -53,6 +55,13 @@ namespace mindnet::enums
     inline std::string message_priority_to_string(int priority)
     {
         return message_priority_to_string(static_cast<MessagePriority>(priority));
+    }
+
+    inline models::misc::EnumDefinition message_priority_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            message_priority_to_string, 4, 0, 1, 2, 3
+        };
     }
 } // namespace mindnet::enums
 #endif

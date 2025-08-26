@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     enum class DecisionStatus
@@ -53,6 +55,13 @@ namespace mindnet::enums
     inline std::string decision_status_to_string(int status)
     {
         return decision_status_to_string(static_cast<DecisionStatus>(status));
+    }
+
+    inline models::misc::EnumDefinition decision_status_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            decision_status_to_string, 4, 2, 3, 4, 5
+        };
     }
 } // namespace mindnet::enums
 

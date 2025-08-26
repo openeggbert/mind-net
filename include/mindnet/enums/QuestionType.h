@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     enum class QuestionType
@@ -52,6 +54,13 @@ namespace mindnet::enums
     inline std::string question_type_to_string(int type)
     {
         return question_type_to_string(static_cast<QuestionType>(type));
+    }
+
+    inline models::misc::EnumDefinition question_type_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            question_type_to_string, 4, 0, 1, 2, 3
+        };
     }
 } // namespace mindnet::enums
 

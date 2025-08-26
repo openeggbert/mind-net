@@ -51,6 +51,12 @@ namespace mindnet::enums {
     {
         return difficulty_to_string(static_cast<Difficulty>(difficulty));
     }
+    inline models::misc::EnumDefinition difficulty_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            difficulty_to_string, 5, 0, 1, 2, 3, 4
+        };
+    }
 
 } // namespace mindnet::enums
 #endif

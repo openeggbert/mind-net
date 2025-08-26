@@ -22,6 +22,7 @@
 
 
 #include <cstdarg>
+#include <stdexcept>
 #include <string>
 
 #include "mindnet/Helper.h"

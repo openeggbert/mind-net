@@ -20,7 +20,6 @@
 #ifndef CONTENTFORMAT_H
 #define CONTENTFORMAT_H
 
-
 #include <string>
 
 namespace mindnet::enums

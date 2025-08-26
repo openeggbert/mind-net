@@ -20,6 +20,7 @@
 #ifndef COLUMNDEFINITION_H
 #define COLUMNDEFINITION_H
 
+#include <optional>
 #include <string>
 #include "EnumDefinition.h"
 

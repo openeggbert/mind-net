@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     enum class SuggestionStatus
@@ -58,6 +60,13 @@ namespace mindnet::enums
     inline std::string suggestion_status_to_string(int status)
     {
         return suggestion_status_to_string(static_cast<SuggestionStatus>(status));
+    }
+
+    inline models::misc::EnumDefinition suggestion_status_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            suggestion_status_to_string, 6, 0, 1, 2, 3, 4, 5
+        };
     }
 } // namespace mindnet::enums
 

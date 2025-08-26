@@ -27,60 +27,61 @@
 // ***** DEFINE SECTION : START *****
 #define Model User
 #define MODEL USER
-#define model_columns_h_file "columns/UserColumns.h"
 // ***** DEFINE SECTION : END *****
-#include model_columns_h_file
-start_models_namespace
-start_model_definition(Model, MODEL)
-// ***** DEFINE MODEL DEFINITION : START *****
-auto_inc
-start_columns_definition
-//
-defcol(USERNAME) mandatory_ unique_ enddefcol
-defcol(PASSWORD_HASH) mandatory_ enddefcol
-defcol(DISPLAY_NAME) enddefcol
-defcol(ROLE) mandatory_ enum() TODO enddefcol
-defcol(PROFILE_TEXT) textarea_ enddefcol
-defcol(LAST_LOGIN) datetime_ enddefcol
-defcol(EMAIL) unique_ enddefcol
-defcol(STATUS) mandatory_ enddefcol
+#include "columns/UserColumns.h"
 
-
-
-
-
-end_columns_definition
-end_model_definition
-// ***** DEFINE MODEL DEFINITION : END *****
-
-start_model_struct(Model)
-
-// ***** DEFINE FIELDS : START *****
-str table_name;
-int record_id{};
-enums::Crudl operation{};
-str data_json;
-str reason;
-// ***** DEFINE FIELDS : END *****
-
-create_model_h_methods(Model, MODEL)
-
-// ***** Implement methods operator== : START *****
-bool operator==(const Model & other) const
+namespace mindnet::models
 {
-    return id == other.id &&
-        created_at == other.created_at &&
-        updated_at == other.updated_at &&
-        table_name == other.table_name &&
-        record_id == other.record_id &&
-        operation == other.operation &&
-        data_json == other.data_json &&
-        reason == other.reason;
-}
-// ***** Implement methods operator== : END *****
+    using bm = misc::BaseModel;
+    using cols = columns::UserColumns;
+    using misc::def;
+    using misc::coldef;
 
-end_model_struct
-end_models_namespace
+    inline def USER_DEFINITION = def(cols::MODEL_NAME)
+
+        .set_columns({
+            //
+            coldef(cols::USERNAME).set_mandatory(true).set_unique(true),
+            coldef(cols::PASSWORD_HASH).set_mandatory(true),
+            coldef(cols::DISPLAY_NAME),
+            coldef(cols::ROLE).set_mandatory(true), // enum() TODO
+            coldef(cols::PROFILE_TEXT).textarea(),
+            coldef(cols::LAST_LOGIN).datetime(),
+            coldef(cols::EMAIL).set_unique(true),
+            coldef(cols::STATUS).set_mandatory(true),
+        })
+    ;
+
+    struct User : bm
+    {
+        User() = default;
+
+        // ***** DEFINE FIELDS : START *****
+        str table_name;
+        int record_id{};
+        enums::Crudl operation{};
+        str data_json;
+        str reason;
+        // ***** DEFINE FIELDS : END *****
+
+        create_model_h_methods(Model, MODEL)
+
+        // ***** Implement methods operator== : START *****
+        bool operator==(const Model& other) const
+        {
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                table_name == other.table_name &&
+                record_id == other.record_id &&
+                operation == other.operation &&
+                data_json == other.data_json &&
+                reason == other.reason;
+        }
+
+        // ***** Implement methods operator== : END *****
+    };
+}
 #undef Model
 #undef MODEL
 

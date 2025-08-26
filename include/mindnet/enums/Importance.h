@@ -53,7 +53,12 @@ namespace mindnet::enums
     {
         return importance_to_string(static_cast<Importance>(importance));
     }
-
+    inline models::misc::EnumDefinition importance_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            importance_to_string, 4, 0, 1, 2, 3
+        };
+    }
 
 } // namespace mindnet::enums
 #endif

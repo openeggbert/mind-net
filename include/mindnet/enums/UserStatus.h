@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 
 namespace mindnet::enums
 {
@@ -72,6 +74,13 @@ namespace mindnet::enums
     inline std::string user_status_to_string(int status)
     {
         return user_status_to_string(static_cast<UserStatus>(status));
+    }
+
+    inline models::misc::EnumDefinition user_status_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            user_status_to_string, 6, 0, 1, 2, 3, 4, 5
+        };
     }
 } // namespace mindnet::enums
 #endif // USERSTATUS_H

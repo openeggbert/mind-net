@@ -33,30 +33,6 @@
 #define PASTE(a,b) a##b
 #define XPASTE(a,b) PASTE(a,b)
 
-#define start_model_definition(Model, MODEL) \
-using type = enums::ColumnType; \
-using coldef = misc::ColumnDefinition; \
-using def = misc::ModelDefinition; \
-using bm = misc::BaseModel; \
-using cols = columns::XPASTE(Model, Columns); \
-using crudl = mindnet::enums::Crudl; \
-\
-static def XPASTE(MODEL,_DEFINITION) = def(cols::MODEL_NAME)
-
-// Start of macros for: model definition
-#define auto_inc .set_auto_inc(true)
-#define start_columns_definition\
-.set_columns(\
-            {
-#define end_columns_definition })
-#define allowed_rest_operations(...) .set_operations(__VA_ARGS__)
-#define end_model_definition ;
-// End of macros for: model definition
-
-#define start_model_struct(Model) struct Model : bm {\
-Model () = default;
-
-#define end_model_struct };
 #define create_model_h_methods(Model, MODEL)\
 [[nodiscard]] const def& get_definition() const override\
         {\
@@ -72,21 +48,7 @@ friend std::ostream& operator<<(std::ostream& os, const Model & o)\
     return os;\
 }\
 
-#define start_models_namespace namespace mindnet::models{
-#define end_models_namespace }
 
-#define defcol(column_name_) coldef(cols:: column_name_ )
-//
-#define mandatory_ .set_mandatory(true)
-#define unique_ .set_unique(true)
-#define foreign_key_(foreign_key_column_name) .set_foreign_key( foreign_key_column_name)
-#define enum_(e) .set_enum_definition(e)
-#define integer_ .integer()
-#define datetime_ .datetime()
-#define textarea_ .textarea()
-
-//
-#define enddefcol ,
 //
 #define def_helper_lambdas()\
 auto number = [&values, &i]\
@@ -102,7 +64,10 @@ auto text = [&values, &i]\
 namespace mindnet::models::misc {
 
     using std::string;
-
+    using type = enums::ColumnType;
+    using coldef = misc::ColumnDefinition;
+    using def = misc::ModelDefinition;
+    using crudl = mindnet::enums::Crudl;
 
     struct BaseModel {
 

@@ -47,6 +47,13 @@ namespace mindnet::enums
     {
         return node_link_type_to_string(static_cast<NodeLinkType>(type));
     }
+
+    inline models::misc::EnumDefinition node_link_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            node_link_type_to_string, 2, 0, 1
+        };
+    }
 } // namespace mindnet::enums
 
 #endif // NODELINKTYPE_H

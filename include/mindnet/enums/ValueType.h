@@ -54,5 +54,12 @@ namespace mindnet::enums
     {
         return value_type_to_string(static_cast<ValueType>(type));
     }
+
+    inline models::misc::EnumDefinition value_type_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            value_type_to_string, 4, 0, 1, 2, 3
+        };
+    }
 } // namespace mindnet::enums
 #endif

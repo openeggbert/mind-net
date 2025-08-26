@@ -40,7 +40,7 @@ namespace mindnet::models::misc
     {
     private:
         str model_name; ///< Name of the model
-        bool auto_increment = false; ///< Whether the model uses auto-incrementing IDs
+        bool auto_increment = true; ///< Whether the model uses auto-incrementing IDs
         column_definitions columns; ///< Column definitions for the model
         std::set<enums::Crudl> allowed_crudl_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;

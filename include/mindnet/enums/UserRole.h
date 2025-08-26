@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     /**
@@ -72,6 +74,13 @@ namespace mindnet::enums
     inline std::string user_role_to_string(int role)
     {
         return user_role_to_string(static_cast<UserRole>(role));
+    }
+
+    inline models::misc::EnumDefinition user_role_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            user_role_to_string, 5, 0, 1, 2, 3, 4
+        };
     }
 } // namespace mindnet::enums
 

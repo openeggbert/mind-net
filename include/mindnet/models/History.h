@@ -26,56 +26,62 @@
 // ***** DEFINE SECTION : START *****
 #define Model History
 #define MODEL HISTORY
-#define model_columns_h_file "columns/HistoryColumns.h"
 // ***** DEFINE SECTION : END *****
-#include model_columns_h_file
-start_models_namespace
-start_model_definition(Model, MODEL)
-// ***** DEFINE MODEL DEFINITION : START *****
-auto_inc
-allowed_rest_operations({crudl::READ, crudl::LIST})
-start_columns_definition
-//
-defcol(USER_ID) mandatory_ foreign_key_("user") enddefcol
-defcol(IP_ADDRESS) enddefcol
-defcol(TABLE_NAME) mandatory_ enddefcol
-defcol(RECORD_ID) mandatory_ enddefcol
-defcol(OPERATION)  mandatory_ enum_(enums::crudl_to_enum_definition()) enddefcol
-defcol(DATA_JSON) mandatory_ enddefcol
-defcol(REASON) enddefcol
-//
-end_columns_definition
-end_model_definition
-// ***** DEFINE MODEL DEFINITION : END *****
+#include "columns/HistoryColumns.h"
 
-start_model_struct(Model)
-
-// ***** DEFINE FIELDS : START *****
-str table_name;
-int record_id{};
-enums::Crudl operation{};
-str data_json;
-str reason;
-// ***** DEFINE FIELDS : END *****
-
-create_model_h_methods(Model, MODEL)
-
-// ***** Implement methods operator== : START *****
-bool operator==(const Model & other) const
+namespace mindnet::models
 {
-    return id == other.id &&
-        created_at == other.created_at &&
-        updated_at == other.updated_at &&
-        table_name == other.table_name &&
-        record_id == other.record_id &&
-        operation == other.operation &&
-        data_json == other.data_json &&
-        reason == other.reason;
-}
-// ***** Implement methods operator== : END *****
+    using bm = misc::BaseModel;
+    using cols = columns::HistoryColumns;
+    using misc::def;
+    using misc::coldef;
 
-end_model_struct
-end_models_namespace
+    inline def HISTORY_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_operations({mindnet::enums::Crudl::READ, mindnet::enums::Crudl::LIST})
+        .set_columns({
+            //
+            coldef(cols::USER_ID).set_mandatory(true).set_foreign_key("user"),
+            coldef(cols::IP_ADDRESS),
+            coldef(cols::TABLE_NAME).set_mandatory(true),
+            coldef(cols::RECORD_ID).set_mandatory(true),
+            coldef(cols::OPERATION).set_mandatory(true).set_enum_definition(
+                enums::crudl_to_enum_definition()),
+            coldef(cols::DATA_JSON).set_mandatory(true),
+            coldef(cols::REASON),
+            //
+        });
+
+    struct History : bm
+    {
+        History() = default;
+
+        // ***** DEFINE FIELDS : START *****
+        str table_name;
+        int record_id{};
+        enums::Crudl operation{};
+        str data_json;
+        str reason;
+        // ***** DEFINE FIELDS : END *****
+
+        create_model_h_methods(Model, MODEL)
+
+        // ***** Implement methods operator== : START *****
+        bool operator==(const Model& other) const
+        {
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                table_name == other.table_name &&
+                record_id == other.record_id &&
+                operation == other.operation &&
+                data_json == other.data_json &&
+                reason == other.reason;
+        }
+
+        // ***** Implement methods operator== : END *****
+    };
+}
 #undef Model
 #undef MODEL
 #endif // HISTORY_H
