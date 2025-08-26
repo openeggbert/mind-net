@@ -52,7 +52,5 @@ namespace mindnet::enums {
         return difficulty_to_string(static_cast<Difficulty>(difficulty));
     }
 
-
-
 } // namespace mindnet::enums
 #endif

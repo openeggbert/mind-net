@@ -21,85 +21,61 @@
 #define HISTORY_H
 
 #include <string>
+#include "mindnet/models/misc/BaseModel.h"
 
-#include "misc/BaseModel.h"
-#include "columns/HistoryColumns.h"
-#include "columns/MapColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/Crudl.h"
+// ***** DEFINE SECTION : START *****
+#define Model History
+#define MODEL HISTORY
+#define model_columns_h_file "columns/HistoryColumns.h"
+// ***** DEFINE SECTION : END *****
+#include model_columns_h_file
+start_models_namespace
+start_model_definition(Model, MODEL)
+// ***** DEFINE MODEL DEFINITION : START *****
+auto_inc
+allowed_rest_operations({crudl::READ, crudl::LIST})
+start_columns_definition
+//
+defcol(USER_ID) mandatory_ foreign_key_("user") enddefcol
+defcol(IP_ADDRESS) enddefcol
+defcol(TABLE_NAME) mandatory_ enddefcol
+defcol(RECORD_ID) mandatory_ enddefcol
+defcol(OPERATION)  mandatory_ enum_(enums::crudl_to_enum_definition()) enddefcol
+defcol(DATA_JSON) mandatory_ enddefcol
+defcol(REASON) enddefcol
+//
+end_columns_definition
+end_model_definition
+// ***** DEFINE MODEL DEFINITION : END *****
 
-namespace mindnet::models
+start_model_struct(Model)
+
+// ***** DEFINE FIELDS : START *****
+str table_name;
+int record_id{};
+enums::Crudl operation{};
+str data_json;
+str reason;
+// ***** DEFINE FIELDS : END *****
+
+create_model_h_methods(Model, MODEL)
+
+// ***** Implement methods operator== : START *****
+bool operator==(const Model & other) const
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::HistoryColumns;
-
-    static ModelDefinition HISTORY_DEFINITION = {
-        HistoryColumns::MODEL_NAME,
-        true,
-        {
-            {HistoryColumns::ID, ColumnType::INTEGER, true},
-            {HistoryColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {HistoryColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {HistoryColumns::TABLE_NAME, ColumnType::TEXT, true},
-            {HistoryColumns::RECORD_ID, ColumnType::INTEGER, true},
-            {HistoryColumns::OPERATION, ColumnType::INTEGER, true},
-            {HistoryColumns::DATA_JSON, ColumnType::TEXT, true},
-            {HistoryColumns::REASON, ColumnType::TEXT, false}
-        },
-{enums::Crudl::READ,enums::Crudl::LIST}
-    };
-
-    struct History : BaseModel
-    {
-        str table_name;
-        int record_id{};
-        enums::Crudl operation{};
-        str data_json;
-        str reason;
-
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return HISTORY_DEFINITION;
-        }
-
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const History& history)
-        {
-            os << history.to_json();
-            return os;
-        }
-
-        bool operator==(const History& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
-        }
-
-        History() = default;
-
-        History(int i, unixtime cat, unixtime uat, const str& tn, int rid, int op, const str& pl, const str& r)
-        {
-            id = i;
-            created_at = cat;
-            updated_at = uat;
-            table_name = tn;
-            record_id = rid;
-            operation = static_cast<enums::Crudl>(op);
-            data_json = pl;
-            reason = r;
-        }
-    };
+    return id == other.id &&
+        created_at == other.created_at &&
+        updated_at == other.updated_at &&
+        table_name == other.table_name &&
+        record_id == other.record_id &&
+        operation == other.operation &&
+        data_json == other.data_json &&
+        reason == other.reason;
 }
+// ***** Implement methods operator== : END *****
 
+end_model_struct
+end_models_namespace
+#undef Model
+#undef MODEL
 #endif // HISTORY_H

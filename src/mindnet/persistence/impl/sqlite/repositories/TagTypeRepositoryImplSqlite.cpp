@@ -17,29 +17,34 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODEPROPERTYREPOSITORY_H
-#define NODEPROPERTYREPOSITORY_H
 
-#include "mindnet/models/Map.h"
-#include <vector>
+/**
+ *
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
 
-#include "IRepository.h"
+#include "mindnet/persistence/impl/sqlite/repositories/TagTypeRepositoryImplSqlite.h"
 
-namespace mindnet::persistence::api
+#include <string>
+
+#include "mindnet/enums/Crudl.h"
+#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
+#include "SQLiteCpp/Database.h"
+
+namespace mindnet::impl::sqlite::repositories
 {
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
+    TagTypeRepositoryImplSqlite::~TagTypeRepositoryImplSqlite() = default;
 
-    class NodePropertyRepository : public models::IRepository
+    def_virtual_irepository_impl_cpp_methods(TagType, TAG_TYPE)
+
+    entity_fields TagTypeRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+        crow::json::rvalue& body, enums::Crudl crudl)
     {
-    public:
-        NodePropertyRepository() = default;
-        virtual ~NodePropertyRepository() = default;
+        start_of_convert_crow_json_rvalue_to_entity_fields(TagType)
 
-        def_virtual_irepository_api_h_methods
-    };
+        add_int(MAP_ID);
+        add_string(TITLE);
+        return fields;
+    }
+
 }
-
-#endif // NODEPROPERTYREPOSITORY_H

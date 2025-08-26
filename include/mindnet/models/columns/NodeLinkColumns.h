@@ -32,7 +32,7 @@
 
 namespace mindnet::models::columns
 {
-    struct NodeLinkColumns : public BaseColumns
+    struct NodeLinkColumns : BaseColumns
     {
         NodeLinkColumns() = delete;
 
@@ -43,6 +43,7 @@ namespace mindnet::models::columns
 
         static constexpr const char* FROM_NODE_ID = "from_node_id";
         static constexpr const char* TO_NODE_ID = "to_node_id";
+        static constexpr const char* TYPE = "type";
         static constexpr const char* LABEL = "label";
     };
 }

@@ -12,8 +12,8 @@ namespace mindnet::models
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
-        result.push_back(map_id);
-        result.push_back(title);
+        result.push_back(node_id);
+        result.push_back(tag_type_id);
         return result;
     }
 
@@ -26,7 +26,7 @@ namespace mindnet::models
         set_id(number());
         created_at = number();
         updated_at = number();
-        map_id = number();
-        title = text();
+        node_id = number();
+        tag_type_id = number();
     };
 }

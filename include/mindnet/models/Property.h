@@ -17,14 +17,14 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODE_PROPERTY_H
-#define NODE_PROPERTY_H
+#ifndef PROPERTY_H
+#define PROPERTY_H
 
 #include <string>
 #include <utility>
 
 #include "misc/BaseModel.h"
-#include "columns/NodePropertyColumns.h"
+#include "columns/PropertyColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ValueType.h"
@@ -34,25 +34,25 @@ namespace mindnet::models
     using enums::ColumnType;
     using misc::BaseModel;
     using misc::ModelDefinition;
-    using columns::NodePropertyColumns;
+    using columns::PropertyColumns;
 
-    static ModelDefinition NODE_PROPERTY_DEFINITION = {
-        NodePropertyColumns::MODEL_NAME,
+    static ModelDefinition PROPERTY_DEFINITION = {
+        PropertyColumns::MODEL_NAME,
         true,
         {
-            {NodePropertyColumns::ID, ColumnType::INTEGER, true},
-            {NodePropertyColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {NodePropertyColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {NodePropertyColumns::MAP_ID, ColumnType::INTEGER, true},
-            {NodePropertyColumns::NODE_ID, ColumnType::INTEGER, true},
-            {NodePropertyColumns::KEY, ColumnType::TEXT, true},
-            {NodePropertyColumns::VALUE, ColumnType::TEXT, false},
-            {NodePropertyColumns::VALUE_TYPE, ColumnType::INTEGER, false},
-            {NodePropertyColumns::IS_INDEXED, ColumnType::INTEGER, false},
+            {PropertyColumns::ID, ColumnType::INTEGER, true},
+            {PropertyColumns::CREATED_AT, ColumnType::INTEGER, false},
+            {PropertyColumns::UPDATED_AT, ColumnType::INTEGER, false},
+            {PropertyColumns::MAP_ID, ColumnType::INTEGER, true},
+            {PropertyColumns::NODE_ID, ColumnType::INTEGER, true},
+            {PropertyColumns::KEY, ColumnType::TEXT, true},
+            {PropertyColumns::VALUE, ColumnType::TEXT, false},
+            {PropertyColumns::VALUE_TYPE, ColumnType::INTEGER, false},
+            {PropertyColumns::IS_INDEXED, ColumnType::INTEGER, false},
         }
     };
 
-    struct NodeProperty : BaseModel
+    struct Property : BaseModel
     {
         int map_id;
         int node_id;
@@ -63,28 +63,28 @@ namespace mindnet::models
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {
-            return NODE_PROPERTY_DEFINITION;
+            return PROPERTY_DEFINITION;
         }
 
         [[nodiscard]] entity_fields get_values() const override;
         void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const NodeProperty& map)
+        friend std::ostream& operator<<(std::ostream& os, const Property& map)
         {
             os << map.to_json();
             return os;
         }
 
-        bool operator==(const NodeProperty& other) const
+        bool operator==(const Property& other) const
         {
             return id == other.id && map_id == other.map_id && node_id == other.node_id && key == other.key &&
                 value == other.value && value_type == other.value_type && is_indexed == other.is_indexed &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
 
-        NodeProperty() = default;
+        Property() = default;
 
-        NodeProperty(int id_, int map_id_, int node_id_, str key_, str value_, int value_type_, bool is_indexed_,
+        Property(int id_, int map_id_, int node_id_, str key_, str value_, int value_type_, bool is_indexed_,
                      unixtime created_at_,
                      unixtime updated_at_
         )
@@ -98,4 +98,4 @@ namespace mindnet::models
     };
 }
 
-#endif // NODE_PROPERTY_H
+#endif // PROPERTY_H

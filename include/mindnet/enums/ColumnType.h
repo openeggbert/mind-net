@@ -11,9 +11,12 @@ namespace mindnet::enums
     enum class ColumnType
     {
         TEXT,
+        TEXTAREA,
         INTEGER,
         REAL,
-        BLOB
+        BLOB,
+        BOOL,
+        DATETIME
     };
 
     inline std::string column_type_to_string(ColumnType column_type)
@@ -22,12 +25,18 @@ namespace mindnet::enums
         {
         case ColumnType::TEXT:
             return "TEXT";
+        case ColumnType::TEXTAREA:
+            return "TEXTAREA";
         case ColumnType::INTEGER:
             return "INTEGER";
         case ColumnType::REAL:
             return "REAL";
         case ColumnType::BLOB:
             return "BLOB";
+        case ColumnType::BOOL:
+            return "BOOL";
+        case ColumnType::DATETIME:
+            return "DATETIME";
         default:
             return "UNKNOWN";
         }

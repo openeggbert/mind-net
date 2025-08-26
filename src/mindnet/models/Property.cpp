@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/models/NodeProperty.h"
+#include "mindnet/models/Property.h"
 
 namespace mindnet::models
 {
-    entity_fields NodeProperty::get_values() const
+    entity_fields Property::get_values() const
     {
         entity_fields result;
         result.push_back(id);
@@ -21,7 +21,7 @@ namespace mindnet::models
         return result;
     }
 
-    void NodeProperty::from_values(const entity_fields& values)
+    void Property::from_values(const entity_fields& values)
     {
         int i = 0;
 

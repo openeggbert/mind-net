@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     /**
@@ -45,11 +47,17 @@ namespace mindnet::enums
             return "Unknown";
         }
     }
+
     inline std::string node_type_to_string(int type)
     {
         return node_type_to_string(static_cast<NodeType>(type));
     }
 
-
+    inline models::misc::EnumDefinition node_type_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            node_type_to_string, 2, 0, 1
+        };
+    }
 } // namespace mindnet::enums
 #endif

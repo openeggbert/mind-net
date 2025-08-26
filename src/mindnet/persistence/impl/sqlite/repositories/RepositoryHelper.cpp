@@ -56,25 +56,36 @@ namespace mindnet::persistence::impl::sqlite
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
         set_foreign_key_pragma(db);
-        SQLite::Statement query(db, sql);
 
-        Utils::fill_sqlite_query(query, fields
+        SQLite::Statement* query_ptr = nullptr;
+
+        try {
+            query_ptr = new SQLite::Statement(db, sql);
+        } catch (const SQLite::Exception& e) {
+            error = e.what();
+            delete query_ptr;
+            return -1;
+        }
+
+        Utils::fill_sqlite_query(*query_ptr, fields
                                  , definition.auto_increment
         );
 
         try
         {
-            Utils::sqlite_exec(query);
+            Utils::sqlite_exec(*query_ptr);
         }
         catch (std::exception& e)
         {
             error = e.what();
+            delete query_ptr;
             throw;
         }
+        delete query_ptr;
         return db.getLastInsertRowid();
     }
 
-    entity_fields read_model(models::misc::ModelDefinition& def, const int id)
+    entity_fields read_model(models::misc::ModelDefinition& def, const int id, str& error)
     {
         std::string sql = Utils::generate_select_one_sql(def.model_name);
         debug << "Going to execute select one SQL: " << sql << commit;
@@ -85,14 +96,25 @@ namespace mindnet::persistence::impl::sqlite
         );
         set_foreign_key_pragma(db);
         set_temp_store_pragma(db);
-        SQLite::Statement query(db, sql);
+
+
+        SQLite::Statement* query_ptr = nullptr;
+
+        try {
+            query_ptr = new SQLite::Statement(db, sql);
+        } catch (const SQLite::Exception& e) {
+            error = e.what();
+            delete query_ptr;
+            return {};
+        }
+
 
         entity_fields result;
         auto columns = def.columns;
-        query.bind(1, id);
+        (*query_ptr).bind(1, id);
 
 
-        if (query.executeStep())
+        if ((*query_ptr).executeStep())
         {
             int i = 0;
             for (const auto& column : def.columns)
@@ -101,28 +123,35 @@ namespace mindnet::persistence::impl::sqlite
                 {
                 case enums::ColumnType::TEXT:
                     {
-                        str text = query.getColumn(i).getString();
+                        str text = (*query_ptr).getColumn(i).getString();
                         result.push_back(text);
                     }
                     break;
                 case enums::ColumnType::INTEGER:
                     {
-                        int number = query.getColumn(i);
+                        int number = (*query_ptr).getColumn(i);
                         result.push_back(number);
                     }
                     break;
-                default: throw std::runtime_error("Unknown type");
+                default:
+                    {
+                        error = "Unknown type";
+                        throw std::runtime_error("Unknown type");
+                    }
                 }
                 i++;
             }
+            delete query_ptr;
             return result;
         }
 
+        delete query_ptr;
 
+        error = def.model_name + " not found";
         throw std::runtime_error(def.model_name + " not found");
     }
 
-    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields)
+    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, str& error)
     {
         std::string sql = Utils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
@@ -133,7 +162,16 @@ namespace mindnet::persistence::impl::sqlite
         );
         set_foreign_key_pragma(db);
         set_temp_store_pragma(db);
-        SQLite::Statement query(db, sql);
+
+        SQLite::Statement* query_ptr = nullptr;
+
+        try {
+            query_ptr = new SQLite::Statement(db, sql);
+        } catch (const SQLite::Exception& e) {
+            error = e.what();
+            delete query_ptr;
+            return false;
+        }
 
         if (!fields.empty())
         {
@@ -145,21 +183,24 @@ namespace mindnet::persistence::impl::sqlite
         }
         fields.push_back(id);
 
-        Utils::fill_sqlite_query(query, fields, false);
+        Utils::fill_sqlite_query(*query_ptr, fields, false);
         try
         {
-            Utils::sqlite_exec(query);
+            Utils::sqlite_exec(*query_ptr);
             debug << "Update successful" << std::endl;
+            delete query_ptr;
             return true;
         }
         catch (std::exception& e)
         {
-            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            err << "Exception during SQLite statement execution: " << e.what() << commit;
+            error = e.what();
+            delete query_ptr;
             return false;
         }
     }
 
-    bool delete_model(models::misc::ModelDefinition& def, const int id)
+    bool delete_model(models::misc::ModelDefinition& def, const int id, str& error)
     {
         str sql = Utils::generate_delete_sql(def);
         debug << "Going to execute delete SQL: " << sql << commit;
@@ -170,27 +211,39 @@ namespace mindnet::persistence::impl::sqlite
         );
         set_foreign_key_pragma(db);
         set_temp_store_pragma(db);
-        SQLite::Statement query(db, sql);
+        SQLite::Statement* query_ptr = nullptr;
 
+        try {
+            query_ptr = new SQLite::Statement(db, sql);
+        } catch (const SQLite::Exception& e) {
+            error = e.what();
+            delete query_ptr;
+            return false;
+        }
 
         entity_fields fields;
         fields.push_back(id);
-        Utils::fill_sqlite_query(query, fields, false);
+        Utils::fill_sqlite_query(*query_ptr, fields, false);
         try
         {
-            Utils::sqlite_exec(query);
+            Utils::sqlite_exec(*query_ptr);
             auto number_of_deleted_rows = db.getChanges();
             if (number_of_deleted_rows != 1)
             {
                 err << "Expected to delete 1 row, but deleted " << number_of_deleted_rows << std::endl;
+                error = std::string("Expected to delete 1 row, but deleted ") + std::to_string(number_of_deleted_rows);
+                delete query_ptr;
                 return false;
             }
             debug << "Delete successful" << std::endl;
+            delete query_ptr;
             return true;
         }
         catch (std::exception& e)
         {
-            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            err << "Exception during SQLite statement execution: " << e.what() << commit;
+            error = e.what();
+            delete query_ptr;
             return false;
         }
     }

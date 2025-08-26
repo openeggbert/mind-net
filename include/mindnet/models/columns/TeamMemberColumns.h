@@ -13,42 +13,39 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
+#ifndef TEAMMEMBERCOLUMNS_H
+#define TEAMMEMBERCOLUMNS_H
 
-#include "mindnet/persistence/impl/sqlite/repositories/NodePropertyRepositoryImplSqlite.h"
 
-#include <string>
+#include "BaseColumns.h"
 
-#include "mindnet/enums/Crudl.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
-#include "SQLiteCpp/Database.h"
 
-namespace mindnet::impl::sqlite::repositories
+namespace mindnet::models::columns
 {
-    NodePropertyRepositoryImplSqlite::~NodePropertyRepositoryImplSqlite() = default;
-
-    def_virtual_irepository_impl_cpp_methods(NodeProperty, NODE_PROPERTY)
-
-    entity_fields NodePropertyRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl)
+    struct TeamMemberColumns : BaseColumns
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(NodeProperty)
+        TeamMemberColumns() = delete;
 
-        add_int(MAP_ID);
-        add_int(NODE_ID);
-        add_string(KEY);
-        add_optional_string(VALUE, "");
-        add_optional_int(VALUE_TYPE, 0);
-        add_optional_int(IS_INDEXED, 0);
-        return fields;
-    }
+        TeamMemberColumns(const TeamMemberColumns&) = delete;
+        TeamMemberColumns& operator=(const TeamMemberColumns&) = delete;
 
+        static constexpr const char* MODEL_NAME = "team_member";
+
+        static constexpr const char* TEAM_ID = "team_id";
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* ROLE = "role";
+        static constexpr const char* JOINED_AT = "joined_at";
+        static constexpr const char* IS_ACTIVE = "is_active";
+        static constexpr const char* LEFT_AT = "left_at";
+    };
 }
+#endif // TEAMMEMBERCOLUMNS_H

@@ -22,27 +22,37 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODETAGCOLUMNS_H
-#define NODETAGCOLUMNS_H
+#ifndef MESSAGECOLUMNS_H
+#define MESSAGECOLUMNS_H
+
 
 #include "BaseColumns.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/ColumnType.h"
 
 
 namespace mindnet::models::columns
 {
-    struct NodeTagColumns : public BaseColumns
+    struct MessageColumns : BaseColumns
     {
-        NodeTagColumns() = delete;
+        MessageColumns() = delete;
 
-        NodeTagColumns(const NodeTagColumns&) = delete;
-        NodeTagColumns& operator=(const NodeTagColumns&) = delete;
+        MessageColumns(const MessageColumns&) = delete;
+        MessageColumns& operator=(const MessageColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "node_tag";
+        static constexpr const char* MODEL_NAME = "message";
 
-        static constexpr const char* NODE_ID = "node_id";
-        static constexpr const char* TAG_ID = "tag_id";
+        static constexpr const char* OWNER_ID = "owner_id";
+        static constexpr const char* SENDER_ID = "sender_id";
+        static constexpr const char* RECIPIENT_ID = "recipient_id";
+        static constexpr const char* SUBJECT = "subject";
+        static constexpr const char* PRIORITY = "priority";
+        static constexpr const char* BODY = "body";
+        static constexpr const char* SENT_AT = "sent_at";
+        static constexpr const char* SYSTEM_MESSAGE = "system_message";
+        static constexpr const char* FOLDER = "folder";
+        static constexpr const char* DRAFT = "draft";
+        static constexpr const char* IS_READ = "is_read";
+        static constexpr const char* DELETED_AT = "deleted_at";
+        static constexpr const char* STARRED = "starred";
     };
 }
-#endif // NODETAGCOLUMNS_H
+#endif // MESSAGECOLUMNS_H

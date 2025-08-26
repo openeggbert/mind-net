@@ -35,15 +35,15 @@ namespace mindnet::impl::sqlite::repositories
 {
     TagRepositoryImplSqlite::~TagRepositoryImplSqlite() = default;
 
-    def_virtual_irepository_impl_cpp_methods(Tag, TAG)
+    def_virtual_irepository_impl_cpp_methods(Tag, NODE_TAG)
 
     entity_fields TagRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
         crow::json::rvalue& body, enums::Crudl crudl)
     {
         start_of_convert_crow_json_rvalue_to_entity_fields(Tag)
 
-        add_int(MAP_ID);
-        add_string(TITLE);
+        add_int(NODE_ID);
+        add_int(TAG_TYPE_ID);
         return fields;
     }
 

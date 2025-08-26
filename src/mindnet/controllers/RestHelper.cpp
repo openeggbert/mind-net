@@ -42,13 +42,13 @@ namespace mindnet::controllers
     {
         for (auto e : def.columns)
         {
-            debug << "Checking " << e.column_name << std::endl;
+            debug << "Checking " << e.column_name << commit;
             if (e.column_name == "id")
             {
                 if (!id_wanted && body.has(e.column_name))
                 {
                     auto msg = "Id is not allowed in body";
-                    err << msg << std::endl;
+                    err << msg << commit;
                     return msg;
                 }
                 if (id_wanted && !body.has(e.column_name))
@@ -59,14 +59,14 @@ namespace mindnet::controllers
                 }
                 continue;
             }
-            if (e.mandatory && !body.has(e.column_name))
+            if (e.mandatory_ && !body.has(e.column_name))
             {
                 auto msg = "Mandatory column " + e.column_name + " is missing";
                 err << msg << std::endl;
                 return msg;
             }
         }
-        debug << "Body is valid" << std::endl;
+        debug << "Body is valid" << commit;
         return "";
     }
 

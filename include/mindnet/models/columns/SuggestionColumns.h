@@ -20,30 +20,34 @@
 
 /**
  *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODETAGREPOSITORYIMPLSQLITE_H
-#define NODETAGREPOSITORYIMPLSQLITE_H
+#ifndef SUGGESTIONCOLUMNS_H
+#define SUGGESTIONCOLUMNS_H
 
 
-#include "mindnet/persistence/api/NodeTagRepository.h"
-#include "mindnet/models/NodeTag.h"
-#include <vector>
+#include "BaseColumns.h"
 
-#include "mindnet/enums/Crudl.h"
 
-namespace mindnet::impl::sqlite::repositories
+namespace mindnet::models::columns
 {
-    using std::vector;
-
-    class NodeTagRepositoryImplSqlite : public persistence::api::NodeTagRepository
+    struct SuggestionColumns : BaseColumns
     {
-    public:
-        NodeTagRepositoryImplSqlite() = default;
-        ~NodeTagRepositoryImplSqlite() override;
+        SuggestionColumns() = delete;
 
-        def_virtual_irepository_impl_h_methods
+        SuggestionColumns(const SuggestionColumns&) = delete;
+        SuggestionColumns& operator=(const SuggestionColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "suggestion";
+
+        static constexpr const char* PARENT_SUGGESTION_ID = "parent_suggestion_id";
+        static constexpr const char* FROM_USER_ID = "from_user_id";
+        static constexpr const char* TABLE_NAME = "table_name";
+        static constexpr const char* OPERATION = "operation";
+        static constexpr const char* STATUS = "status";
+        static constexpr const char* DATA_JSON = "data_json";
+        static constexpr const char* REVIEW_COUNT = "review_count";
+        static constexpr const char* PRIORITY = "priority";
     };
 }
-// MAPREPOSITORYIMPLSQLITE_H
-#endif // NODETAGREPOSITORYIMPLSQLITE_H
+#endif // SUGGESTIONCOLUMNS_H

@@ -32,7 +32,7 @@
 
 namespace mindnet::models::columns
 {
-    struct ExternalLinkColumns : public BaseColumns
+    struct ExternalLinkColumns : BaseColumns
     {
         ExternalLinkColumns() = delete;
 

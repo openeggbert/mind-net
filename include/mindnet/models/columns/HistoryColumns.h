@@ -31,7 +31,7 @@
 
 namespace mindnet::models::columns
 {
-    struct HistoryColumns : public BaseColumns
+    struct HistoryColumns : BaseColumns
     {
         HistoryColumns() = delete;
 
@@ -40,6 +40,8 @@ namespace mindnet::models::columns
 
         static constexpr const char* MODEL_NAME = "history";
 
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* IP_ADDRESS = "ip_address";
         static constexpr const char* TABLE_NAME = "table_name";
         static constexpr const char* RECORD_ID = "record_id";
         static constexpr const char* OPERATION = "operation";

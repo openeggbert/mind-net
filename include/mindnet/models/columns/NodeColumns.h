@@ -30,7 +30,7 @@
 
 namespace mindnet::models::columns
 {
-    struct NodeColumns : public BaseColumns
+    struct NodeColumns : BaseColumns
     {
         NodeColumns() = delete;
 
@@ -50,7 +50,6 @@ namespace mindnet::models::columns
         static constexpr const char* LAST_SHOWN_AT = "last_shown_at";
         static constexpr const char* EXPIRES_AT = "expires_at";
         static constexpr const char* IS_FAVORITE = "is_favorite";
-        static constexpr const char* IS_REDIRECT = "is_redirect";
         static constexpr const char* REDIRECT_NODE_ID = "redirect_node_id";
         static constexpr const char* REDIRECT_REASON = "redirect_reason";
         static constexpr const char* IMPORTANCE = "importance";

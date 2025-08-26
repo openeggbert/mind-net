@@ -33,7 +33,7 @@
 
 namespace mindnet::models::columns
 {
-    struct SM2StateColumns : public BaseColumns
+    struct SM2StateColumns : BaseColumns
     {
         SM2StateColumns() = delete;
 

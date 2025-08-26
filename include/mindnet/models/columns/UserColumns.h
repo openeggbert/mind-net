@@ -13,33 +13,41 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODETAGREPOSITORY_H
-#define NODETAGREPOSITORY_H
 
-#include "mindnet/models/NodeTag.h"
-#include <vector>
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef USERCOLUMNS_H
+#define USERCOLUMNS_H
 
-#include "IRepository.h"
 
-namespace mindnet::persistence::api
+#include "BaseColumns.h"
+
+
+namespace mindnet::models::columns
 {
-    /**
-     *
-    * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
-     */
-
-    class NodeTagRepository : public models::IRepository
+    struct UserColumns : BaseColumns
     {
-    public:
-        NodeTagRepository() = default;
-        virtual ~NodeTagRepository() = default;
+        UserColumns() = delete;
 
-        def_virtual_irepository_api_h_methods
+        UserColumns(const UserColumns&) = delete;
+        UserColumns& operator=(const UserColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "user";
+
+        static constexpr const char* USERNAME = "username";
+        static constexpr const char* PASSWORD_HASH = "password_hash";
+        static constexpr const char* DISPLAY_NAME = "display_name";
+        static constexpr const char* ROLE = "role";
+        static constexpr const char* PROFILE_TEXT = "profile_text";
+        static constexpr const char* LAST_LOGIN = "last_login";
+        static constexpr const char* EMAIL = "email";
+        static constexpr const char* STATUS = "status";
     };
 }
-
-#endif // NODETAGREPOSITORY_H
+#endif // USERCOLUMNS_H

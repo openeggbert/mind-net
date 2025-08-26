@@ -22,11 +22,9 @@
 
 
 #include <string>
-#include <utility>
 
 #include "misc/BaseModel.h"
 #include "columns/TagColumns.h"
-#include "crow/json.h"
 #include "mindnet/Helper.h"
 
 namespace mindnet::models
@@ -35,26 +33,27 @@ namespace mindnet::models
     using misc::BaseModel;
     using misc::ModelDefinition;
     using columns::TagColumns;
-    static ModelDefinition TAG_DEFINITION = {
+
+    static ModelDefinition NODE_TAG_DEFINITION = {
         TagColumns::MODEL_NAME,
         true,
         {
             {TagColumns::ID, ColumnType::INTEGER, true},
             {TagColumns::CREATED_AT, ColumnType::INTEGER, false},
             {TagColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {TagColumns::MAP_ID, ColumnType::INTEGER, true},
-            {TagColumns::TITLE, ColumnType::TEXT, true}
+            {TagColumns::NODE_ID, ColumnType::INTEGER, true},
+            {TagColumns::TAG_TYPE_ID, ColumnType::INTEGER, true},
         }
     };
 
     struct Tag : BaseModel
     {
-        int map_id;
-        str title;
+        int node_id;
+        int tag_type_id;
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {
-            return TAG_DEFINITION;
+            return NODE_TAG_DEFINITION;
         }
 
         [[nodiscard]] entity_fields get_values() const override;
@@ -68,19 +67,20 @@ namespace mindnet::models
 
         bool operator==(const Tag& other) const
         {
-            return id == other.id && map_id == other.map_id && title == other.title &&
+            return id == other.id && node_id == other.node_id && tag_type_id == other.tag_type_id &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
 
         Tag() = default;
 
-        Tag(int id_, int map_id_, str title_,
-            unixtime created_at_,
-            unixtime updated_at_
+        Tag(int id_, int node_id_, int tag_id_,
+                unixtime created_at_,
+                unixtime updated_at_
         )
-            : map_id(map_id_), title(std::move(title_))
         {
             id = id_;
+            node_id = node_id_;
+            tag_type_id = tag_id_;
             created_at = created_at_;
             updated_at = updated_at_;
         }

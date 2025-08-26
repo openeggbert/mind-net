@@ -32,7 +32,7 @@
 
 namespace mindnet::models::columns
 {
-    struct MapColumns : public BaseColumns
+    struct MapColumns : BaseColumns
     {
         MapColumns() = delete;
 
@@ -44,6 +44,8 @@ namespace mindnet::models::columns
         static constexpr const char* NAME = "name";
         static constexpr const char* DESCRIPTION = "description";
         static constexpr const char* CATEGORY = "category";
+        static constexpr const char* OWNER_ID = "owner_id";
+        static constexpr const char* IS_PUBLIC = "is_public";
     };
 }
 #endif // MAPCOLUMNS_H

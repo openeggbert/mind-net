@@ -28,14 +28,124 @@
 #include "mindnet/Helper.h"
 #include "mindnet/enums/Crudl.h"
 
-namespace mindnet::models::misc {
+namespace mindnet::models::misc
+{
     using std::string;
 
-    struct ModelDefinition {
-        str model_name;
-        bool auto_increment;
-        column_definitions columns;
-        std::set<enums::Crudl> allowed_crudl_rest_operations;
+    /**
+     * Represents the definition of a database model including its name,
+     * auto-increment status, columns and allowed CRUD operations.
+     */
+    struct ModelDefinition
+    {
+    private:
+        str model_name; ///< Name of the model
+        bool auto_increment = false; ///< Whether the model uses auto-incrementing IDs
+        column_definitions columns; ///< Column definitions for the model
+        std::set<enums::Crudl> allowed_crudl_rest_operations; ///< Allowed CRUD operations for REST API
+        bool virtual_table = false;
+
+    public:
+        /**
+         * Constructs a ModelDefinition with the given name
+         * @param name The name for the model
+         */
+        ModelDefinition(const str& name)
+        {
+            model_name = name;
+        };
+
+        // Getters
+        /** @return The model name */
+        [[nodiscard]] const str& get_model_name() const
+        {
+            return model_name;
+        }
+
+        /** @return Whether auto-increment is enabled */
+        [[nodiscard]] const bool get_auto_increment() const
+        {
+            return auto_increment;
+        }
+
+        /** @return The column definitions */
+        [[nodiscard]] const column_definitions& get_columns() const
+        {
+            return columns;
+        }
+
+        /** @return The allowed CRUD operations */
+        [[nodiscard]] const std::set<enums::Crudl>& get_allowed_crudl_rest_operations() const
+        {
+            return allowed_crudl_rest_operations;
+        }
+
+        /** @return True if the model is virtual table otherwise false. */
+        [[nodiscard]] const bool get_virtual_table() const
+        {
+            return virtual_table;
+        }
+
+        // Setters
+        /**
+         * Sets the model name
+         * @param name New model name
+         * @return Reference to this object for method chaining
+         */
+        ModelDefinition& set_name(str name)
+        {
+            model_name = name;
+            return *this;
+        }
+
+        /**
+         * Sets the auto-increment flag
+         * @param value True to enable auto-increment
+         * @return Reference to this object for method chaining
+         */
+        ModelDefinition& set_auto_inc(bool value)
+        {
+            auto_increment = value;
+            return *this;
+        }
+
+        /**
+         * Sets the column definitions and adds standard base columns
+         * @param cols Column definitions to set
+         * @return Reference to this object for method chaining
+         */
+        ModelDefinition& set_columns(column_definitions cols)
+        {
+            cols.emplace(cols.begin(), columns::BaseColumns::UPDATED_AT);
+            cols.emplace(cols.begin(), columns::BaseColumns::CREATED_AT);
+            cols.emplace(cols.begin(), columns::BaseColumns::ID);
+            columns = std::move(cols);
+
+            return *this;
+        }
+
+        /**
+         * Sets the allowed CRUD operations
+         * @param ops Set of allowed operations
+         * @return Reference to this object for method chaining
+         */
+        ModelDefinition& set_operations(std::set<enums::Crudl> ops)
+        {
+            allowed_crudl_rest_operations = std::move(ops);
+            return *this;
+        }
+
+        /**
+         * Configures the virtual table for a database model.
+         *
+         * @param value Boolean.
+         * @return Reference to this object for method chaining
+         */
+        ModelDefinition& set_virtual_table(bool value)
+        {
+            virtual_table = value;
+            return *this;
+        }
     };
 }
 

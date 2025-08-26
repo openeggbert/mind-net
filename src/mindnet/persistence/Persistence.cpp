@@ -8,9 +8,9 @@
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/NodeRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/NodePropertyRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/PropertyRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/TagTypeRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/TagRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/NodeTagRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/NodeLinkRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ExternalLinkRepositoryImplSqlite.h"
 #include <memory>
@@ -30,10 +30,10 @@ namespace mindnet::persistence
         add_repository(map, Map);
         add_repository(node, Node);
         add_repository(content, Content);
-        add_repository(node_property, NodeProperty);
+        add_repository(property, Property);
         //
+        add_repository(tag_type, TagType);
         add_repository(tag, Tag);
-        add_repository(node_tag, NodeTag);
         add_repository(node_link, NodeLink);
         add_repository(external_link, ExternalLink);
     }
@@ -61,19 +61,19 @@ namespace mindnet::persistence
         return get_repository(def.model_name)->create(fields, error);
     }
 
-    entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def)
+    entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, str& error)
     {
-        return get_repository(def.model_name)->read(id);
+        return get_repository(def.model_name)->read(id, error);
     }
 
-    bool Persistence::update(int id, entity_fields& fields, models::misc::ModelDefinition& def)
+    bool Persistence::update(int id, entity_fields& fields, models::misc::ModelDefinition& def, str& error)
     {
-        return get_repository(def.model_name)->update(id, fields);
+        return get_repository(def.model_name)->update(id, fields, error);
     }
 
-    bool Persistence::remove(int id, models::misc::ModelDefinition& def)
+    bool Persistence::remove(int id, models::misc::ModelDefinition& def, str& error)
     {
-        return get_repository(def.model_name)->remove(id);
+        return get_repository(def.model_name)->remove(id, error);
     }
 
     std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, str& error)

@@ -28,6 +28,7 @@
 #include "columns/NodeLinkColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
+#include "mindnet/enums/NodeLinkType.h"
 
 namespace mindnet::models
 {
@@ -45,15 +46,16 @@ namespace mindnet::models
             {NodeLinkColumns::UPDATED_AT, ColumnType::INTEGER, false},
             {NodeLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
             {NodeLinkColumns::TO_NODE_ID, ColumnType::INTEGER, true},
+            {NodeLinkColumns::TYPE, ColumnType::INTEGER, true},
             {NodeLinkColumns::LABEL, ColumnType::TEXT, false},
-        },
-{enums::Crudl::READ,enums::Crudl::LIST}
+        }
     };
 
     struct NodeLink : BaseModel
     {
         int from_node_id;
         int to_node_id;
+        enums::NodeLinkType type;
         str label;
 
         [[nodiscard]] ModelDefinition get_definition() const override
@@ -73,16 +75,17 @@ namespace mindnet::models
         bool operator==(const NodeLink& other) const
         {
             return id == other.id && from_node_id == other.from_node_id && to_node_id == other.to_node_id &&
-                label == other.label && created_at == other.created_at && updated_at == other.updated_at;
+                type == other.type && label == other.label && created_at == other.created_at && updated_at == other.
+                updated_at;
         }
 
         NodeLink() = default;
 
-        NodeLink(int id_, int from_node_id_, int to_node_id_, str label_,
+        NodeLink(int id_, int from_node_id_, int to_node_id_, enums::NodeLinkType type_, str label_,
                  unixtime created_at_,
                  unixtime updated_at_
         )
-            : from_node_id(from_node_id_), to_node_id(to_node_id_), label(std::move(label_))
+            : from_node_id(from_node_id_), to_node_id(to_node_id_), type(type_), label(std::move(label_))
         {
             id = id_;
             created_at = created_at_;

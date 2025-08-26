@@ -77,7 +77,10 @@ cmake --build .
 ./mind_net
 ```
 
-## Entities
+
+## Bugs
+
+- Update of boolean values in SQLite is not working.
 
 ## TODO
 

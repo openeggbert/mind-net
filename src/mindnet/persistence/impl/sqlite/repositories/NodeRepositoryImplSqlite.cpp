@@ -55,8 +55,6 @@ namespace mindnet::impl::sqlite::repositories
         add_int(LAST_SHOWN_AT);
         add_optional_int(EXPIRES_AT, 0);
         add_optional_int(IS_FAVORITE, 0);
-        add_optional_int(IS_REDIRECT, 0);
-
         add_int_foreign_key(REDIRECT_NODE_ID)
 
         add_optional_string(REDIRECT_REASON, "");

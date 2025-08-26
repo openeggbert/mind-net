@@ -1,5 +1,5 @@
 // ========================================
-// 1. API a ENUM definice
+// 1. API and enumeration definitions
 // ========================================
 
 const API_BASE = "http://localhost:8888/api";
@@ -44,8 +44,8 @@ const entitySchemas = {
             {name: "category", type: "text"}
         ]
     },
-    tag: {
-        label: "Tag", titleField: "title", fields: [
+    tag_type: {
+        label: "TagType", titleField: "title", fields: [
             {name: "map_id", type: "number", required: true, foreignKey: "map"},
             {name: "title", type: "text", required: true}
         ]
@@ -78,8 +78,8 @@ const entitySchemas = {
             {name: "node_id", type: "number", foreignKey: "node"}
         ]
     },
-    node_property: {
-        label: "Node Property", titleField: "key", fields: [
+    property: {
+        label: "Property", titleField: "key", fields: [
             {name: "map_id", type: "number", required: true, foreignKey: "map"},
             {name: "node_id", type: "number", required: true, foreignKey: "node"},
             {name: "key", type: "text", required: true},
@@ -88,16 +88,17 @@ const entitySchemas = {
             {name: "is_indexed", type: "checkbox"}
         ]
     },
-    node_tag: {
-        label: "Node Tag", titleField: "id", fields: [
+    tag: {
+        label: "Tag", titleField: "id", fields: [
             {name: "node_id", type: "number", required: true, foreignKey: "node"},
-            {name: "tag_id", type: "number", required: true, foreignKey: "tag"}
+            {name: "tag_type_id", type: "number", required: true, foreignKey: "tag_type"}
         ]
     },
     node_link: {
         label: "Node Link", titleField: "label", fields: [
             {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
             {name: "to_node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "type", type: "number", required: true},
             {name: "label", type: "text"}
         ]
     },
@@ -123,21 +124,29 @@ const entitySchemas = {
 // ========================================
 
 const entities = [
-    'map', 'node', 'content', 'node_property', 'tag', 'node_tag', 'node_link', 'external_link', 'history',
+    'map', 'node', 'content', 'property', 'tag_type', 'tag', 'external_link',
     'user', 'message', 'team', 'team_member', 'discussion', 'comment',
     'suggestion', 'suggestion_review', 'collection', 'collection_node',
-    'question', 'question_review', 'question_sm2_state', 'manual_link', 'parsed_link', 'flag'
+    'question', 'question_review', 'question_sm2_state', 'node_link', 'flag',
+    'history'
 ];
-const mainEntities = ['map', 'node', 'node_tag', 'flag', 'node_property'];
+const mainEntities = ['map', 'node', 'tag', 'flag', 'property'];
+const linkEntities = ['node_link', 'external_link'];
+const questionEntities = ['question', 'question_review', 'question_sm2_state'];
+const collaborationEntities = ['user', 'team', 'team_member', 'message', 'discussion', 'comment'];
+const suggestionEntities = ['suggestion', 'suggestion_review'];
+const notMainEntities = [linkEntities, questionEntities, collaborationEntities, suggestionEntities];
+
+
 const actions = ['list', 'create', 'read', 'update', 'explore'];
 
 const entityLabels = {
-    map: 'Map', node: 'Node', content: 'Content', node_property: 'Node Property',
-    tag: 'Tag', node_tag: 'Node Tag', node_link: 'Node Link', external_link: 'External Link', history: 'History',
+    map: 'Map', node: 'Node', content: 'Content', property: 'Property',
+    tag_type: 'Tag Type', tag: 'Tag', external_link: 'External Link', history: 'History',
     user: 'User', message: 'Message', team: 'Team', team_member: 'Team Member', discussion: 'Discussion', comment: 'Comment',
     suggestion: 'Suggestion', suggestion_review: 'Suggestion Review', collection: 'Collection', collection_node: 'Collection Node',
     question: 'Question', question_review: 'Question Review', question_sm2_state: 'Question SM2 State',
-    manual_link: 'Manual Link', parsed_link: 'Parsed Link', flag: 'Flag'
+    node_link: 'Node Link', flag: 'Flag'
 };
 
 
@@ -561,19 +570,44 @@ function changePage(page) {
 // ========================================
 // 7. Navigation a menu
 // ========================================
-
 function renderEntityNav() {
     entityNav.innerHTML = "";
 
-    // Prepare main entities
-    let shownMainEntities = [...mainEntities];
+    // --- If the selected entity is in (linkEntities, questionEntities, collaborationEntities or suggestionEntities), show it on the left ---
+    if (selectedEntity &&
+        (
+            linkEntities.includes(selectedEntity) ||
+            questionEntities.includes(selectedEntity) ||
+            collaborationEntities.includes(selectedEntity) ||
+            suggestionEntities.includes(selectedEntity)
+        )
+    ) {
+        const link = document.createElement('a');
+        link.href = `?entity=${encodeURIComponent(selectedEntity)}`;
+        link.textContent = entityLabels[selectedEntity];
+        link.classList.add('active');
+        link.onclick = e => {
+            e.preventDefault();
+            selectEntity(selectedEntity);
+            history.pushState({}, "", `?entity=${encodeURIComponent(selectedEntity)}`);
+            renderEntityNav();
+        };
+        entityNav.appendChild(link);
+    }
 
-    // If the selected entity is in Other Entities, add it at the top of main menu
-    if (selectedEntity && !mainEntities.includes(selectedEntity)) {
+    // --- MAIN entities ---
+    let shownMainEntities = [...mainEntities];
+    if (
+        selectedEntity &&
+        !mainEntities.includes(selectedEntity) &&
+        !linkEntities.includes(selectedEntity) &&
+        !questionEntities.includes(selectedEntity) &&
+        !collaborationEntities.includes(selectedEntity) &&
+        !suggestionEntities.includes(selectedEntity)
+    ) {
         shownMainEntities = [selectedEntity, ...mainEntities];
     }
 
-    // Main menu
     shownMainEntities.forEach(entity => {
         const link = document.createElement('a');
         link.href = `?entity=${encodeURIComponent(entity)}`;
@@ -583,28 +617,98 @@ function renderEntityNav() {
             selectEntity(entity);
             history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
             renderEntityNav();
-        }
+        };
         if (entity === selectedEntity) link.classList.add('active');
         entityNav.appendChild(link);
     });
 
-    // Dropdown for other entities
-    const otherEntities = entities.filter(e => !mainEntities.includes(e) && e !== selectedEntity);
+    // --- entities ---
+    notMainEntities.forEach((entity, index) =>
+    {
+        const wrapper = document.createElement('div');
+        wrapper.className = "dropdown";
+
+        const button_ = document.createElement('a');
+        button_.href = "#";
+        button_.textContent = "";
+        switch (index) {
+            case 0: button_.textContent = "Links ▼"; break;
+            case 1: button_.textContent = "Questions ▼"; break;
+            case 2: button_.textContent = "Collaboration ▼"; break;
+            case 3: button_.textContent = "Suggestions ▼"; break;
+            default: console.error("Too many not main entities");
+        }
+        button_.onclick = e => {
+            e.preventDefault();
+
+            // close all other dropdowns
+            document.querySelectorAll('.dropdown-content.show').forEach(el => {
+                if (el !== content_) {
+                    el.classList.remove('show');
+                }
+            });
+
+            // toggle current
+            content_.classList.toggle('show');
+        };
+
+
+        const content_ = document.createElement('div');
+        content_.className = "dropdown-content";
+        entity.forEach(entity => {
+            if (entity === selectedEntity) return;
+            const link = document.createElement('a');
+            link.href = `?entity=${encodeURIComponent(entity)}`;
+            link.textContent = entityLabels[entity];
+            link.onclick = e => {
+                e.preventDefault();
+                selectEntity(entity);
+                content_.classList.remove('show');
+                history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
+                renderEntityNav();
+            };
+            content_.appendChild(link);
+        });
+        wrapper.appendChild(button_);
+        wrapper.appendChild(content_);
+        entityNav.appendChild(wrapper);
+    });
+
+    // --- OTHER entities ---
+    const otherEntities = entities.filter(
+        e => !mainEntities.includes(e) &&
+            !linkEntities.includes(e) &&
+            !questionEntities.includes(e) &&
+            !collaborationEntities.includes(e) &&
+            !suggestionEntities.includes(e) &&
+            e !== selectedEntity
+    );
+
+
     if (otherEntities.length > 0) {
         const moreWrapper = document.createElement('div');
         moreWrapper.className = "dropdown";
 
         const moreButton = document.createElement('a');
         moreButton.href = "#";
-        moreButton.textContent = "Other Entities ▼";
+        moreButton.textContent = "Other ▼";
         moreButton.onclick = e => {
             e.preventDefault();
-            dropdownContent.classList.toggle('show'); // toggle dropdown visibility
+
+            // close all other dropdowns
+            document.querySelectorAll('.dropdown-content.show').forEach(el => {
+                if (el !== dropdownContent) {
+                    el.classList.remove('show');
+                }
+            });
+
+            // toggle current
+            dropdownContent.classList.toggle('show');
         };
+
 
         const dropdownContent = document.createElement('div');
         dropdownContent.className = "dropdown-content";
-
         otherEntities.forEach(entity => {
             const link = document.createElement('a');
             link.href = `?entity=${encodeURIComponent(entity)}`;
@@ -612,10 +716,10 @@ function renderEntityNav() {
             link.onclick = e => {
                 e.preventDefault();
                 selectEntity(entity);
-                dropdownContent.classList.remove('show'); // collapse dropdown after selection
+                dropdownContent.classList.remove('show');
                 history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
-                renderEntityNav(); // re-render to highlight selected entity
-            }
+                renderEntityNav();
+            };
             dropdownContent.appendChild(link);
         });
 

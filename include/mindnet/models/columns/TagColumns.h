@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef TAGCOLUMNS_H
-#define TAGCOLUMNS_H
+#ifndef NODETAGCOLUMNS_H
+#define NODETAGCOLUMNS_H
 
 #include "BaseColumns.h"
 #include "mindnet/Helper.h"
@@ -32,7 +32,7 @@
 
 namespace mindnet::models::columns
 {
-    struct TagColumns : public BaseColumns
+    struct TagColumns : BaseColumns
     {
         TagColumns() = delete;
 
@@ -41,8 +41,8 @@ namespace mindnet::models::columns
 
         static constexpr const char* MODEL_NAME = "tag";
 
-        static constexpr const char* MAP_ID = "map_id";
-        static constexpr const char* TITLE = "title";
+        static constexpr const char* NODE_ID = "node_id";
+        static constexpr const char* TAG_TYPE_ID = "tag_type_id";
     };
 }
-#endif // TAGCOLUMNS_H
+#endif // NODETAGCOLUMNS_H

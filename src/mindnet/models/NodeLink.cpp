@@ -14,6 +14,7 @@ namespace mindnet::models
         result.push_back(cast64(updated_at));
         result.push_back(from_node_id);
         result.push_back(to_node_id);
+        result.push_back(castint(type));
         result.push_back(label);
         return result;
     }
@@ -29,6 +30,7 @@ namespace mindnet::models
         updated_at = number();
         from_node_id = number();
         to_node_id = number();
+        type = static_cast<enums::NodeLinkType>(number());
         label = text();
     };
 }

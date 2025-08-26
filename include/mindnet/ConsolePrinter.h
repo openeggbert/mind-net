@@ -31,6 +31,7 @@ namespace mindnet
         std::ostringstream buffer;
         std::string prefix;
         std::string suffix;
+        std::string last_buffer_str;
 
     public:
         ConsoleColor color = ConsoleColor::UNKNOWN;
@@ -61,10 +62,25 @@ namespace mindnet
         {
             if (manip == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
             {
+                // 1. Flush current buffer
                 flush(false);
+
+                // 2. Print warning in red on a new line
+                ConsoleColor old_color = color;
+                color = ConsoleColor::RED;
+                std::cout << "\nConsolePrinter: !!!endl used instead of commit: " + last_buffer_str;
+                color = old_color;
+
+                // 3. Standard endl
+                manip(std::cout); // prints '\n' and flush
+            }
+            else
+            {
+                manip(std::cout); // other manipulator
             }
             return *this;
         }
+
 
         void set_timestamp_function(print_timestamp_function fn);
 

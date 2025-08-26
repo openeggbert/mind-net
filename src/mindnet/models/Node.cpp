@@ -23,7 +23,6 @@ namespace mindnet::models
         result.push_back(cast64(last_shown_at));
         result.push_back(cast64(expires_at));
         result.push_back(is_favorite);
-        result.push_back(is_redirect);
         result.push_back(redirect_node_id);
         result.push_back(redirect_reason);
         result.push_back(cast64(importance));
@@ -51,7 +50,6 @@ namespace mindnet::models
         last_shown_at = number();
         expires_at = number();
         is_favorite = number();
-        is_redirect = number();
         redirect_node_id = number();
         redirect_reason = text();
         importance = static_cast<enums::Importance>(number());

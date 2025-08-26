@@ -22,29 +22,29 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODEPROPERTYCOLUMNS_H
-#define NODEPROPERTYCOLUMNS_H
+#ifndef DISCUSSIONCOLUMNS_H
+#define DISCUSSIONCOLUMNS_H
+
 
 #include "BaseColumns.h"
 
 
 namespace mindnet::models::columns
 {
-    struct NodePropertyColumns : public BaseColumns
+    struct DiscussionColumns : BaseColumns
     {
-        NodePropertyColumns() = delete;
+        DiscussionColumns() = delete;
 
-        NodePropertyColumns(const NodePropertyColumns&) = delete;
-        NodePropertyColumns& operator=(const NodePropertyColumns&) = delete;
+        DiscussionColumns(const DiscussionColumns&) = delete;
+        DiscussionColumns& operator=(const DiscussionColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "node_property";
+        static constexpr const char* MODEL_NAME = "discussion";
 
-        static constexpr const char* MAP_ID = "map_id";
-        static constexpr const char* NODE_ID = "node_id";
-        static constexpr const char* KEY = "key";
-        static constexpr const char* VALUE = "value";
-        static constexpr const char* VALUE_TYPE = "value_type";
-        static constexpr const char* IS_INDEXED = "is_indexed";
+        static constexpr const char* TEAM_ID = "team_id";
+        static constexpr const char* TITLE = "title";
+        static constexpr const char* CREATED_BY = "created_by";
+        static constexpr const char* IS_PINNED = "is_pinned";
+        static constexpr const char* EDITED_AT = "edited_at";
     };
 }
-#endif // NODEPROPERTYCOLUMNS_H
+#endif // DISCUSSIONCOLUMNS_H

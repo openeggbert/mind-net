@@ -53,5 +53,12 @@ namespace mindnet::enums
     {
         return content_format_to_string(static_cast<ContentFormat>(format));
     }
+
+    inline models::misc::EnumDefinition content_format_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            content_format_to_string, 3, 0, 1, 2
+        };
+    }
 } // namespace mindnet::enums
 #endif // CONTENTFORMAT_H

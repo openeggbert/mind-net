@@ -58,7 +58,6 @@ namespace mindnet::models
             {NodeColumns::LAST_SHOWN_AT, ColumnType::INTEGER, true},
             {NodeColumns::EXPIRES_AT, ColumnType::INTEGER, false},
             {NodeColumns::IS_FAVORITE, ColumnType::INTEGER, false},
-            {NodeColumns::IS_REDIRECT, ColumnType::INTEGER, false},
             {NodeColumns::REDIRECT_NODE_ID, ColumnType::INTEGER, false},
             {NodeColumns::REDIRECT_REASON, ColumnType::TEXT, false},
             {NodeColumns::IMPORTANCE, ColumnType::INTEGER, false},
@@ -79,7 +78,6 @@ namespace mindnet::models
         unixtime last_shown_at;
         unixtime expires_at;
         bool is_favorite;
-        bool is_redirect;
         int redirect_node_id;
         str redirect_reason;
         enums::Importance importance;
@@ -106,7 +104,7 @@ namespace mindnet::models
                 content_id == other.content_id && parent_node_id == other.parent_node_id &&
                 type == other.type && visibility == other.visibility &&
                 last_shown_at == other.last_shown_at && expires_at == other.expires_at &&
-                is_favorite == other.is_favorite && is_redirect == other.is_redirect &&
+                is_favorite == other.is_favorite &&
                 redirect_node_id == other.redirect_node_id && redirect_reason == other.redirect_reason &&
                 importance == other.importance && difficulty == other.difficulty &&
                 created_at == other.created_at && updated_at == other.updated_at;
@@ -125,7 +123,7 @@ namespace mindnet::models
               title(std::move(title_)), content_id(content_id_), parent_node_id(parent_node_id_),
               type(static_cast<enums::NodeType>(type_)), visibility(static_cast<enums::Visibility>(visibility_)),
               last_shown_at(last_shown_at_), expires_at(expires_at_), is_favorite(is_favorite_),
-              is_redirect(is_redirect_), redirect_node_id(redirect_node_id_),
+              redirect_node_id(redirect_node_id_),
               redirect_reason(std::move(redirect_reason_)), importance(static_cast<enums::Importance>(importance_)),
               difficulty(static_cast<enums::Difficulty>(difficulty_))
         {

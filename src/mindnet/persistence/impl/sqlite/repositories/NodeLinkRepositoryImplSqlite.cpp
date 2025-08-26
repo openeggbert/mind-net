@@ -44,6 +44,7 @@ namespace mindnet::impl::sqlite::repositories
 
         add_int(FROM_NODE_ID);
         add_int(TO_NODE_ID);
+        add_int(TYPE)
         add_optional_string(LABEL, "");
         return fields;
     }

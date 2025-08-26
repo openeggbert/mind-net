@@ -22,12 +22,12 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODEPROPERTYREPOSITORYIMPLSQLITE_H
-#define NODEPROPERTYREPOSITORYIMPLSQLITE_H
+#ifndef TAGTYPEREPOSITORYIMPLSQLITE_H
+#define TAGTYPEREPOSITORYIMPLSQLITE_H
 
 
-#include "mindnet/persistence/api/NodePropertyRepository.h"
-#include "mindnet/models/NodeProperty.h"
+#include "mindnet/persistence/api/TagTypeRepository.h"
+#include "mindnet/models/TagType.h"
 #include <vector>
 
 #include "mindnet/enums/Crudl.h"
@@ -36,14 +36,13 @@ namespace mindnet::impl::sqlite::repositories
 {
     using std::vector;
 
-    class NodePropertyRepositoryImplSqlite : public persistence::api::NodePropertyRepository
+    class TagTypeRepositoryImplSqlite : public persistence::api::TagTypeRepository
     {
     public:
-        NodePropertyRepositoryImplSqlite() = default;
-        ~NodePropertyRepositoryImplSqlite() override;
+        TagTypeRepositoryImplSqlite() = default;
+        ~TagTypeRepositoryImplSqlite() override;
 
         def_virtual_irepository_impl_h_methods
     };
 }
-// MAPREPOSITORYIMPLSQLITE_H
-#endif // NODEPROPERTYREPOSITORYIMPLSQLITE_H
+#endif // TAGTYPEREPOSITORYIMPLSQLITE_H

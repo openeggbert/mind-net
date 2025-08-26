@@ -72,14 +72,15 @@ namespace mindnet::routes
             if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::READ))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             entity_fields values;
+            str error;
             try
             {
-                values = db->read(id, def);
+                values = db->read(id, def, error);
             }
             catch (std::runtime_error& e)
             {
                 return crow::response(
-                    404, "The " + def.model_name + " with id " + std::to_string(id) + " was not found.");
+                    404, "The " + def.model_name + " with id " + std::to_string(id) + " was not found. " + error);
             }
 
             str fields = req.url_params.get("fields") ? req.url_params.get("fields"): "";
@@ -104,6 +105,10 @@ namespace mindnet::routes
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
+            if (id != body["id"].i())
+            {
+                return crow::response(400, "Invalid input. id in body is not equal to id in url.");
+            }
             entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::UPDATE, def);
             if (fields.size() != def.columns.size())
             {
@@ -113,11 +118,12 @@ namespace mindnet::routes
                     + def.model_name + ".");
             }
 
-            bool success = db->update(id, fields, def);
+            str error;
+            bool success = db->update(id, fields, def, error);
             if (!success)
             {
                 return crow::response(
-                    404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
+                    404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found. " + error);
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
@@ -132,12 +138,13 @@ namespace mindnet::routes
             if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
                                                                    contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
-            bool success = db->remove(id, def);
+            str error;
+            bool success = db->remove(id, def, error);
 
             if (!success)
             {
                 return crow::response(
-                    404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found.");
+                    404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found. " + error);
             }
 
             return crow::response(200, def.model_name + " with id " + std::to_string(id) + " was deleted.");

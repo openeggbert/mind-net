@@ -31,7 +31,7 @@
 
 namespace mindnet::models::columns
 {
-    struct ContentColumns : public BaseColumns
+    struct ContentColumns : BaseColumns
     {
         ContentColumns() = delete;
 
@@ -42,6 +42,7 @@ namespace mindnet::models::columns
 
         static constexpr const char* CONTENT = "content";
         static constexpr const char* FORMAT = "format";
+        static constexpr const char* MIME_TYPE = "mime_type";
         static constexpr const char* VERSION = "version";
         static constexpr const char* NODE_ID = "node_id";
     };

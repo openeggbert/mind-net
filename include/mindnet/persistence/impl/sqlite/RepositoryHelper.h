@@ -40,11 +40,11 @@ namespace mindnet::persistence::impl::sqlite
 
     int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, str& error);
 
-    entity_fields read_model(models::misc::ModelDefinition& def, int id);
+    entity_fields read_model(models::misc::ModelDefinition& def, int id, str& error);
 
-    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields);
+    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, str& error);
 
-    bool delete_model(models::misc::ModelDefinition& def, int id);
+    bool delete_model(models::misc::ModelDefinition& def, int id, str& error);
 
     std::vector<entity_fields> list_models(
         models::misc::ModelDefinition& def,

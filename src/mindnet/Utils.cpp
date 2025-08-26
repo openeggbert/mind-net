@@ -176,7 +176,7 @@ namespace mindnet
         }
         catch (SQLite::Exception& e)
         {
-            err << "Exception during SQLite statement execution: " << e.what() << std::endl;
+            err << "Exception during SQLite statement execution: " << e.what() << commit;
             throw std::runtime_error(e.what());
         }
     }
@@ -373,7 +373,7 @@ namespace mindnet
             {
                 using T = std::decay_t<decltype(val)>;
 
-                err << "binding index " << i << " with value \"" << val << "\"" << std::endl;
+                debug << "binding index " << i << " with value \"" << val << "\"" << commit;
 
                 int index = static_cast<int>(i + 1 + (auto_increment ? -1 : 0));
                 if constexpr (std::is_same_v<T, std::string>)

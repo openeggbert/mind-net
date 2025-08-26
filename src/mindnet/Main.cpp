@@ -14,14 +14,14 @@
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/controllers/ModelController.h"
 #include "mindnet/models/History.h"
-#include "mindnet/models/Tag.h"
+#include "mindnet/models/TagType.h"
 #include "mindnet/models/Map.h"
 #include "mindnet/models/Content.h"
 #include "mindnet/models/Node.h"
 #include "mindnet/models/ExternalLink.h"
 #include "mindnet/models/NodeLink.h"
-#include "mindnet/models/NodeTag.h"
-#include "mindnet/models/NodeProperty.h"
+#include "mindnet/models/Tag.h"
+#include "mindnet/models/Property.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
 
@@ -153,11 +153,11 @@ bool commands_function_start(
     add_controller(MAP)
     add_controller(CONTENT)
     add_controller(NODE)
-    add_controller(TAG)
+    add_controller(TAG_TYPE)
     add_controller(EXTERNAL_LINK)
     add_controller(NODE_LINK)
     add_controller(NODE_TAG)
-    add_controller(NODE_PROPERTY)
+    add_controller(PROPERTY)
 
     if (custom_port)
     {

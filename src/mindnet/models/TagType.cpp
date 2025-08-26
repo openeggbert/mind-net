@@ -2,22 +2,22 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/models/NodeTag.h"
+#include "mindnet/models/TagType.h"
 
 namespace mindnet::models
 {
-    entity_fields NodeTag::get_values() const
+    entity_fields TagType::get_values() const
     {
         entity_fields result;
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
-        result.push_back(node_id);
-        result.push_back(tag_id);
+        result.push_back(map_id);
+        result.push_back(title);
         return result;
     }
 
-    void NodeTag::from_values(const entity_fields& values)
+    void TagType::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -26,7 +26,7 @@ namespace mindnet::models
         set_id(number());
         created_at = number();
         updated_at = number();
-        node_id = number();
-        tag_id = number();
+        map_id = number();
+        title = text();
     };
 }

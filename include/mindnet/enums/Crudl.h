@@ -58,6 +58,13 @@ namespace mindnet::enums
     {
         return crudl_to_string(static_cast<Crudl>(crudl));
     }
+
+    inline models::misc::EnumDefinition crudl_to_enum_definition()
+    {
+        return models::misc::EnumDefinition{
+            crudl_to_string, 6, 0, 1, 2, 3, 4, 5
+        };
+    }
 } // namespace mindnet::enums
 
 #endif // CRUDL_H
