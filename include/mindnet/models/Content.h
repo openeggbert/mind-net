@@ -24,74 +24,61 @@
 
 #include "misc/BaseModel.h"
 #include "columns/ContentColumns.h"
-#include "crow/json.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ContentFormat.h"
 
+// ***** DEFINE SECTION : START *****
+#define Model Content
+#define MODEL CONTENT
+// ***** DEFINE SECTION : END *****
+
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::ContentColumns;
+    using bm = misc::BaseModel;
+    using cols = columns::ContentColumns;
+    using misc::def;
+    using misc::coldef;
 
-    static ModelDefinition CONTENT_DEFINITION = {
-        ContentColumns::MODEL_NAME,
-        true,
-        {
-            {ContentColumns::ID, ColumnType::INTEGER, true},
-            {ContentColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {ContentColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {ContentColumns::CONTENT, ColumnType::TEXT, true},
-            {ContentColumns::FORMAT, ColumnType::TEXT, true},
-            {ContentColumns::VERSION, ColumnType::INTEGER, true},
-            {ContentColumns::NODE_ID, ColumnType::INTEGER, true},
-        }
+    inline def CONTENT_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_columns(
+            {
+                coldef(cols::CONTENT).set_mandatory(true),
+                coldef(cols::FORMAT).set_enum_definition(enums::content_format_to_enum_definition()).
+                                     set_mandatory(true),
+                coldef(cols::MIME_TYPE).set_mandatory(true),
+                coldef(cols::VERSION).integer(),
+                coldef(cols::NODE_ID).set_foreign_key("enum")
+            }
+        );
 
-    };
+struct Content : bm
+{
+    str content;
+    mindnet::enums::ContentFormat format;
+    str mime_type;
+    str version;
+    str node_id;
 
-    struct Content : BaseModel
+    create_model_h_methods(Model, MODEL)
+
+    bool operator==(const Model & other) const
     {
-        str content;
-        enums::ContentFormat format;
-        str version;
-        str node_id;
+        return id == other.id &&
+            created_at == other.created_at &&
+            updated_at == other.updated_at &&
+            content == other.content &&
+            format == other.format &&
+            version == other.version &&
+            node_id == other.node_id;
+    }
 
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return CONTENT_DEFINITION;
-        }
+    Content() = default;
 
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
+};
 
-        friend std::ostream& operator<<(std::ostream& os, const Content& idea)
-        {
-            os << idea.to_json();
-            return os;
-        }
-
-        bool operator==(const Content& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                content == other.content &&
-                format == other.format &&
-                version == other.version &&
-                node_id == other.node_id;
-        }
-
-        Content() = default;
-
-        Content(const str& content, const int& format, const str& version, const str& node_id)
-            : content(content),
-              format(static_cast<enums::ContentFormat>(format)),
-              version(version),
-              node_id(node_id)
-        {
-        }
-    };
 }
 
+#undef Model
+#undef MODEL
 #endif // CONTENT_H

@@ -20,53 +20,42 @@
 #ifndef EXTERNAL_LINK_H
 #define EXTERNAL_LINK_H
 
-
 #include <string>
 #include <utility>
 
+#include "TagType.h"
 #include "misc/BaseModel.h"
 #include "columns/ExternalLinkColumns.h"
-#include "crow/json.h"
 #include "mindnet/Helper.h"
+// ***** DEFINE SECTION : START *****
+#define Model ExternalLink
+#define MODEL EXTERNAL_LINK
+// ***** DEFINE SECTION : END *****
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::ExternalLinkColumns;
 
-    static ModelDefinition EXTERNAL_LINK_DEFINITION = {
-        ExternalLinkColumns::MODEL_NAME,
-        true,
+    using bm = misc::BaseModel;
+    using cols = columns::ExternalLinkColumns;
+    using misc::def;
+    using misc::coldef;
+
+    inline def EXTERNAL_LINK_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_operations({enums::Crudl::READ,enums::Crudl::LIST})
+        .set_columns(
         {
-            {ExternalLinkColumns::ID, ColumnType::INTEGER, true},
-            {ExternalLinkColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {ExternalLinkColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {ExternalLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
-            {ExternalLinkColumns::TO_URL, ColumnType::TEXT, true},
-        },
-        {enums::Crudl::READ,enums::Crudl::LIST}
-    };
+            coldef(cols::FROM_NODE_ID).set_foreign_key("node"),
+            coldef(cols::TO_URL).set_mandatory(true)
+        });
 
-    struct ExternalLink : BaseModel
+    ;
+
+    struct ExternalLink : bm
     {
         int from_node_id;
         str to_url;
-
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return EXTERNAL_LINK_DEFINITION;
-        }
-
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const ExternalLink& map)
-        {
-            os << map.to_json();
-            return os;
-        }
+        create_model_h_methods(Model, MODEL)
 
         bool operator==(const ExternalLink& other) const
         {
@@ -75,18 +64,9 @@ namespace mindnet::models
         }
 
         ExternalLink() = default;
-
-        ExternalLink(int id_, int from_node_id_, str to_url_,
-                     unixtime created_at_,
-                     unixtime updated_at_
-        )
-            : from_node_id(from_node_id_), to_url(std::move(to_url_))
-        {
-            id = id_;
-            created_at = created_at_;
-            updated_at = updated_at_;
-        }
     };
 }
 
+#undef Model
+#undef MODEL
 #endif // EXTERNAL_LINK_H

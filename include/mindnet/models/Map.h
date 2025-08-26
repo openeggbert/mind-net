@@ -20,54 +20,45 @@
 #ifndef MAP_H
 #define MAP_H
 
-
 #include <string>
 #include <utility>
 
 #include "misc/BaseModel.h"
 #include "columns/MapColumns.h"
-#include "crow/json.h"
 #include "mindnet/Helper.h"
+
+// ***** DEFINE SECTION : START *****
+#define Model Map
+#define MODEL MAP
+// ***** DEFINE SECTION : END *****
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::MapColumns;
+    using bm = misc::BaseModel;
+    using cols = columns::MapColumns;
+    using misc::def;
+    using misc::coldef;
 
-    static ModelDefinition MAP_DEFINITION = {
-        MapColumns::MODEL_NAME,
-        true,
-        {
-            {MapColumns::ID, ColumnType::INTEGER, true},
-            {MapColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {MapColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {MapColumns::NAME, ColumnType::TEXT, true},
-            {MapColumns::DESCRIPTION, ColumnType::TEXT, false},
-            {MapColumns::CATEGORY, ColumnType::TEXT, false},
-        }
-    };
+    inline def MAP_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_columns(
+            {
+                coldef(cols::NAME).set_mandatory().set_unique(),
+                coldef(cols::DESCRIPTION),
+                coldef(cols::CATEGORY),
+                coldef(cols::OWNER_ID).set_foreign_key("user"),
+                coldef(cols::IS_PUBLIC).bool_column()
 
-    struct Map : BaseModel
+            });
+
+
+    struct Map : bm
     {
         str name;
         str description;
         str category;
 
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return MAP_DEFINITION;
-        }
-
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const Map& map)
-        {
-            os << map.to_json();
-            return os;
-        }
+        create_model_h_methods(Model, MODEL)
 
         bool operator==(const Map& other) const
         {
@@ -77,17 +68,8 @@ namespace mindnet::models
 
         Map() = default;
 
-        Map(int id_, str name_, str description_, str category_,
-            unixtime created_at_,
-            unixtime updated_at_
-        )
-            : name(std::move(name_)), description(std::move(description_)), category(std::move(category_))
-        {
-            id = id_;
-            created_at = created_at_;
-            updated_at = updated_at_;
-        }
     };
 }
-
+#undef Model
+#undef MODEL
 #endif // MAP_H

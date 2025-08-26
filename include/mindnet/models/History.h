@@ -56,17 +56,14 @@ namespace mindnet::models
     {
         History() = default;
 
-        // ***** DEFINE FIELDS : START *****
         str table_name;
         int record_id{};
         enums::Crudl operation{};
         str data_json;
         str reason;
-        // ***** DEFINE FIELDS : END *****
 
         create_model_h_methods(Model, MODEL)
 
-        // ***** Implement methods operator== : START *****
         bool operator==(const Model& other) const
         {
             return id == other.id &&
@@ -78,8 +75,6 @@ namespace mindnet::models
                 data_json == other.data_json &&
                 reason == other.reason;
         }
-
-        // ***** Implement methods operator== : END *****
     };
 }
 #undef Model

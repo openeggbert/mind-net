@@ -155,7 +155,7 @@ CREATE TABLE map (
     --
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
-    category TEXT DEFAULT NULL,
+    category TEXT,
     owner_id INTEGER,
     is_public BOOLEAN DEFAULT 0,
 	FOREIGN KEY(owner_id) REFERENCES user(id)
@@ -196,7 +196,7 @@ CREATE TABLE content (
     --
 	content TEXT NOT NULL,
 	format INTEGER DEFAULT 0 CHECK (format IN (0, 1, 2)),
-    mime_type TEXT,
+    mime_type TEXT NOT NULL,
     version INTEGER DEFAULT 1,
     node_id INTEGER,
 

@@ -30,7 +30,7 @@ namespace mindnet::models::misc
     {
     private:
         std::string column_name;
-        mindnet::enums::ColumnType column_type;
+        enums::ColumnType column_type;
         bool mandatory = false;
         bool primary_key = false;
         std::string foreign_key;
@@ -177,6 +177,11 @@ namespace mindnet::models::misc
             set_column_type(mindnet::enums::ColumnType::TEXTAREA);
             return *this;
         }
+        ColumnDefinition& bool_column()
+        {
+            set_column_type(mindnet::enums::ColumnType::BLOB);
+            return *this;
+        }
 
 
         /**
@@ -189,6 +194,12 @@ namespace mindnet::models::misc
             mandatory = value;
             return *this;
         }
+        ColumnDefinition& set_mandatory()
+        {
+            set_mandatory(true);
+            return *this;
+        }
+
 
         /**
      * Sets the enum definition
@@ -215,6 +226,11 @@ namespace mindnet::models::misc
         ColumnDefinition& set_unique(bool value)
         {
             unique = value;
+            return *this;
+        }
+        ColumnDefinition& set_unique()
+        {
+            set_unique(true);
             return *this;
         }
     };
