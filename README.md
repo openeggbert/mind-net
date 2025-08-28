@@ -11,8 +11,35 @@ Used technologies:
 * SQLite
 * CMake
 
-Entities:
-* TODO
+## Screenshots
+
+### List nodes
+
+![List nodes](screenshots/screen_list_nodes.jpg "List nodes")
+
+### Read node
+
+![Read node](screenshots/screen_read_node.jpg "Read node")
+
+### Create node
+
+![Create node](screenshots/screen_create_node.jpg "Create node")
+
+### Delete node
+
+![Delete node](screenshots/screen_delete_node.jpg "Delete node")
+
+### List properties
+
+![List properties](screenshots/screen_list_properties.jpg "List properties")
+
+### Graph demo
+
+![Graph demo](screenshots/screen_graph_demo.jpg "Graph demo")
+
+### Calling get list for node
+
+![Calling get list for node](screenshots/screen_calling_get_list_for_node.jpg "Calling get list for node")
 
 ## How to build
 
@@ -48,6 +75,8 @@ cmake --build .
 # Run the application
 ./mind_net
 ```
+
+## Entities
 
 ## TODO
 
