@@ -9,6 +9,7 @@ Requirements:
 Used technologies:
 * C++17
 * SQLite
+* Crow
 * CMake
 
 ## Screenshots
