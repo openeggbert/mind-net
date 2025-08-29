@@ -33,7 +33,7 @@ namespace mindnet::routes
         auto create_lambda_function = [&db, &def](const crow::request& req)
         {
             trace << "Create lambda function called" << commit;
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
+            if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.
                                                                    contains(Crudl::CREATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
@@ -69,7 +69,7 @@ namespace mindnet::routes
         auto read_lambda_function = [&db, &def, &split_string_by_commas](const crow::request& req, int id)
         {
             trace << "Read lambda function called" << commit;
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::READ))
+            if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.contains(Crudl::READ))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             entity_fields values;
             str error;
@@ -94,7 +94,7 @@ namespace mindnet::routes
         auto update_lambda_function = [&db, &def](const crow::request& req, int id)
         {
             trace << "Update lambda function called" << commit;
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
+            if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.
                                                                    contains(Crudl::UPDATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
@@ -135,7 +135,7 @@ namespace mindnet::routes
         auto delete_lambda_function = [&db, &def](int id)
         {
             trace << "Delete lambda function called" << commit;
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.
+            if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.
                                                                    contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             str error;
@@ -153,7 +153,7 @@ namespace mindnet::routes
         auto list_lambda_function = [&db, &def, &split_string_by_commas](const crow::request& req)
         {
             trace << "List lambda function called" << commit;
-            if (!def.allowed_crudl_rest_operations.empty() && !def.allowed_crudl_rest_operations.contains(Crudl::LIST))
+            if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.contains(Crudl::LIST))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             int page_number = req.url_params.get("page_number") ? std::stoi(req.url_params.get("page_number")) : 1;
             int page_size = req.url_params.get("page_size") ? std::stoi(req.url_params.get("page_size")) : 20;

@@ -36,6 +36,7 @@ namespace mindnet::models::misc
         std::string foreign_key;
         std::optional<EnumDefinition> enum_definition;
         bool unique = false;
+        std::string default_value;
 
         bool ends_with_id(const char* str)
         {
@@ -131,6 +132,10 @@ namespace mindnet::models::misc
         [[nodiscard]] const bool get_unique() const
         {
             return unique;
+        }
+        [[nodiscard]] const std::string get_default_value() const
+        {
+            return default_value;
         }
 
         // Setters
@@ -231,6 +236,11 @@ namespace mindnet::models::misc
         ColumnDefinition& set_unique()
         {
             set_unique(true);
+            return *this;
+        }
+        ColumnDefinition& set_default_value(std::string value)
+        {
+            default_value = value;
             return *this;
         }
     };

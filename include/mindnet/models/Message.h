@@ -17,92 +17,93 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef HISTORY_H
-#define HISTORY_H
+#ifndef MESSAGE_H
+#define MESSAGE_H
+
 
 #include <string>
 
 #include "misc/BaseModel.h"
-#include "columns/HistoryColumns.h"
-#include "columns/MapColumns.h"
+#include "columns/MessageColumns.h"
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/Crudl.h"
-#include "mindnet/enums/NodeType.h"
+
+// ***** DEFINE TWO MACROS : START *****
+#define Model Message
+#define MODEL MESSAGE
+// ***** DEFINE TWO MACROS : END *****
 
 namespace mindnet::models
 {
-    // *** Definition of model starts ***
-    using type = enums::ColumnType;
-    using cols = columns::HistoryColumns;
-    using coldef = misc::ColumnDefinition;
-    using def = misc::ModelDefinition;
-    static def HISTORY_DEFINITION =
+    using bm = misc::BaseModel;
+    using cols = columns::MessageColumns;
+    using misc::def;
+    using misc::coldef;
+
+    inline def MESSAGE_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_auto_inc(true)
         .set_columns(
             {
-                coldef(cols::TABLE_NAME).set_mandatory(true),
-                coldef(cols::RECORD_ID).set_mandatory(true),
-                coldef(cols::OPERATION, type::INTEGER)
-                .set_mandatory(true)
-                .set_enum_definition(enums::crudl_to_enum_definition()),
-                coldef(cols::DATA_JSON).set_mandatory(true),
-                coldef(cols::REASON, type::TEXT)
-            })
-        .set_operations({enums::Crudl::READ, enums::Crudl::LIST});
+                coldef(cols::OWNER_ID).set_mandatory().set_foreign_key("user"),
+                coldef(cols::SENDER_ID).set_mandatory().set_foreign_key("user"),
+                coldef(cols::RECIPIENT_ID).set_mandatory().set_foreign_key("user"),
+                coldef(cols::SUBJECT),
+                coldef(cols::IMPORTANT).bool_column().set_default_value("0"),
+                coldef(cols::BODY).textarea().set_mandatory(),
+                coldef(cols::SENT_AT).datetime(),
+                coldef(cols::SYSTEM_MESSAGE).bool_column().set_default_value("0"),
+                coldef(cols::FOLDER),
+                coldef(cols::DRAFT).bool_column().set_default_value("0"),
+                coldef(cols::IS_READ).bool_column().set_default_value("0"),
+                coldef(cols::DELETED_AT).datetime(),
+                coldef(cols::STARRED).bool_column().set_default_value("0")
+            });
     // *** Definition of model ends ***
 
     using misc::BaseModel;
 
-    struct History : BaseModel
+    struct Message : BaseModel
     {
-        str table_name;
-        int record_id{};
-        enums::Crudl operation{};
-        str data_json;
-        str reason;
+        int owner_id{};
+        int sender_id{};
+        int recipient_id{};
+        str subject;
+        bool important{false};
+        str body;
+        unixtime sent_at{};
+        bool system_message{false};
+        str folder;
+        bool draft{false};
+        bool is_read{false};
+        unixtime deleted_at{};
+        bool starred{false};
 
-        [[nodiscard]] const def& get_definition() const override
-        {
-            return HISTORY_DEFINITION;
-        }
+        create_model_h_methods(Model, MODEL)
 
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const History& history)
-        {
-            os << history.to_json();
-            return os;
-        }
-
-        bool operator==(const History& other) const
+        bool operator==(const Model& other) const
         {
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                owner_id == other.owner_id &&
+                sender_id == other.sender_id &&
+                recipient_id == other.recipient_id &&
+                subject == other.subject &&
+                important == other.important &&
+                body == other.body &&
+                sent_at == other.sent_at &&
+                system_message == other.system_message &&
+                folder == other.folder &&
+                draft == other.draft &&
+                is_read == other.is_read &&
+                deleted_at == other.deleted_at &&
+                starred == other.starred;
         }
 
-        History() = default;
+        Message() = default;
 
-        History(int i, unixtime cat, unixtime uat, const str& tn, int rid, int op, const str& pl, const str& r)
-        {
-            id = i;
-            created_at = cat;
-            updated_at = uat;
-            table_name = tn;
-            record_id = rid;
-            operation = static_cast<enums::Crudl>(op);
-            data_json = pl;
-            reason = r;
-        }
     };
 }
 
-#endif // HISTORY_H
+#endif // MESSAGE_H

@@ -20,7 +20,6 @@
 #ifndef USER_H
 #define USER_H
 
-
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 
@@ -29,6 +28,8 @@
 #define MODEL USER
 // ***** DEFINE SECTION : END *****
 #include "columns/UserColumns.h"
+#include "mindnet/enums/UserRole.h"
+#include "mindnet/enums/UserStatus.h"
 
 namespace mindnet::models
 {
@@ -41,14 +42,14 @@ namespace mindnet::models
 
         .set_columns({
             //
-            coldef(cols::USERNAME).set_mandatory(true).set_unique(true),
-            coldef(cols::PASSWORD_HASH).set_mandatory(true),
+            coldef(cols::USERNAME).set_mandatory().set_unique(),
+            coldef(cols::PASSWORD_HASH).set_mandatory(),
             coldef(cols::DISPLAY_NAME),
-            coldef(cols::ROLE).set_mandatory(true), // enum() TODO
+            coldef(cols::ROLE).set_mandatory().set_enum_definition(enums::user_role_to_enum_definition()).set_default_value("0"),
             coldef(cols::PROFILE_TEXT).textarea(),
             coldef(cols::LAST_LOGIN).datetime(),
-            coldef(cols::EMAIL).set_unique(true),
-            coldef(cols::STATUS).set_mandatory(true),
+            coldef(cols::EMAIL).set_unique(),
+            coldef(cols::STATUS).set_mandatory().set_enum_definition(enums::user_status_to_enum_definition()),
         })
     ;
 
@@ -56,30 +57,31 @@ namespace mindnet::models
     {
         User() = default;
 
-        // ***** DEFINE FIELDS : START *****
-        str table_name;
-        int record_id{};
-        enums::Crudl operation{};
-        str data_json;
-        str reason;
-        // ***** DEFINE FIELDS : END *****
+        str username;
+        str password_hash;
+        str display_name;
+        int role{};
+        str profile_text;
+        unixtime last_login{};
+        str email;
+        int status{};
 
         create_model_h_methods(Model, MODEL)
 
-        // ***** Implement methods operator== : START *****
         bool operator==(const Model& other) const
         {
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                username == other.username &&
+                password_hash == other.password_hash &&
+                display_name == other.display_name &&
+                role == other.role &&
+                profile_text == other.profile_text &&
+                last_login == other.last_login &&
+                email == other.email &&
+                status == other.status;
         }
-
-        // ***** Implement methods operator== : END *****
     };
 }
 #undef Model

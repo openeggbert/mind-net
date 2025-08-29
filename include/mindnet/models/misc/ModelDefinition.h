@@ -41,7 +41,7 @@ namespace mindnet::models::misc
     private:
         str model_name; ///< Name of the model
         column_definitions columns; ///< Column definitions for the model
-        std::set<enums::Crudl> allowed_crudl_rest_operations; ///< Allowed CRUD operations for REST API
+        std::set<enums::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
 
     public:
@@ -68,9 +68,9 @@ namespace mindnet::models::misc
         }
 
         /** @return The allowed CRUD operations */
-        [[nodiscard]] const std::set<enums::Crudl>& get_allowed_crudl_rest_operations() const
+        [[nodiscard]] const std::set<enums::Crudl>& get_allowed_rest_operations() const
         {
-            return allowed_crudl_rest_operations;
+            return allowed_rest_operations;
         }
 
         /** @return True if the model is virtual table otherwise false. */
@@ -111,9 +111,9 @@ namespace mindnet::models::misc
          * @param ops Set of allowed operations
          * @return Reference to this object for method chaining
          */
-        ModelDefinition& set_operations(std::set<enums::Crudl> ops)
+        ModelDefinition& set_rest_operations(std::set<enums::Crudl> ops)
         {
-            allowed_crudl_rest_operations = std::move(ops);
+            allowed_rest_operations = std::move(ops);
             return *this;
         }
 

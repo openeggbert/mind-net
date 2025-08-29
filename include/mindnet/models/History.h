@@ -23,10 +23,10 @@
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 
-// ***** DEFINE SECTION : START *****
+// ***** DEFINE TWO MACROS : START *****
 #define Model History
 #define MODEL HISTORY
-// ***** DEFINE SECTION : END *****
+// ***** DEFINE TWO MACROS : END *****
 #include "columns/HistoryColumns.h"
 
 namespace mindnet::models
@@ -38,16 +38,16 @@ namespace mindnet::models
 
     inline def HISTORY_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_operations({mindnet::enums::Crudl::READ, mindnet::enums::Crudl::LIST})
+        .set_rest_operations({mindnet::enums::Crudl::READ, mindnet::enums::Crudl::LIST})
         .set_columns({
             //
-            coldef(cols::USER_ID).set_mandatory(true).set_foreign_key("user"),
+            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
             coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(true),
-            coldef(cols::RECORD_ID).set_mandatory(true),
-            coldef(cols::OPERATION).set_mandatory(true).set_enum_definition(
+            coldef(cols::TABLE_NAME).set_mandatory(),
+            coldef(cols::RECORD_ID).set_mandatory(),
+            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
                 enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(true),
+            coldef(cols::DATA_JSON).set_mandatory(),
             coldef(cols::REASON),
             //
         });

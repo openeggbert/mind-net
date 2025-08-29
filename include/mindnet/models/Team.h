@@ -21,63 +21,50 @@
 #define HISTORY_H
 
 #include <string>
+#include "mindnet/models/misc/BaseModel.h"
 
-#include "misc/BaseModel.h"
+// ***** DEFINE TWO MACROS : START *****
+#define Model History
+#define MODEL HISTORY
+// ***** DEFINE TWO MACROS : END *****
 #include "columns/HistoryColumns.h"
-#include "columns/MapColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/Crudl.h"
-#include "mindnet/enums/NodeType.h"
 
 namespace mindnet::models
 {
-    // *** Definition of model starts ***
-    using type = enums::ColumnType;
+    using bm = misc::BaseModel;
     using cols = columns::HistoryColumns;
-    using coldef = misc::ColumnDefinition;
-    using def = misc::ModelDefinition;
-    static def HISTORY_DEFINITION =
+    using misc::def;
+    using misc::coldef;
+
+    inline def HISTORY_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_auto_inc(true)
-        .set_columns(
-            {
-                coldef(cols::TABLE_NAME).set_mandatory(true),
-                coldef(cols::RECORD_ID).set_mandatory(true),
-                coldef(cols::OPERATION, type::INTEGER)
-                .set_mandatory(true)
-                .set_enum_definition(enums::crudl_to_enum_definition()),
-                coldef(cols::DATA_JSON).set_mandatory(true),
-                coldef(cols::REASON, type::TEXT)
-            })
-        .set_operations({enums::Crudl::READ, enums::Crudl::LIST});
-    // *** Definition of model ends ***
+        .set_rest_operations({mindnet::enums::Crudl::READ, mindnet::enums::Crudl::LIST})
+        .set_columns({
+            //
+            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
+            coldef(cols::IP_ADDRESS),
+            coldef(cols::TABLE_NAME).set_mandatory(),
+            coldef(cols::RECORD_ID).set_mandatory(),
+            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
+                enums::crudl_to_enum_definition()),
+            coldef(cols::DATA_JSON).set_mandatory(),
+            coldef(cols::REASON),
+            //
+        });
 
-    using misc::BaseModel;
-
-    struct History : BaseModel
+    struct History : bm
     {
+        History() = default;
+
         str table_name;
         int record_id{};
         enums::Crudl operation{};
         str data_json;
         str reason;
 
-        [[nodiscard]] const def& get_definition() const override
-        {
-            return HISTORY_DEFINITION;
-        }
+        create_model_h_methods(Model, MODEL)
 
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
-
-        friend std::ostream& operator<<(std::ostream& os, const History& history)
-        {
-            os << history.to_json();
-            return os;
-        }
-
-        bool operator==(const History& other) const
+        bool operator==(const Model& other) const
         {
             return id == other.id &&
                 created_at == other.created_at &&
@@ -88,21 +75,8 @@ namespace mindnet::models
                 data_json == other.data_json &&
                 reason == other.reason;
         }
-
-        History() = default;
-
-        History(int i, unixtime cat, unixtime uat, const str& tn, int rid, int op, const str& pl, const str& r)
-        {
-            id = i;
-            created_at = cat;
-            updated_at = uat;
-            table_name = tn;
-            record_id = rid;
-            operation = static_cast<enums::Crudl>(op);
-            data_json = pl;
-            reason = r;
-        }
     };
 }
-
+#undef Model
+#undef MODEL
 #endif // HISTORY_H
