@@ -40,12 +40,9 @@ namespace mindnet::models::columns
         static constexpr const char* MODEL_NAME = "property";
 
         static constexpr const char* MAP_ID = "map_id";
-        static constexpr const char* NODE_ID = "node_id";
+        static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* KEY = "key";
         static constexpr const char* VALUE = "value";
-        static constexpr const char* VALUE_TYPE = "value_type";
-        static constexpr const char* DESCRIPTION = "description";
-        static constexpr const char* IS_INDEXED = "is_indexed";
     };
 }
 #endif // NODEPROPERTYCOLUMNS_H

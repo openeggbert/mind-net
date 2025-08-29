@@ -40,7 +40,6 @@ namespace mindnet::models::misc
     {
     private:
         str model_name; ///< Name of the model
-        bool auto_increment = true; ///< Whether the model uses auto-incrementing IDs
         column_definitions columns; ///< Column definitions for the model
         std::set<enums::Crudl> allowed_crudl_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
@@ -60,12 +59,6 @@ namespace mindnet::models::misc
         [[nodiscard]] const str& get_model_name() const
         {
             return model_name;
-        }
-
-        /** @return Whether auto-increment is enabled */
-        [[nodiscard]] const bool get_auto_increment() const
-        {
-            return auto_increment;
         }
 
         /** @return The column definitions */
@@ -95,17 +88,6 @@ namespace mindnet::models::misc
         ModelDefinition& set_name(str name)
         {
             model_name = name;
-            return *this;
-        }
-
-        /**
-         * Sets the auto-increment flag
-         * @param value True to enable auto-increment
-         * @return Reference to this object for method chaining
-         */
-        ModelDefinition& set_auto_inc(bool value)
-        {
-            auto_increment = value;
             return *this;
         }
 

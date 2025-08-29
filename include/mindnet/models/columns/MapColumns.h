@@ -45,7 +45,10 @@ namespace mindnet::models::columns
         static constexpr const char* DESCRIPTION = "description";
         static constexpr const char* CATEGORY = "category";
         static constexpr const char* OWNER_ID = "owner_id";
-        static constexpr const char* IS_PUBLIC = "is_public";
+        static constexpr const char* TEAM_ID = "team_id";
+        static constexpr const char* OWNER_RIGHTS = "owner_rights";
+        static constexpr const char* TEAM_RIGHTS = "team_rights";
+        static constexpr const char* OTHER_RIGHTS = "other_rights";
     };
 }
 #endif // MAPCOLUMNS_H

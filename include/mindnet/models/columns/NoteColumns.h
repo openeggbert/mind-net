@@ -22,30 +22,31 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef QUESTIONCOLUMNS_H
-#define QUESTIONCOLUMNS_H
+#ifndef NOTECOLUMNS_H
+#define NOTECOLUMNS_H
+
 
 #include "BaseColumns.h"
 
 
 namespace mindnet::models::columns
 {
-    struct QuestionColumns : BaseColumns
+    struct NoteColumns : BaseColumns
     {
-        QuestionColumns() = delete;
+        NoteColumns() = delete;
 
-        QuestionColumns(const QuestionColumns&) = delete;
-        QuestionColumns& operator=(const QuestionColumns&) = delete;
+        NoteColumns(const NoteColumns&) = delete;
+        NoteColumns& operator=(const NoteColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "question";
+        static constexpr const char* MODEL_NAME = "note";
 
-        static constexpr const char* NODE_ID = "node_id";
-        static constexpr const char* QUESTION_TEXT = "question_text";
-        static constexpr const char* TYPE = "type";
+        static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* TITLE = "title";
+        static constexpr const char* PARENT_NOTE_ID = "parent_note_id";
+        static constexpr const char* CONTENT_ID = "content_id";
+        static constexpr const char* SIBLING_POSITION = "sibling_position";
+        static constexpr const char* IMPORTANCE = "importance";
         static constexpr const char* DIFFICULTY = "difficulty";
-        static constexpr const char* TAGS = "tags";
-        static constexpr const char* ANSWERS_JSON = "answers_json";
-        static constexpr const char* ACTIVE = "active";
     };
 }
-#endif // QUESTIONCOLUMNS_H
+#endif // NOTECOLUMNS_H

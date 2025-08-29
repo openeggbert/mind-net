@@ -27,6 +27,8 @@
 
 
 #include "BaseColumns.h"
+#include "mindnet/Helper.h"
+#include "mindnet/enums/ColumnType.h"
 
 
 namespace mindnet::models::columns

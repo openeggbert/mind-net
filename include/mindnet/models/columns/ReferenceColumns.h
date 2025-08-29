@@ -17,50 +17,33 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef VISIBILITY_H
-#define VISIBILITY_H
+
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef REFERENCECOLUMNS_H
+#define REFERENCECOLUMNS_H
+
+#include "BaseColumns.h"
+#include "mindnet/Helper.h"
+#include "mindnet/enums/ColumnType.h"
 
 
-#include <string>
-
-namespace mindnet::enums
+namespace mindnet::models::columns
 {
-    /**
-     *
-     * @author robertvokac
-     */
-    enum class Visibility
+    struct ReferenceColumns : BaseColumns
     {
-        PUBLIC = 0, PRIVATE = 1, DRAFT = 2, ARCHIVED = 3
+        ReferenceColumns() = delete;
+
+        ReferenceColumns(const ReferenceColumns&) = delete;
+        ReferenceColumns& operator=(const ReferenceColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "reference";
+
+        static constexpr const char* FROM_NOTE_ID = "from_note_id";
+        static constexpr const char* TO_NOTE_ID = "to_note_id";
+        static constexpr const char* LABEL = "label";
     };
-
-    inline std::string visibility_to_string(Visibility visibility)
-    {
-        switch (visibility)
-        {
-        case Visibility::PUBLIC:
-            return "Public";
-        case Visibility::PRIVATE:
-            return "Private";
-        case Visibility::DRAFT:
-            return "Draft";
-        case Visibility::ARCHIVED:
-            return "Archived";
-        default:
-            return "Unknown";
-        }
-    }
-
-    inline std::string visibility_to_string(int visibility)
-    {
-        return visibility_to_string(static_cast<Visibility>(visibility));
-    }
-
-    inline models::misc::EnumDefinition visibility_to_enum_definition()
-    {
-        return models::misc::EnumDefinition{
-            visibility_to_string, 4, 0, 1, 2, 3
-        };
-    }
-} // namespace mindnet::enums
-#endif // VISIBILITY_H
+}
+#endif // REFERENCECOLUMNS_H

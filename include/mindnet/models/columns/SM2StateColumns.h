@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SM2RESULTCOLUMNS_H
-#define SM2RESULTCOLUMNS_H
+#ifndef SM2STATECOLUMNS_H
+#define SM2STATECOLUMNS_H
 
 
 #include "BaseColumns.h"
@@ -40,11 +40,16 @@ namespace mindnet::models::columns
         SM2StateColumns(const SM2StateColumns&) = delete;
         SM2StateColumns& operator=(const SM2StateColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "sm2_result";
+        static constexpr const char* MODEL_NAME = "sm2_state";
 
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* NOTE_ID = "note_id";
+        static constexpr const char* REPETITIONS = "repetitions";
         static constexpr const char* INTERVAL = "interval";
         static constexpr const char* EF_TIMES_100 = "ef_times_100";
-        static constexpr const char* REPETITION = "repetition";
+        static constexpr const char* NEXT_REVIEW = "next_review";
+        static constexpr const char* LAST_REVIEW = "last_review";
+        static constexpr const char* LAST_QUALITY = "last_quality";
     };
 }
-#endif // SM2RESULTCOLUMNS_H
+#endif // SM2STATECOLUMNS_H

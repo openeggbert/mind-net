@@ -44,7 +44,7 @@ namespace mindnet::models::columns
         static constexpr const char* SENDER_ID = "sender_id";
         static constexpr const char* RECIPIENT_ID = "recipient_id";
         static constexpr const char* SUBJECT = "subject";
-        static constexpr const char* PRIORITY = "priority";
+        static constexpr const char* IMPORTANT = "important";
         static constexpr const char* BODY = "body";
         static constexpr const char* SENT_AT = "sent_at";
         static constexpr const char* SYSTEM_MESSAGE = "system_message";

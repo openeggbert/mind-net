@@ -22,8 +22,9 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODETAGCOLUMNS_H
-#define NODETAGCOLUMNS_H
+#ifndef TAGCOLUMNS_H
+#define TAGCOLUMNS_H
+
 
 #include "BaseColumns.h"
 #include "mindnet/Helper.h"
@@ -41,8 +42,8 @@ namespace mindnet::models::columns
 
         static constexpr const char* MODEL_NAME = "tag";
 
-        static constexpr const char* NODE_ID = "node_id";
+        static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* TAG_TYPE_ID = "tag_type_id";
     };
 }
-#endif // NODETAGCOLUMNS_H
+#endif // TAGCOLUMNS_H

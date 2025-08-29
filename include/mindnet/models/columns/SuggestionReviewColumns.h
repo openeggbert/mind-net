@@ -38,16 +38,13 @@ namespace mindnet::models::columns
         SuggestionReviewColumns(const SuggestionReviewColumns&) = delete;
         SuggestionReviewColumns& operator=(const SuggestionReviewColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "suggestion";
+        static constexpr const char* MODEL_NAME = "suggestion_review";
 
-        static constexpr const char* PARENT_SUGGESTION_ID = "parent_suggestion_id";
-        static constexpr const char* FROM_USER_ID = "from_user_id";
-        static constexpr const char* TABLE_NAME = "table_name";
-        static constexpr const char* OPERATION = "operation";
-        static constexpr const char* STATUS = "status";
-        static constexpr const char* DATA_JSON = "data_json";
-        static constexpr const char* REVIEW_COUNT = "review_count";
-        static constexpr const char* PRIORITY = "priority";
+        static constexpr const char* SUGGESTION_ID = "suggestion_id";
+        static constexpr const char* REVIEWER_ID = "reviewer_id";
+        static constexpr const char* DECISION_STATUS = "decision_status";
+        static constexpr const char* COMMENT = "comment";
+        static constexpr const char* REVIEWED_AT = "reviewed_at";
     };
 }
 #endif // SUGGESTIONREVIEWCOLUMNS_H

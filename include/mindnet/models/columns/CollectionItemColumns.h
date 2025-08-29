@@ -22,27 +22,25 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef EXTERNALLINKCOLUMNS_H
-#define EXTERNALLINKCOLUMNS_H
+#ifndef COLLECTIONITEMCOLUMNS_H
+#define COLLECTIONITEMCOLUMNS_H
 
 #include "BaseColumns.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/ColumnType.h"
-
 
 namespace mindnet::models::columns
 {
-    struct ExternalLinkColumns : BaseColumns
+    struct CollectionItemColumns : BaseColumns
     {
-        ExternalLinkColumns() = delete;
+        CollectionItemColumns() = delete;
 
-        ExternalLinkColumns(const ExternalLinkColumns&) = delete;
-        ExternalLinkColumns& operator=(const ExternalLinkColumns&) = delete;
+        CollectionItemColumns(const CollectionItemColumns&) = delete;
+        CollectionItemColumns& operator=(const CollectionItemColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "external_link";
+        static constexpr const char* MODEL_NAME = "collection_item";
 
-        static constexpr const char* FROM_NODE_ID = "from_node_id";
-        static constexpr const char* TO_URL = "to_url";
+        static constexpr const char* COLLECTION_ID = "collection_id";
+        static constexpr const char* NOTE_ID = "note_id";
+        static constexpr const char* ORDER_INDEX = "order_index";
     };
 }
-#endif // EXTERNALLINKCOLUMNS_H
+#endif // COLLECTIONITEMCOLUMNS_H

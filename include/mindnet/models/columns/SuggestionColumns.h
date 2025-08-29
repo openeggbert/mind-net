@@ -47,7 +47,6 @@ namespace mindnet::models::columns
         static constexpr const char* STATUS = "status";
         static constexpr const char* DATA_JSON = "data_json";
         static constexpr const char* REVIEW_COUNT = "review_count";
-        static constexpr const char* PRIORITY = "priority";
     };
 }
 #endif // SUGGESTIONCOLUMNS_H

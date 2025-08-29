@@ -17,43 +17,31 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODELINKTYPE_H
-#define NODELINKTYPE_H
 
-#include <string>
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
+#ifndef LINKCOLUMNS_H
+#define LINKCOLUMNS_H
 
-namespace mindnet::enums
+#include "BaseColumns.h"
+#include "mindnet/Helper.h"
+#include "mindnet/enums/ColumnType.h"
+
+namespace mindnet::models::columns
 {
-    enum class NodeLinkType
+    struct ExternalLinkColumns : BaseColumns
     {
-        MANUAL = 0,
-        PARSED = 1
+        ExternalLinkColumns() = delete;
+
+        ExternalLinkColumns(const ExternalLinkColumns&) = delete;
+        ExternalLinkColumns& operator=(const ExternalLinkColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "link";
+
+        static constexpr const char* FROM_NOTE_ID = "from_note_id";
+        static constexpr const char* TO_URL = "to_url";
     };
-
-    inline std::string node_link_type_to_string(const NodeLinkType type)
-    {
-        switch (type)
-        {
-        case NodeLinkType::MANUAL:
-            return "manual";
-        case NodeLinkType::PARSED:
-            return "parsed";
-        default:
-            return "unknown";
-        }
-    }
-
-    inline std::string node_link_type_to_string(int type)
-    {
-        return node_link_type_to_string(static_cast<NodeLinkType>(type));
-    }
-
-    inline models::misc::EnumDefinition node_link_to_enum_definition()
-    {
-        return models::misc::EnumDefinition{
-            node_link_type_to_string, 2, 0, 1
-        };
-    }
-} // namespace mindnet::enums
-
-#endif // NODELINKTYPE_H
+}
+#endif // LINKCOLUMNS_H

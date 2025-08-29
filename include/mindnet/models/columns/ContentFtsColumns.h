@@ -31,19 +31,18 @@
 
 namespace mindnet::models::columns
 {
-    struct ContentColumns : BaseColumns
+    struct ContentFtsColumns : BaseColumns
     {
-        ContentColumns() = delete;
+        ContentFtsColumns() = delete;
 
-        ContentColumns(const ContentColumns&) = delete;
-        ContentColumns& operator=(const ContentColumns&) = delete;
+        ContentFtsColumns(const ContentFtsColumns&) = delete;
+        ContentFtsColumns& operator=(const ContentFtsColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "content";
+        static constexpr const char* MODEL_NAME = "content_fts";
 
-        static constexpr const char* CONTENT = "content";
+        static constexpr const char* VALUE = "value";
         static constexpr const char* FORMAT = "format";
         static constexpr const char* VERSION = "version";
-        static constexpr const char* NODE_ID = "node_id";
     };
 }
 #endif // CONTENTCOLUMNS_H

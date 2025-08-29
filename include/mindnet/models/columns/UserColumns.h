@@ -25,9 +25,7 @@
 #ifndef USERCOLUMNS_H
 #define USERCOLUMNS_H
 
-
 #include "BaseColumns.h"
-
 
 namespace mindnet::models::columns
 {

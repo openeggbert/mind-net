@@ -22,29 +22,28 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODELINKCOLUMNS_H
-#define NODELINKCOLUMNS_H
+#ifndef REVIEWCOLUMNS_H
+#define REVIEWCOLUMNS_H
 
 #include "BaseColumns.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/ColumnType.h"
-
 
 namespace mindnet::models::columns
 {
-    struct NodeLinkColumns : BaseColumns
+    struct ReviewColumns : BaseColumns
     {
-        NodeLinkColumns() = delete;
+        ReviewColumns() = delete;
 
-        NodeLinkColumns(const NodeLinkColumns&) = delete;
-        NodeLinkColumns& operator=(const NodeLinkColumns&) = delete;
+        ReviewColumns(const ReviewColumns&) = delete;
+        ReviewColumns& operator=(const ReviewColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "node_link";
+        static constexpr const char* MODEL_NAME = "review";
 
-        static constexpr const char* FROM_NODE_ID = "from_node_id";
-        static constexpr const char* TO_NODE_ID = "to_node_id";
-        static constexpr const char* TYPE = "type";
-        static constexpr const char* LABEL = "label";
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* NOTE_ID = "note_id";
+        static constexpr const char* REVIEW_DATE = "review_date";
+        static constexpr const char* GRADE = "grade";
+        static constexpr const char* RESPONSE_DATA = "response_data";
+        static constexpr const char* NOTES = "notes";
     };
 }
-#endif // NODELINKCOLUMNS_H
+#endif // REVIEWCOLUMNS_H

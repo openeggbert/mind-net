@@ -30,7 +30,6 @@
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ColumnType.h"
 
-
 namespace mindnet::models::columns
 {
     struct TagTypeColumns : BaseColumns
@@ -44,7 +43,6 @@ namespace mindnet::models::columns
 
         static constexpr const char* MAP_ID = "map_id";
         static constexpr const char* TITLE = "title";
-        static constexpr const char* COLOR = "color";
     };
 }
 #endif // TAGTYPECOLUMNS_H

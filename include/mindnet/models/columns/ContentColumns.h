@@ -40,11 +40,9 @@ namespace mindnet::models::columns
 
         static constexpr const char* MODEL_NAME = "content";
 
-        static constexpr const char* CONTENT = "content";
+        static constexpr const char* VALUE = "value";
         static constexpr const char* FORMAT = "format";
-        static constexpr const char* MIME_TYPE = "mime_type";
         static constexpr const char* VERSION = "version";
-        static constexpr const char* NODE_ID = "node_id";
     };
 }
 #endif // CONTENTCOLUMNS_H
