@@ -142,4 +142,9 @@ namespace mindnet::http
     {
         crow_app.port(port).multithreaded().run();
     }
+
+    crow::SimpleApp& HttpServer::get_crow_app()
+    {
+        return crow_app;
+    }
 }

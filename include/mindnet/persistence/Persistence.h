@@ -16,13 +16,14 @@ namespace mindnet::persistence
     {
     private:
         std::map<std::string, api::IRepository*> repositories;
-        std::vector<std::string> repositoryNames;
+        std::vector<std::string> repository_names;
 
     public:
         Persistence();
         ~Persistence();
 
         api::IRepository* get_repository(const std::string& name);
+        bool has_repository(const std::string& name);
 
         std::vector<std::string>& list_repositories();
 
@@ -30,6 +31,7 @@ namespace mindnet::persistence
         entity_fields read(int id, const ModelDefinition& def, string& error);
         bool update(int id, entity_fields& fields, ModelDefinition& def, string& error);
         bool remove(int id, ModelDefinition& def, string& error);
+        std::optional<ModelDefinition> get_model_definition(string& model_name);
 
         std::vector<entity_fields> list(http::QueryParams& query_params, ModelDefinition& def, string& error);
 

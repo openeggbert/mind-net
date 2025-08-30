@@ -38,7 +38,7 @@ api::IRepository* model##_repo = new RepositoryImplSqlite(\
 models :: MODEL_JOIN(MODEL)\
 );\
 repositories[#model] = model##_repo;\
-repositoryNames.emplace_back(#model);
+repository_names.emplace_back(#model);
 
 namespace mindnet::persistence
 {
@@ -89,9 +89,14 @@ namespace mindnet::persistence
         return repositories.count(name) ? repositories[name] : nullptr;
     }
 
+    bool Persistence::has_repository(const std::string& name)
+    {
+        return repositories.count(name) > 0;
+    }
+
     std::vector<std::string>& Persistence::list_repositories()
     {
-        return repositoryNames;
+        return repository_names;
     }
 
     int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, string& error)
@@ -112,6 +117,15 @@ namespace mindnet::persistence
     bool Persistence::remove(int id, models::misc::ModelDefinition& def, string& error)
     {
         return get_repository(def.get_model_name())->remove(id, error);
+    }
+
+    std::optional<ModelDefinition> Persistence::get_model_definition(string& model_name)
+    {
+        if (!has_repository(model_name))
+        {
+            return std::nullopt;
+        }
+        return get_repository(model_name)->get_model_definition();
     }
 
     std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, string& error)

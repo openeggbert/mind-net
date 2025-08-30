@@ -125,6 +125,7 @@ namespace mindnet::models::misc
             {
                 primary_key = true;
                 mandatory = true;
+                unique = true;
                 auto_ = true;
                 column_type = mindnet::enums::ColumnType::INTEGER;
             }
@@ -182,7 +183,7 @@ namespace mindnet::models::misc
 
         [[nodiscard]] const bool is_unique() const
         {
-            return unique;
+            return unique || primary_key;
         }
 
         [[nodiscard]] const std::string get_default_value() const

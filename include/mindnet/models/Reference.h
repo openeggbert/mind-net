@@ -43,7 +43,7 @@ namespace mindnet::models
         .set_columns({
             coldef(COLS::FROM_NOTE_ID, MANDATORY).set_foreign_key("note"),
             coldef(COLS::TO_NOTE_ID, MANDATORY).set_foreign_key("note"),
-            coldef(COLS::ID),
+            coldef(COLS::LABEL),
         });
 ;
 

@@ -4,151 +4,340 @@
 
 const API_BASE = "http://localhost:8888/api";
 
-// Importance
-const Importance = {0: "Undefined", 1: "Low", 2: "Medium", 3: "High"};
-const ImportanceValues = Object.keys(Importance).map(Number);
-
-// Difficulty
-const Difficulty = {0: "Undefined", 1: "Easy", 2: "Medium", 3: "Hard", 4: "Expert"};
-const DifficultyValues = Object.keys(Difficulty).map(Number);
+// ColumnType
+const ColumnType = {
+    0: "TEXT",
+    1: "TEXTAREA",
+    2: "INTEGER",
+    3: "BOOL",
+    4: "DATETIME",
+    5: "REAL",
+    6: "BLOB"
+};
+const ColumnTypeValues = Object.keys(ColumnType).map(Number);
 
 // ContentFormat
 const ContentFormat = {0: "Markdown", 1: "HTML", 2: "Plain"};
 const ContentFormatValues = Object.keys(ContentFormat).map(Number);
 
-// NodeType
-const NodeType = {0: "Generic", 1: "Term"};
-const NodeTypeValues = Object.keys(NodeType).map(Number);
-
-// ValueType
-const ValueType = {0: "String", 1: "Number", 2: "Boolean", 3: "Date"};
-const ValueTypeValues = Object.keys(ValueType).map(Number);
-
 // Crudl
-const Crudl = {0: "Undefined", 1: "Create", 2: "Read", 3: "Update", 4: "Delete", 5: "List"};
+const Crudl = {
+    0: "Undefined",
+    1: "Create",
+    2: "Read",
+    3: "Update",
+    4: "Delete",
+    5: "List"
+};
 const CrudlValues = Object.keys(Crudl).map(Number);
 
-// Visibility
-const Visibility = {0: "Public", 1: "Private", 2: "Draft", 3: "Archived"};
-const VisibilityValues = Object.keys(Visibility).map(Number);
+// DecisionStatus
+const DecisionStatus = {
+    2: "approved",
+    3: "rejected",
+    4: "cancelled",
+    5: "requests_feedback"
+};
+const DecisionStatusValues = Object.keys(DecisionStatus).map(Number);
+
+// Difficulty
+const Difficulty = {
+    0: "Undefined",
+    1: "Easy",
+    2: "Medium",
+    3: "Hard",
+    4: "Expert"
+};
+const DifficultyValues = Object.keys(Difficulty).map(Number);
+
+// Importance
+const Importance = {
+    0: "Undefined",
+    1: "Low",
+    2: "Medium",
+    3: "High"
+};
+const ImportanceValues = Object.keys(Importance).map(Number);
+
+// SuggestionStatus
+const SuggestionStatus = {
+    0: "pending",
+    1: "under_review",
+    2: "approved",
+    3: "rejected",
+    4: "cancelled",
+    5: "requests_feedback"
+};
+const SuggestionStatusValues = Object.keys(SuggestionStatus).map(Number);
+
+// UserRole
+const UserRole = {
+    0: "Guest",
+    1: "Reader",
+    2: "Editor",
+    3: "Reviewer",
+    4: "Admin"
+};
+const UserRoleValues = Object.keys(UserRole).map(Number);
+
+// UserStatus
+const UserStatus = {
+    0: "pending",
+    1: "active",
+    2: "deactivated",
+    3: "banned",
+    4: "suspended",
+    5: "deleted"
+};
+const UserStatusValues = Object.keys(UserStatus).map(Number);
 
 // ========================================
-// 2. Entity schema definice
+// 2. Entity schema definitions
 // ========================================
 
 const entitySchemas = {
+    user: {
+        label: "User", titleField: "username", fields: [
+            {name: "username", type: "text", required: true},
+            {name: "password_hash", type: "text", required: true},
+            {name: "display_name", type: "text"},
+            {name: "role", type: "number", enum: UserRole},
+            {name: "profile_text", type: "textarea"},
+            {name: "last_login", type: "datetime"},
+            {name: "email", type: "text"},
+            {name: "status", type: "number", enum: UserStatus}
+        ]
+    },
+    message: {
+        label: "Message", titleField: "subject", fields: [
+            {name: "owner_id", type: "number", foreignKey: "user"},
+            {name: "sender_id", type: "number", foreignKey: "user"},
+            {name: "recipient_id", type: "number", foreignKey: "user"},
+            {name: "subject", type: "text"},
+            {name: "important", type: "checkbox"},
+            {name: "body", type: "textarea", required: true},
+            {name: "sent_at", type: "datetime"},
+            {name: "system_message", type: "checkbox"},
+            {name: "folder", type: "text"},
+            {name: "draft", type: "checkbox"},
+            {name: "is_read", type: "checkbox"},
+            {name: "deleted_at", type: "datetime"},
+            {name: "starred", type: "checkbox"}
+        ]
+    },
+    team: {
+        label: "Team", titleField: "name", fields: [
+            {name: "name", type: "text", required: true},
+            {name: "description", type: "text"},
+            {name: "created_by", type: "number", foreignKey: "user"},
+            {name: "leader_id", type: "number", foreignKey: "user"}
+        ]
+    },
+    team_member: {
+        label: "Team Member", titleField: "id", fields: [
+            {name: "team_id", type: "number", foreignKey: "team"},
+            {name: "user_id", type: "number", foreignKey: "user"},
+            {name: "role", type: "number", enum: UserRole},
+            {name: "joined_at", type: "datetime"},
+            {name: "is_active", type: "checkbox"},
+            {name: "left_at", type: "datetime"}
+        ]
+    },
+    discussion: {
+        label: "Discussion", titleField: "title", fields: [
+            {name: "team_id", type: "number", foreignKey: "team"},
+            {name: "title", type: "text", required: true},
+            {name: "created_by", type: "number", foreignKey: "user"},
+            {name: "is_pinned", type: "checkbox"}
+        ]
+    },
+    comment: {
+        label: "Comment", titleField: "content", fields: [
+            {name: "discussion_id", type: "number", foreignKey: "discussion"},
+            {name: "user_id", type: "number", foreignKey: "user"},
+            {name: "content", type: "textarea", required: true},
+            {name: "parent_comment_id", type: "number", foreignKey: "comment"},
+            {name: "is_deleted", type: "checkbox"}
+        ]
+    },
+    suggestion: {
+        label: "Suggestion", titleField: "table_name", fields: [
+            {name: "parent_suggestion_id", type: "number", foreignKey: "suggestion"},
+            {name: "from_user_id", type: "number", foreignKey: "user"},
+            {name: "table_name", type: "text", required: true},
+            {name: "operation", type: "number", enum: Crudl},
+            {name: "status", type: "number", enum: SuggestionStatus},
+            {name: "data_json", type: "textarea"},
+            {name: "review_count", type: "number"}
+        ]
+    },
+    suggestion_review: {
+        label: "Suggestion Review", titleField: "comment", fields: [
+            {name: "suggestion_id", type: "number", foreignKey: "suggestion"},
+            {name: "reviewer_id", type: "number", foreignKey: "user"},
+            {name: "decision_status", type: "number", enum: DecisionStatus},
+            {name: "comment", type: "textarea"},
+            {name: "reviewed_at", type: "datetime"}
+        ]
+    },
+    history: {
+        label: "History", titleField: "table_name", fields: [
+            {name: "user_id", type: "number", foreignKey: "user"},
+            {name: "ip_address", type: "text"},
+            {name: "table_name", type: "text", required: true},
+            {name: "record_id", type: "number", required: true},
+            {name: "operation", type: "number", enum: Crudl},
+            {name: "data_json", type: "textarea", required: true},
+            {name: "reason", type: "text"}
+        ]
+    },
     map: {
         label: "Map", titleField: "name", fields: [
             {name: "name", type: "text", required: true},
             {name: "description", type: "text"},
-            {name: "category", type: "text"}
+            {name: "category", type: "text"},
+            {name: "owner_id", type: "number", foreignKey: "user"},
+            {name: "team_id", type: "number", foreignKey: "team"},
+            {name: "owner_rights", type: "number"},
+            {name: "team_rights", type: "number"},
+            {name: "other_rights", type: "number"}
         ]
     },
-    tag_type: {
-        label: "TagType", titleField: "title", fields: [
-            {name: "map_id", type: "number", required: true, foreignKey: "map"},
-            {name: "title", type: "text", required: true}
+    content: {
+        label: "Content", titleField: "id", fields: [
+            {name: "value", type: "textarea", required: true},
+            {name: "format", type: "number", enum: ContentFormat},
+            {name: "version", type: "number"}
         ]
     },
-    node: {
-        label: "Node", titleField: "title", fields: [
-            {name: "uuid", type: "text", required: true},
-            {name: "map_id", type: "number", required: true, foreignKey: "map"},
-            {name: "sibling_position", type: "number", required: true},
+    note: {
+        label: "Note", titleField: "title", fields: [
+            {name: "map_id", type: "number", foreignKey: "map"},
             {name: "title", type: "text", required: true},
+            {name: "parent_note_id", type: "number", foreignKey: "note"},
             {name: "content_id", type: "number", foreignKey: "content"},
-            {name: "parent_node_id", type: "number", foreignKey: "node"},
-            {name: "type", type: "number", required: true, enum: NodeType},
-            {name: "visibility", type: "number", list: false, enum: Visibility},
-            {name: "last_shown_at", type: "datetime", list: false},
-            {name: "expires_at", type: "datetime", list: false},
-            {name: "is_favorite", type: "checkbox"},
-            {name: "is_redirect", type: "checkbox", list: false},
-            {name: "redirect_node_id", type: "number", list: false, foreignKey: "node"},
-            {name: "redirect_reason", type: "text", list: false},
+            {name: "sibling_position", type: "number"},
             {name: "importance", type: "number", enum: Importance},
             {name: "difficulty", type: "number", enum: Difficulty}
         ]
     },
-    content: {
-        label: "Content", titleField: "version", fields: [
-            {name: "content", type: "textarea", required: true},
-            {name: "format", type: "number", enum: ContentFormat},
-            {name: "version", type: "number"},
-            {name: "node_id", type: "number", foreignKey: "node"}
-        ]
-    },
     property: {
         label: "Property", titleField: "key", fields: [
-            {name: "map_id", type: "number", required: true, foreignKey: "map"},
-            {name: "node_id", type: "number", required: true, foreignKey: "node"},
+            {name: "map_id", type: "number", foreignKey: "map"},
+            {name: "note_id", type: "number", foreignKey: "note"},
             {name: "key", type: "text", required: true},
-            {name: "value", type: "text"},
-            {name: "value_type", type: "number", enum: ValueType},
-            {name: "is_indexed", type: "checkbox"}
+            {name: "value", type: "text"}
+        ]
+    },
+    tag_type: {
+        label: "TagType", titleField: "title", fields: [
+            {name: "map_id", type: "number", foreignKey: "map"},
+            {name: "title", type: "text", required: true}
         ]
     },
     tag: {
         label: "Tag", titleField: "id", fields: [
-            {name: "node_id", type: "number", required: true, foreignKey: "node"},
-            {name: "tag_type_id", type: "number", required: true, foreignKey: "tag_type"}
+            {name: "note_id", type: "number", foreignKey: "note"},
+            {name: "tag_type_id", type: "number", foreignKey: "tag_type"}
         ]
     },
-    node_link: {
-        label: "Node Link", titleField: "label", fields: [
-            {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
-            {name: "to_node_id", type: "number", required: true, foreignKey: "node"},
-            {name: "type", type: "number", required: true},
+    collection: {
+        label: "Collection", titleField: "name", fields: [
+            {name: "name", type: "text", required: true},
+            {name: "description", type: "text"},
+            {name: "order_index", type: "number"},
+            {name: "created_by", type: "number", foreignKey: "user"},
+            {name: "is_public", type: "checkbox"}
+        ]
+    },
+    collection_item: {
+        label: "Collection Item", titleField: "id", fields: [
+            {name: "collection_id", type: "number", foreignKey: "collection"},
+            {name: "note_id", type: "number", foreignKey: "note"},
+            {name: "order_index", type: "number"}
+        ]
+    },
+    review: {
+        label: "Review", titleField: "id", fields: [
+            {name: "user_id", type: "number", foreignKey: "user"},
+            {name: "note_id", type: "number", foreignKey: "note"},
+            {name: "review_date", type: "datetime"},
+            {name: "grade", type: "number"},
+            {name: "response_data", type: "textarea"},
+            {name: "notes", type: "textarea"}
+        ]
+    },
+    sm2_state: {
+        label: "SM2 State", titleField: "id", fields: [
+            {name: "user_id", type: "number", foreignKey: "user"},
+            {name: "note_id", type: "number", foreignKey: "note"},
+            {name: "repetitions", type: "number"},
+            {name: "interval", type: "number"},
+            {name: "ef_times_100", type: "number"},
+            {name: "next_review", type: "datetime"},
+            {name: "last_review", type: "datetime"},
+            {name: "last_quality", type: "number"}
+        ]
+    },
+    reference: {
+        label: "Reference", titleField: "label", fields: [
+            {name: "from_note_id", type: "number", foreignKey: "note"},
+            {name: "to_note_id", type: "number", foreignKey: "note"},
             {name: "label", type: "text"}
         ]
     },
-    external_link: {
-        label: "External Link", titleField: "to_url", fields: [
-            {name: "from_node_id", type: "number", required: true, foreignKey: "node"},
+    link: {
+        label: "Link", titleField: "to_url", fields: [
+            {name: "from_note_id", type: "number", foreignKey: "note"},
             {name: "to_url", type: "text", required: true}
-        ]
-    },
-    history: {
-        label: "History", titleField: "operation", fields: [
-            {name: "table_name", type: "text", required: true},
-            {name: "record_id", type: "number", required: true},
-            {name: "operation", type: "number", required: true, enum: Crudl},
-            {name: "payload", type: "textarea", required: true},
-            {name: "reason", type: "text"}
         ]
     }
 };
+
 
 // ========================================
 // 3. Global state a DOM reference
 // ========================================
 
 const entities = [
-    'map', 'node', 'content', 'property', 'tag_type', 'tag', 'external_link',
     'user', 'message', 'team', 'team_member', 'discussion', 'comment',
-    'suggestion', 'suggestion_review', 'collection', 'collection_node',
-    'question', 'question_review', 'question_sm2_state', 'node_link', 'flag',
-    'history'
+    'suggestion', 'suggestion_review', 'history', 'map', 'content', 'note',
+    'property', 'tag_type', 'tag', 'collection', 'collection_item', 'review',
+    'sm2_state', 'reference', 'link'
 ];
-const mainEntities = ['map', 'node', 'tag', 'flag', 'property'];
-const linkEntities = ['node_link', 'external_link'];
-const questionEntities = ['question', 'question_review', 'question_sm2_state'];
+const mainEntities = ['map', 'note', 'tag', 'property'];
+const linkEntities = ['reference', 'link'];
+const reviewEntities = ['review', 'sm2_state'];
 const collaborationEntities = ['user', 'team', 'team_member', 'message', 'discussion', 'comment'];
 const suggestionEntities = ['suggestion', 'suggestion_review'];
-const notMainEntities = [linkEntities, questionEntities, collaborationEntities, suggestionEntities];
+const notMainEntities = [linkEntities, reviewEntities, collaborationEntities, suggestionEntities];
 
 
 const actions = ['list', 'create', 'read', 'update', 'explore'];
 
 const entityLabels = {
-    map: 'Map', node: 'Node', content: 'Content', property: 'Property',
-    tag_type: 'Tag Type', tag: 'Tag', external_link: 'External Link', history: 'History',
-    user: 'User', message: 'Message', team: 'Team', team_member: 'Team Member', discussion: 'Discussion', comment: 'Comment',
-    suggestion: 'Suggestion', suggestion_review: 'Suggestion Review', collection: 'Collection', collection_node: 'Collection Node',
-    question: 'Question', question_review: 'Question Review', question_sm2_state: 'Question SM2 State',
-    node_link: 'Node Link', flag: 'Flag'
+    user: 'User',
+    message: 'Message',
+    team: 'Team',
+    team_member: 'Team Member',
+    discussion: 'Discussion',
+    comment: 'Comment',
+    suggestion: 'Suggestion',
+    suggestion_review: 'Suggestion Review',
+    history: 'History',
+    map: 'Map',
+    content: 'Content',
+    note: 'Note',
+    property: 'Property',
+    tag_type: 'Tag Type',
+    tag: 'Tag',
+    collection: 'Collection',
+    collection_item: 'Collection Item',
+    review: 'Review',
+    sm2_state: 'SM2 State',
+    reference: 'Reference',
+    link: 'Link'
 };
-
 
 
 
@@ -403,13 +592,13 @@ async function renderMapExplore(mapId) {
 
 
 async function loadChildren(mapId, parentId) {
-    let url = `${API_BASE}/node?map_id=${mapId}`;
-    if (parentId.startsWith("node_")) {
-        const nodeId = parentId.replace("node_", "");
-        url += `&parent_node_id=${nodeId}`;
+    let url = `${API_BASE}/note?map_id=${mapId}`;
+    if (parentId.startsWith("note_")) {
+        const nodeId = parentId.replace("note_", "");
+        url += `&parent_note_id=${noteId}`;
     } else {
-        // děti mapy (root nodes)
-        url += `&parent_node_id=0`;
+        // map root notes
+        url += `&parent_note_id=0`;
     }
     const json = await apiFetch(url);
     if (!json) return;
@@ -435,7 +624,7 @@ function replaceSpacesWithUnderscores(text) {
 function add_node_and_edges(label, color, id_of_parent, level = null) {
     let id_of_new_node = replaceSpacesWithUnderscores(label);
     const nodeData = {id: id_of_new_node, label: label, color: color};
-    if (level !== null) nodeData.level = level;  // přidá level jen pokud je zadán
+    if (level !== null) nodeData.level = level;  // adds level only if provided
     network.body.data.nodes.add(nodeData);
     network.body.data.edges.add({from: id_of_parent, to: id_of_new_node});
 }
@@ -573,11 +762,11 @@ function changePage(page) {
 function renderEntityNav() {
     entityNav.innerHTML = "";
 
-    // --- If the selected entity is in (linkEntities, questionEntities, collaborationEntities or suggestionEntities), show it on the left ---
+    // --- If the selected entity is in (linkEntities, reviewEntities, collaborationEntities or suggestionEntities), show it on the left ---
     if (selectedEntity &&
         (
             linkEntities.includes(selectedEntity) ||
-            questionEntities.includes(selectedEntity) ||
+            reviewEntities.includes(selectedEntity) ||
             collaborationEntities.includes(selectedEntity) ||
             suggestionEntities.includes(selectedEntity)
         )
@@ -601,7 +790,7 @@ function renderEntityNav() {
         selectedEntity &&
         !mainEntities.includes(selectedEntity) &&
         !linkEntities.includes(selectedEntity) &&
-        !questionEntities.includes(selectedEntity) &&
+        !reviewEntities.includes(selectedEntity) &&
         !collaborationEntities.includes(selectedEntity) &&
         !suggestionEntities.includes(selectedEntity)
     ) {
@@ -633,7 +822,7 @@ function renderEntityNav() {
         button_.textContent = "";
         switch (index) {
             case 0: button_.textContent = "Links ▼"; break;
-            case 1: button_.textContent = "Questions ▼"; break;
+            case 1: button_.textContent = "Review ▼"; break;
             case 2: button_.textContent = "Collaboration ▼"; break;
             case 3: button_.textContent = "Suggestions ▼"; break;
             default: console.error("Too many not main entities");
@@ -678,7 +867,7 @@ function renderEntityNav() {
     const otherEntities = entities.filter(
         e => !mainEntities.includes(e) &&
             !linkEntities.includes(e) &&
-            !questionEntities.includes(e) &&
+            !reviewEntities.includes(e) &&
             !collaborationEntities.includes(e) &&
             !suggestionEntities.includes(e) &&
             e !== selectedEntity

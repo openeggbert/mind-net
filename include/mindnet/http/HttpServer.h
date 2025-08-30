@@ -29,6 +29,8 @@ namespace mindnet::http
             controller->register_routes(crow_app, db_, definition);
         }
 
+        crow::SimpleApp& get_crow_app();
+
     private:
         crow::SimpleApp crow_app;
         std::shared_ptr<persistence::Persistence> db_;
