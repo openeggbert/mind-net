@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/models/Node.h"
+#include "mindnet/models/Note.h"
 
 namespace mindnet::models
 {

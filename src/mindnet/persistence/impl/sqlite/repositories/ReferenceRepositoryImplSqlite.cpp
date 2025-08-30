@@ -23,7 +23,7 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "mindnet/persistence/impl/sqlite/repositories/NodeLinkRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/ReferenceRepositoryImplSqlite.h"
 
 #include <string>
 
@@ -33,14 +33,14 @@
 
 namespace mindnet::impl::sqlite::repositories
 {
-    NodeLinkRepositoryImplSqlite::~NodeLinkRepositoryImplSqlite() = default;
+    ReferenceRepositoryImplSqlite::~ReferenceRepositoryImplSqlite() = default;
 
-    def_virtual_irepository_impl_cpp_methods(NodeLink, NODE_LINK)
+    def_virtual_irepository_impl_cpp_methods(Reference, REFERENCE)
 
-    entity_fields NodeLinkRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+    entity_fields ReferenceRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
         crow::json::rvalue& body, enums::Crudl crudl)
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(NodeLink)
+        start_of_convert_crow_json_rvalue_to_entity_fields(Reference)
 
         add_int(FROM_NODE_ID);
         add_int(TO_NODE_ID);

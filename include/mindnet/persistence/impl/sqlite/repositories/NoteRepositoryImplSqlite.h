@@ -22,12 +22,12 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODEREPOSITORYIMPLSQLITE_H
-#define NODEREPOSITORYIMPLSQLITE_H
+#ifndef NOTEREPOSITORYIMPLSQLITE_H
+#define NOTEREPOSITORYIMPLSQLITE_H
 
 
-#include "mindnet/persistence/api/NodeRepository.h"
-#include "mindnet/models/Node.h"
+#include "mindnet/persistence/api/NoteRepository.h"
+#include "mindnet/models/Note.h"
 #include <vector>
 
 #include "mindnet/enums/Crudl.h"
@@ -36,15 +36,14 @@ namespace mindnet::impl::sqlite::repositories
 {
     using std::vector;
 
-    class NodeRepositoryImplSqlite : public persistence::api::NodeRepository
+    class NoteRepositoryImplSqlite : public persistence::api::NoteRepository
     {
     public:
-        NodeRepositoryImplSqlite() = default;
-        ~NodeRepositoryImplSqlite() override;
+        NoteRepositoryImplSqlite() = default;
+        ~NoteRepositoryImplSqlite() override;
 
         def_virtual_irepository_impl_h_methods
     };
 }
 
-// MAPREPOSITORYIMPLSQLITE_H
-#endif // NODEREPOSITORYIMPLSQLITE_H
+#endif // NOTEREPOSITORYIMPLSQLITE_H

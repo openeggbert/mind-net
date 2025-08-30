@@ -32,11 +32,11 @@ namespace mindnet::persistence::api
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class NodeRepository : public models::IRepository
+    class NoTeRepository : public models::IRepository
     {
     public:
-        NodeRepository() = default;
-        virtual ~NodeRepository() = default;
+        NoTeRepository() = default;
+        virtual ~NoTeRepository() = default;
 
         def_virtual_irepository_api_h_methods
     };
