@@ -35,15 +35,26 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::MapColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def MAP_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
+    .set_columns({
+    //
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+
+    //
+});
         .set_columns(
             {
                 coldef(cols::NAME).set_mandatory().set_unique(),
@@ -55,10 +66,8 @@ using_flags();
             });
 
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
-
-
         string name;
         string description;
         string category;
@@ -75,7 +84,6 @@ using_flags();
             return id == other.id && name == other.name && description == other.description && category == other.
                 category && created_at == other.created_at && updated_at == other.updated_at;
         }
-
     };
 }
 #undef Model

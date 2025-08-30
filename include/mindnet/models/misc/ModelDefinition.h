@@ -149,10 +149,12 @@ namespace mindnet::models::misc
         {
             return set_rest_operations(std::string(ops_as_string));
         }
+
         ModelDefinition& set_all_rest_operations()
         {
             return set_rest_operations(enums::CRUDL);
         }
+
         /**
          * Configures the virtual table for a database model.
          *

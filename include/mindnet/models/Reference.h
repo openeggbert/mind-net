@@ -34,15 +34,26 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::PropertyColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def REFERENCE_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
+    .set_columns({
+    //
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+
+    //
+});
     {
         {
             NodeLinkColumns::ID, ColumnType::INTEGER, true
@@ -77,8 +88,6 @@ using_flags();
 
 struct Model : mindnet::models::bm
 {
-
-
     int from_note_id;
     int to_note_id;
     string label;
@@ -91,7 +100,6 @@ struct Model : mindnet::models::bm
             type == other.type && label == other.label && created_at == other.created_at && updated_at == other.
             updated_at;
     }
-
 };
 
 }

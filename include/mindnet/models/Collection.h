@@ -34,15 +34,26 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::CollectionColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def COLLECTION_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
+    .set_columns({
+    //
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+
+    //
+});
         .set_columns({
             //
             coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
@@ -56,10 +67,8 @@ using_flags();
             //
         });
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
-
-
         string name;
         string description;
         int order_index{};

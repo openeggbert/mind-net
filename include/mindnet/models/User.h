@@ -34,7 +34,7 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
+
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -44,18 +44,18 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::USERNAME).flags(MANDATORY | UNIQUE),
-            coldef(COLS::PASSWORD_HASH).flags(MANDATORY),
+            coldef(COLS::USERNAME,MANDATORY | UNIQUE),
+            coldef(COLS::PASSWORD_HASH,MANDATORY),
             coldef(COLS::DISPLAY_NAME),
-            coldef(COLS::ROLE).flags(MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
+            coldef(COLS::ROLE,MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
                                set_default_value("0"),
-            coldef(COLS::PROFILE_TEXT).flags(TEXTAREA),
-            coldef(COLS::LAST_LOGIN).flags(DATETIME),
-            coldef(COLS::EMAIL).flags(UNIQUE),
-            coldef(COLS::STATUS).flags(MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
+            coldef(COLS::PROFILE_TEXT,TEXTAREA),
+            coldef(COLS::LAST_LOGIN,DATETIME),
+            coldef(COLS::EMAIL,UNIQUE),
+            coldef(COLS::STATUS,MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
         });
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
         string username;
         string password_hash;
@@ -86,6 +86,5 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
-#undef COLS
 #undef COLS
 #endif // USER_H

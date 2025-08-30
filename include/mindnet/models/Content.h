@@ -37,15 +37,26 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    namespace detail{using cols = columns::ContentColumns;}
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def CONTENT_DEFINITION =
         def(detail::cols::MODEL_NAME)
         .set_all_rest_operations()
+    .set_columns({
+    //
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+
+    //
+});
         .set_columns(
             {
                 coldef(cols::CONTENT).set_mandatory(true),
@@ -57,10 +68,8 @@ using_flags();
             }
         );
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
-
-
         string value;
         mindnet::enums::ContentFormat format{};
         int version{1};

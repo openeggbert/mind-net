@@ -69,7 +69,7 @@ namespace mindnet::models::misc
     {
     private:
         std::string column_name;
-        enums::ColumnType column_type;
+        enums::ColumnType column_type = enums::ColumnType::TEXT;
         bool mandatory = false;
         bool primary_key = false;
         std::string foreign_key;
@@ -103,10 +103,9 @@ namespace mindnet::models::misc
          * - id column is set as primary key and mandatory
          * - created_at column is set as mandatory
          */
-        ColumnDefinition(const char* name, mindnet::enums::ColumnType type = mindnet::enums::ColumnType::TEXT)
+        ColumnDefinition(const char* name, int flags_ = 0)
         {
             column_name = name;
-            column_type = type;
             using bc = columns::BaseColumns;
             if (ends_with_id(column_name))
             {
@@ -128,6 +127,7 @@ namespace mindnet::models::misc
             {
                 column_type = mindnet::enums::ColumnType::DATETIME;
             }
+            flags(flags_);
         }
 
         // Setters
@@ -210,11 +210,12 @@ namespace mindnet::models::misc
             return *this;
         }
 
-        ColumnDefinition flags(int flags)
+    private:
+        ColumnDefinition& flags(int flags)
         {
             if (flags == 0)
             {
-                throw std::invalid_argument("flags cannot be 0");
+                return *this;
             }
             std::set<ColumnDefinitionFlag> flags_set;
             for (auto cdf : column_definition_flag_values())
@@ -237,6 +238,7 @@ namespace mindnet::models::misc
 
             return *this;
         }
+    public:
     };
 }
 

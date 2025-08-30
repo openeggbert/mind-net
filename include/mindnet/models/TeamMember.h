@@ -29,37 +29,33 @@
 #define MODEL TEAM_MEMBER
 #define COLS columns::TeamMemberColumns
 #include "columns/TeamMemberColumns.h"
+#include "mindnet/enums/UserRole.h"
 // ***** MACROS : END *****
 
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::TeamMemberColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def TEAM_MEMBER_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
-        .set_columns({
-            //
-            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(),
-            coldef(cols::RECORD_ID).set_mandatory(),
-            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(),
-            coldef(cols::REASON),
-            //
-        });
+    .set_columns({
+        //
+        coldef(COLS::TEAM_ID,MANDATORY).set_foreign_key("user"),
+        coldef(COLS::USER_ID,MANDATORY).set_foreign_key("user"),
+        coldef(COLS::ROLE,MANDATORY).set_default_value("0").set_enum_definition(enums::user_role_to_enum_definition()),
+        coldef(COLS::JOINED_AT,DATETIME | MANDATORY),
+        coldef(COLS::IS_ACTIVE,BOOL).set_default_value("1"),
+        coldef(COLS::LEFT_AT,DATETIME),
 
-    struct Model : bm
+    });
+
+    struct Model : misc::BaseModel
     {
-
-
         int team_id{};
         int user_id{};
         int role{};

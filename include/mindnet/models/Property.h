@@ -35,15 +35,26 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::PropertyColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def PROPERTY_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
+    .set_columns({
+    //
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+
+    //
+});
     {
         {
             PropertyColumns::ID, ColumnType::INTEGER, true
@@ -84,10 +95,8 @@ using_flags();
     }
 };
 
-struct Model : bm
+struct Model : misc::BaseModel
 {
-
-
     int map_id;
     int note_id;
     string key;
@@ -101,7 +110,6 @@ struct Model : bm
             value == other.value && value_type == other.value_type && is_indexed == other.is_indexed &&
             created_at == other.created_at && updated_at == other.updated_at;
     }
-
 };
 
 }

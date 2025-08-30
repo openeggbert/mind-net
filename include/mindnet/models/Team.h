@@ -34,32 +34,25 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::TeamColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def TEAM_DEFINITION =
-        def(cols::MODEL_NAME)
-        .set_all_rest_operations()
+        def(COLS::MODEL_NAME).set_all_rest_operations()
         .set_columns({
             //
-            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(),
-            coldef(cols::RECORD_ID).set_mandatory(),
-            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(),
-            coldef(cols::REASON),
+            coldef(COLS::NAME,MANDATORY),
+            coldef(COLS::DESCRIPTION),
+            coldef(COLS::CREATED_BY,MANDATORY).set_foreign_key("user"),
+            coldef(COLS::LEADER_ID,MANDATORY).set_foreign_key("user"),
+
             //
         });
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
-
-
         string name;
         string description;
         int created_by{};

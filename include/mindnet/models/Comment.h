@@ -34,11 +34,10 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::CommentColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def COMMENT_DEFINITION =
         def(cols::MODEL_NAME)
@@ -56,10 +55,8 @@ using_flags();
             //
         });
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
-
-
         int discussion_id{};
         int user_id{};
         string content;

@@ -34,33 +34,29 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::SM2StateColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def SM2STATE_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
-        .set_columns({
-            //
-            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(),
-            coldef(cols::RECORD_ID).set_mandatory(),
-            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(),
-            coldef(cols::REASON),
-            //
-        });
+    .set_columns({
+        //
+        coldef(COLS::ID,tttt MANDATORY),
+        coldef(COLS::ID,tttt MANDATORY),
+        coldef(COLS::ID,tttt MANDATORY),
+        coldef(COLS::ID,tttt MANDATORY),
+        coldef(COLS::ID,tttt MANDATORY),
+        coldef(COLS::ID,tttt MANDATORY),
+        coldef(COLS::ID,tttt MANDATORY),
 
-    struct Model : bm
+        //
+    });
+
+    struct Model : misc::BaseModel
     {
-
-
-
         int user_id{};
         int note_id{};
         int repetitions{};

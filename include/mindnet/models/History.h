@@ -34,11 +34,10 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    namespace detail{using cols = columns::HistoryColumns;}
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def HISTORY_DEFINITION =
         def(cols::MODEL_NAME)
@@ -56,10 +55,8 @@ using_flags();
             //
         });
 
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
-
-
         string table_name;
         int record_id{};
         enums::Crudl operation{};

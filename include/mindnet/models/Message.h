@@ -34,7 +34,7 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
+
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -44,25 +44,23 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns(
             {
-                coldef(COLS::OWNER_ID).flags(MANDATORY).set_foreign_key("user"),
-                coldef(COLS::SENDER_ID).flags(MANDATORY).set_foreign_key("user"),
-                coldef(COLS::RECIPIENT_ID).flags(MANDATORY).set_foreign_key("user"),
+                coldef(COLS::OWNER_ID,MANDATORY).set_foreign_key("user"),
+                coldef(COLS::SENDER_ID,MANDATORY).set_foreign_key("user"),
+                coldef(COLS::RECIPIENT_ID,MANDATORY).set_foreign_key("user"),
                 coldef(COLS::SUBJECT),
-                coldef(COLS::IMPORTANT).flags(BOOL).set_default_value("0"),
-                coldef(COLS::BODY).flags(TEXTAREA | MANDATORY),
-                coldef(COLS::SENT_AT).flags(DATETIME),
-                coldef(COLS::SYSTEM_MESSAGE).flags(BOOL).set_default_value("0"),
+                coldef(COLS::IMPORTANT,BOOL).set_default_value("0"),
+                coldef(COLS::BODY,TEXTAREA | MANDATORY),
+                coldef(COLS::SENT_AT,DATETIME),
+                coldef(COLS::SYSTEM_MESSAGE,BOOL).set_default_value("0"),
                 coldef(COLS::FOLDER),
-                coldef(COLS::DRAFT).flags(BOOL).set_default_value("0"),
-                coldef(COLS::IS_READ).flags(BOOL).set_default_value("0"),
-                coldef(COLS::DELETED_AT).flags(DATETIME),
-                coldef(COLS::STARRED).flags(BOOL).set_default_value("0")
+                coldef(COLS::DRAFT,BOOL).set_default_value("0"),
+                coldef(COLS::IS_READ,BOOL).set_default_value("0"),
+                coldef(COLS::DELETED_AT,DATETIME),
+                coldef(COLS::STARRED,BOOL).set_default_value("0")
             });
     // *** Definition of model ends ***
 
-    using misc::BaseModel;
-
-    struct Model : bm
+    struct Model : misc::BaseModel
     {
         int owner_id{};
         int sender_id{};

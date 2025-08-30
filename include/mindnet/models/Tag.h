@@ -34,11 +34,10 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::TagColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def TAG_DEFINITION =
         def(cols::MODEL_NAME)
@@ -67,10 +66,8 @@ using_flags();
     }
 };
 
-struct Model : bm
+struct Model : misc::BaseModel
 {
-
-
     int note_id;
     int tag_type_id;
 
@@ -81,7 +78,6 @@ struct Model : bm
         return id == other.id && node_id == other.node_id && tag_type_id == other.tag_type_id &&
             created_at == other.created_at && updated_at == other.updated_at;
     }
-
 };
 
 }

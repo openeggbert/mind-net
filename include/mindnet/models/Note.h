@@ -37,15 +37,26 @@
 
 namespace mindnet::models
 {
-    using bm = misc::BaseModel;
-    using cols = columns::NoteColumns;
+
     using misc::def;
     using misc::coldef;
-using_flags();
+    using_flags();
 
     inline def NOTE_DEFINITION =
         def(cols::MODEL_NAME)
         .set_all_rest_operations()
+    .set_columns({
+    //
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt MANDATORY),
+
+    //
+});
     {
         {
             NodeColumns::ID, ColumnType::INTEGER, true
@@ -124,10 +135,8 @@ using_flags();
     ,
 };
 
-struct Model : bm
+struct Model : misc::BaseModel
 {
-
-
     int map_id{};
     string title;
     int parent_note_id{};
@@ -150,7 +159,6 @@ struct Model : bm
             importance == other.importance && difficulty == other.difficulty &&
             created_at == other.created_at && updated_at == other.updated_at;
     }
-
 };
 
 }
