@@ -22,41 +22,46 @@
 
 #include <string>
 
-namespace mindnet::enums {
+namespace mindnet::enums
+{
     /**
      *
      * @author robertvokac
      */
-    enum class Difficulty {
+    enum class Difficulty
+    {
         UNDEFINED = 0, EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
     };
-    inline std::string difficulty_to_string(Difficulty difficulty) {
+
+    inline std::string difficulty_to_string(Difficulty difficulty)
+    {
         switch (difficulty)
         {
-            case Difficulty::UNDEFINED:
-                return "Undefined";
-            case Difficulty::EASY:
-                return "Easy";
-            case Difficulty::MEDIUM:
-                return "Medium";
-            case Difficulty::HARD:
-                return "Hard";
-            case Difficulty::EXPERT:
-                return "Expert";
-            default:
-                return "Unknown";
+        case Difficulty::UNDEFINED:
+            return "Undefined";
+        case Difficulty::EASY:
+            return "Easy";
+        case Difficulty::MEDIUM:
+            return "Medium";
+        case Difficulty::HARD:
+            return "Hard";
+        case Difficulty::EXPERT:
+            return "Expert";
+        default:
+            return "Unknown";
         }
     }
+
     inline std::string difficulty_to_string(int difficulty)
     {
         return difficulty_to_string(static_cast<Difficulty>(difficulty));
     }
+
     inline models::misc::EnumDefinition difficulty_to_enum_definition()
     {
         return models::misc::EnumDefinition{
             difficulty_to_string, 5, 0, 1, 2, 3, 4
         };
     }
-
 } // namespace mindnet::enums
 #endif

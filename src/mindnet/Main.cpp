@@ -75,7 +75,6 @@ bool check_args(std::vector<str>& arguments)
 
 void load_args(int argc, char** argv, std::vector<std::string>& arguments)
 {
-
     for (int i = 1; i < argc; ++i)
     {
         arguments.push_back(argv[i]);
@@ -220,10 +219,13 @@ bool run_command(
 
 int main(int argc, char** argv)
 {
-    auto loggers = { &mindnet::fatal, &mindnet::err, &mindnet::warn,
-                 &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::test };
+    auto loggers = {
+        &mindnet::fatal, &mindnet::err, &mindnet::warn,
+        &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::test
+    };
 
-    for (auto* logger : loggers) {
+    for (auto* logger : loggers)
+    {
         logger->set_timestamp_function(&mindnet::Utils::print_current_timestamp);
     }
 

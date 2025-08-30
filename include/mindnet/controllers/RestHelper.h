@@ -32,7 +32,6 @@ namespace mindnet::controllers
         static nlohmann::json crow_json_to_nlohmann_json(const crow::json::rvalue& crow_json);
 
         static crow::json::wvalue rjson_to_wjson(const crow::json::rvalue& rjson);
-
     };
 }
 

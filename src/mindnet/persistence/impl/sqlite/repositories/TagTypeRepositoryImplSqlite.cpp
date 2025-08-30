@@ -46,5 +46,4 @@ namespace mindnet::impl::sqlite::repositories
         add_string(TITLE);
         return fields;
     }
-
 }

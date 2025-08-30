@@ -46,8 +46,7 @@ friend std::ostream& operator<<(std::ostream& os, const Model & o)\
 {\
     os << o.to_json();\
     return os;\
-}\
-
+}
 
 //
 #define def_helper_lambdas()\
@@ -59,26 +58,26 @@ auto number = [&values, &i]\
 auto text = [&values, &i]\
 {\
     return std::get<std::string>(values[i++]);\
-};\
+};
 
-namespace mindnet::models::misc {
-
+namespace mindnet::models::misc
+{
     using std::string;
     using type = enums::ColumnType;
     using coldef = misc::ColumnDefinition;
     using def = misc::ModelDefinition;
     using crudl = mindnet::enums::Crudl;
 
-    struct BaseModel {
-
+    struct BaseModel
+    {
     protected:
         int id{};
         unixtime created_at{};
         unixtime updated_at{};
 
     public:
-
         virtual ~BaseModel() = default;
+
         [[nodiscard]] int get_id() const
         {
             return id;
@@ -88,6 +87,7 @@ namespace mindnet::models::misc {
         {
             id = id_;
         }
+
         [[nodiscard]] virtual const misc::ModelDefinition& get_definition() const = 0;
 
         [[nodiscard]] virtual entity_fields get_values() const = 0;
@@ -116,7 +116,7 @@ namespace mindnet::models::misc {
         // {
         //     return to_json() == other.to_json();
         // };
-        void print(std::ostream &os) const
+        void print(std::ostream& os) const
         {
             os << to_json();
         };

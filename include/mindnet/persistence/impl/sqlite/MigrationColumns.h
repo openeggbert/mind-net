@@ -25,18 +25,20 @@
 #ifndef MIGRATIONCOLUMNS_H
 #define MIGRATIONCOLUMNS_H
 
-namespace mindnet::models::fields{
-    struct MigrationColumns {
+namespace mindnet::models::fields
+{
+    struct MigrationColumns
+    {
         MigrationColumns() = delete;
 
-        MigrationColumns(const MigrationColumns &) = delete;
+        MigrationColumns(const MigrationColumns&) = delete;
 
-        MigrationColumns &operator=(const MigrationColumns &) = delete;
+        MigrationColumns& operator=(const MigrationColumns&) = delete;
 
-        static constexpr const char *MODEL_NAME = "migration";
+        static constexpr const char* MODEL_NAME = "migration";
 
-        static constexpr const char *ID = "id";
-        static constexpr const char *MAX_MIGRATION_NUMBER = "max_migration_number";
+        static constexpr const char* ID = "id";
+        static constexpr const char* MAX_MIGRATION_NUMBER = "max_migration_number";
     };
 }
 #endif // MIGRATIONCOLUMNS_H

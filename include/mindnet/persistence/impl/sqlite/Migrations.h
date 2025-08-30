@@ -8,10 +8,12 @@
 #include <climits>
 
 
-namespace mindnet::persistence::impl::sqlite {constexpr int MIGRATION_COUNT = 22;
+namespace mindnet::persistence::impl::sqlite
+{
+    constexpr int MIGRATION_COUNT = 22;
     inline std::string migrations[MIGRATION_COUNT] = {
 
-    	R"(
+        R"(
 
 CREATE TABLE user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,7 +29,8 @@ CREATE TABLE user (
     email TEXT UNIQUE,
 	status INTEGER NOT NULL CHECK (status IN (0,1,2,3,4,5))
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE message (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -51,7 +54,8 @@ CREATE TABLE message (
 	FOREIGN KEY(recipient_id) REFERENCES user(id),
 	FOREIGN KEY(owner_id) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE team (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -64,7 +68,8 @@ CREATE TABLE team (
 	FOREIGN KEY(created_by) REFERENCES user(id),
     FOREIGN KEY(leader_id) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE team_member (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -79,7 +84,8 @@ CREATE TABLE team_member (
 	FOREIGN KEY(team_id) REFERENCES team(id),
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE discussion (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -92,7 +98,8 @@ CREATE TABLE discussion (
   FOREIGN KEY (team_id) REFERENCES team(id),
   FOREIGN KEY (created_by) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE comment (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -107,7 +114,8 @@ CREATE TABLE comment (
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY(parent_comment_id) REFERENCES comment(id) /*ON DELETE CASCADE*/
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE suggestion (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -123,7 +131,8 @@ CREATE TABLE suggestion (
     FOREIGN KEY(parent_suggestion_id) REFERENCES suggestion(id),
 	FOREIGN KEY(from_user_id) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE suggestion_review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -137,7 +146,8 @@ CREATE TABLE suggestion_review (
 	FOREIGN KEY(suggestion_id) REFERENCES suggestion(id),
 	FOREIGN KEY(reviewer_id) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE history (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -152,7 +162,8 @@ CREATE TABLE history (
     reason TEXT,
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
-)", R"(
+)",
+        R"(
 CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -171,7 +182,8 @@ CREATE TABLE map (
 
 	FOREIGN KEY(owner_id) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -192,7 +204,8 @@ CREATE TABLE note (
 
 CREATE INDEX idx_note_content_id ON note(content_id);
 CREATE INDEX idx_note_map_id ON note(map_id);
-)",R"(
+)",
+        R"(
 CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -203,7 +216,8 @@ CREATE TABLE content (
     version INTEGER DEFAULT 1
 );
 CREATE INDEX idx_content_value ON content(value);
-)",R"(
+)",
+        R"(
 CREATE VIRTUAL TABLE content_fts USING fts5(
     value,
     format UNINDEXED,
@@ -222,7 +236,8 @@ END;
 CREATE TRIGGER content_au AFTER UPDATE ON content BEGIN
   UPDATE content_fts SET value = new.value WHERE rowid = old.id;
 END;
-)",R"(
+)",
+        R"(
 CREATE TABLE property(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -240,7 +255,8 @@ CREATE TABLE property(
 
 CREATE INDEX idx_property_map_note_key ON property(map_id, note_id, key);
 
-)",R"(
+)",
+        R"(
 CREATE TABLE tag_type (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -252,7 +268,8 @@ CREATE TABLE tag_type (
 	FOREIGN KEY (map_id) REFERENCES map(id) /*ON DELETE CASCADE*/,
     UNIQUE(map_id, title)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE tag (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -268,7 +285,8 @@ CREATE TABLE tag (
 
 CREATE INDEX idx_tag_note_id ON tag(note_id);
 
-)",R"(
+)",
+        R"(
 CREATE TABLE collection (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -281,7 +299,8 @@ CREATE TABLE collection (
     is_public BOOLEAN DEFAULT 0,
     FOREIGN KEY (created_by) REFERENCES user(id)
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE collection_item (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -296,30 +315,30 @@ CREATE TABLE collection_item (
 	FOREIGN KEY(note_id) REFERENCES note(id)
 );
 )",
-//     	R"(
-// 		CREATE TABLE question (
-// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-// 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-// 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-// 			version INTEGER NOT NULL DEFAULT 1,
-// 			node_id INTEGER,
-// 			question_text TEXT NOT NULL,
-// 			type INTEGER NOT NULL CHECK (type IN (0,1,2,3)),
-//             difficulty INTEGER DEFAULT 0 CHECK (difficulty IN (0, 1, 2, 3, 4)),
-// 			tags TEXT, -- for example. CSV: "STL,containers"
-// 			answers_json TEXT, -- answers as a json object
-// 			active BOOLEAN DEFAULT 1,
-//             FOREIGN KEY (node_id) REFERENCES node(id) /*ON DELETE CASCADE*/
-// 		);
-//
-//     	--answers_json
-// 		--[
-// 		--  { "text": "std::vector", "is_correct": true },
-// 		--  { "text": "std::map", "is_correct": false },
-// 		--  { "text": "std::set", "is_correct": false }
-// 		--]
-// )",
-    	R"(
+        //     	R"(
+        // 		CREATE TABLE question (
+        // 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+        // 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        // 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        // 			version INTEGER NOT NULL DEFAULT 1,
+        // 			node_id INTEGER,
+        // 			question_text TEXT NOT NULL,
+        // 			type INTEGER NOT NULL CHECK (type IN (0,1,2,3)),
+        //             difficulty INTEGER DEFAULT 0 CHECK (difficulty IN (0, 1, 2, 3, 4)),
+        // 			tags TEXT, -- for example. CSV: "STL,containers"
+        // 			answers_json TEXT, -- answers as a json object
+        // 			active BOOLEAN DEFAULT 1,
+        //             FOREIGN KEY (node_id) REFERENCES node(id) /*ON DELETE CASCADE*/
+        // 		);
+        //
+        //     	--answers_json
+        // 		--[
+        // 		--  { "text": "std::vector", "is_correct": true },
+        // 		--  { "text": "std::map", "is_correct": false },
+        // 		--  { "text": "std::set", "is_correct": false }
+        // 		--]
+        // )",
+        R"(
 CREATE TABLE review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -335,7 +354,8 @@ CREATE TABLE review (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-)",R"(
+)",
+        R"(
 -- SM-2 state for each note and user
 CREATE TABLE sm2_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -357,7 +377,8 @@ CREATE TABLE sm2_state (
     FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
     FOREIGN KEY (user_id) REFERENCES user(id) /*ON DELETE CASCADE*/
 );
-)",R"(
+)",
+        R"(
 CREATE TABLE reference(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -375,7 +396,8 @@ CREATE TABLE reference(
 
 CREATE INDEX idx_reference_from_to ON reference(from_note_id, to_note_id);
 
-)",R"(
+)",
+        R"(
 CREATE TABLE link(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -390,8 +412,6 @@ CREATE TABLE link(
 
 CREATE INDEX idx_link_from_note ON link(from_note_id);
 )",
-
-
 
 
     };

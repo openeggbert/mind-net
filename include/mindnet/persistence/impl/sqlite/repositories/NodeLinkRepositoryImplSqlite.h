@@ -45,5 +45,6 @@ namespace mindnet::impl::sqlite::repositories
         def_virtual_irepository_impl_h_methods
     };
 }
+
 // MAPREPOSITORYIMPLSQLITE_H
 #endif // NODELINKREPOSITORYIMPLSQLITE_H

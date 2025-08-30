@@ -59,28 +59,25 @@ namespace mindnet::models
     {
         Model() = default;
 
-    str content;
-    mindnet::enums::ContentFormat format;
-    str mime_type;
-    str version;
-    str node_id;
+        str content;
+        mindnet::enums::ContentFormat format;
+        str mime_type;
+        str version;
+        str node_id;
 
-    create_model_h_methods(Model, MODEL)
+        create_model_h_methods(Model, MODEL)
 
-    bool operator==(const Model & other) const
-    {
-        return id == other.id &&
-            created_at == other.created_at &&
-            updated_at == other.updated_at &&
-            content == other.content &&
-            format == other.format &&
-            version == other.version &&
-            node_id == other.node_id;
-    }
-
-
-};
-
+        bool operator==(const Model& other) const
+        {
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                content == other.content &&
+                format == other.format &&
+                version == other.version &&
+                node_id == other.node_id;
+        }
+    };
 }
 
 #undef Model

@@ -6,7 +6,6 @@
 
 namespace mindnet::models
 {
-
     entity_fields Content::get_values() const
     {
         entity_fields result;
@@ -35,5 +34,5 @@ namespace mindnet::models
         version = number();
         node_id = number();
     }
-;
+    ;
 }

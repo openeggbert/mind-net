@@ -86,8 +86,7 @@ std::vector<entity_fields> Model##RepositoryImplSqlite::list(http::QueryParams& 
 models::misc::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
     {\
         return models::MODEL##_DEFINITION;\
-    }\
-
+    }
 #define string_for(COLUMN) body[cols::COLUMN].s()
 #define int_for(COLUMN) cast64(body[cols::COLUMN])
 #define add_string(COLUMN) fields.push_back(string_for(COLUMN));
@@ -110,8 +109,7 @@ if (\
 } else\
 {\
     fields.push_back(FOREIGN_KEY_NULL);\
-}\
-
+}
 
 
 #define start_of_convert_crow_json_rvalue_to_entity_fields(Model)\
@@ -138,19 +136,18 @@ else\
 fields.push_back(cast64(Utils::currentUnixTimestamp()));
 
 
-namespace mindnet::models {
-
+namespace mindnet::models
+{
     using std::string;
 
-    class IRepository {
-
+    class IRepository
+    {
     public:
         virtual ~IRepository() = default;
         IRepository() = default;
 
     public:
         def_virtual_irepository_api_h_methods
-
     };
 }
 

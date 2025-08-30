@@ -114,8 +114,6 @@ namespace mindnet
               level(log_level)
         {
         }
-
     };
-
 }
 #endif // LOGGER_H

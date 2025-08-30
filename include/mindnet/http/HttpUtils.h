@@ -9,8 +9,10 @@
 #include <string>
 
 
-namespace mindnet::http {
-    inline const std::string& http_method_to_string(crow::HTTPMethod method) {
+namespace mindnet::http
+{
+    inline const std::string& http_method_to_string(crow::HTTPMethod method)
+    {
         static const std::string methodNames[] = {
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"
         };
@@ -18,12 +20,14 @@ namespace mindnet::http {
         static const std::string unknown = "UNKNOWN";
 
         size_t index = static_cast<size_t>(method);
-        if (index < sizeof(methodNames) / sizeof(methodNames[0])) {
+        if (index < sizeof(methodNames) / sizeof(methodNames[0]))
+        {
             return methodNames[index];
-        } else {
+        }
+        else
+        {
             return unknown;
         }
     }
-
 }
 #endif //MINI_WIKI_HTTPUTILS_H

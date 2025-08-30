@@ -73,7 +73,8 @@ namespace mindnet
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
         static str generate_select_one_sql(const std::string& table_name);
-        static str generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params, bool count = false);
+        static str generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params,
+                                           bool count = false);
         static str generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params);
 
         static str generate_insert_sql(const models::misc::ModelDefinition& definition);
@@ -87,7 +88,8 @@ namespace mindnet
     enum EscapeColor
     {
         Black = 0, Red = 1, Green = 2, Yellow = 3, Blue = 4, Magenta = 5, Cyan = 6, White = 7,
-        BrightBlack = 8, BrightRed = 9, BrightGreen = 10, BrightYellow = 11, BrightBlue = 12, BrightMagenta = 13, BrightCyan = 14, BrightWhite = 15,
+        BrightBlack = 8, BrightRed = 9, BrightGreen = 10, BrightYellow = 11, BrightBlue = 12, BrightMagenta = 13,
+        BrightCyan = 14, BrightWhite = 15,
     };
 
     struct TextColour
@@ -95,21 +97,22 @@ namespace mindnet
         int foreground = -1;
         int background = -1;
     };
+
     inline void set_text_colour(TextColour colour)
     {
-        if (colour.foreground >=0) printf("\033[38;5;%dm", colour.foreground);
-        if (colour.background >=0) printf("\033[48;5;%dm", colour.background);
+        if (colour.foreground >= 0) printf("\033[38;5;%dm", colour.foreground);
+        if (colour.background >= 0) printf("\033[48;5;%dm", colour.background);
     }
 
     inline void set_text_colour(EscapeColor foreground, EscapeColor background)
     {
         set_text_colour({foreground, background});
     }
+
     inline void set_text_colour(EscapeColor foreground)
     {
         set_text_colour({foreground, -1});
     }
-
 }
 
 #endif //UTILS_H

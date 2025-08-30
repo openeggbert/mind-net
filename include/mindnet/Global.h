@@ -10,7 +10,8 @@
 #include "Logger.h"
 #include "Utils.h"
 
-namespace mindnet {
+namespace mindnet
+{
     extern ll start_time;
     extern Logger fatal;
     extern Logger err;
@@ -21,7 +22,6 @@ namespace mindnet {
     extern Logger test;
     //
     extern Logger& log;
-
 }
 
 

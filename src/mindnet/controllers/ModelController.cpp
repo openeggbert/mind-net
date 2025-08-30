@@ -28,13 +28,12 @@ namespace mindnet::routes
                     result.insert(field_entry);
                 }
             }
-
         };
         auto create_lambda_function = [&db, &def](const crow::request& req)
         {
             trace << "Create lambda function called" << commit;
             if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.
-                                                                   contains(Crudl::CREATE))
+                                                             contains(Crudl::CREATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
@@ -83,7 +82,7 @@ namespace mindnet::routes
                     404, "The " + def.model_name + " with id " + std::to_string(id) + " was not found. " + error);
             }
 
-            str fields = req.url_params.get("fields") ? req.url_params.get("fields"): "";
+            str fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
             std::set<std::string> fields_set_filter{};
             split_string_by_commas(fields, fields_set_filter);
 
@@ -95,7 +94,7 @@ namespace mindnet::routes
         {
             trace << "Update lambda function called" << commit;
             if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.
-                                                                   contains(Crudl::UPDATE))
+                                                             contains(Crudl::UPDATE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
@@ -123,7 +122,8 @@ namespace mindnet::routes
             if (!success)
             {
                 return crow::response(
-                    404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found. " + error);
+                    404, "Update failed. " + def.model_name + " with id " + std::to_string(id) + " not found. " +
+                    error);
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
@@ -136,7 +136,7 @@ namespace mindnet::routes
         {
             trace << "Delete lambda function called" << commit;
             if (!def.allowed_rest_operations.empty() && !def.allowed_rest_operations.
-                                                                   contains(Crudl::DELETE))
+                                                             contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.model_name + ".");
             str error;
             bool success = db->remove(id, def, error);
@@ -144,7 +144,8 @@ namespace mindnet::routes
             if (!success)
             {
                 return crow::response(
-                    404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found. " + error);
+                    404, "Delete failed. " + def.model_name + " with id " + std::to_string(id) + " not found. " +
+                    error);
             }
 
             return crow::response(200, def.model_name + " with id " + std::to_string(id) + " was deleted.");
@@ -169,9 +170,9 @@ namespace mindnet::routes
             {
                 return crow::response(400, "Invalid page size. It must be 100 at most");
             }
-            str sort = req.url_params.get("sort") ? req.url_params.get("sort"): "";
-            str order = req.url_params.get("order") ? req.url_params.get("order"): "";
-            str fields = req.url_params.get("fields") ? req.url_params.get("fields"): "";
+            str sort = req.url_params.get("sort") ? req.url_params.get("sort") : "";
+            str order = req.url_params.get("order") ? req.url_params.get("order") : "";
+            str fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::vector<entity_fields> all_records;
 
@@ -198,7 +199,6 @@ namespace mindnet::routes
                 }
                 str value = req.url_params.get(column.column_name);
                 query_params.add_filter(column.column_name, value);
-
             }
 
             all_records = db->list(query_params, def, error);

@@ -24,26 +24,25 @@
 
 #include "mindnet/Utils.h"
 
-namespace mindnet::persistence::impl::sqlite {
+namespace mindnet::persistence::impl::sqlite
+{
+    /**
+     *
+    * @author <a href="mailto:mail@robertvokac.com">Robert Vokac</a>
+     */
+    class SqliteDatabaseMigration
+    {
+    private:
+        //Not meant to be instantiated
+        SqliteDatabaseMigration();
 
-/**
- *
-* @author <a href="mailto:mail@robertvokac.com">Robert Vokac</a>
- */
-class SqliteDatabaseMigration {
-private:
-    //Not meant to be instantiated
-    SqliteDatabaseMigration();
+    public:
+        SqliteDatabaseMigration(const SqliteDatabaseMigration&) = delete;
+        SqliteDatabaseMigration& operator=(const SqliteDatabaseMigration&) = delete;
 
-public:
-    SqliteDatabaseMigration(const SqliteDatabaseMigration&) = delete;
-    SqliteDatabaseMigration& operator=(const SqliteDatabaseMigration&) = delete;
-
-    static SqliteDatabaseMigration* getInstance();
-    static void destroyInstance();
-    bool migrate();
-
-};
-
+        static SqliteDatabaseMigration* getInstance();
+        static void destroyInstance();
+        bool migrate();
+    };
 }
 #endif // SQLITEDATABASEMIGRATION_H

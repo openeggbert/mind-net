@@ -133,6 +133,7 @@ namespace mindnet::models::misc
         {
             return unique;
         }
+
         [[nodiscard]] const std::string get_default_value() const
         {
             return default_value;
@@ -182,6 +183,7 @@ namespace mindnet::models::misc
             set_column_type(mindnet::enums::ColumnType::TEXTAREA);
             return *this;
         }
+
         ColumnDefinition& bool_column()
         {
             set_column_type(mindnet::enums::ColumnType::BLOB);
@@ -199,6 +201,7 @@ namespace mindnet::models::misc
             mandatory = value;
             return *this;
         }
+
         ColumnDefinition& set_mandatory()
         {
             set_mandatory(true);
@@ -228,16 +231,19 @@ namespace mindnet::models::misc
             foreign_key = value;
             return *this;
         }
+
         ColumnDefinition& set_unique(bool value)
         {
             unique = value;
             return *this;
         }
+
         ColumnDefinition& set_unique()
         {
             set_unique(true);
             return *this;
         }
+
         ColumnDefinition& set_default_value(std::string value)
         {
             default_value = value;

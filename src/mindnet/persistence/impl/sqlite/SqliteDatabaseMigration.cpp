@@ -36,6 +36,7 @@
 namespace mindnet::persistence::impl::sqlite
 {
     using models::fields::MigrationColumns;
+
     SqliteDatabaseMigration::SqliteDatabaseMigration()
     {
         //Not meant to be instantiated
@@ -63,12 +64,10 @@ namespace mindnet::persistence::impl::sqlite
 
     class DBMigration
     {
-
     public:
         DBMigration(
         )
         {
-
         }
 
         bool executeSQL(SQLite::Database& db, std::string& sql, int number)
@@ -156,7 +155,7 @@ INSERT INTO "migration" VALUES (1,0)
                     bool inited = initTable(db);
                     if (!inited)
                     {
-                        err << "Table " << MigrationColumns::MODEL_NAME << " could not be initialized."  << commit;
+                        err << "Table " << MigrationColumns::MODEL_NAME << " could not be initialized." << commit;
                         return false;
                     }
                     else
@@ -166,7 +165,7 @@ INSERT INTO "migration" VALUES (1,0)
                 }
                 else
                 {
-                    err << "Table " << MigrationColumns::MODEL_NAME << " could not be created."  << commit;
+                    err << "Table " << MigrationColumns::MODEL_NAME << " could not be created." << commit;
                     return false;
                 }
             }
@@ -186,7 +185,7 @@ INSERT INTO "migration" VALUES (1,0)
                     MigrationColumns::MODEL_NAME +
                     " WHERE " + MigrationColumns::ID + "=1"
                 )
-                );
+            );
             try
             {
                 query.executeStep();
@@ -270,9 +269,11 @@ INSERT INTO "migration" VALUES (1,0)
                 }
                 trace << "Going to find out the maxMigrationNumber" << commit;
                 int maxMigrationNumber = get_newest_migration_number(db);
-                trace << std::string(std::string("maxMigrationNumber=") + std::to_string(maxMigrationNumber)).c_str() << commit;
+                trace << std::string(std::string("maxMigrationNumber=") + std::to_string(maxMigrationNumber)).c_str() <<
+                    commit;
                 if (maxMigrationNumber == -1) return false;
-                for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <= MIGRATION_COUNT; migrationNumber++)
+                for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <=
+                     MIGRATION_COUNT; migrationNumber++)
                 {
                     debug << "Going to migrate migration " << migrationNumber << commit;
                     if (migrationNumber <= maxMigrationNumber)

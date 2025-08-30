@@ -42,7 +42,6 @@ namespace mindnet::impl::sqlite::repositories
         ~ContentRepositoryImplSqlite() override;
 
         def_virtual_irepository_impl_h_methods
-
     };
 }
 #endif // CONTENTREPOSITORYIMPLSQLITE_H

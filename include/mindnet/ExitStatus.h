@@ -8,7 +8,6 @@ namespace mindnet
 {
     enum ExitStatus
     {
-
         NO_ARGUMENT_PROVIDED = 1,
         MIGRATION_FAILED = 2,
     };

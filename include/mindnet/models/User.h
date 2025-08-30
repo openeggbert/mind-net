@@ -41,18 +41,18 @@ namespace mindnet::models
     inline def USER_DEFINITION =
         def(cols::MODEL_NAME)
         .set_rest_operations("crudl")
-            .set_columns({
+        .set_columns({
             //
             coldef(cols::USERNAME).set_mandatory().set_unique(),
             coldef(cols::PASSWORD_HASH).set_mandatory(),
             coldef(cols::DISPLAY_NAME),
-            coldef(cols::ROLE).set_mandatory().set_enum_definition(enums::user_role_to_enum_definition()).set_default_value("0"),
+            coldef(cols::ROLE).set_mandatory().set_enum_definition(enums::user_role_to_enum_definition()).
+                               set_default_value("0"),
             coldef(cols::PROFILE_TEXT).textarea(),
             coldef(cols::LAST_LOGIN).datetime(),
             coldef(cols::EMAIL).set_unique(),
             coldef(cols::STATUS).set_mandatory().set_enum_definition(enums::user_status_to_enum_definition()),
-        })
-    ;
+        });
 
     struct Model : bm
     {

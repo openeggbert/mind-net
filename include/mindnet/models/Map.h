@@ -32,7 +32,6 @@
 // ***** MACROS : END *****
 
 
-
 namespace mindnet::models
 {
     using bm = misc::BaseModel;
@@ -71,7 +70,6 @@ namespace mindnet::models
         }
 
         Map() = default;
-
     };
 }
 #undef Model

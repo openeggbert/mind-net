@@ -87,7 +87,5 @@ namespace mindnet
         void flush(bool new_line);
         ~ConsolePrinter();
     };
-
-
 }
 #endif // CONSOLEPRINTER_H

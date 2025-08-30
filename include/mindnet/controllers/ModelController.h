@@ -13,7 +13,8 @@ namespace mindnet::routes
     class ModelController
     {
     public:
-        void register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db, models::misc::ModelDefinition& def);
+        void register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
+                             models::misc::ModelDefinition& def);
     };
 }
 #endif // MAPCONTROLLER_H

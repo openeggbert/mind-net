@@ -132,7 +132,7 @@ namespace mindnet::models::misc
             {
                 throw std::invalid_argument("Invalid value for allowed_rest_operations");
             }
-            for (char ch: ops_as_string)
+            for (char ch : ops_as_string)
             {
                 enums::Crudl crudl = enums::char_to_crudl(ch);
                 if (crudl == enums::Crudl::UNDEFINED)

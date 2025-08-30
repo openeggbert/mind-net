@@ -46,5 +46,4 @@ namespace mindnet::impl::sqlite::repositories
         add_int(TAG_TYPE_ID);
         return fields;
     }
-
 }

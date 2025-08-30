@@ -13,6 +13,7 @@ namespace mindnet::http
         ASC,
         DESC,
     };
+
     inline str order_to_string(const Order& order)
     {
         switch (order)
@@ -29,12 +30,12 @@ namespace mindnet::http
         {
             return Order::ASC;
         }
-        if (string == "DESC") {
+        if (string == "DESC")
+        {
             return Order::DESC;
         }
         throw std::runtime_error(std::string("Unknown order: ") + string);
     }
-
 }
 
 

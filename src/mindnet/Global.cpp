@@ -17,5 +17,4 @@ namespace mindnet
     Logger test(TEST);
     //
     Logger& log = info;
-
 }

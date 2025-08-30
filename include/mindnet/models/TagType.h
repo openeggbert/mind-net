@@ -42,7 +42,8 @@ namespace mindnet::models
     inline def TAG_TYPE_DEFINITION =
         def(cols::MODEL_NAME)
         .set_rest_operations("crudl")
-        true,
+    true
+    ,
         {
             {TagTypeColumns::ID, ColumnType::INTEGER, true},
             {TagTypeColumns::CREATED_AT, ColumnType::INTEGER, false},
@@ -50,46 +51,47 @@ namespace mindnet::models
             {TagTypeColumns::MAP_ID, ColumnType::INTEGER, true},
             {TagTypeColumns::TITLE, ColumnType::TEXT, true}
         }
-    };
+};
 
 struct Model : bm
 {
     Model() = default;
 
 
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return TAG_TYPE_DEFINITION;
-        }
+    [[nodiscard]] ModelDefinition get_definition() const override
+    {
+        return TAG_TYPE_DEFINITION;
+    }
 
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
+    [[nodiscard]] entity_fields get_values() const override;
+    void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const TagType& map)
-        {
-            os << map.to_json();
-            return os;
-        }
+    friend std::ostream& operator<<(std::ostream& os, const TagType& map)
+    {
+        os << map.to_json();
+        return os;
+    }
 
-        bool operator==(const TagType& other) const
-        {
-            return id == other.id && map_id == other.map_id && title == other.title &&
-                created_at == other.created_at && updated_at == other.updated_at;
-        }
+    bool operator==(const TagType& other) const
+    {
+        return id == other.id && map_id == other.map_id && title == other.title &&
+            created_at == other.created_at && updated_at == other.updated_at;
+    }
 
-        TagType() = default;
+    TagType() = default;
 
-        TagType(int id_, int map_id_, str title_,
+    TagType(int id_, int map_id_, str title_,
             unixtime created_at_,
             unixtime updated_at_
-        )
-            : map_id(map_id_), title(std::move(title_))
-        {
-            id = id_;
-            created_at = created_at_;
-            updated_at = updated_at_;
-        }
-    };
+    )
+        : map_id(map_id_), title(std::move(title_))
+    {
+        id = id_;
+        created_at = created_at_;
+        updated_at = updated_at_;
+    }
+};
+
 }
 
 #endif // TAGTYPE_H

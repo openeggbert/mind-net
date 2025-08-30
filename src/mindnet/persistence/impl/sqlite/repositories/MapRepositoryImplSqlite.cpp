@@ -47,5 +47,4 @@ namespace mindnet::impl::sqlite::repositories
         add_optional_string(CATEGORY, "");
         return fields;
     }
-
 }

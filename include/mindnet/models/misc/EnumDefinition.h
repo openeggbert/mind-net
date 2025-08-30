@@ -38,14 +38,12 @@ namespace mindnet::models::misc
      */
     struct EnumDefinition
     {
-
     private:
         short* values;
         short value_count;
         enum_to_string_pointer enum_to_string_pointer_function;
 
-
-            public:
+    public:
         /**
          * Constructs a ModelDefinition with the given name
          * @param name The name for the model
@@ -55,32 +53,38 @@ namespace mindnet::models::misc
             enum_to_string_pointer enum_to_string_pointer_function_,
             int count,
             ...
-            )
+        )
             :
-        enum_to_string_pointer_function(enum_to_string_pointer_function_),
-        value_count(count)
+            enum_to_string_pointer_function(enum_to_string_pointer_function_),
+            value_count(count)
         {
             values = new short[count];
             va_list args;
             va_start(args, count);
 
-            for (int i = 0; i < count; ++i) {
+            for (int i = 0; i < count; ++i)
+            {
                 values[i] = va_arg(args, int);
             }
 
             va_end(args);
         };
-        ~EnumDefinition() {
+
+        ~EnumDefinition()
+        {
             delete[] values;
         }
+
         short get_value_count() const
         {
             return value_count;
         }
+
         bool is_index_valid(const int index) const
         {
             return index >= 0 && index < value_count;
         }
+
         void check_index_is_valid(const size_t index) const
         {
             if (!is_index_valid(index))
@@ -94,12 +98,12 @@ namespace mindnet::models::misc
             check_index_is_valid(index);
             return values[index];
         }
+
         string get_value_as_string(const size_t index) const
         {
             check_index_is_valid(index);
             return enum_to_string_pointer_function(values[index]);
         }
-
     };
 }
 #endif // ENUMDEFINITION_H

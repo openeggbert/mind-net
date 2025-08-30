@@ -25,22 +25,21 @@
 
 #include "IRepository.h"
 
-namespace mindnet::persistence::api {
-
+namespace mindnet::persistence::api
+{
     /**
      *
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class MapRepository : public models::IRepository {
-
+    class MapRepository : public models::IRepository
+    {
     public:
         MapRepository() = default;
         virtual ~MapRepository() = default;
 
         def_virtual_irepository_api_h_methods
     };
-
 }
 
 #endif // MAPREPOSITORY_H

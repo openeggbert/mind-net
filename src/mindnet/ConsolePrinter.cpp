@@ -39,7 +39,7 @@ namespace mindnet
         if (print_timestamp_function_pointer) std::cout << print_timestamp_function_pointer() << " ";
         std::cout << prefix << buffer.str() << suffix;
         if (color != ConsoleColor::UNKNOWN) std::cout << "\033[0m";
-        if (new_line) {std::cout << std::endl;}
+        if (new_line) { std::cout << std::endl; }
 
         last_buffer_str = buffer.str();
         buffer.str("");
@@ -51,4 +51,3 @@ namespace mindnet
         if (enabled && !buffer.str().empty()) flush(true);
     }
 }
-

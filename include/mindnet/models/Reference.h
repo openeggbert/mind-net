@@ -41,60 +41,82 @@ namespace mindnet::models
     inline def REFERENCE_DEFINITION =
         def(cols::MODEL_NAME)
         .set_rest_operations("crudl")
+    {
         {
-            {NodeLinkColumns::ID, ColumnType::INTEGER, true},
-            {NodeLinkColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {NodeLinkColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {NodeLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true},
-            {NodeLinkColumns::TO_NODE_ID, ColumnType::INTEGER, true},
-            {NodeLinkColumns::TYPE, ColumnType::INTEGER, true},
-            {NodeLinkColumns::LABEL, ColumnType::TEXT, false},
+            NodeLinkColumns::ID, ColumnType::INTEGER, true
         }
-    };
+        ,
+        {
+            NodeLinkColumns::CREATED_AT, ColumnType::INTEGER, false
+        }
+        ,
+        {
+            NodeLinkColumns::UPDATED_AT, ColumnType::INTEGER, false
+        }
+        ,
+        {
+            NodeLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true
+        }
+        ,
+        {
+            NodeLinkColumns::TO_NODE_ID, ColumnType::INTEGER, true
+        }
+        ,
+        {
+            NodeLinkColumns::TYPE, ColumnType::INTEGER, true
+        }
+        ,
+        {
+            NodeLinkColumns::LABEL, ColumnType::TEXT, false
+        }
+        ,
+    }
+};
 
 struct Model : bm
 {
     Model() = default;
 
-        int from_node_id;
-        int to_node_id;
-        enums::NodeLinkType type;
-        str label;
+    int from_node_id;
+    int to_node_id;
+    enums::NodeLinkType type;
+    str label;
 
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return NODE_LINK_DEFINITION;
-        }
+    [[nodiscard]] ModelDefinition get_definition() const override
+    {
+        return NODE_LINK_DEFINITION;
+    }
 
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
+    [[nodiscard]] entity_fields get_values() const override;
+    void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const NodeLink& map)
-        {
-            os << map.to_json();
-            return os;
-        }
+    friend std::ostream& operator<<(std::ostream& os, const NodeLink& map)
+    {
+        os << map.to_json();
+        return os;
+    }
 
-        bool operator==(const NodeLink& other) const
-        {
-            return id == other.id && from_node_id == other.from_node_id && to_node_id == other.to_node_id &&
-                type == other.type && label == other.label && created_at == other.created_at && updated_at == other.
-                updated_at;
-        }
+    bool operator==(const NodeLink& other) const
+    {
+        return id == other.id && from_node_id == other.from_node_id && to_node_id == other.to_node_id &&
+            type == other.type && label == other.label && created_at == other.created_at && updated_at == other.
+            updated_at;
+    }
 
-        NodeLink() = default;
+    NodeLink() = default;
 
-        NodeLink(int id_, int from_node_id_, int to_node_id_, enums::NodeLinkType type_, str label_,
-                 unixtime created_at_,
-                 unixtime updated_at_
-        )
-            : from_node_id(from_node_id_), to_node_id(to_node_id_), type(type_), label(std::move(label_))
-        {
-            id = id_;
-            created_at = created_at_;
-            updated_at = updated_at_;
-        }
-    };
+    NodeLink(int id_, int from_node_id_, int to_node_id_, enums::NodeLinkType type_, str label_,
+             unixtime created_at_,
+             unixtime updated_at_
+    )
+        : from_node_id(from_node_id_), to_node_id(to_node_id_), type(type_), label(std::move(label_))
+    {
+        id = id_;
+        created_at = created_at_;
+        updated_at = updated_at_;
+    }
+};
+
 }
 
 #endif // REFERENCE_H

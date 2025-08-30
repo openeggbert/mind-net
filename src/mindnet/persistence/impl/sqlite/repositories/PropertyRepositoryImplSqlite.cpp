@@ -50,5 +50,4 @@ namespace mindnet::impl::sqlite::repositories
         add_optional_int(IS_INDEXED, 0);
         return fields;
     }
-
 }

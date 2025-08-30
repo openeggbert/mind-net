@@ -48,5 +48,4 @@ namespace mindnet::impl::sqlite::repositories
         add_optional_string(LABEL, "");
         return fields;
     }
-
 }

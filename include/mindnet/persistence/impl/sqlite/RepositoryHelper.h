@@ -50,7 +50,7 @@ namespace mindnet::persistence::impl::sqlite
         models::misc::ModelDefinition& def,
         mindnet::http::QueryParams& query_params,
         str& error
-        );
+    );
 }
 
 #endif // REPOSITORYHELPER_H

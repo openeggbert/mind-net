@@ -41,56 +41,72 @@ namespace mindnet::models
     inline def TAG_DEFINITION =
         def(cols::MODEL_NAME)
         .set_rest_operations("crudl")
+    {
         {
-            {TagColumns::ID, ColumnType::INTEGER, true},
-            {TagColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {TagColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {TagColumns::NODE_ID, ColumnType::INTEGER, true},
-            {TagColumns::TAG_TYPE_ID, ColumnType::INTEGER, true},
+            TagColumns::ID, ColumnType::INTEGER, true
         }
-    };
+        ,
+        {
+            TagColumns::CREATED_AT, ColumnType::INTEGER, false
+        }
+        ,
+        {
+            TagColumns::UPDATED_AT, ColumnType::INTEGER, false
+        }
+        ,
+        {
+            TagColumns::NODE_ID, ColumnType::INTEGER, true
+        }
+        ,
+        {
+            TagColumns::TAG_TYPE_ID, ColumnType::INTEGER, true
+        }
+        ,
+    }
+};
 
 struct Model : bm
 {
     Model() = default;
 
-        int node_id;
-        int tag_type_id;
+    int node_id;
+    int tag_type_id;
 
-        [[nodiscard]] ModelDefinition get_definition() const override
-        {
-            return NODE_TAG_DEFINITION;
-        }
+    [[nodiscard]] ModelDefinition get_definition() const override
+    {
+        return NODE_TAG_DEFINITION;
+    }
 
-        [[nodiscard]] entity_fields get_values() const override;
-        void from_values(const entity_fields& values) override;
+    [[nodiscard]] entity_fields get_values() const override;
+    void from_values(const entity_fields& values) override;
 
-        friend std::ostream& operator<<(std::ostream& os, const Tag& map)
-        {
-            os << map.to_json();
-            return os;
-        }
+    friend std::ostream& operator<<(std::ostream& os, const Tag& map)
+    {
+        os << map.to_json();
+        return os;
+    }
 
-        bool operator==(const Tag& other) const
-        {
-            return id == other.id && node_id == other.node_id && tag_type_id == other.tag_type_id &&
-                created_at == other.created_at && updated_at == other.updated_at;
-        }
+    bool operator==(const Tag& other) const
+    {
+        return id == other.id && node_id == other.node_id && tag_type_id == other.tag_type_id &&
+            created_at == other.created_at && updated_at == other.updated_at;
+    }
 
-        Tag() = default;
+    Tag() = default;
 
-        Tag(int id_, int node_id_, int tag_id_,
-                unixtime created_at_,
-                unixtime updated_at_
-        )
-        {
-            id = id_;
-            node_id = node_id_;
-            tag_type_id = tag_id_;
-            created_at = created_at_;
-            updated_at = updated_at_;
-        }
-    };
+    Tag(int id_, int node_id_, int tag_id_,
+        unixtime created_at_,
+        unixtime updated_at_
+    )
+    {
+        id = id_;
+        node_id = node_id_;
+        tag_type_id = tag_id_;
+        created_at = created_at_;
+        updated_at = updated_at_;
+    }
+};
+
 }
 
 #endif // TAG_H

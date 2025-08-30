@@ -62,5 +62,4 @@ namespace mindnet::impl::sqlite::repositories
         add_optional_int(DIFFICULTY, 0);
         return fields;
     }
-
 }

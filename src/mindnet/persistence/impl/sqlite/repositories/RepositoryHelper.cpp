@@ -59,9 +59,12 @@ namespace mindnet::persistence::impl::sqlite
 
         SQLite::Statement* query_ptr = nullptr;
 
-        try {
+        try
+        {
             query_ptr = new SQLite::Statement(db, sql);
-        } catch (const SQLite::Exception& e) {
+        }
+        catch (const SQLite::Exception& e)
+        {
             error = e.what();
             delete query_ptr;
             return -1;
@@ -100,9 +103,12 @@ namespace mindnet::persistence::impl::sqlite
 
         SQLite::Statement* query_ptr = nullptr;
 
-        try {
+        try
+        {
             query_ptr = new SQLite::Statement(db, sql);
-        } catch (const SQLite::Exception& e) {
+        }
+        catch (const SQLite::Exception& e)
+        {
             error = e.what();
             delete query_ptr;
             return {};
@@ -165,9 +171,12 @@ namespace mindnet::persistence::impl::sqlite
 
         SQLite::Statement* query_ptr = nullptr;
 
-        try {
+        try
+        {
             query_ptr = new SQLite::Statement(db, sql);
-        } catch (const SQLite::Exception& e) {
+        }
+        catch (const SQLite::Exception& e)
+        {
             error = e.what();
             delete query_ptr;
             return false;
@@ -213,9 +222,12 @@ namespace mindnet::persistence::impl::sqlite
         set_temp_store_pragma(db);
         SQLite::Statement* query_ptr = nullptr;
 
-        try {
+        try
+        {
             query_ptr = new SQLite::Statement(db, sql);
-        } catch (const SQLite::Exception& e) {
+        }
+        catch (const SQLite::Exception& e)
+        {
             error = e.what();
             delete query_ptr;
             return false;
@@ -286,7 +298,6 @@ namespace mindnet::persistence::impl::sqlite
                     break;
                 default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
                 }
-
             }
         }
     }
@@ -295,7 +306,7 @@ namespace mindnet::persistence::impl::sqlite
         models::misc::ModelDefinition& def,
         http::QueryParams& query_params,
         str& error
-        )
+    )
     {
         trace << "list_models()" << commit;
         std::string sql = Utils::generate_select_all_sql(def.model_name, query_params);
@@ -312,9 +323,12 @@ namespace mindnet::persistence::impl::sqlite
 
         SQLite::Statement* query_ptr = nullptr;
 
-        try {
+        try
+        {
             query_ptr = new SQLite::Statement(db, sql);
-        } catch (const SQLite::Exception& e) {
+        }
+        catch (const SQLite::Exception& e)
+        {
             error = e.what();
             delete query_ptr;
             return {};
@@ -345,7 +359,8 @@ namespace mindnet::persistence::impl::sqlite
         // }
         test << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) << commit;
         (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size));
-        test << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size * (query_params.page_number - 1)) << commit;
+        test << "Binding index " << bind_index << " with value " + std::to_string(
+            query_params.page_size * (query_params.page_number - 1)) << commit;
         (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size * (query_params.page_number - 1)));
 
         std::vector<entity_fields> results;
@@ -377,7 +392,8 @@ namespace mindnet::persistence::impl::sqlite
                 }
                 results.push_back(result);
             }
-        } catch (SQLite::Exception& e)
+        }
+        catch (SQLite::Exception& e)
         {
             error = e.what();
             delete query_ptr;
