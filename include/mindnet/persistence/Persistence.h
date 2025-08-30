@@ -34,7 +34,7 @@ namespace mindnet::persistence
         std::vector<entity_fields> list(http::QueryParams& query_params, ModelDefinition& def, string& error);
 
         //
-        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
+        entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
                                                                 ModelDefinition& def);
     };
 }

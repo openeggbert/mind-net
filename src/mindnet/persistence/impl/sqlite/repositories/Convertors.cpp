@@ -53,10 +53,10 @@
 
 namespace mindnet::persistence::impl::sqlite::repositories
 {
-    entity_fields convert_crow_json_rvalue_to_entity_fields_user(
+    entity_fields request_to_entity_fields_user(
         crow::json::rvalue& body, enums::Crudl crudl)
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(User)
+        start_of_request_to_entity_fields(User)
 
         add_string(USERNAME);
         add_string(PASSWORD_HASH);
@@ -69,9 +69,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_history(method_arguments())
+    entity_fields request_to_entity_fields_history(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(History)
+        start_of_request_to_entity_fields(History)
 
         add_string(TABLE_NAME);
         add_int(RECORD_ID);
@@ -81,9 +81,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_map(method_arguments())
+    entity_fields request_to_entity_fields_map(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Map)
+        start_of_request_to_entity_fields(Map)
 
         add_string(NAME);
         add_optional_string(DESCRIPTION, "");
@@ -96,9 +96,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_note(method_arguments())
+    entity_fields request_to_entity_fields_note(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Note)
+        start_of_request_to_entity_fields(Note)
 
         add_int(MAP_ID);
         add_int(SIBLING_POSITION);
@@ -112,9 +112,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_content(method_arguments())
+    entity_fields request_to_entity_fields_content(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Content)
+        start_of_request_to_entity_fields(Content)
 
         add_string(VALUE);
         add_int(FORMAT);
@@ -123,9 +123,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_property(method_arguments())
+    entity_fields request_to_entity_fields_property(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Property)
+        start_of_request_to_entity_fields(Property)
 
         add_int(MAP_ID);
         add_int(NOTE_ID);
@@ -134,27 +134,27 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_tag_type(method_arguments())
+    entity_fields request_to_entity_fields_tag_type(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(TagType)
+        start_of_request_to_entity_fields(TagType)
 
         add_int(MAP_ID);
         add_string(TITLE);
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_tag(method_arguments())
+    entity_fields request_to_entity_fields_tag(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Tag)
+        start_of_request_to_entity_fields(Tag)
 
         add_int(NOTE_ID);
         add_int(TAG_TYPE_ID);
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_reference(method_arguments())
+    entity_fields request_to_entity_fields_reference(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Reference)
+        start_of_request_to_entity_fields(Reference)
 
         add_int(FROM_NOTE_ID);
         add_int(TO_NOTE_ID);
@@ -162,9 +162,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
-    entity_fields convert_crow_json_rvalue_to_entity_fields_link(method_arguments())
+    entity_fields request_to_entity_fields_link(method_arguments())
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Link)
+        start_of_request_to_entity_fields(Link)
 
         add_int(FROM_NOTE_ID);
         add_string(TO_URL);

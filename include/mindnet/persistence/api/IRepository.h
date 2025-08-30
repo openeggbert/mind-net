@@ -55,7 +55,7 @@ if (\
 }
 
 
-#define start_of_convert_crow_json_rvalue_to_entity_fields(Model)\
+#define start_of_request_to_entity_fields(Model)\
 typedef models::columns::Model##Columns cols;\
         entity_fields fields;\
 \
@@ -81,7 +81,7 @@ fields.emplace_back(cast64(Utils::currentUnixTimestamp()));
 
 namespace mindnet::persistence::api
 {
-    typedef entity_fields (*convert_rest_request_to_entity_fields)(crow::json::rvalue&, enums::Crudl);
+    typedef entity_fields (*request_to_entity_fields_pointer)(crow::json::rvalue&, enums::Crudl);
 
     using std::string;
 
@@ -90,7 +90,7 @@ namespace mindnet::persistence::api
     public:
         virtual ~IRepository() = default;
         IRepository(
-        api::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer,
+        api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
         models::misc::ModelDefinition& model_definition
         );
         virtual int create(const entity_fields& fields, string& error) = 0;
@@ -99,11 +99,11 @@ namespace mindnet::persistence::api
         virtual bool remove(int id, string& error) = 0;
         virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;
         [[nodiscard]] virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) =
+        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) =
         0;
 
     protected:
-        convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer = nullptr;
+        request_to_entity_fields_pointer request_to_entity_fields_pointer_ = nullptr;
         models::misc::ModelDefinition model_definition;
     };
 }

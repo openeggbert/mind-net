@@ -42,12 +42,12 @@ namespace mindnet::routes
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::CREATE, def);
+            entity_fields fields = db->request_to_entity_fields(body, enums::Crudl::CREATE, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
                     500,
-                    "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model "
+                    "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
                     + def.get_model_name() + ".");
             }
 
@@ -106,12 +106,12 @@ namespace mindnet::routes
             {
                 return crow::response(400, "Invalid input. id in body is not equal to id in url.");
             }
-            entity_fields fields = db->convert_crow_json_rvalue_to_entity_fields(body, enums::Crudl::UPDATE, def);
+            entity_fields fields = db->request_to_entity_fields(body, enums::Crudl::UPDATE, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
                     500,
-                    "Server issue. Function convert_crow_json_rvalue_to_entity_fields() is not correctly implemented for model "
+                    "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
                     + def.get_model_name() + ".");
             }
 

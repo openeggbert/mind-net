@@ -39,7 +39,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
     public:
         RepositoryImplSqlite(
-            api::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer,
+            api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
             ModelDefinition& model_definition
             );
         ~RepositoryImplSqlite() override;
@@ -50,7 +50,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
         bool remove(int id, string& error) override;
         std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;
         [[nodiscard]] models::misc::ModelDefinition& get_model_definition() override;
-        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
+        entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
     };
 }
 #endif // REPOSITORYIMPLSQLITE_H

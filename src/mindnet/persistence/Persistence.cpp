@@ -30,7 +30,7 @@
 #include "mindnet/persistence/impl/sqlite/repositories/RepositoryImplSqlite.h"
 
 #define MODEL_JOIN(x) x##_DEFINITION
-#define FUNCTION_JOIN(x) convert_crow_json_rvalue_to_entity_fields_##x
+#define FUNCTION_JOIN(x) request_to_entity_fields_##x
 
 #define add_repository(model, Model, MODEL) \
 api::IRepository* model##_repo = new RepositoryImplSqlite(\
@@ -48,7 +48,7 @@ namespace mindnet::persistence
     {
         // IRepository* user_repo =
         //     new RepositoryImplSqlite(
-        //         &convert_crow_json_rvalue_to_entity_fields_user,
+        //         &request_to_entity_fields_user,
         //         models::USER_DEFINITION
         //         );
         // repositories["user"] = user_repo;;
@@ -119,9 +119,9 @@ namespace mindnet::persistence
         return get_repository(def.get_model_name())->list(query_params, error);
     }
 
-    entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(
+    entity_fields Persistence::request_to_entity_fields(
         crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
     {
-        return get_repository(def.get_model_name())->convert_crow_json_rvalue_to_entity_fields(body, crudl);
+        return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
     }
 }
