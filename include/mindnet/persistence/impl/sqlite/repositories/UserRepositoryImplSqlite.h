@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,34 +22,27 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
+#ifndef USERREPOSITORYIMPLSQLITE_H
+#define USERREPOSITORYIMPLSQLITE_H
 
-#include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 
-#include <string>
+#include "mindnet/persistence/api/UserRepository.h"
+#include "mindnet/models/User.h"
+#include <vector>
 
 #include "mindnet/enums/Crudl.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
-#include "SQLiteCpp/Database.h"
 
 namespace mindnet::impl::sqlite::repositories
 {
-    MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
+    using std::vector;
 
-    def_virtual_irepository_impl_cpp_methods(Map, MAP)
-
-    entity_fields MapRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl)
+    class UserRepositoryImplSqlite : public persistence::api::UserRepository
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Map)
+    public:
+        UserRepositoryImplSqlite() = default;
+        ~UserRepositoryImplSqlite() override;
 
-        add_string(NAME);
-        add_optional_string(DESCRIPTION, "");
-        add_optional_string(CATEGORY, "");
-        add_int_foreign_key(OWNER_ID);
-        add_int_foreign_key(TEAM_ID);
-        add_int(OWNER_RIGHTS);
-        add_int(TEAM_RIGHTS);
-        add_int(OTHER_RIGHTS);
-        return fields;
-    }
+        def_virtual_irepository_impl_h_methods
+    };
 }
+#endif // USERREPOSITORYIMPLSQLITE_H

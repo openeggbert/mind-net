@@ -23,7 +23,7 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/UserRepositoryImplSqlite.h"
 
 #include <string>
 
@@ -33,23 +33,23 @@
 
 namespace mindnet::impl::sqlite::repositories
 {
-    MapRepositoryImplSqlite::~MapRepositoryImplSqlite() = default;
+    UserRepositoryImplSqlite::~UserRepositoryImplSqlite() = default;
 
-    def_virtual_irepository_impl_cpp_methods(Map, MAP)
+    def_virtual_irepository_impl_cpp_methods(User, USER)
 
-    entity_fields MapRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+    entity_fields UserRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
         crow::json::rvalue& body, enums::Crudl crudl)
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Map)
+        start_of_convert_crow_json_rvalue_to_entity_fields(User)
 
-        add_string(NAME);
-        add_optional_string(DESCRIPTION, "");
-        add_optional_string(CATEGORY, "");
-        add_int_foreign_key(OWNER_ID);
-        add_int_foreign_key(TEAM_ID);
-        add_int(OWNER_RIGHTS);
-        add_int(TEAM_RIGHTS);
-        add_int(OTHER_RIGHTS);
+        add_string(USERNAME);
+        add_string(PASSWORD_HASH);
+        add_optional_string(DISPLAY_NAME, "");
+        add_int(ROLE);
+        add_optional_string(PROFILE_TEXT, "");
+        add_optional_int(LAST_LOGIN, 0);
+        add_optional_string(EMAIL, "");
+        add_int(STATUS);
         return fields;
     }
 }

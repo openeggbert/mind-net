@@ -45,13 +45,14 @@ namespace mindnet::models::misc
         MANDATORY = 1 << 0,
         UNIQUE = 1 << 1,
         FOREIGN_KEY = 1 << 2,
-        TEXT = 1 << 3,
-        TEXTAREA = 1 << 4,
-        INTEGER = 1 << 5,
-        REAL = 1 << 6,
-        BLOB = 1 << 7,
-        BOOL = 1 << 8,
-        DATETIME = 1 << 9
+        AUTO = 1 << 3,
+        TEXT = 1 << 4,
+        TEXTAREA = 1 << 5,
+        INTEGER = 1 << 6,
+        REAL = 1 << 7,
+        BLOB = 1 << 8,
+        BOOL = 1 << 9,
+        DATETIME = 1 << 10
     };
 
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
@@ -60,6 +61,7 @@ namespace mindnet::models::misc
             MANDATORY,
             UNIQUE,
             FOREIGN_KEY,
+            AUTO,
             TEXT,
             TEXTAREA,
             INTEGER,
@@ -80,6 +82,7 @@ namespace mindnet::models::misc
         std::string foreign_key;
         std::optional<EnumDefinition> enum_definition;
         bool unique = false;
+        bool auto_ = false;
         std::string default_value;
 
         bool ends_with_id(const char* str)
@@ -121,15 +124,18 @@ namespace mindnet::models::misc
             {
                 primary_key = true;
                 mandatory = true;
+                auto_ = true;
                 column_type = mindnet::enums::ColumnType::INTEGER;
             }
             if (column_name == bc::CREATED_AT)
             {
                 mandatory = true;
+                auto_ = true;
                 column_type = mindnet::enums::ColumnType::DATETIME;
             }
             if (column_name == bc::UPDATED_AT)
             {
+                auto_ = true;
                 column_type = mindnet::enums::ColumnType::DATETIME;
             }
             flags(flags_);
@@ -183,6 +189,11 @@ namespace mindnet::models::misc
             return default_value;
         }
 
+        [[nodiscard]] const bool is_auto() const
+        {
+            return auto_;
+        }
+
         // Setters
 
 
@@ -209,7 +220,6 @@ namespace mindnet::models::misc
             return *this;
         }
 
-
         ColumnDefinition& set_default_value(std::string value)
         {
             default_value = value;
@@ -233,6 +243,11 @@ namespace mindnet::models::misc
             }
             return *this;
         }
+        ColumnDefinition& set_auto()
+        {
+            auto_ = true;
+            return *this;
+        }
 
         ColumnDefinition& flags(int flags)
         {
@@ -251,6 +266,7 @@ namespace mindnet::models::misc
             if (flags_set.contains(MANDATORY)) mandatory = true;
             if (flags_set.contains(UNIQUE)) unique = true;
             if (flags_set.contains(FOREIGN_KEY)) set_foreign_key();
+            if (flags_set.contains(AUTO)) set_auto();
             //
             if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
             if (flags_set.contains(TEXTAREA)) column_type = enums::ColumnType::TEXTAREA;

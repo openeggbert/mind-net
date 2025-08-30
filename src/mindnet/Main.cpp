@@ -11,8 +11,8 @@
 #include "mindnet/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/persistence/Persistence.h"
-#include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/controllers/ModelController.h"
+#include "mindnet/models/User.h"
 #include "mindnet/models/History.h"
 #include "mindnet/models/TagType.h"
 #include "mindnet/models/Map.h"
@@ -148,6 +148,7 @@ bool commands_function_start(
 
     mindnet::routes::ModelController controller;
 
+    add_controller(USER)
     add_controller(HISTORY)
     add_controller(MAP)
     add_controller(CONTENT)

@@ -388,10 +388,12 @@ namespace mindnet
                 {
                     if (FOREIGN_KEY_NULL == val)
                     {
+                        debug << "binding index " << i << " with value NULL" << commit;
                         query.bind(index, nullptr);
                     }
                     else
                     {
+                        debug << "binding index " << i << " with value" << commit;
                         query.bind(index, val);
                     }
                 }

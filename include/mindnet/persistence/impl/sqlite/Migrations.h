@@ -180,7 +180,7 @@ CREATE TABLE map (
 	description TEXT,
     category TEXT,
     --
-    owner_id INTEGER,
+    owner_id INTEGER NOT NULL,
     team_id INTEGER,
     owner_rights INTEGER CHECK (owner_rights >= 1 and owner_rights <= 7),
     team_rights INTEGER CHECK (team_rights >= 1 and team_rights <= 7),

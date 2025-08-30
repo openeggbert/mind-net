@@ -62,7 +62,7 @@ namespace mindnet::controllers
                 }
                 continue;
             }
-            if (column_.is_mandatory() && !body.has(column_.get_column_name()))
+            if (column_.is_mandatory() && !column_.is_auto() && !body.has(column_.get_column_name()))
             {
                 auto msg = "Mandatory column " + column_.get_column_name() + " is missing";
                 err << msg << std::endl;

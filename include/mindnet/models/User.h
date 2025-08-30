@@ -60,11 +60,11 @@ namespace mindnet::models
         string username;
         string password_hash;
         string display_name;
-        int role{};
+        enums::UserRole role{};
         string profile_text;
         unixtime last_login{};
         string email;
-        int status{};
+        enums::UserStatus status{};
 
         create_model_h_methods(Model, MODEL)
 

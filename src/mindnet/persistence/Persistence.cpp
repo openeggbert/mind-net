@@ -3,7 +3,7 @@
 //
 
 #include "mindnet/persistence/Persistence.h"
-
+#include "mindnet/persistence/impl/sqlite/repositories/UserRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
@@ -24,6 +24,8 @@ namespace mindnet::persistence
 
     Persistence::Persistence()
     {
+
+        add_repository(user, User);
         add_repository(history, History);
         add_repository(map, Map);
         add_repository(note, Note);
