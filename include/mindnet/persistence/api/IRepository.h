@@ -43,7 +43,7 @@
 if (body.has(cols::COLUMN)) {fields.emplace_back(int_for(COLUMN));}\
 else{fields.emplace_back(DEFAULT_VALUE);}
 
-#define int_foreign_key(COLUMN)\
+#define foreign_key(COLUMN)\
 if (\
     body.has(cols::COLUMN) &&\
     body[cols::COLUMN] != 0)\
