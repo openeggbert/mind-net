@@ -8,7 +8,6 @@
 #include "crow/json.h"
 #include "mindnet/models/misc/ModelDefinition.h"
 
-
 namespace mindnet::persistence
 {
     using mindnet::models::misc::ModelDefinition;

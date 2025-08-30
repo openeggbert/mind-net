@@ -20,7 +20,6 @@
 #ifndef IREPOSITORY_H
 #define IREPOSITORY_H
 
-
 #include <nlohmann/json.hpp>
 
 #include <string>
@@ -28,77 +27,21 @@
 #include "crow/json.h"
 #include "mindnet/Helper.h"
 #include "mindnet/enums/Crudl.h"
-#include "mindnet/models/misc/BaseModel.h"
 #include "mindnet/models/misc/ModelDefinition.h"
 #include "mindnet/http/QueryParams.h"
 
-#define def_virtual_irepository_api_h_methods \
-virtual int create(const entity_fields& fields, string& error) = 0;\
-virtual entity_fields read(int id, string& error) = 0;\
-virtual bool update(int id, entity_fields& fields, string& error) = 0;\
-virtual bool remove(int id, string& error) = 0;\
-virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;\
-virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;\
-virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
-
-#define def_virtual_irepository_impl_h_methods \
-int create(const entity_fields& fields, string& error) override;\
-entity_fields read(int id, string& error) override;\
-bool update(int id, entity_fields& fields, string& error) override;\
-bool remove(int id, string& error) override;\
-std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;\
-models::misc::ModelDefinition& get_model_definition() override;\
-entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
-
-#define def_virtual_irepository_impl_cpp_methods(Model, MODEL) \
-int Model##RepositoryImplSqlite::create(const entity_fields& fields, string& error)\
-    {\
-        try\
-        {\
-            return persistence::impl::sqlite::create_model(fields, get_model_definition(), error);\
-        }\
-        catch (std::exception& e)\
-        {\
-            return -1;\
-        }\
-    }\
-\
-entity_fields Model##RepositoryImplSqlite::read(const int id, string& error)\
-    {\
-        return persistence::impl::sqlite::read_model(get_model_definition(), id, error);\
-\
-    }\
-   \
-bool Model##RepositoryImplSqlite::update(int id, entity_fields& fields, string& error)\
-    {\
-        return persistence::impl::sqlite::update_model(id, get_model_definition(), fields, error);\
-    }\
-\
-bool Model##RepositoryImplSqlite::remove(int id, string& error)\
-    {\
-        return persistence::impl::sqlite::delete_model(get_model_definition(), id, error);\
-    }\
-\
-std::vector<entity_fields> Model##RepositoryImplSqlite::list(http::QueryParams& query_params, string& error)\
-    {\
-        return persistence::impl::sqlite::list_models(get_model_definition(), query_params, error);\
-    }\
-models::misc::ModelDefinition& Model##RepositoryImplSqlite::get_model_definition()\
-    {\
-        return models::MODEL##_DEFINITION;\
-    }
 #define string_for(COLUMN) body[cols::COLUMN].s()
 #define int_for(COLUMN) cast64(body[cols::COLUMN])
-#define add_string(COLUMN) fields.push_back(string_for(COLUMN));
-#define add_int(COLUMN) fields.push_back(int_for(COLUMN));
+#define add_string(COLUMN) fields.emplace_back(string_for(COLUMN));
+#define add_int(COLUMN) fields.emplace_back(int_for(COLUMN));
 
 #define add_optional_string(COLUMN, DEFAULT_VALUE) \
-    if (body.has(cols::COLUMN)) {fields.push_back(string_for(COLUMN));}\
-    else{fields.push_back(DEFAULT_VALUE);}
+    if (body.has(cols::COLUMN)) {fields.emplace_back(string_for(COLUMN));}\
+    else{fields.emplace_back(DEFAULT_VALUE);}
 
 #define add_optional_int(COLUMN, DEFAULT_VALUE) \
-if (body.has(cols::COLUMN)) {fields.push_back(int_for(COLUMN));}\
-else{fields.push_back(DEFAULT_VALUE);}
+if (body.has(cols::COLUMN)) {fields.emplace_back(int_for(COLUMN));}\
+else{fields.emplace_back(DEFAULT_VALUE);}
 
 #define add_int_foreign_key(COLUMN)\
 if (\
@@ -108,7 +51,7 @@ if (\
     add_int(COLUMN);\
 } else\
 {\
-    fields.push_back(FOREIGN_KEY_NULL);\
+    fields.emplace_back(FOREIGN_KEY_NULL);\
 }
 
 
@@ -123,31 +66,42 @@ if (!create && !update)\
     return fields;\
 }\
 \
-fields.push_back(0);\
+fields.emplace_back(0);\
 \
 if (create)\
 {\
-    fields.push_back(cast64(Utils::currentUnixTimestamp()));\
+    fields.emplace_back(cast64(Utils::currentUnixTimestamp()));\
 }\
 else\
 {\
-    fields.push_back(cast64(0));\
+    fields.emplace_back(cast64(0));\
 }\
-fields.push_back(cast64(Utils::currentUnixTimestamp()));
+fields.emplace_back(cast64(Utils::currentUnixTimestamp()));
 
 
 namespace mindnet::models
 {
+    typedef entity_fields (*convert_rest_request_to_entity_fields)(crow::json::rvalue&, enums::Crudl);
+
     using std::string;
 
     class IRepository
     {
     public:
         virtual ~IRepository() = default;
-        IRepository() = default;
+        IRepository();
+        virtual int create(const entity_fields& fields, string& error) = 0;
+        virtual entity_fields read(int id, string& error) = 0;
+        virtual bool update(int id, entity_fields& fields, string& error) = 0;
+        virtual bool remove(int id, string& error) = 0;
+        virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;
+        [[nodiscard]] virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;
+        virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) =
+        0;
 
-    public:
-        def_virtual_irepository_api_h_methods
+    protected:
+        convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer = nullptr;
+        misc::ModelDefinition model_definition;
     };
 }
 

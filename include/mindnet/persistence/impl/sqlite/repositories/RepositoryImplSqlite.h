@@ -22,26 +22,35 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef CONTENTREPOSITORYIMPLSQLITE_H
-#define CONTENTREPOSITORYIMPLSQLITE_H
+#ifndef REPOSITORYIMPLSQLITE_H
+#define REPOSITORYIMPLSQLITE_H
 
-#include "mindnet/persistence/api/ContentRepository.h"
-#include "mindnet/models/Content.h"
 #include <vector>
 
 #include "mindnet/enums/Crudl.h"
+#include "mindnet/persistence/Persistence.h"
+#include "mindnet/persistence/api/IRepository.h"
 
-namespace mindnet::impl::sqlite::repositories
+namespace mindnet::persistence::impl::sqlite::repositories
 {
     using std::vector;
 
-    class ContentRepositoryImplSqlite : public persistence::api::ContentRepository
+    class RepositoryImplSqlite : public models::IRepository
     {
     public:
-        ContentRepositoryImplSqlite();
-        ~ContentRepositoryImplSqlite() override;
+        RepositoryImplSqlite(
+            models::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer,
+            persistence::ModelDefinition& model_definition
+            );
+        ~RepositoryImplSqlite() override;
 
-        def_virtual_irepository_impl_h_methods
+        int create(const entity_fields& fields, string& error) override;
+        entity_fields read(int id, string& error) override;
+        bool update(int id, entity_fields& fields, string& error) override;
+        bool remove(int id, string& error) override;
+        std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;
+        [[nodiscard]] models::misc::ModelDefinition& get_model_definition() override;
+        entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
     };
 }
-#endif // CONTENTREPOSITORYIMPLSQLITE_H
+#endif // REPOSITORYIMPLSQLITE_H

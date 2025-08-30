@@ -3,39 +3,56 @@
 //
 
 #include "mindnet/persistence/Persistence.h"
-#include "mindnet/persistence/impl/sqlite/repositories/UserRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/NoteRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/PropertyRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/TagTypeRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/TagRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/ReferenceRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/LinkRepositoryImplSqlite.h"
 
-#define add_repository(model, Model) \
-models::IRepository* model##_repo = new Model##RepositoryImplSqlite();\
-repositories[#model] = model##_repo;
+#include "mindnet/models/User.h"
+#include "mindnet/models/History.h"
+#include "mindnet/models/Map.h"
+#include "mindnet/models/Note.h"
+#include "mindnet/models/Content.h"
+#include "mindnet/models/Property.h"
+#include "mindnet/models/TagType.h"
+#include "mindnet/models/Tag.h"
+#include "mindnet/models/Reference.h"
+#include "mindnet/models/Link.h"
+
+#include "mindnet/persistence/impl/sqlite/repositories/Convertors.h"
+#include "mindnet/persistence/impl/sqlite/repositories/RepositoryImplSqlite.h"
+
+#define MODEL_JOIN(x) x##_DEFINITION
+#define FUNCTION_JOIN(x) convert_crow_json_rvalue_to_entity_fields_##x
+
+#define add_repository(model, Model, MODEL) \
+models::IRepository* model##_repo = new RepositoryImplSqlite(\
+& FUNCTION_JOIN(model),\
+models :: MODEL_JOIN(MODEL)\
+);\
+repositories[#model] = model##_repo;\
+repositoryNames.push_back(#model);
 
 namespace mindnet::persistence
 {
-    using namespace mindnet::impl::sqlite::repositories;
+    using namespace mindnet::persistence::impl::sqlite::repositories;
 
     Persistence::Persistence()
     {
+        // models::IRepository* user_repo =
+        //     new RepositoryImplSqlite(
+        //         &convert_crow_json_rvalue_to_entity_fields_user,
+        //         models::USER_DEFINITION
+        //         );
+        // repositories["user"] = user_repo;;
 
-        add_repository(user, User);
-        add_repository(history, History);
-        add_repository(map, Map);
-        add_repository(note, Note);
-        add_repository(content, Content);
-        add_repository(property, Property);
+        add_repository(user, User, USER);
+        add_repository(history, History, HISTORY);
+        add_repository(map, Map, MAP);
+        add_repository(note, Note, NOTE);
+        add_repository(content, Content, CONTENT);
+        add_repository(property, Property, PROPERTY);
         //
-        add_repository(tag_type, TagType);
-        add_repository(tag, Tag);
-        add_repository(reference, Reference);
-        add_repository(link, Link);
+        add_repository(tag_type, TagType, TAG_TYPE);
+        add_repository(tag, Tag, TAG);
+        add_repository(reference, Reference, REFERENCE);
+        add_repository(link, Link, LINK);
     }
 
     Persistence::~Persistence()
