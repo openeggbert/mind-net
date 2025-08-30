@@ -32,28 +32,27 @@
 
 #define string_for(COLUMN) body[cols::COLUMN].s()
 #define int_for(COLUMN) cast64(body[cols::COLUMN])
-#define add_string(COLUMN) fields.emplace_back(string_for(COLUMN));
-#define add_int(COLUMN) fields.emplace_back(int_for(COLUMN));
+#define mandatory_string(COLUMN) fields.emplace_back(string_for(COLUMN));
+#define mandatory_int(COLUMN) fields.emplace_back(int_for(COLUMN));
 
-#define add_optional_string(COLUMN, DEFAULT_VALUE) \
+#define optional_string(COLUMN, DEFAULT_VALUE) \
     if (body.has(cols::COLUMN)) {fields.emplace_back(string_for(COLUMN));}\
     else{fields.emplace_back(DEFAULT_VALUE);}
 
-#define add_optional_int(COLUMN, DEFAULT_VALUE) \
+#define optional_int(COLUMN, DEFAULT_VALUE) \
 if (body.has(cols::COLUMN)) {fields.emplace_back(int_for(COLUMN));}\
 else{fields.emplace_back(DEFAULT_VALUE);}
 
-#define add_int_foreign_key(COLUMN)\
+#define int_foreign_key(COLUMN)\
 if (\
     body.has(cols::COLUMN) &&\
     body[cols::COLUMN] != 0)\
 {\
-    add_int(COLUMN);\
+    mandatory_int(COLUMN);\
 } else\
 {\
     fields.emplace_back(FOREIGN_KEY_NULL);\
 }
-
 
 #define start_of_request_to_entity_fields(Model)\
 typedef models::columns::Model##Columns cols;\

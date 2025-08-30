@@ -58,44 +58,80 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(User)
 
-        add_string(USERNAME);
-        add_string(PASSWORD_HASH);
-        add_optional_string(DISPLAY_NAME, "");
-        add_int(ROLE);
-        add_optional_string(PROFILE_TEXT, "");
-        add_optional_int(LAST_LOGIN, 0);
-        add_optional_string(EMAIL, "");
-        add_int(STATUS);
+        mandatory_string(USERNAME);
+        mandatory_string(PASSWORD_HASH);
+        optional_string(DISPLAY_NAME, "");
+        mandatory_int(ROLE);
+        optional_string(PROFILE_TEXT, "");
+        optional_int(LAST_LOGIN, 0);
+        optional_string(EMAIL, "");
+        mandatory_int(STATUS);
         return fields;
     }
 
     entity_fields request_to_entity_fields_message(method_arguments())
     {
         start_of_request_to_entity_fields(Message)
+
+        int_foreign_key(OWNER_ID)
+        int_foreign_key(SENDER_ID)
+        int_foreign_key(RECIPIENT_ID)
+        optional_string(SUBJECT, "")
+        optional_int(IMPORTANT, 0)
+        mandatory_string(BODY)
+        optional_int(SENT_AT, 0)
+        optional_int(SYSTEM_MESSAGE, 0)
+        optional_string(FOLDER, "")
+        optional_int(DRAFT, 0)
+        optional_int(IS_READ, 0)
+        optional_int(DELETED_AT, 0)
+        optional_int(STARRED, 0)
+
         return fields;
     }
 
     entity_fields request_to_entity_fields_team(method_arguments())
     {
         start_of_request_to_entity_fields(Team)
+        mandatory_string(NAME)
+        optional_string(DESCRIPTION, "")
+        int_foreign_key(CREATED_BY)
+        int_foreign_key(LEADER_ID)
+
         return fields;
     }
 
     entity_fields request_to_entity_fields_team_member(method_arguments())
     {
         start_of_request_to_entity_fields(TeamMember)
+        int_foreign_key(TEAM_ID)
+        int_foreign_key(USER_ID)
+        mandatory_int(ROLE)
+        mandatory_int(JOINED_AT)
+        optional_int(IS_ACTIVE, 1)
+        optional_int(LEFT_AT, 0)
+
         return fields;
     }
 
     entity_fields request_to_entity_fields_discussion(method_arguments())
     {
         start_of_request_to_entity_fields(Discussion)
+        int_foreign_key(TEAM_ID)
+        mandatory_string(TITLE)
+        int_foreign_key(CREATED_BY)
+        optional_int(IS_PINNED, 0)
         return fields;
     }
 
     entity_fields request_to_entity_fields_comment(method_arguments())
     {
         start_of_request_to_entity_fields(Comment)
+        int_foreign_key(DISCUSSION_ID)
+        int_foreign_key(USER_ID)
+        mandatory_string(CONTENT)
+        int_foreign_key(PARENT_COMMENT_ID)
+        optional_int(IS_DELETED, 0)
         return fields;
     }
 
@@ -115,11 +151,11 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(History)
 
-        add_string(TABLE_NAME);
-        add_int(RECORD_ID);
-        add_int(OPERATION);
-        add_string(DATA_JSON);
-        add_optional_string(REASON, "");
+        mandatory_string(TABLE_NAME);
+        mandatory_int(RECORD_ID);
+        mandatory_int(OPERATION);
+        mandatory_string(DATA_JSON);
+        optional_string(REASON, "");
         return fields;
     }
 
@@ -127,14 +163,14 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Map)
 
-        add_string(NAME);
-        add_optional_string(DESCRIPTION, "");
-        add_optional_string(CATEGORY, "");
-        add_int_foreign_key(OWNER_ID);
-        add_int_foreign_key(TEAM_ID);
-        add_int(OWNER_RIGHTS);
-        add_int(TEAM_RIGHTS);
-        add_int(OTHER_RIGHTS);
+        mandatory_string(NAME);
+        optional_string(DESCRIPTION, "");
+        optional_string(CATEGORY, "");
+        int_foreign_key(OWNER_ID);
+        int_foreign_key(TEAM_ID);
+        mandatory_int(OWNER_RIGHTS);
+        mandatory_int(TEAM_RIGHTS);
+        mandatory_int(OTHER_RIGHTS);
         return fields;
     }
 
@@ -142,9 +178,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Content)
 
-        add_string(VALUE);
-        add_int(FORMAT);
-        add_int(VERSION);
+        mandatory_string(VALUE);
+        mandatory_int(FORMAT);
+        mandatory_int(VERSION);
 
         return fields;
     }
@@ -153,15 +189,15 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Note)
 
-        add_int(MAP_ID);
-        add_int(SIBLING_POSITION);
-        add_string(TITLE);
+        mandatory_int(MAP_ID);
+        mandatory_int(SIBLING_POSITION);
+        mandatory_string(TITLE);
 
-        add_int_foreign_key(CONTENT_ID)
-        add_int_foreign_key(PARENT_NOTE_ID)
+        int_foreign_key(CONTENT_ID)
+        int_foreign_key(PARENT_NOTE_ID)
 
-        add_optional_int(IMPORTANCE, 0);
-        add_optional_int(DIFFICULTY, 0);
+        optional_int(IMPORTANCE, 0);
+        optional_int(DIFFICULTY, 0);
         return fields;
     }
 
@@ -169,10 +205,10 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Property)
 
-        add_int(MAP_ID);
-        add_int(NOTE_ID);
-        add_string(KEY);
-        add_optional_string(VALUE, "");
+        mandatory_int(MAP_ID);
+        mandatory_int(NOTE_ID);
+        mandatory_string(KEY);
+        optional_string(VALUE, "");
         return fields;
     }
 
@@ -180,8 +216,8 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(TagType)
 
-        add_int(MAP_ID);
-        add_string(TITLE);
+        mandatory_int(MAP_ID);
+        mandatory_string(TITLE);
         return fields;
     }
 
@@ -189,32 +225,58 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Tag)
 
-        add_int(NOTE_ID);
-        add_int(TAG_TYPE_ID);
+        mandatory_int(NOTE_ID);
+        mandatory_int(TAG_TYPE_ID);
         return fields;
     }
 
     entity_fields request_to_entity_fields_collection(method_arguments())
     {
         start_of_request_to_entity_fields(Collection)
+
+        mandatory_string(NAME);
+        optional_string(DESCRIPTION, "");
+        optional_int(ORDER_INDEX, 0);
+        int_foreign_key(CREATED_BY);
+        optional_int(IS_PUBLIC, 0);
         return fields;
     }
 
     entity_fields request_to_entity_fields_collection_item(method_arguments())
     {
         start_of_request_to_entity_fields(CollectionItem)
+
+        mandatory_int(COLLECTION_ID);
+        mandatory_int(NOTE_ID);
+        optional_int(ORDER_INDEX, 0);
         return fields;
     }
 
     entity_fields request_to_entity_fields_review(method_arguments())
     {
         start_of_request_to_entity_fields(Review)
+
+        mandatory_int(USER_ID);
+        mandatory_int(NOTE_ID);
+        mandatory_int(REVIEW_DATE);
+        mandatory_int(GRADE);
+        optional_string(RESPONSE_DATA, "");
+        optional_string(NOTES, "");
         return fields;
     }
 
     entity_fields request_to_entity_fields_sm2_state(method_arguments())
     {
         start_of_request_to_entity_fields(SM2State)
+
+        mandatory_int(USER_ID);
+        mandatory_int(NOTE_ID);
+        mandatory_int(REPETITIONS);
+        mandatory_int(INTERVAL);
+        mandatory_int(EF_TIMES_100);
+        mandatory_int(NEXT_REVIEW);
+        mandatory_int(LAST_REVIEW);
+        mandatory_int(LAST_QUALITY);
         return fields;
     }
 
@@ -222,9 +284,9 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Reference)
 
-        add_int(FROM_NOTE_ID);
-        add_int(TO_NOTE_ID);
-        add_optional_string(LABEL, "");
+        mandatory_int(FROM_NOTE_ID);
+        mandatory_int(TO_NOTE_ID);
+        optional_string(LABEL, "");
         return fields;
     }
 
@@ -232,8 +294,8 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
         start_of_request_to_entity_fields(Link)
 
-        add_int(FROM_NOTE_ID);
-        add_string(TO_URL);
+        mandatory_int(FROM_NOTE_ID);
+        mandatory_string(TO_URL);
         return fields;
     }
 }

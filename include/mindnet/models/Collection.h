@@ -30,7 +30,6 @@
 #include "columns/CollectionColumns.h"
 // ***** MACROS : END *****
 
-
 namespace mindnet::models
 {
 

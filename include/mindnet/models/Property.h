@@ -53,8 +53,8 @@ namespace mindnet::models
 
     struct Model : misc::BaseModel
     {
-        int map_id;
-        int note_id;
+        int map_id{};
+        int note_id{};
         string key;
         string value;
 
