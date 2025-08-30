@@ -15,14 +15,14 @@ namespace mindnet::persistence
     class Persistence
     {
     private:
-        std::map<std::string, models::IRepository*> repositories;
+        std::map<std::string, api::IRepository*> repositories;
         std::vector<std::string> repositoryNames;
 
     public:
         Persistence();
         ~Persistence();
 
-        models::IRepository* get_repository(const std::string& name);
+        api::IRepository* get_repository(const std::string& name);
 
         std::vector<std::string>& list_repositories();
 

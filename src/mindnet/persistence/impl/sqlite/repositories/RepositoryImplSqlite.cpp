@@ -31,17 +31,14 @@
 namespace mindnet::persistence::impl::sqlite::repositories
 {
     RepositoryImplSqlite::RepositoryImplSqlite(
-        models::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer_,
-        persistence::ModelDefinition& model_definition_
-    )
+        api::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer_,
+        ModelDefinition& model_definition_
+        ) : IRepository(convert_rest_request_to_entity_fields_pointer_,
+            model_definition_)
     {
-        if (convert_rest_request_to_entity_fields_pointer == nullptr)
-        {
-            throw std::invalid_argument("convert_rest_request_to_entity_fields_pointer cannot be null");
-        }
-        convert_rest_request_to_entity_fields_pointer = convert_rest_request_to_entity_fields_pointer_,
-        model_definition = model_definition_;
-    };
+
+    }
+    ;
     RepositoryImplSqlite::~RepositoryImplSqlite() = default;
 
     int RepositoryImplSqlite::create(const entity_fields& fields, string& error)

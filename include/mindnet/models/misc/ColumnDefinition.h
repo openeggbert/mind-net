@@ -24,7 +24,8 @@
 #include <string>
 #include <vector>
 #include <set>
-#include "EnumDefinition.h"
+
+#include "mindnet/models/misc/EnumDefinition.h"
 
 #define using_flags()\
 using misc::MANDATORY;\

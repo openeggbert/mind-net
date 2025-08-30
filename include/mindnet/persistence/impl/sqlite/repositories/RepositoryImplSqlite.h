@@ -35,12 +35,12 @@ namespace mindnet::persistence::impl::sqlite::repositories
 {
     using std::vector;
 
-    class RepositoryImplSqlite : public models::IRepository
+    class RepositoryImplSqlite : public api::IRepository
     {
     public:
         RepositoryImplSqlite(
-            models::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer,
-            persistence::ModelDefinition& model_definition
+            api::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer,
+            ModelDefinition& model_definition
             );
         ~RepositoryImplSqlite() override;
 

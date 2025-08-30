@@ -25,8 +25,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "mindnet/Helper.h"
-
 namespace mindnet::models::misc
 {
     typedef std::string (*enum_to_string_pointer)(int);

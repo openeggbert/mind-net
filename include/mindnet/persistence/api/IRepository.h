@@ -79,7 +79,7 @@ else\
 fields.emplace_back(cast64(Utils::currentUnixTimestamp()));
 
 
-namespace mindnet::models
+namespace mindnet::persistence::api
 {
     typedef entity_fields (*convert_rest_request_to_entity_fields)(crow::json::rvalue&, enums::Crudl);
 
@@ -89,7 +89,10 @@ namespace mindnet::models
     {
     public:
         virtual ~IRepository() = default;
-        IRepository();
+        IRepository(
+        api::convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer,
+        models::misc::ModelDefinition& model_definition
+        );
         virtual int create(const entity_fields& fields, string& error) = 0;
         virtual entity_fields read(int id, string& error) = 0;
         virtual bool update(int id, entity_fields& fields, string& error) = 0;
@@ -101,7 +104,7 @@ namespace mindnet::models
 
     protected:
         convert_rest_request_to_entity_fields convert_rest_request_to_entity_fields_pointer = nullptr;
-        misc::ModelDefinition model_definition;
+        models::misc::ModelDefinition model_definition;
     };
 }
 

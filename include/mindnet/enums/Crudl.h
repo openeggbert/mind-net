@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include "mindnet/models/misc/EnumDefinition.h"
+
 namespace mindnet::enums
 {
     /**

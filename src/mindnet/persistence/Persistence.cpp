@@ -22,7 +22,7 @@
 #define FUNCTION_JOIN(x) convert_crow_json_rvalue_to_entity_fields_##x
 
 #define add_repository(model, Model, MODEL) \
-models::IRepository* model##_repo = new RepositoryImplSqlite(\
+api::IRepository* model##_repo = new RepositoryImplSqlite(\
 & FUNCTION_JOIN(model),\
 models :: MODEL_JOIN(MODEL)\
 );\
@@ -35,7 +35,7 @@ namespace mindnet::persistence
 
     Persistence::Persistence()
     {
-        // models::IRepository* user_repo =
+        // IRepository* user_repo =
         //     new RepositoryImplSqlite(
         //         &convert_crow_json_rvalue_to_entity_fields_user,
         //         models::USER_DEFINITION
@@ -63,7 +63,7 @@ namespace mindnet::persistence
         }
     }
 
-    models::IRepository* Persistence::get_repository(const std::string& name)
+    api::IRepository* Persistence::get_repository(const std::string& name)
     {
         return repositories.count(name) ? repositories[name] : nullptr;
     }
