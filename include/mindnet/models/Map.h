@@ -69,7 +69,6 @@ namespace mindnet::models
                 category && created_at == other.created_at && updated_at == other.updated_at;
         }
 
-        Map() = default;
     };
 }
 #undef Model

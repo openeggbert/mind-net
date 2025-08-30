@@ -101,7 +101,6 @@ namespace mindnet::models
                 starred == other.starred;
         }
 
-        Message() = default;
     };
 }
 

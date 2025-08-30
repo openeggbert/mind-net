@@ -142,21 +142,9 @@ struct Model : bm
     enums::Importance importance;
     enums::Difficulty difficulty;
 
-    [[nodiscard]] ModelDefinition get_definition() const override
-    {
-        return NODE_DEFINITION;
-    }
+    create_model_h_methods(Model, MODEL)
 
-    [[nodiscard]] entity_fields get_values() const override;
-    void from_values(const entity_fields& values) override;
-
-    friend std::ostream& operator<<(std::ostream& os, const Node& map)
-    {
-        os << map.to_json();
-        return os;
-    }
-
-    bool operator==(const Node& other) const
+    bool operator==(const Model& other) const
     {
         return id == other.id && uuid == other.uuid && map_id == other.map_id &&
             sibling_position == other.sibling_position && title == other.title &&
@@ -169,27 +157,6 @@ struct Model : bm
             created_at == other.created_at && updated_at == other.updated_at;
     }
 
-    Node() = default;
-
-    Node(int id_, str uuid_, int map_id_, int sibling_position_, str title_,
-         int content_id_, int parent_node_id_, int type_, int visibility_,
-         unixtime last_shown_at_, unixtime expires_at_, bool is_favorite_,
-         bool is_redirect_, int redirect_node_id_, str redirect_reason_,
-         int importance_, int difficulty_,
-         unixtime created_at_, unixtime updated_at_
-    )
-        : BaseModel(), uuid(std::move(uuid_)), map_id(map_id_), sibling_position(sibling_position_),
-          title(std::move(title_)), content_id(content_id_), parent_node_id(parent_node_id_),
-          type(static_cast<enums::NodeType>(type_)), visibility(static_cast<enums::Visibility>(visibility_)),
-          last_shown_at(last_shown_at_), expires_at(expires_at_), is_favorite(is_favorite_),
-          redirect_node_id(redirect_node_id_),
-          redirect_reason(std::move(redirect_reason_)), importance(static_cast<enums::Importance>(importance_)),
-          difficulty(static_cast<enums::Difficulty>(difficulty_))
-    {
-        id = id_;
-        created_at = created_at_;
-        updated_at = updated_at_;
-    }
 };
 
 }

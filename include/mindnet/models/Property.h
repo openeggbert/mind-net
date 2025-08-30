@@ -93,19 +93,7 @@ struct Model : bm
     enums::ValueType value_type{};
     bool is_indexed{};
 
-    [[nodiscard]] ModelDefinition get_definition() const override
-    {
-        return PROPERTY_DEFINITION;
-    }
-
-    [[nodiscard]] entity_fields get_values() const override;
-    void from_values(const entity_fields& values) override;
-
-    friend std::ostream& operator<<(std::ostream& os, const Property& map)
-    {
-        os << map.to_json();
-        return os;
-    }
+    create_model_h_methods(Model, MODEL)
 
     bool operator==(const Property& other) const
     {
@@ -114,19 +102,6 @@ struct Model : bm
             created_at == other.created_at && updated_at == other.updated_at;
     }
 
-    Property() = default;
-
-    Property(int id_, int map_id_, int node_id_, str key_, str value_, int value_type_, bool is_indexed_,
-             unixtime created_at_,
-             unixtime updated_at_
-    )
-        : map_id(map_id_), node_id(node_id_), key(std::move(key_)), value(std::move(value_)),
-          value_type(static_cast<enums::ValueType>(value_type_)), is_indexed(is_indexed_)
-    {
-        id = id_;
-        created_at = created_at_;
-        updated_at = updated_at_;
-    }
 };
 
 }

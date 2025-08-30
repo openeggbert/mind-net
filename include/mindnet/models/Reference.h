@@ -73,7 +73,7 @@ namespace mindnet::models
     }
 };
 
-struct Model : bm
+struct Model : mindnet::models::bm
 {
     Model() = default;
 
@@ -82,19 +82,7 @@ struct Model : bm
     enums::NodeLinkType type;
     str label;
 
-    [[nodiscard]] ModelDefinition get_definition() const override
-    {
-        return NODE_LINK_DEFINITION;
-    }
-
-    [[nodiscard]] entity_fields get_values() const override;
-    void from_values(const entity_fields& values) override;
-
-    friend std::ostream& operator<<(std::ostream& os, const NodeLink& map)
-    {
-        os << map.to_json();
-        return os;
-    }
+    create_model_h_methods(Model, MODEL)
 
     bool operator==(const NodeLink& other) const
     {
@@ -103,18 +91,6 @@ struct Model : bm
             updated_at;
     }
 
-    NodeLink() = default;
-
-    NodeLink(int id_, int from_node_id_, int to_node_id_, enums::NodeLinkType type_, str label_,
-             unixtime created_at_,
-             unixtime updated_at_
-    )
-        : from_node_id(from_node_id_), to_node_id(to_node_id_), type(type_), label(std::move(label_))
-    {
-        id = id_;
-        created_at = created_at_;
-        updated_at = updated_at_;
-    }
 };
 
 }

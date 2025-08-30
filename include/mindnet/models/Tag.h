@@ -72,19 +72,7 @@ struct Model : bm
     int node_id;
     int tag_type_id;
 
-    [[nodiscard]] ModelDefinition get_definition() const override
-    {
-        return NODE_TAG_DEFINITION;
-    }
-
-    [[nodiscard]] entity_fields get_values() const override;
-    void from_values(const entity_fields& values) override;
-
-    friend std::ostream& operator<<(std::ostream& os, const Tag& map)
-    {
-        os << map.to_json();
-        return os;
-    }
+    create_model_h_methods(Model, MODEL)
 
     bool operator==(const Tag& other) const
     {
@@ -92,19 +80,6 @@ struct Model : bm
             created_at == other.created_at && updated_at == other.updated_at;
     }
 
-    Tag() = default;
-
-    Tag(int id_, int node_id_, int tag_id_,
-        unixtime created_at_,
-        unixtime updated_at_
-    )
-    {
-        id = id_;
-        node_id = node_id_;
-        tag_type_id = tag_id_;
-        created_at = created_at_;
-        updated_at = updated_at_;
-    }
 };
 
 }
