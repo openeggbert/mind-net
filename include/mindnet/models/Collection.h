@@ -20,7 +20,6 @@
 #ifndef COLLECTION_H
 #define COLLECTION_H
 
-
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 

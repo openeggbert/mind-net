@@ -69,6 +69,48 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
+    entity_fields request_to_entity_fields_message(method_arguments())
+    {
+        start_of_request_to_entity_fields(Message)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_team(method_arguments())
+    {
+        start_of_request_to_entity_fields(Team)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_team_member(method_arguments())
+    {
+        start_of_request_to_entity_fields(TeamMember)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_discussion(method_arguments())
+    {
+        start_of_request_to_entity_fields(Discussion)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_comment(method_arguments())
+    {
+        start_of_request_to_entity_fields(Comment)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_suggestion(method_arguments())
+    {
+        start_of_request_to_entity_fields(Suggestion)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_suggestion_review(method_arguments())
+    {
+        start_of_request_to_entity_fields(SuggestionReview)
+        return fields;
+    }
+
     entity_fields request_to_entity_fields_history(method_arguments())
     {
         start_of_request_to_entity_fields(History)
@@ -96,6 +138,17 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return fields;
     }
 
+    entity_fields request_to_entity_fields_content(method_arguments())
+    {
+        start_of_request_to_entity_fields(Content)
+
+        add_string(VALUE);
+        add_int(FORMAT);
+        add_int(VERSION);
+
+        return fields;
+    }
+
     entity_fields request_to_entity_fields_note(method_arguments())
     {
         start_of_request_to_entity_fields(Note)
@@ -109,17 +162,6 @@ namespace mindnet::persistence::impl::sqlite::repositories
 
         add_optional_int(IMPORTANCE, 0);
         add_optional_int(DIFFICULTY, 0);
-        return fields;
-    }
-
-    entity_fields request_to_entity_fields_content(method_arguments())
-    {
-        start_of_request_to_entity_fields(Content)
-
-        add_string(VALUE);
-        add_int(FORMAT);
-        add_int(VERSION);
-
         return fields;
     }
 
@@ -149,6 +191,30 @@ namespace mindnet::persistence::impl::sqlite::repositories
 
         add_int(NOTE_ID);
         add_int(TAG_TYPE_ID);
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_collection(method_arguments())
+    {
+        start_of_request_to_entity_fields(Collection)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_collection_item(method_arguments())
+    {
+        start_of_request_to_entity_fields(CollectionItem)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_review(method_arguments())
+    {
+        start_of_request_to_entity_fields(Review)
+        return fields;
+    }
+
+    entity_fields request_to_entity_fields_sm2_state(method_arguments())
+    {
+        start_of_request_to_entity_fields(SM2State)
         return fields;
     }
 
