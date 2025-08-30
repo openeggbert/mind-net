@@ -13,10 +13,10 @@ namespace mindnet::enums
         TEXT,
         TEXTAREA,
         INTEGER,
+        BOOL,
+        DATETIME,
         REAL,
         BLOB,
-        BOOL,
-        DATETIME
     };
 
     inline std::string column_type_to_string(ColumnType column_type)

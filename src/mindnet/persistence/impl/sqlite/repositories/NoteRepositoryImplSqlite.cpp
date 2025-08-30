@@ -23,7 +23,7 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "mindnet/persistence/impl/sqlite/repositories/NodeRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/NoteRepositoryImplSqlite.h"
 
 #include <string>
 
@@ -33,31 +33,22 @@
 
 namespace mindnet::impl::sqlite::repositories
 {
-    NodeRepositoryImplSqlite::~NodeRepositoryImplSqlite() = default;
+    NoteRepositoryImplSqlite::~NoteRepositoryImplSqlite() = default;
 
-    def_virtual_irepository_impl_cpp_methods(Node, NODE)
+    def_virtual_irepository_impl_cpp_methods(Note, NOTE)
 
-    entity_fields NodeRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
+    entity_fields NoteRepositoryImplSqlite::convert_crow_json_rvalue_to_entity_fields(
         crow::json::rvalue& body, enums::Crudl crudl)
     {
-        start_of_convert_crow_json_rvalue_to_entity_fields(Node)
+        start_of_convert_crow_json_rvalue_to_entity_fields(Note)
 
-        add_string(UUID);
         add_int(MAP_ID);
         add_int(SIBLING_POSITION);
         add_string(TITLE);
 
         add_int_foreign_key(CONTENT_ID)
-        add_int_foreign_key(PARENT_NODE_ID)
+        add_int_foreign_key(PARENT_NOTE_ID)
 
-        add_optional_int(TYPE, 0);
-        add_optional_int(VISIBILITY, 0);
-        add_int(LAST_SHOWN_AT);
-        add_optional_int(EXPIRES_AT, 0);
-        add_optional_int(IS_FAVORITE, 0);
-        add_int_foreign_key(REDIRECT_NODE_ID)
-
-        add_optional_string(REDIRECT_REASON, "");
         add_optional_int(IMPORTANCE, 0);
         add_optional_int(DIFFICULTY, 0);
         return fields;

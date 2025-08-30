@@ -12,7 +12,7 @@ namespace mindnet::models
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
-        result.push_back(node_id);
+        result.push_back(note_id);
         result.push_back(tag_type_id);
         return result;
     }
@@ -26,7 +26,7 @@ namespace mindnet::models
         set_id(number());
         created_at = number();
         updated_at = number();
-        node_id = number();
+        note_id = number();
         tag_type_id = number();
     };
 }

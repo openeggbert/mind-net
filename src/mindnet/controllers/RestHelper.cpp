@@ -20,16 +20,16 @@ namespace mindnet::controllers
                                                    std::set<std::string> fields_vector_filter)
     {
         crow::json::wvalue res;
-        auto columns = def.columns;
+        auto columns = def.get_columns();
 
         bool filter_by_fields = !fields_vector_filter.empty();
         for (int i = 0; i < columns.size(); i++)
         {
-            if (filter_by_fields && !fields_vector_filter.contains(columns[i].column_name))
+            if (filter_by_fields && !fields_vector_filter.contains(columns[i].get_column_name()))
             {
                 continue;
             }
-            auto column_name = columns[i].column_name;
+            auto column_name = columns[i].get_column_name();
             auto value = values[i];
 
             std::visit([&res, &column_name](auto&& val)
@@ -40,21 +40,21 @@ namespace mindnet::controllers
         return res;
     }
 
-    str RestHelper::check_body_is_valid(const crow::json::rvalue& body, const models::misc::ModelDefinition& def,
+    string RestHelper::check_body_is_valid(const crow::json::rvalue& body, const models::misc::ModelDefinition& def,
                                         const bool id_wanted)
     {
-        for (auto e : def.columns)
+        for (auto column_ : def.get_columns())
         {
-            debug << "Checking " << e.column_name << commit;
-            if (e.column_name == "id")
+            debug << "Checking " << column_.get_column_name() << commit;
+            if (column_.get_column_name() == "id")
             {
-                if (!id_wanted && body.has(e.column_name))
+                if (!id_wanted && body.has(column_.get_column_name()))
                 {
                     auto msg = "Id is not allowed in body";
                     err << msg << commit;
                     return msg;
                 }
-                if (id_wanted && !body.has(e.column_name))
+                if (id_wanted && !body.has(column_.get_column_name()))
                 {
                     auto msg = "Mandatory column id is missing";
                     err << msg << std::endl;
@@ -62,9 +62,9 @@ namespace mindnet::controllers
                 }
                 continue;
             }
-            if (e.mandatory_ && !body.has(e.column_name))
+            if (column_.is_mandatory() && !body.has(column_.get_column_name()))
             {
-                auto msg = "Mandatory column " + e.column_name + " is missing";
+                auto msg = "Mandatory column " + column_.get_column_name() + " is missing";
                 err << msg << std::endl;
                 return msg;
             }

@@ -22,6 +22,8 @@
 
 #include <optional>
 #include <string>
+#include <vector>
+#include <set>
 #include "EnumDefinition.h"
 
 #define using_flags()\

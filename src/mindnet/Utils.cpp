@@ -233,7 +233,7 @@ namespace mindnet
         auto columns = definition.get_columns();
         for (int i = 0; i < columns.size(); ++i)
         {
-            auto& column = columns[i].column_name;
+            auto& column = columns[i].get_column_name();
             if (std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
@@ -247,7 +247,7 @@ namespace mindnet
         sql += ") VALUES (";
         for (int i = 0; i < columns.size(); ++i)
         {
-            auto column = columns[i].column_name;
+            auto column = columns[i].get_column_name();
             if (std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
@@ -267,7 +267,7 @@ namespace mindnet
         std::string sql = "UPDATE " + definition.get_model_name() + " SET ";
         for (int i = 0; i < definition.get_columns().size(); ++i)
         {
-            auto column = definition.get_columns()[i].column_name;
+            auto column = definition.get_columns()[i].get_column_name();
             if (std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;

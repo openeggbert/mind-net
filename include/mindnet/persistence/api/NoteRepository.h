@@ -20,7 +20,7 @@
 #ifndef NODEREPOSITORY_H
 #define NODEREPOSITORY_H
 
-#include "mindnet/models/Node.h"
+#include "mindnet/models/Note.h"
 #include <vector>
 
 #include "IRepository.h"
@@ -32,11 +32,11 @@ namespace mindnet::persistence::api
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class NoTeRepository : public models::IRepository
+    class NoteRepository : public models::IRepository
     {
     public:
-        NoTeRepository() = default;
-        virtual ~NoTeRepository() = default;
+        NoteRepository() = default;
+        virtual ~NoteRepository() = default;
 
         def_virtual_irepository_api_h_methods
     };

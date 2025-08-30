@@ -50,8 +50,8 @@ namespace mindnet
         static SM2Result calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef);
         static long long currentTimestamp();
         static long long currentUnixTimestamp();
-        static std::string unixToFormattedString(ll unixTimestamp);
-        static str print_current_timestamp();
+        static string unixToFormattedString(ll unixTimestamp);
+        static string print_current_timestamp();
         // static ll formattedStringToUnix(const std::string& formattedTime);
 
         // Convert single letter 'a'-'z' to number 0-25
@@ -72,14 +72,14 @@ namespace mindnet
 
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
-        static str generate_select_one_sql(const std::string& table_name);
-        static str generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params,
+        static string generate_select_one_sql(const std::string& table_name);
+        static string generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params,
                                            bool count = false);
-        static str generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params);
+        static string generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params);
 
-        static str generate_insert_sql(const models::misc::ModelDefinition& definition);
-        static str generate_update_sql(const models::misc::ModelDefinition& definition);
-        static str generate_delete_sql(const models::misc::ModelDefinition& definition);
+        static string generate_insert_sql(const models::misc::ModelDefinition& definition);
+        static string generate_update_sql(const models::misc::ModelDefinition& definition);
+        static string generate_delete_sql(const models::misc::ModelDefinition& definition);
 
         static void fill_sqlite_query(SQLite::Statement& query, const entity_fields& values,
                                       bool auto_increment = false);

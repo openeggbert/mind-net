@@ -57,6 +57,8 @@ namespace mindnet::models
 
     struct Model : misc::BaseModel
     {
+        int user_id{};
+        string ip_address;
         string table_name;
         int record_id{};
         enums::Crudl operation{};
@@ -70,6 +72,8 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
+                user_id == other.user_id &&
+                ip_address == other.ip_address &&
                 table_name == other.table_name &&
                 record_id == other.record_id &&
                 operation == other.operation &&

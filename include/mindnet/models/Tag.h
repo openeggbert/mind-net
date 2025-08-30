@@ -45,7 +45,6 @@ namespace mindnet::models
             coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::TAG_TYPE_ID, MANDATORY | FOREIGN_KEY),
         });
-};
 
 struct Model : misc::BaseModel
 {
@@ -56,7 +55,7 @@ struct Model : misc::BaseModel
 
     bool operator==(const Tag& other) const
     {
-        return id == other.id && note_id == other.node_id && tag_type_id == other.tag_type_id &&
+        return id == other.id && note_id == other.note_id && tag_type_id == other.tag_type_id &&
             created_at == other.created_at && updated_at == other.updated_at;
     }
 };

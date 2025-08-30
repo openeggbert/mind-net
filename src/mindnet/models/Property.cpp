@@ -13,11 +13,9 @@ namespace mindnet::models
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
         result.push_back(map_id);
-        result.push_back(node_id);
+        result.push_back(note_id);
         result.push_back(key);
         result.push_back(value);
-        result.push_back(cast64(value_type));
-        result.push_back(is_indexed);
         return result;
     }
 
@@ -31,10 +29,8 @@ namespace mindnet::models
         created_at = number();
         updated_at = number();
         map_id = number();
-        node_id = number();
+        note_id = number();
         key = text();
         value = text();
-        value_type = static_cast<enums::ValueType>(number());
-        is_indexed = number();
     };
 }

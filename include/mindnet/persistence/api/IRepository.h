@@ -33,25 +33,25 @@
 #include "mindnet/http/QueryParams.h"
 
 #define def_virtual_irepository_api_h_methods \
-virtual int create(const entity_fields& fields, str& error) = 0;\
-virtual entity_fields read(int id, str& error) = 0;\
-virtual bool update(int id, entity_fields& fields, str& error) = 0;\
-virtual bool remove(int id, str& error) = 0;\
-virtual std::vector<entity_fields> list(http::QueryParams& query_params, str& error) = 0;\
+virtual int create(const entity_fields& fields, string& error) = 0;\
+virtual entity_fields read(int id, string& error) = 0;\
+virtual bool update(int id, entity_fields& fields, string& error) = 0;\
+virtual bool remove(int id, string& error) = 0;\
+virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;\
 virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;\
 virtual entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) = 0;
 
 #define def_virtual_irepository_impl_h_methods \
-int create(const entity_fields& fields, str& error) override;\
-entity_fields read(int id, str& error) override;\
-bool update(int id, entity_fields& fields, str& error) override;\
-bool remove(int id, str& error) override;\
-std::vector<entity_fields> list(http::QueryParams& query_params, str& error) override;\
+int create(const entity_fields& fields, string& error) override;\
+entity_fields read(int id, string& error) override;\
+bool update(int id, entity_fields& fields, string& error) override;\
+bool remove(int id, string& error) override;\
+std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;\
 models::misc::ModelDefinition& get_model_definition() override;\
 entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
 
 #define def_virtual_irepository_impl_cpp_methods(Model, MODEL) \
-int Model##RepositoryImplSqlite::create(const entity_fields& fields, str& error)\
+int Model##RepositoryImplSqlite::create(const entity_fields& fields, string& error)\
     {\
         try\
         {\
@@ -63,23 +63,23 @@ int Model##RepositoryImplSqlite::create(const entity_fields& fields, str& error)
         }\
     }\
 \
-entity_fields Model##RepositoryImplSqlite::read(const int id, str& error)\
+entity_fields Model##RepositoryImplSqlite::read(const int id, string& error)\
     {\
         return persistence::impl::sqlite::read_model(get_model_definition(), id, error);\
 \
     }\
    \
-bool Model##RepositoryImplSqlite::update(int id, entity_fields& fields, str& error)\
+bool Model##RepositoryImplSqlite::update(int id, entity_fields& fields, string& error)\
     {\
         return persistence::impl::sqlite::update_model(id, get_model_definition(), fields, error);\
     }\
 \
-bool Model##RepositoryImplSqlite::remove(int id, str& error)\
+bool Model##RepositoryImplSqlite::remove(int id, string& error)\
     {\
         return persistence::impl::sqlite::delete_model(get_model_definition(), id, error);\
     }\
 \
-std::vector<entity_fields> Model##RepositoryImplSqlite::list(http::QueryParams& query_params, str& error)\
+std::vector<entity_fields> Model##RepositoryImplSqlite::list(http::QueryParams& query_params, string& error)\
     {\
         return persistence::impl::sqlite::list_models(get_model_definition(), query_params, error);\
     }\

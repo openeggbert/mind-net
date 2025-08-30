@@ -26,7 +26,7 @@ namespace mindnet::controllers
             const models::misc::ModelDefinition& def,
             std::set<std::string> fields_vector_filter);
 
-        static str check_body_is_valid(const crow::json::rvalue& body, const models::misc::ModelDefinition& def,
+        static string check_body_is_valid(const crow::json::rvalue& body, const models::misc::ModelDefinition& def,
                                        bool id_wanted = true);
 
         static nlohmann::json crow_json_to_nlohmann_json(const crow::json::rvalue& crow_json);

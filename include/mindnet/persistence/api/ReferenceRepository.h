@@ -17,10 +17,11 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODELINKREPOSITORY_H
-#define NODELINKREPOSITORY_H
+#ifndef REFERENCEREPOSITORY_H
+#define REFERENCEREPOSITORY_H
 
-#include "mindnet/models/NodeLink.h"
+
+#include "mindnet/models/Reference.h"
 #include <vector>
 
 #include "IRepository.h"
@@ -32,14 +33,14 @@ namespace mindnet::persistence::api
     * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
      */
 
-    class NodeLinkRepository : public models::IRepository
+    class ReferenceRepository : public models::IRepository
     {
     public:
-        NodeLinkRepository() = default;
-        virtual ~NodeLinkRepository() = default;
+        ReferenceRepository() = default;
+        virtual ~ReferenceRepository() = default;
 
         def_virtual_irepository_api_h_methods
     };
 }
 
-#endif // NODELINKREPOSITORY_H
+#endif // REFERENCEREPOSITORY_H

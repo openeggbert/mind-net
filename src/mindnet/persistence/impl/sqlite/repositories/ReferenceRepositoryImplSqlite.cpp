@@ -42,9 +42,8 @@ namespace mindnet::impl::sqlite::repositories
     {
         start_of_convert_crow_json_rvalue_to_entity_fields(Reference)
 
-        add_int(FROM_NODE_ID);
-        add_int(TO_NODE_ID);
-        add_int(TYPE)
+        add_int(FROM_NOTE_ID);
+        add_int(TO_NOTE_ID);
         add_optional_string(LABEL, "");
         return fields;
     }

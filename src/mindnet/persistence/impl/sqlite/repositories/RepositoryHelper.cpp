@@ -17,10 +17,6 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef BASEREPOSITORY_H
-#define BASEREPOSITORY_H
-
-#include <iostream>
 
 #include "mindnet/models/Content.h"
 #include <vector>
@@ -46,7 +42,7 @@ namespace mindnet::persistence::impl::sqlite
         db.exec("PRAGMA temp_store = MEMORY;");
     }
 
-    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, str& error)
+    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, string& error)
     {
         std::string sql = Utils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
@@ -71,7 +67,7 @@ namespace mindnet::persistence::impl::sqlite
         }
 
         Utils::fill_sqlite_query(*query_ptr, fields
-                                 , definition.auto_increment
+                                 , true
         );
 
         try
@@ -88,9 +84,9 @@ namespace mindnet::persistence::impl::sqlite
         return db.getLastInsertRowid();
     }
 
-    entity_fields read_model(models::misc::ModelDefinition& def, const int id, str& error)
+    entity_fields read_model(models::misc::ModelDefinition& def, const int id, string& error)
     {
-        std::string sql = Utils::generate_select_one_sql(def.model_name);
+        std::string sql = Utils::generate_select_one_sql(def.get_model_name());
         debug << "Going to execute select one SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -116,23 +112,26 @@ namespace mindnet::persistence::impl::sqlite
 
 
         entity_fields result;
-        auto columns = def.columns;
+        auto columns = def.get_columns();
         (*query_ptr).bind(1, id);
 
 
         if ((*query_ptr).executeStep())
         {
             int i = 0;
-            for (const auto& column : def.columns)
+            for (const auto& column : def.get_columns())
             {
-                switch (column.column_type)
+                switch (column.get_column_type())
                 {
+                case enums::ColumnType::TEXTAREA:
                 case enums::ColumnType::TEXT:
                     {
-                        str text = (*query_ptr).getColumn(i).getString();
+                        string text = (*query_ptr).getColumn(i).getString();
                         result.push_back(text);
                     }
                     break;
+                case enums::ColumnType::BOOL:
+                case enums::ColumnType::DATETIME:
                 case enums::ColumnType::INTEGER:
                     {
                         int number = (*query_ptr).getColumn(i);
@@ -153,11 +152,11 @@ namespace mindnet::persistence::impl::sqlite
 
         delete query_ptr;
 
-        error = def.model_name + " not found";
-        throw std::runtime_error(def.model_name + " not found");
+        error = def.get_model_name() + " not found";
+        throw std::runtime_error(def.get_model_name() + " not found");
     }
 
-    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, str& error)
+    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, string& error)
     {
         std::string sql = Utils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
@@ -209,9 +208,9 @@ namespace mindnet::persistence::impl::sqlite
         }
     }
 
-    bool delete_model(models::misc::ModelDefinition& def, const int id, str& error)
+    bool delete_model(models::misc::ModelDefinition& def, const int id, string& error)
     {
-        str sql = Utils::generate_delete_sql(def);
+        string sql = Utils::generate_delete_sql(def);
         debug << "Going to execute delete SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -274,25 +273,28 @@ namespace mindnet::persistence::impl::sqlite
                 auto value = filter.second;
                 enums::ColumnType column_type{enums::ColumnType::TEXT};
                 bool column_type_found = false;
-                for (auto& column : def.columns)
+                for (auto& column : def.get_columns())
                 {
-                    if (column.column_name == key)
+                    if (column.get_column_name() == key)
                     {
-                        column_type = column.column_type;
+                        column_type = column.get_column_type();
                         column_type_found = true;
                         break;
                     }
                 }
                 if (!column_type_found)
                 {
-                    err << "Filter column " << key << " not found in model " << def.model_name << std::endl;
+                    err << "Filter column " << key << " not found in model " << def.get_model_name() << std::endl;
                     throw std::runtime_error("Filter column not found: " + key);
                 }
                 switch (column_type)
                 {
+                case enums::ColumnType::TEXTAREA:
                 case enums::ColumnType::TEXT:
                     query.bind(bind_index++, value);
                     break;
+                case enums::ColumnType::BOOL:
+                case enums::ColumnType::DATETIME:
                 case enums::ColumnType::INTEGER:
                     query.bind(bind_index++, stoi(value));
                     break;
@@ -305,12 +307,12 @@ namespace mindnet::persistence::impl::sqlite
     std::vector<entity_fields> list_models(
         models::misc::ModelDefinition& def,
         http::QueryParams& query_params,
-        str& error
+        string& error
     )
     {
         trace << "list_models()" << commit;
-        std::string sql = Utils::generate_select_all_sql(def.model_name, query_params);
-        std::string sql_count = Utils::generate_select_count_sql(def.model_name, query_params);
+        std::string sql = Utils::generate_select_all_sql(def.get_model_name(), query_params);
+        std::string sql_count = Utils::generate_select_count_sql(def.get_model_name(), query_params);
 
         debug << "Going to execute select all SQL: " << sql << commit;
 
@@ -370,16 +372,19 @@ namespace mindnet::persistence::impl::sqlite
             {
                 entity_fields result;
                 int i = 0;
-                for (const auto& column : def.columns)
+                for (const auto& column : def.get_columns())
                 {
-                    switch (column.column_type)
+                    switch (column.get_column_type())
                     {
+                    case enums::ColumnType::TEXTAREA:
                     case enums::ColumnType::TEXT:
                         {
-                            str text = (*query_ptr).getColumn(i).getString();
+                            string text = (*query_ptr).getColumn(i).getString();
                             result.push_back(text);
                         }
                         break;
+                    case enums::ColumnType::BOOL:
+                    case enums::ColumnType::DATETIME:
                     case enums::ColumnType::INTEGER:
                         {
                             int number = (*query_ptr).getColumn(i);
@@ -422,5 +427,3 @@ namespace mindnet::persistence::impl::sqlite
         return results;
     }
 }
-
-#endif // BASEREPOSITORY_H

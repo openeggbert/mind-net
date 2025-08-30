@@ -17,9 +17,9 @@
 #include "mindnet/models/TagType.h"
 #include "mindnet/models/Map.h"
 #include "mindnet/models/Content.h"
-#include "mindnet/models/Node.h"
-#include "mindnet/models/ExternalLink.h"
-#include "mindnet/models/NodeLink.h"
+#include "mindnet/models/Note.h"
+#include "mindnet/models/Link.h"
+#include "mindnet/models/Reference.h"
 #include "mindnet/models/Tag.h"
 #include "mindnet/models/Property.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
@@ -63,7 +63,7 @@ void print_logo()
  * @param args A vector of strings representing the arguments to validate.
  * @return A boolean value indicating whether all arguments meet the validation criteria (true if valid, false otherwise).
  */
-bool check_args(std::vector<str>& arguments)
+bool check_args(std::vector<string>& arguments)
 {
     if (arguments.empty())
     {
@@ -89,7 +89,7 @@ bool commands_function_start(
 {
     bool custom_port = false;
     int port = 8080;
-    str static_directory = "static";
+    string static_directory = "static";
     for (int i = 1; i < arguments.size(); ++i)
     {
         const auto& argument = arguments[i];
@@ -151,11 +151,11 @@ bool commands_function_start(
     add_controller(HISTORY)
     add_controller(MAP)
     add_controller(CONTENT)
-    add_controller(NODE)
+    add_controller(NOTE)
     add_controller(TAG_TYPE)
-    add_controller(EXTERNAL_LINK)
-    add_controller(NODE_LINK)
-    add_controller(NODE_TAG)
+    add_controller(LINK)
+    add_controller(REFERENCE)
+    add_controller(TAG)
     add_controller(PROPERTY)
 
     if (custom_port)

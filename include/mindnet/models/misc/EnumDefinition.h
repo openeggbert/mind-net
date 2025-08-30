@@ -39,7 +39,7 @@ namespace mindnet::models::misc
     struct EnumDefinition
     {
     private:
-        short* values;
+        short* values = nullptr;
         short value_count;
         enum_to_string_pointer enum_to_string_pointer_function;
 
@@ -69,10 +69,33 @@ namespace mindnet::models::misc
 
             va_end(args);
         };
+        EnumDefinition(const EnumDefinition& other)
+            : value_count(other.value_count),
+              enum_to_string_pointer_function(other.enum_to_string_pointer_function)
+        {
+            values = new short[value_count];
+            std::copy(other.values, other.values + value_count, values);
+        }
+
+        EnumDefinition& operator=(const EnumDefinition& other)
+        {
+            if (this != &other)
+            {
+                delete[] values;
+                value_count = other.value_count;
+                enum_to_string_pointer_function = other.enum_to_string_pointer_function;
+                values = new short[value_count];
+                std::copy(other.values, other.values + value_count, values);
+            }
+            return *this;
+        }
 
         ~EnumDefinition()
         {
-            delete[] values;
+            if (values != nullptr)
+            {
+                delete[] values;
+            }
         }
 
         short get_value_count() const

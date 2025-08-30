@@ -12,10 +12,9 @@ namespace mindnet::models
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
-        result.push_back(content);
+        result.push_back(value);
         result.push_back(cast64(format));
         result.push_back(version);
-        result.push_back(node_id);
         return result;
     }
 
@@ -29,10 +28,9 @@ namespace mindnet::models
         created_at = number();
         updated_at = number();
         //
-        content = text();
+        value = text();
         format = static_cast<enums::ContentFormat>(number());
         version = number();
-        node_id = number();
     }
     ;
 }

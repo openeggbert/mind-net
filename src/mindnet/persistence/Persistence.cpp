@@ -7,14 +7,12 @@
 #include "mindnet/persistence/impl/sqlite/repositories/MapRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/HistoryRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/NodeRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/NoteRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/PropertyRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/TagTypeRepositoryImplSqlite.h"
 #include "mindnet/persistence/impl/sqlite/repositories/TagRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/NodeLinkRepositoryImplSqlite.h"
-#include "mindnet/persistence/impl/sqlite/repositories/ExternalLinkRepositoryImplSqlite.h"
-#include <memory>
-
+#include "mindnet/persistence/impl/sqlite/repositories/ReferenceRepositoryImplSqlite.h"
+#include "mindnet/persistence/impl/sqlite/repositories/LinkRepositoryImplSqlite.h"
 
 #define add_repository(model, Model) \
 models::IRepository* model##_repo = new Model##RepositoryImplSqlite();\
@@ -28,14 +26,14 @@ namespace mindnet::persistence
     {
         add_repository(history, History);
         add_repository(map, Map);
-        add_repository(node, Node);
+        add_repository(note, Note);
         add_repository(content, Content);
         add_repository(property, Property);
         //
         add_repository(tag_type, TagType);
         add_repository(tag, Tag);
-        add_repository(node_link, NodeLink);
-        add_repository(external_link, ExternalLink);
+        add_repository(reference, Reference);
+        add_repository(link, Link);
     }
 
     Persistence::~Persistence()
@@ -56,34 +54,34 @@ namespace mindnet::persistence
         return repositoryNames;
     }
 
-    int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, str& error)
+    int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, string& error)
     {
-        return get_repository(def.model_name)->create(fields, error);
+        return get_repository(def.get_model_name())->create(fields, error);
     }
 
-    entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, str& error)
+    entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, string& error)
     {
-        return get_repository(def.model_name)->read(id, error);
+        return get_repository(def.get_model_name())->read(id, error);
     }
 
-    bool Persistence::update(int id, entity_fields& fields, models::misc::ModelDefinition& def, str& error)
+    bool Persistence::update(int id, entity_fields& fields, models::misc::ModelDefinition& def, string& error)
     {
-        return get_repository(def.model_name)->update(id, fields, error);
+        return get_repository(def.get_model_name())->update(id, fields, error);
     }
 
-    bool Persistence::remove(int id, models::misc::ModelDefinition& def, str& error)
+    bool Persistence::remove(int id, models::misc::ModelDefinition& def, string& error)
     {
-        return get_repository(def.model_name)->remove(id, error);
+        return get_repository(def.get_model_name())->remove(id, error);
     }
 
-    std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, str& error)
+    std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, string& error)
     {
-        return get_repository(def.model_name)->list(query_params, error);
+        return get_repository(def.get_model_name())->list(query_params, error);
     }
 
     entity_fields Persistence::convert_crow_json_rvalue_to_entity_fields(
         crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
     {
-        return get_repository(def.model_name)->convert_crow_json_rvalue_to_entity_fields(body, crudl);
+        return get_repository(def.get_model_name())->convert_crow_json_rvalue_to_entity_fields(body, crudl);
     }
 }

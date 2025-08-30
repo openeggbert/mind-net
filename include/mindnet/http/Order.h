@@ -14,7 +14,7 @@ namespace mindnet::http
         DESC,
     };
 
-    inline str order_to_string(const Order& order)
+    inline string order_to_string(const Order& order)
     {
         switch (order)
         {
@@ -24,7 +24,7 @@ namespace mindnet::http
         }
     }
 
-    inline Order string_to_order(const str& string)
+    inline Order string_to_order(const string& string)
     {
         if (string == "ASC")
         {

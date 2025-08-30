@@ -27,12 +27,12 @@ namespace mindnet::persistence
 
         std::vector<std::string>& list_repositories();
 
-        int create(const ModelDefinition& def, entity_fields& fields, str& error);
-        entity_fields read(int id, const ModelDefinition& def, str& error);
-        bool update(int id, entity_fields& fields, ModelDefinition& def, str& error);
-        bool remove(int id, ModelDefinition& def, str& error);
+        int create(const ModelDefinition& def, entity_fields& fields, string& error);
+        entity_fields read(int id, const ModelDefinition& def, string& error);
+        bool update(int id, entity_fields& fields, ModelDefinition& def, string& error);
+        bool remove(int id, ModelDefinition& def, string& error);
 
-        std::vector<entity_fields> list(http::QueryParams& query_params, ModelDefinition& def, str& error);
+        std::vector<entity_fields> list(http::QueryParams& query_params, ModelDefinition& def, string& error);
 
         //
         entity_fields convert_crow_json_rvalue_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
