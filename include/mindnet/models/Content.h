@@ -37,36 +37,20 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
 
     inline def CONTENT_DEFINITION =
-        def(detail::cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    //
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-
-    //
-});
-        .set_columns(
-            {
-                coldef(COLS::CONTENT).set_mandatory(true),
-                coldef(COLS::FORMAT).set_enum_definition(enums::content_format_to_enum_definition()).
-                                     set_mandatory(true),
-                coldef(COLS::MIME_TYPE).set_mandatory(true),
-                coldef(COLS::VERSION).integer(),
-                coldef(COLS::NODE_ID).set_foreign_key("enum")
-            }
-        );
+        .set_columns({
+            //
+            coldef(COLS::VALUE, TEXT | MANDATORY),
+            coldef(COLS::FORMAT, INTEGER).set_default_value(0).set_enum_definition(enums::content_format_to_enum_definition()),
+            coldef(COLS::VERSION, INTEGER).set_default_value("1"),
+            //
+        });
 
     struct Model : misc::BaseModel
     {
@@ -81,10 +65,9 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                content == other.content &&
+                value == other.value &&
                 format == other.format &&
-                version == other.version &&
-                node_id == other.node_id;
+                version == other.version;
         }
     };
 }

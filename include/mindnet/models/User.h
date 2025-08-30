@@ -48,7 +48,7 @@ namespace mindnet::models
             coldef(COLS::PASSWORD_HASH,MANDATORY),
             coldef(COLS::DISPLAY_NAME),
             coldef(COLS::ROLE,MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
-                               set_default_value("0"),
+                               set_default_value(0),
             coldef(COLS::PROFILE_TEXT,TEXTAREA),
             coldef(COLS::LAST_LOGIN,DATETIME),
             coldef(COLS::EMAIL,UNIQUE),

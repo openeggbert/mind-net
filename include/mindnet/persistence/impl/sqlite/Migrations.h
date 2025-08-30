@@ -190,8 +190,37 @@ CREATE TABLE map (
 	FOREIGN KEY(owner_id) REFERENCES user(id),
     FOREIGN KEY(team_id) REFERENCES team(id)
 );
-)",
-        R"(
+)",        R"(
+CREATE TABLE content (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    --
+	value TEXT NOT NULL,
+	format INTEGER DEFAULT 0 CHECK (format IN (0, 1, 2)),
+    version INTEGER DEFAULT 1
+);
+CREATE INDEX idx_content_value ON content(value);
+)",R"(
+CREATE VIRTUAL TABLE content_fts USING fts5(
+    value,
+    format UNINDEXED,
+    version UNINDEXED,
+    tokenize = 'unicode61'
+);
+
+CREATE TRIGGER content_ai AFTER INSERT ON content BEGIN
+  INSERT INTO content_fts(rowid, value) VALUES (new.id, new.value);
+END;
+
+CREATE TRIGGER content_ad AFTER DELETE ON content BEGIN
+  DELETE FROM content_fts WHERE rowid = old.id;
+END;
+
+CREATE TRIGGER content_au AFTER UPDATE ON content BEGIN
+  UPDATE content_fts SET value = new.value WHERE rowid = old.id;
+END;
+)",R"(
 CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -212,40 +241,7 @@ CREATE TABLE note (
 
 CREATE INDEX idx_note_content_id ON note(content_id);
 CREATE INDEX idx_note_map_id ON note(map_id);
-)",
-        R"(
-CREATE TABLE content (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    --
-	value TEXT NOT NULL,
-	format INTEGER DEFAULT 0 CHECK (format IN (0, 1, 2)),
-    version INTEGER DEFAULT 1
-);
-CREATE INDEX idx_content_value ON content(value);
-)",
-        R"(
-CREATE VIRTUAL TABLE content_fts USING fts5(
-    value,
-    format UNINDEXED,
-    version UNINDEXED,
-    tokenize = 'unicode61'
-);
-
-CREATE TRIGGER content_ai AFTER INSERT ON content BEGIN
-  INSERT INTO content_fts(rowid, value) VALUES (new.id, new.value);
-END;
-
-CREATE TRIGGER content_ad AFTER DELETE ON content BEGIN
-  DELETE FROM content_fts WHERE rowid = old.id;
-END;
-
-CREATE TRIGGER content_au AFTER UPDATE ON content BEGIN
-  UPDATE content_fts SET value = new.value WHERE rowid = old.id;
-END;
-)",
-        R"(
+)",R"(
 CREATE TABLE property(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

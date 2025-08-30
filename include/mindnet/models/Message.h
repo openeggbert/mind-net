@@ -48,15 +48,15 @@ namespace mindnet::models
                 coldef(COLS::SENDER_ID,MANDATORY).set_foreign_key("user"),
                 coldef(COLS::RECIPIENT_ID,MANDATORY).set_foreign_key("user"),
                 coldef(COLS::SUBJECT),
-                coldef(COLS::IMPORTANT,BOOL).set_default_value("0"),
+                coldef(COLS::IMPORTANT,BOOL).set_default_value(0),
                 coldef(COLS::BODY,TEXTAREA | MANDATORY),
                 coldef(COLS::SENT_AT,DATETIME),
-                coldef(COLS::SYSTEM_MESSAGE,BOOL).set_default_value("0"),
+                coldef(COLS::SYSTEM_MESSAGE,BOOL).set_default_value(0),
                 coldef(COLS::FOLDER),
-                coldef(COLS::DRAFT,BOOL).set_default_value("0"),
-                coldef(COLS::IS_READ,BOOL).set_default_value("0"),
+                coldef(COLS::DRAFT,BOOL).set_default_value(0),
+                coldef(COLS::IS_READ,BOOL).set_default_value(0),
                 coldef(COLS::DELETED_AT,DATETIME),
-                coldef(COLS::STARRED,BOOL).set_default_value("0")
+                coldef(COLS::STARRED,BOOL).set_default_value(0)
             });
     // *** Definition of model ends ***
 

@@ -45,9 +45,9 @@ namespace mindnet::models
         .set_all_rest_operations()
     .set_columns({
         //
-        coldef(COLS::TEAM_ID,MANDATORY).set_foreign_key("user"),
-        coldef(COLS::USER_ID,MANDATORY).set_foreign_key("user"),
-        coldef(COLS::ROLE,MANDATORY).set_default_value("0").set_enum_definition(enums::user_role_to_enum_definition()),
+        coldef(COLS::TEAM_ID,MANDATORY | FOREIGN_KEY),
+        coldef(COLS::USER_ID,MANDATORY | FOREIGN_KEY),
+        coldef(COLS::ROLE,MANDATORY).set_default_value(0).set_enum_definition(enums::user_role_to_enum_definition()),
         coldef(COLS::JOINED_AT,DATETIME | MANDATORY),
         coldef(COLS::IS_ACTIVE,BOOL).set_default_value("1"),
         coldef(COLS::LEFT_AT,DATETIME),

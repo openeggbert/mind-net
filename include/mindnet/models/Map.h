@@ -44,14 +44,14 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::NAME, NOT_NULL | UNIQUE),
+            coldef(COLS::NAME, MANDATORY | UNIQUE),
             coldef(COLS::DESCRIPTION),
             coldef(COLS::CATEGORY),
-            coldef(COLS::OWNER_ID, NOT_NULL).set_foreign_key("user"),
-            coldef(COLS::TEAM_ID).set_foreign_key("team"),
-            coldef(COLS::OWNER_RIGHTS, INTEGER | NOT_NULL).set_default_value("7"),
-            coldef(COLS::TEAM_RIGHTS, INTEGER | NOT_NULL).set_default_value("7"),
-            coldef(COLS::OTHER_RIGHTS, INTEGER | NOT_NULL).set_default_value("7")
+            coldef(COLS::OWNER_ID, MANDATORY).set_foreign_key("user"),
+            coldef(COLS::TEAM_ID | FOREIGN_KEY),
+            coldef(COLS::OWNER_RIGHTS, INTEGER | MANDATORY).set_default_value("7"),
+            coldef(COLS::TEAM_RIGHTS, INTEGER | MANDATORY).set_default_value("7"),
+            coldef(COLS::OTHER_RIGHTS, INTEGER | MANDATORY).set_default_value("7")
         });
 
 

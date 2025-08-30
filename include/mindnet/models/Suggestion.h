@@ -48,9 +48,9 @@ namespace mindnet::models
             coldef(COLS::FROM_USER_ID, MANDATORY).set_foreign_key("user"),
             coldef(COLS::TABLE_NAME, MANDATORY),
             coldef(COLS::OPERATION, MANDATORY).set_enum_definition(enums::crudl_to_enum_definition()),
-            coldef(COLS::STATUS).set_default_value("0").set_enum_definition(enums::suggestion_status_to_enum_definition()),
+            coldef(COLS::STATUS).set_default_value(0).set_enum_definition(enums::suggestion_status_to_enum_definition()),
             coldef(COLS::DATA_JSON),
-            coldef(COLS::REVIEW_COUNT, INTEGER).set_default_value("0"),
+            coldef(COLS::REVIEW_COUNT, INTEGER).set_default_value(0),
             //
         });
 

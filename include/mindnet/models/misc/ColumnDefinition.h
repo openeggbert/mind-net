@@ -25,8 +25,9 @@
 #include "EnumDefinition.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #define using_flags()\
-using misc::NOT_NULL;\
+using misc::MANDATORY;\
 using misc::UNIQUE;\
+using misc::FOREIGN_KEY;\
 using misc::TEXT;\
 using misc::TEXTAREA;\
 using misc::INTEGER;\
@@ -39,22 +40,24 @@ namespace mindnet::models::misc
 {
     enum ColumnDefinitionFlag
     {
-        NOT_NULL = 1 << 0,
+        MANDATORY = 1 << 0,
         UNIQUE = 1 << 1,
-        TEXT = 1 << 2,
-        TEXTAREA = 1 << 3,
-        INTEGER = 1 << 4,
-        REAL = 1 << 5,
-        BLOB = 1 << 6,
-        BOOL = 1 << 7,
-        DATETIME = 1 << 8
+        FOREIGN_KEY = 1 << 2,
+        TEXT = 1 << 3,
+        TEXTAREA = 1 << 4,
+        INTEGER = 1 << 5,
+        REAL = 1 << 6,
+        BLOB = 1 << 7,
+        BOOL = 1 << 8,
+        DATETIME = 1 << 9
     };
 
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
     {
         return {
-            NOT_NULL,
+            MANDATORY,
             UNIQUE,
+            FOREIGN_KEY,
             TEXT,
             TEXTAREA,
             INTEGER,
@@ -204,13 +207,31 @@ namespace mindnet::models::misc
             return *this;
         }
 
+
         ColumnDefinition& set_default_value(std::string value)
         {
             default_value = value;
             return *this;
         }
+        ColumnDefinition& set_default_value(int value)
+        {
+            default_value = std::to_string(value);
+            return *this;
+        }
 
     private:
+        ColumnDefinition& set_foreign_key()
+        {
+            if (column_name.ends_with("_id"))
+            {
+                foreign_key = column_name.substr(0, column_name.size() - 3);
+            } else
+            {
+                throw std::invalid_argument("foreign_key must be set to the name of the column ending with _id, if set_foreign_key(string) method is called");
+            }
+            return *this;
+        }
+
         ColumnDefinition& flags(int flags)
         {
             if (flags == 0)
@@ -225,8 +246,9 @@ namespace mindnet::models::misc
                     flags_set.insert(cdf);
                 }
             }
-            if (flags_set.contains(NOT_NULL)) mandatory = true;
+            if (flags_set.contains(MANDATORY)) mandatory = true;
             if (flags_set.contains(UNIQUE)) unique = true;
+            if (flags_set.contains(FOREIGN_KEY)) set_foreign_key();
             //
             if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
             if (flags_set.contains(TEXTAREA)) column_type = enums::ColumnType::TEXTAREA;

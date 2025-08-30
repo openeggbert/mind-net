@@ -44,7 +44,7 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::SUGGESTION_ID).set_foreign_key("suggestion"),
+            coldef(COLS::SUGGESTION_ID, FOREIGN_KEY),
             coldef(COLS::REVIEWER_ID, MANDATORY).set_foreign_key("user"),
             coldef(COLS::DECISION_STATUS).set_enum_definition(enums::decision_status_to_enum_definition()),
             coldef(COLS::COMMENT),

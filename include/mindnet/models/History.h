@@ -44,13 +44,13 @@ namespace mindnet::models
         .set_rest_operations("rl")
         .set_columns({
             //
-            coldef(COLS::USER_ID, NOT_NULL).set_foreign_key("user"),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::IP_ADDRESS),
-            coldef(COLS::TABLE_NAME, NOT_NULL),
-            coldef(COLS::RECORD_ID, NOT_NULL),
-            coldef(COLS::OPERATION, NOT_NULL).set_enum_definition(
+            coldef(COLS::TABLE_NAME, MANDATORY),
+            coldef(COLS::RECORD_ID, MANDATORY),
+            coldef(COLS::OPERATION, MANDATORY).set_enum_definition(
                 enums::crudl_to_enum_definition()),
-            coldef(COLS::DATA_JSON, NOT_NULL),
+            coldef(COLS::DATA_JSON, MANDATORY),
             coldef(COLS::REASON),
             //
         });

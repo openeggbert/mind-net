@@ -37,7 +37,6 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -45,122 +44,38 @@ namespace mindnet::models
     inline def NOTE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    //
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
+        .set_columns({
+            //
+            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::PARENT_NOTE_ID).set_foreign_key("note"),
+            coldef(COLS::CONTENT_ID, FOREIGN_KEY),
+            coldef(COLS::SIBLING_POSITION, MANDATORY),
+            coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()),
+            coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition())
+        });
 
-    //
-});
+    struct Model : misc::BaseModel
     {
-        {
-            NodeColumns::ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeColumns::CREATED_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::UPDATED_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::UUID, ColumnType::TEXT, true
-        }
-        ,
-        {
-            NodeColumns::MAP_ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeColumns::SIBLING_POSITION, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeColumns::TITLE, ColumnType::TEXT, true
-        }
-        ,
-        {
-            NodeColumns::CONTENT_ID, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::PARENT_NODE_ID, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::TYPE, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::VISIBILITY, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::LAST_SHOWN_AT, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeColumns::EXPIRES_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::IS_FAVORITE, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::REDIRECT_NODE_ID, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::REDIRECT_REASON, ColumnType::TEXT, false
-        }
-        ,
-        {
-            NodeColumns::IMPORTANCE, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeColumns::DIFFICULTY, ColumnType::INTEGER, false
-        }
-        ,
-    }
+        int map_id{};
+        string title;
+        int parent_note_id{};
+        int content_id{};
+        int sibling_position{};
+        mindnet::enums::Importance importance{mindnet::enums::Importance::UNDEFINED};
+        mindnet::enums::Difficulty difficulty{mindnet::enums::Difficulty::UNDEFINED};
 
-    ,
-};
+        create_model_h_methods(Model, MODEL)
 
-struct Model : misc::BaseModel
-{
-    int map_id{};
-    string title;
-    int parent_note_id{};
-    int content_id{};
-    int sibling_position{};
-    mindnet::enums::Importance importance{mindnet::enums::Importance::UNDEFINED};
-    mindnet::enums::Difficulty difficulty{mindnet::enums::Difficulty::UNDEFINED};
-
-    create_model_h_methods(Model, MODEL)
-
-    bool operator==(const Model& other) const
-    {
-        return id == other.id && uuid == other.uuid && map_id == other.map_id &&
-            sibling_position == other.sibling_position && title == other.title &&
-            content_id == other.content_id && parent_node_id == other.parent_node_id &&
-            type == other.type && visibility == other.visibility &&
-            last_shown_at == other.last_shown_at && expires_at == other.expires_at &&
-            is_favorite == other.is_favorite &&
-            redirect_node_id == other.redirect_node_id && redirect_reason == other.redirect_reason &&
-            importance == other.importance && difficulty == other.difficulty &&
-            created_at == other.created_at && updated_at == other.updated_at;
-    }
-};
-
+        bool operator==(const Model& other) const
+        {
+            return id == other.id && map_id == other.map_id &&
+                sibling_position == other.sibling_position && title == other.title &&
+                content_id == other.content_id && parent_note_id == other.parent_note_id &&
+                importance == other.importance && difficulty == other.difficulty &&
+                created_at == other.created_at && updated_at == other.updated_at;
+        }
+    };
 }
 #undef Model
 #undef MODEL

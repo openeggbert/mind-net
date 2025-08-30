@@ -44,14 +44,11 @@ namespace mindnet::models
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::TEAM_ID,MANDATORY).set_foreign_key("user"),
-    coldef(COLS::TITLE,MANDATORY).set_foreign_key("user"),
-    coldef(COLS::CREATED_BY,MANDATORY),
-    coldef(COLS::IS_PINNED,BOOL).set_default_value("0"),
-
-    //
+    coldef(COLS::TEAM_ID,MANDATORY | FOREIGN_KEY),
+    coldef(COLS::TITLE,MANDATORY),
+    coldef(COLS::CREATED_BY,MANDATORY).set_foreign_key("user"),
+    coldef(COLS::IS_PINNED,BOOL).set_default_value(0),
 });
-
 
     struct Model : misc::BaseModel
     {

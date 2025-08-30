@@ -44,12 +44,11 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::DISCUSSION_ID, MANDATORY).set_foreign_key("discussion"),
-            coldef(COLS::USER_ID, MANDATORY).set_foreign_key("user"),
+            coldef(COLS::DISCUSSION_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::CONTENT, TEXTAREA | MANDATORY),
             coldef(COLS::PARENT_COMMENT_ID).set_foreign_key("comment"),
-            coldef(COLS::IS_DELETED, BOOL).set_default_value("0"),
-            //
+            coldef(COLS::IS_DELETED, BOOL).set_default_value(0),
         });
 
     struct Model : misc::BaseModel

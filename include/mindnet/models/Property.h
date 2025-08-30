@@ -35,7 +35,6 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -43,75 +42,30 @@ namespace mindnet::models
     inline def PROPERTY_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    //
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
-    coldef(COLS::ID,tttt | NOT_NULL),
+        .set_columns({
+            //
+            coldef(COLS::MAP_ID, MANDATORY).set_foreign_key(),
+            coldef(COLS::NOTE_ID, MANDATORY).set_foreign_key(),
+            coldef(COLS::KEY, MANDATORY),
+            coldef(COLS::VALUE),
+            //
+        });
 
-    //
-});
+    struct Model : misc::BaseModel
     {
-        {
-            PropertyColumns::ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            PropertyColumns::CREATED_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            PropertyColumns::UPDATED_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            PropertyColumns::MAP_ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            PropertyColumns::NODE_ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            PropertyColumns::KEY, ColumnType::TEXT, true
-        }
-        ,
-        {
-            PropertyColumns::VALUE, ColumnType::TEXT, false
-        }
-        ,
-        {
-            PropertyColumns::VALUE_TYPE, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            PropertyColumns::IS_INDEXED, ColumnType::INTEGER, false
-        }
-        ,
-    }
-};
+        int map_id;
+        int note_id;
+        string key;
+        string value;
 
-struct Model : misc::BaseModel
-{
-    int map_id;
-    int note_id;
-    string key;
-    string value;
+        create_model_h_methods(Model, MODEL)
 
-    create_model_h_methods(Model, MODEL)
-
-    bool operator==(const Property& other) const
-    {
-        return id == other.id && map_id == other.map_id && node_id == other.node_id && key == other.key &&
-            value == other.value && value_type == other.value_type && is_indexed == other.is_indexed &&
-            created_at == other.created_at && updated_at == other.updated_at;
-    }
-};
-
+        bool operator==(const Property& other) const
+        {
+            return id == other.id && map_id == other.map_id && note_id == other.note_id && key == other.key &&
+                value == other.value && created_at == other.created_at && updated_at == other.updated_at;
+        }
+    };
 }
 #undef Model
 #undef MODEL
