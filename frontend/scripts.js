@@ -1,310 +1,145 @@
 // ========================================
-// 1. API and enumeration definitions
+// 1. API a cache
 // ========================================
-
 const API_BASE = "http://localhost:8888/api";
+const MODEL_DEFINITION_URL = `${API_BASE}/model_definition`;
+const CACHE_KEY = "model_definition_cache";
+const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours
 
-// ColumnType
-const ColumnType = {
-    0: "TEXT",
-    1: "TEXTAREA",
-    2: "INTEGER",
-    3: "BOOL",
-    4: "DATETIME",
-    5: "REAL",
-    6: "BLOB"
-};
-const ColumnTypeValues = Object.keys(ColumnType).map(Number);
+async function loadModelDefinition() {
+    const now = Date.now();
+    const cached = localStorage.getItem(CACHE_KEY);
 
-// ContentFormat
-const ContentFormat = {0: "Markdown", 1: "HTML", 2: "Plain"};
-const ContentFormatValues = Object.keys(ContentFormat).map(Number);
+    if (cached) {
+        const { timestamp, data } = JSON.parse(cached);
+        if (now - timestamp < CACHE_TTL_MS) {
+            console.log("I use cached model_definition");
+            return data;
+        }
+    }
 
-// Crudl
-const Crudl = {
-    0: "Undefined",
-    1: "Create",
-    2: "Read",
-    3: "Update",
-    4: "Delete",
-    5: "List"
-};
-const CrudlValues = Object.keys(Crudl).map(Number);
+    console.log("I download model_definition z API...");
+    const resp = await fetch(MODEL_DEFINITION_URL);
+    if (!resp.ok) throw new Error("Error loading model_definition");
+    const data = await resp.json();
 
-// DecisionStatus
-const DecisionStatus = {
-    2: "approved",
-    3: "rejected",
-    4: "cancelled",
-    5: "requests_feedback"
-};
-const DecisionStatusValues = Object.keys(DecisionStatus).map(Number);
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: now, data }));
+    return data;
+}
 
-// Difficulty
-const Difficulty = {
-    0: "Undefined",
-    1: "Easy",
-    2: "Medium",
-    3: "Hard",
-    4: "Expert"
-};
-const DifficultyValues = Object.keys(Difficulty).map(Number);
+function buildEntitySchemas(modelDef) {
+    const schemas = {};
+    for (const item of modelDef.items) {
+        const fields = filterColumnsForForm(item.columns).map(col => {
+            let field = {
+                name: col.column_name,
+                type: mapColumnType(col.column_type),
+                required: col.mandatory
+            };
+            if (col.foreign_key) field.foreignKey = col.foreign_key;
+            if (col.enum_definition) {
+                const enumObj = {};
+                for (const entry of col.enum_definition) {
+                    const [label, val] = Object.entries(entry)[0];
+                    enumObj[val] = label;
+                }
+                field.enum = enumObj;
+            }
+            return field;
+        });
 
-// Importance
-const Importance = {
-    0: "Undefined",
-    1: "Low",
-    2: "Medium",
-    3: "High"
-};
-const ImportanceValues = Object.keys(Importance).map(Number);
+        schemas[item.model_name] = {
+            label: capitalize(item.model_name),
+            titleField: findTitleField(item),
+            fields,
+            allowedOperations: item.allowed_rest_operations // ← here CRUDL
+        };
+    }
+    return schemas;
+}
 
-// SuggestionStatus
-const SuggestionStatus = {
-    0: "pending",
-    1: "under_review",
-    2: "approved",
-    3: "rejected",
-    4: "cancelled",
-    5: "requests_feedback"
-};
-const SuggestionStatusValues = Object.keys(SuggestionStatus).map(Number);
+function mapColumnType(colType) {
+    switch (colType) {
+        case "TEXT": return "text";
+        case "TEXTAREA": return "textarea";
+        case "INTEGER": return "number";
+        case "BOOL": return "checkbox";
+        case "DATETIME": return "datetime";
+        case "REAL": return "number";
+        case "BLOB": return "file";
+        default: return "text";
+    }
+}
 
-// UserRole
-const UserRole = {
-    0: "Guest",
-    1: "Reader",
-    2: "Editor",
-    3: "Reviewer",
-    4: "Admin"
-};
-const UserRoleValues = Object.keys(UserRole).map(Number);
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
-// UserStatus
-const UserStatus = {
-    0: "pending",
-    1: "active",
-    2: "deactivated",
-    3: "banned",
-    4: "suspended",
-    5: "deleted"
-};
-const UserStatusValues = Object.keys(UserStatus).map(Number);
+function findTitleField(item) {
+    const preferred = ["name", "title", "username", "subject"];
+    for (const p of preferred) {
+        if (item.columns.find(c => c.column_name === p)) {
+            return p;
+        }
+    }
+    return item.columns[0]?.column_name || "id";
+}
+
+
+
+function buildGlobals(modelDef, schemas) {
+    const entities = modelDef.items.map(i => i.model_name);
+
+    const entityLabels = {};
+    for (const [key, schema] of Object.entries(schemas)) {
+        entityLabels[key] = schema.label;
+    }
+
+    // unikátní operace
+    const actions = [
+        ...new Set(modelDef.items.flatMap(i =>
+            i.allowed_rest_operations.map(a => a.toLowerCase())
+        ))
+    ];
+
+    return { entities, entityLabels, actions };
+}
+let entities = [];
+let entityLabels = {};
+let actions = [];
+let entitySchemas = {};
+
+(async () => {
+    const modelDef = await loadModelDefinition();
+
+    entitySchemas = buildEntitySchemas(modelDef); // populate global
+    const globals = buildGlobals(modelDef, entitySchemas);
+
+    entities = globals.entities;           // populate global 
+    entityLabels = globals.entityLabels;   // populate global
+    actions = globals.actions;             // populate global
+
+    console.log("Schemas:", entitySchemas);
+    console.log("Entities:", entities);
+    console.log("Labels:", entityLabels);
+    console.log("Actions:", actions);
+
+    initializeFromURL(); // ← start after model load
+})();
+
+
 
 // ========================================
 // 2. Entity schema definitions
 // ========================================
 
-const entitySchemas = {
-    user: {
-        label: "User", titleField: "username", fields: [
-            {name: "username", type: "text", required: true},
-            {name: "password_hash", type: "text", required: true},
-            {name: "display_name", type: "text"},
-            {name: "role", type: "number", enum: UserRole},
-            {name: "profile_text", type: "textarea"},
-            {name: "last_login", type: "datetime"},
-            {name: "email", type: "text"},
-            {name: "status", type: "number", enum: UserStatus}
-        ]
-    },
-    message: {
-        label: "Message", titleField: "subject", fields: [
-            {name: "owner_id", type: "number", foreignKey: "user"},
-            {name: "sender_id", type: "number", foreignKey: "user"},
-            {name: "recipient_id", type: "number", foreignKey: "user"},
-            {name: "subject", type: "text"},
-            {name: "important", type: "checkbox"},
-            {name: "body", type: "textarea", required: true},
-            {name: "sent_at", type: "datetime"},
-            {name: "system_message", type: "checkbox"},
-            {name: "folder", type: "text"},
-            {name: "draft", type: "checkbox"},
-            {name: "is_read", type: "checkbox"},
-            {name: "deleted_at", type: "datetime"},
-            {name: "starred", type: "checkbox"}
-        ]
-    },
-    team: {
-        label: "Team", titleField: "name", fields: [
-            {name: "name", type: "text", required: true},
-            {name: "description", type: "text"},
-            {name: "created_by", type: "number", foreignKey: "user"},
-            {name: "leader_id", type: "number", foreignKey: "user"}
-        ]
-    },
-    team_member: {
-        label: "Team Member", titleField: "id", fields: [
-            {name: "team_id", type: "number", foreignKey: "team"},
-            {name: "user_id", type: "number", foreignKey: "user"},
-            {name: "role", type: "number", enum: UserRole},
-            {name: "joined_at", type: "datetime"},
-            {name: "is_active", type: "checkbox"},
-            {name: "left_at", type: "datetime"}
-        ]
-    },
-    discussion: {
-        label: "Discussion", titleField: "title", fields: [
-            {name: "team_id", type: "number", foreignKey: "team"},
-            {name: "title", type: "text", required: true},
-            {name: "created_by", type: "number", foreignKey: "user"},
-            {name: "is_pinned", type: "checkbox"}
-        ]
-    },
-    comment: {
-        label: "Comment", titleField: "content", fields: [
-            {name: "discussion_id", type: "number", foreignKey: "discussion"},
-            {name: "user_id", type: "number", foreignKey: "user"},
-            {name: "content", type: "textarea", required: true},
-            {name: "parent_comment_id", type: "number", foreignKey: "comment"},
-            {name: "is_deleted", type: "checkbox"}
-        ]
-    },
-    suggestion: {
-        label: "Suggestion", titleField: "table_name", fields: [
-            {name: "parent_suggestion_id", type: "number", foreignKey: "suggestion"},
-            {name: "from_user_id", type: "number", foreignKey: "user"},
-            {name: "table_name", type: "text", required: true},
-            {name: "operation", type: "number", enum: Crudl},
-            {name: "status", type: "number", enum: SuggestionStatus},
-            {name: "data_json", type: "textarea"},
-            {name: "review_count", type: "number"}
-        ]
-    },
-    suggestion_review: {
-        label: "Suggestion Review", titleField: "comment", fields: [
-            {name: "suggestion_id", type: "number", foreignKey: "suggestion"},
-            {name: "reviewer_id", type: "number", foreignKey: "user"},
-            {name: "decision_status", type: "number", enum: DecisionStatus},
-            {name: "comment", type: "textarea"},
-            {name: "reviewed_at", type: "datetime"}
-        ]
-    },
-    history: {
-        label: "History", titleField: "table_name", fields: [
-            {name: "user_id", type: "number", foreignKey: "user"},
-            {name: "ip_address", type: "text"},
-            {name: "table_name", type: "text", required: true},
-            {name: "record_id", type: "number", required: true},
-            {name: "operation", type: "number", enum: Crudl},
-            {name: "data_json", type: "textarea", required: true},
-            {name: "reason", type: "text"}
-        ]
-    },
-    map: {
-        label: "Map", titleField: "name", fields: [
-            {name: "name", type: "text", required: true},
-            {name: "description", type: "text"},
-            {name: "category", type: "text"},
-            {name: "owner_id", type: "number", foreignKey: "user"},
-            {name: "team_id", type: "number", foreignKey: "team"},
-            {name: "owner_rights", type: "number"},
-            {name: "team_rights", type: "number"},
-            {name: "other_rights", type: "number"}
-        ]
-    },
-    content: {
-        label: "Content", titleField: "id", fields: [
-            {name: "value", type: "textarea", required: true},
-            {name: "format", type: "number", enum: ContentFormat},
-            {name: "version", type: "number"}
-        ]
-    },
-    note: {
-        label: "Note", titleField: "title", fields: [
-            {name: "map_id", type: "number", foreignKey: "map"},
-            {name: "title", type: "text", required: true},
-            {name: "parent_note_id", type: "number", foreignKey: "note"},
-            {name: "content_id", type: "number", foreignKey: "content"},
-            {name: "sibling_position", type: "number"},
-            {name: "importance", type: "number", enum: Importance},
-            {name: "difficulty", type: "number", enum: Difficulty}
-        ]
-    },
-    property: {
-        label: "Property", titleField: "key", fields: [
-            {name: "map_id", type: "number", foreignKey: "map"},
-            {name: "note_id", type: "number", foreignKey: "note"},
-            {name: "key", type: "text", required: true},
-            {name: "value", type: "text"}
-        ]
-    },
-    tag_type: {
-        label: "TagType", titleField: "title", fields: [
-            {name: "map_id", type: "number", foreignKey: "map"},
-            {name: "title", type: "text", required: true}
-        ]
-    },
-    tag: {
-        label: "Tag", titleField: "id", fields: [
-            {name: "note_id", type: "number", foreignKey: "note"},
-            {name: "tag_type_id", type: "number", foreignKey: "tag_type"}
-        ]
-    },
-    collection: {
-        label: "Collection", titleField: "name", fields: [
-            {name: "name", type: "text", required: true},
-            {name: "description", type: "text"},
-            {name: "order_index", type: "number"},
-            {name: "created_by", type: "number", foreignKey: "user"},
-            {name: "is_public", type: "checkbox"}
-        ]
-    },
-    collection_item: {
-        label: "Collection Item", titleField: "id", fields: [
-            {name: "collection_id", type: "number", foreignKey: "collection"},
-            {name: "note_id", type: "number", foreignKey: "note"},
-            {name: "order_index", type: "number"}
-        ]
-    },
-    review: {
-        label: "Review", titleField: "id", fields: [
-            {name: "user_id", type: "number", foreignKey: "user"},
-            {name: "note_id", type: "number", foreignKey: "note"},
-            {name: "review_date", type: "datetime"},
-            {name: "grade", type: "number"},
-            {name: "response_data", type: "textarea"},
-            {name: "notes", type: "textarea"}
-        ]
-    },
-    sm2_state: {
-        label: "SM2 State", titleField: "id", fields: [
-            {name: "user_id", type: "number", foreignKey: "user"},
-            {name: "note_id", type: "number", foreignKey: "note"},
-            {name: "repetitions", type: "number"},
-            {name: "interval", type: "number"},
-            {name: "ef_times_100", type: "number"},
-            {name: "next_review", type: "datetime"},
-            {name: "last_review", type: "datetime"},
-            {name: "last_quality", type: "number"}
-        ]
-    },
-    reference: {
-        label: "Reference", titleField: "label", fields: [
-            {name: "from_note_id", type: "number", foreignKey: "note"},
-            {name: "to_note_id", type: "number", foreignKey: "note"},
-            {name: "label", type: "text"}
-        ]
-    },
-    link: {
-        label: "Link", titleField: "to_url", fields: [
-            {name: "from_note_id", type: "number", foreignKey: "note"},
-            {name: "to_url", type: "text", required: true}
-        ]
-    }
-};
 
 
 // ========================================
 // 3. Global state a DOM reference
 // ========================================
 
-const entities = [
-    'user', 'message', 'team', 'team_member', 'discussion', 'comment',
-    'suggestion', 'suggestion_review', 'history', 'map', 'content', 'note',
-    'property', 'tag_type', 'tag', 'collection', 'collection_item', 'review',
-    'sm2_state', 'reference', 'link'
-];
+
 const mainEntities = ['map', 'note', 'tag', 'property'];
 const linkEntities = ['reference', 'link'];
 const reviewEntities = ['review', 'sm2_state'];
@@ -313,39 +148,12 @@ const suggestionEntities = ['suggestion', 'suggestion_review'];
 const notMainEntities = [linkEntities, reviewEntities, collaborationEntities, suggestionEntities];
 
 
-const actions = ['list', 'create', 'read', 'update', 'explore'];
-
-const entityLabels = {
-    user: 'User',
-    message: 'Message',
-    team: 'Team',
-    team_member: 'Team Member',
-    discussion: 'Discussion',
-    comment: 'Comment',
-    suggestion: 'Suggestion',
-    suggestion_review: 'Suggestion Review',
-    history: 'History',
-    map: 'Map',
-    content: 'Content',
-    note: 'Note',
-    property: 'Property',
-    tag_type: 'Tag Type',
-    tag: 'Tag',
-    collection: 'Collection',
-    collection_item: 'Collection Item',
-    review: 'Review',
-    sm2_state: 'SM2 State',
-    reference: 'Reference',
-    link: 'Link'
-};
+//const actions = ['list', 'create', 'read', 'update', 'explore'];
 
 
 
+const actionLabels = { list: '📋 List', create: '➕ Create', read: '📖 Read', update: '✏️ Update', delete: '🗑️ Delete', explore: '🗺️ Explore' };
 
-
-const actionLabels = {
-    list: '📋 List', create: '➕ Create', read: '📖 Read', update: '✏️ Update', explore: '🗺️ Explore'
-};
 
 let selectedEntity = null;
 let selectedAction = null;
@@ -405,6 +213,11 @@ async function resolveForeignKeyValue(fkEntity, id) {
 // 5. CRUD render functions
 // ========================================
 
+function filterColumnsForForm(columns) {
+    return columns.filter(col => !col.auto);
+}
+
+
 async function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
@@ -413,7 +226,7 @@ async function renderEntityForm(entity, data = {}) {
     html += `<input type="hidden" name="id" value="${data.id ?? ""}">`;
     html += `<p style="color:red; font-size:0.9rem;">* Required fields</p>`;
 
-    schema.fields.forEach(f => {
+    filterColumnsForForm(schema.fields).forEach(f => {
         let type = f.type === "datetime" ? "text" : f.type;
         if (f.enum) {
             html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' *' : ''}</label>
@@ -441,7 +254,9 @@ async function renderEntityForm(entity, data = {}) {
         formData.forEach((value, key) => {
             if (!(key === "id" && !value)) {
                 const f = schema.fields.find(ff => ff.name === key);
+
                 if (f) {
+                    if(f.auto) return;
                     switch (f.type) {
                         case "number":
                             payload[key] = (value === "" || isNaN(value)) ? 0 : Number(value);
