@@ -65,11 +65,10 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                name == other.name &&
+                description == other.description &&
+                created_by == other.created_by &&
+                leader_id == other.leader_id;
         }
     };
 }

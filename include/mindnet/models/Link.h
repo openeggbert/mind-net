@@ -40,30 +40,30 @@ namespace mindnet::models
     using_flags();
 
     inline def LINK_DEFINITION =
-        def(cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
 
     //
 });
         .set_columns({
             //
-            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(),
-            coldef(cols::RECORD_ID).set_mandatory(),
-            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
+            coldef(COLS::USER_ID).set_mandatory().set_foreign_key("user"),
+            coldef(COLS::IP_ADDRESS),
+            coldef(COLS::TABLE_NAME).set_mandatory(),
+            coldef(COLS::RECORD_ID).set_mandatory(),
+            coldef(COLS::OPERATION).set_mandatory().set_enum_definition(
                 enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(),
-            coldef(cols::REASON),
+            coldef(COLS::DATA_JSON).set_mandatory(),
+            coldef(COLS::REASON),
             //
         });
 

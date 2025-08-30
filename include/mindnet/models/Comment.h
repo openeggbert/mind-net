@@ -40,18 +40,15 @@ namespace mindnet::models
     using_flags();
 
     inline def COMMENT_DEFINITION =
-        def(cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(),
-            coldef(cols::RECORD_ID).set_mandatory(),
-            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(),
-            coldef(cols::REASON),
+            coldef(COLS::DISCUSSION_ID, MANDATORY).set_foreign_key("discussion"),
+            coldef(COLS::USER_ID, MANDATORY).set_foreign_key("user"),
+            coldef(COLS::CONTENT, TEXTAREA | MANDATORY),
+            coldef(COLS::PARENT_COMMENT_ID).set_foreign_key("comment"),
+            coldef(COLS::IS_DELETED, BOOL).set_default_value("0"),
             //
         });
 
@@ -70,11 +67,11 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                discussion_id == other.discussion_id &&
+                user_id == other.user_id &&
+                content == other.content &&
+                parent_comment_id == other.parent_comment_id &&
+                is_deleted == other.is_deleted;
         }
     };
 }

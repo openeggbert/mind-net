@@ -41,17 +41,17 @@ namespace mindnet::models
     using_flags();
 
     inline def PROPERTY_DEFINITION =
-        def(cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
 
     //
 });

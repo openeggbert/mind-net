@@ -40,7 +40,7 @@ namespace mindnet::models
     using_flags();
 
     inline def TAG_DEFINITION =
-        def(cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     {
         {

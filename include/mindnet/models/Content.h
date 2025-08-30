@@ -47,24 +47,24 @@ namespace mindnet::models
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
 
     //
 });
         .set_columns(
             {
-                coldef(cols::CONTENT).set_mandatory(true),
-                coldef(cols::FORMAT).set_enum_definition(enums::content_format_to_enum_definition()).
+                coldef(COLS::CONTENT).set_mandatory(true),
+                coldef(COLS::FORMAT).set_enum_definition(enums::content_format_to_enum_definition()).
                                      set_mandatory(true),
-                coldef(cols::MIME_TYPE).set_mandatory(true),
-                coldef(cols::VERSION).integer(),
-                coldef(cols::NODE_ID).set_foreign_key("enum")
+                coldef(COLS::MIME_TYPE).set_mandatory(true),
+                coldef(COLS::VERSION).integer(),
+                coldef(COLS::NODE_ID).set_foreign_key("enum")
             }
         );
 

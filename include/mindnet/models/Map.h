@@ -41,27 +41,27 @@ namespace mindnet::models
     using_flags();
 
     inline def MAP_DEFINITION =
-        def(cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | MANDATORY),
 
     //
 });
         .set_columns(
             {
-                coldef(cols::NAME).set_mandatory().set_unique(),
-                coldef(cols::DESCRIPTION),
-                coldef(cols::CATEGORY),
-                coldef(cols::OWNER_ID).set_foreign_key("user"),
-                coldef(cols::IS_PUBLIC).bool_column()
+                coldef(COLS::NAME).set_mandatory().set_unique(),
+                coldef(COLS::DESCRIPTION),
+                coldef(COLS::CATEGORY),
+                coldef(COLS::OWNER_ID).set_foreign_key("user"),
+                coldef(COLS::IS_PUBLIC).bool_column()
 
             });
 

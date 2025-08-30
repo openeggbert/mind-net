@@ -40,32 +40,18 @@ namespace mindnet::models
     using_flags();
 
     inline def DISCUSSION_DEFINITION =
-        def(cols::MODEL_NAME)
+        def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
-    coldef(COLS::ID,tttt MANDATORY),
+    coldef(COLS::TEAM_ID,MANDATORY).set_foreign_key("user"),
+    coldef(COLS::TITLE,MANDATORY).set_foreign_key("user"),
+    coldef(COLS::CREATED_BY,MANDATORY),
+    coldef(COLS::IS_PINNED,BOOL).set_default_value("0"),
 
     //
 });
-        .set_columns({
-            //
-            coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(cols::IP_ADDRESS),
-            coldef(cols::TABLE_NAME).set_mandatory(),
-            coldef(cols::RECORD_ID).set_mandatory(),
-            coldef(cols::OPERATION).set_mandatory().set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(cols::DATA_JSON).set_mandatory(),
-            coldef(cols::REASON),
-            //
-        });
+
 
     struct Model : misc::BaseModel
     {
@@ -81,11 +67,10 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                team_id == other.team_id &&
+                title == other.title &&
+                created_by == other.created_by &&
+                is_pinned == other.is_pinned;
         }
     };
 }
