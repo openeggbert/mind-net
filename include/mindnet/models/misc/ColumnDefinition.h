@@ -23,9 +23,48 @@
 #include <optional>
 #include <string>
 #include "EnumDefinition.h"
+#include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
+#define using_flags()\
+using misc::MANDATORY;\
+using misc::UNIQUE;\
+using misc::TEXT;\
+using misc::TEXTAREA;\
+using misc::INTEGER;\
+using misc::REAL;\
+using misc::BLOB;\
+using misc::BOOL;\
+using misc::DATETIME;
 
 namespace mindnet::models::misc
 {
+    enum ColumnDefinitionFlag
+    {
+        MANDATORY = 1 << 0,
+        UNIQUE = 1 << 1,
+        TEXT = 1 << 2,
+        TEXTAREA = 1 << 3,
+        INTEGER = 1 << 4,
+        REAL = 1 << 5,
+        BLOB = 1 << 6,
+        BOOL = 1 << 7,
+        DATETIME = 1 << 8
+    };
+
+    inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
+    {
+        return {
+            MANDATORY,
+            UNIQUE,
+            TEXT,
+            TEXTAREA,
+            INTEGER,
+            REAL,
+            BLOB,
+            BOOL,
+            DATETIME,
+        };
+    }
+
     struct ColumnDefinition
     {
     private:
@@ -105,13 +144,13 @@ namespace mindnet::models::misc
         }
 
         /** @return Whether the column is mandatory */
-        [[nodiscard]] const bool get_mandatory() const
+        [[nodiscard]] const bool is_mandatory() const
         {
             return mandatory;
         }
 
         /** @return Whether the column is a primary key */
-        [[nodiscard]] const bool get_primary_key() const
+        [[nodiscard]] const bool is_primary_key() const
         {
             return primary_key;
         }
@@ -129,7 +168,7 @@ namespace mindnet::models::misc
         }
 
 
-        [[nodiscard]] const bool get_unique() const
+        [[nodiscard]] const bool is_unique() const
         {
             return unique;
         }
@@ -140,73 +179,6 @@ namespace mindnet::models::misc
         }
 
         // Setters
-        /**
-         * Sets the column name
-         * @param name New column name
-         * @return Reference to this object for method chaining
-         */
-        ColumnDefinition& set_column_name(std::string name)
-        {
-            column_name = name;
-            return *this;
-        }
-
-        /**
-         * Sets the column type
-         * @param type New column type
-         * @return Reference to this object for method chaining
-         */
-        ColumnDefinition& set_column_type(mindnet::enums::ColumnType type)
-        {
-            column_type = type;
-            return *this;
-        }
-
-        /**
- * Helper method to set column type to INTEGER
- * @return Reference to this object for method chaining
- */
-        ColumnDefinition& integer()
-        {
-            set_column_type(mindnet::enums::ColumnType::INTEGER);
-            return *this;
-        }
-
-        ColumnDefinition& datetime()
-        {
-            set_column_type(mindnet::enums::ColumnType::DATETIME);
-            return *this;
-        }
-
-        ColumnDefinition& textarea()
-        {
-            set_column_type(mindnet::enums::ColumnType::TEXTAREA);
-            return *this;
-        }
-
-        ColumnDefinition& bool_column()
-        {
-            set_column_type(mindnet::enums::ColumnType::BLOB);
-            return *this;
-        }
-
-
-        /**
-         * Sets whether the column is mandatory
-         * @param value True to make mandatory
-         * @return Reference to this object for method chaining
-         */
-        ColumnDefinition& set_mandatory(bool value)
-        {
-            mandatory = value;
-            return *this;
-        }
-
-        ColumnDefinition& set_mandatory()
-        {
-            set_mandatory(true);
-            return *this;
-        }
 
 
         /**
@@ -217,7 +189,7 @@ namespace mindnet::models::misc
         ColumnDefinition& set_enum_definition(std::optional<mindnet::models::misc::EnumDefinition> value)
         {
             enum_definition = value;
-            integer();
+            column_type = mindnet::enums::ColumnType::INTEGER;
             return *this;
         }
 
@@ -232,21 +204,37 @@ namespace mindnet::models::misc
             return *this;
         }
 
-        ColumnDefinition& set_unique(bool value)
-        {
-            unique = value;
-            return *this;
-        }
-
-        ColumnDefinition& set_unique()
-        {
-            set_unique(true);
-            return *this;
-        }
-
         ColumnDefinition& set_default_value(std::string value)
         {
             default_value = value;
+            return *this;
+        }
+
+        ColumnDefinition flags(int flags)
+        {
+            if (flags == 0)
+            {
+                throw std::invalid_argument("flags cannot be 0");
+            }
+            std::set<ColumnDefinitionFlag> flags_set;
+            for (auto cdf : column_definition_flag_values())
+            {
+                if (flags & cdf)
+                {
+                    flags_set.insert(cdf);
+                }
+            }
+            if (flags_set.contains(MANDATORY)) mandatory = true;
+            if (flags_set.contains(UNIQUE)) unique = true;
+            //
+            if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
+            if (flags_set.contains(TEXTAREA)) column_type = enums::ColumnType::TEXTAREA;
+            if (flags_set.contains(INTEGER)) column_type = enums::ColumnType::INTEGER;
+            if (flags_set.contains(REAL)) column_type = enums::ColumnType::REAL;
+            if (flags_set.contains(BLOB)) column_type = enums::ColumnType::BLOB;
+            if (flags_set.contains(BOOL)) column_type = enums::ColumnType::BOOL;
+            if (flags_set.contains(DATETIME)) column_type = enums::ColumnType::DATETIME;
+
             return *this;
         }
     };

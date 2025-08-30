@@ -28,6 +28,7 @@
 // ***** MACROS : START *****
 #define Model Property
 #define MODEL PROPERTY
+#define COLS columns::PropertyColumns
 #include "columns/PropertyColumns.h"
 // ***** MACROS : END *****
 
@@ -38,10 +39,11 @@ namespace mindnet::models
     using cols = columns::PropertyColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def PROPERTY_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
     {
         {
             PropertyColumns::ID, ColumnType::INTEGER, true
@@ -84,14 +86,12 @@ namespace mindnet::models
 
 struct Model : bm
 {
-    Model() = default;
+
 
     int map_id;
-    int node_id;
-    str key;
-    str value;
-    enums::ValueType value_type{};
-    bool is_indexed{};
+    int note_id;
+    string key;
+    string value;
 
     create_model_h_methods(Model, MODEL)
 
@@ -105,5 +105,7 @@ struct Model : bm
 };
 
 }
-
+#undef Model
+#undef MODEL
+#undef COLS
 #endif // PROPERTY_H

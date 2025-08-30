@@ -31,19 +31,21 @@
 // ***** MACROS : START *****
 #define Model Content
 #define MODEL CONTENT
+#define COLS columns::ContentColumns
 #include "columns/ContentColumns.h"
 // ***** MACROS : END *****
 
 namespace mindnet::models
 {
     using bm = misc::BaseModel;
-    using cols = columns::ContentColumns;
+    namespace detail{using cols = columns::ContentColumns;}
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def CONTENT_DEFINITION =
-        def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        def(detail::cols::MODEL_NAME)
+        .set_all_rest_operations()
         .set_columns(
             {
                 coldef(cols::CONTENT).set_mandatory(true),
@@ -57,13 +59,11 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
 
-        str content;
-        mindnet::enums::ContentFormat format;
-        str mime_type;
-        str version;
-        str node_id;
+
+        string value;
+        mindnet::enums::ContentFormat format{};
+        int version{1};
 
         create_model_h_methods(Model, MODEL)
 
@@ -82,4 +82,5 @@ namespace mindnet::models
 
 #undef Model
 #undef MODEL
+#undef COLS
 #endif // CONTENT_H

@@ -84,6 +84,7 @@ cmake --build .
 
 ## TODO
 
+### Remove macro str and use std::string instead
 ### Support for export to static HTML files
 
 ### Support for PostgresSQL storage

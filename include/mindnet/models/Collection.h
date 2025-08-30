@@ -27,6 +27,7 @@
 // ***** MACROS : START *****
 #define Model Collection
 #define MODEL COLLECTION
+#define COLS columns::CollectionColumns
 #include "columns/CollectionColumns.h"
 // ***** MACROS : END *****
 
@@ -37,10 +38,11 @@ namespace mindnet::models
     using cols = columns::CollectionColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def COLLECTION_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
         .set_columns({
             //
             coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
@@ -56,13 +58,13 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
 
-        str table_name;
-        int record_id{};
-        enums::Crudl operation{};
-        str data_json;
-        str reason;
+
+        string name;
+        string description;
+        int order_index{};
+        int created_by{};
+        bool is_public{false};
 
         create_model_h_methods(Model, MODEL)
 
@@ -81,4 +83,5 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+#undef COLS
 #endif // COLLECTION_H

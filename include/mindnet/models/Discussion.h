@@ -27,6 +27,7 @@
 // ***** MACROS : START *****
 #define Model Discussion
 #define MODEL DISCUSSION
+#define COLS columns::DiscussionColumns
 #include "columns/DiscussionColumns.h"
 // ***** MACROS : END *****
 
@@ -37,10 +38,11 @@ namespace mindnet::models
     using cols = columns::DiscussionColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def DISCUSSION_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
         .set_columns({
             //
             coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
@@ -56,13 +58,12 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
 
-        str table_name;
-        int record_id{};
-        enums::Crudl operation{};
-        str data_json;
-        str reason;
+
+        int team_id{};
+        string title;
+        int created_by{};
+        bool is_pinned{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -81,5 +82,6 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+#undef COLS
 
 #endif // DISCUSSION_H

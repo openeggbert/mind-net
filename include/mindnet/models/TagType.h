@@ -28,6 +28,7 @@
 // ***** MACROS : START *****
 #define Model TagType
 #define MODEL TAG_TYPE
+#define COLS columns::TagTypeColumns
 #include "columns/TagTypeColumns.h"
 // ***** MACROS : END *****
 
@@ -38,10 +39,11 @@ namespace mindnet::models
     using cols = columns::TagTypeColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def TAG_TYPE_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
     true
     ,
         {
@@ -55,8 +57,11 @@ namespace mindnet::models
 
 struct Model : bm
 {
-    Model() = default;
 
+
+
+    int map_id;
+    string title;
 
     create_model_h_methods(Model, MODEL)
 
@@ -69,5 +74,7 @@ struct Model : bm
 };
 
 }
-
+#undef Model
+#undef MODEL
+#undef COLS
 #endif // TAGTYPE_H

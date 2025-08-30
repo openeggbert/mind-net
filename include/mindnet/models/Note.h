@@ -28,6 +28,7 @@
 // ***** MACROS : START *****
 #define Model Note
 #define MODEL NOTE
+#define COLS columns::NoteColumns
 #include "columns/NoteColumns.h"
 // ***** MACROS : END *****
 
@@ -40,10 +41,11 @@ namespace mindnet::models
     using cols = columns::NoteColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def NOTE_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
     {
         {
             NodeColumns::ID, ColumnType::INTEGER, true
@@ -124,23 +126,15 @@ namespace mindnet::models
 
 struct Model : bm
 {
-    Model() = default;
 
-    str uuid;
-    int map_id;
-    int sibling_position;
-    str title;
-    int content_id;
-    int parent_node_id;
-    enums::NodeType type;
-    enums::Visibility visibility;
-    unixtime last_shown_at;
-    unixtime expires_at;
-    bool is_favorite;
-    int redirect_node_id;
-    str redirect_reason;
-    enums::Importance importance;
-    enums::Difficulty difficulty;
+
+    int map_id{};
+    string title;
+    int parent_note_id{};
+    int content_id{};
+    int sibling_position{};
+    mindnet::enums::Importance importance{mindnet::enums::Importance::UNDEFINED};
+    mindnet::enums::Difficulty difficulty{mindnet::enums::Difficulty::UNDEFINED};
 
     create_model_h_methods(Model, MODEL)
 
@@ -160,5 +154,7 @@ struct Model : bm
 };
 
 }
-
+#undef Model
+#undef MODEL
+#undef COLS
 #endif // NOTE_H

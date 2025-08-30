@@ -46,7 +46,9 @@ friend std::ostream& operator<<(std::ostream& os, const Model & o)\
 {\
     os << o.to_json();\
     return os;\
-}
+}\
+\
+Model() = default;
 
 //
 #define def_helper_lambdas()\

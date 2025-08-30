@@ -28,7 +28,8 @@
 // ***** MACROS : START *****
 #define Model Reference
 #define MODEL REFERENCE
-#include "columns/PropertyColumns.h"
+#define COLS columns::ReferenceColumns
+#include "columns/ReferenceColumns.h"
 // ***** MACROS : END *****
 
 namespace mindnet::models
@@ -37,10 +38,11 @@ namespace mindnet::models
     using cols = columns::PropertyColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def REFERENCE_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
     {
         {
             NodeLinkColumns::ID, ColumnType::INTEGER, true
@@ -75,12 +77,11 @@ namespace mindnet::models
 
 struct Model : mindnet::models::bm
 {
-    Model() = default;
 
-    int from_node_id;
-    int to_node_id;
-    enums::NodeLinkType type;
-    str label;
+
+    int from_note_id;
+    int to_note_id;
+    string label;
 
     create_model_h_methods(Model, MODEL)
 
@@ -94,5 +95,7 @@ struct Model : mindnet::models::bm
 };
 
 }
-
+#undef Model
+#undef MODEL
+#undef COLS
 #endif // REFERENCE_H

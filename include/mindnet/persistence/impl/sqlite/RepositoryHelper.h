@@ -33,23 +33,22 @@
 namespace mindnet::persistence::impl::sqlite
 {
     using std::vector;
-    using models::columns::ContentColumns;
     using sqlite::SQLITE_FILE_NAME;
 
     void set_foreign_key_pragma(SQLite::Database& db);
 
-    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, str& error);
+    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, string& error);
 
-    entity_fields read_model(models::misc::ModelDefinition& def, int id, str& error);
+    entity_fields read_model(models::misc::ModelDefinition& def, int id, string& error);
 
-    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, str& error);
+    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, string& error);
 
-    bool delete_model(models::misc::ModelDefinition& def, int id, str& error);
+    bool delete_model(models::misc::ModelDefinition& def, int id, string& error);
 
     std::vector<entity_fields> list_models(
         models::misc::ModelDefinition& def,
         mindnet::http::QueryParams& query_params,
-        str& error
+        string& error
     );
 }
 

@@ -27,6 +27,7 @@
 // ***** MACROS : START *****
 #define Model History
 #define MODEL HISTORY
+#define COLS columns::HistoryColumns
 #include "columns/HistoryColumns.h"
 // ***** MACROS : END *****
 
@@ -34,9 +35,10 @@
 namespace mindnet::models
 {
     using bm = misc::BaseModel;
-    using cols = columns::HistoryColumns;
+    namespace detail{using cols = columns::HistoryColumns;}
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def HISTORY_DEFINITION =
         def(cols::MODEL_NAME)
@@ -56,13 +58,13 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
 
-        str table_name;
+
+        string table_name;
         int record_id{};
         enums::Crudl operation{};
-        str data_json;
-        str reason;
+        string data_json;
+        string reason;
 
         create_model_h_methods(Model, MODEL)
 
@@ -81,5 +83,6 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+#undef COLS
 
 #endif // HISTORY_H

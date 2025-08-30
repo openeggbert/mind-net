@@ -20,7 +20,7 @@ typedef long long ll;
 typedef unsigned long long ull;
 typedef ull unixtime;
 typedef unsigned short ushort;
-typedef std::string str;
+using std::string;
 typedef nlohmann::json JSON;
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;

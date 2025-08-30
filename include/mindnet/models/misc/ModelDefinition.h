@@ -39,7 +39,7 @@ namespace mindnet::models::misc
     struct ModelDefinition
     {
     private:
-        str model_name; ///< Name of the model
+        string model_name; ///< Name of the model
         column_definitions columns; ///< Column definitions for the model
         std::set<enums::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
@@ -49,14 +49,14 @@ namespace mindnet::models::misc
          * Constructs a ModelDefinition with the given name
          * @param name The name for the model
          */
-        ModelDefinition(const str& name)
+        ModelDefinition(const string& name)
         {
             model_name = name;
         };
 
         // Getters
         /** @return The model name */
-        [[nodiscard]] const str& get_model_name() const
+        [[nodiscard]] const string& get_model_name() const
         {
             return model_name;
         }
@@ -85,7 +85,7 @@ namespace mindnet::models::misc
          * @param name New model name
          * @return Reference to this object for method chaining
          */
-        ModelDefinition& set_name(str name)
+        ModelDefinition& set_name(string name)
         {
             model_name = name;
             return *this;
@@ -145,6 +145,14 @@ namespace mindnet::models::misc
             return *this;
         }
 
+        ModelDefinition& set_rest_operations(const char* ops_as_string)
+        {
+            return set_rest_operations(std::string(ops_as_string));
+        }
+        ModelDefinition& set_all_rest_operations()
+        {
+            return set_rest_operations(enums::CRUDL);
+        }
         /**
          * Configures the virtual table for a database model.
          *

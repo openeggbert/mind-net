@@ -27,6 +27,7 @@
 // ***** MACROS : START *****
 #define Model TeamMember
 #define MODEL TEAM_MEMBER
+#define COLS columns::TeamMemberColumns
 #include "columns/TeamMemberColumns.h"
 // ***** MACROS : END *****
 
@@ -37,10 +38,11 @@ namespace mindnet::models
     using cols = columns::TeamMemberColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def TEAM_MEMBER_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
         .set_columns({
             //
             coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
@@ -56,14 +58,14 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
 
 
-        str table_name;
-        int record_id{};
-        enums::Crudl operation{};
-        str data_json;
-        str reason;
+        int team_id{};
+        int user_id{};
+        int role{};
+        unixtime joined_at{};
+        bool is_active{true};
+        unixtime left_at{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -82,4 +84,5 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+#undef COLS
 #endif // TEAMMEMBER_H

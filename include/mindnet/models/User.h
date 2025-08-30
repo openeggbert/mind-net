@@ -26,6 +26,7 @@
 // ***** MACROS : START *****
 #define Model User
 #define MODEL USER
+#define COLS columns::UserColumns
 #include "columns/UserColumns.h"
 // ***** MACROS : END *****
 #include "mindnet/enums/UserRole.h"
@@ -34,38 +35,35 @@
 namespace mindnet::models
 {
     using bm = misc::BaseModel;
-    using cols = columns::UserColumns;
     using misc::def;
     using misc::coldef;
+    using_flags();
 
     inline def USER_DEFINITION =
-        def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        def(COLS::MODEL_NAME)
+        .set_all_rest_operations()
         .set_columns({
             //
-            coldef(cols::USERNAME).set_mandatory().set_unique(),
-            coldef(cols::PASSWORD_HASH).set_mandatory(),
-            coldef(cols::DISPLAY_NAME),
-            coldef(cols::ROLE).set_mandatory().set_enum_definition(enums::user_role_to_enum_definition()).
+            coldef(COLS::USERNAME).flags(MANDATORY | UNIQUE),
+            coldef(COLS::PASSWORD_HASH).flags(MANDATORY),
+            coldef(COLS::DISPLAY_NAME),
+            coldef(COLS::ROLE).flags(MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
                                set_default_value("0"),
-            coldef(cols::PROFILE_TEXT).textarea(),
-            coldef(cols::LAST_LOGIN).datetime(),
-            coldef(cols::EMAIL).set_unique(),
-            coldef(cols::STATUS).set_mandatory().set_enum_definition(enums::user_status_to_enum_definition()),
+            coldef(COLS::PROFILE_TEXT).flags(TEXTAREA),
+            coldef(COLS::LAST_LOGIN).flags(DATETIME),
+            coldef(COLS::EMAIL).flags(UNIQUE),
+            coldef(COLS::STATUS).flags(MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
         });
 
     struct Model : bm
     {
-        Model() = default;
-
-
-        str username;
-        str password_hash;
-        str display_name;
+        string username;
+        string password_hash;
+        string display_name;
         int role{};
-        str profile_text;
+        string profile_text;
         unixtime last_login{};
-        str email;
+        string email;
         int status{};
 
         create_model_h_methods(Model, MODEL)
@@ -88,5 +86,6 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
-
+#undef COLS
+#undef COLS
 #endif // USER_H

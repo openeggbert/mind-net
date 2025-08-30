@@ -27,6 +27,7 @@
 // ***** MACROS : START *****
 #define Model Message
 #define MODEL MESSAGE
+#define COLS columns::MessageColumns
 #include "columns/MessageColumns.h"
 // ***** MACROS : END *****
 
@@ -34,28 +35,28 @@
 namespace mindnet::models
 {
     using bm = misc::BaseModel;
-    using cols = columns::MessageColumns;
     using misc::def;
     using misc::coldef;
+    using_flags();
 
     inline def MESSAGE_DEFINITION =
-        def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        def(COLS::MODEL_NAME)
+        .set_all_rest_operations()
         .set_columns(
             {
-                coldef(cols::OWNER_ID).set_mandatory().set_foreign_key("user"),
-                coldef(cols::SENDER_ID).set_mandatory().set_foreign_key("user"),
-                coldef(cols::RECIPIENT_ID).set_mandatory().set_foreign_key("user"),
-                coldef(cols::SUBJECT),
-                coldef(cols::IMPORTANT).bool_column().set_default_value("0"),
-                coldef(cols::BODY).textarea().set_mandatory(),
-                coldef(cols::SENT_AT).datetime(),
-                coldef(cols::SYSTEM_MESSAGE).bool_column().set_default_value("0"),
-                coldef(cols::FOLDER),
-                coldef(cols::DRAFT).bool_column().set_default_value("0"),
-                coldef(cols::IS_READ).bool_column().set_default_value("0"),
-                coldef(cols::DELETED_AT).datetime(),
-                coldef(cols::STARRED).bool_column().set_default_value("0")
+                coldef(COLS::OWNER_ID).flags(MANDATORY).set_foreign_key("user"),
+                coldef(COLS::SENDER_ID).flags(MANDATORY).set_foreign_key("user"),
+                coldef(COLS::RECIPIENT_ID).flags(MANDATORY).set_foreign_key("user"),
+                coldef(COLS::SUBJECT),
+                coldef(COLS::IMPORTANT).flags(BOOL).set_default_value("0"),
+                coldef(COLS::BODY).flags(TEXTAREA | MANDATORY),
+                coldef(COLS::SENT_AT).flags(DATETIME),
+                coldef(COLS::SYSTEM_MESSAGE).flags(BOOL).set_default_value("0"),
+                coldef(COLS::FOLDER),
+                coldef(COLS::DRAFT).flags(BOOL).set_default_value("0"),
+                coldef(COLS::IS_READ).flags(BOOL).set_default_value("0"),
+                coldef(COLS::DELETED_AT).flags(DATETIME),
+                coldef(COLS::STARRED).flags(BOOL).set_default_value("0")
             });
     // *** Definition of model ends ***
 
@@ -63,17 +64,15 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
-
         int owner_id{};
         int sender_id{};
         int recipient_id{};
-        str subject;
+        string subject;
         bool important{false};
-        str body;
+        string body;
         unixtime sent_at{};
         bool system_message{false};
-        str folder;
+        string folder;
         bool draft{false};
         bool is_read{false};
         unixtime deleted_at{};
@@ -100,9 +99,10 @@ namespace mindnet::models
                 deleted_at == other.deleted_at &&
                 starred == other.starred;
         }
-
     };
 }
 
-
+#undef Model
+#undef MODEL
+#undef COLS
 #endif // MESSAGE_H

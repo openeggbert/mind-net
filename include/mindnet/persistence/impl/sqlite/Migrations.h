@@ -65,6 +65,7 @@ CREATE TABLE team (
 	description TEXT,
 	created_by INTEGER NOT NULL,
 	leader_id INTEGER NOT NULL,
+
 	FOREIGN KEY(created_by) REFERENCES user(id),
     FOREIGN KEY(leader_id) REFERENCES user(id)
 );
@@ -81,6 +82,7 @@ CREATE TABLE team_member (
 	joined_at DATETIME NOT NULL,
 	is_active BOOLEAN DEFAULT 1,
     left_at DATETIME,
+
 	FOREIGN KEY(team_id) REFERENCES team(id),
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
@@ -95,6 +97,7 @@ CREATE TABLE discussion (
   title TEXT NOT NULL,
   created_by INTEGER NOT NULL,
   is_pinned BOOLEAN DEFAULT 0,
+
   FOREIGN KEY (team_id) REFERENCES team(id),
   FOREIGN KEY (created_by) REFERENCES user(id)
 );
@@ -110,6 +113,7 @@ CREATE TABLE comment (
   content TEXT NOT NULL,
   parent_comment_id INTEGER,
   is_deleted BOOLEAN DEFAULT 0,
+
   FOREIGN KEY (discussion_id) REFERENCES discussion(id),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY(parent_comment_id) REFERENCES comment(id) /*ON DELETE CASCADE*/
@@ -128,6 +132,7 @@ CREATE TABLE suggestion (
 	status INTEGER CHECK(status IN (0,1,2,3,4,5)) DEFAULT 0,
 	data_json TEXT,
     review_count INTEGER DEFAULT 0,
+
     FOREIGN KEY(parent_suggestion_id) REFERENCES suggestion(id),
 	FOREIGN KEY(from_user_id) REFERENCES user(id)
 );
@@ -143,6 +148,7 @@ CREATE TABLE suggestion_review (
 	decision_status INTEGER CHECK(decision_status IN (2,3,4,5)),
 	comment TEXT,
 	reviewed_at DATETIME,
+
 	FOREIGN KEY(suggestion_id) REFERENCES suggestion(id),
 	FOREIGN KEY(reviewer_id) REFERENCES user(id)
 );
@@ -160,6 +166,7 @@ CREATE TABLE history (
 	operation INTEGER NOT NULL CHECK (operation IN (1, 2, 3, 4, 5)),
 	data_json TEXT NOT NULL,
     reason TEXT,
+
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
 )",
@@ -279,6 +286,7 @@ CREATE TABLE tag (
 	tag_type_id INTEGER NOT NULL,
 
 	UNIQUE (note_id, tag_type_id),
+
 	FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
 	FOREIGN KEY (tag_type_id) REFERENCES tag_type(id) /*ON DELETE CASCADE*/
 );
@@ -297,6 +305,7 @@ CREATE TABLE collection (
 	order_index INTEGER,
     created_by INTEGER,
     is_public BOOLEAN DEFAULT 0,
+
     FOREIGN KEY (created_by) REFERENCES user(id)
 );
 )",
@@ -311,6 +320,7 @@ CREATE TABLE collection_item (
 	order_index INTEGER,
 
 	UNIQUE(collection_id, note_id),
+
 	FOREIGN KEY(collection_id) REFERENCES collection(id),
 	FOREIGN KEY(note_id) REFERENCES note(id)
 );
@@ -350,6 +360,7 @@ CREATE TABLE review (
     grade INTEGER CHECK (grade BETWEEN 0 AND 5),
     response_data TEXT, -- for example. JSON: {"selected": [1, 3]}
     notes TEXT,
+
     FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -373,7 +384,8 @@ CREATE TABLE sm2_state (
     last_review DATETIME,
     last_quality INTEGER DEFAULT 0,
 --
-    unique (user_id, note_id),
+    UNIQUE (user_id, note_id),
+
     FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
     FOREIGN KEY (user_id) REFERENCES user(id) /*ON DELETE CASCADE*/
 );
@@ -390,6 +402,7 @@ CREATE TABLE reference(
 
 	CHECK (from_note_id <> to_note_id),
     UNIQUE (from_note_id, to_note_id),
+
 	FOREIGN KEY (from_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
 	FOREIGN KEY (to_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
 );
@@ -407,6 +420,7 @@ CREATE TABLE link(
 	to_url TEXT NOT NULL,
 
 	UNIQUE(from_note_id, to_url),
+
 	FOREIGN KEY (from_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
 );
 

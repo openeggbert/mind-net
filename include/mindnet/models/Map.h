@@ -28,6 +28,7 @@
 // ***** MACROS : START *****
 #define Model Map
 #define MODEL MAP
+#define COLS columns::MapColumns
 #include "columns/MapColumns.h"
 // ***** MACROS : END *****
 
@@ -38,10 +39,11 @@ namespace mindnet::models
     using cols = columns::MapColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def MAP_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
         .set_columns(
             {
                 coldef(cols::NAME).set_mandatory().set_unique(),
@@ -55,11 +57,16 @@ namespace mindnet::models
 
     struct Model : bm
     {
-        Model() = default;
 
-        str name;
-        str description;
-        str category;
+
+        string name;
+        string description;
+        string category;
+        int owner_id{};
+        int team_id{};
+        int owner_rights{};
+        int team_rights{};
+        int other_rights{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -73,5 +80,6 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+#undef COLS
 
 #endif // MAP_H

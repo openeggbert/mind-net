@@ -27,6 +27,7 @@
 // ***** MACROS : START *****
 #define Model Tag
 #define MODEL TAG
+#define COLS columns::TagColumns
 #include "columns/TagColumns.h"
 // ***** MACROS : END *****
 
@@ -37,10 +38,11 @@ namespace mindnet::models
     using cols = columns::TagColumns;
     using misc::def;
     using misc::coldef;
+using_flags();
 
     inline def TAG_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations("crudl")
+        .set_all_rest_operations()
     {
         {
             TagColumns::ID, ColumnType::INTEGER, true
@@ -67,9 +69,9 @@ namespace mindnet::models
 
 struct Model : bm
 {
-    Model() = default;
 
-    int node_id;
+
+    int note_id;
     int tag_type_id;
 
     create_model_h_methods(Model, MODEL)
@@ -83,5 +85,7 @@ struct Model : bm
 };
 
 }
-
+#undef Model
+#undef MODEL
+#undef COLS
 #endif // TAG_H
