@@ -59,6 +59,26 @@ namespace mindnet::enums
         return crudl_to_string(static_cast<Crudl>(crudl));
     }
 
+    inline Crudl char_to_crudl(const char ch)
+    {
+        char lowercase_ch = std::tolower(ch);
+        switch (lowercase_ch)
+        {
+        case 'c':
+            return Crudl::CREATE;
+        case 'r':
+            return Crudl::READ;
+        case 'u':
+            return Crudl::UPDATE;
+        case 'd':
+            return Crudl::DELETE;
+        case 'l':
+            return Crudl::LIST;
+        default:
+            return Crudl::UNDEFINED;
+        }
+    }
+
     inline models::misc::EnumDefinition crudl_to_enum_definition()
     {
         return models::misc::EnumDefinition{

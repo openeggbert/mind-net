@@ -17,32 +17,33 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODE_H
-#define NODE_H
+#ifndef NOTE_H
+#define NOTE_H
 
 
 #include <string>
 #include <utility>
 
 #include "misc/BaseModel.h"
-#include "columns/NodeColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
+// ***** MACROS : START *****
+#define Model Note
+#define MODEL NOTE
+#include "columns/NoteColumns.h"
+// ***** MACROS : END *****
+
 #include "mindnet/enums/Difficulty.h"
 #include "mindnet/enums/Importance.h"
-#include "mindnet/enums/NodeType.h"
-#include "mindnet/enums/Visibility.h"
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::NodeColumns;
+    using bm = misc::BaseModel;
+    using cols = columns::NoteColumns;
+    using misc::def;
+    using misc::coldef;
 
-    static ModelDefinition NODE_DEFINITION = {
-        NodeColumns::MODEL_NAME,
-        true,
+    inline def NOTE_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         {
             {NodeColumns::ID, ColumnType::INTEGER, true},
             {NodeColumns::CREATED_AT, ColumnType::INTEGER, false},
@@ -134,4 +135,4 @@ namespace mindnet::models
     };
 }
 
-#endif // NODE_H
+#endif // NOTE_H

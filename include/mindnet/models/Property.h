@@ -20,25 +20,28 @@
 #ifndef PROPERTY_H
 #define PROPERTY_H
 
+
 #include <string>
 #include <utility>
 
 #include "misc/BaseModel.h"
+// ***** MACROS : START *****
+#define Model Property
+#define MODEL PROPERTY
 #include "columns/PropertyColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/ValueType.h"
+// ***** MACROS : END *****
+
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::PropertyColumns;
+    using bm = misc::BaseModel;
+    using cols = columns::PropertyColumns;
+    using misc::def;
+    using misc::coldef;
 
-    static ModelDefinition PROPERTY_DEFINITION = {
-        PropertyColumns::MODEL_NAME,
-        true,
+    inline def PROPERTY_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         {
             {PropertyColumns::ID, ColumnType::INTEGER, true},
             {PropertyColumns::CREATED_AT, ColumnType::INTEGER, false},

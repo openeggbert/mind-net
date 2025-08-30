@@ -17,29 +17,30 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NODE_LINK_H
-#define NODE_LINK_H
+#ifndef REFERENCE_H
+#define REFERENCE_H
 
 
 #include <string>
 #include <utility>
 
 #include "misc/BaseModel.h"
-#include "columns/NodeLinkColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/NodeLinkType.h"
+// ***** MACROS : START *****
+#define Model Reference
+#define MODEL REFERENCE
+#include "columns/PropertyColumns.h"
+// ***** MACROS : END *****
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::NodeLinkColumns;
+    using bm = misc::BaseModel;
+    using cols = columns::PropertyColumns;
+    using misc::def;
+    using misc::coldef;
 
-    static ModelDefinition NODE_LINK_DEFINITION = {
-        NodeLinkColumns::MODEL_NAME,
-        true,
+    inline def REFERENCE_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         {
             {NodeLinkColumns::ID, ColumnType::INTEGER, true},
             {NodeLinkColumns::CREATED_AT, ColumnType::INTEGER, false},
@@ -94,4 +95,4 @@ namespace mindnet::models
     };
 }
 
-#endif // NODE_LINK_H
+#endif // REFERENCE_H

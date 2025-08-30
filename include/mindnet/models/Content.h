@@ -20,6 +20,7 @@
 #ifndef CONTENT_H
 #define CONTENT_H
 
+
 #include <string>
 
 #include "misc/BaseModel.h"
@@ -27,10 +28,11 @@
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ContentFormat.h"
 
-// ***** DEFINE SECTION : START *****
+// ***** MACROS : START *****
 #define Model Content
 #define MODEL CONTENT
-// ***** DEFINE SECTION : END *****
+#include "columns/ContentColumns.h"
+// ***** MACROS : END *****
 
 namespace mindnet::models
 {
@@ -41,6 +43,7 @@ namespace mindnet::models
 
     inline def CONTENT_DEFINITION =
         def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         .set_columns(
             {
                 coldef(cols::CONTENT).set_mandatory(true),

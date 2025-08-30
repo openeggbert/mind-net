@@ -17,28 +17,30 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef HISTORY_H
-#define HISTORY_H
+#ifndef LINK_H
+#define LINK_H
+
 
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 
-// ***** DEFINE TWO MACROS : START *****
-#define Model History
-#define MODEL HISTORY
-// ***** DEFINE TWO MACROS : END *****
-#include "columns/HistoryColumns.h"
+// ***** MACROS : START *****
+#define Model Link
+#define MODEL LINK
+#include "columns/LinkColumns.h"
+// ***** MACROS : END *****
+
 
 namespace mindnet::models
 {
     using bm = misc::BaseModel;
-    using cols = columns::HistoryColumns;
+    using cols = columns::LinkColumns;
     using misc::def;
     using misc::coldef;
 
-    inline def HISTORY_DEFINITION =
+    inline def LINK_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations({mindnet::enums::Crudl::READ, mindnet::enums::Crudl::LIST})
+        .set_rest_operations("crudl")
         .set_columns({
             //
             coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
@@ -79,4 +81,5 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
-#endif // HISTORY_H
+
+#endif // LINK_H

@@ -24,15 +24,12 @@
 #include <string>
 
 #include "misc/BaseModel.h"
-#include "columns/MessageColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/Crudl.h"
-
-// ***** DEFINE TWO MACROS : START *****
+// ***** MACROS : START *****
 #define Model Message
 #define MODEL MESSAGE
-// ***** DEFINE TWO MACROS : END *****
+#include "columns/MessageColumns.h"
+// ***** MACROS : END *****
+
 
 namespace mindnet::models
 {
@@ -43,6 +40,7 @@ namespace mindnet::models
 
     inline def MESSAGE_DEFINITION =
         def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         .set_columns(
             {
                 coldef(cols::OWNER_ID).set_mandatory().set_foreign_key("user"),
@@ -105,5 +103,6 @@ namespace mindnet::models
 
     };
 }
+
 
 #endif // MESSAGE_H

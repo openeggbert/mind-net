@@ -20,17 +20,18 @@
 #ifndef MAP_H
 #define MAP_H
 
+
 #include <string>
 #include <utility>
 
 #include "misc/BaseModel.h"
-#include "columns/MapColumns.h"
-#include "mindnet/Helper.h"
-
-// ***** DEFINE SECTION : START *****
+// ***** MACROS : START *****
 #define Model Map
 #define MODEL MAP
-// ***** DEFINE SECTION : END *****
+#include "columns/MapColumns.h"
+// ***** MACROS : END *****
+
+
 
 namespace mindnet::models
 {
@@ -41,6 +42,7 @@ namespace mindnet::models
 
     inline def MAP_DEFINITION =
         def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         .set_columns(
             {
                 coldef(cols::NAME).set_mandatory().set_unique(),
@@ -72,4 +74,5 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+
 #endif // MAP_H

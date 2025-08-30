@@ -20,14 +20,16 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
+
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 
-// ***** DEFINE TWO MACROS : START *****
+// ***** MACROS : START *****
 #define Model History
 #define MODEL HISTORY
-// ***** DEFINE TWO MACROS : END *****
 #include "columns/HistoryColumns.h"
+// ***** MACROS : END *****
+
 
 namespace mindnet::models
 {
@@ -38,7 +40,7 @@ namespace mindnet::models
 
     inline def HISTORY_DEFINITION =
         def(cols::MODEL_NAME)
-        .set_rest_operations({mindnet::enums::Crudl::READ, mindnet::enums::Crudl::LIST})
+        .set_rest_operations("rl")
         .set_columns({
             //
             coldef(cols::USER_ID).set_mandatory().set_foreign_key("user"),
@@ -79,4 +81,5 @@ namespace mindnet::models
 }
 #undef Model
 #undef MODEL
+
 #endif // HISTORY_H

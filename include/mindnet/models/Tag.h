@@ -24,19 +24,23 @@
 #include <string>
 
 #include "misc/BaseModel.h"
+// ***** MACROS : START *****
+#define Model Tag
+#define MODEL TAG
 #include "columns/TagColumns.h"
-#include "mindnet/Helper.h"
+// ***** MACROS : END *****
+
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::TagColumns;
+    using bm = misc::BaseModel;
+    using cols = columns::TagColumns;
+    using misc::def;
+    using misc::coldef;
 
-    static ModelDefinition NODE_TAG_DEFINITION = {
-        TagColumns::MODEL_NAME,
-        true,
+    inline def TAG_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         {
             {TagColumns::ID, ColumnType::INTEGER, true},
             {TagColumns::CREATED_AT, ColumnType::INTEGER, false},

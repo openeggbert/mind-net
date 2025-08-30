@@ -31,12 +31,12 @@
 
 namespace mindnet::models::columns
 {
-    struct ExternalLinkColumns : BaseColumns
+    struct LinkColumns : BaseColumns
     {
-        ExternalLinkColumns() = delete;
+        LinkColumns() = delete;
 
-        ExternalLinkColumns(const ExternalLinkColumns&) = delete;
-        ExternalLinkColumns& operator=(const ExternalLinkColumns&) = delete;
+        LinkColumns(const LinkColumns&) = delete;
+        LinkColumns& operator=(const LinkColumns&) = delete;
 
         static constexpr const char* MODEL_NAME = "link";
 

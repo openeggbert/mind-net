@@ -23,11 +23,11 @@
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 
-// ***** DEFINE SECTION : START *****
+// ***** MACROS : START *****
 #define Model User
 #define MODEL USER
-// ***** DEFINE SECTION : END *****
 #include "columns/UserColumns.h"
+// ***** MACROS : END *****
 #include "mindnet/enums/UserRole.h"
 #include "mindnet/enums/UserStatus.h"
 
@@ -38,9 +38,10 @@ namespace mindnet::models
     using misc::def;
     using misc::coldef;
 
-    inline def USER_DEFINITION = def(cols::MODEL_NAME)
-
-        .set_columns({
+    inline def USER_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
+            .set_columns({
             //
             coldef(cols::USERNAME).set_mandatory().set_unique(),
             coldef(cols::PASSWORD_HASH).set_mandatory(),

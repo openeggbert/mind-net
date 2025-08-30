@@ -25,18 +25,23 @@
 #include <utility>
 
 #include "misc/BaseModel.h"
+// ***** MACROS : START *****
+#define Model TagType
+#define MODEL TAG_TYPE
 #include "columns/TagTypeColumns.h"
-#include "crow/json.h"
-#include "mindnet/Helper.h"
+// ***** MACROS : END *****
+
 
 namespace mindnet::models
 {
-    using enums::ColumnType;
-    using misc::BaseModel;
-    using misc::ModelDefinition;
-    using columns::TagTypeColumns;
-    static ModelDefinition TAG_TYPE_DEFINITION = {
-        TagTypeColumns::MODEL_NAME,
+    using bm = misc::BaseModel;
+    using cols = columns::TagTypeColumns;
+    using misc::def;
+    using misc::coldef;
+
+    inline def TAG_TYPE_DEFINITION =
+        def(cols::MODEL_NAME)
+        .set_rest_operations("crudl")
         true,
         {
             {TagTypeColumns::ID, ColumnType::INTEGER, true},

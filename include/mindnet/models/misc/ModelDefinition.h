@@ -113,7 +113,35 @@ namespace mindnet::models::misc
          */
         ModelDefinition& set_rest_operations(std::set<enums::Crudl> ops)
         {
+            if (!allowed_rest_operations.empty())
+            {
+                throw std::invalid_argument("allowed_rest_operations were already set");
+            }
             allowed_rest_operations = std::move(ops);
+            return *this;
+        }
+
+        ModelDefinition& set_rest_operations(std::string ops_as_string)
+        {
+            if (!allowed_rest_operations.empty())
+            {
+                throw std::invalid_argument("allowed_rest_operations were already set");
+            }
+            EnumDefinition enumDef = enums::crudl_to_enum_definition();
+            if (ops_as_string.size() > enumDef.get_value_count())
+            {
+                throw std::invalid_argument("Invalid value for allowed_rest_operations");
+            }
+            for (char ch: ops_as_string)
+            {
+                enums::Crudl crudl = enums::char_to_crudl(ch);
+                if (crudl == enums::Crudl::UNDEFINED)
+                {
+                    throw std::invalid_argument("Invalid value for allowed_rest_operations: ");
+                }
+                allowed_rest_operations.insert(crudl);
+            }
+
             return *this;
         }
 
