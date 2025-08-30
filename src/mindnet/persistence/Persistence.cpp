@@ -27,7 +27,7 @@ api::IRepository* model##_repo = new RepositoryImplSqlite(\
 models :: MODEL_JOIN(MODEL)\
 );\
 repositories[#model] = model##_repo;\
-repositoryNames.push_back(#model);
+repositoryNames.emplace_back(#model);
 
 namespace mindnet::persistence
 {

@@ -38,7 +38,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
     {
 
     }
-    ;
+
     RepositoryImplSqlite::~RepositoryImplSqlite() = default;
 
     int RepositoryImplSqlite::create(const entity_fields& fields, string& error)
