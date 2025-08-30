@@ -29,12 +29,12 @@
 #define MODEL SUGGESTION
 #define COLS columns::SuggestionColumns
 #include "columns/SuggestionColumns.h"
+#include "mindnet/enums/SuggestionStatus.h"
 // ***** MACROS : END *****
 
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -42,18 +42,17 @@ namespace mindnet::models
     inline def SUGGESTION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-        //
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-
-        //
-    });
+        .set_columns({
+            //
+            coldef(COLS::PARENT_SUGGESTION_ID).set_foreign_key("suggestion"),
+            coldef(COLS::FROM_USER_ID, MANDATORY).set_foreign_key("user"),
+            coldef(COLS::TABLE_NAME, MANDATORY),
+            coldef(COLS::OPERATION, MANDATORY).set_enum_definition(enums::crudl_to_enum_definition()),
+            coldef(COLS::STATUS).set_default_value("0").set_enum_definition(enums::suggestion_status_to_enum_definition()),
+            coldef(COLS::DATA_JSON),
+            coldef(COLS::REVIEW_COUNT, INTEGER).set_default_value("0"),
+            //
+        });
 
     struct Model : misc::BaseModel
     {
@@ -72,11 +71,13 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
+                parent_suggestion_id == other.parent_suggestion_id &&
+                from_user_id == other.from_user_id &&
                 table_name == other.table_name &&
-                record_id == other.record_id &&
                 operation == other.operation &&
+                status == other.status &&
                 data_json == other.data_json &&
-                reason == other.reason;
+                review_count == other.review_count;
         }
     };
 }

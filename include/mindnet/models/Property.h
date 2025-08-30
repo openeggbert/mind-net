@@ -45,13 +45,13 @@ namespace mindnet::models
         .set_all_rest_operations()
     .set_columns({
     //
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
+    coldef(COLS::ID,tttt | NOT_NULL),
+    coldef(COLS::ID,tttt | NOT_NULL),
+    coldef(COLS::ID,tttt | NOT_NULL),
+    coldef(COLS::ID,tttt | NOT_NULL),
+    coldef(COLS::ID,tttt | NOT_NULL),
+    coldef(COLS::ID,tttt | NOT_NULL),
+    coldef(COLS::ID,tttt | NOT_NULL),
 
     //
 });

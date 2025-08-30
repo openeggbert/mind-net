@@ -187,7 +187,8 @@ CREATE TABLE map (
     other_rights INTEGER CHECK (other_rights >= 1 and other_rights <= 7),
     --
 
-	FOREIGN KEY(owner_id) REFERENCES user(id)
+	FOREIGN KEY(owner_id) REFERENCES user(id),
+    FOREIGN KEY(team_id) REFERENCES team(id)
 );
 )",
         R"(

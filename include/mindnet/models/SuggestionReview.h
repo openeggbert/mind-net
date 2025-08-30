@@ -29,12 +29,12 @@
 #define MODEL SUGGESTION_REVIEW
 #define COLS columns::SuggestionReviewColumns
 #include "columns/SuggestionReviewColumns.h"
+#include "mindnet/enums/DecisionStatus.h"
 // ***** MACROS : END *****
 
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -42,18 +42,14 @@ namespace mindnet::models
     inline def SUGGESTION_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-        //
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-
-        //
-    });
+        .set_columns({
+            //
+            coldef(COLS::SUGGESTION_ID).set_foreign_key("suggestion"),
+            coldef(COLS::REVIEWER_ID, MANDATORY).set_foreign_key("user"),
+            coldef(COLS::DECISION_STATUS).set_enum_definition(enums::decision_status_to_enum_definition()),
+            coldef(COLS::COMMENT),
+            coldef(COLS::REVIEWED_AT, DATETIME)
+        });
 
     struct Model : misc::BaseModel
     {
@@ -70,11 +66,11 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                suggestion_id == other.suggestion_id &&
+                reviewer_id == other.reviewer_id &&
+                decision_status == other.decision_status &&
+                comment == other.comment &&
+                reviewed_at == other.reviewed_at;
         }
     };
 }

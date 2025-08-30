@@ -35,7 +35,6 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -43,27 +42,17 @@ namespace mindnet::models
     inline def MAP_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    //
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-
-    //
-});
-        .set_columns(
-            {
-                coldef(COLS::NAME).set_mandatory().set_unique(),
-                coldef(COLS::DESCRIPTION),
-                coldef(COLS::CATEGORY),
-                coldef(COLS::OWNER_ID).set_foreign_key("user"),
-                coldef(COLS::IS_PUBLIC).bool_column()
-
-            });
+        .set_columns({
+            //
+            coldef(COLS::NAME, NOT_NULL | UNIQUE),
+            coldef(COLS::DESCRIPTION),
+            coldef(COLS::CATEGORY),
+            coldef(COLS::OWNER_ID, NOT_NULL).set_foreign_key("user"),
+            coldef(COLS::TEAM_ID).set_foreign_key("team"),
+            coldef(COLS::OWNER_RIGHTS, INTEGER | NOT_NULL).set_default_value("7"),
+            coldef(COLS::TEAM_RIGHTS, INTEGER | NOT_NULL).set_default_value("7"),
+            coldef(COLS::OTHER_RIGHTS, INTEGER | NOT_NULL).set_default_value("7")
+        });
 
 
     struct Model : misc::BaseModel
@@ -73,9 +62,9 @@ namespace mindnet::models
         string category;
         int owner_id{};
         int team_id{};
-        int owner_rights{};
-        int team_rights{};
-        int other_rights{};
+        int owner_rights{7};
+        int team_rights{7};
+        int other_rights{7};
 
         create_model_h_methods(Model, MODEL)
 

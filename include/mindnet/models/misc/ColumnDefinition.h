@@ -25,7 +25,7 @@
 #include "EnumDefinition.h"
 #include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
 #define using_flags()\
-using misc::MANDATORY;\
+using misc::NOT_NULL;\
 using misc::UNIQUE;\
 using misc::TEXT;\
 using misc::TEXTAREA;\
@@ -39,7 +39,7 @@ namespace mindnet::models::misc
 {
     enum ColumnDefinitionFlag
     {
-        MANDATORY = 1 << 0,
+        NOT_NULL = 1 << 0,
         UNIQUE = 1 << 1,
         TEXT = 1 << 2,
         TEXTAREA = 1 << 3,
@@ -53,7 +53,7 @@ namespace mindnet::models::misc
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
     {
         return {
-            MANDATORY,
+            NOT_NULL,
             UNIQUE,
             TEXT,
             TEXTAREA,
@@ -225,7 +225,7 @@ namespace mindnet::models::misc
                     flags_set.insert(cdf);
                 }
             }
-            if (flags_set.contains(MANDATORY)) mandatory = true;
+            if (flags_set.contains(NOT_NULL)) mandatory = true;
             if (flags_set.contains(UNIQUE)) unique = true;
             //
             if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
