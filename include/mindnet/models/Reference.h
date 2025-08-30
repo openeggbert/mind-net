@@ -20,7 +20,6 @@
 #ifndef REFERENCE_H
 #define REFERENCE_H
 
-
 #include <string>
 #include <utility>
 
@@ -34,7 +33,6 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -42,51 +40,14 @@ namespace mindnet::models
     inline def REFERENCE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    //
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
+        .set_columns({
+            coldef(COLS::FROM_NOTE_ID, MANDATORY).set_foreign_key("note"),
+            coldef(COLS::TO_NOTE_ID, MANDATORY).set_foreign_key("note"),
+            coldef(COLS::ID),
+        });
+;
 
-    //
-});
-    {
-        {
-            NodeLinkColumns::ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeLinkColumns::CREATED_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeLinkColumns::UPDATED_AT, ColumnType::INTEGER, false
-        }
-        ,
-        {
-            NodeLinkColumns::FROM_NODE_ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeLinkColumns::TO_NODE_ID, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeLinkColumns::TYPE, ColumnType::INTEGER, true
-        }
-        ,
-        {
-            NodeLinkColumns::LABEL, ColumnType::TEXT, false
-        }
-        ,
-    }
-};
-
-struct Model : mindnet::models::bm
+struct Model : mindnet::models::misc::BaseModel
 {
     int from_note_id;
     int to_note_id;
@@ -94,10 +55,10 @@ struct Model : mindnet::models::bm
 
     create_model_h_methods(Model, MODEL)
 
-    bool operator==(const NodeLink& other) const
+    bool operator==(const Model& other) const
     {
-        return id == other.id && from_node_id == other.from_node_id && to_node_id == other.to_node_id &&
-            type == other.type && label == other.label && created_at == other.created_at && updated_at == other.
+        return id == other.id && from_note_id == other.from_note_id && to_note_id == other.to_note_id &&
+            label == other.label && created_at == other.created_at && updated_at == other.
             updated_at;
     }
 };

@@ -20,7 +20,6 @@
 #ifndef SM2STATE_H
 #define SM2STATE_H
 
-
 #include <string>
 #include "mindnet/models/misc/BaseModel.h"
 
@@ -30,7 +29,6 @@
 #define COLS columns::SM2StateColumns
 #include "columns/SM2StateColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::models
 {
@@ -44,15 +42,14 @@ namespace mindnet::models
         .set_all_rest_operations()
     .set_columns({
         //
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-
-        //
+        coldef(COLS::USER_ID,FOREIGN_KEY | MANDATORY),
+        coldef(COLS::NOTE_ID,FOREIGN_KEY | MANDATORY),
+        coldef(COLS::REPETITIONS,INTEGER).set_default_value(0),
+        coldef(COLS::INTERVAL,INTEGER).set_default_value(1),
+        coldef(COLS::EF_TIMES_100,INTEGER).set_default_value(250),
+        coldef(COLS::NEXT_REVIEW,DATETIME),
+        coldef(COLS::LAST_REVIEW,DATETIME),
+        coldef(COLS::LAST_QUALITY,INTEGER).set_default_value(0),
     });
 
     struct Model : misc::BaseModel
@@ -73,11 +70,14 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                user_id == other.user_id &&
+                note_id == other.note_id &&
+                repetitions == other.repetitions &&
+                interval == other.interval &&
+                ef_times_100 == other.ef_times_100 &&
+                next_review == other.next_review &&
+                last_review == other.last_review &&
+                last_quality == other.last_quality;
         }
     };
 }

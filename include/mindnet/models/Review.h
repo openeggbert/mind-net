@@ -30,10 +30,8 @@
 #include "columns/ReviewColumns.h"
 // ***** MACROS : END *****
 
-
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -41,42 +39,41 @@ namespace mindnet::models
     inline def REVIEW_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-        //
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
-        coldef(COLS::ID,tttt | MANDATORY),
+        .set_columns({
+            coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY),
+            coldef(COLS::REVIEW_DATE, DATETIME),
+            coldef(COLS::GRADE, INTEGER),
+            coldef(COLS::RESPONSE_DATA),
+            coldef(COLS::NOTES),
+        });
 
-        //
-    });
 
-    struct Model : misc::BaseModel
+struct Model : misc::BaseModel
+{
+    int user_id{};
+    int note_id{};
+    string review_date;
+    int grade{};
+    string response_data;
+    string notes;
+
+    create_model_h_methods(Model, MODEL)
+
+    bool operator==(const Model& other) const
     {
-        int user_id{};
-        int note_id{};
-        string review_date;
-        int grade{};
-        string response_data;
-        string notes;
+        return id == other.id &&
+            created_at == other.created_at &&
+            updated_at == other.updated_at &&
+            user_id == other.user_id &&
+            note_id == other.note_id &&
+            review_date == other.review_date &&
+            grade == other.grade &&
+            response_data == other.response_data &&
+            notes == other.notes;
+    }
+};
 
-        create_model_h_methods(Model, MODEL)
-
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
-        }
-    };
 }
 #undef Model
 #undef MODEL
