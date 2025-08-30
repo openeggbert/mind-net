@@ -14,7 +14,6 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/http/QueryParams.h"
-#include "mindnet/models/Node.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet
@@ -86,7 +85,7 @@ namespace mindnet
         return std::string(buffer);
     }
 
-    str Utils::print_current_timestamp()
+    string Utils::print_current_timestamp()
     {
         return Utils::unixToFormattedString(Utils::currentUnixTimestamp());
     }
@@ -226,16 +225,16 @@ namespace mindnet
         return result;
     }
 
-    str Utils::generate_insert_sql(const models::misc::ModelDefinition& definition)
+    string Utils::generate_insert_sql(const models::misc::ModelDefinition& definition)
     // const std::string& table_name, const std::vector<const char*>& columns,
     //                                    bool auto_increment)
     {
-        str sql = "INSERT INTO " + definition.model_name + " (";
-        auto columns = definition.columns;
+        string sql = "INSERT INTO " + definition.get_model_name() + " (";
+        auto columns = definition.get_columns();
         for (int i = 0; i < columns.size(); ++i)
         {
             auto& column = columns[i].column_name;
-            if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
+            if (std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
             }
@@ -249,7 +248,7 @@ namespace mindnet
         for (int i = 0; i < columns.size(); ++i)
         {
             auto column = columns[i].column_name;
-            if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
+            if (std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
             }
@@ -263,13 +262,13 @@ namespace mindnet
         return sql;
     }
 
-    str Utils::generate_update_sql(const models::misc::ModelDefinition& definition)
+    string Utils::generate_update_sql(const models::misc::ModelDefinition& definition)
     {
-        std::string sql = "UPDATE " + definition.model_name + " SET ";
-        for (int i = 0; i < definition.columns.size(); ++i)
+        std::string sql = "UPDATE " + definition.get_model_name() + " SET ";
+        for (int i = 0; i < definition.get_columns().size(); ++i)
         {
-            auto column = definition.columns[i].column_name;
-            if (definition.auto_increment && std::string(column) == PRIMARY_KEY_COLUMN_NAME)
+            auto column = definition.get_columns()[i].column_name;
+            if (std::string(column) == PRIMARY_KEY_COLUMN_NAME)
             {
                 continue;
             }
@@ -279,7 +278,7 @@ namespace mindnet
                 continue;
             }
             sql += column + "=?";
-            if (i < definition.columns.size() - 1)
+            if (i < definition.get_columns().size() - 1)
             {
                 sql += ", ";
             }
@@ -289,12 +288,12 @@ namespace mindnet
         return sql;
     }
 
-    str Utils::generate_delete_sql(const models::misc::ModelDefinition& definition)
+    string Utils::generate_delete_sql(const models::misc::ModelDefinition& definition)
     {
-        return "DELETE FROM " + definition.model_name + " WHERE id = ?";
+        return "DELETE FROM " + definition.get_model_name() + " WHERE id = ?";
     }
 
-    str Utils::generate_select_one_sql(const std::string& table_name)
+    string Utils::generate_select_one_sql(const std::string& table_name)
     {
         return "SELECT * FROM " + table_name + " WHERE id = ?";
     }
@@ -310,7 +309,7 @@ namespace mindnet
      * @param count A boolean flag. If true, modifies the query to ignore sorting and pagination, suitable for row count queries. Default is false.
      * @return The constructed SQL query as a string.
      */
-    str Utils::generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params, bool count)
+    string Utils::generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params, bool count)
     {
         auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
         if (!query_params.filters.empty())
@@ -342,7 +341,7 @@ namespace mindnet
         return sql;
     }
 
-    str Utils::generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params)
+    string Utils::generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params)
     {
         return generate_select_all_sql(table_name, query_params, true);
     }

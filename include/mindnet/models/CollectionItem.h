@@ -42,29 +42,10 @@ namespace mindnet::models
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     .set_columns({
-    //
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-    coldef(COLS::ID,tttt | MANDATORY),
-
-    //
+    coldef(COLS::COLLECTION_ID,FOREIGN_KEY | MANDATORY),
+    coldef(COLS::NOTE_ID,FOREIGN_KEY | MANDATORY),
+    coldef(COLS::ORDER_INDEX, INTEGER),
 });
-        .set_columns({
-            //
-            coldef(COLS::USER_ID).set_mandatory().set_foreign_key("user"),
-            coldef(COLS::IP_ADDRESS),
-            coldef(COLS::TABLE_NAME).set_mandatory(),
-            coldef(COLS::RECORD_ID).set_mandatory(),
-            coldef(COLS::OPERATION).set_mandatory().set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(COLS::DATA_JSON).set_mandatory(),
-            coldef(COLS::REASON),
-            //
-        });
 
     struct Model : misc::BaseModel
     {
@@ -79,11 +60,9 @@ namespace mindnet::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                table_name == other.table_name &&
-                record_id == other.record_id &&
-                operation == other.operation &&
-                data_json == other.data_json &&
-                reason == other.reason;
+                collection_id == other.collection_id &&
+                note_id == other.note_id &&
+                order_index == other.order_index;
         }
     };
 }

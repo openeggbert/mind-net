@@ -74,7 +74,7 @@ namespace mindnet::models::misc
         }
 
         /** @return True if the model is virtual table otherwise false. */
-        [[nodiscard]] const bool get_virtual_table() const
+        [[nodiscard]] const bool is_virtual_table() const
         {
             return virtual_table;
         }

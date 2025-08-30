@@ -35,7 +35,6 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
@@ -43,31 +42,26 @@ namespace mindnet::models
     inline def TAG_TYPE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    true
-    ,
-        {
-            {TagTypeColumns::ID, ColumnType::INTEGER, true},
-            {TagTypeColumns::CREATED_AT, ColumnType::INTEGER, false},
-            {TagTypeColumns::UPDATED_AT, ColumnType::INTEGER, false},
-            {TagTypeColumns::MAP_ID, ColumnType::INTEGER, true},
-            {TagTypeColumns::TITLE, ColumnType::TEXT, true}
-        }
-};
+        .set_columns({
+            //
+            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY),
+            //
+        });
 
-struct Model : misc::BaseModel
-{
-    int map_id;
-    string title;
-
-    create_model_h_methods(Model, MODEL)
-
-    bool operator==(const TagType& other) const
+    struct Model : misc::BaseModel
     {
-        return id == other.id && map_id == other.map_id && title == other.title &&
-            created_at == other.created_at && updated_at == other.updated_at;
-    }
-};
+        int map_id;
+        string title;
 
+        create_model_h_methods(Model, MODEL)
+
+        bool operator==(const TagType& other) const
+        {
+            return id == other.id && map_id == other.map_id && title == other.title &&
+                created_at == other.created_at && updated_at == other.updated_at;
+        }
+    };
 }
 #undef Model
 #undef MODEL

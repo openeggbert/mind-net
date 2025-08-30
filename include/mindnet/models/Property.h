@@ -44,8 +44,8 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::MAP_ID, MANDATORY).set_foreign_key(),
-            coldef(COLS::NOTE_ID, MANDATORY).set_foreign_key(),
+            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::KEY, MANDATORY),
             coldef(COLS::VALUE),
             //

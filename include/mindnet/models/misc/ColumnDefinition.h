@@ -23,7 +23,7 @@
 #include <optional>
 #include <string>
 #include "EnumDefinition.h"
-#include "mindnet/persistence/impl/sqlite/repositories/ContentRepositoryImplSqlite.h"
+
 #define using_flags()\
 using misc::MANDATORY;\
 using misc::UNIQUE;\
