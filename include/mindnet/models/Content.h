@@ -55,8 +55,10 @@ namespace mindnet::models
             }
         );
 
-struct Content : bm
-{
+    struct Model : bm
+    {
+        Model() = default;
+
     str content;
     mindnet::enums::ContentFormat format;
     str mime_type;
@@ -76,7 +78,6 @@ struct Content : bm
             node_id == other.node_id;
     }
 
-    Content() = default;
 
 };
 

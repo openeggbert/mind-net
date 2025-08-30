@@ -55,8 +55,10 @@ namespace mindnet::models
         }
     };
 
-    struct Property : BaseModel
-    {
+struct Model : bm
+{
+    Model() = default;
+
         int map_id;
         int node_id;
         str key;

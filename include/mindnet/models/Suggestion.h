@@ -54,9 +54,10 @@ namespace mindnet::models
             //
         });
 
-    struct History : bm
+    struct Model : bm
     {
-        History() = default;
+        Model() = default;
+
 
         str table_name;
         int record_id{};

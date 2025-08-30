@@ -52,10 +52,10 @@ namespace mindnet::models
         }
     };
 
-    struct TagType : BaseModel
-    {
-        int map_id;
-        str title;
+struct Model : bm
+{
+    Model() = default;
+
 
         [[nodiscard]] ModelDefinition get_definition() const override
         {

@@ -52,8 +52,10 @@ namespace mindnet::models
         }
     };
 
-    struct NodeLink : BaseModel
-    {
+struct Model : bm
+{
+    Model() = default;
+
         int from_node_id;
         int to_node_id;
         enums::NodeLinkType type;

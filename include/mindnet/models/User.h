@@ -54,9 +54,10 @@ namespace mindnet::models
         })
     ;
 
-    struct User : bm
+    struct Model : bm
     {
-        User() = default;
+        Model() = default;
+
 
         str username;
         str password_hash;

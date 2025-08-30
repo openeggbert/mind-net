@@ -54,8 +54,10 @@ namespace mindnet::models
             });
 
 
-    struct Map : bm
+    struct Model : bm
     {
+        Model() = default;
+
         str name;
         str description;
         str category;

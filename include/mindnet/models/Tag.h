@@ -50,8 +50,10 @@ namespace mindnet::models
         }
     };
 
-    struct Tag : BaseModel
-    {
+struct Model : bm
+{
+    Model() = default;
+
         int node_id;
         int tag_type_id;
 

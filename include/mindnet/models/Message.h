@@ -61,8 +61,10 @@ namespace mindnet::models
 
     using misc::BaseModel;
 
-    struct Message : BaseModel
+    struct Model : bm
     {
+        Model() = default;
+
         int owner_id{};
         int sender_id{};
         int recipient_id{};

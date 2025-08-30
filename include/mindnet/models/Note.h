@@ -66,8 +66,10 @@ namespace mindnet::models
         },
     };
 
-    struct Node : BaseModel
-    {
+struct Model : bm
+{
+    Model() = default;
+
         str uuid;
         int map_id;
         int sibling_position;
