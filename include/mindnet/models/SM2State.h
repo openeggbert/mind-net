@@ -25,7 +25,7 @@
 
 // ***** MACROS : START *****
 #define Model SM2State
-#define MODEL SM2STATE
+#define MODEL SM2_STATE
 #define COLS columns::SM2StateColumns
 #include "columns/SM2StateColumns.h"
 // ***** MACROS : END *****
@@ -37,7 +37,7 @@ namespace mindnet::models
     using misc::coldef;
     using_flags();
 
-    inline def SM2STATE_DEFINITION =
+    inline def SM2_STATE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
     .set_columns({

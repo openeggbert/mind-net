@@ -5,13 +5,24 @@
 #include "mindnet/persistence/Persistence.h"
 
 #include "mindnet/models/User.h"
+#include "mindnet/models/Message.h"
+#include "mindnet/models/Team.h"
+#include "mindnet/models/TeamMember.h"
+#include "mindnet/models/Discussion.h"
+#include "mindnet/models/Comment.h"
+#include "mindnet/models/Suggestion.h"
+#include "mindnet/models/SuggestionReview.h"
 #include "mindnet/models/History.h"
 #include "mindnet/models/Map.h"
-#include "mindnet/models/Note.h"
 #include "mindnet/models/Content.h"
+#include "mindnet/models/Note.h"
 #include "mindnet/models/Property.h"
 #include "mindnet/models/TagType.h"
 #include "mindnet/models/Tag.h"
+#include "mindnet/models/Collection.h"
+#include "mindnet/models/CollectionItem.h"
+#include "mindnet/models/Review.h"
+#include "mindnet/models/SM2State.h"
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
 
@@ -43,14 +54,24 @@ namespace mindnet::persistence
         // repositories["user"] = user_repo;;
 
         add_repository(user, User, USER);
+        add_repository(message, Message, MESSAGE);
+        add_repository(team, Team, TEAM);
+        add_repository(team_member, TeamMember, TEAM_MEMBER);
+        add_repository(discussion, Discussion, DISCUSSION);
+        add_repository(comment, Comment, COMMENT);
+        add_repository(suggestion, Suggestion, SUGGESTION);
+        add_repository(suggestion_review, SuggestionReview, SUGGESTION_REVIEW);
         add_repository(history, History, HISTORY);
         add_repository(map, Map, MAP);
-        add_repository(note, Note, NOTE);
         add_repository(content, Content, CONTENT);
+        add_repository(note, Note, NOTE);
         add_repository(property, Property, PROPERTY);
-        //
         add_repository(tag_type, TagType, TAG_TYPE);
         add_repository(tag, Tag, TAG);
+        add_repository(collection, Collection, COLLECTION);
+        add_repository(collection_item, CollectionItem, COLLECTION_ITEM);
+        add_repository(review, Review, REVIEW);
+        add_repository(sm2_state, SM2State, SM2_STATE);
         add_repository(reference, Reference, REFERENCE);
         add_repository(link, Link, LINK);
     }

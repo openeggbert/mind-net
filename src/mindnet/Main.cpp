@@ -12,19 +12,31 @@
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/persistence/Persistence.h"
 #include "mindnet/controllers/ModelController.h"
+//
 #include "mindnet/models/User.h"
+#include "mindnet/models/Message.h"
+#include "mindnet/models/Team.h"
+#include "mindnet/models/TeamMember.h"
+#include "mindnet/models/Discussion.h"
+#include "mindnet/models/Comment.h"
+#include "mindnet/models/Suggestion.h"
+#include "mindnet/models/SuggestionReview.h"
 #include "mindnet/models/History.h"
-#include "mindnet/models/TagType.h"
 #include "mindnet/models/Map.h"
 #include "mindnet/models/Content.h"
 #include "mindnet/models/Note.h"
-#include "mindnet/models/Link.h"
-#include "mindnet/models/Reference.h"
-#include "mindnet/models/Tag.h"
 #include "mindnet/models/Property.h"
+#include "mindnet/models/TagType.h"
+#include "mindnet/models/Tag.h"
+#include "mindnet/models/Collection.h"
+#include "mindnet/models/CollectionItem.h"
+#include "mindnet/models/Review.h"
+#include "mindnet/models/SM2State.h"
+#include "mindnet/models/Reference.h"
+#include "mindnet/models/Link.h"
+//
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
-
 
 using mindnet::commit;
 
@@ -149,15 +161,26 @@ bool commands_function_start(
     mindnet::routes::ModelController controller;
 
     add_controller(USER)
+    add_controller(MESSAGE)
+    add_controller(TEAM)
+    add_controller(TEAM_MEMBER)
+    add_controller(DISCUSSION)
+    add_controller(COMMENT)
+    add_controller(SUGGESTION)
+    add_controller(SUGGESTION_REVIEW)
     add_controller(HISTORY)
     add_controller(MAP)
     add_controller(CONTENT)
     add_controller(NOTE)
-    add_controller(TAG_TYPE)
-    add_controller(LINK)
-    add_controller(REFERENCE)
-    add_controller(TAG)
     add_controller(PROPERTY)
+    add_controller(TAG_TYPE)
+    add_controller(TAG)
+    add_controller(COLLECTION)
+    add_controller(COLLECTION_ITEM)
+    add_controller(REVIEW)
+    add_controller(SM2_STATE)
+    add_controller(REFERENCE)
+    add_controller(LINK)
 
     if (custom_port)
     {
