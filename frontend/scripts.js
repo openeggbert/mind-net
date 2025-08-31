@@ -344,7 +344,7 @@ async function renderEntityRead(entity, id) {
         else if (f.enum && value in f.enum) value = f.enum[value];
         else if (f.foreignKey) {
             if (!value || value === 0) {
-                value = "<span style='color:grey;font-style:italic;'>NONE</span>";
+                value = "<span style='color:grey;'>NONE</span>";
             } else {
                 const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
                 value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
@@ -392,7 +392,7 @@ async function renderEntityList(entity) {
             else if (f.enum && value in f.enum) value = f.enum[value];
             else if (f.foreignKey) {
                 if (!value || value === 0) {
-                    value = "<span style='color:grey;font-style:italic;'>NONE</span>";
+                    value = "<span style='color:grey;'>NONE</span>";
                 } else {
                     value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
                 }
