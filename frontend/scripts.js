@@ -383,7 +383,7 @@ async function renderEntityRead(entity, id) {
             grouped[model].push(action);
         });
 
-        Object.keys(grouped).sort().forEach(model => {
+        Object.keys(grouped).forEach(model => {
             // Convert model_name to label (replace underscores with spaces and capitalize words)
             const modelLabel = model.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             html += `<div id="custom-action-model-container"><div class="custom-action-model">${modelLabel}:</div>`;
@@ -398,8 +398,8 @@ async function renderEntityRead(entity, id) {
 
                 // --- build URL with params ---
                 const url = new URL(window.location.origin + window.location.pathname);
-                url.searchParams.set('entity', entity);
-                url.searchParams.set('action', action.action);
+                url.searchParams.set('entity', action.model_name);
+                url.searchParams.set('action', action.crudl === "List" ? "list" : "create");
                 url.searchParams.set('id', id);
                 Object.entries(action.params || {}).forEach(([k, v]) => {
                     url.searchParams.set(k, v === "{id}" ? id : v);
