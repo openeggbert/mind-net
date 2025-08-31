@@ -49,11 +49,12 @@ function buildEntitySchemas(modelDef) {
         });
 
         schemas[item.model_name] = {
-            label: capitalize(item.model_name),
+            label: toLabel(item.model_name),
             titleField: findTitleField(item),
             fields,
-            allowedOperations: item.allowed_rest_operations // ← here CRUDL
+            allowedOperations: item.allowed_rest_operations
         };
+
     }
     return schemas;
 }
@@ -245,7 +246,7 @@ async function renderEntityForm(entity, data = {}) {
 
         let value = data[f.name] ?? "";
         if (f.type === "datetime" && value) {
-            value = formatDateTime(value);
+            if (!isNaN(value)) value = formatDateTime(Number(value));
         }
 
         if (f.enum) {
@@ -330,10 +331,10 @@ async function renderEntityRead(entity, id) {
     html += `<tr><th>ID</th><td data-label="ID">${json.id ?? ""}</td></tr>`;
 
     if ('created_at' in json) {
-        html += `<tr><th>Created At</th><td data-label="Created At">${json.created_at}</td></tr>`;
+        html += `<tr><th>Created At</th><td data-label="Created At">${formatDateTime(json.created_at)}</td></tr>`;
     }
     if ('updated_at' in json) {
-        html += `<tr><th>Updated At</th><td data-label="Updated At">${json.updated_at}</td></tr>`;
+        html += `<tr><th>Updated At</th><td data-label="Updated At">${formatDateTime(json.updated_at)}</td></tr>`;
     }
 
     for (const f of schema.fields.filter(f => !f.auto)) {
@@ -341,9 +342,13 @@ async function renderEntityRead(entity, id) {
 
         if (f.type === "datetime") value = formatDateTime(value);
         else if (f.enum && value in f.enum) value = f.enum[value];
-        else if (f.foreignKey && value) {
-            const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
-            value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
+        else if (f.foreignKey) {
+            if (!value || value === 0) {
+                value = "<span style='color:grey;font-style:italic;'>NONE</span>";
+            } else {
+                const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
+                value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
+            }
         }
 
         html += `<tr><th>${toLabel(f.name)}</th><td data-label="${toLabel(f.name)}">${value ?? ""}</td></tr>`;
@@ -385,7 +390,14 @@ async function renderEntityList(entity) {
             let value = item[f.name];
             if (f.type === "datetime") value = formatDateTime(value);
             else if (f.enum && value in f.enum) value = f.enum[value];
-            else if (f.foreignKey && value) value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
+            else if (f.foreignKey) {
+                if (!value || value === 0) {
+                    value = "<span style='color:grey;font-style:italic;'>NONE</span>";
+                } else {
+                    value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
+                }
+            }
+
             html += `<td data-label="${toLabel(f.name)}">${value ?? ""}</td>`;
         }
         html += `<td class="actions" data-label="Actions">
