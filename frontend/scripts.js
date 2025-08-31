@@ -209,6 +209,7 @@ async function resolveForeignKeyValue(fkEntity, id) {
     return json[schema.titleField] ?? id;
 }
 
+
 // ========================================
 // 5. CRUD render functions
 // ========================================
@@ -308,7 +309,7 @@ async function renderEntityRead(entity, id) {
             const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
             value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
         }
-        html += `<tr><th>${toLabel(f.name)}</th><td>${value ?? ""}</td></tr>`;
+        html += `<tr><th>${toLabel(f.name)}</th><td data-label="${toLabel(f.name)}">${value ?? ""}</td></tr>`;
     }
     html += "</table>";
     contentArea.innerHTML = html;
@@ -345,19 +346,18 @@ async function renderEntityList(entity) {
             let value = item[f.name];
             if (f.enum && value in f.enum) value = f.enum[value];
             else if (f.foreignKey && value) value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
-            html += `<td>${value ?? ""}</td>`;
-        }
-        html += `<td class="actions">
-        <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>
-        <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
-        <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>`;
+            html += `<td data-label="${toLabel(f.name)}">${value ?? ""}</td>`;
 
+        }
+        html += `<td class="actions" data-label="Actions">
+    <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>
+    <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
+    <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>`;
         if (entity === "map") {
             html += ` <a href="#" onclick="selectAction('explore', ${item.id}); return false;">🗺️ Explore</a>`;
         }
-
-
         html += `</td></tr>`;
+
     }
     html += `</tbody></table>`;
     html += `<div style="margin-top:10px;text-align:center;">

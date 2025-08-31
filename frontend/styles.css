@@ -306,10 +306,7 @@ table td:last-child {
     }
 }
 
-@media (max-width: 600px) {
-    nav, .submenu { display: none; flex-direction: column; }
-    .mobile-menu-btn { display: block; background:#3498db; color:white; border:none; padding:0.5rem 1rem; font-size:1.2rem; cursor:pointer; border-radius:4px; }
-}
+
 
 .show {
     display: block;
