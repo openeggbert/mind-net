@@ -455,6 +455,17 @@ async function renderEntityList(entity) {
     url.searchParams.set("page_number", currentPage);
     url.searchParams.set("page_size", pageSize);
 
+
+
+    // --- ADD FILTERS FROM URL OR INPUTS ---
+    const filters = getQueryParams().others;
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value) url.searchParams.set(key, value);
+    });
+
+
+
+
     const json = await apiFetch(url.toString());
     if (!json) return;
     const items = json.items || [];
@@ -466,6 +477,21 @@ async function renderEntityList(entity) {
 
 
     let html = `<h3>${schema.label} List</h3>`;
+
+
+
+    // --- FILTER UI ---
+    html += `<div style="margin-bottom:10px;"><strong>Filters:</strong>`;
+    listFields.forEach(f => {
+        html += `<label style="margin-right:10px;">
+        ${toLabel(f.name)}: <input type="text" class="filter-input" data-field="${f.name}" value="${getQueryParams().others[f.name] || ''}">
+    </label>`;
+    });
+    html += `<button id="applyFilters">Apply Filters</button></div>`;
+
+
+
+
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
         <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${pageSize === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
@@ -531,6 +557,25 @@ async function renderEntityList(entity) {
         currentPage = 1;
         renderEntityList(entity);
     });
+
+
+
+
+    document.getElementById("applyFilters").onclick = () => {
+        const filterInputs = document.querySelectorAll('.filter-input');
+        filterInputs.forEach(input => {
+            const field = input.dataset.field;
+            const value = input.value.trim();
+            const params = new URLSearchParams(window.location.search);
+            if (value) params.set(field, value);
+            else params.delete(field);
+            history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+        });
+        currentPage = 1;
+        renderEntityList(entity);
+    };
+
+
 
 
 }

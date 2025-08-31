@@ -194,6 +194,11 @@ namespace mindnet::routes
                 {
                     continue;
                 }
+                if (column.get_column_name() == "id")
+                {
+                    continue;
+                    //return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: Parameters contain id.");
+                }
                 string value = req.url_params.get(column.get_column_name());
                 query_params.add_filter(column.get_column_name(), value);
             }
