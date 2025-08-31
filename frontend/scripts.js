@@ -209,6 +209,19 @@ async function resolveForeignKeyValue(fkEntity, id) {
     return json[schema.titleField] ?? id;
 }
 
+function formatDateTime(value) {
+    if (!value || value === 0) return "";
+    const d = new Date(Number(value) * 1000); // Unix timestamp v sekundách
+    const pad = n => n.toString().padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+function parseDateTimeToUnix(str) {
+    if (!str) return 0;
+    const parts = str.split(/[- :]/);
+    if (parts.length < 6) return 0;
+    const [y,m,d,h,min,s] = parts.map(Number);
+    return Math.floor(new Date(y,m-1,d,h,min,s).getTime()/1000);
+}
 
 // ========================================
 // 5. CRUD render functions
@@ -229,16 +242,23 @@ async function renderEntityForm(entity, data = {}) {
 
     filterColumnsForForm(schema.fields).forEach(f => {
         let type = f.type === "datetime" ? "text" : f.type;
+
+        let value = data[f.name] ?? "";
+        if (f.type === "datetime" && value) {
+            value = formatDateTime(value);
+        }
+
         if (f.enum) {
             html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
-                <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
-                    ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
-                </select></div>`;
+            <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
+                ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
+            </select></div>`;
         } else {
             html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
-                <input type="${type}" id="${f.name}" name="${f.name}" value="${data[f.name] ?? ""}" ${f.required ? "required" : ""}></div>`;
+            <input type="${type}" id="${f.name}" name="${f.name}" value="${value}" ${f.required ? "required" : ""}></div>`;
         }
     });
+
 
     html += `<button type="submit">Save</button></form>`;
     contentArea.innerHTML = html;
@@ -265,10 +285,14 @@ async function renderEntityForm(entity, data = {}) {
                         case "checkbox":
                             payload[key] = (value === "on" || value === "1" || value === true) ? 1 : 0;
                             break;
+                        case "datetime":
+                            payload[key] = parseDateTimeToUnix(value);
+                            break;
                         default:
                             payload[key] = value ?? "";
                             break;
                     }
+
                 } else payload[key] = value ?? "";
             }
         });
@@ -312,13 +336,16 @@ async function renderEntityRead(entity, id) {
         html += `<tr><th>Updated At</th><td data-label="Updated At">${json.updated_at}</td></tr>`;
     }
 
-    for (const f of schema.fields) {
+    for (const f of schema.fields.filter(f => !f.auto)) {
         let value = json[f.name];
-        if (f.enum && value in f.enum) value = f.enum[value];
+
+        if (f.type === "datetime") value = formatDateTime(value);
+        else if (f.enum && value in f.enum) value = f.enum[value];
         else if (f.foreignKey && value) {
             const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
             value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
         }
+
         html += `<tr><th>${toLabel(f.name)}</th><td data-label="${toLabel(f.name)}">${value ?? ""}</td></tr>`;
     }
 
@@ -344,7 +371,7 @@ async function renderEntityList(entity) {
     if (!schema) return;
 
     totalPages = json.total_pages || 1;
-    const listFields = schema.fields.filter(f => f.list !== false);
+    const listFields = schema.fields.filter(f => !f.auto && f.list !== false);
 
     let html = `<h3>${schema.label} List</h3>`;
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
@@ -356,10 +383,10 @@ async function renderEntityList(entity) {
         html += `<tr><td>${item.id}</td>`;
         for (const f of listFields) {
             let value = item[f.name];
-            if (f.enum && value in f.enum) value = f.enum[value];
+            if (f.type === "datetime") value = formatDateTime(value);
+            else if (f.enum && value in f.enum) value = f.enum[value];
             else if (f.foreignKey && value) value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
             html += `<td data-label="${toLabel(f.name)}">${value ?? ""}</td>`;
-
         }
         html += `<td class="actions" data-label="Actions">
     <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>

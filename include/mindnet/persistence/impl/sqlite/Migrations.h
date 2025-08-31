@@ -83,6 +83,8 @@ CREATE TABLE team_member (
 	is_active BOOLEAN DEFAULT 1,
     left_at DATETIME,
 
+    UNIQUE(team_id, user_id),
+
 	FOREIGN KEY(team_id) REFERENCES team(id),
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
