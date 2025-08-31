@@ -34,7 +34,8 @@ function buildEntitySchemas(modelDef) {
             let field = {
                 name: col.column_name,
                 type: mapColumnType(col.column_type),
-                required: col.mandatory
+                required: col.mandatory,
+                description: col.description,
             };
             if (col.foreign_key) field.foreignKey = col.foreign_key;
             if (col.enum_definition) {
@@ -237,29 +238,43 @@ async function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
 
+    // --- Předvyplnění z URL parametrů jen při CREATE ---
+    if (!data.id) {
+        const params = new URLSearchParams(window.location.search);
+        schema.fields.forEach(f => {
+            if (params.has(f.name) && !(f.auto || f.type === 'checkbox')) {
+                data[f.name] = params.get(f.name);
+            }
+        });
+    }
+
     let html = `<h3>${data.id ? "Update" : "Create"} ${schema.label}</h3><form id="entityForm">`;
     html += `<input type="hidden" name="id" value="${data.id ?? ""}">`;
     html += `<p style="color:red; font-size:0.9rem;">* Required fields</p>`;
 
     filterColumnsForForm(schema.fields).forEach(f => {
         let type = f.type === "datetime" ? "text" : f.type;
-
         let value = data[f.name] ?? "";
         if (f.type === "datetime" && value) {
             if (!isNaN(value)) value = formatDateTime(Number(value));
         }
 
+        const titleAttr = f.description ? `title="${f.description}"` : '';
+
         if (f.enum) {
-            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
-            <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
-                ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
-            </select></div>`;
+            html += `<div class="form-row">
+                <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
+                <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
+                    ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
+                </select>
+            </div>`;
         } else {
-            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
-            <input type="${type}" id="${f.name}" name="${f.name}" value="${value}" ${f.required ? "required" : ""}></div>`;
+            html += `<div class="form-row">
+                <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
+                <input type="${type}" id="${f.name}" name="${f.name}" value="${value}" ${f.required ? "required" : ""}>
+            </div>`;
         }
     });
-
 
     html += `<button type="submit">Save</button></form>`;
     contentArea.innerHTML = html;
@@ -276,7 +291,6 @@ async function renderEntityForm(entity, data = {}) {
         formData.forEach((value, key) => {
             if (!(key === "id" && !value)) {
                 const f = schema.fields.find(ff => ff.name === key);
-
                 if (f) {
                     if(f.auto) return;
                     switch (f.type) {
@@ -293,7 +307,6 @@ async function renderEntityForm(entity, data = {}) {
                             payload[key] = value ?? "";
                             break;
                     }
-
                 } else payload[key] = value ?? "";
             }
         });
@@ -328,14 +341,15 @@ async function renderEntityRead(entity, id) {
 
     let html = `<h3>Read ${schema.label}</h3><table>`;
 
-    html += `<tr><th>ID</th><td data-label="ID">${json.id ?? ""}</td></tr>`;
+    html += `<tr><th title="Unique identifier">ID</th><td data-label="ID">${json.id ?? ""}</td></tr>`;
 
     if ('created_at' in json) {
-        html += `<tr><th>Created At</th><td data-label="Created At">${formatDateTime(json.created_at)}</td></tr>`;
+        html += `<tr><th title="Record creation time">Created At</th><td data-label="Created At">${formatDateTime(json.created_at)}</td></tr>`;
     }
     if ('updated_at' in json) {
-        html += `<tr><th>Updated At</th><td data-label="Updated At">${formatDateTime(json.updated_at)}</td></tr>`;
+        html += `<tr><th title="Last update time">Updated At</th><td data-label="Updated At">${formatDateTime(json.updated_at)}</td></tr>`;
     }
+
 
     for (const f of schema.fields.filter(f => !f.auto)) {
         let value = json[f.name];
@@ -351,7 +365,12 @@ async function renderEntityRead(entity, id) {
             }
         }
 
-        html += `<tr><th>${toLabel(f.name)}</th><td data-label="${toLabel(f.name)}">${value ?? ""}</td></tr>`;
+
+        html += `<tr>
+  <th title="${f.description ?? ''}">${toLabel(f.name)}</th>
+  <td data-label="${toLabel(f.name)}">${value ?? ""}</td>
+</tr>`;
+
     }
 
     html += "</table>";
@@ -382,7 +401,7 @@ async function renderEntityList(entity) {
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
         <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${pageSize === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
-    html += `<table><thead><tr><th>ID</th>${listFields.map(f => `<th>${toLabel(f.name)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>`;
+    html += `<table><thead><tr><th>ID</th>${listFields.map(f => `<th title="${f.description ?? ''}">${toLabel(f.name)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>`;
     if (items.length === 0) html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
     else for (const item of items) {
         html += `<tr><td>${item.id}</td>`;
