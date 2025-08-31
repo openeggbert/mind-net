@@ -38,20 +38,19 @@ namespace mindnet::models
     using misc::def;
     using misc::coldef;
     using_flags();
-
     inline def HISTORY_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_columns({
             //
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::IP_ADDRESS),
-            coldef(COLS::TABLE_NAME, MANDATORY),
-            coldef(COLS::RECORD_ID, MANDATORY),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY).set_description("User ID who made the change"),
+            coldef(COLS::IP_ADDRESS).set_description("IP address of the user"),
+            coldef(COLS::TABLE_NAME, MANDATORY).set_description("Name of the table where change was made"),
+            coldef(COLS::RECORD_ID, MANDATORY).set_description("ID of the record that was changed"),
             coldef(COLS::OPERATION, MANDATORY).set_enum_definition(
-                enums::crudl_to_enum_definition()),
-            coldef(COLS::DATA_JSON, MANDATORY),
-            coldef(COLS::REASON),
+                enums::crudl_to_enum_definition()).set_description("Type of operation performed"),
+            coldef(COLS::DATA_JSON, MANDATORY).set_description("JSON data containing the changes"),
+            coldef(COLS::REASON).set_description("Reason for making the change"),
             //
         });
 

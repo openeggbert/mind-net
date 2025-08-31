@@ -40,10 +40,11 @@ namespace mindnet::models
     inline def LINK_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    coldef(COLS::FROM_NOTE_ID,MANDATORY).set_foreign_key("note"),
-    coldef(COLS::TO_URL,MANDATORY),
-});
+        .set_columns({
+            coldef(COLS::FROM_NOTE_ID, MANDATORY).set_foreign_key("note").set_description(
+                "ID of the note this link is from"),
+            coldef(COLS::TO_URL, MANDATORY).set_description("URL this link points to"),
+        });
 
     struct Model : misc::BaseModel
     {

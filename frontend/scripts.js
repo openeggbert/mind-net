@@ -13,12 +13,12 @@ async function loadModelDefinition() {
     if (cached) {
         const { timestamp, data } = JSON.parse(cached);
         if (now - timestamp < CACHE_TTL_MS) {
-            console.log("I use cached model_definition");
+            console.log("Using cached model_definition");
             return data;
         }
     }
 
-    console.log("I download model_definition z API...");
+    console.log("Downloading model_definition from API...");
     const resp = await fetch(MODEL_DEFINITION_URL);
     if (!resp.ok) throw new Error("Error loading model_definition");
     const data = await resp.json();
@@ -238,7 +238,7 @@ async function renderEntityForm(entity, data = {}) {
     const schema = entitySchemas[entity];
     if (!schema) return;
 
-    // --- Předvyplnění z URL parametrů jen při CREATE ---
+    // --- Pre-fill from URL parameters only during CREATE ---
     if (!data.id) {
         const params = new URLSearchParams(window.location.search);
         schema.fields.forEach(f => {

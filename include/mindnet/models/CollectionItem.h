@@ -41,11 +41,12 @@ namespace mindnet::models
     inline def COLLECTION_ITEM_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    coldef(COLS::COLLECTION_ID,FOREIGN_KEY | MANDATORY),
-    coldef(COLS::NOTE_ID,FOREIGN_KEY | MANDATORY),
-    coldef(COLS::ORDER_INDEX, INTEGER),
-});
+        .set_columns({
+            coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY).set_description(
+                "Foreign key referencing the collection"),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY).set_description("Foreign key referencing the note"),
+            coldef(COLS::ORDER_INDEX, INTEGER).set_description("Ordering index of the item within the collection"),
+        });
 
     struct Model : misc::BaseModel
     {

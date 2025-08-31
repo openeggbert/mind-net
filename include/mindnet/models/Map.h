@@ -52,7 +52,11 @@ namespace mindnet::models
             coldef(COLS::OWNER_RIGHTS, INTEGER | MANDATORY).set_default_value("7"),
             coldef(COLS::TEAM_RIGHTS, INTEGER | MANDATORY).set_default_value("7"),
             coldef(COLS::OTHER_RIGHTS, INTEGER | MANDATORY).set_default_value("7")
-        });
+        })
+    .add_custom_list_action("note","List notes", {"map_id","{id}"})
+    .add_custom_list_action("note","Create note", {"map_id","{id}"})
+    .add_custom_list_action("tag_type","List tags", {"map_id","{id}"})
+    .add_custom_list_action("tag_type","Create tag", {"map_id","{id}"});
 
 
     struct Model : misc::BaseModel

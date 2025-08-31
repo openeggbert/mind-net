@@ -44,11 +44,15 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::DISCUSSION_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::CONTENT, TEXTAREA | MANDATORY),
-            coldef(COLS::PARENT_COMMENT_ID).set_foreign_key("comment"),
-            coldef(COLS::IS_DELETED, BOOL).set_default_value(0),
+            coldef(COLS::DISCUSSION_ID, MANDATORY | FOREIGN_KEY).set_description(
+                "The ID of the discussion this comment belongs to"),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY).set_description(
+                "The ID of the user who created this comment"),
+            coldef(COLS::CONTENT, TEXTAREA | MANDATORY).set_description("The content of the comment"),
+            coldef(COLS::PARENT_COMMENT_ID).set_foreign_key("comment").set_description(
+                "The ID of the parent comment if this is a reply"),
+            coldef(COLS::IS_DELETED, BOOL).set_default_value(0).
+                                           set_description("Whether this comment has been deleted"),
         });
 
     struct Model : misc::BaseModel

@@ -158,6 +158,21 @@ namespace mindnet::http
 
     void HttpServer::create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_)
     {
+        //todo: remove this duplicity
+        auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
+        {
+            if (!string_.empty())
+            {
+                std::stringstream ss(string_);
+                std::string field_entry;
+
+                while (std::getline(ss, field_entry, ','))
+                {
+                    result.insert(field_entry);
+                }
+            }
+        };
+
         auto column_definition_to_json = [](mindnet::models::misc::ColumnDefinition& column_definition)
         {
             crow::json::wvalue result;
@@ -187,12 +202,39 @@ namespace mindnet::http
             result["unique"] = column_definition.is_unique();
             result["auto"] = column_definition.is_auto();
             result["default_value"] = column_definition.get_default_value();
-            if (!column_definition.get_description().empty()) result["description"] = column_definition.get_description();
+            if (!column_definition.get_description().empty()) result["description"] = column_definition.
+                get_description();
 
             return result;
         };
 
-        auto model_definition_to_json = [column_definition_to_json, d_b_](
+
+        auto custom_action_to_json = [](mindnet::models::misc::CustomAction& custom_action)
+        {
+            crow::json::wvalue result;
+
+            result["action"] = custom_action.action;
+            result["label"] = custom_action.label;
+            result["crudl"] = custom_action.crudl;
+            result["model_name"] = custom_action.model_name;
+
+            if (!custom_action.params.empty())
+            {
+                crow::json::wvalue params_as_json;
+
+                for (auto& entry : custom_action.params)
+                {
+                    params_as_json[entry.first] = entry.second; // [ "id", 1
+                }
+
+                result["params"] = std::move(params_as_json);
+            }
+
+            return result;
+        };
+
+
+        auto model_definition_to_json = [column_definition_to_json, d_b_, custom_action_to_json](
             string& model_name,
             const std::set<string>& fields_set
         )
@@ -229,18 +271,33 @@ namespace mindnet::http
                 }
                 res["columns"] = std::move(column_list);
             }
+            if (fields_set_empty || fields_set.contains("custom_actions"))
+            {
+                crow::json::wvalue::list custom_action_list;
+                for (auto ca : model_definition->get_custom_actions())
+                {
+                    auto custom_action_as_json_ = custom_action_to_json(ca);
+                    custom_action_list.push_back(custom_action_as_json_);
+                }
+                res["custom_actions"] = std::move(custom_action_list);
+            }
+
 
             return res;
         };
         //READ
         CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
-        ([d_b_, model_definition_to_json](const crow::request& req, string model_name)
+        ([d_b_, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
         {
             if (!d_b_->has_repository(model_name))
             {
                 return crow::response(404, "Model definition not found: " + model_name);
             }
-            auto json = model_definition_to_json(model_name, {});
+            string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
+
+            std::set<string> fields_set;
+            split_string_by_commas(fields, fields_set);
+            auto json = model_definition_to_json(model_name, fields_set);
 
             return crow::response(200, json);
         });
@@ -252,21 +309,6 @@ namespace mindnet::http
         // DELETE
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::DELETE)
             ([] { return crow::response(405, "Method not allowed for model_definition.");; });
-
-        //todo: remove this duplicity
-        auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
-        {
-            if (!string_.empty())
-            {
-                std::stringstream ss(string_);
-                std::string field_entry;
-
-                while (std::getline(ss, field_entry, ','))
-                {
-                    result.insert(field_entry);
-                }
-            }
-        };
 
         // LIST
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::GET)

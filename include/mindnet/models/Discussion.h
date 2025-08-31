@@ -42,13 +42,15 @@ namespace mindnet::models
     inline def DISCUSSION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    //
-    coldef(COLS::TEAM_ID,MANDATORY | FOREIGN_KEY),
-    coldef(COLS::TITLE,MANDATORY),
-    coldef(COLS::CREATED_BY,MANDATORY).set_foreign_key("user"),
-    coldef(COLS::IS_PINNED,BOOL).set_default_value(0),
-});
+        .set_columns({
+            //
+            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY).set_description("ID of the team this discussion belongs to"),
+            coldef(COLS::TITLE, MANDATORY).set_description("Title of the discussion"),
+            coldef(COLS::CREATED_BY, MANDATORY).set_foreign_key("user").set_description(
+                "User ID who created the discussion"),
+            coldef(COLS::IS_PINNED, BOOL).set_default_value(0).set_description(
+                "Whether this discussion is pinned to the top"),
+        });
 
     struct Model : misc::BaseModel
     {

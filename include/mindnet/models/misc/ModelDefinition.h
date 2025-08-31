@@ -43,6 +43,7 @@ namespace mindnet::models::misc
         column_definitions columns; ///< Column definitions for the model
         std::set<enums::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
+        std::vector<CustomAction> custom_actions{};
 
     public:
         /**
@@ -77,6 +78,11 @@ namespace mindnet::models::misc
         [[nodiscard]] const bool is_virtual_table() const
         {
             return virtual_table;
+        }
+
+        [[nodiscard]] const std::vector<CustomAction> get_custom_actions() const
+        {
+            return custom_actions;
         }
 
         // Setters
@@ -165,6 +171,67 @@ namespace mindnet::models::misc
         {
             virtual_table = value;
             return *this;
+        }
+
+    private:
+        [[nodiscard]] ModelDefinition& add_custom_action(CustomAction custom_action)
+        {
+            custom_actions.emplace_back(custom_action);
+
+            return *this;
+        }
+
+        [[nodiscard]] ModelDefinition& add_custom_action(
+            enums::Crudl crudl_,
+            std::string model_name_,
+            std::string label_,
+            const std::map<std::string, std::string>& params_ = {})
+        {
+            auto custom_action = CustomAction(crudl_, model_name_, label_, params_);
+            custom_actions.emplace_back(custom_action);
+
+            return *this;
+        }
+
+        [[nodiscard]] ModelDefinition& add_custom_action(
+            enums::Crudl crudl_,
+            std::string model_name_,
+            std::string label_,
+            const std::vector<std::string>& params_ = {})
+        {
+            if (params_.size() != 2)
+            {
+                throw std::invalid_argument("Invalid params for custom action");
+            }
+            std::map<std::string, std::string> map;
+            for (int i = 0; i < params_.size(); i++)
+            {
+                auto param1 = params_.at(i);
+                i++;
+                auto param2 = params_.at(i);
+                map.insert(std::make_pair(param1, param2));
+            }
+            auto custom_action = CustomAction(crudl_, model_name_, label_, map);
+            custom_actions.emplace_back(custom_action);
+
+            return *this;
+        }
+
+    public:
+        [[nodiscard]] ModelDefinition& add_custom_list_action(
+            std::string model_name_,
+            std::string label_,
+            const std::vector<std::string>& params_ = {})
+        {
+            return add_custom_action(enums::Crudl::LIST, model_name_, label_, params_);
+        }
+
+        [[nodiscard]] ModelDefinition& add_custom_create_action(
+            std::string model_name_,
+            std::string label_,
+            const std::vector<std::string>& params_ = {})
+        {
+            return add_custom_action(enums::Crudl::CREATE, model_name_, label_, params_);
         }
     };
 }

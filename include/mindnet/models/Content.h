@@ -46,9 +46,10 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::VALUE, TEXT | MANDATORY),
-            coldef(COLS::FORMAT, INTEGER).set_default_value(0).set_enum_definition(enums::content_format_to_enum_definition()),
-            coldef(COLS::VERSION, INTEGER).set_default_value("1"),
+            coldef(COLS::VALUE, TEXT | MANDATORY).set_description("Content value/body"),
+            coldef(COLS::FORMAT, INTEGER).set_default_value(0).set_enum_definition(
+                enums::content_format_to_enum_definition()).set_description("Content format type"),
+            coldef(COLS::VERSION, INTEGER).set_default_value("1").set_description("Content version number"),
             //
         });
 

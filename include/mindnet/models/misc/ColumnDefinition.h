@@ -25,6 +25,7 @@
 #include <vector>
 #include <set>
 
+#include "CustomAction.h"
 #include "mindnet/models/misc/EnumDefinition.h"
 
 #define using_flags()\
@@ -86,7 +87,6 @@ namespace mindnet::models::misc
         bool auto_ = false;
         std::string default_value;
         string description;
-
 
         bool ends_with_id(const char* str)
         {

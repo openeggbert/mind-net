@@ -40,13 +40,13 @@ namespace mindnet::models
     inline def COLLECTION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-    .set_columns({
-    coldef(COLS::NAME,MANDATORY),
-    coldef(COLS::DESCRIPTION),
-    coldef(COLS::ORDER_INDEX,INTEGER),
-    coldef(COLS::CREATED_BY).set_foreign_key("user"),
-    coldef(COLS::IS_PUBLIC,BOOL).set_default_value(0),
-});
+        .set_columns({
+            coldef(COLS::NAME, MANDATORY).set_description("Collection name"),
+            coldef(COLS::DESCRIPTION).set_description("Collection description"),
+            coldef(COLS::ORDER_INDEX, INTEGER).set_description("Order index for sorting"),
+            coldef(COLS::CREATED_BY).set_foreign_key("user").set_description("User ID who created this collection"),
+            coldef(COLS::IS_PUBLIC, BOOL).set_default_value(0).set_description("Whether this collection is public"),
+        });
 
     struct Model : misc::BaseModel
     {
