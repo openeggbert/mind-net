@@ -1,32 +1,34 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Mind Net</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" type="image/png" href="favicon.png">
-  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Mind Net</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
-  <header>
-    <h1><a href="index.html" style="text-decoration: none; color: white;"><img src="favicon.png" width="32" height="32"> Mind Net</a></h1>
-
+<header>
+    <button id="mobileMenuButton" class="mobile-menu-btn">☰ Menu</button>
+    <h1><a href="index.html" style="text-decoration: none; color: white;"><img src="favicon.png" width="32" height="32">
+        Mind Net</a></h1>
     <nav id="entityNav">
-      <!-- Entity links will be injected here -->
+        <!-- Entity links will be injected here -->
     </nav>
-  </header>
+</header>
 
-  <div class="submenu" id="crudMenu">
+<div class="submenu" id="crudMenu">
     <!-- CRUD actions will be injected here -->
-  </div>
+</div>
 
-  <main>
+<main>
     <div class="entity-title" id="entityTitle">Select an entity to begin</div>
     <div class="content-area empty" id="contentArea">No action selected.</div>
-  </main>
+</main>
 
-  <script src="scripts.js"></script>
+<script src="scripts.js"></script>
 
 </body>
 </html>

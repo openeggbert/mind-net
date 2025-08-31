@@ -352,12 +352,10 @@ async function renderEntityList(entity) {
         <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
         <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>`;
 
-        // 👉 jen pro map přidáme Explore
         if (entity === "map") {
-            html += ` <a href="?entity=map&action=explore&id=${item.id}" target="_blank">🗺️ Explore</a>`;
-            // if you want in the same tab instead of a new one:
-            // html+=` <a href="#" onclick="selectEntity('map','explore'); renderMapExplore(${item.id}); return false;">🗺️ Explore</a>`;
+            html += ` <a href="#" onclick="selectAction('explore', ${item.id}); return false;">🗺️ Explore</a>`;
         }
+
 
         html += `</td></tr>`;
     }
@@ -499,6 +497,15 @@ function drawNetwork(nodes, edges, mapId) {
 
         case 2: {
             const options = {
+                interaction: {
+                    dragNodes: true,
+                    zoomView: true,
+                    dragView: true,
+                    multiselect: true,
+                    selectable: true,
+                    hover: true,
+                    touch: true
+                },
                 layout: {
                     hierarchical: {
                         direction: "UD",
@@ -507,7 +514,7 @@ function drawNetwork(nodes, edges, mapId) {
                         nodeSpacing: 100
                     }
                 },
-                physics: {enabled: false}
+                physics: {enabled: true}
             };
 
 
@@ -737,21 +744,37 @@ function renderEntityNav() {
 
 function renderCrudMenu() {
     crudMenu.innerHTML = "";
-    actions.forEach(action => {
-        // Explore is only for map
-        if (action === "explore" && selectedEntity !== "map") return;
+
+    const sortedActions = [...actions];
+    const listIndex = sortedActions.indexOf('list');
+    if (listIndex > -1) {
+        sortedActions.splice(listIndex, 1);
+        sortedActions.unshift('list');
+    }
+
+    sortedActions.forEach(action => {
+        let href = `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
+        if (action === "explore") {
+            if (selectedActionId) href += `&id=${selectedActionId}`;
+        }
 
         const link = document.createElement('a');
-        link.href = `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
+        link.href = href;
         link.textContent = actionLabels[action];
         link.onclick = e => {
             e.preventDefault();
-            selectAction(action);
-            history.pushState({}, "", `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`);
-        }
+            if (action === "explore" && !selectedActionId) {
+                showError("No map selected for Explore action");
+                return;
+            }
+            selectAction(action, selectedActionId);
+            history.pushState({}, "", link.href);
+        };
         crudMenu.appendChild(link);
     });
+
 }
+
 
 
 function updateActiveMenu() {
@@ -772,8 +795,17 @@ function selectEntity(entity, action = null) {
     selectAction(selectedAction);
 }
 
-function selectAction(action) {
+function selectAction(action, id = null) {
     selectedAction = action;
+    selectedActionId = id;
+
+
+    if (selectedAction === 'explore' && !selectedActionId && selectedEntity === 'map') {
+        // default to first map in list or ask user to select
+        selectedActionId = 1; // or another ID you want to use
+    }
+
+    
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
     const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[action]);
     if (activeLink) activeLink.classList.add('active');
@@ -784,18 +816,15 @@ function selectAction(action) {
     if (action === "list") renderEntityList(selectedEntity);
     else if (action === "create") renderEntityForm(selectedEntity);
     else if (action === "read") {
-        const params = getQueryParams();
-        if (params.others.id) renderEntityRead(selectedEntity, params.others.id);
+        if (id) renderEntityRead(selectedEntity, id);
         else contentArea.innerHTML = `<p style="color:red;">No ID provided for Read action.</p>`;
     } else if (action === "explore") {
-        const params = getQueryParams();
-        if (params.others.id) {
-            renderMapExplore(params.others.id);
-        } else {
-            contentArea.innerHTML = `<p style="color:red;">No ID provided for Explore action.</p>`;
-        }
+        if (id) renderMapExplore(id);
+        else contentArea.innerHTML = `<p style="color:red;">No ID provided for Explore action.</p>`;
     } else contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
 }
+
+let selectedActionId = null;
 
 // ========================================
 // 8. Global action helpers
@@ -842,3 +871,13 @@ function initializeFromURL() {
 }
 
 initializeFromURL();
+
+const mobileMenuButton = document.getElementById("mobileMenuButton");
+if (mobileMenuButton) {
+    mobileMenuButton.onclick = () => {
+        const nav = document.getElementById("entityNav");
+        const submenu = document.getElementById("crudMenu");
+        nav.style.display = nav.style.display === "flex" ? "none" : "flex";
+        submenu.style.display = submenu.style.display === "flex" ? "none" : "flex";
+    };
+}
