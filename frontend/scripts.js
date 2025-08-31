@@ -792,7 +792,6 @@ function renderEntityNav() {
 }
 
 
-
 function renderCrudMenu() {
     crudMenu.innerHTML = "";
 
@@ -804,18 +803,18 @@ function renderCrudMenu() {
     }
 
     sortedActions.forEach(action => {
+        const link = document.createElement('a');
         let href = `?entity=${encodeURIComponent(selectedEntity)}&action=${encodeURIComponent(action)}`;
-        if (action === "explore") {
-            if (selectedActionId) href += `&id=${selectedActionId}`;
+        if (['read','update','delete','explore'].includes(action) && selectedActionId) {
+            href += `&id=${selectedActionId}`;
         }
 
-        const link = document.createElement('a');
         link.href = href;
         link.textContent = actionLabels[action];
         link.onclick = e => {
             e.preventDefault();
-            if (action === "explore" && !selectedActionId) {
-                showError("No map selected for Explore action");
+            if (['read','update','delete','explore'].includes(action) && !selectedActionId) {
+                showError(`No ID selected for ${actionLabels[action]}`);
                 return;
             }
             selectAction(action, selectedActionId);
@@ -823,7 +822,6 @@ function renderCrudMenu() {
         };
         crudMenu.appendChild(link);
     });
-
 }
 
 
@@ -850,13 +848,11 @@ function selectAction(action, id = null) {
     selectedAction = action;
     selectedActionId = id;
 
-
+    // Pokud je explore, ale nebylo ID, použij default map
     if (selectedAction === 'explore' && !selectedActionId && selectedEntity === 'map') {
-        // default to first map in list or ask user to select
-        selectedActionId = 1; // or another ID you want to use
+        selectedActionId = 1;
     }
 
-    
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
     const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[action]);
     if (activeLink) activeLink.classList.add('active');
@@ -867,12 +863,26 @@ function selectAction(action, id = null) {
     if (action === "list") renderEntityList(selectedEntity);
     else if (action === "create") renderEntityForm(selectedEntity);
     else if (action === "read") {
-        if (id) renderEntityRead(selectedEntity, id);
+        if (selectedActionId) renderEntityRead(selectedEntity, selectedActionId);
         else contentArea.innerHTML = `<p style="color:red;">No ID provided for Read action.</p>`;
+    } else if (action === "update") {
+        if (selectedActionId) {
+
+            const url = `${API_BASE}/${selectedEntity}/${selectedActionId}`;
+            apiFetch(url).then(data => {
+                if (!data) return;
+                renderEntityForm(selectedEntity, data);
+            });
+        } else contentArea.innerHTML = `<p style="color:red;">No ID provided for Update action.</p>`;
+    } else if (action === "delete") {
+        if (selectedActionId) deleteEntity(selectedEntity, selectedActionId);
+        else contentArea.innerHTML = `<p style="color:red;">No ID provided for Delete action.</p>`;
     } else if (action === "explore") {
-        if (id) renderMapExplore(id);
+        if (selectedActionId) renderMapExplore(selectedActionId);
         else contentArea.innerHTML = `<p style="color:red;">No ID provided for Explore action.</p>`;
-    } else contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
+    } else {
+        contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
+    }
 }
 
 let selectedActionId = null;
@@ -882,24 +892,27 @@ let selectedActionId = null;
 // ========================================
 
 window.readEntity = (entity, id) => {
-    selectEntity(entity, "read");
+    selectedEntity = entity;
+    selectedActionId = id;
+    selectAction(entitySchemas[entity] ? "read" : "list", id);
     history.pushState({}, "", `?entity=${encodeURIComponent(entity)}&action=read&id=${encodeURIComponent(id)}`);
-    renderEntityRead(entity, id);
 }
+
 window.editEntity = (entity, data) => {
     selectedEntity = entity;
-    selectedAction = "update";
+    selectedActionId = data.id;
+    selectAction("update", data.id);
     history.pushState({}, "", `?entity=${encodeURIComponent(entity)}&action=update&id=${encodeURIComponent(data.id)}`);
-    renderCrudMenu();
-    updateActiveMenu();
-    entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
-    renderEntityForm(entity, data);
 }
+
 window.deleteEntity = async (entity, id) => {
     if (!confirm("Do you really want to delete this record?")) return;
     await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
-    renderEntityList(entity);
+    // po smazání vždy přejdi na list
+    selectedActionId = null;
+    selectAction("list", null);
 }
+
 
 // ========================================
 // 9. Initialization
@@ -907,19 +920,22 @@ window.deleteEntity = async (entity, id) => {
 
 function initializeFromURL() {
     renderEntityNav();
-    const {entity, action} = getQueryParams();
+    const {entity, action, others} = getQueryParams();
+    const id = others.id ? Number(others.id) : null;
     if (entity && entities.includes(entity)) {
         selectedEntity = entity;
         selectedAction = action && actions.includes(action) ? action : 'list';
+        selectedActionId = id;
         [...entityNav.children].forEach(el => el.classList.remove('active'));
         const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[selectedEntity]);
         if (activeLink) activeLink.classList.add('active');
         entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
         contentArea.classList.remove('empty');
         renderCrudMenu();
-        selectAction(selectedAction);
+        selectAction(selectedAction, selectedActionId);
     }
 }
+
 
 initializeFromURL();
 

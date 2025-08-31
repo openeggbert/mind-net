@@ -35,6 +35,9 @@ namespace mindnet::http
         crow::SimpleApp crow_app;
         std::shared_ptr<persistence::Persistence> db_;
         std::unordered_map<std::string, CachedFile> file_cache;
+        //
+        void create_web_endpoints(const std::string& directory_for_static_files);
+        void create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_);
     };
 }
 

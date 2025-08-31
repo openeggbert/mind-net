@@ -85,6 +85,8 @@ namespace mindnet::models::misc
         bool unique = false;
         bool auto_ = false;
         std::string default_value;
+        string description;
+
 
         bool ends_with_id(const char* str)
         {
@@ -128,17 +130,21 @@ namespace mindnet::models::misc
                 unique = true;
                 auto_ = true;
                 column_type = mindnet::enums::ColumnType::INTEGER;
+                description = "Unique identifier of the record.";
+
             }
             if (column_name == bc::CREATED_AT)
             {
                 mandatory = true;
                 auto_ = true;
                 column_type = mindnet::enums::ColumnType::DATETIME;
+                description = "Timestamp when the record was created.";
             }
             if (column_name == bc::UPDATED_AT)
             {
                 auto_ = true;
                 column_type = mindnet::enums::ColumnType::DATETIME;
+                description = "Timestamp of the last update to the record.";
             }
             flags(flags_);
         }
@@ -195,6 +201,10 @@ namespace mindnet::models::misc
         {
             return auto_;
         }
+        [[nodiscard]] const string& get_description() const
+        {
+            return description;
+        }
 
         // Setters
 
@@ -230,6 +240,11 @@ namespace mindnet::models::misc
         ColumnDefinition& set_default_value(int value)
         {
             default_value = std::to_string(value);
+            return *this;
+        }
+        ColumnDefinition& set_description(string str)
+        {
+            description = str;
             return *this;
         }
 
