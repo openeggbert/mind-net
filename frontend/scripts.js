@@ -230,12 +230,12 @@ async function renderEntityForm(entity, data = {}) {
     filterColumnsForForm(schema.fields).forEach(f => {
         let type = f.type === "datetime" ? "text" : f.type;
         if (f.enum) {
-            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' *' : ''}</label>
+            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
                 <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
                     ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
                 </select></div>`;
         } else {
-            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' *' : ''}</label>
+            html += `<div class="form-row"><label for="${f.name}">${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
                 <input type="${type}" id="${f.name}" name="${f.name}" value="${data[f.name] ?? ""}" ${f.required ? "required" : ""}></div>`;
         }
     });
