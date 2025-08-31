@@ -84,7 +84,6 @@ cmake --build .
 
 ## TODO
 
-### Remove macro str and use std::string instead
 ### Support for export to static HTML files
 
 ### Support for PostgresSQL storage
@@ -100,12 +99,6 @@ cmake --build .
 ### New entity Flag
 
 - starred
-
-### New entity Question
-
-### New entity Review
-
-### New entity SM2Result
 
 ### SM-2 (SuperMemo 2)
 
@@ -212,4 +205,118 @@ This highlights questions where the user consistently scores poorly.
   * Application updates REVIEW_IN_X_DAYS, EASINESS_FACTOR, REPETITION, EXPIRES_AT
   * Continues to the next node
 
+#### Refactor script.js
 
+The huge file script.js can  be refactored and split into several modules. In its current state, it is *
+*monolithic** - containing everything from API, cache, schema build, CRUD renderers, navigation, network map to
+initialization and menu. Splitting it into modules will improve readability, maintenance and testability.
+
+I propose the following **modular approach**:
+
+---
+
+### 1️⃣ `api.js` - API and cache
+
+* `API_BASE`, `MODEL_DEFINITION_URL`, `CACHE_KEY`, `CACHE_TTL_MS`
+* `loadModelDefinition()`
+* `apiFetch()`
+* `resolveForeignKeyValue()`
+
+---
+
+### 2️⃣ `schemas.js` - Entity schema build
+
+* `buildEntitySchemas()`
+* `buildGlobals()`
+* `mapColumnType()`
+* `findTitleField()`
+* `filterColumnsForForm()`
+* `toLabel()`
+* `capitalize()`
+
+---
+
+### 3️⃣ `state.js` - Global state
+
+* `entities`, `entityLabels`, `actions`, `entitySchemas`
+* `selectedEntity`, `selectedAction`, `selectedActionId`
+* `currentPage`, `pageSize`, `totalPages`
+* `mainEntities`, `linkEntities`, `reviewEntities`, `collaborationEntities`, `suggestionEntities`, `notMainEntities`
+* `actionLabels`
+
+---
+
+### 4️⃣ `dom.js` - DOM references and basic UI helpers
+
+* `entityNav`, `crudMenu`, `entityTitle`, `contentArea`
+* `showError()`, `getQueryParams()`, `formatDateTime()`, `parseDateTimeToUnix()`
+* `getHiddenColumns()`, `setHiddenColumns()`, `isColumnHidden()`
+
+---
+
+### 5️⃣ `crud.js` - CRUD render functions
+
+* `renderEntityForm()`
+* `renderEntityRead()`
+* `renderEntityList()`
+* `renderColumnSelector()`
+* `executeCustomAction()`
+* Event handlers for form submit, pageSize changes, applyColumns
+
+---
+
+### 6️⃣ `explore.js` - Map/Network visualization
+
+* `renderMapExplore()`
+* `loadChildren()`
+* `loadTestNodes()`
+* `add_node_and_edges()`
+* `drawNetwork()`
+* `replaceSpacesWithUnderscores()`
+* `currentCenterNodeId`, `parentStack`, `network`
+
+---
+
+### 7️⃣ `navigation.js` - Navigation and menu
+
+* `renderEntityNav()`
+* `renderCrudMenu()`
+* `updateActiveMenu()`
+* `selectEntity()`
+* `selectAction()`
+* `changePage()`
+
+---
+
+### 8️⃣ `actions.js` - Global CRUD helpers
+
+* `readEntity()`, `editEntity()`, `deleteEntity()`
+
+---
+
+### 9️⃣ `init.js` - Initialization
+
+* `initializeFromURL()`
+* Mobile menu button handler
+* Launching: `initializeFromURL();`
+
+---
+
+✅ **Benefits:**
+
+* Individual JS parts have a clear purpose.
+* Reduced dependency on global variables (you can gradually transition to ES6 module `import/export`).
+* Easier testing and maintenance.
+* Future extensions e.g. additional entities, custom actions, or new visualizations will be simpler.
+* `initializeFromURL()`
+* Mobile menu button handler
+* Launching: `initializeFromURL();`
+
+---
+
+✅ **Benefits:**
+
+* Individual JS parts have a clear purpose.
+* Reduced dependency on global variables (you can gradually transition to ES6 module `import/export`).
+* Easier testing and maintenance.
+* Future extensions e.g. additional entities, custom actions, or new visualizations will be simpler.
