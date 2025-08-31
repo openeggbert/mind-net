@@ -302,6 +302,16 @@ async function renderEntityRead(entity, id) {
     if (!schema) return;
 
     let html = `<h3>Read ${schema.label}</h3><table>`;
+
+    html += `<tr><th>ID</th><td data-label="ID">${json.id ?? ""}</td></tr>`;
+
+    if ('created_at' in json) {
+        html += `<tr><th>Created At</th><td data-label="Created At">${json.created_at}</td></tr>`;
+    }
+    if ('updated_at' in json) {
+        html += `<tr><th>Updated At</th><td data-label="Updated At">${json.updated_at}</td></tr>`;
+    }
+
     for (const f of schema.fields) {
         let value = json[f.name];
         if (f.enum && value in f.enum) value = f.enum[value];
@@ -311,9 +321,11 @@ async function renderEntityRead(entity, id) {
         }
         html += `<tr><th>${toLabel(f.name)}</th><td data-label="${toLabel(f.name)}">${value ?? ""}</td></tr>`;
     }
+
     html += "</table>";
     contentArea.innerHTML = html;
 }
+
 
 // ========================================
 // 6. List + Pagination
