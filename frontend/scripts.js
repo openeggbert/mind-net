@@ -226,6 +226,24 @@ function parseDateTimeToUnix(str) {
     return Math.floor(new Date(y,m-1,d,h,min,s).getTime()/1000);
 }
 
+
+
+// key: hidden_columns
+// value: { "note": ["created_at","updated_at"], "user": ["password"] }
+function getHiddenColumns() {
+    return JSON.parse(localStorage.getItem("hidden_columns") || "{}");
+}
+
+function setHiddenColumns(hiddenCols) {
+    localStorage.setItem("hidden_columns", JSON.stringify(hiddenCols));
+}
+
+function isColumnHidden(entity, column) {
+    const hiddenCols = getHiddenColumns();
+    return hiddenCols[entity]?.includes(column);
+}
+
+
 // ========================================
 // 5. CRUD render functions
 // ========================================
@@ -444,7 +462,8 @@ async function renderEntityList(entity) {
     if (!schema) return;
 
     totalPages = json.total_pages || 1;
-    const listFields = schema.fields.filter(f => !f.auto && f.list !== false);
+    const listFields = schema.fields.filter(f => !f.auto && f.list !== false && !isColumnHidden(entity, f.name));
+
 
     let html = `<h3>${schema.label} List</h3>`;
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
@@ -486,6 +505,27 @@ async function renderEntityList(entity) {
     </div>`;
     contentArea.innerHTML = html;
 
+
+
+
+    contentArea.innerHTML = renderColumnSelector(entity) + html;
+
+    document.getElementById("applyColumns").onclick = () => {
+        const checkboxes = document.querySelectorAll('.column-selector input[type="checkbox"]');
+        const hiddenCols = [];
+        checkboxes.forEach(cb => {
+            if (!cb.checked) hiddenCols.push(cb.dataset.col);
+        });
+        const allHidden = getHiddenColumns();
+        allHidden[entity] = hiddenCols;
+        setHiddenColumns(allHidden);
+        renderEntityList(entity); // refresh list
+    };
+
+
+
+
+
     document.getElementById("pageSizeSelect").addEventListener("change", e => {
         pageSize = Number(e.target.value);
         currentPage = 1;
@@ -494,6 +534,24 @@ async function renderEntityList(entity) {
 
 
 }
+
+
+function renderColumnSelector(entity) {
+    const schema = entitySchemas[entity];
+    const hiddenCols = getHiddenColumns()[entity] || [];
+    let html = `<div class="column-selector"><strong>Columns:</strong> `;
+    schema.fields.filter(f => !f.auto && f.list !== false).forEach(f => {
+        const checked = hiddenCols.includes(f.name) ? "" : "checked";
+        html += `<label style="margin-right:10px;">
+            <input type="checkbox" data-col="${f.name}" ${checked}> ${toLabel(f.name)}
+        </label>`;
+    });
+    html += `<button id="applyColumns">Apply</button></div>`;
+    return html;
+}
+
+
+
 
 // ========================================
 // ?. Explore
