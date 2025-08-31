@@ -41,6 +41,7 @@ namespace mindnet::models::misc
     {
     public:
         string action;
+
         string label;
         std::string crudl;
         string model_name;

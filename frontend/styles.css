@@ -357,3 +357,40 @@ table td:last-child {
 }
 
 
+.custom-action-model {
+    font-weight: bold;
+    color: #1d5993;
+    display: inline-block;
+    margin-right: 0.5em; /* space between name and first buttons */
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+    width: 100px!important;
+}
+#custom-action-model-container {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #eee;
+}
+.custom-action-btn {
+    display: inline-block; /* buttons inline next to name */
+    margin: 0.2em 0.2em 0.2em 1em;
+    padding: 0.6em 0.6em;
+    background-color: #57aae8;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.custom-action-btn:hover {
+    color: yellow;
+    background-color: #2483cc;
+    transition: background 0.2s;
+}
+
+.custom-action-btn:last-child::after {
+    content: "\A"; /* new line after last button */
+    white-space: pre;
+}

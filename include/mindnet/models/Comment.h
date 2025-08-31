@@ -53,7 +53,10 @@ namespace mindnet::models
                 "The ID of the parent comment if this is a reply"),
             coldef(COLS::IS_DELETED, BOOL).set_default_value(0).
                                            set_description("Whether this comment has been deleted"),
-        });
+        })
+    .add_custom_list_action("comment","List subcomments", {"parent_comment_id","{id}"})
+    .add_custom_create_action("comment","Add subcomment", {"parent_comment_id","{id}"})
+    ;
 
     struct Model : misc::BaseModel
     {

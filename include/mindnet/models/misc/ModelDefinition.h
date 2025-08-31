@@ -173,30 +173,10 @@ namespace mindnet::models::misc
             return *this;
         }
 
-    private:
-        [[nodiscard]] ModelDefinition& add_custom_action(CustomAction custom_action)
-        {
-            custom_actions.emplace_back(custom_action);
-
-            return *this;
-        }
-
         [[nodiscard]] ModelDefinition& add_custom_action(
             enums::Crudl crudl_,
-            std::string model_name_,
-            std::string label_,
-            const std::map<std::string, std::string>& params_ = {})
-        {
-            auto custom_action = CustomAction(crudl_, model_name_, label_, params_);
-            custom_actions.emplace_back(custom_action);
-
-            return *this;
-        }
-
-        [[nodiscard]] ModelDefinition& add_custom_action(
-            enums::Crudl crudl_,
-            std::string model_name_,
-            std::string label_,
+            std::string& model_name_,
+            std::string& label_,
             const std::vector<std::string>& params_ = {})
         {
             if (params_.size() != 2)
@@ -221,7 +201,7 @@ namespace mindnet::models::misc
         [[nodiscard]] ModelDefinition& add_custom_list_action(
             std::string model_name_,
             std::string label_,
-            const std::vector<std::string>& params_ = {})
+            const std::vector<std::string>& params_)
         {
             return add_custom_action(enums::Crudl::LIST, model_name_, label_, params_);
         }
@@ -229,9 +209,23 @@ namespace mindnet::models::misc
         [[nodiscard]] ModelDefinition& add_custom_create_action(
             std::string model_name_,
             std::string label_,
-            const std::vector<std::string>& params_ = {})
+            const std::vector<std::string>& params_)
         {
             return add_custom_action(enums::Crudl::CREATE, model_name_, label_, params_);
+        }
+
+        [[nodiscard]] ModelDefinition& add_custom_list_action(
+            std::string model_name_,
+            const std::vector<std::string>& params_)
+        {
+            return add_custom_list_action(model_name_, "List", params_);
+        }
+
+        [[nodiscard]] ModelDefinition& add_custom_create_action(
+            std::string model_name_,
+            const std::vector<std::string>& params_)
+        {
+            return add_custom_create_action(model_name_, "Add", params_);
         }
     };
 }

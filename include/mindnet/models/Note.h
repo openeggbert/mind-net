@@ -55,7 +55,18 @@ namespace mindnet::models
                                      set_description("Importance level of the note."),
             coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
                                      set_description("Difficulty level of the note.")
-        });
+        })
+    .add_custom_list_action("note","List children", {"parent_note_id","{id}"})
+    .add_custom_create_action("note","Add child", {"parent_note_id","{id}"})
+    .add_custom_list_action("tag","List tags", {"note_id","{id}"})
+    .add_custom_create_action("tag","Add tag", {"note_id","{id}"})
+    .add_custom_list_action("property",{"note_id","{id}"})
+    .add_custom_create_action("property", {"note_id","{id}"})
+    .add_custom_list_action("reference", {"from_note_id","{id}"})
+    .add_custom_create_action("reference", {"from_note_id","{id}"})
+    .add_custom_list_action("link", {"from_note_id","{id}"})
+    .add_custom_create_action("link", {"from_note_id","{id}"})
+    ;
 
     struct Model : misc::BaseModel
     {

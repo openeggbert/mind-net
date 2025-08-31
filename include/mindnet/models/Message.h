@@ -57,7 +57,12 @@ namespace mindnet::models
                 coldef(COLS::IS_READ,BOOL).set_default_value(0),
                 coldef(COLS::DELETED_AT,DATETIME),
                 coldef(COLS::STARRED,BOOL).set_default_value(0)
-            });
+            })
+    .add_custom_list_action("message","Inbox", {"todo","{id}"})
+    .add_custom_list_action("message","Sent", {"todo","{id}"})
+    .add_custom_list_action("message","Drafts", {"todo","{id}"})
+    .add_custom_create_action("collection_item","Compose", {"todo","{id}"})
+    ;
     // *** Definition of model ends ***
 
     struct Model : misc::BaseModel

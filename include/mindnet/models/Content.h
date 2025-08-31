@@ -51,7 +51,9 @@ namespace mindnet::models
                 enums::content_format_to_enum_definition()).set_description("Content format type"),
             coldef(COLS::VERSION, INTEGER).set_default_value("1").set_description("Content version number"),
             //
-        });
+        })
+    .add_custom_list_action("note","Get note", {"content_id","{id}"})
+    ;
 
     struct Model : misc::BaseModel
     {

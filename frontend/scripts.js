@@ -53,7 +53,8 @@ function buildEntitySchemas(modelDef) {
             label: toLabel(item.model_name),
             titleField: findTitleField(item),
             fields,
-            allowedOperations: item.allowed_rest_operations
+            allowedOperations: item.allowed_rest_operations,
+            customActions: item.custom_actions || []
         };
 
     }
@@ -341,39 +342,75 @@ async function renderEntityRead(entity, id) {
 
     let html = `<h3>Read ${schema.label}</h3><table>`;
 
-    html += `<tr><th title="Unique identifier">ID</th><td data-label="ID">${json.id ?? ""}</td></tr>`;
+    html += `<tr><th>ID</th><td>${json.id ?? ""}</td></tr>`;
 
     if ('created_at' in json) {
-        html += `<tr><th title="Record creation time">Created At</th><td data-label="Created At">${formatDateTime(json.created_at)}</td></tr>`;
+        html += `<tr><th>Created At</th><td>${formatDateTime(json.created_at)}</td></tr>`;
     }
     if ('updated_at' in json) {
-        html += `<tr><th title="Last update time">Updated At</th><td data-label="Updated At">${formatDateTime(json.updated_at)}</td></tr>`;
+        html += `<tr><th>Updated At</th><td>${formatDateTime(json.updated_at)}</td></tr>`;
     }
-
 
     for (const f of schema.fields.filter(f => !f.auto)) {
         let value = json[f.name];
-
         if (f.type === "datetime") value = formatDateTime(value);
         else if (f.enum && value in f.enum) value = f.enum[value];
         else if (f.foreignKey) {
             if (!value || value === 0) {
-                value = "<span style='color:grey;'>NONE</span>";
+                value = "<span style='color:grey;font-style:italic;'>NONE</span>";
             } else {
                 const fkTitle = await resolveForeignKeyValue(f.foreignKey, value);
                 value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${fkTitle}</a>`;
             }
         }
 
-
-        html += `<tr>
-  <th title="${f.description ?? ''}">${toLabel(f.name)}</th>
-  <td data-label="${toLabel(f.name)}">${value ?? ""}</td>
-</tr>`;
-
+        html += `<tr><th>${toLabel(f.name)}</th><td>${value ?? ""}</td></tr>`;
     }
 
     html += "</table>";
+// --- custom actions always visible ---
+    html += `<h4 style="margin-bottom: 1em;">Custom Actions</h4>`;
+
+
+
+
+    if (schema.customActions && schema.customActions.length > 0) {
+        // group actions by model_name
+        const grouped = {};
+        schema.customActions.forEach(action => {
+            const model = action.model_name || "Other";
+            if (!grouped[model]) grouped[model] = [];
+            grouped[model].push(action);
+        });
+
+        Object.keys(grouped).sort().forEach(model => {
+            // Convert model_name to label (replace underscores with spaces and capitalize words)
+            const modelLabel = model.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            html += `<div id="custom-action-model-container"><div class="custom-action-model">${modelLabel}:</div>`;
+
+            grouped[model].forEach(action => {
+                const label = action.label ?? action.action;
+                let prefix = '';
+                if (action.crudl?.toUpperCase() === 'LIST') prefix = '📋 ';
+                else if (action.crudl?.toUpperCase() === 'CREATE') prefix = '➕ ';
+
+                html += `<a href="#" class="custom-action-btn" onclick="executeCustomAction('${entity}', '${action.action}', ${id}); return false;">
+                        ${prefix}${label}
+                    </a>`;
+            });
+            html += `</div>`;
+        });
+    } else {
+        html += `<p style="color:grey;font-style:italic;">No custom actions.</p>`;
+    }
+
+
+
+
+
+
+
+
     contentArea.innerHTML = html;
 }
 
@@ -411,7 +448,7 @@ async function renderEntityList(entity) {
             else if (f.enum && value in f.enum) value = f.enum[value];
             else if (f.foreignKey) {
                 if (!value || value === 0) {
-                    value = "<span style='color:grey;'>NONE</span>";
+                    value = "<span style='color:grey;font-style:italic;'>NONE</span>";
                 } else {
                     value = `<a href="#" onclick="readEntity('${f.foreignKey}',${value});return false;">${await resolveForeignKeyValue(f.foreignKey, value)}</a>`;
                 }
@@ -930,6 +967,62 @@ window.deleteEntity = async (entity, id) => {
     // po smazání vždy přejdi na list
     selectedActionId = null;
     selectAction("list", null);
+}
+
+async function executeCustomAction(entity, action, id) {
+    const schema = entitySchemas[entity];
+    if (!schema) {
+        showError("Unknown entity: " + entity);
+        return;
+    }
+
+    const def = schema.customActions.find(a => a.action === action);
+    if (!def) {
+        showError("Unknown action: " + action);
+        return;
+    }
+
+    // prepare parameters (replace {id})
+    const params = {};
+    for (const [k, v] of Object.entries(def.params || {})) {
+        params[k] = (v === "{id}") ? id : v;
+    }
+
+    // build URL (usually /entity/{id}/{action}) 
+    const url = new URL(`${API_BASE}/${entity}/${id}/${action}`);
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+
+    // call API
+    const json = await apiFetch(url.toString());
+    if (!json) return;
+
+    // when API returns list of items -> render table
+    if (Array.isArray(json.items)) {
+        let html = `<h3>${def.label}</h3><table><thead><tr>`;
+        if (json.items.length > 0) {
+            Object.keys(json.items[0]).forEach(col => {
+                html += `<th>${toLabel(col)}</th>`;
+            });
+        }
+        html += `</tr></thead><tbody>`;
+        json.items.forEach(row => {
+            html += `<tr>`;
+            Object.values(row).forEach(val => {
+                html += `<td>${val ?? ""}</td>`;
+            });
+            html += `</tr>`;
+        });
+        html += `</tbody></table>`;
+        html += `<p><a href="#" onclick="readEntity('${entity}', ${id});return false;">⬅️ Back</a></p>`;
+        contentArea.innerHTML = html;
+    } else {
+        // fallback: zobraz JSON
+        contentArea.innerHTML = `
+            <h3>${def.label}</h3>
+            <pre style="background:#f5f5f5;padding:10px;border-radius:6px;">${JSON.stringify(json,null,2)}</pre>
+            <p><a href="#" onclick="readEntity('${entity}', ${id});return false;">⬅️ Back</a></p>
+        `;
+    }
 }
 
 

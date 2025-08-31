@@ -50,7 +50,10 @@ namespace mindnet::models
                 "User ID who created the discussion"),
             coldef(COLS::IS_PINNED, BOOL).set_default_value(0).set_description(
                 "Whether this discussion is pinned to the top"),
-        });
+        })
+    .add_custom_list_action("comment","List comments", {"discussion_id","{id}"})
+    .add_custom_create_action("comment","Add comment", {"discussion_id","{id}"})
+    ;
 
     struct Model : misc::BaseModel
     {

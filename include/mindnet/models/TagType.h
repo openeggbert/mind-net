@@ -47,7 +47,10 @@ namespace mindnet::models
             coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::TITLE, MANDATORY),
             //
-        });
+        })
+    .add_custom_list_action("tag","List tags", {"tag_type_id","{id}"})
+    .add_custom_create_action("tag","Add tag", {"tag_type_id","{id}"})
+    ;
 
     struct Model : misc::BaseModel
     {
