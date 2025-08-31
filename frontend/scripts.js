@@ -388,16 +388,28 @@ async function renderEntityRead(entity, id) {
             const modelLabel = model.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             html += `<div id="custom-action-model-container"><div class="custom-action-model">${modelLabel}:</div>`;
 
+
+
             grouped[model].forEach(action => {
                 const label = action.label ?? action.action;
                 let prefix = '';
                 if (action.crudl?.toUpperCase() === 'LIST') prefix = '📋 ';
                 else if (action.crudl?.toUpperCase() === 'CREATE') prefix = '➕ ';
 
-                html += `<a href="#" class="custom-action-btn" onclick="executeCustomAction('${entity}', '${action.action}', ${id}); return false;">
-                        ${prefix}${label}
-                    </a>`;
+                // --- build URL with params ---
+                const url = new URL(window.location.origin + window.location.pathname);
+                url.searchParams.set('entity', entity);
+                url.searchParams.set('action', action.action);
+                url.searchParams.set('id', id);
+                Object.entries(action.params || {}).forEach(([k, v]) => {
+                    url.searchParams.set(k, v === "{id}" ? id : v);
+                });
+
+                html += `<a href="${url.toString()}" class="custom-action-btn">${prefix}${label}</a>`;
             });
+
+
+
             html += `</div>`;
         });
     } else {
