@@ -1,7 +1,9 @@
+import { PORT } from "./port.js";
+
 // ========================================
-// 1. API a cache
+// 1. API and cache
 // ========================================
-const API_BASE = "http://localhost:8888/api";
+const API_BASE = `http://localhost:${PORT}/api`;
 const MODEL_DEFINITION_URL = `${API_BASE}/model_definition`;
 const CACHE_KEY = "model_definition_cache";
 const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours

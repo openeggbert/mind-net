@@ -2,6 +2,7 @@
 // Created by robertvokac on 7/31/25.
 //
 #include <iostream>
+#include <filesystem>
 
 #include "mindnet/Utils.h"
 #include <memory>
@@ -118,6 +119,12 @@ bool commands_function_start(
                 try
                 {
                     port = std::stoi(arguments[i + 1]);
+                    if (port < 1 || port > 65535)
+                    {
+                        mindnet::fatal << "Port must be between 1 and 65535" << commit;
+                        exit_status = 1;
+                        return true;
+                    }
                     custom_port = true;
                 }
                 catch (std::exception& e)
@@ -156,6 +163,14 @@ bool commands_function_start(
             return true;
         }
     }
+    if (!std::filesystem::exists(static_directory) || !std::filesystem::is_directory(static_directory))
+    {
+        mindnet::fatal << "Static directory does not exist: " << static_directory << commit;
+        exit_status = 1;
+        return true;
+    }
+    
+
     mindnet::http::HttpServer server{db, static_directory};
 
     mindnet::routes::ModelController controller;

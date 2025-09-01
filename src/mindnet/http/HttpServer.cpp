@@ -3,22 +3,35 @@
 #include <unordered_set>
 #include <utility>
 #include <utility>
+#include <fstream>
+#include <filesystem>
 
 #include "mindnet/Global.h"
 
 namespace mindnet::http
 {
     HttpServer::HttpServer(std::shared_ptr<persistence::Persistence> db,
-                           const std::string& directory_for_static_files)
-        : db_(std::move(db))
+                           const std::string& directory_for_static_files_)
+        : db_(std::move(db)),
+          directory_for_static_files(directory_for_static_files_)
     {
-        create_web_endpoints(directory_for_static_files);
+        create_web_endpoints();
 
         create_model_definition_endpoints(db_);
     }
 
     void HttpServer::run(int port)
     {
+        namespace fs = std::filesystem;
+        fs::path port_js_path = fs::path(directory_for_static_files) / "port.js";
+        if (fs::exists(port_js_path))
+        {
+            fs::remove(port_js_path);
+        }
+        std::ofstream port_js(port_js_path);
+        port_js << "export const PORT = " << port << ";" << std::endl;
+        port_js.close();
+
         crow_app.port(port).multithreaded().run();
     }
 
@@ -28,10 +41,10 @@ namespace mindnet::http
     }
 
 
-    void HttpServer::create_web_endpoints(const std::string& directory_for_static_files)
+    void HttpServer::create_web_endpoints()
     {
         CROW_ROUTE(crow_app, "/web/<string>")
-        ([directory_for_static_files, this](const crow::request& req, crow::response& res, const std::string& file_name)
+        ([this](const crow::request& req, crow::response& res, const std::string& file_name)
         {
             if (file_name.find("..") != std::string::npos)
             {
@@ -42,7 +55,7 @@ namespace mindnet::http
             }
 
             static const std::unordered_set<std::string> allowed_files = {
-                "index.html", "styles.css", "scripts.js", "favicon.png"
+                "index.html", "styles.css", "scripts.js", "port.js", "favicon.png"
             };
 
             if (allowed_files.find(file_name) == allowed_files.end())
@@ -202,8 +215,9 @@ namespace mindnet::http
             result["unique"] = column_definition.is_unique();
             result["auto"] = column_definition.is_auto();
             result["default_value"] = column_definition.get_default_value();
-            if (!column_definition.get_description().empty()) result["description"] = column_definition.
-                get_description();
+            if (!column_definition.get_description().empty())
+                result["description"] = column_definition.
+                    get_description();
 
             return result;
         };
