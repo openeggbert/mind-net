@@ -55,7 +55,22 @@ namespace mindnet::http
             }
 
             static const std::unordered_set<std::string> allowed_files = {
-                "index.html", "styles.css", "scripts.js", "port.js", "favicon.png"
+                "index.html",
+                "styles.css",
+                "scripts.js",
+                "port.js",
+                "favicon.png",
+                "api.js",
+                "schemas.js",
+                "state.js",
+                "dom.js",
+                "crud.js",
+                "explore.js",
+                "navigation.js",
+                "actions.js",
+                "init.js",
+
+
             };
 
             if (allowed_files.find(file_name) == allowed_files.end())
