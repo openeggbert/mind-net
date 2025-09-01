@@ -23,6 +23,26 @@ namespace mindnet::http
     void HttpServer::run(int port)
     {
         namespace fs = std::filesystem;
+
+        ////
+        std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
+        std::vector<fs::path> js_files;
+        for (const auto& entry : fs::directory_iterator(directory_for_static_files))
+        {
+            if (entry.path().extension() == ".js")
+            {
+                js_files.push_back(entry.path());
+            }
+        }
+        std::sort(js_files.begin(), js_files.end());
+
+        for (const auto& file : js_files)
+        {
+            js_file << file.filename().string() << ":" << std::endl;
+            std::ifstream input(file, std::ios::binary);
+            js_file << input.rdbuf() << std::endl;
+        }
+        //
         fs::path port_js_path = fs::path(directory_for_static_files) / "port.js";
         if (fs::exists(port_js_path))
         {
@@ -31,6 +51,8 @@ namespace mindnet::http
         std::ofstream port_js(port_js_path);
         port_js << "export const PORT = " << port << ";" << std::endl;
         port_js.close();
+
+
 
         crow_app.port(port).multithreaded().run();
     }

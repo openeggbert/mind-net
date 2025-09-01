@@ -1,5 +1,6 @@
 import { PORT } from "./port.js";
-import { entitySchemas } from "./state.js";
+import {showError} from "./dom.js";
+import {getEntitySchemas} from "./state.js";
 
 
 export const API_BASE = `http://localhost:${PORT}/api`;
@@ -45,7 +46,7 @@ export async function apiFetch(url, options = {}) {
 
 export async function resolveForeignKeyValue(fkEntity, id) {
     if (!id) return "";
-    const schema = entitySchemas[fkEntity];
+    const schema = getEntitySchemas()[fkEntity];
     if (!schema) return id;
     const json = await apiFetch(`${API_BASE}/${fkEntity}/${id}`);
     if (!json) return id;

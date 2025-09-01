@@ -1,9 +1,8 @@
 import {
-    selectedEntity,
-    selectedActionId,
-    selectedAction, entities, entityLabels, actionLabels,
+    actionLabels, getActions, getSelectedEntity, getEntityLabels, setSelectedEntity, setSelectedAction,
+    setSelectedActionId, getSelectedAction, getSelectedActionId, getEntities,
 } from "./state.js";
-import {renderEntityNav} from "./navigation.js";
+import {renderCrudMenu, renderEntityNav, selectAction} from "./navigation.js";
 import {contentArea, entityNav, entityTitle, getQueryParams} from "./dom.js"
 
 
@@ -17,17 +16,17 @@ export function initializeFromURL() {
     renderEntityNav();
     const {entity, action, others} = getQueryParams();
     const id = others.id ? Number(others.id) : null;
-    if (entity && entities.includes(entity)) {
-        selectedEntity = entity;
-        selectedAction = action && actions.includes(action) ? action : 'list';
-        selectedActionId = id;
+    if (entity && getEntities().includes(entity)) {
+        setSelectedEntity(entity);
+        setSelectedAction(action && getActions().includes(action) ? action : 'list');
+        setSelectedActionId(id);
         [...entityNav.children].forEach(el => el.classList.remove('active'));
-        const activeLink = [...entityNav.children].find(el => el.textContent === entityLabels[selectedEntity]);
+        const activeLink = [...entityNav.children].find(el => el.textContent === getEntityLabels()[getSelectedEntity()]);
         if (activeLink) activeLink.classList.add('active');
-        entityTitle.textContent = `${entityLabels[selectedEntity]} – ${actionLabels[selectedAction]}`;
+        entityTitle.textContent = `${getEntityLabels()[getSelectedEntity()]} – ${actionLabels[getSelectedAction()]}`;
         contentArea.classList.remove('empty');
         renderCrudMenu();
-        selectAction(selectedAction, selectedActionId);
+        selectAction(getSelectedAction(), getSelectedActionId());
     }
 }
 

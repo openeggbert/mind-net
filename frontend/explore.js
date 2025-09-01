@@ -3,7 +3,8 @@
 // ========================================
 // ?. Explore
 // ========================================
-import {API_BASE, apiFetch} from "./api";
+import {API_BASE, apiFetch} from "./api.js";
+import {contentArea} from "./dom.js";
 
 let currentCenterNodeId = null;
 let parentStack = [];
@@ -25,7 +26,7 @@ export async function renderMapExplore(mapId) {
         drawNetwork(nodes, edges, mapId);
         currentCenterNodeId = "map_" + mapJson.id;
         //loadChildren(mapId, currentCenterNodeId);
-        loadTestNodes(mapId, currentCenterNodeId);
+        await loadTestNodes(mapId, currentCenterNodeId);
     }
 }
 

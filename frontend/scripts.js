@@ -4,8 +4,9 @@ import { buildEntitySchemas, buildGlobals } from "./schemas.js";
 
 // State
 import {
-    entities, entityLabels, actions,
-    entitySchemas
+    getActions,
+    getEntities,
+    getEntitySchemas, setActions, setEntities, setEntityLabels, setEntitySchemas
 } from "./state.js";
 
 // Navigation & UI
@@ -13,18 +14,27 @@ import { initializeFromURL } from "./init.js";
 
 (async () => {
     const modelDef = await loadModelDefinition();
+    console.log("modelDef:", modelDef);
 
-    entitySchemas = buildEntitySchemas(modelDef); // populate global
-    const globals = buildGlobals(modelDef, entitySchemas);
 
-    entities = globals.entities;           // populate global
-    entityLabels = globals.entityLabels;   // populate global
-    actions = globals.actions;             // populate global
+    const schemas = buildEntitySchemas(modelDef);
+    console.log("buildEntitySchemas returned:", schemas);
 
-    console.log("Schemas:", entitySchemas);
-    console.log("Entities:", entities);
-    console.log("Labels:", entityLabels);
-    console.log("Actions:", actions);
+    setEntitySchemas(schemas);
+
+    const globals = buildGlobals(modelDef, schemas);
+    setEntities(globals.entities);
+    setEntityLabels(globals.entityLabels);
+    setActions(globals.actions);
+
+
+
+    console.log("Model definition:", modelDef);
+    console.log("Entity Schemas:", getEntitySchemas());
+    console.log("Entities:", getEntities());
+    console.log("Actions:", getActions());
+
+
 
     initializeFromURL(); // ← start after model load
 })();

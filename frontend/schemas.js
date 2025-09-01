@@ -46,7 +46,7 @@ export function buildGlobals(modelDef, schemas) {
         entityLabels[key] = schema.label;
     }
 
-    // unikátní operace
+    // unique operations
     const actions = [
         ...new Set(modelDef.items.flatMap(i =>
             i.allowed_rest_operations.map(a => a.toLowerCase())
@@ -67,10 +67,6 @@ export function mapColumnType(colType) {
         case "BLOB": return "file";
         default: return "text";
     }
-}
-
-export function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export function findTitleField(item) {

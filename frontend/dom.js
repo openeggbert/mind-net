@@ -1,5 +1,4 @@
 
-
 export const entityNav = document.getElementById('entityNav');
 export const crudMenu = document.getElementById('crudMenu');
 export const entityTitle = document.getElementById('entityTitle');
@@ -17,7 +16,7 @@ export function showError(msg) {
 }
 export function formatDateTime(value) {
     if (!value || value === 0) return "";
-    const d = new Date(Number(value) * 1000); // Unix timestamp v sekundách
+    const d = new Date(Number(value) * 1000); // Unix timestamp in seconds
     const pad = n => n.toString().padStart(2,'0');
     return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }

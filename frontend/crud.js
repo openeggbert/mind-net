@@ -2,15 +2,30 @@
 // 5. CRUD render functions
 // ========================================
 import {
-    totalPages,
-    pageSize,
-    currentPage
+    getCurrentPage,
+    getEntitySchemas, getPageSize, getTotalPages, setCurrentPage, setPageSize, setTotalPages,
 } from "./state.js";
-import {API_BASE, apiFetch} from "./api";
+import {API_BASE, apiFetch, resolveForeignKeyValue} from "./api.js";
+import {
+    contentArea,
+    formatDateTime,
+    getHiddenColumns,
+    getQueryParams, isColumnHidden,
+    parseDateTimeToUnix,
+    setHiddenColumns,
+    showError
+} from "./dom.js";
+import {filterColumnsForForm, toLabel} from "./schemas.js";
+import {selectAction} from "./navigation.js";
+
+
+
+
+
 
 
 export async function renderEntityForm(entity, data = {}) {
-    const schema = entitySchemas[entity];
+    const schema = getEntitySchemas()[entity];
     if (!schema) return;
 
     // --- Pre-fill from URL parameters only during CREATE ---
@@ -111,7 +126,7 @@ export async function renderEntityRead(entity, id) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const json = await apiFetch(`${API_BASE}/${entity}/${id}`);
     if (!json) return;
-    const schema = entitySchemas[entity];
+    const schema = getEntitySchemas()[entity];
     if (!schema) return;
 
     let html = `<h3>Read ${schema.label}</h3><table>`;
@@ -208,8 +223,8 @@ export async function renderEntityRead(entity, id) {
 export async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const url = new URL(`${API_BASE}/${entity}`);
-    url.searchParams.set("page_number", currentPage);
-    url.searchParams.set("page_size", pageSize);
+    url.searchParams.set("page_number", getCurrentPage());
+    url.searchParams.set("page_size", getPageSize());
 
 
 
@@ -225,10 +240,10 @@ export async function renderEntityList(entity) {
     const json = await apiFetch(url.toString());
     if (!json) return;
     const items = json.items || [];
-    const schema = entitySchemas[entity];
+    const schema = getEntitySchemas()[entity];
     if (!schema) return;
 
-    totalPages = json.total_pages || 1;
+    setTotalPages(json.total_pages || 1);
     const listFields = schema.fields.filter(f => !f.auto && f.list !== false && !isColumnHidden(entity, f.name));
 
 
@@ -249,7 +264,7 @@ export async function renderEntityList(entity) {
 
 
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
-        <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${pageSize === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
+        <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${getPageSize() === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
     html += `<table><thead><tr><th>ID</th>${listFields.map(f => `<th title="${f.description ?? ''}">${toLabel(f.name)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>`;
     if (items.length === 0) html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
@@ -279,6 +294,8 @@ export async function renderEntityList(entity) {
         html += `</td></tr>`;
 
     }
+    const currentPage = getCurrentPage();
+    const totalPages = getTotalPages();
     html += `</tbody></table>`;
     html += `<div style="margin-top:10px;text-align:center;">
         <button ${currentPage <= 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">Previous</button>
@@ -309,8 +326,8 @@ export async function renderEntityList(entity) {
 
 
     document.getElementById("pageSizeSelect").addEventListener("change", e => {
-        pageSize = Number(e.target.value);
-        currentPage = 1;
+        setPageSize(Number(e.target.value));
+        setCurrentPage(1);
         renderEntityList(entity);
     });
 
@@ -327,7 +344,7 @@ export async function renderEntityList(entity) {
             else params.delete(field);
             history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
         });
-        currentPage = 1;
+        setCurrentPage(1);
         renderEntityList(entity);
     };
 
@@ -338,7 +355,7 @@ export async function renderEntityList(entity) {
 
 
 export function renderColumnSelector(entity) {
-    const schema = entitySchemas[entity];
+    const schema = getEntitySchemas()[entity];
     const hiddenCols = getHiddenColumns()[entity] || [];
     let html = `<div class="column-selector"><strong>Columns:</strong> `;
     schema.fields.filter(f => !f.auto && f.list !== false).forEach(f => {
@@ -354,7 +371,7 @@ export function renderColumnSelector(entity) {
 
 
 export async function executeCustomAction(entity, action, id) {
-    const schema = entitySchemas[entity];
+    const schema = getEntitySchemas()[entity];
     if (!schema) {
         showError("Unknown entity: " + entity);
         return;
