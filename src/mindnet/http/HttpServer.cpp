@@ -25,6 +25,7 @@ namespace mindnet::http
         namespace fs = std::filesystem;
 
         ////
+#ifndef jstxt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
@@ -42,6 +43,9 @@ namespace mindnet::http
             std::ifstream input(file, std::ios::binary);
             js_file << input.rdbuf() << std::endl;
         }
+///
+#endif
+
         //
         fs::path port_js_path = fs::path(directory_for_static_files) / "port.js";
         if (fs::exists(port_js_path))

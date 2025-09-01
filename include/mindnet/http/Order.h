@@ -26,11 +26,11 @@ namespace mindnet::http
 
     inline Order string_to_order(const string& string)
     {
-        if (string == "ASC")
+        if (string == "ASC" || string == "asc")
         {
             return Order::ASC;
         }
-        if (string == "DESC")
+        if (string == "DESC" || string == "desc")
         {
             return Order::DESC;
         }

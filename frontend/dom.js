@@ -6,7 +6,10 @@ export const contentArea = document.getElementById('contentArea');
 //
 export function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
-    return {entity: params.get('entity'), action: params.get('action'), others: Object.fromEntries(params.entries())};
+    const entity = params.get('entity');
+    const action = params.get('action');
+    const others = Object.fromEntries(params.entries());
+    return {entity, action, others};
 }
 
 

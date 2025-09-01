@@ -220,12 +220,44 @@ export async function renderEntityRead(entity, id) {
 // 6. List + Pagination
 // ========================================
 
+
+window.sortList = function(entity, field) {
+    const params = new URLSearchParams(window.location.search);
+    const currentSort = params.get('sort');
+    const currentOrder = params.get('order') || 'asc';
+
+    if (currentSort === field) {
+        // toggle order
+        params.set('order', currentOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+        params.set('sort', field);
+        params.set('order', 'asc');
+    }
+
+    history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+    setCurrentPage(1);
+    renderEntityList(entity);
+};
+
+
 export async function renderEntityList(entity) {
+
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const url = new URL(`${API_BASE}/${entity}`);
+
+
+    const queryParams = getQueryParams();
+    const currentSort = queryParams.sort || '';
+    const currentOrder = queryParams.order || 'asc';
+
+
+
     url.searchParams.set("page_number", getCurrentPage());
     url.searchParams.set("page_size", getPageSize());
 
+
+    if (currentSort) url.searchParams.set('sort', currentSort);
+    if (currentOrder) url.searchParams.set('order', currentOrder);
 
 
     // --- ADD FILTERS FROM URL OR INPUTS ---
@@ -258,7 +290,11 @@ export async function renderEntityList(entity) {
         ${toLabel(f.name)}: <input type="text" class="filter-input" data-field="${f.name}" value="${getQueryParams().others[f.name] || ''}">
     </label>`;
     });
-    html += `<button id="applyFilters">Apply Filters</button></div>`;
+    html += `
+    <button id="applyFilters" style="padding:6px 12px; font-size:1rem; margin-right:5px;">Search</button>
+    <button id="clearFilters" style="padding:6px 12px; font-size:1rem;">Clear</button>
+</div>`;
+
 
 
 
@@ -266,7 +302,22 @@ export async function renderEntityList(entity) {
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
         <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${getPageSize() === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
-    html += `<table><thead><tr><th>ID</th>${listFields.map(f => `<th title="${f.description ?? ''}">${toLabel(f.name)}</th>`).join('')}<th>Actions</th></tr></thead><tbody>`;
+    html += `<table><thead><tr>
+    
+    <th class="sortable" data-field="id">ID <span>${currentSort==='id' ? (currentOrder==='asc'?'🔼':'🔽') : ''}</span></th>
+    
+    
+    
+    
+    
+
+${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.description ?? ''}" style="cursor:pointer;">
+        ${toLabel(f.name)}${currentSort===f.name ? (currentOrder==='asc'?' 🔼':' 🔽') : ''}
+    </th>`).join('')}
+
+    <th>Actions</th>
+</tr></thead><tbody>`;
+
     if (items.length === 0) html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
     else for (const item of items) {
         html += `<tr><td>${item.id}</td>`;
@@ -302,25 +353,86 @@ export async function renderEntityList(entity) {
         Page ${currentPage} of ${totalPages}
         <button ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Next</button>
     </div>`;
-    contentArea.innerHTML = html;
+    contentArea.innerHTML = `
+    <div id="columnSelectorContainer">${renderColumnSelector(entity)}</div>
+    <div id="tableContainer">
+        ${html}
+    </div>
+`;
+
+
+// --- přiřazení řazení na kliknutí hlaviček ---
+    document.querySelectorAll("#tableContainer th.sortable").forEach(th => {
+        th.onclick = () => {
+            const field = th.dataset.field;
+            window.sortList(entity, field);
+        };
+    });
 
 
 
 
-    contentArea.innerHTML = renderColumnSelector(entity) + html;
 
-    document.getElementById("applyColumns").onclick = () => {
-        const checkboxes = document.querySelectorAll('.column-selector input[type="checkbox"]');
-        const hiddenCols = [];
-        checkboxes.forEach(cb => {
-            if (!cb.checked) hiddenCols.push(cb.dataset.col);
+// teď už prvek existuje → můžeme přiřadit listener
+    const pageSizeSelect = document.getElementById("pageSizeSelect");
+    if (pageSizeSelect) {
+        pageSizeSelect.addEventListener("change", e => {
+            setPageSize(Number(e.target.value));
+            setCurrentPage(1);
+            renderEntityList(entity);
         });
-        const allHidden = getHiddenColumns();
-        allHidden[entity] = hiddenCols;
-        setHiddenColumns(allHidden);
-        renderEntityList(entity); // refresh list
+    }
+
+    const applyFiltersBtn = document.getElementById("applyFilters");
+    if (applyFiltersBtn) applyFiltersBtn.onclick = () => {
+        const filterInputs = document.querySelectorAll('.filter-input');
+        filterInputs.forEach(input => {
+            const field = input.dataset.field;
+            const value = input.value.trim();
+            const params = new URLSearchParams(window.location.search);
+            if (value) params.set(field, value);
+            else params.delete(field);
+            history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+        });
+        setCurrentPage(1);
+        renderEntityList(entity);
     };
 
+    const clearFiltersBtn = document.getElementById("clearFilters");
+    if (clearFiltersBtn) clearFiltersBtn.onclick = () => {
+        const filterInputs = document.querySelectorAll('.filter-input');
+        filterInputs.forEach(input => input.value = '');
+
+        const params = new URLSearchParams(window.location.search);
+        listFields.forEach(f => params.delete(f.name));
+        history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+
+        setCurrentPage(1);
+        renderEntityList(entity);
+    };
+
+
+
+
+
+
+
+
+
+    const applyColumnsBtn = document.getElementById("applyColumns");
+    if (applyColumnsBtn) {
+        applyColumnsBtn.onclick = () => {
+            const checkboxes = document.querySelectorAll('.column-selector input[type="checkbox"]');
+            const hiddenCols = [];
+            checkboxes.forEach(cb => {
+                if (!cb.checked) hiddenCols.push(cb.dataset.col);
+            });
+            const allHidden = getHiddenColumns();
+            allHidden[entity] = hiddenCols;
+            setHiddenColumns(allHidden);
+            renderEntityList(entity); // refresh list
+        };
+    }
 
 
 
@@ -347,6 +459,19 @@ export async function renderEntityList(entity) {
         setCurrentPage(1);
         renderEntityList(entity);
     };
+
+    document.getElementById("clearFilters").onclick = () => {
+        const filterInputs = document.querySelectorAll('.filter-input');
+        filterInputs.forEach(input => input.value = '');
+
+        const params = new URLSearchParams(window.location.search);
+        listFields.forEach(f => params.delete(f.name));
+        history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+
+        setCurrentPage(1);
+        renderEntityList(entity);
+    };
+
 
 
 

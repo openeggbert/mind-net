@@ -53,7 +53,7 @@ namespace mindnet::models
             coldef(COLS::SIBLING_POSITION, MANDATORY).set_description("Position among sibling notes."),
             coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
                                      set_description("Importance level of the note."),
-            coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
+            coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the note.")
         })
     .add_custom_list_action("note","List children", {"parent_note_id","{id}"})
