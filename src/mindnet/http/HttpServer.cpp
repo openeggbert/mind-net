@@ -318,6 +318,11 @@ namespace mindnet::http
             if (fields_set_empty || fields_set.contains("group"))
             {
                 res["group"] = model_definition->get_group();
+                if (fields_set_empty || fields_set.contains("group_order_index"))
+                {
+                    res["group_order_index"] = model_definition->get_group_order_index();
+                }
+
             }
             crow::json::wvalue::list crudl_list;
             for (auto e : model_definition->get_allowed_rest_operations())

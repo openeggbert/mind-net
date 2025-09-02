@@ -35,6 +35,13 @@ nav a.active,
     color: white;
 }
 
+#entityNav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;        /* mezery mezi odkazy */
+    //margin-bottom: 0.5rem; /* prostor pod menu */
+}
+
 .submenu {
     background: #ecf0f1;
     padding: 0.5rem 1rem;

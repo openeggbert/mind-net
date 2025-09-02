@@ -41,6 +41,7 @@ namespace mindnet::models::misc
     private:
         string model_name; ///< Name of the model
         string group;
+        int group_order_index = 0;
         column_definitions columns; ///< Column definitions for the model
         std::set<enums::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
@@ -66,6 +67,11 @@ namespace mindnet::models::misc
         {
             return group;
         }
+        [[nodiscard]] int get_group_order_index() const
+        {
+            return group_order_index;
+        }
+
 
         /** @return The column definitions */
         [[nodiscard]] const column_definitions& get_columns() const
@@ -90,9 +96,10 @@ namespace mindnet::models::misc
             return custom_actions;
         }
 
-        ModelDefinition& set_group(const string& group_)
+        ModelDefinition& set_group(const string& group_, const int group_order_index_ = 0)
         {
             group = group_;
+            group_order_index = group_order_index_;
             return *this;
         }
 

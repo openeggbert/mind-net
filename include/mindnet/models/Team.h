@@ -41,6 +41,7 @@ namespace mindnet::models
 
     inline def TEAM_DEFINITION =
         def(COLS::MODEL_NAME).set_rest_operations("rl")
+        .set_group("Collaboration", 300)
         .set_columns({
             //
             coldef(COLS::NAME,MANDATORY),

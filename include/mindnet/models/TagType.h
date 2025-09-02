@@ -42,6 +42,7 @@ namespace mindnet::models
     inline def TAG_TYPE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Other", 500)
         .set_columns({
             //
             coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),

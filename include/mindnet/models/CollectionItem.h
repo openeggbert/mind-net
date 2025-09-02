@@ -41,6 +41,7 @@ namespace mindnet::models
     inline def COLLECTION_ITEM_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Other", 500)
         .set_columns({
             coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY).set_description(
                 "Foreign key referencing the collection"),

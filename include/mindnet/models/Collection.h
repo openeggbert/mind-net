@@ -40,6 +40,7 @@ namespace mindnet::models
     inline def COLLECTION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Other", 500)
         .set_columns({
             coldef(COLS::NAME, MANDATORY).set_description("Collection name"),
             coldef(COLS::DESCRIPTION).set_description("Collection description"),

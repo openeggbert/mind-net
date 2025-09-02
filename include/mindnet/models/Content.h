@@ -44,6 +44,7 @@ namespace mindnet::models
     inline def CONTENT_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Other", 500)
         .set_columns({
             //
             coldef(COLS::VALUE, TEXT | MANDATORY).set_description("Content value/body"),

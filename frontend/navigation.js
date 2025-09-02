@@ -3,10 +3,7 @@
 // 7. Navigation a menu
 // ========================================
 import {API_BASE, apiFetch} from "./api.js";
-import {
-    mainEntities,
-    notMainEntities,
-    linkEntities, reviewEntities, collaborationEntities, suggestionEntities, actionLabels,
+import {actionLabels,
     getSelectedEntity, getEntityLabels, getSelectedActionId, getCurrentPage, getTotalPages, getEntities,
     getSelectedAction, getActions, setSelectedEntity, setSelectedAction, setSelectedActionId,
     getEntitySchemas,
@@ -20,55 +17,29 @@ import {renderMapExplore} from "./explore.js";
 export function renderEntityNav() {
     entityNav.innerHTML = "";
 
-    // --- If the selected entity is in (linkEntities, reviewEntities, collaborationEntities or suggestionEntities), show it on the left ---
-    if (getSelectedEntity() &&
-        (
-            linkEntities.includes(getSelectedEntity()) ||
-            reviewEntities.includes(getSelectedEntity()) ||
-            collaborationEntities.includes(getSelectedEntity()) ||
-            suggestionEntities.includes(getSelectedEntity())
-        )
-    ) {
-        const link = document.createElement('a');
-        link.href = `?entity=${encodeURIComponent(getSelectedEntity())}`;
+    const schemas = getEntitySchemas();
+    const entities = getEntities();
 
-        const label = getEntityLabels()[getSelectedEntity()];
-        console.log("Left entity link label:", label, "for entity:", getSelectedEntity());
+    const mainPanelEntities = [];
+    const groupedEntities = {};
 
+    // --- Rozdělení entit na hlavní panel a skupiny ---
+    entities.forEach(entity => {
+        const schema = schemas[entity];
+        if (!schema) return;
 
-        link.textContent =
+        if (!schema.group || schema.group === "") {
+            mainPanelEntities.push(entity);
+        } else {
+            if (!groupedEntities[schema.group]) groupedEntities[schema.group] = [];
+            groupedEntities[schema.group].push(entity);
+        }
+    });
 
-            getEntityLabels()[getSelectedEntity()];
-        link.classList.add('active');
-        link.onclick = e => {
-            e.preventDefault();
-            selectEntity(getSelectedEntity());
-            history.pushState({}, "", `?entity=${encodeURIComponent(getSelectedEntity())}`);
-            renderEntityNav();
-        };
-        entityNav.appendChild(link);
-    }
-
-    // --- MAIN entities ---
-    let shownMainEntities = [...mainEntities];
-
-    if (
-        getSelectedEntity() &&
-        !mainEntities.includes(getSelectedEntity()) &&
-        !linkEntities.includes(getSelectedEntity()) &&
-        !reviewEntities.includes(getSelectedEntity()) &&
-        !collaborationEntities.includes(getSelectedEntity()) &&
-        !suggestionEntities.includes(getSelectedEntity())
-    ) {
-        shownMainEntities = [getSelectedEntity(), ...mainEntities];
-    }
-
-    shownMainEntities.forEach(entity => {
+    // --- Seřazení hlavního panelu ---
+    mainPanelEntities.forEach(entity => {
         const link = document.createElement('a');
         link.href = `?entity=${encodeURIComponent(entity)}`;
-
-        const label = getEntityLabels()[entity];
-
         link.textContent = getEntityLabels()[entity];
         link.onclick = e => {
             e.preventDefault();
@@ -80,41 +51,32 @@ export function renderEntityNav() {
         entityNav.appendChild(link);
     });
 
-    // --- entities ---
-    notMainEntities.forEach((entity, index) =>
-    {
+    // --- Seřazení skupin podle group_order_index první entity ---
+    const sortedGroups = Object.entries(groupedEntities).sort(([, entitiesA], [, entitiesB]) => {
+        const idxA = schemas[entitiesA[0]].group_order_index || 0;
+        const idxB = schemas[entitiesB[0]].group_order_index || 0;
+        return idxA - idxB;
+    });
+
+    // --- Vykreslení submenu ---
+    sortedGroups.forEach(([groupName, groupEntities]) => {
         const wrapper = document.createElement('div');
         wrapper.className = "dropdown";
 
         const button_ = document.createElement('a');
         button_.href = "#";
-        button_.textContent = "";
-        switch (index) {
-            case 0: button_.textContent = "Links ▼"; break;
-            case 1: button_.textContent = "Review ▼"; break;
-            case 2: button_.textContent = "Collaboration ▼"; break;
-            case 3: button_.textContent = "Suggestions ▼"; break;
-            default: console.error("Too many not main entities");
-        }
+        button_.textContent = `${groupName} ▼`;
         button_.onclick = e => {
             e.preventDefault();
-
-            // close all other dropdowns
             document.querySelectorAll('.dropdown-content.show').forEach(el => {
-                if (el !== content_) {
-                    el.classList.remove('show');
-                }
+                if (el !== content_) el.classList.remove('show');
             });
-
-            // toggle current
             content_.classList.toggle('show');
         };
 
-
         const content_ = document.createElement('div');
         content_.className = "dropdown-content";
-        entity.forEach(entity => {
-            //if (entity === getSelectedEntity()) return; //remove selected entity from dropdown
+        groupEntities.forEach(entity => {
             const link = document.createElement('a');
             link.href = `?entity=${encodeURIComponent(entity)}`;
             link.textContent = getEntityLabels()[entity];
@@ -127,65 +89,15 @@ export function renderEntityNav() {
             };
             content_.appendChild(link);
         });
+
         wrapper.appendChild(button_);
         wrapper.appendChild(content_);
         entityNav.appendChild(wrapper);
     });
-
-    // --- OTHER entities ---
-    const otherEntities = getEntities().filter(
-        e => !mainEntities.includes(e) &&
-            !linkEntities.includes(e) &&
-            !reviewEntities.includes(e) &&
-            !collaborationEntities.includes(e) &&
-            !suggestionEntities.includes(e) &&
-            e !== getSelectedEntity()
-    );
-
-
-    if (otherEntities.length > 0) {
-        const moreWrapper = document.createElement('div');
-        moreWrapper.className = "dropdown";
-
-        const moreButton = document.createElement('a');
-        moreButton.href = "#";
-        moreButton.textContent = "Other ▼";
-        moreButton.onclick = e => {
-            e.preventDefault();
-
-            // close all other dropdowns
-            document.querySelectorAll('.dropdown-content.show').forEach(el => {
-                if (el !== dropdownContent) {
-                    el.classList.remove('show');
-                }
-            });
-
-            // toggle current
-            dropdownContent.classList.toggle('show');
-        };
-
-
-        const dropdownContent = document.createElement('div');
-        dropdownContent.className = "dropdown-content";
-        otherEntities.forEach(entity => {
-            const link = document.createElement('a');
-            link.href = `?entity=${encodeURIComponent(entity)}`;
-            link.textContent = getEntityLabels()[entity];
-            link.onclick = e => {
-                e.preventDefault();
-                selectEntity(entity);
-                dropdownContent.classList.remove('show');
-                history.pushState({}, "", `?entity=${encodeURIComponent(entity)}`);
-                renderEntityNav();
-            };
-            dropdownContent.appendChild(link);
-        });
-
-        moreWrapper.appendChild(moreButton);
-        moreWrapper.appendChild(dropdownContent);
-        entityNav.appendChild(moreWrapper);
-    }
 }
+
+
+
 export function renderCrudMenu() {
     crudMenu.innerHTML = "";
 

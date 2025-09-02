@@ -42,6 +42,7 @@ namespace mindnet::models
     inline def MESSAGE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Collaboration", 300)
         .set_columns(
             {
                 coldef(COLS::OWNER_ID,MANDATORY).set_foreign_key("user"),

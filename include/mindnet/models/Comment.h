@@ -42,6 +42,7 @@ namespace mindnet::models
     inline def COMMENT_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Collaboration", 300)
         .set_columns({
             //
             coldef(COLS::DISCUSSION_ID, MANDATORY | FOREIGN_KEY).set_description(

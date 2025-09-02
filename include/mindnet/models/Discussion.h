@@ -42,6 +42,7 @@ namespace mindnet::models
     inline def DISCUSSION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Collaboration", 300)
         .set_columns({
             //
             coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY).set_description("ID of the team this discussion belongs to"),

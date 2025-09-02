@@ -31,7 +31,9 @@ export function buildEntitySchemas(modelDef) {
             titleField: findTitleField(item),
             fields,
             allowedOperations: item.allowed_rest_operations.map(op => op.toLowerCase()),
-            customActions: item.custom_actions || []
+            customActions: item.custom_actions || [],
+            group: item.group || "",
+            group_order_index: item.group_order_index || 0,
         };
 
     }

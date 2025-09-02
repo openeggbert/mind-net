@@ -40,29 +40,29 @@ namespace mindnet::models
     inline def REFERENCE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
+        .set_group("Links", 100)
         .set_columns({
             coldef(COLS::FROM_NOTE_ID, MANDATORY).set_foreign_key("note"),
             coldef(COLS::TO_NOTE_ID, MANDATORY).set_foreign_key("note"),
             coldef(COLS::LABEL),
         });
-;
+    ;
 
-struct Model : mindnet::models::misc::BaseModel
-{
-    int from_note_id;
-    int to_note_id;
-    string label;
-
-    create_model_h_methods(Model, MODEL)
-
-    bool operator==(const Model& other) const
+    struct Model : mindnet::models::misc::BaseModel
     {
-        return id == other.id && from_note_id == other.from_note_id && to_note_id == other.to_note_id &&
-            label == other.label && created_at == other.created_at && updated_at == other.
-            updated_at;
-    }
-};
+        int from_note_id;
+        int to_note_id;
+        string label;
 
+        create_model_h_methods(Model, MODEL)
+
+        bool operator==(const Model& other) const
+        {
+            return id == other.id && from_note_id == other.from_note_id && to_note_id == other.to_note_id &&
+                label == other.label && created_at == other.created_at && updated_at == other.
+                updated_at;
+        }
+    };
 }
 #undef Model
 #undef MODEL
