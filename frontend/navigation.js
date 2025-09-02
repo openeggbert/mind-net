@@ -114,7 +114,7 @@ export function renderEntityNav() {
         const content_ = document.createElement('div');
         content_.className = "dropdown-content";
         entity.forEach(entity => {
-            if (entity === getSelectedEntity()) return;
+            //if (entity === getSelectedEntity()) return; //remove selected entity from dropdown
             const link = document.createElement('a');
             link.href = `?entity=${encodeURIComponent(entity)}`;
             link.textContent = getEntityLabels()[entity];
