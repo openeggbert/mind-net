@@ -4,6 +4,7 @@
 
 #include "mindnet/persistence/Persistence.h"
 
+#include "mindnet/Global.h"
 #include "mindnet/models/User.h"
 #include "mindnet/models/Message.h"
 #include "mindnet/models/Team.h"
@@ -101,7 +102,7 @@ namespace mindnet::persistence
 
     int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, string& error)
     {
-        return get_repository(def.get_model_name())->create(fields, error);
+        return 400;//get_repository(def.get_model_name())->create(fields, error);
     }
 
     entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, string& error)
@@ -130,6 +131,13 @@ namespace mindnet::persistence
 
     std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, string& error)
     {
+        // auto result = get_repository(def.get_model_name())->list(query_params, error);
+        // std::vector<entity_fields> duplicated;
+        // for (int i = 0; i < 100; i++)
+        // {
+        //     duplicated.insert(duplicated.end(), result.begin(), result.end());
+        // }
+        // return duplicated;
         return get_repository(def.get_model_name())->list(query_params, error);
     }
 

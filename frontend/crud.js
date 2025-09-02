@@ -16,7 +16,7 @@ import {
     showError
 } from "./dom.js";
 import {filterColumnsForForm, toLabel} from "./schemas.js";
-import {selectAction} from "./navigation.js";
+import {selectAction, changePage} from "./navigation.js";
 
 
 

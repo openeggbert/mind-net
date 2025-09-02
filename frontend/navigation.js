@@ -3,10 +3,11 @@
 // 7. Navigation a menu
 // ========================================
 import {API_BASE, apiFetch} from "./api.js";
-import {actionLabels,
+import {
+    actionLabels,
     getSelectedEntity, getEntityLabels, getSelectedActionId, getCurrentPage, getTotalPages, getEntities,
     getSelectedAction, getActions, setSelectedEntity, setSelectedAction, setSelectedActionId,
-    getEntitySchemas,
+    getEntitySchemas, setCurrentPage,
 } from "./state.js";
 import {contentArea, crudMenu, entityNav, entityTitle, showError} from "./dom.js";
 import {renderEntityForm, renderEntityList, renderEntityRead} from "./crud.js";
@@ -195,7 +196,9 @@ export function selectAction(action, id = null) {
 export function changePage(page) {
     if (page < 1) page = 1;
     if (page > getTotalPages()) page = getTotalPages();
-    getCurrentPage(page);
+    setCurrentPage(page);
     renderEntityList(getSelectedEntity());
 }
+
+window.changePage = changePage;
 
