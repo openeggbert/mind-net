@@ -10,7 +10,7 @@
 
 namespace mindnet::persistence::impl::sqlite
 {
-    constexpr int MIGRATION_COUNT = 22;
+    constexpr int MIGRATION_COUNT = 23;
     inline std::string migrations[MIGRATION_COUNT] = {
 
         R"(
@@ -21,7 +21,7 @@ CREATE TABLE user (
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     --
 	username TEXT NOT NULL UNIQUE,
-	password_hash TEXT NOT NULL,
+	password_hash TEXT,
 	display_name TEXT,
 	role INTEGER NOT NULL DEFAULT 0 CHECK (role IN (0,1,2,3,4)),
 	profile_text TEXT,
@@ -324,29 +324,25 @@ CREATE TABLE collection_item (
 	FOREIGN KEY(note_id) REFERENCES note(id)
 );
 )",
-        //     	R"(
-        // 		CREATE TABLE question (
-        // 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-        // 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        // 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        // 			version INTEGER NOT NULL DEFAULT 1,
-        // 			node_id INTEGER,
-        // 			question_text TEXT NOT NULL,
-        // 			type INTEGER NOT NULL CHECK (type IN (0,1,2,3)),
-        //             difficulty INTEGER DEFAULT 0 CHECK (difficulty IN (0, 1, 2, 3, 4)),
-        // 			tags TEXT, -- for example. CSV: "STL,containers"
-        // 			answers_json TEXT, -- answers as a json object
-        // 			active BOOLEAN DEFAULT 1,
-        //             FOREIGN KEY (node_id) REFERENCES node(id) /*ON DELETE CASCADE*/
-        // 		);
-        //
-        //     	--answers_json
-        // 		--[
-        // 		--  { "text": "std::vector", "is_correct": true },
-        // 		--  { "text": "std::map", "is_correct": false },
-        // 		--  { "text": "std::set", "is_correct": false }
-        // 		--]
-        // )",
+            	R"(
+        		CREATE TABLE question (
+        	id INTEGER PRIMARY KEY AUTOINCREMENT,
+        	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+--
+        			note_id INTEGER,
+        			question_text TEXT NOT NULL,
+        			answers_json TEXT, -- answers as a json object
+                    FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
+        		);
+
+            	--answers_json
+        		--[
+        		--  { "text": "std::vector", "is_correct": true },
+        		--  { "text": "std::map", "is_correct": false },
+        		--  { "text": "std::set", "is_correct": false }
+        		--]
+        )",
         R"(
 CREATE TABLE review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -354,13 +350,15 @@ CREATE TABLE review (
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     --
     user_id INTEGER NOT NULL,
-    note_id INTEGER NOT NULL,
+    note_id INTEGER,
+    question_id INTEGER check (note_id NOT NULL OR question_id NOT NULL),
     review_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     grade INTEGER CHECK (grade BETWEEN 0 AND 5),
     response_data TEXT, -- for example. JSON: {"selected": [1, 3]}
     notes TEXT,
 
     FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
+    FOREIGN KEY (question_id) REFERENCES question(id) /*ON DELETE CASCADE*/,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
@@ -373,7 +371,8 @@ CREATE TABLE sm2_state (
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     --
     user_id INTEGER NOT NULL,
-    note_id INTEGER NOT NULL,
+    note_id INTEGER,
+    question_id INTEGER check (note_id NOT NULL OR question_id NOT NULL),
 --
     repetitions INTEGER DEFAULT 0,
     interval INTEGER DEFAULT 1,
@@ -384,8 +383,10 @@ CREATE TABLE sm2_state (
     last_quality INTEGER DEFAULT 0,
 --
     UNIQUE (user_id, note_id),
+UNIQUE (user_id, question_id),
 
     FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
+    FOREIGN KEY (question_id) REFERENCES question(id) /*ON DELETE CASCADE*/,
     FOREIGN KEY (user_id) REFERENCES user(id) /*ON DELETE CASCADE*/
 );
 )",

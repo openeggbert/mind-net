@@ -32,6 +32,7 @@
 using misc::MANDATORY;\
 using misc::UNIQUE;\
 using misc::FOREIGN_KEY;\
+using misc::HIDDEN;\
 using misc::TEXT;\
 using misc::TEXTAREA;\
 using misc::INTEGER;\
@@ -48,13 +49,14 @@ namespace mindnet::models::misc
         UNIQUE = 1 << 1,
         FOREIGN_KEY = 1 << 2,
         AUTO = 1 << 3,
-        TEXT = 1 << 4,
-        TEXTAREA = 1 << 5,
-        INTEGER = 1 << 6,
-        REAL = 1 << 7,
-        BLOB = 1 << 8,
-        BOOL = 1 << 9,
-        DATETIME = 1 << 10
+        HIDDEN = 1 << 4,
+        TEXT = 1 << 5,
+        TEXTAREA = 1 << 6,
+        INTEGER = 1 << 7,
+        REAL = 1 << 8,
+        BLOB = 1 << 9,
+        BOOL = 1 << 10,
+        DATETIME = 1 << 11
     };
 
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
@@ -64,6 +66,7 @@ namespace mindnet::models::misc
             UNIQUE,
             FOREIGN_KEY,
             AUTO,
+            HIDDEN,
             TEXT,
             TEXTAREA,
             INTEGER,
@@ -85,6 +88,7 @@ namespace mindnet::models::misc
         std::optional<EnumDefinition> enum_definition;
         bool unique = false;
         bool auto_ = false;
+        bool hidden_ = false;
         std::string default_value;
         string description;
 
@@ -201,6 +205,10 @@ namespace mindnet::models::misc
         {
             return auto_;
         }
+        [[nodiscard]] const bool is_hidden() const
+        {
+            return hidden_;
+        }
         [[nodiscard]] const string& get_description() const
         {
             return description;
@@ -266,6 +274,12 @@ namespace mindnet::models::misc
             return *this;
         }
 
+        ColumnDefinition& set_hidden()
+        {
+            hidden_ = true;
+            return *this;
+        }
+
         ColumnDefinition& flags(int flags)
         {
             if (flags == 0)
@@ -284,6 +298,7 @@ namespace mindnet::models::misc
             if (flags_set.contains(UNIQUE)) unique = true;
             if (flags_set.contains(FOREIGN_KEY)) set_foreign_key();
             if (flags_set.contains(AUTO)) set_auto();
+            if (flags_set.contains(HIDDEN)) set_auto();
             //
             if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
             if (flags_set.contains(TEXTAREA)) column_type = enums::ColumnType::TEXTAREA;

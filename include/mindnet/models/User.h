@@ -40,7 +40,7 @@ namespace mindnet::models
 
     inline def USER_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_rest_operations("rl")
+        .set_rest_operations("crl")
         .set_group("Collaboration", 300)
         .set_columns({
             //

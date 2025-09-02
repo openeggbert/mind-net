@@ -25,11 +25,6 @@ export const getCurrentPage = () => _state.currentPage;
 export const getPageSize = () => _state.pageSize;
 export const getTotalPages = () => _state.totalPages;
 
-//
-export function getEntityAllowedOps(entity) {
-    return _state['entitySchemas'][entity]?.allowed_rest_operations ?? [];
-}
-//
 
 // setters
 export const setEntities = (value) => { _state.entities = value; };
@@ -42,25 +37,6 @@ export const setSelectedActionId = (value) => { _state.selectedActionId = value;
 export const setCurrentPage = (value) => { _state.currentPage = value; };
 export const setPageSize = (value) => { _state.pageSize = value; };
 export const setTotalPages = (value) => { _state.totalPages = value; };
-
-
-// export const mainEntities = ['map', 'note', 'tag', 'property'];
-// export const linkEntities = ['reference', 'link'];
-// export const reviewEntities = ['review', 'sm2_state'];
-// export const collaborationEntities = ['user', 'team', 'team_member', 'message', 'discussion', 'comment'];
-// export const suggestionEntities = ['suggestion', 'suggestion_review'];
-// export const notMainEntities = [linkEntities, reviewEntities, collaborationEntities, suggestionEntities];
-// //
-
-
-// -        button_.textContent = "";
-// -        switch (index) {
-//     -            case 0: button_.textContent = "Links ▼"; break;
-//         -            case 1: button_.textContent = "Review ▼"; break;
-//         -            case 2: button_.textContent = "Collaboration ▼"; break;
-//         -            case 3: button_.textContent = "Suggestions ▼"; break;
-//         -            default: console.error("Too many not main entities");
-//         -        }
 
 export const actionLabels = {
     list: '📋 List',

@@ -24,6 +24,7 @@
 #include "mindnet/models/CollectionItem.h"
 #include "mindnet/models/Review.h"
 #include "mindnet/models/SM2State.h"
+#include "mindnet/models/Question.h"
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
 
@@ -73,6 +74,7 @@ namespace mindnet::persistence
         add_repository(collection_item, CollectionItem, COLLECTION_ITEM);
         add_repository(review, Review, REVIEW);
         add_repository(sm2_state, SM2State, SM2_STATE);
+        add_repository(question, Question, QUESTION);
         add_repository(reference, Reference, REFERENCE);
         add_repository(link, Link, LINK);
     }

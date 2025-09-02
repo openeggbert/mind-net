@@ -33,6 +33,7 @@
 #include "mindnet/models/CollectionItem.h"
 #include "mindnet/models/Review.h"
 #include "mindnet/models/SM2State.h"
+#include "mindnet/models/Question.h"
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
 //
@@ -194,6 +195,7 @@ bool commands_function_start(
     add_controller(COLLECTION_ITEM)
     add_controller(REVIEW)
     add_controller(SM2_STATE)
+    add_controller(QUESTION)
     add_controller(REFERENCE)
     add_controller(LINK)
     //

@@ -74,31 +74,172 @@ cmake -B . -S ..
 # Build
 cmake --build .
 # Run the application
-./mind_net
+./mind_net start --port 8888 -s /home/johndoe/Desktop/mindnet/frontend
 ```
 
+# Project TODO / Roadmap
 
-## Bugs
+## Emoji Legend
+- 🐛 **Bug** – Issues, crashes, or bugs to fix
+- ✨ **Feature** – New functionality or enhancements
+- 🔧 **Improvement** – Improvements to existing code
+- 📝 **Documentation** – Docs, guides, README updates
+- ✅ **Testing** – Writing or updating tests
+- 📌 **Task** – General task or chore
+- ❓ **Question / Discussion** – Questions, decisions, or discussions
+- ⚡ **Performance** – Performance optimization
+- 🔒 **Security** – Security-related changes
+- ⚰️ **Deprecation / Removal** – Removing old or deprecated code
+- 
 
-- Update of boolean values in SQLite is not working.
+## BACKLOG
 
-## TODO
+- [ ] BUG Update of boolean values in SQLite is not working.
+- [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
+- [ ] FEATURE New entity Flag
+- [ ] FEATURE New entity SystemConfig
+- [ ] IMPROVEMENT Add logging to files
+- [ ] FEATURE Support for export to static HTML files
+- [ ] FEATURE Support for PostgresSQL storage
+- [ ] FEATURE User authentication (JWT or session token or ?)
+- [ ] FEATURE User authorization via Validators
+- [ ] FEATURE Implement Complex Filtering in REST API
 
-### Support for export to static HTML files
+### Task details
 
-### Support for PostgresSQL storage
+#### Implement Complex Filtering in REST API
 
-### New entity SystemConfig
+```aiignore
+
+
+
+
+
+
+## express complex filtering logic (like AND, OR, etc.) in REST APIs — with both parenthetical syntax and JSON-based format.
+🔧 Common Logical and Comparison Operators
+Operator
+	
+Meaning
+	
+Parenthetical Format
+	
+JSON Format
+AND
+	
+Logical conjunction
+	
+(A AND B)
+	
+{ "and": [A, B] }
+OR
+	
+Logical disjunction
+	
+(A OR B)
+	
+{ "or": [A, B] }
+NOT
+	
+Logical negation
+	
+NOT (A)
+	
+{ "not": A }
+= / ==
+	
+Equality
+	
+field = value
+	
+{ "field": { "eq": value } }
+!=
+	
+Inequality
+	
+field != value
+	
+{ "field": { "neq": value } }
+< / >
+	
+Less than / Greater than
+	
+field < value
+	
+{ "field": { "lt": value } }
+<= / >=
+	
+Less than or equal / Greater or equal
+	
+field <= value
+	
+{ "field": { "lte": value } }
+IN
+	
+Value is in a list
+	
+field IN (a, b, c)
+	
+{ "field": { "in": [a, b, c] } }
+LIKE
+	
+Pattern match (e.g. substring)
+	
+field LIKE '%abc%'
+	
+{ "field": { "like": "%abc%" } }
+IS NULL
+	
+Field is null
+	
+field IS NULL
+	
+{ "field": { "is_null": true } }
+EXISTS
+	
+Subquery or presence check
+	
+EXISTS (subquery)
+	
+{ "exists": { ... } }
+🧠 Example: Complex Filter
+🔹 Parenthetical Format
+
+((owner = 123 AND visibility = 'public') OR shared = true) AND NOT deleted
+
+🔹 JSON Format
+
+{
+  "and": [
+    {
+      "or": [
+        {
+          "and": [
+            { "owner": { "eq": 123 } },
+            { "visibility": { "eq": "public" } }
+          ]
+        },
+        { "shared": { "eq": true } }
+      ]
+    },
+    { "deleted": { "eq": false } }
+  ]
+}
+```
+
+#### New entity SystemConfig
 
 - bool guest_users_are_allowed
 - bool user_can_self_register
-   * if user_can_self_register==false then only admin can create new users,
+  * if user_can_self_register==false then only admin can create new users,
 
-###  Multi-user support
 
-### New entity Flag
 
-- starred
+## Done
+
+
+
+
 
 ### SM-2 (SuperMemo 2)
 
@@ -320,3 +461,6 @@ I propose the following **modular approach**:
 * Reduced dependency on global variables (you can gradually transition to ES6 module `import/export`).
 * Easier testing and maintenance.
 * Future extensions e.g. additional entities, custom actions, or new visualizations will be simpler.
+
+
+# DONE

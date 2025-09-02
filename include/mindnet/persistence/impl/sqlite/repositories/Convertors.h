@@ -30,6 +30,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
     entity_fields request_to_entity_fields_collection_item(method_arguments());
     entity_fields request_to_entity_fields_review(method_arguments());
     entity_fields request_to_entity_fields_sm2_state(method_arguments());
+    entity_fields request_to_entity_fields_question(method_arguments());
     entity_fields request_to_entity_fields_reference(method_arguments());
     entity_fields request_to_entity_fields_link(method_arguments());
 }

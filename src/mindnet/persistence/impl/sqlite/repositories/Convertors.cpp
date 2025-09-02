@@ -47,6 +47,7 @@
 #include "mindnet/models/columns/CollectionItemColumns.h"
 #include "mindnet/models/columns/ReviewColumns.h"
 #include "mindnet/models/columns/SM2StateColumns.h"
+#include "mindnet/models/columns/QuestionColumns.h"
 #include "mindnet/models/columns/ReferenceColumns.h"
 #include "mindnet/models/columns/LinkColumns.h"
 #include "mindnet/persistence/impl/sqlite/repositories/Convertors.h"
@@ -296,6 +297,17 @@ namespace mindnet::persistence::impl::sqlite::repositories
         optional_int(LAST_QUALITY, 0);
         return fields;
     }
+
+    entity_fields request_to_entity_fields_question(method_arguments())
+    {
+        start_of_request_to_entity_fields(Question)
+
+        foreign_key(NOTE_ID);
+        mandatory_string(QUESTION_TEXT);
+        optional_string(ANSWERS_JSON, "");
+        return fields;
+    }
+
 
     entity_fields request_to_entity_fields_reference(method_arguments())
     {

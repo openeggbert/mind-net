@@ -236,6 +236,10 @@ namespace mindnet::http
         auto column_definition_to_json = [](mindnet::models::misc::ColumnDefinition& column_definition)
         {
             crow::json::wvalue result;
+            if (column_definition.is_hidden())
+            {
+                return result;
+            }
 
             result["column_name"] = column_definition.get_column_name();
             result["column_type"] = mindnet::enums::column_type_to_string(column_definition.get_column_type());
@@ -261,6 +265,7 @@ namespace mindnet::http
 
             result["unique"] = column_definition.is_unique();
             result["auto"] = column_definition.is_auto();
+            if (column_definition.is_hidden()) { result["hidden"] = column_definition.is_hidden(); }
             result["default_value"] = column_definition.get_default_value();
             if (!column_definition.get_description().empty())
                 result["description"] = column_definition.
@@ -345,6 +350,7 @@ namespace mindnet::http
                 for (auto e : model_definition->get_columns())
                 {
                     auto column_as_json = column_definition_to_json(e);
+                    //if (column_as_json.t() == crow::json::type::Null) {continue;}
                     column_list.push_back(column_as_json);
                 }
                 res["columns"] = std::move(column_list);
