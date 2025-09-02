@@ -32,6 +32,14 @@ namespace mindnet::persistence::api
         {
             return "Description must not be longer than 50 characters";
         }
+        if (map.owner_id != 1)
+        {
+            return "Only owner can create maps";
+        }
+        if (map.team_id != 0)
+        {
+            return "Team maps are not supported yet";
+        }
         if (map.owner_rights < 0 || map.owner_rights > 7)
         {
             return "owner_rights must be between 0 and 7";
@@ -48,6 +56,14 @@ namespace mindnet::persistence::api
         {
             //todo
             return "Owner rights must be Read+Write+Delete. This is temporary.";
+        }
+        if (map.team_rights != castint(enums::AccessRight::NONE))
+        {
+            return "Team rights must be NONE. This is temporary.";
+        }
+        if (map.other_rights != castint(enums::AccessRight::NONE))
+        {
+            return "Other rights must be NONE. This is temporary.";
         }
         return "";
     }
