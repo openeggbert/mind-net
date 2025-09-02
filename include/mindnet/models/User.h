@@ -34,25 +34,24 @@
 
 namespace mindnet::models
 {
-
     using misc::def;
     using misc::coldef;
     using_flags();
 
     inline def USER_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
+        .set_rest_operations("rl")
         .set_columns({
             //
-            coldef(COLS::USERNAME,MANDATORY | UNIQUE),
-            coldef(COLS::PASSWORD_HASH,MANDATORY),
+            coldef(COLS::USERNAME, MANDATORY | UNIQUE),
+            coldef(COLS::PASSWORD_HASH, MANDATORY),
             coldef(COLS::DISPLAY_NAME),
-            coldef(COLS::ROLE,MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
-                               set_default_value(0),
-            coldef(COLS::PROFILE_TEXT,TEXTAREA),
-            coldef(COLS::LAST_LOGIN,DATETIME),
-            coldef(COLS::EMAIL,UNIQUE),
-            coldef(COLS::STATUS,MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
+            coldef(COLS::ROLE, MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
+                                          set_default_value(0),
+            coldef(COLS::PROFILE_TEXT, TEXTAREA),
+            coldef(COLS::LAST_LOGIN, DATETIME),
+            coldef(COLS::EMAIL, UNIQUE),
+            coldef(COLS::STATUS, MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
         });
 
     struct Model : misc::BaseModel

@@ -25,6 +25,12 @@ export const getCurrentPage = () => _state.currentPage;
 export const getPageSize = () => _state.pageSize;
 export const getTotalPages = () => _state.totalPages;
 
+//
+export function getEntityAllowedOps(entity) {
+    return _state['entitySchemas'][entity]?.allowed_rest_operations ?? [];
+}
+//
+
 // setters
 export const setEntities = (value) => { _state.entities = value; };
 export const setEntityLabels = (value) => { _state.entityLabels = value; };

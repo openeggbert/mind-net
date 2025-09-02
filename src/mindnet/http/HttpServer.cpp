@@ -39,11 +39,11 @@ namespace mindnet::http
 
         for (const auto& file : js_files)
         {
-            js_file << file.filename().string() << ":" << std::endl;
+            js_file << "//" << file.filename().string() << ":" << std::endl;
             std::ifstream input(file, std::ios::binary);
             js_file << input.rdbuf() << std::endl;
         }
-///
+        ///
 #endif
 
         //
@@ -55,8 +55,6 @@ namespace mindnet::http
         std::ofstream port_js(port_js_path);
         port_js << "export const PORT = " << port << ";" << std::endl;
         port_js.close();
-
-
 
         crow_app.port(port).multithreaded().run();
     }
@@ -209,7 +207,15 @@ namespace mindnet::http
             res.end();
         });
     }
-
+ const std::pmr::set<string> forbidden_model_names = {
+        "comment",
+        "discussion",
+        "message",
+        "review",
+        "sm2_state",
+        "suggestion",
+        "suggestion_review",
+    };
     void HttpServer::create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_)
     {
         //todo: remove this duplicity
@@ -264,7 +270,7 @@ namespace mindnet::http
         };
 
 
-        auto custom_action_to_json = [](mindnet::models::misc::CustomAction& custom_action)
+        auto custom_action_to_json = [](const mindnet::models::misc::CustomAction& custom_action)
         {
             crow::json::wvalue result;
 
@@ -296,10 +302,22 @@ namespace mindnet::http
         {
             auto model_definition = d_b_->get_model_definition(model_name);
             crow::json::wvalue res;
+            if (
+                model_definition->get_allowed_rest_operations().empty()
+                //|| forbidden_model_names.contains(model_name)
+                )
+            {
+                return res;
+            }
+
             auto fields_set_empty = fields_set.empty();
             if (fields_set_empty || fields_set.contains("model_name"))
             {
                 res["model_name"] = model_definition->get_model_name();
+            }
+            if (fields_set_empty || fields_set.contains("group"))
+            {
+                res["group"] = model_definition->get_group();
             }
             crow::json::wvalue::list crudl_list;
             for (auto e : model_definition->get_allowed_rest_operations())
@@ -354,6 +372,11 @@ namespace mindnet::http
             split_string_by_commas(fields, fields_set);
             auto json = model_definition_to_json(model_name, fields_set);
 
+            if (json.t() == crow::json::type::Null)
+            {
+                return crow::response(404, "Model definition not found: " + model_name);
+            }
+
             return crow::response(200, json);
         });
 
@@ -380,6 +403,10 @@ namespace mindnet::http
             {
                 //std::cout << model_name << std::endl;
                 auto model_definition_as_json = model_definition_to_json(model_name, fields_set);
+                if (model_definition_as_json.t() == crow::json::type::Null)
+                {
+                    continue;
+                }
                 model_definitions_as_json.push_back(model_definition_as_json);
             }
             result["items"] = std::move(model_definitions_as_json);

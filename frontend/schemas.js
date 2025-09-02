@@ -30,7 +30,7 @@ export function buildEntitySchemas(modelDef) {
             label: toLabel(item.model_name),
             titleField: findTitleField(item),
             fields,
-            allowedOperations: item.allowed_rest_operations,
+            allowedOperations: item.allowed_rest_operations.map(op => op.toLowerCase()),
             customActions: item.custom_actions || []
         };
 

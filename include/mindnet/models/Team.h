@@ -40,7 +40,7 @@ namespace mindnet::models
     using_flags();
 
     inline def TEAM_DEFINITION =
-        def(COLS::MODEL_NAME).set_all_rest_operations()
+        def(COLS::MODEL_NAME).set_rest_operations("rl")
         .set_columns({
             //
             coldef(COLS::NAME,MANDATORY),

@@ -9,6 +9,7 @@ import {
     linkEntities, reviewEntities, collaborationEntities, suggestionEntities, actionLabels,
     getSelectedEntity, getEntityLabels, getSelectedActionId, getCurrentPage, getTotalPages, getEntities,
     getSelectedAction, getActions, setSelectedEntity, setSelectedAction, setSelectedActionId,
+    getEntitySchemas,
 } from "./state.js";
 import {contentArea, crudMenu, entityNav, entityTitle, showError} from "./dom.js";
 import {renderEntityForm, renderEntityList, renderEntityRead} from "./crud.js";
@@ -23,14 +24,21 @@ export function renderEntityNav() {
     if (getSelectedEntity() &&
         (
             linkEntities.includes(getSelectedEntity()) ||
-            reviewEntities.includes(getSelectedEntity() ||
+            reviewEntities.includes(getSelectedEntity()) ||
             collaborationEntities.includes(getSelectedEntity()) ||
             suggestionEntities.includes(getSelectedEntity())
         )
-    )) {
+    ) {
         const link = document.createElement('a');
         link.href = `?entity=${encodeURIComponent(getSelectedEntity())}`;
-        link.textContent = getEntityLabels(getSelectedEntity());
+
+        const label = getEntityLabels()[getSelectedEntity()];
+        console.log("Left entity link label:", label, "for entity:", getSelectedEntity());
+
+
+        link.textContent =
+
+            getEntityLabels()[getSelectedEntity()];
         link.classList.add('active');
         link.onclick = e => {
             e.preventDefault();
@@ -58,6 +66,9 @@ export function renderEntityNav() {
     shownMainEntities.forEach(entity => {
         const link = document.createElement('a');
         link.href = `?entity=${encodeURIComponent(entity)}`;
+
+        const label = getEntityLabels()[entity];
+
         link.textContent = getEntityLabels()[entity];
         link.onclick = e => {
             e.preventDefault();
@@ -175,31 +186,38 @@ export function renderEntityNav() {
         entityNav.appendChild(moreWrapper);
     }
 }
-
-
 export function renderCrudMenu() {
     crudMenu.innerHTML = "";
 
-    const sortedActions = [...getActions()];
-    const listIndex = sortedActions.indexOf('list');
+    const schemas = getEntitySchemas();
+    const entity = getSelectedEntity();
+
+    const allowedOps = schemas[entity]?.allowedOperations || [];
+
+    if (allowedOps.length === 0) return; // nic k vykreslení
+
+    // List bude vždy první
+    const sortedActions = [...allowedOps];
+    const listIndex = sortedActions.indexOf("list");
     if (listIndex > -1) {
         sortedActions.splice(listIndex, 1);
-        sortedActions.unshift('list');
+        sortedActions.unshift("list");
     }
 
     sortedActions.forEach(action => {
-        const link = document.createElement('a');
-        let href = `?entity=${encodeURIComponent(getSelectedEntity())}&action=${encodeURIComponent(action)}`;
-        if (['read','update','delete','explore'].includes(action) && getSelectedActionId()) {
+        const link = document.createElement("a");
+        let href = `?entity=${encodeURIComponent(entity)}&action=${encodeURIComponent(action)}`;
+
+        if (["read", "update", "delete", "explore"].includes(action) && getSelectedActionId()) {
             href += `&id=${getSelectedActionId()}`;
         }
 
         link.href = href;
-        link.textContent = actionLabels[action];
+        link.textContent = actionLabels[action] || action;
         link.onclick = e => {
             e.preventDefault();
-            if (['read','update','delete','explore'].includes(action) && !getSelectedActionId()) {
-                showError(`No ID selected for ${actionLabels[action]}`);
+            if (["read", "update", "delete", "explore"].includes(action) && !getSelectedActionId()) {
+                showError(`No ID selected for ${actionLabels[action] || action}`);
                 return;
             }
             selectAction(action, getSelectedActionId());
@@ -207,11 +225,6 @@ export function renderCrudMenu() {
         };
         crudMenu.appendChild(link);
     });
-}
-function updateActiveMenu() {
-    [...crudMenu.children].forEach(el => el.classList.remove('active'));
-    const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[getSelectedActionId()]);
-    if (activeLink) activeLink.classList.add('active');
 }
 
 
@@ -264,7 +277,7 @@ export function selectAction(action, id = null) {
         if (getSelectedActionId()) renderMapExplore(getSelectedActionId());
         else contentArea.innerHTML = `<p style="color:red;">No ID provided for Explore action.</p>`;
     } else {
-        contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[selectedAction]}</span> not implemented for ${entityLabels[selectedEntity]}.</p>`;
+        contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[getSelectedAction()]}</span> not implemented for ${getEntityLabels()[getSelectedEntity()]}.</p>`;
     }
 }
 export function changePage(page) {

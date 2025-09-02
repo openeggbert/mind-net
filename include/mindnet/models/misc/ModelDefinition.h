@@ -40,6 +40,7 @@ namespace mindnet::models::misc
     {
     private:
         string model_name; ///< Name of the model
+        string group;
         column_definitions columns; ///< Column definitions for the model
         std::set<enums::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
@@ -60,6 +61,10 @@ namespace mindnet::models::misc
         [[nodiscard]] const string& get_model_name() const
         {
             return model_name;
+        }
+        [[nodiscard]] const string& get_group() const
+        {
+            return group;
         }
 
         /** @return The column definitions */
@@ -85,15 +90,9 @@ namespace mindnet::models::misc
             return custom_actions;
         }
 
-        // Setters
-        /**
-         * Sets the model name
-         * @param name New model name
-         * @return Reference to this object for method chaining
-         */
-        ModelDefinition& set_name(string name)
+        ModelDefinition& set_group(const string& group_)
         {
-            model_name = name;
+            group = group_;
             return *this;
         }
 
@@ -132,6 +131,12 @@ namespace mindnet::models::misc
             if (!allowed_rest_operations.empty())
             {
                 throw std::invalid_argument("allowed_rest_operations were already set");
+            }
+
+            if (ops_as_string.empty())
+            {
+                allowed_rest_operations.clear();
+                return *this;
             }
             EnumDefinition enumDef = enums::crudl_to_enum_definition();
             if (ops_as_string.size() > enumDef.get_value_count())
