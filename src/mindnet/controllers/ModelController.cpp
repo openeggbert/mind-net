@@ -80,6 +80,10 @@ namespace mindnet::routes
                 return crow::response(
                     404, "The " + def.get_model_name() + " with id " + std::to_string(id) + " was not found. " + error);
             }
+            if (!error.empty())
+            {
+                return crow::response(404, "You cannot read the model." + error);
+            }
 
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
             std::set<std::string> fields_set_filter{};

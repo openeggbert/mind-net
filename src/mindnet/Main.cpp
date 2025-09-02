@@ -280,6 +280,5 @@ int main(int argc, char** argv)
     load_args(argc, argv, arguments);
     migrate_schema_if_needed();
     auto db = std::make_shared<mindnet::persistence::Persistence>();
-
     return run_command(arguments, db);
 }

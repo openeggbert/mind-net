@@ -1,11 +1,13 @@
 //
 // Created by robertvokac on 9/2/25.
 //
+#ifndef MAPCRUDLVALIDATOR_H
+#define MAPCRUDLVALIDATOR_H
 
-#ifndef MIND_NET_CRUDLVALIDATOR_H
-#define MIND_NET_CRUDLVALIDATOR_H
+
 #include <memory>
 
+#include "CrudlValidator.h"
 #include "mindnet/Helper.h"
 
 namespace mindnet::persistence
@@ -17,17 +19,17 @@ namespace mindnet::persistence::api
 {
     using db_ = mindnet::persistence::Persistence*;
 
-    class CrudlValidator
+    class MapCrudlValidator : public CrudlValidator
     {
     public:
-        CrudlValidator() = default;
-        virtual ~CrudlValidator() = default; // explicitly make it destructible
-        virtual string can_create(db_ d, entity_fields& ef) const = 0;
-        virtual string can_read(db_ d, int id) const = 0;
-        virtual string can_update(db_ d, entity_fields& ef) const = 0;
-        virtual string can_delete(db_ d, int id) const = 0;
-        virtual string can_list(db_ d, std::map<std::string, std::string>& filter) const = 0;
-        virtual string get_model_name() const = 0;
+        MapCrudlValidator() = default;
+        ~MapCrudlValidator() = default; // explicitly make it destructible
+        string can_create(db_ d, entity_fields& ef) const override;
+        string can_read(db_ d, int id) const override;
+        string can_update(db_ d, entity_fields& ef) const override;
+        string can_delete(db_ d, int id) const override;
+        string can_list(db_ d, std::map<std::string, std::string>& filter) const override;
+        string get_model_name() const override;
     //
     // public:
     //     virtual string validate(enums::Crudl& crudl, db_& d, entity_fields& ef,
@@ -53,7 +55,8 @@ namespace mindnet::persistence::api
     //     }
 
     };
+
 }
 
 
-#endif //MIND_NET_CRUDLVALIDATOR_H
+#endif // MAPCRUDLVALIDATOR_H

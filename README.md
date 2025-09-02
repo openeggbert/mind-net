@@ -240,7 +240,7 @@ EXISTS (subquery)
 
 
 
-
+## Other
 ### SM-2 (SuperMemo 2)
 
 User defines the quality of the knowledge (0-5).

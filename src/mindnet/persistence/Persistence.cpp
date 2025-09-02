@@ -27,6 +27,7 @@
 #include "mindnet/models/Question.h"
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
+#include "mindnet/persistence/api/MapCrudlValidator.h"
 
 #include "mindnet/persistence/impl/sqlite/repositories/Convertors.h"
 #include "mindnet/persistence/impl/sqlite/repositories/RepositoryImplSqlite.h"
@@ -45,6 +46,7 @@ repository_names.emplace_back(#model);
 namespace mindnet::persistence
 {
     using namespace mindnet::persistence::impl::sqlite::repositories;
+    using db_ = std::shared_ptr<mindnet::persistence::Persistence>;
 
     Persistence::Persistence()
     {
@@ -77,6 +79,9 @@ namespace mindnet::persistence
         add_repository(question, Question, QUESTION);
         add_repository(reference, Reference, REFERENCE);
         add_repository(link, Link, LINK);
+
+        api::CrudlValidator* map_validator = new api::MapCrudlValidator();
+        validators["map"] = map_validator;
     }
 
     Persistence::~Persistence()
@@ -92,6 +97,12 @@ namespace mindnet::persistence
         return repositories.count(name) ? repositories[name] : nullptr;
     }
 
+    api::CrudlValidator* Persistence::get_validator(const std::string& name)
+    {
+        return validators.count(name) ? validators[name] : nullptr;
+    }
+
+
     bool Persistence::has_repository(const std::string& name)
     {
         return repositories.count(name) > 0;
@@ -102,50 +113,124 @@ namespace mindnet::persistence
         return repository_names;
     }
 
-    int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, string& error)
+    string Persistence::can_create(const ModelDefinition& model_definition, entity_fields& ef)
     {
-        return 400;//get_repository(def.get_model_name())->create(fields, error);
-    }
-
-    entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, string& error)
-    {
-        return get_repository(def.get_model_name())->read(id, error);
-    }
-
-    bool Persistence::update(int id, entity_fields& fields, models::misc::ModelDefinition& def, string& error)
-    {
-        return get_repository(def.get_model_name())->update(id, fields, error);
-    }
-
-    bool Persistence::remove(int id, models::misc::ModelDefinition& def, string& error)
-    {
-        return get_repository(def.get_model_name())->remove(id, error);
-    }
-
-    std::optional<ModelDefinition> Persistence::get_model_definition(string& model_name)
-    {
-        if (!has_repository(model_name))
+        api::CrudlValidator* v = get_validator("*");
+        if (v != nullptr)
         {
-            return std::nullopt;
+            string result = v->can_create(this, ef);
+            if (!result.empty())
+            {
+                return result;
+            }
         }
-        return get_repository(model_name)->get_model_definition();
-    }
 
-    std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, string& error)
-    {
-        // auto result = get_repository(def.get_model_name())->list(query_params, error);
-        // std::vector<entity_fields> duplicated;
-        // for (int i = 0; i < 100; i++)
-        // {
-        //     duplicated.insert(duplicated.end(), result.begin(), result.end());
-        // }
-        // return duplicated;
-        return get_repository(def.get_model_name())->list(query_params, error);
-    }
+        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        if (v2 != nullptr)
+        {
+            string result = v2->can_create(this, ef);
+            if (!result.empty())
+            {
+                return result;
+            }
+        } else
+        {
+            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation cannot be validated.";
+        }
 
-    entity_fields Persistence::request_to_entity_fields(
-        crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
+
+    return "";
+};
+
+    string Persistence::can_read(const ModelDefinition& model_definition, int id)
     {
-        return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
+        api::CrudlValidator* v = get_validator("*");
+        if (v != nullptr)
+        {
+            string result = v->can_read(this, id);
+            if (!result.empty())
+            {
+                return result;
+            }
+        }
+
+        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        if (v2 != nullptr)
+        {
+            string result = v2->can_read(this, id);
+            if (!result.empty())
+            {
+                return result;
+            }
+        } else
+        {
+            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation cannot be validated.";
+        }
+
+
+        return "";
+    };
+
+
+int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, string& error)
+{
+    std::map<std::string, std::string> empty_map;
+    auto result = can_create(def.get_model_name(), fields);
+    if (!result.empty())
+    {
+        error = result;
+        return -1;
     }
+    return get_repository(def.get_model_name())->create(fields, error);
+}
+
+entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, string& error)
+{
+    std::map<std::string, std::string> empty_map;
+    auto result = can_read(def.get_model_name(), id);
+    if (!result.empty())
+    {
+        error = result;
+        return {};
+    }
+    return get_repository(def.get_model_name())->read(id, error);
+}
+
+bool Persistence::update(int id, entity_fields& fields, models::misc::ModelDefinition& def, string& error)
+{
+    return get_repository(def.get_model_name())->update(id, fields, error);
+}
+
+bool Persistence::remove(int id, models::misc::ModelDefinition& def, string& error)
+{
+    return get_repository(def.get_model_name())->remove(id, error);
+}
+
+std::optional<ModelDefinition> Persistence::get_model_definition(string& model_name)
+{
+    if (!has_repository(model_name))
+    {
+        return std::nullopt;
+    }
+    return get_repository(model_name)->get_model_definition();
+}
+
+std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, string& error)
+{
+    // auto result = get_repository(def.get_model_name())->list(query_params, error);
+    // std::vector<entity_fields> duplicated;
+    // for (int i = 0; i < 100; i++)
+    // {
+    //     duplicated.insert(duplicated.end(), result.begin(), result.end());
+    // }
+    // return duplicated;
+    return get_repository(def.get_model_name())->list(query_params, error);
+}
+
+entity_fields Persistence::request_to_entity_fields(
+    crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
+{
+    return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
+}
+
 }

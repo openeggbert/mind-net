@@ -15,6 +15,11 @@ namespace mindnet::models
         result.push_back(name);
         result.push_back(description);
         result.push_back(category);
+        result.push_back(owner_id);
+        result.push_back(team_id);
+        result.push_back(owner_rights);
+        result.push_back(team_rights);
+        result.push_back(other_rights);
         return result;
     }
 
@@ -30,5 +35,16 @@ namespace mindnet::models
         name = text();
         description = text();
         category = text();
+        owner_id = number();
+        try
+        {
+            team_id = number();
+        } catch (const std::exception& e)
+        {
+            team_id = 0;
+        }
+        owner_rights = number();
+        team_rights = number();
+        other_rights = number();
     };
 }
