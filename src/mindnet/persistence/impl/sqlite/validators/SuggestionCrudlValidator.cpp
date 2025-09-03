@@ -3,16 +3,15 @@
 //
 
 
-#include "mindnet/persistence/impl/sqlite/validators/UserCrudlValidator.h"
+#include "mindnet/persistence/impl/sqlite/validators/SuggestionCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/User.h"
 #include "mindnet/persistence/Persistence.h"
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
-    using impl::sqlite::validators::UserCrudlValidator;
-    string UserCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    using impl::sqlite::validators::SuggestionCrudlValidator;
+    string SuggestionCrudlValidator::can_create(db_ d, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -69,27 +68,27 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    string UserCrudlValidator::can_read(db_ d, int id) const
+    string SuggestionCrudlValidator::can_read(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string UserCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    string SuggestionCrudlValidator::can_update(db_ d, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string UserCrudlValidator::can_delete(db_ d, int id) const
+    string SuggestionCrudlValidator::can_delete(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string UserCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    string SuggestionCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
     {
         return "";
     }
 
-    string UserCrudlValidator::get_model_name() const
+    string SuggestionCrudlValidator::get_model_name() const
     {
         return "todo";
     }

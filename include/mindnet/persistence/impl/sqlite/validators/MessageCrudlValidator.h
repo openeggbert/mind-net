@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
+#include "mindnet/persistence/api/CrudlValidator.h"
 
 namespace mindnet::persistence
 {
