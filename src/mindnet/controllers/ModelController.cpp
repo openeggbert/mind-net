@@ -82,7 +82,7 @@ namespace mindnet::routes
             }
             if (!error.empty())
             {
-                return crow::response(404, "You cannot read the model." + error);
+                return crow::response(404, "You cannot read the model. " + error);
             }
 
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";

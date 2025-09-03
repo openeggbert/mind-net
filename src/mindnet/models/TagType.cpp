@@ -6,7 +6,7 @@
 
 namespace mindnet::models
 {
-    entity_fields TagType::get_values() const
+    entity_fields TagType::to_values() const
     {
         entity_fields result;
         result.push_back(id);

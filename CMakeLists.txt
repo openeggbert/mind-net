@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(mind_net)
 
-set(CMAKE_CXX_STANDARD 23)
+find_package(OpenSSL REQUIRED)
+
+
+        set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(ENABLE_TESTS "Enable unit tests" ON)
@@ -37,12 +40,15 @@ target_include_directories(mind_net_core PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/crow/include
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/asio/asio/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jwt-cpp/include
 )
+
 
 target_link_libraries(mind_net_core PUBLIC
         SQLiteCpp
         sqlite3
         nlohmann_json::nlohmann_json
+        OpenSSL::Crypto
         pthread
         dl
 )

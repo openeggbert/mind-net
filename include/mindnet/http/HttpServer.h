@@ -39,6 +39,7 @@ namespace mindnet::http
         //
         void create_web_endpoints();
         void create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_);
+        void create_authentication_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_);
     };
 }
 

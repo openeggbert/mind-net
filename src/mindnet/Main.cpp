@@ -104,6 +104,14 @@ bool commands_function_start(
     bool custom_port = false;
     int port = 8080;
     string static_directory = "static";
+
+    const char* env_secret = std::getenv("JWT_SECRET");
+    if (!env_secret)
+    {
+        mindnet::err << "JWT_SECRET environment variable is not set." << commit;
+        return 1;
+    }
+
     for (int i = 1; i < arguments.size(); ++i)
     {
         const auto& argument = arguments[i];
@@ -199,9 +207,6 @@ bool commands_function_start(
     add_controller(REFERENCE)
     add_controller(LINK)
     //
-    //CREATE
-    CROW_ROUTE(server.get_crow_app(), "/api/model_definition").methods(crow::HTTPMethod::POST)
-        ([] { return crow::response(405, "Method not allowed for model_definition.");; });
 
 
     if (custom_port)

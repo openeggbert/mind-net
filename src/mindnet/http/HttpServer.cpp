@@ -2,11 +2,13 @@
 
 #include <unordered_set>
 #include <utility>
-#include <utility>
+#include <chrono>
 #include <fstream>
 #include <filesystem>
 
 #include "mindnet/Global.h"
+#include "jwt-cpp/jwt.h"
+#include "mindnet/models/User.h"
 
 namespace mindnet::http
 {
@@ -18,6 +20,7 @@ namespace mindnet::http
         create_web_endpoints();
 
         create_model_definition_endpoints(db_);
+        create_authentication_endpoints(db_);
     }
 
     void HttpServer::run(int port)
@@ -207,7 +210,8 @@ namespace mindnet::http
             res.end();
         });
     }
- const std::pmr::set<string> forbidden_model_names = {
+
+    const std::pmr::set<string> forbidden_model_names = {
         "comment",
         "discussion",
         "message",
@@ -216,6 +220,7 @@ namespace mindnet::http
         "suggestion",
         "suggestion_review",
     };
+
     void HttpServer::create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_)
     {
         //todo: remove this duplicity
@@ -310,7 +315,7 @@ namespace mindnet::http
             if (
                 model_definition->get_allowed_rest_operations().empty()
                 //|| forbidden_model_names.contains(model_name)
-                )
+            )
             {
                 return res;
             }
@@ -327,7 +332,6 @@ namespace mindnet::http
                 {
                     res["group_order_index"] = model_definition->get_group_order_index();
                 }
-
             }
             crow::json::wvalue::list crudl_list;
             for (auto e : model_definition->get_allowed_rest_operations())
@@ -369,6 +373,12 @@ namespace mindnet::http
 
             return res;
         };
+
+        //CREATE
+        CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::POST)
+            ([] { return crow::response(405, "Method not allowed for model_definition.");; });
+
+
         //READ
         CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
         ([d_b_, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
@@ -426,4 +436,195 @@ namespace mindnet::http
             //return model_definition_to_json(model_name);
         });
     }
+
+    inline std::string hash_password(const std::string& pass)
+    {
+        unsigned char hash[SHA256_DIGEST_LENGTH];
+        SHA256(reinterpret_cast<const unsigned char*>(pass.c_str()), pass.size(), hash);
+
+        std::ostringstream os;
+        for (unsigned char i : hash)
+            os << std::hex << std::setw(2) << std::setfill('0') << (int)i;
+
+        return os.str();
+    }
+
+#include <random>
+#include <string>
+
+    //openssl rand -base64 32
+
+    std::string generate_secret_key(size_t length = 32) {
+        static const char charset[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz"
+            "!@#$%^&*()-_=+[]{}<>?/|";
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, sizeof(charset) - 2);
+
+        std::string key;
+        key.reserve(length);
+        for (size_t i = 0; i < length; i++) {
+            key.push_back(charset[dist(gen)]);
+        }
+        return key;
+    }
+
+    string get_jwt_secret()
+    {
+        const char* env_secret = std::getenv("JWT_SECRET");
+        std::string secret = env_secret ? env_secret : "";
+        if (secret.empty())
+        {
+            throw std::runtime_error("JWT_SECRET environment variable is not set.");
+        }
+        return secret;
+
+    }
+
+    void HttpServer::create_authentication_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_)
+    {
+        CROW_ROUTE(crow_app, "/login").methods("POST"_method)([d_b_](const crow::request& req)
+        {
+            auto auth = req.get_header_value("Authorization"); // Basic base64(username:password)
+            if (auth.empty())
+            {
+                return crow::response(400, "Missing.");
+            }
+            if (auth.rfind("Basic ", 0) != 0)
+            {
+                return crow::response(400, "Invalid Authorization header.");
+            }
+
+            std::string creds;
+            try
+            {
+                creds = crow::utility::base64decode(auth.substr(6));
+            }
+            catch (const std::exception& e)
+            {
+                return crow::response(400, "Invalid base64 encoding in Authorization header.");
+            }
+
+            auto sep = creds.find(':');
+            if (sep == std::string::npos)
+            {
+                return crow::response(400, "Invalid credentials format.");
+            }
+
+
+            std::string username = creds.substr(0, sep);
+            std::string password = creds.substr(sep + 1);
+
+            string error;
+            QueryParams query_params;
+            query_params.add_filter(models::columns::UserColumns::USERNAME, username);
+            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, error);
+            if (users.empty()) { return crow::response(401, "User does not exist."); }
+            models::User user;
+            user.from_values(users[0]);
+
+            string expected_password_hash = user.password_hash;
+            string returned_password_hash = hash_password(password);
+            bool verified = expected_password_hash == returned_password_hash;
+            if (verified)
+            {
+                using namespace std::chrono_literals;
+                auto token = jwt::create()
+                             .set_issuer("crow-app")
+                             .set_type("JWT")
+                             .set_payload_claim("username", jwt::claim(username))
+                             .set_expires_at(std::chrono::system_clock::now() + 7*24h)
+                             .sign(jwt::algorithm::hs256{get_jwt_secret()});
+
+                crow::json::wvalue response;
+                response["token"] = token;
+                return crow::response{response};
+            }
+            else
+            {
+                return crow::response(401, "Username or password is not correct.");
+            }
+        });
+
+        CROW_ROUTE(crow_app, "/register").methods("POST"_method)([=](const crow::request& req){
+    auto body = crow::json::load(req.body);
+    if (!body || !body.has("username") || !body.has("password"))
+        return crow::response{400};
+
+    std::string username = body["username"].s();
+    std::string password = body["password"].s();
+    std::string display_name = body["display_name"].s();
+    std::string profile_text = body["profile_text"].s();
+    std::string email = body["email"].s();
+
+    //
+    string error;
+    QueryParams query_params;
+    query_params.add_filter(models::columns::UserColumns::USERNAME, username);
+            query_params.fields = {models::columns::UserColumns::USERNAME};
+    auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, error);
+    if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
+    if (!users.empty()) { return crow::response(409, "User already exists."); }
+    //
+
+    std::string hashed = hash_password(password);
+    models::User user;
+            user.username = username;
+            user.password_hash = hashed;
+            user.display_name = display_name;
+            user.role = enums::UserRole::READER;
+            user.profile_text = profile_text;
+            user.last_login = 0;
+            user.email = email;
+            user.status = enums::UserStatus::PENDING;
+
+            error.clear();
+            auto fields_ = user.to_values();
+            d_b_.get()->create(models::USER_DEFINITION, fields_ , error);
+            if (!error.empty())
+            {
+                return crow::response{400, "Registration failed. " + error};
+            }
+
+    return crow::response{201, "Registration successful"};
+});
+
+
+        CROW_ROUTE(crow_app, "/protected")([](const crow::request& req)
+        {
+            auto auth = req.get_header_value("Authorization"); // Bearer <token>
+            if (auth.empty() || auth.rfind("Bearer ", 0) != 0)
+            {
+                return crow::response(401, "Invalid or missing Authorization header");
+            }
+            std::string token = auth.substr(7);
+            if (token.empty())
+            {
+                return crow::response(401, "Missing token");
+            }
+
+            try
+            {
+                auto decoded = jwt::decode(token);
+                auto verifier = jwt::verify()
+                                .allow_algorithm(jwt::algorithm::hs256{get_jwt_secret()})
+                                .with_issuer("crow-app");
+
+                verifier.verify(decoded);
+
+                std::string username = decoded.get_payload_claim("username").as_string();
+                return crow::response{"Welcome, " + username};
+            }
+            catch (const std::exception& e)
+            {
+                return crow::response{403};
+            }
+        });
+    }
+
+
 }

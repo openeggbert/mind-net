@@ -6,7 +6,7 @@
 
 namespace mindnet::models
 {
-    entity_fields History::get_values() const
+    entity_fields History::to_values() const
     {
         entity_fields result;
         result.emplace_back(id);

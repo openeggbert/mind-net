@@ -18,8 +18,8 @@ namespace mindnet::persistence
     {
     private:
         std::map<std::string, api::IRepository*> repositories;
-        std::map<std::string, validator> validators;
         std::vector<std::string> repository_names;
+        std::map<std::string, validator> validators;
         api::IRepository* get_repository(const std::string& name);
         api::CrudlValidator* get_validator(const std::string& name);
         const std::vector<validator> empty_vector;
@@ -34,12 +34,15 @@ namespace mindnet::persistence
         std::vector<std::string>& list_repositories();
         string can_create(const ModelDefinition& model_definition, entity_fields& ef);
         string can_read(const ModelDefinition& model_definition, int id);
+        string can_update(const ModelDefinition& model_definition,entity_fields& ef);
+        string can_delete(const ModelDefinition& model_definition,int id);
+        string can_list(const ModelDefinition& model_definition,std::map<std::string, std::string>& filter);
 
         int create(const ModelDefinition& def, entity_fields& fields, string& error);
         entity_fields read(int id, const ModelDefinition& def, string& error);
-        bool update(int id, entity_fields& fields, ModelDefinition& def, string& error);
+        bool update(int id, entity_fields& fields, const ModelDefinition& def, string& error);
         bool remove(int id, ModelDefinition& def, string& error);
-        std::optional<ModelDefinition> get_model_definition(string& model_name);
+        std::optional<ModelDefinition> get_model_definition(const string& model_name);
 
         std::vector<entity_fields> list(http::QueryParams& query_params, ModelDefinition& def, string& error);
 

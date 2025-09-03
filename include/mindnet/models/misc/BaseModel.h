@@ -39,7 +39,7 @@
             return XPASTE(MODEL,_DEFINITION);\
         }\
 \
-[[nodiscard]] entity_fields get_values() const override;\
+[[nodiscard]] entity_fields to_values() const override;\
 void from_values(const entity_fields& values) override;\
 \
 friend std::ostream& operator<<(std::ostream& os, const Model & o)\
@@ -92,14 +92,14 @@ namespace mindnet::models::misc
 
         [[nodiscard]] virtual const misc::ModelDefinition& get_definition() const = 0;
 
-        [[nodiscard]] virtual entity_fields get_values() const = 0;
+        [[nodiscard]] virtual entity_fields to_values() const = 0;
         virtual void from_values(const entity_fields& values) = 0;
 
         [[nodiscard]] JSON to_json() const
         {
             JSON json;
             int index = 0;
-            entity_fields fields = get_values();
+            entity_fields fields = to_values();
             auto definition = get_definition();
 
             for (auto& e : definition.get_columns())

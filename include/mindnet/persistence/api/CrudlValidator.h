@@ -7,6 +7,13 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
+#define create_h_methods()\
+string can_create(db_ d, entity_fields& ef) const override;\
+string can_read(db_ d, int id) const override;\
+string can_update(db_ d, entity_fields& ef) const override;\
+string can_delete(db_ d, int id) const override;\
+string can_list(db_ d, std::map<std::string, std::string>& filter) const override;\
+[[nodiscard]] string get_model_name() const override;
 
 namespace mindnet::persistence
 {
@@ -28,29 +35,6 @@ namespace mindnet::persistence::api
         virtual string can_delete(db_ d, int id) const = 0;
         virtual string can_list(db_ d, std::map<std::string, std::string>& filter) const = 0;
         virtual string get_model_name() const = 0;
-    //
-    // public:
-    //     virtual string validate(enums::Crudl& crudl, db_& d, entity_fields& ef,
-    //                             std::map<std::string, std::string>& filter) const
-    //     {
-    //         switch (crudl)
-    //         {
-    //         case enums::Crudl::CREATE: return can_create(d, ef);
-    //         case enums::Crudl::READ: return can_read(d, ef);
-    //         case enums::Crudl::UPDATE: return can_update(d, ef);
-    //         case enums::Crudl::DELETE: return can_delete(d, ef);
-    //         case enums::Crudl::LIST:
-    //             return can_list(d, ef, filter);
-    //         default:
-    //             return "Unknown crudl: " + enums::crudl_to_string(crudl);
-    //         }
-    //     };
-    //
-    //     virtual string validate(enums::Crudl& crudl, db_& d, entity_fields& ef) const
-    //     {
-    //         std::map<std::string, std::string> empty_map;
-    //         return validate(crudl, d, ef, empty_map);
-    //     }
 
     };
 }

@@ -6,7 +6,7 @@
 
 namespace mindnet::models
 {
-    entity_fields Map::get_values() const
+    entity_fields Map::to_values() const
     {
         entity_fields result;
         result.push_back(id);

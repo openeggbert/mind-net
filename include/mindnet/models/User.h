@@ -45,7 +45,7 @@ namespace mindnet::models
         .set_columns({
             //
             coldef(COLS::USERNAME, MANDATORY | UNIQUE),
-            coldef(COLS::PASSWORD_HASH, MANDATORY),
+            coldef(COLS::PASSWORD_HASH, MANDATORY | HIDDEN),
             coldef(COLS::DISPLAY_NAME),
             coldef(COLS::ROLE, MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
                                           set_default_value(0),
