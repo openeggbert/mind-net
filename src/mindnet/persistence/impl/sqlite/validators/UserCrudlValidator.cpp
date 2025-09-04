@@ -71,17 +71,17 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string UserCrudlValidator::can_read(db_ d, int id) const
     {
-        return "The validation is not yet implemented.";
+        return "";
     }
 
     string UserCrudlValidator::can_update(db_ d, entity_fields& ef) const
     {
-        return "The validation is not yet implemented.";
+        return "";
     }
 
     string UserCrudlValidator::can_delete(db_ d, int id) const
     {
-        return "The validation is not yet implemented.";
+        return "";
     }
 
     string UserCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
@@ -91,6 +91,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string UserCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return "user";
     }
 }
