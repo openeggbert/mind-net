@@ -12,7 +12,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::PropertyCrudlValidator;
-    string PropertyCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result PropertyCrudlValidator::can_create(db_ d, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -69,17 +69,17 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    string PropertyCrudlValidator::can_read(db_ d, int id) const
+    operation_result PropertyCrudlValidator::can_read(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string PropertyCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result PropertyCrudlValidator::can_update(db_ d, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string PropertyCrudlValidator::can_delete(db_ d, int id) const
+    operation_result PropertyCrudlValidator::can_delete(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }

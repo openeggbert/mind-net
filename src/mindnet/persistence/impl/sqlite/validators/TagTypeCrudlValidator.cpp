@@ -11,7 +11,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TagTypeCrudlValidator;
-    string TagTypeCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result TagTypeCrudlValidator::can_create(db_ d, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -68,27 +68,27 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    string TagTypeCrudlValidator::can_read(db_ d, int id) const
+    operation_result TagTypeCrudlValidator::can_read(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string TagTypeCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result TagTypeCrudlValidator::can_update(db_ d, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string TagTypeCrudlValidator::can_delete(db_ d, int id) const
+    operation_result TagTypeCrudlValidator::can_delete(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string TagTypeCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    operation_result TagTypeCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
     {
         return "";
     }
 
-    string TagTypeCrudlValidator::get_model_name() const
+    operation_result TagTypeCrudlValidator::get_model_name() const
     {
         return "todo";
     }

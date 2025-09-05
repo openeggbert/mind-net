@@ -502,10 +502,11 @@ namespace mindnet::http
             string error;
             QueryParams query_params;
             query_params.add_filter(models::columns::UserColumns::USERNAME, credentials.username);
-            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, error);
-            if (users.empty()) { return crow::response(401, "User does not exist."); }
+            LoginToken login_token{req};
+            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, login_token);
+            if (users.first.empty()) { return crow::response(401, "User does not exist."); }
             models::User user;
-            user.from_values(users[0]);
+            user.from_values(users.first[0]);
 
             string expected_password_hash = user.password_hash;
             string returned_password_hash = hash_password(credentials.password);
@@ -548,9 +549,10 @@ namespace mindnet::http
             QueryParams query_params;
             query_params.add_filter(models::columns::UserColumns::USERNAME, username);
             query_params.fields = {models::columns::UserColumns::USERNAME};
-            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, error);
+            LoginToken login_token{req};
+            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, login_token);
             if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
-            if (!users.empty()) { return crow::response(409, "User already exists."); }
+            if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
 
             std::string hashed = hash_password(password);
@@ -566,7 +568,7 @@ namespace mindnet::http
 
             error.clear();
             auto fields_ = user.to_values();
-            d_b_.get()->create(models::USER_DEFINITION, fields_, error);
+            d_b_.get()->create(models::USER_DEFINITION, fields_, login_token);
             if (!error.empty())
             {
                 return crow::response{400, "Registration failed. " + error};
@@ -577,7 +579,7 @@ namespace mindnet::http
 
         CROW_ROUTE(crow_app, "/protected")([](const crow::request& req)
         {
-            LoginToken login_token{req, get_jwt_secret()};
+            LoginToken login_token{req};
             return crow::response(login_token.status, login_token.msg);
         });
     }

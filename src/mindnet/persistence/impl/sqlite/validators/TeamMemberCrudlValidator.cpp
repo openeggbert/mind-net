@@ -11,7 +11,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamMemberCrudlValidator;
-    string TeamMemberCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_create(db_ d, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -68,22 +68,22 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    string TeamMemberCrudlValidator::can_read(db_ d, int id) const
+    operation_result TeamMemberCrudlValidator::can_read(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string TeamMemberCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_update(db_ d, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string TeamMemberCrudlValidator::can_delete(db_ d, int id) const
+    operation_result TeamMemberCrudlValidator::can_delete(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string TeamMemberCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    operation_result TeamMemberCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
     {
         return "";
     }
