@@ -76,6 +76,16 @@ namespace mindnet::enums
         return user_role_to_string(static_cast<UserRole>(role));
     }
 
+    inline UserRole string_to_user_role(const std::string& role_str)
+    {
+        if (role_str == "Guest") return UserRole::GUEST;
+        if (role_str == "Reader") return UserRole::READER;
+        if (role_str == "Editor") return UserRole::EDITOR;
+        if (role_str == "Reviewer") return UserRole::REVIEWER;
+        if (role_str == "Admin") return UserRole::ADMIN;
+        throw std::runtime_error("Invalid user role: " + role_str);
+    }
+
     inline models::misc::EnumDefinition user_role_to_enum_definition()
     {
         return models::misc::EnumDefinition{

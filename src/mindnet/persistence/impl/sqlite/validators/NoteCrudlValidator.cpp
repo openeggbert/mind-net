@@ -12,7 +12,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::NoteCrudlValidator;
-    string NoteCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    result NoteCrudlValidator::can_create(db_ d, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -69,27 +69,27 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    string NoteCrudlValidator::can_read(db_ d, int id) const
+    result NoteCrudlValidator::can_read(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string NoteCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    result NoteCrudlValidator::can_update(db_ d, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string NoteCrudlValidator::can_delete(db_ d, int id) const
+    result NoteCrudlValidator::can_delete(db_ d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    string NoteCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    result NoteCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
     {
-        return "";
+        return empty_result;
     }
 
-    string NoteCrudlValidator::get_model_name() const
+    result NoteCrudlValidator::get_model_name() const
     {
         return "todo";
     }
