@@ -7,6 +7,7 @@
 #include "api/CrudlValidator.h"
 #include "api/IRepository.h"
 #include "crow/json.h"
+#include "mindnet/http/LoginToken.h"
 #include "mindnet/models/misc/ModelDefinition.h"
 
 namespace mindnet::persistence
@@ -32,24 +33,27 @@ namespace mindnet::persistence
         bool has_repository(const std::string& name);
 
         std::vector<std::string>& list_repositories();
-        string can_create(const ModelDefinition& model_definition, entity_fields& ef);
-        string can_read(const ModelDefinition& model_definition, int id);
-        string can_update(const ModelDefinition& model_definition,entity_fields& ef);
-        string can_delete(const ModelDefinition& model_definition,int id);
-        string can_list(const ModelDefinition& model_definition,std::map<std::string, std::string>& filter);
+        // bool can_user_make_changes(http::LoginToken& login_token, mindnet::persistence::api::OperationResult& value);
+        operation_result can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token);
+        operation_result can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token);
+        operation_result can_update(const ModelDefinition& model_definition,entity_fields& ef, http::LoginToken& login_token);
+        operation_result can_delete(const ModelDefinition& model_definition,int id, http::LoginToken& login_token);
+        operation_result can_list(const ModelDefinition& model_definition,std::map<std::string, std::string>& filter, http::LoginToken& login_token);
 
-        int create(const ModelDefinition& def, entity_fields& fields, string& error);
-        entity_fields read(int id, const ModelDefinition& def, string& error);
-        bool update(int id, entity_fields& fields, const ModelDefinition& def, string& error);
-        bool remove(int id, ModelDefinition& def, string& error);
+        std::pair<int, operation_result> create(const ModelDefinition& def, entity_fields& fields, http::LoginToken& login_token);
+        std::pair<entity_fields, operation_result> read(int id, const ModelDefinition& def, http::LoginToken& login_token);
+        operation_result update(int id, entity_fields& fields, const ModelDefinition& def, http::LoginToken& login_token);
+        operation_result remove(int id, ModelDefinition& def, http::LoginToken& login_token);
+        std::pair<std::vector<entity_fields>, operation_result> list(http::QueryParams& query_params, ModelDefinition& def, http::LoginToken& login_token);
+
         std::optional<ModelDefinition> get_model_definition(const string& model_name);
-
-        std::vector<entity_fields> list(http::QueryParams& query_params, ModelDefinition& def, string& error);
 
 
         //
         entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
                                                                 ModelDefinition& def);
+        std::pair<models::User, mindnet::persistence::api::OperationResult> find_logged_in_user(
+            http::LoginToken login_token);
     };
 }
 #endif // DB_H

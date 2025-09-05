@@ -4,6 +4,7 @@
 
 #include "mindnet/controllers/ModelController.h"
 #include "crow.h"
+#include "mindnet/Configuration.h"
 #include "mindnet/Utils.h"
 #include "mindnet/controllers/RestHelper.h"
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
@@ -51,15 +52,15 @@ namespace mindnet::routes
                     + def.get_model_name() + ".");
             }
 
-            string error;
-            auto last_inserted_id = db.get()->create(def, fields, error);
-            if (last_inserted_id == -1)
+            http::LoginToken login_token{req};
+            auto last_inserted_id = db.get()->create(def, fields, login_token);
+            if (last_inserted_id.first == -1)
             {
-                return crow::response(500, "Saving the " + def.get_model_name() + " failed. Error: " + error);
+                return crow::response(500, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
-            res["id"] = last_inserted_id;
+            res["id"] = last_inserted_id.first;
 
             return crow::response(200, res);
         };
@@ -70,10 +71,17 @@ namespace mindnet::routes
             if (!def.get_allowed_rest_operations().contains(Crudl::READ))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             entity_fields values;
+
+            http::LoginToken login_token{req};
+
             string error;
             try
             {
-                values = db->read(id, def, error);
+                auto read_result = db->read(id, def, login_token);
+                if (read_result.second.ko())
+                {
+                    error = read_result.second.error;
+                }
             }
             catch (std::runtime_error& e)
             {
@@ -119,9 +127,11 @@ namespace mindnet::routes
                     + def.get_model_name() + ".");
             }
 
+            http::LoginToken login_token{req};
+
             string error;
-            bool success = db->update(id, fields, def, error);
-            if (!success)
+            auto success = db->update(id, fields, def, login_token);
+            if (success.ko())
             {
                 return crow::response(
                     404, "Update failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
@@ -134,15 +144,16 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
-        auto delete_lambda_function = [&db, &def](int id)
+        auto delete_lambda_function = [&db, &def](const crow::request& req, int id)
         {
             trace << "Delete lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             string error;
-            bool success = db->remove(id, def, error);
+            http::LoginToken login_token{req};
+            auto success = db->remove(id, def, login_token);
 
-            if (!success)
+            if (success.ko())
             {
                 return crow::response(
                     404, "Delete failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
@@ -175,8 +186,6 @@ namespace mindnet::routes
             string order = req.url_params.get("order") ? req.url_params.get("order") : "";
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
-            std::vector<entity_fields> all_records;
-
             http::QueryParams query_params;
             query_params.page_number = page_number;
             query_params.page_size = page_size;
@@ -207,8 +216,9 @@ namespace mindnet::routes
                 query_params.add_filter(column.get_column_name(), value);
             }
 
-            all_records = db->list(query_params, def, error);
-            if (!error.empty())
+            http::LoginToken login_token{req};
+            auto all_records = db->list(query_params, def, login_token);
+            if (all_records.second.ko())
             {
                 return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + error);
             }
@@ -216,7 +226,7 @@ namespace mindnet::routes
             crow::json::wvalue res;
             std::vector<crow::json::wvalue> items;
 
-            for (const auto& record : all_records)
+            for (const auto& record : all_records.first)
             {
                 items.push_back(RestHelper::model_to_wvalue(record, def, query_params.fields));
             }

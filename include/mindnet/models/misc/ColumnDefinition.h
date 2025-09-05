@@ -298,7 +298,7 @@ namespace mindnet::models::misc
             if (flags_set.contains(UNIQUE)) unique = true;
             if (flags_set.contains(FOREIGN_KEY)) set_foreign_key();
             if (flags_set.contains(AUTO)) set_auto();
-            if (flags_set.contains(HIDDEN)) set_auto();
+            if (flags_set.contains(HIDDEN)) set_hidden();
             //
             if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
             if (flags_set.contains(TEXTAREA)) column_type = enums::ColumnType::TEXTAREA;

@@ -41,6 +41,7 @@
 \
 [[nodiscard]] entity_fields to_values() const override;\
 void from_values(const entity_fields& values) override;\
+string validate() override;\
 \
 friend std::ostream& operator<<(std::ostream& os, const Model & o)\
 {\
@@ -61,6 +62,25 @@ auto text = [&values, &i]\
 {\
     return std::get<std::string>(values[i++]);\
 };
+
+
+
+//
+#define test_true(condition, error) if ( ! ( condition ) ) return error;
+//
+#define test_eq(number, eq_to, field) test_true(number == eq_to, field " must be equal to " + std::to_string(eq_to))
+#define test_ne(number, eq_to, field) test_true(number != eq_to, field " must be not equal to " + std::to_string(eq_to))
+#define test_at_least(number, min_value, field) test_true(number >= min_value, field " must not be less than " + std::to_string(min_value))
+#define test_at_most(number, max_value, field) test_true(number <= max_value, field " must not be greater than " + std::to_string(max_value))
+#define test_between(number, min_value, max_value, field) test_at_least(number, min_value, field) test_at_most(number, max_value, field)
+//
+#define testt_at_least(text, min_value, field) test_at_least(text .size(), min_value, field)
+#define testt_at_most(text, max_value, field) test_at_most(text .size(), max_value, field)
+#define testt_between(text, min_value, max_value, field) test_between(text .size(), min_value, max_value, field)
+//
+#define testt_not_empty(text, field) test_true(!text.empty(), field " must not be empty")
+//
+
 
 namespace mindnet::models::misc
 {
@@ -94,6 +114,7 @@ namespace mindnet::models::misc
 
         [[nodiscard]] virtual entity_fields to_values() const = 0;
         virtual void from_values(const entity_fields& values) = 0;
+        virtual string validate() = 0;
 
         [[nodiscard]] JSON to_json() const
         {

@@ -12,85 +12,111 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::MessageCrudlValidator;
-    string MessageCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result MessageCrudlValidator::can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
-        // models::Map map;
-        // map.from_values(ef);
-        // err << map << commit;
-        // if (map.name.empty())
-        // {
-        //     return "Name must not be empty";
-        // }
-        // string error;
-        // http::QueryParams query_params;
-        // query_params.filters.emplace("name", map.name);
-        // if (!d->list(query_params, models::MAP_DEFINITION, error).empty())
-        // {
-        //     return "Map name already exists";
-        // }
+        //2. Authorization
+        models::Message new_message;
+        new_message.from_values(ef);
+        err << new_message << commit;
+        models::User logged_in_user = d->find_logged_in_user(login_token).first;
+
+        //3. Request
+        if (new_message.owner_id != logged_in_user.get_id()) return operation_result(
+            403, "You can only create messages for your own user.");
+        if (new_message.sent_at != 0) return operation_result(400, "sent_at must not be set during message creation.");
+        if (!new_message.draft) return operation_result(400, "draft must be set to true during message creation.");
+    }
+
+    operation_result MessageCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const
+    {
+        //2. Authorization
+        models::Message message;
+        message.from_values(d->read(id, models::MESSAGE_DEFINITION, login_token).first);
+        err << message << commit;
+
+        models::User logged_in_user = d->find_logged_in_user(login_token).first;
+
+        if (message.owner_id != logged_in_user.get_id()) return operation_result(
+            403, "You can only read messages for your own user.");
+
+        //3. Request
+        return ok_result;
+    }
+
+    operation_result MessageCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
+    {
+        //2. Authorization
+        auto logged_in_user_pair = d->find_logged_in_user(login_token);
+        if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;
+        auto logged_in_user = logged_in_user_pair.first;
         //
-        // if (map.description.size() > 50)
-        // {
-        //     return "Description must not be longer than 50 characters";
-        // }
-        // if (map.owner_id != 1)
-        // {
-        //     return "Only owner can create maps";
-        // }
-        // if (map.team_id != 0)
-        // {
-        //     return "Team maps are not supported yet";
-        // }
-        // if (map.owner_rights < 0 || map.owner_rights > 7)
-        // {
-        //     return "owner_rights must be between 0 and 7";
-        // }
-        // if (map.team_rights < 0 || map.team_rights > 7)
-        // {
-        //     return "team_rights must be between 0 and 7";
-        // }
-        // if (map.other_rights < 0 || map.other_rights > 7)
-        // {
-        //     return "other_rights must be between 0 and 7";
-        // }
-        // if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        // {
-        //     //todo
-        //     return "Owner rights must be Read+Write+Delete. This is temporary.";
-        // }
-        // if (map.team_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Team rights must be NONE. This is temporary.";
-        // }
-        // if (map.other_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Other rights must be NONE. This is temporary.";
-        // }
-        return "";
+        models::Message old_message;
+        old_message.from_values(ef);
+        models::Message new_message;
+        new_message.from_values(d->read(old_message.get_id(), models::MESSAGE_DEFINITION, login_token).first);
+
+        //3. Request
+        string error = new_message.validate();
+        if (!error.empty()) return operation_result(400, error);
+
+        if (logged_in_user.get_id() != new_message.owner_id) return operation_result(
+            403, "You can only update your own message.");
+        if (old_message.sent_at != 0 && new_message.sent_at == 0) return operation_result(
+            400, "sent_at cannot be changed, if already set");
+        if (new_message.sent_at != 0 && new_message.draft) return operation_result(
+            400, "draft cannot be changed, if sent_at is set");
+        if (old_message.system_message != new_message.system_message) return operation_result(
+            400, "system_message cannot be changed");
+        if (old_message.sent_at != 0)
+        {
+            if (old_message.sender_id != new_message.sender_id) return operation_result(400, "sender_id cannot be changed, if sent_at is set");
+            if (old_message.recipient_id != new_message.recipient_id) return operation_result(400, "recipient_id cannot be changed, if sent_at is set");
+            if (old_message.subject != new_message.subject) return operation_result(400, "subject cannot be changed, if sent_at is set");
+            if (old_message.body != new_message.body) return operation_result(400, "body cannot be changed, if sent_at is set");
+            if (old_message.draft != new_message.draft) return operation_result(400, "draft cannot be changed, if sent_at is set");
+
+
+        }
+
+        return ok_result;
     }
 
-    string MessageCrudlValidator::can_read(db_ d, int id) const
+    operation_result MessageCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        //2. Authorization
+        auto logged_in_user_pair = d->find_logged_in_user(login_token);
+        if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;
+        auto logged_in_user = logged_in_user_pair.first;
+        //
+        models::Message message;
+        message.from_values(d->read(id, models::MESSAGE_DEFINITION, login_token).first);
+
+        if (logged_in_user.get_id() != message.owner_id) return operation_result(
+            403, "You can only delete your own message.");
+
+        //3. Request
+        if (message.deleted_at == 0) return operation_result(
+            400, "message cannot be deleted, if deleted_at flag is not set");
+
+        return ok_result;
     }
 
-    string MessageCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result MessageCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,
+                                                     http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
-    }
+        //2. Authorization
+        models::User logged_in_user = d->find_logged_in_user(login_token).first;
 
-    string MessageCrudlValidator::can_delete(db_ d, int id) const
-    {
-        return "The validation is not yet implemented.";
-    }
+        if (filter.find("owner_id") == filter.end()) return {403, "You can't filter without owner_id."};
+        if (filter["owner_id"] != std::to_string(logged_in_user.get_id())) return operation_result(
+            403, "You can only list messages for your own user.");
 
-    string MessageCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
-    {
-        return "";
+        //3. Request
+        return ok_result;
     }
 
     string MessageCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return "message";
     }
 }

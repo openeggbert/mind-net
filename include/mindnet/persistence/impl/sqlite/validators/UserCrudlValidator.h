@@ -26,7 +26,6 @@ namespace mindnet::persistence::impl::sqlite::validators
         ~UserCrudlValidator() = default; // explicitly make it destructible
         create_h_methods()
 
-
     };
 
 }

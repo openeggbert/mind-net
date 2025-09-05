@@ -4,7 +4,9 @@
 
 #include "mindnet/persistence/Persistence.h"
 
+#include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
+#include "mindnet/http/LoginToken.h"
 #include "mindnet/models/User.h"
 #include "mindnet/models/Message.h"
 #include "mindnet/models/Team.h"
@@ -104,7 +106,7 @@ namespace mindnet::persistence
         add_repository(question, Question, QUESTION);
         add_repository(reference, Reference, REFERENCE);
         add_repository(link, Link, LINK);
-//
+        //
         add_validator(user, User)
         add_validator(message, Message)
         add_validator(team, Team)
@@ -158,176 +160,211 @@ namespace mindnet::persistence
         return repository_names;
     }
 
-    string Persistence::can_create(const ModelDefinition& model_definition, entity_fields& ef)
+    // bool Persistence::can_user_make_changes(http::LoginToken& login_token, mindnet::persistence::api::OperationResult& value)
+    // {
+    //     auto logged_in_user_pair = find_logged_in_user(login_token);
+    //     if (logged_in_user_pair.second.ko())
+    //     {
+    //         value = logged_in_user_pair.second;
+    //         return true;
+    //     }
+    //     auto logged_in_user = logged_in_user_pair.first;
+    //
+    //     if (logged_in_user.role < enums::UserRole::EDITOR)
+    //     {
+    //         value = operation_result(403, "User does not have permission to delete this resource.");
+    //         return true;
+    //     }
+    //     return false;
+    // }
+
+    operation_result Persistence::can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token)
     {
+        //Authentication
+        if (login_token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
+
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            string result = v2->can_create(this, ef);
-            if (!result.empty())
-            {
-                return result;
-            }
-        } else
-        {
-            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation CREATE cannot be validated.";
+            return v2->can_create(this, ef, login_token);
         }
+        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+                                ". Operation CREATE cannot be validated.");
+    };
 
-
-    return "";
-};
-
-    string Persistence::can_read(const ModelDefinition& model_definition, int id)
+    operation_result Persistence::can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token)
     {
+
+        //Authentication
+        if (login_token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
+
+
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            string result = v2->can_read(this, id);
-            if (!result.empty())
-            {
-                return result;
-            }
-        } else
-        {
-            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation READ cannot be validated.";
+            return v2->can_read(this, id, login_token);
+
         }
+        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+                                ". Operation READ cannot be validated.");
 
 
-        return "";
+        return ok_result;
     }
 
-    string Persistence::can_update(const ModelDefinition& model_definition, entity_fields& ef)
+    operation_result Persistence::can_update(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token)
     {
+        //Authentication
+        if (login_token.ko()) return {401, "Only logged in users can update."};
+
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            string result = v2->can_update(this, ef);
-            if (!result.empty())
-            {
-                return result;
-            }
-        } else
-        {
-            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation UPDATE cannot be validated.";
+            return v2->can_update(this, ef, login_token);
         }
+        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+                                ". Operation UPDATE cannot be validated.");
 
 
-        return "";
+        return ok_result;
     }
 
-    string Persistence::can_delete(const ModelDefinition& model_definition, int id)
+    operation_result Persistence::can_delete(const ModelDefinition& model_definition, int id, http::LoginToken& login_token)
     {
+        //Authentication
+        if (login_token.ko()) return {401, "Only logged in users can delete."};
+
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            string result = v2->can_delete(this, id);
-            if (!result.empty())
-            {
-                return result;
-            }
-        } else
-        {
-            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation DELETE cannot be validated.";
+            return v2->can_delete(this, id, login_token);
         }
+        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+                                ". Operation DELETE cannot be validated.");
 
 
-        return "";
+        return ok_result;
     }
 
-    string Persistence::can_list(const ModelDefinition& model_definition,
-        std::map<std::string, std::string>& filter)
+    operation_result Persistence::can_list(const ModelDefinition& model_definition,
+                                 std::map<std::string, std::string>& filter, http::LoginToken& login_token)
     {
+        //Authentication
+        if (login_token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
+
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            string result = v2->can_list(this, filter);
-            if (!result.empty())
-            {
-                return result;
-            }
-        } else
-        {
-            return "Validator is not implemented for " + model_definition.get_model_name() + ". Operation LIST cannot be validated.";
+            return v2->can_list(this, filter, login_token);
         }
+        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+                                ". Operation LIST cannot be validated.");
 
 
-        return "";
+        return ok_result;
     };
 
 
-int Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields, string& error)
-{
-    std::map<std::string, std::string> empty_map;
-    auto result = can_create(def.get_model_name(), fields);
-    if (!result.empty())
+    std::pair<int, operation_result> Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields,
+                                                          http::LoginToken& login_token)
     {
-        error = result;
-        return -1;
+        auto result = can_create(def.get_model_name(), fields, login_token);
+        if (result.ko())
+        {
+            return {-1, result};
+        }
+        string error;
+        int last_id = get_repository(def.get_model_name())->create(fields, error);
+        return {last_id, {500, error}};
     }
-    return get_repository(def.get_model_name())->create(fields, error);
-}
 
-entity_fields Persistence::read(const int id, const models::misc::ModelDefinition& def, string& error)
-{
-    std::map<std::string, std::string> empty_map;
-    auto result = can_read(def.get_model_name(), id);
-    if (!result.empty())
+    std::pair<entity_fields, operation_result> Persistence::read(const int id, const models::misc::ModelDefinition& def,
+                                    http::LoginToken& login_token)
     {
-        error = result;
-        return {};
+        std::map<std::string, std::string> empty_map;
+        auto result = can_read(def.get_model_name(), id, login_token);
+        if (result.ko())
+        {
+            return {{}, result};
+        }
+        string error;
+        entity_fields ef = get_repository(def.get_model_name())->read(id, error);
+        return {ef, {500, error}};
     }
-    return get_repository(def.get_model_name())->read(id, error);
-}
 
-bool Persistence::update(int id, entity_fields& fields, const models::misc::ModelDefinition& def, string& error)
-{
-    std::map<std::string, std::string> empty_map;
-    auto result = can_update(def.get_model_name(), fields);
-    if (!result.empty())
+    operation_result Persistence::update(int id, entity_fields& fields, const models::misc::ModelDefinition& def,
+                             http::LoginToken& login_token)
     {
-        error = result;
-        return -1;
+        std::map<std::string, std::string> empty_map;
+        auto result = can_update(def.get_model_name(), fields, login_token);
+        if (result.ko())
+        {
+            return result;
+        }
+        string error;
+        get_repository(def.get_model_name())->update(id, fields, error);
+        if (error.empty()) {return ok_result;} else {return {500, error};}
     }
-    return get_repository(def.get_model_name())->update(id, fields, error);
-}
 
-bool Persistence::remove(int id, models::misc::ModelDefinition& def, string& error)
-{
-    std::map<std::string, std::string> empty_map;
-    auto result = can_delete(def.get_model_name(), id);
-    if (!result.empty())
+    operation_result Persistence::remove(int id, models::misc::ModelDefinition& def, http::LoginToken& login_token)
     {
-        error = result;
-        return -1;
-    }
-    return get_repository(def.get_model_name())->remove(id, error);
-}
+        std::map<std::string, std::string> empty_map;
+        auto result = can_delete(def.get_model_name(), id, login_token);
+        if (result.ko())
+        {
+            return result;
+        }
+        string error;
+        get_repository(def.get_model_name())->remove(id, error);
+        if (error.empty()) {return ok_result;} else {return {500, error};}
 
-std::optional<ModelDefinition> Persistence::get_model_definition(const string& model_name)
-{
-    if (!has_repository(model_name))
+    }
+
+    std::pair<std::vector<entity_fields>, operation_result> Persistence::list(http::QueryParams& query_params, ModelDefinition& def,
+                                                 http::LoginToken& login_token)
     {
-        return std::nullopt;
-    }
-    return get_repository(model_name)->get_model_definition();
-}
+        auto result = can_list(def.get_model_name(), query_params.filters, login_token);
+        if (result.ko())
+        {
+            return {{}, result};
+        }
+        string error;
+        auto l = get_repository(def.get_model_name())->list(query_params, error);
+        if (error.empty())
+        {
+            return {l, ok_result};
+        } else
+        {
+            return {{}, {500, error}};
+        }
 
-std::vector<entity_fields> Persistence::list(http::QueryParams& query_params, ModelDefinition& def, string& error)
-{
-    std::map<std::string, std::string> empty_map;
-    auto result = can_list(def.get_model_name(), query_params.filters);
-    if (!result.empty())
+    }
+
+    std::optional<ModelDefinition> Persistence::get_model_definition(const string& model_name)
     {
-        error = result;
-        return {};
+        if (!has_repository(model_name))
+        {
+            return std::nullopt;
+        }
+        return get_repository(model_name)->get_model_definition();
     }
-    return get_repository(def.get_model_name())->list(query_params, error);
-}
 
-entity_fields Persistence::request_to_entity_fields(
-    crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
-{
-    return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
-}
+    entity_fields Persistence::request_to_entity_fields(
+        crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
+    {
+        return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
+    }
 
+    std::pair<models::User, api::OperationResult> Persistence::find_logged_in_user(
+        http::LoginToken login_token)
+    {
+        auto result = this->read(login_token.user_id, models::USER_DEFINITION, login_token);
+        if (result.second.ko())
+        {
+            return {models::User(), result.second};
+        }
+        models::User user;
+        user.from_values(result.first);
+        return {user, ok_result};
+    }
 }
