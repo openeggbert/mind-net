@@ -86,7 +86,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     result NoteCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
     {
-        return empty_result;
+        return ok_result;
     }
 
     result NoteCrudlValidator::get_model_name() const

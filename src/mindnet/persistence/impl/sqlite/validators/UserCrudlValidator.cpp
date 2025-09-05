@@ -29,90 +29,70 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    string validate(models::User& user, enums::Crudl& crudl)
+    string validate_create(models::User& user)
     {
-        bool create = crudl == enums::Crudl::CREATE;
-        bool update = crudl == enums::Crudl::UPDATE;
-
-        if (!create && !update) return "crudl must be CREATE or UPDATE";
-
         testt_not_empty(user.username, "username");
         testt_between(user.username, 5, 64, "username");
-        for (char ch:user.username) if (!isdigit(ch) && !isalpha(ch)) return "username must contain only letters and digits";
+        for (char ch : user.username) if (!isdigit(ch) && !isalpha(ch)) return
+            "username must contain only letters and digits";
         if (isdigit(user.username[0])) return "username must not start with a digit";
 
-        if (create) test_eq(user.password_hash.size(), 64, "password_hash");
+        test_eq(user.password_hash.size(), 64, "password_hash");
         test_at_most(user.display_name.size(), 64, "display_name");
         //
-        if (create) {
-        enums::UserRole default_role = g_configuration.default_user_role;
-        if ( ! ( user.role == default_role) ) return "role" " must be qual to " + enums::user_role_to_string(default_role);
+        {
+            enums::UserRole default_role = g_configuration.default_user_role;
+            if (!(user.role == default_role)) return "role" " must be qual to " + enums::user_role_to_string(
+                default_role);
         }
 
-        if ( ! ( user.profile_text .size() <= 256 ) ) return "profile_text" " must not be greater than " + std::to_string(256);
+        if (!(user.profile_text.size() <= 256)) return "profile_text" " must not be greater than " +
+            std::to_string(256);
 
         std::regex email_pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
         if (!std::regex_match(user.email, email_pattern))
         {
             return "Invalid email format";
         }
-        if (create)
-        {
-            if (g_configuration.require_admin_approval_for_new_users)
-            {
-                if ( ! ( user.status == enums::UserStatus::PENDING) ) return "status" " must be qual to PENDING";
-            } else
-            {
-                if ( ! ( user.status == enums::UserStatus::ACTIVE) ) return "status" " must be qual to ACTIVE";
-            }
-        }
 
+        if (g_configuration.require_admin_approval_for_new_users)
+        {
+            if (!(user.status == enums::UserStatus::PENDING)) return "status" " must be qual to PENDING";
+        }
+        else
+        {
+            if (!(user.status == enums::UserStatus::ACTIVE)) return "status" " must be qual to ACTIVE";
+        }
 
 
         return "";
     }
+
     validator_result UserCrudlValidator::can_create(db_ d, entity_fields& ef) const
     {
         models::User user;
         user.from_values(ef);
         err << user << commit;
 
-        string str = validate(user);
-        if (!str.empty()) return validator_result(400, str);
+        string error = validate_create(user);
+        if (!error.empty()) return validator_result(400, error);
 
-        string error;
+        error.clear();
         http::QueryParams query_params;
         query_params.filters.emplace("name", user.username);
         if (!d->list(query_params, models::USER_DEFINITION, error).empty())
         {
-            return validator_result(409, "Name name already exists");
+            return validator_result(409, "username already exists");
+        }
+        error.clear();
+        http::QueryParams query_params2;
+        query_params2.filters.emplace("email", user.email);
+        if (!d->list(query_params, models::USER_DEFINITION, error).empty())
+        {
+            return validator_result(409, "email already exists");
         }
 
-
-
-
-        if (map.team_rights < 0 || map.team_rights > 7)
-        {
-            return "team_rights must be between 0 and 7";
-        }
-        if (map.other_rights < 0 || map.other_rights > 7)
-        {
-            return "other_rights must be between 0 and 7";
-        }
-        if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        {
-            //todo
-            return "Owner rights must be Read+Write+Delete. This is temporary.";
-        }
-        if (map.team_rights != castint(enums::AccessRight::NONE))
-        {
-            return "Team rights must be NONE. This is temporary.";
-        }
-        if (map.other_rights != castint(enums::AccessRight::NONE))
-        {
-            return "Other rights must be NONE. This is temporary.";
-        }
-        return "";
+        return ok_result;
     }
 
     validator_result UserCrudlValidator::can_read(db_ d, int id) const

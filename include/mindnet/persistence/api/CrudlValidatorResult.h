@@ -4,7 +4,7 @@
 #ifndef CRUDLVALIDATORRESULT_H
 #define CRUDLVALIDATORRESULT_H
 #define validator_result mindnet::persistence::api::ValidatorResult
-#define empty_result mindnet::persistence::api::EmptyValidatorResult
+#define ok_result mindnet::persistence::api::EmptyValidatorResult
 
 #include <utility>
 
