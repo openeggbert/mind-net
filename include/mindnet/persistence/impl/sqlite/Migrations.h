@@ -99,6 +99,7 @@ CREATE TABLE discussion (
   title TEXT NOT NULL,
   created_by INTEGER NOT NULL,
   is_pinned BOOLEAN DEFAULT 0,
+  is_archived BOOLEAN DEFAULT 0,
 
   FOREIGN KEY (team_id) REFERENCES team(id),
   FOREIGN KEY (created_by) REFERENCES user(id)

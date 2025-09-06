@@ -51,6 +51,8 @@ namespace mindnet::models
                 "User ID who created the discussion"),
             coldef(COLS::IS_PINNED, BOOL).set_default_value(0).set_description(
                 "Whether this discussion is pinned to the top"),
+            coldef(COLS::IS_ARCHIVED, BOOL).set_default_value(0).set_description(
+                "Whether this discussion is archived or not"),
         })
     .add_custom_list_action("comment","List comments", {"discussion_id","{id}"})
     .add_custom_create_action("comment","Add comment", {"discussion_id","{id}"})
@@ -62,6 +64,7 @@ namespace mindnet::models
         string title;
         int created_by{};
         bool is_pinned{};
+        bool is_archived{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -73,7 +76,8 @@ namespace mindnet::models
                 team_id == other.team_id &&
                 title == other.title &&
                 created_by == other.created_by &&
-                is_pinned == other.is_pinned;
+                    is_pinned == other.is_pinned &&
+                    is_archived == other.is_archived;
         }
     };
 }

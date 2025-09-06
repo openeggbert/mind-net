@@ -44,6 +44,7 @@ namespace mindnet::models::columns
         static constexpr const char* TITLE = "title";
         static constexpr const char* CREATED_BY = "created_by";
         static constexpr const char* IS_PINNED = "is_pinned";
+        static constexpr const char* IS_ARCHIVED = "is_archived";
     };
 }
 #endif // DISCUSSIONCOLUMNS_H

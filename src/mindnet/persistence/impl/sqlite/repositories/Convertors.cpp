@@ -123,6 +123,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
         mandatory_string(TITLE)
         foreign_key(CREATED_BY)
         optional_int(IS_PINNED, 0)
+        optional_int(IS_ARCHIVED, 0)
         return fields;
     }
 

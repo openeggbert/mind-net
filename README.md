@@ -108,6 +108,8 @@ export JWT_SECRET={jwt_secret}
 - [ ] FEATURE User authentication (JWT or session token or ?)
 - [ ] FEATURE User authorization via Validators
 - [ ] FEATURE Implement Complex Filtering in REST API
+- [ ] FEATURE New table comment_reaction
+- [ ] FEATURE New table discussion_read_status
 
 ### Task details
 
@@ -237,6 +239,28 @@ EXISTS (subquery)
 - bool user_can_self_register
   * if user_can_self_register==false then only admin can create new users,
 
+  
+#### New table comment_reaction
+
+CREATE TABLE comment_reaction (
+comment_id INTEGER,
+user_id INTEGER NOT NULL,
+type TEXT NOT NULL, -- např. 'like', 'heart', 'laugh'
+FOREIGN KEY(comment_id) REFERENCES comment(id),
+FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
+
+#### New table discussion_read_status
+
+CREATE TABLE discussion_read_status (
+user_id INTEGER NOT NULL,
+discussion_id INTEGER NOT NULL,
+last_read_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY(user_id, discussion_id),
+FOREIGN KEY(user_id) REFERENCES user(id),
+FOREIGN KEY(discussion_id) REFERENCES discussion(id)
+);
 
 
 ## Done
@@ -466,5 +490,3 @@ I propose the following **modular approach**:
 * Easier testing and maintenance.
 * Future extensions e.g. additional entities, custom actions, or new visualizations will be simpler.
 
-
-# DONE
