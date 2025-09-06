@@ -12,7 +12,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamCrudlValidator;
-    operation_result TeamCrudlValidator::can_create(db_& d, entity_fields& ef, http::LoginToken& login_token) const
+    operation_result TeamCrudlValidator::can_create(db_& d, http::LoginToken& token, entity_fields& ef) const
     {
         //2. Authorization
         logged_user()
@@ -40,12 +40,12 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const
+    operation_result TeamCrudlValidator::can_read(db_& d, http::LoginToken& token, int id) const
     {
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
+    operation_result TeamCrudlValidator::can_update(db_& d, http::LoginToken& token, entity_fields& ef) const
     {
         //2. Authorization
         logged_user()
@@ -74,7 +74,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
+    operation_result TeamCrudlValidator::can_delete(db_& d, http::LoginToken& token, int id) const
     {
         //2. Authorization
         auto logged_in_user_pair = d->find_logged_in_user(login_token);
@@ -92,8 +92,8 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,
-                                                  http::LoginToken& login_token) const
+    operation_result TeamCrudlValidator::can_list(db_& d, string_map& filter,
+                                                  http::LoginToken& token) const
     {
         return ok_result;
     }

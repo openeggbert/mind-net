@@ -1,0 +1,48 @@
+//
+// Created by robertvokac on 8/4/25.
+//
+
+#include "mindnet/models/Comment.h"
+
+namespace mindnet::models
+{
+    entity_fields Comment::to_values() const
+    {
+        entity_fields result;
+        result.push_back(id);
+        result.push_back(cast64(created_at));
+        result.push_back(cast64(updated_at));
+        result.push_back(discussion_id);
+        result.push_back(user_id);
+        result.push_back(content);
+        result.push_back(parent_comment_id);
+        result.push_back(cast64(is_deleted));
+        return result;
+    }
+
+    void Comment::from_values(const entity_fields& values)
+    {
+        int i = 0;
+
+        def_helper_lambdas()
+
+        set_id(number());
+        created_at = number();
+        updated_at = number();
+        discussion_id = number();
+        user_id = number();
+        content = text();
+        parent_comment_id = number();
+        is_deleted = number();
+    };
+
+    string Comment::validate()
+    {
+        test_ne(discussion_id, 0, "discussion_id");
+        test_ne(user_id, 0, "user_id");
+        testt_not_empty(content, "content");
+        test_at_most(content.size(), 1000, "content");
+
+        return "";
+    }
+}

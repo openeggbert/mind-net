@@ -12,33 +12,15 @@
 #include "mindnet/models/Team.h"
 #include "mindnet/models/TeamMember.h"
 #include "mindnet/persistence/Persistence.h"
+#include "mindnet/persistence/api/PersistenceMethods.h"
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    string is_member_of_team(db_& d, int team_id, http::LoginToken& login_token)
-    {
-        auto team_result = d->read(team_id, models::TEAM_DEFINITION, login_token);
-        if (team_result.second.ko()) return team_result.second.error;
-        models::Team team;
-        team.from_values(team_result.first);
-
-        http::QueryParams query_params;
-        query_params.filters.emplace("team_id", std::to_string(team.get_id()));
-        query_params.filters.emplace("user_id", std::to_string(login_token.user_id));
-        query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
-        auto is_team_member_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, login_token);
-        if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
-        if (is_team_member_result.first.empty())
-        {
-            return "User is not member of team with id " + std::to_string(team.get_id()) + ".";
-        }
-        return "";
-    }
 
     operation_result DiscussionCrudlValidator::can_create(db_& d, entity_fields& ef,
-                                                          http::LoginToken& login_token) const
+                                                          http::LoginToken& token) const
     {
         //2. Authorization
         logged_user()
@@ -54,7 +36,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         new_entity.from_values(ef);
         err << new_entity << commit;
 
-        string is_member_of_team_result = is_member_of_team(d, new_entity.team_id, login_token);
+        string is_member_of_team_result = api::is_member_of_team(d, login_token, new_entity.team_id);
         if (!is_member_of_team_result.empty())
         {
             return operation_result(
@@ -74,7 +56,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const
+    operation_result DiscussionCrudlValidator::can_read(db_& d, http::LoginToken& token, int id) const
     {
         logged_user()
         if (logged_in_user.role == enums::UserRole::ADMIN) return ok_result;
@@ -86,7 +68,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         discussion.from_values(discussion_result.first);
 
 
-        string is_member_of_team_result = is_member_of_team(d, discussion.team_id, login_token);
+        string is_member_of_team_result = api::is_member_of_team(d, discussion.team_id, login_token);
         if (!is_member_of_team_result.empty())
         {
             return operation_result(
@@ -96,7 +78,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
+    operation_result DiscussionCrudlValidator::can_update(db_& d, http::LoginToken& token, entity_fields& ef) const
     {
         logged_user()
 
@@ -106,10 +88,11 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto old_entity_values = d->read(new_entity.get_id(), models::DISCUSSION_DEFINITION, login_token).first;
         old_entity.from_values(old_entity_values);
 
-        if (old_entity.created_by != logged_in_user.get_id()) return operation_result(403, "You can only update your own discussion.");
+        if (old_entity.created_by != logged_in_user.get_id()) return operation_result(
+            403, "You can only update your own discussion.");
 
-        string is_member_of_team_result = is_member_of_team(d, old_entity.team_id, login_token);
-        if (!is_member_of_team_result.empty())
+        string is_member_of_team_result = api::is_member_of_team(d, old_entity.team_id, login_token);
+        if (!is_member_of_team_result.empty() && logged_in_user.role != enums::UserRole::ADMIN)
         {
             return operation_result(
                 403, "You can only update discussions, you created." + is_member_of_team_result);
@@ -117,22 +100,23 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         string error = new_entity.validate();
         if (!error.empty()) return operation_result(400, error);
-        error = validate_readonly(old_entity_values, ef, models::TEAM_MEMBER_DEFINITION);
+        error = validate_readonly(old_entity_values, ef, models::DISCUSSION_DEFINITION);
         if (!error.empty()) return operation_result(400, error);
 
 
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
+    operation_result DiscussionCrudlValidator::can_delete(db_& d, http::LoginToken& token, int id) const
     {
         auto discussion_result = d->read(id, models::DISCUSSION_DEFINITION, login_token);
         if (discussion_result.second.ko()) return discussion_result.second;
 
-        return operation_result(403, "Deleting discussions is forbidden. Set is_archived to true.");    }
+        return operation_result(403, "Deleting discussions is forbidden. Set is_archived to true.");
+    }
 
-    operation_result DiscussionCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,
-                                                        http::LoginToken& login_token) const
+    operation_result DiscussionCrudlValidator::can_list(db_& d, string_map& filter,
+                                                        http::LoginToken& token) const
     {
         //2. Authorization
         logged_user()
@@ -146,7 +130,8 @@ namespace mindnet::persistence::impl::sqlite::validators
                 403, "You can only list discussions for teams, you are member of. " + is_member_of_team_result);
         }
 
-        return ok_result;    }
+        return ok_result;
+    }
 
     string DiscussionCrudlValidator::get_model_name() const
     {

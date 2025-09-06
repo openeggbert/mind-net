@@ -195,7 +195,7 @@ namespace mindnet::models::misc
             {
                 throw std::invalid_argument("Invalid params for custom action");
             }
-            std::map<std::string, std::string> map;
+            string_map map;
             for (int i = 0; i < params_.size(); i++)
             {
                 auto param1 = params_.at(i);

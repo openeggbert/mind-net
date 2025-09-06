@@ -45,7 +45,7 @@ namespace mindnet::models::misc
         string label;
         std::string crudl;
         string model_name;
-        std::map<std::string, std::string> params;
+        string_map params;
 
     public:
 
@@ -53,7 +53,7 @@ namespace mindnet::models::misc
             enums::Crudl crudl_,
             std::string  model_name_,
             std::string  label_,
-            const std::map<std::string, std::string>& params_ = {}
+            const string_map& params_ = {}
         ) :
         crudl(enums::crudl_to_string(static_cast<int>(crudl_))),
         model_name(std::move(model_name_)),

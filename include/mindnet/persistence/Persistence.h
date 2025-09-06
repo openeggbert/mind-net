@@ -38,7 +38,7 @@ namespace mindnet::persistence
         operation_result can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token);
         operation_result can_update(const ModelDefinition& model_definition,entity_fields& ef, http::LoginToken& login_token);
         operation_result can_delete(const ModelDefinition& model_definition,int id, http::LoginToken& login_token);
-        operation_result can_list(const ModelDefinition& model_definition,std::map<std::string, std::string>& filter, http::LoginToken& login_token);
+        operation_result can_list(const ModelDefinition& model_definition,string_map& filter, http::LoginToken& login_token);
 
         std::pair<int, operation_result> create(const ModelDefinition& def, entity_fields& fields, http::LoginToken& login_token);
         std::pair<entity_fields, operation_result> read(int id, const ModelDefinition& def, http::LoginToken& login_token);

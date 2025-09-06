@@ -21,7 +21,7 @@ namespace mindnet::http
         std::optional<mindnet::http::Order> order; // "asc" or "desc"
 
         // filters: key = field, value = filter value
-        std::map<std::string, std::string> filters;
+        string_map filters;
         std::set<std::string> fields;
 
         // helper: add filter

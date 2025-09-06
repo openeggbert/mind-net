@@ -25,6 +25,7 @@ typedef nlohmann::json JSON;
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;
 using std::endl;
+typedef std::map<std::string, std::string> string_map;
 
 typedef mindnet::models::misc::ColumnDefinition column_definition;
 typedef std::vector<column_definition> column_definitions;

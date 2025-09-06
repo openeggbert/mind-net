@@ -15,9 +15,9 @@
 
 namespace mindnet
 {
-    inline std::map<std::string, std::string> loadProperties(const std::string& filename)
+    inline string_map loadProperties(const std::string& filename)
     {
-        std::map<std::string, std::string> properties;
+        string_map properties;
         std::ifstream file(filename);
         if (!file)
         {
@@ -67,12 +67,12 @@ namespace mindnet
             throw std::runtime_error("Invalid boolean value: " + str);
         }
 
-        bool map_contains(std::map<std::string, std::string>& map, std::string key)
+        bool map_contains(string_map& map, std::string key)
         {
             return map.find(key) != map.end();
         }
 
-        Configuration(std::map<std::string, std::string> map)
+        Configuration(string_map map)
         {
             if (map_contains(map, "allow_public_access"))
                 allow_public_access = string_to_bool(

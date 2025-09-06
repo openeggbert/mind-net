@@ -247,7 +247,7 @@ namespace mindnet::persistence
     }
 
     operation_result Persistence::can_list(const ModelDefinition& model_definition,
-                                 std::map<std::string, std::string>& filter, http::LoginToken& login_token)
+                                 string_map& filter, http::LoginToken& login_token)
     {
         //Authentication
         if (login_token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
@@ -281,7 +281,7 @@ namespace mindnet::persistence
     std::pair<entity_fields, operation_result> Persistence::read(const int id, const models::misc::ModelDefinition& def,
                                     http::LoginToken& login_token)
     {
-        std::map<std::string, std::string> empty_map;
+        string_map empty_map;
         auto result = can_read(def.get_model_name(), id, login_token);
         if (result.ko())
         {
@@ -295,7 +295,7 @@ namespace mindnet::persistence
     operation_result Persistence::update(int id, entity_fields& fields, const models::misc::ModelDefinition& def,
                              http::LoginToken& login_token)
     {
-        std::map<std::string, std::string> empty_map;
+        string_map empty_map;
         auto result = can_update(def.get_model_name(), fields, login_token);
         if (result.ko())
         {
@@ -308,7 +308,7 @@ namespace mindnet::persistence
 
     operation_result Persistence::remove(int id, models::misc::ModelDefinition& def, http::LoginToken& login_token)
     {
-        std::map<std::string, std::string> empty_map;
+        string_map empty_map;
         auto result = can_delete(def.get_model_name(), id, login_token);
         if (result.ko())
         {

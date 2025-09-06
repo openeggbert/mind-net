@@ -69,22 +69,22 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    operation_result NoteCrudlValidator::can_read(db_ d, int id) const
+    operation_result NoteCrudlValidator::can_read(db_& d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result NoteCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result NoteCrudlValidator::can_update(db_& d, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result NoteCrudlValidator::can_delete(db_ d, int id) const
+    operation_result NoteCrudlValidator::can_delete(db_& d, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result NoteCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    operation_result NoteCrudlValidator::can_list(db_& d, string_map& filter) const
     {
         return ok_result;
     }
