@@ -2,95 +2,94 @@
 // Created by robertvokac on 8/6/25.
 //
 
-
 #include "mindnet/persistence/impl/sqlite/validators/ContentCrudlValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/models/Content.h"
 #include "mindnet/persistence/Persistence.h"
 
+#define Model Content
+#define MODEL CONTENT
+#define model content
+
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::ContentCrudlValidator;
-    operation_result ContentCrudlValidator::can_create(db_ db, entity_fields& ef) const
+
+    operation_result ContentCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
-        // models::Map map;
-        // map.from_values(ef);
-        // err << map << commit;
-        // if (map.name.empty())
-        // {
-        //     return "Name must not be empty";
-        // }
-        // string error;
-        // http::QueryParams query_params;
-        // query_params.filters.emplace("name", map.name);
-        // if (!d->list(query_params, models::MAP_DEFINITION, error).empty())
-        // {
-        //     return "Map name already exists";
-        // }
-        //
-        // if (map.description.size() > 50)
-        // {
-        //     return "Description must not be longer than 50 characters";
-        // }
-        // if (map.owner_id != 1)
-        // {
-        //     return "Only owner can create maps";
-        // }
-        // if (map.team_id != 0)
-        // {
-        //     return "Team maps are not supported yet";
-        // }
-        // if (map.owner_rights < 0 || map.owner_rights > 7)
-        // {
-        //     return "owner_rights must be between 0 and 7";
-        // }
-        // if (map.team_rights < 0 || map.team_rights > 7)
-        // {
-        //     return "team_rights must be between 0 and 7";
-        // }
-        // if (map.other_rights < 0 || map.other_rights > 7)
-        // {
-        //     return "other_rights must be between 0 and 7";
-        // }
-        // if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        // {
-        //     //todo
-        //     return "Owner rights must be Read+Write+Delete. This is temporary.";
-        // }
-        // if (map.team_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Team rights must be NONE. This is temporary.";
-        // }
-        // if (map.other_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Other rights must be NONE. This is temporary.";
-        // }
-        return "";
+        start_can_create(Model);
+        return_if (role < enums::UserRole::EDITOR,403, "You can not create content.")
+        return_if (new_entity.version != 1,
+            404, "version must be 1 during message creation.");
+
+        return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_read(db_ db, int id) const
+    operation_result ContentCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
     {
-        return "The validation is not yet implemented.";
+        start_can_read(Model, MODEL)
+
+        return_if (entity.owner_id != logged_in_user.get_id(),
+            403, "You can only read messages for your own user.");
+
+        return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_update(db_ db, entity_fields& ef) const
+    operation_result ContentCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
-        return "The validation is not yet implemented.";
+        start_can_update(Model, MODEL)
+
+        return_if (logged_in_user.get_id() != new_entity.owner_id,
+            403, "You can only update your own message.");
+        return_if (old_entity.sent_at != 0 && new_entity.sent_at == 0,
+            400, "sent_at cannot be changed, if already set");
+        return_if (old_entity.sent_at != 0 && new_entity.draft,
+            400, "draft cannot be changed, if sent_at is set");
+
+        if (old_entity.sent_at != 0)
+        {
+            return_if (old_entity.sender_id != new_entity.sender_id,400, "sender_id cannot be changed, if sent_at is set");
+            return_if (old_entity.recipient_id != new_entity.recipient_id,400, "recipient_id cannot be changed, if sent_at is set");
+            return_if (old_entity.subject != new_entity.subject,400, "subject cannot be changed, if sent_at is set");
+            return_if (old_entity.body != new_entity.body,400, "body cannot be changed, if sent_at is set");
+            return_if (old_entity.draft != new_entity.draft,400, "draft cannot be changed, if sent_at is set");
+        }
+
+        return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_delete(db_ db, int id) const
+    operation_result ContentCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
     {
-        return "The validation is not yet implemented.";
+        start_can_delete(Model, MODEL)
+
+        return_if (logged_in_user.get_id() != entity.owner_id,
+            403, "You can only delete your own message.");
+
+        return_if (entity.deleted_at == 0,
+            400, "message cannot be deleted, if deleted_at flag is not set");
+
+        return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_list(db_ db, string_map& filter) const
+    operation_result ContentCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
     {
-        return "";
+        start_can_list(Model, MODEL)
+
+        mandatory_filter(owner_id)
+
+        return_if (filter["owner_id"] != std::to_string(logged_in_user.get_id()),
+            403, "You can only list messages for your own user.");
+
+        return ok_result;
     }
 
     string ContentCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return STRING(model);
     }
 }
+
+#undef Model
+#undef MODEL
+#undef model

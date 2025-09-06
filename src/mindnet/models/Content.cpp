@@ -32,5 +32,8 @@ namespace mindnet::models
         format = static_cast<enums::ContentFormat>(number());
         version = number();
     }
-    ;
+    string Content::validate()
+    {
+        return "";
+    }
 }

@@ -119,7 +119,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         {
             auto maps = db->list(params, models::MAP_DEFINITION, token);
             if (maps.second.ko()) return maps.second;
-            if (maps.first.empty()) return ok_result;
+            if (maps.first.empty()) break;
             for (auto& values : maps.first)
             {
                 models::Map map;
@@ -127,6 +127,7 @@ namespace mindnet::persistence::impl::sqlite::validators
                 auto check_result = can_read(db, token, map.get_id());
                 if (check_result.ko()) return {400, std::string("You request list containing map with ID ") + std::to_string(map.get_id()) + ", but you cannot read this map. Modify your query."};
             }
+            params.page_number++;
         }
         return ok_result;
     }
