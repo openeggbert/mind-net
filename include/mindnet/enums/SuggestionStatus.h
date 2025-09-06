@@ -28,18 +28,21 @@ namespace mindnet::enums
 {
     enum class SuggestionStatus
     {
-        PENDING = 0,
-        UNDER_REVIEW = 1,
-        APPROVED = 2,
-        REJECTED = 3,
-        CANCELLED = 4,
-        REQUESTS_FEEDBACK = 5
+        DRAFT = 0,
+        PENDING = 1,
+        UNDER_REVIEW = 2,
+        APPROVED = 3,
+        REJECTED = 4,
+        CANCELLED = 5,
+        REQUESTS_FEEDBACK = 6
     };
 
     inline std::string suggestion_status_to_string(const SuggestionStatus status)
     {
         switch (status)
         {
+        case SuggestionStatus::DRAFT:
+            return "draft";
         case SuggestionStatus::PENDING:
             return "pending";
         case SuggestionStatus::UNDER_REVIEW:
@@ -65,7 +68,7 @@ namespace mindnet::enums
     inline models::misc::EnumDefinition suggestion_status_to_enum_definition()
     {
         return models::misc::EnumDefinition{
-            suggestion_status_to_string, 6, 0, 1, 2, 3, 4, 5
+            suggestion_status_to_string, 7, 0, 1, 2, 3, 4, 5, 6
         };
     }
 } // namespace mindnet::enums

@@ -78,7 +78,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         auto is_member_of_team_result = api::is_member_of_team(db, token, discussion.first.team_id);
 
-        return_if (!is_member_of_team_result.empty(),403, "You can only list comments for teams, you are member of. " + is_member_of_team_result)
+        return_if (!is_member_of_team_result.empty(),403, std::string("You can only list comments for teams, you are member of. ") + is_member_of_team_result)
 
         return ok_result;
     }

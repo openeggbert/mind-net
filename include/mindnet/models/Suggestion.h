@@ -46,9 +46,9 @@ namespace mindnet::models
         .set_columns({
             //
             coldef(COLS::PARENT_SUGGESTION_ID).set_foreign_key("suggestion"),
-            coldef(COLS::FROM_USER_ID, MANDATORY).set_foreign_key("user"),
-            coldef(COLS::TABLE_NAME, MANDATORY),
-            coldef(COLS::OPERATION, MANDATORY).set_enum_definition(enums::crudl_to_enum_definition()),
+            coldef(COLS::FROM_USER_ID, MANDATORY | READONLY).set_foreign_key("user"),
+            coldef(COLS::TABLE_NAME, MANDATORY | READONLY),
+            coldef(COLS::OPERATION, MANDATORY | READONLY).set_enum_definition(enums::crudl_to_enum_definition()),
             coldef(COLS::STATUS).set_default_value(0).set_enum_definition(enums::suggestion_status_to_enum_definition()),
             coldef(COLS::DATA_JSON),
             coldef(COLS::REVIEW_COUNT, INTEGER).set_default_value(0),
@@ -58,10 +58,10 @@ namespace mindnet::models
     struct Model : misc::BaseModel
     {
         int parent_suggestion_id{};
-        string from_user_id;
+        int from_user_id;
         string table_name;
         enums::Crudl operation{};
-        int status{};
+        enums::SuggestionStatus status{};
         string data_json;
         int review_count{};
 
