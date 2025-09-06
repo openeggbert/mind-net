@@ -23,6 +23,9 @@ operation_result can_list(db_& db, http::LoginToken& token, string_map& filter) 
 auto logged_in_user_pair = db->find_logged_in_user(token);\
 if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;\
 auto logged_in_user = logged_in_user_pair.first;\
+auto role = logged_in_user.role;
+
+#define return_if_true(condition, status, message) if (condition) return operation_result(status, message);\
 
 #define start_can_create(Model)\
 logged_user()\

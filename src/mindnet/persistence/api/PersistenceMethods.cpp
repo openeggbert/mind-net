@@ -7,6 +7,25 @@
 namespace mindnet::persistence::api
 {
 
+
+    bool has_user_name(db_& db, http::LoginToken& token, string user_name)
+    {
+        string error;
+        http::QueryParams query_params;
+        query_params.filters.emplace("name", user_name);
+
+        return !db->list(query_params, models::USER_DEFINITION, token).first.empty();
+    }
+    bool has_user_email(db_& db, http::LoginToken& token, string user_email)
+    {
+
+        string error;
+        http::QueryParams query_params;
+        query_params.filters.emplace("email", user_email);
+        return !db->list(query_params, models::USER_DEFINITION, token).first.empty();
+    }
+
+
     string is_member_of_team(db_& d, http::LoginToken& login_token, int team_id)
     {
         auto team_result = d->read(team_id, models::TEAM_DEFINITION, login_token);

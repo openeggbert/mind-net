@@ -5,11 +5,11 @@
 #include "mindnet/persistence/impl/sqlite/validators/UserCrudlValidator.h"
 
 #include <regex>
-#include "crow/common.h"
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
 #include "mindnet/models/User.h"
 #include "mindnet/persistence/Persistence.h"
+#include "mindnet/persistence/api/PersistenceMethods.h"
 
 
 namespace mindnet::persistence::impl::sqlite::validators
@@ -20,48 +20,27 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
         start_can_create(User);
 
-        if (!g_configuration.allow_self_registration && token.ko())
-        {
-            return {401, "You must be logged in to create a user"};
-        }
-        if (!g_configuration.allow_self_registration && token.ok())
-        {
-            if (logged_in_user.role != enums::UserRole::ADMIN)
-            {
-                return operation_result(403, "You must be admin to create a user.");
-            }
-        }
+        return_if_true (!g_configuration.allow_self_registration && token.ko(),
+            401,"You must be logged in to create a user")
 
+        return_if_true (!g_configuration.allow_self_registration && token.ok() && logged_in_user.role != enums::UserRole::ADMIN,
+            403,"You must be admin to create a user.")
 
-        {
-            if (logged_in_user.role != enums::UserRole::ADMIN && new_entity.role != g_configuration.default_user_role)
-                return operation_result(
-                    400, "role" " must be qual to " + enums::user_role_to_string(g_configuration.default_user_role));
-        }
+        return_if_true(role != enums::UserRole::ADMIN && new_entity.role != g_configuration.default_user_role,
+            400,"role" " must be qual to " + enums::user_role_to_string(g_configuration.default_user_role))
 
-        error.clear();
-        http::QueryParams query_params;
-        query_params.filters.emplace("name", new_entity.username);
-        if (!db->list(query_params, models::USER_DEFINITION, token).first.empty())
-        {
-            return operation_result(409, "username already exists");
-        }
-        error.clear();
-        http::QueryParams query_params2;
-        query_params2.filters.emplace("email", new_entity.email);
-        if (!db->list(query_params2, models::USER_DEFINITION, token).first.empty())
-        {
-            return operation_result(409, "email already exists");
-        }
+        return_if_true (!api::has_user_name(db, token, new_entity.username),
+            409, "username already exists")
+
+        return_if_true (!api::has_user_email(db, token, new_entity.email),
+            409, "email already exists");
 
         return ok_result;
     }
 
     operation_result UserCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
     {
-        //2. Authorization
         return ok_result;
-        //3. Request
     }
 
     operation_result UserCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const

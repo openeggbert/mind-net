@@ -45,7 +45,10 @@ std::pair<models::Model, string> find_##model(db_& db, http::LoginToken& token, 
 namespace mindnet::persistence::api
 {
 
-    string is_member_of_team(db_& d, http::LoginToken& token, int team_id);
+    bool has_user_name(db_& db, http::LoginToken& token, string user_name);
+    bool has_user_email(db_& db, http::LoginToken& token, string user_mail);
+
+    string is_member_of_team(db_& db, http::LoginToken& token, int team_id);
 
     gen_find_h(Collection, collection)
     gen_find_h(CollectionItem, collection_item)
