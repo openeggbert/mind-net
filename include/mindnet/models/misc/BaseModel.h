@@ -30,9 +30,6 @@
 #include "crow/json.h"
 #include "mindnet/enums/Crudl.h"
 
-#define PASTE(a,b) a##b
-#define XPASTE(a,b) PASTE(a,b)
-
 #define create_model_h_methods(Model, MODEL)\
 [[nodiscard]] const def& get_definition() const override\
         {\

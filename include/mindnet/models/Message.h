@@ -31,7 +31,6 @@
 #include "columns/MessageColumns.h"
 // ***** MACROS : END *****
 
-
 namespace mindnet::models
 {
 
@@ -52,7 +51,7 @@ namespace mindnet::models
                 coldef(COLS::IMPORTANT,BOOL).set_default_value(0),
                 coldef(COLS::BODY,TEXTAREA | MANDATORY),
                 coldef(COLS::SENT_AT,DATETIME),
-                coldef(COLS::SYSTEM_MESSAGE,BOOL).set_default_value(0),
+                coldef(COLS::SYSTEM_MESSAGE,BOOL | READONLY).set_default_value(0),
                 coldef(COLS::FOLDER),
                 coldef(COLS::DRAFT,BOOL).set_default_value(0),
                 coldef(COLS::IS_READ,BOOL).set_default_value(0),

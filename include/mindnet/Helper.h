@@ -15,6 +15,9 @@
 
 #define cast64 static_cast<int64_t>
 #define castint static_cast<int>
+#define PASTE(a,b) a##b
+#define XPASTE(a,b) PASTE(a,b)
+#define STRING(s) #s
 
 typedef long long ll;
 typedef unsigned long long ull;

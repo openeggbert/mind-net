@@ -9,7 +9,10 @@
 #include "mindnet/Global.h"
 #include "mindnet/models/User.h"
 #include "mindnet/persistence/Persistence.h"
-#include "mindnet/persistence/api/PersistenceMethods.h"
+
+#define Model User
+#define MODEL USER
+#define model user
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
@@ -17,7 +20,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     operation_result UserCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
-        start_can_create(User);
+        start_can_create(Model);
 
         return_if (!g_configuration.allow_self_registration && token.ko(),
             401,"You must be logged in to create a user")
@@ -44,7 +47,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     operation_result UserCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
-        start_can_update(User, USER)
+        start_can_update(Model, MODEL)
 
         bool logged_in_user_updates_himself = logged_in_user.get_id() == old_entity.get_id();
 

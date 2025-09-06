@@ -10,6 +10,7 @@
 #include "mindnet/Helper.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/models/misc/BaseModel.h"
+#include "mindnet/persistence/api/PersistenceMethods.h"
 #include "mindnet/persistence/Persistence.h"
 #define create_h_methods()\
 operation_result can_create(db_& db, http::LoginToken& token, entity_fields& ef) const override;\
@@ -35,18 +36,38 @@ new_entity.from_values(ef);\
 string error = new_entity.validate();\
 if (!error.empty()) return operation_result(400, error);
 
+#define start_can_read(Model, MODEL)\
+logged_user()\
+models::Model entity;\
+entity.from_values(db->read(id, models:: XPASTE(MODEL,_DEFINITION) , token).first);\
+err << entity << commit;
+
+
+
 
 #define start_can_update(Model, MODEL)\
 logged_user()\
 models::Model new_entity;\
 new_entity.from_values(ef);\
-auto old_entity_values = db->read(new_entity.get_id(), models::MODEL##_DEFINITION, token).first;\
-models::User old_entity;\
+auto old_entity_values = db->read(new_entity.get_id(), models::XPASTE(MODEL,_DEFINITION), token).first;\
+models::Model old_entity;\
 old_entity.from_values(old_entity_values);\
 string error = new_entity.validate();\
 if (!error.empty()) return operation_result(400, error);\
-error = validate_readonly(old_entity_values, ef, models::DISCUSSION_DEFINITION);\
+error = validate_readonly(old_entity_values, ef, models::XPASTE(MODEL,_DEFINITION));\
 if (!error.empty()) return operation_result(400, error);\
+
+#define start_can_delete(Model, MODEL)\
+logged_user()\
+models::Model entity;\
+entity.from_values(db->read(id, models:: XPASTE(MODEL,_DEFINITION) , token).first);\
+err << entity << commit;
+
+#define start_can_list(Model, MODEL)\
+logged_user()
+
+#define mandatory_filter(field)\
+if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
 
 
 
