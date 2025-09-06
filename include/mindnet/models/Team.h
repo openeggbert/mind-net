@@ -46,7 +46,7 @@ namespace mindnet::models
             //
             coldef(COLS::NAME,MANDATORY),
             coldef(COLS::DESCRIPTION),
-            coldef(COLS::CREATED_BY,MANDATORY).set_foreign_key("user"),
+            coldef(COLS::CREATED_BY | READONLY,MANDATORY).set_foreign_key("user"),
             coldef(COLS::LEADER_ID,MANDATORY).set_foreign_key("user"),
 
             //

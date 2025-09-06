@@ -30,6 +30,7 @@
 #define COLS columns::TeamMemberColumns
 #include "columns/TeamMemberColumns.h"
 #include "mindnet/enums/UserRole.h"
+#include "mindnet/enums/UserStatus.h"
 // ***** MACROS : END *****
 
 
@@ -45,12 +46,12 @@ namespace mindnet::models
         .set_group("Collaboration", 300)
         .set_columns({
             //
-            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY | READONLY),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY),
             coldef(COLS::ROLE, MANDATORY).set_default_value(0).set_enum_definition(
                 enums::user_role_to_enum_definition()),
             coldef(COLS::STATUS, MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
-            coldef(COLS::JOINED_AT, DATETIME | MANDATORY),
+            coldef(COLS::JOINED_AT, DATETIME | MANDATORY | READONLY),
             coldef(COLS::LEFT_AT, DATETIME),
 
         });

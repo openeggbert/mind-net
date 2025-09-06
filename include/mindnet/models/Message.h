@@ -45,7 +45,7 @@ namespace mindnet::models
         .set_group("Collaboration", 300)
         .set_columns(
             {
-                coldef(COLS::OWNER_ID,MANDATORY).set_foreign_key("user"),
+                coldef(COLS::OWNER_ID,MANDATORY | READONLY).set_foreign_key("user"),
                 coldef(COLS::SENDER_ID,MANDATORY).set_foreign_key("user"),
                 coldef(COLS::RECIPIENT_ID,MANDATORY).set_foreign_key("user"),
                 coldef(COLS::SUBJECT),

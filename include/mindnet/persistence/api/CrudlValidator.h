@@ -10,6 +10,7 @@
 #include "mindnet/Helper.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/models/misc/BaseModel.h"
+#include "mindnet/persistence/Persistence.h"
 #define create_h_methods()\
 operation_result can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const override;\
 operation_result can_read(db_ d, int id, http::LoginToken& login_token) const override;\
@@ -44,7 +45,9 @@ namespace mindnet::persistence::api
         virtual operation_result can_list(db_ d, std::map<std::string, std::string>& filter, http::LoginToken& login_token) const = 0;
         [[nodiscard]] virtual string get_model_name() const = 0;
 
+
     };
+
 }
 
 

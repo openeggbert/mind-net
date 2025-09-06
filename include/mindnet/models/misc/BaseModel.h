@@ -143,7 +143,23 @@ namespace mindnet::models::misc
         {
             os << to_json();
         };
+
     };
+
+    inline string validate_readonly(entity_fields& old_, entity_fields& new_, ModelDefinition& def_)
+    {
+        if (old_.size() != new_.size()) return "The number of fields in the entity has changed";
+        auto columns = def_.get_columns();
+        for (int i = 0; i < old_.size(); i++)
+        {
+            auto column = columns[i];
+            if (column.is_readonly() && old_[i] != new_[i])
+            {
+                return "Value of column " + column.get_column_name() + " is readonly and cannot be changed.";
+            }
+        }
+        return "";
+    }
 }
 
 #endif // BASEMODEL_H

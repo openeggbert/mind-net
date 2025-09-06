@@ -105,17 +105,19 @@ namespace mindnet::persistence::impl::sqlite::validators
             return operation_result(403, "You can only read your own team members.");
         }
 
-        return operation_result(403, "You can only read your own team members.");
+        return ok_result;
     }
 
     operation_result TeamMemberCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
         logged_user()
 
-        models::TeamMember old_entity;
-        old_entity.from_values(ef);
         models::TeamMember new_entity;
-        new_entity.from_values(d->read(old_entity.get_id(), models::TEAM_MEMBER_DEFINITION, login_token).first);
+        new_entity.from_values(ef);
+        models::TeamMember old_entity;
+        auto old_entity_values = d->read(new_entity.get_id(), models::TEAM_MEMBER_DEFINITION, login_token).first;
+        old_entity.from_values(old_entity_values);
+
 
         auto team_result = d->read(old_entity.team_id, models::TEAM_DEFINITION, login_token);
         if (team_result.second.ko()) return team_result.second;
@@ -126,13 +128,21 @@ namespace mindnet::persistence::impl::sqlite::validators
         {
             return operation_result(403, "Only team leader can update the team.");
         }
+        string error = new_entity.validate();
+        if (!error.empty()) return operation_result(400, error);
+        error = validate_readonly(old_entity_values, ef, models::TEAM_MEMBER_DEFINITION);
+        if (!error.empty()) return operation_result(400, error);
+
 
         return ok_result;
     }
 
     operation_result TeamMemberCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
     {
-        return operation_result(403, "Team members cannot be deleted. Set status to DELETED.");
+        auto team_member_result = d->read(id, models::TEAM_MEMBER_DEFINITION, login_token);
+        if (team_member_result.second.ko()) return team_member_result.second;
+
+        return operation_result(403, "Deleting team members is forbidden. Set status to DELETED.");
     }
 
     operation_result TeamMemberCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,

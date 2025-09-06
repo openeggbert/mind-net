@@ -44,14 +44,14 @@ namespace mindnet::models
         .set_group("Collaboration", 300)
         .set_columns({
             //
-            coldef(COLS::USERNAME, MANDATORY | UNIQUE),
+            coldef(COLS::USERNAME, MANDATORY | UNIQUE | READONLY),
             coldef(COLS::PASSWORD_HASH, MANDATORY | HIDDEN),
             coldef(COLS::DISPLAY_NAME),
             coldef(COLS::ROLE, MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
                                           set_default_value(0),
             coldef(COLS::PROFILE_TEXT, TEXTAREA),
             coldef(COLS::LAST_LOGIN, DATETIME),
-            coldef(COLS::EMAIL, UNIQUE),
+            coldef(COLS::EMAIL, UNIQUE | READONLY),
             coldef(COLS::STATUS, MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
         });
 
