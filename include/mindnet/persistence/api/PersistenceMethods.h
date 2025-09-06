@@ -30,10 +30,10 @@
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
 #define gen_find_h(Model, model) \
-std::pair<models::Model, string> find_##model(db_& db, http::LoginToken& token, int id);
+std::pair<models::Model, string> find_##model(db_ptr& db, http::LoginToken& token, int id);
 
 #define gen_find_cpp(Model, model, MODEL)\
-std::pair<models::Model, string> find_##model(db_& db, http::LoginToken& token, int id)\
+std::pair<models::Model, string> find_##model(db_ptr& db, http::LoginToken& token, int id)\
     {\
         auto result = db->read(id, models::MODEL##_DEFINITION, token);\
         if (result.second.ko()) return {{}, result.second.error};\
@@ -44,11 +44,12 @@ std::pair<models::Model, string> find_##model(db_& db, http::LoginToken& token, 
 
 namespace mindnet::persistence::api
 {
+    using db_ptr = mindnet::persistence::Persistence*;
 
-    bool has_user_name(db_& db, http::LoginToken& token, string user_name);
-    bool has_user_email(db_& db, http::LoginToken& token, string user_mail);
+    bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name);
+    bool has_user_email(db_ptr& db, http::LoginToken& token, string user_mail);
 
-    string is_member_of_team(db_& db, http::LoginToken& token, int team_id);
+    string is_member_of_team(db_ptr& db, http::LoginToken& token, int team_id);
 
     gen_find_h(Collection, collection)
     gen_find_h(CollectionItem, collection_item)

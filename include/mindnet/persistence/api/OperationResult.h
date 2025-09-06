@@ -4,13 +4,9 @@
 #ifndef OPERATIONRESULT_H
 #define OPERATIONRESULT_H
 
-#define operation_result mindnet::persistence::api::OperationResult
 #define ok_result mindnet::persistence::api::OKOperationResult
 
 #include <utility>
-
-#include "mindnet/Helper.h"
-
 
 namespace mindnet::persistence::api
 {
@@ -33,7 +29,7 @@ namespace mindnet::persistence::api
         {
             return status == 0;
         }
-        bool ko() const
+        [[nodiscard]] bool ko() const
         {
             return !ok();
         }

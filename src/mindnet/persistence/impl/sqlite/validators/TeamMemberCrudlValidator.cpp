@@ -18,7 +18,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamMemberCrudlValidator;
 
-    operation_result TeamMemberCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
         start_can_create(Model);
 
@@ -49,7 +49,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
+    operation_result TeamMemberCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
     {
         start_can_read(Model, MODEL)
 
@@ -71,7 +71,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
         start_can_update(Model, MODEL)
 
@@ -84,7 +84,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
+    operation_result TeamMemberCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
     {
         start_can_delete(Model, MODEL)
 
@@ -94,7 +94,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return operation_result(403, "Deleting team members is forbidden. Set status to DELETED.");
     }
 
-    operation_result TeamMemberCrudlValidator::can_list(db_& db, http::LoginToken& token, string_map& filter) const
+    operation_result TeamMemberCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
     {
         start_can_list(Model, MODEL)
 

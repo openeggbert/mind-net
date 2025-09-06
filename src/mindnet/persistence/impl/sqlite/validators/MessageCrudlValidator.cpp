@@ -16,7 +16,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::MessageCrudlValidator;
 
-    operation_result MessageCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
+    operation_result MessageCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
         start_can_create(Model);
 
@@ -27,7 +27,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
+    operation_result MessageCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
     {
         start_can_read(Model, MODEL)
 
@@ -38,7 +38,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
+    operation_result MessageCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
         start_can_update(Model, MODEL)
         
@@ -61,7 +61,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
+    operation_result MessageCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
     {
         start_can_delete(Model, MODEL)
 
@@ -74,7 +74,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::can_list(db_& db, http::LoginToken& token, string_map& filter) const
+    operation_result MessageCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
     {
         start_can_list(Model, MODEL)
 

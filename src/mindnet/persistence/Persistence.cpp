@@ -73,7 +73,7 @@ validators[#model] = model##_validator;
 namespace mindnet::persistence
 {
     using namespace mindnet::persistence::impl::sqlite::repositories;
-    using db_ = std::shared_ptr<mindnet::persistence::Persistence>;
+    // using db_ = std::shared_ptr<mindnet::persistence::Persistence>;
 
     Persistence::Persistence()
     {
@@ -186,7 +186,7 @@ namespace mindnet::persistence
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_create(this, ef, login_token);
+            return v2->can_create(this, login_token, ef);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation CREATE cannot be validated.");
@@ -202,7 +202,7 @@ namespace mindnet::persistence
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_read(this, id, login_token);
+            return v2->can_read(this, login_token, id);
 
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
@@ -220,7 +220,7 @@ namespace mindnet::persistence
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_update(this, ef, login_token);
+            return v2->can_update(this, login_token, ef);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation UPDATE cannot be validated.");
@@ -237,7 +237,7 @@ namespace mindnet::persistence
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_delete(this, id, login_token);
+            return v2->can_delete(this, login_token, id);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation DELETE cannot be validated.");
@@ -255,7 +255,7 @@ namespace mindnet::persistence
         api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_list(this, filter, login_token);
+            return v2->can_list(this, login_token, filter);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation LIST cannot be validated.");

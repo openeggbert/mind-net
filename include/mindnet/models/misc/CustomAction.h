@@ -33,6 +33,7 @@
 namespace mindnet::models::misc
 {
     using std::string;
+    typedef std::map<std::string, std::string> string_map;
 
     /**
      * Represents the definition of a database model including its name,

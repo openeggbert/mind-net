@@ -11,7 +11,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TagTypeCrudlValidator;
-    operation_result TagTypeCrudlValidator::can_create(db_& db, entity_fields& ef) const
+    operation_result TagTypeCrudlValidator::can_create(db_ db, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -68,22 +68,22 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    operation_result TagTypeCrudlValidator::can_read(db_& db, int id) const
+    operation_result TagTypeCrudlValidator::can_read(db_ db, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result TagTypeCrudlValidator::can_update(db_& db, entity_fields& ef) const
+    operation_result TagTypeCrudlValidator::can_update(db_ db, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result TagTypeCrudlValidator::can_delete(db_& db, int id) const
+    operation_result TagTypeCrudlValidator::can_delete(db_ db, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result TagTypeCrudlValidator::can_list(db_& db, string_map& filter) const
+    operation_result TagTypeCrudlValidator::can_list(db_ db, string_map& filter) const
     {
         return "";
     }

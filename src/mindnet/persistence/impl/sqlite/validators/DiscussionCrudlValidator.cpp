@@ -22,7 +22,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    operation_result DiscussionCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
+    operation_result DiscussionCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
         start_can_create(Model);
 
@@ -41,7 +41,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
+    operation_result DiscussionCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
     {
         start_can_read(Model, MODEL)
 
@@ -57,7 +57,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
+    operation_result DiscussionCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
     {
         start_can_update(Model, MODEL)
 
@@ -71,14 +71,14 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
+    operation_result DiscussionCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
     {
         start_can_delete(Model, MODEL)
 
         return {403, "Deleting discussions is forbidden. Set is_archived to true."};
     }
 
-    operation_result DiscussionCrudlValidator::can_list(db_& db, http::LoginToken& token, string_map& filter) const
+    operation_result DiscussionCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
     {
         start_can_list(Model, MODEL)
 

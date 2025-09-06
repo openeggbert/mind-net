@@ -4,7 +4,6 @@
 
 #ifndef HELPER_H
 #define HELPER_H
-#include <cstring>
 #include <string>
 
 #include "enums/ColumnType.h"

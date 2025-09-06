@@ -20,13 +20,13 @@
 #ifndef COLUMNDEFINITION_H
 #define COLUMNDEFINITION_H
 
+#include <cstring>
 #include <optional>
 #include <string>
 #include <vector>
 #include <set>
 
 #include "CustomAction.h"
-#include "asio/impl/read.hpp"
 #include "mindnet/models/misc/EnumDefinition.h"
 
 #define using_flags()\

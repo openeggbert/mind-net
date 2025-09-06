@@ -27,6 +27,7 @@
 
 #include "mindnet/Helper.h"
 #include "mindnet/enums/Crudl.h"
+#include "mindnet/models/columns/BaseColumns.h"
 
 namespace mindnet::models::misc
 {

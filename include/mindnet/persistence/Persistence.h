@@ -9,9 +9,15 @@
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/models/misc/ModelDefinition.h"
+#include "mindnet/persistence/api/OperationResult.h"
+
+namespace mindnet::persistence::api {
+    class CrudlValidator;
+}
 
 namespace mindnet::persistence
 {
+    typedef mindnet::persistence::api::OperationResult operation_result;
     using mindnet::models::misc::ModelDefinition;
 
     using validator = api::CrudlValidator*;
@@ -24,7 +30,6 @@ namespace mindnet::persistence
         api::IRepository* get_repository(const std::string& name);
         api::CrudlValidator* get_validator(const std::string& name);
         const std::vector<validator> empty_vector;
-
 
     public:
         Persistence();
@@ -52,7 +57,7 @@ namespace mindnet::persistence
         //
         entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
                                                                 ModelDefinition& def);
-        std::pair<models::User, mindnet::persistence::api::OperationResult> find_logged_in_user(
+        std::pair<models::User, operation_result> find_logged_in_user(
             http::LoginToken login_token);
     };
 }

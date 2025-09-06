@@ -8,7 +8,7 @@ namespace mindnet::persistence::api
 {
 
 
-    bool has_user_name(db_& db, http::LoginToken& token, string user_name)
+    bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name)
     {
         string error;
         http::QueryParams query_params;
@@ -16,7 +16,7 @@ namespace mindnet::persistence::api
 
         return !db->list(query_params, models::USER_DEFINITION, token).first.empty();
     }
-    bool has_user_email(db_& db, http::LoginToken& token, string user_email)
+    bool has_user_email(db_ptr& db, http::LoginToken& token, string user_email)
     {
 
         string error;
@@ -26,7 +26,7 @@ namespace mindnet::persistence::api
     }
 
 
-    string is_member_of_team(db_& d, http::LoginToken& token, int team_id)
+    string is_member_of_team(db_ptr& d, http::LoginToken& token, int team_id)
     {
         auto team_result = d->read(team_id, models::TEAM_DEFINITION, token);
         if (team_result.second.ko()) return team_result.second.error;
