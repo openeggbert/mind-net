@@ -85,7 +85,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         models::Discussion new_entity;
         new_entity.from_values(ef);
         models::Discussion old_entity;
-        auto old_entity_values = d->read(new_entity.get_id(), models::DISCUSSION_DEFINITION, login_token).first;
+        auto old_entity_values = db->read(new_entity.get_id(), models::DISCUSSION_DEFINITION, login_token).first;
         old_entity.from_values(old_entity_values);
 
         if (old_entity.created_by != logged_in_user.get_id()) return operation_result(

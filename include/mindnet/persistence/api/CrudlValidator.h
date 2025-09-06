@@ -25,7 +25,7 @@ if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;\
 auto logged_in_user = logged_in_user_pair.first;\
 auto role = logged_in_user.role;
 
-#define return_if_true(condition, status, message) if (condition) return operation_result(status, message);\
+#define return_if(condition, status, message) if (condition) return operation_result(status, message);\
 
 #define start_can_create(Model)\
 logged_user()\
@@ -34,6 +34,22 @@ new_entity.from_values(ef);\
 \
 string error = new_entity.validate();\
 if (!error.empty()) return operation_result(400, error);
+
+
+#define start_can_update(Model, MODEL)\
+logged_user()\
+models::Model new_entity;\
+new_entity.from_values(ef);\
+auto old_entity_values = db->read(new_entity.get_id(), models::MODEL##_DEFINITION, token).first;\
+models::User old_entity;\
+old_entity.from_values(old_entity_values);\
+string error = new_entity.validate();\
+if (!error.empty()) return operation_result(400, error);\
+error = validate_readonly(old_entity_values, ef, models::DISCUSSION_DEFINITION);\
+if (!error.empty()) return operation_result(400, error);\
+
+
+
 
 
 namespace mindnet::persistence

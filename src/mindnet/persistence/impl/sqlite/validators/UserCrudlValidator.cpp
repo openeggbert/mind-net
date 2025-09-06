@@ -11,7 +11,6 @@
 #include "mindnet/persistence/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
-
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
@@ -20,19 +19,19 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
         start_can_create(User);
 
-        return_if_true (!g_configuration.allow_self_registration && token.ko(),
+        return_if (!g_configuration.allow_self_registration && token.ko(),
             401,"You must be logged in to create a user")
 
-        return_if_true (!g_configuration.allow_self_registration && token.ok() && logged_in_user.role != enums::UserRole::ADMIN,
+        return_if (!g_configuration.allow_self_registration && token.ok() && logged_in_user.role != enums::UserRole::ADMIN,
             403,"You must be admin to create a user.")
 
-        return_if_true(role != enums::UserRole::ADMIN && new_entity.role != g_configuration.default_user_role,
+        return_if(role != enums::UserRole::ADMIN && new_entity.role != g_configuration.default_user_role,
             400,"role" " must be qual to " + enums::user_role_to_string(g_configuration.default_user_role))
 
-        return_if_true (!api::has_user_name(db, token, new_entity.username),
+        return_if (api::has_user_name(db, token, new_entity.username),
             409, "username already exists")
 
-        return_if_true (!api::has_user_email(db, token, new_entity.email),
+        return_if (api::has_user_email(db, token, new_entity.email),
             409, "email already exists");
 
         return ok_result;
@@ -45,44 +44,25 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     operation_result UserCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
-        //2. Authorization
-        auto logged_in_user_pair = db->find_logged_in_user(token);
-        if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;
-        auto logged_in_user = logged_in_user_pair.first;
-        //
-        models::User old_user;
-        old_user.from_values(ef);
-        models::User new_user;
-        new_user.from_values(db->read(old_user.get_id(), models::USER_DEFINITION, token).first);
+        start_can_update(User, USER)
 
-        bool logged_in_user_updates_himself = logged_in_user.get_id() == old_user.get_id();
-        if (logged_in_user.role != enums::UserRole::ADMIN)
-        {
-            if (!logged_in_user_updates_himself)
-            {
-                return operation_result(403, "You can only update your own user.");
-            }
-        }
-        //3. Request
-        string error = new_user.validate();
-        if (!error.empty()) return operation_result(400, error);
+        bool logged_in_user_updates_himself = logged_in_user.get_id() == old_entity.get_id();
 
-        if (old_user.username != new_user.username) return operation_result(400, "username cannot be changed");
-        if (new_user.password_hash != "*") return operation_result(
+        return_if (logged_in_user.role != enums::UserRole::ADMIN && !logged_in_user_updates_himself,
+            403, "You can only update your own user.")
+
+        return_if (new_entity.password_hash != "*",
             400, "password cannot be changed here, use /changepw endpoint instead");
 
-        bool role_different = new_user.role != old_user.role;
-        if (role_different)
-        {
-            if (logged_in_user_updates_himself) return operation_result(400, "role cannot be changed");
-        }
-        if (old_user.email != new_user.email) return operation_result(
-            400, "email cannot be changed by yourself, contact admin");
-        if (old_user.status != new_user.status && logged_in_user.role != enums::UserRole::ADMIN)
-        {
-            return operation_result(400, "status cannot be changed by yourself");
-        }
+        bool role_different = new_entity.role != old_entity.role;
+        return_if (role_different && logged_in_user_updates_himself,
+            400, "role cannot be changed");
 
+        return_if (role_different && role != enums::UserRole::ADMIN,
+            400, "role cannot be changed");
+
+        return_if (old_entity.status != new_entity.status && logged_in_user.role != enums::UserRole::ADMIN,
+        400, "status cannot be changed by yourself")
 
         return ok_result;
     }
