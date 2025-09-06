@@ -31,7 +31,6 @@
 #include "columns/TeamColumns.h"
 // ***** MACROS : END *****
 
-
 namespace mindnet::models
 {
 

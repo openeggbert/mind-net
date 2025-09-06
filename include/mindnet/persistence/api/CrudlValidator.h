@@ -43,8 +43,6 @@ entity.from_values(db->read(id, models:: XPASTE(MODEL,_DEFINITION) , token).firs
 err << entity << commit;
 
 
-
-
 #define start_can_update(Model, MODEL)\
 logged_user()\
 models::Model new_entity;\
