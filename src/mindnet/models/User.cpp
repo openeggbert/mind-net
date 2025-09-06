@@ -50,7 +50,6 @@ namespace mindnet::models
 
     string User::validate()
     {
-
         testt_not_empty(username, "username");
         testt_between(username, 5, 64, "username");
         for (char ch : username)
@@ -85,7 +84,6 @@ namespace mindnet::models
         {
             if (!(status == enums::UserStatus::ACTIVE)) return "status" " must be qual to ACTIVE";
         }
-
 
         return "";
     }

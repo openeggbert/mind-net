@@ -2,94 +2,74 @@
 // Created by robertvokac on 8/6/25.
 //
 
-
 #include "mindnet/persistence/impl/sqlite/validators/SuggestionReviewCrudlValidator.h"
 
 #include "mindnet/Global.h"
+#include "mindnet/models/SuggestionReview.h"
 #include "mindnet/persistence/Persistence.h"
+
+#define Model SuggestionReview
+#define MODEL SUGGESTION_REVIEW
+#define model suggestion_review
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::SuggestionReviewCrudlValidator;
-    operation_result SuggestionReviewCrudlValidator::can_create(db_& db, entity_fields& ef) const
+
+    operation_result SuggestionReviewCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
-        // models::Map map;
-        // map.from_values(ef);
-        // err << map << commit;
-        // if (map.name.empty())
-        // {
-        //     return "Name must not be empty";
-        // }
-        // string error;
-        // http::QueryParams query_params;
-        // query_params.filters.emplace("name", map.name);
-        // if (!d->list(query_params, models::MAP_DEFINITION, error).empty())
-        // {
-        //     return "Map name already exists";
-        // }
-        //
-        // if (map.description.size() > 50)
-        // {
-        //     return "Description must not be longer than 50 characters";
-        // }
-        // if (map.owner_id != 1)
-        // {
-        //     return "Only owner can create maps";
-        // }
-        // if (map.team_id != 0)
-        // {
-        //     return "Team maps are not supported yet";
-        // }
-        // if (map.owner_rights < 0 || map.owner_rights > 7)
-        // {
-        //     return "owner_rights must be between 0 and 7";
-        // }
-        // if (map.team_rights < 0 || map.team_rights > 7)
-        // {
-        //     return "team_rights must be between 0 and 7";
-        // }
-        // if (map.other_rights < 0 || map.other_rights > 7)
-        // {
-        //     return "other_rights must be between 0 and 7";
-        // }
-        // if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        // {
-        //     //todo
-        //     return "Owner rights must be Read+Write+Delete. This is temporary.";
-        // }
-        // if (map.team_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Team rights must be NONE. This is temporary.";
-        // }
-        // if (map.other_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Other rights must be NONE. This is temporary.";
-        // }
-        return "";
+        start_can_create(Model);
+
+        return_if (role < enums::UserRole::REVIEWER,
+            403, "You can not create suggestion reviews.");
+
+        return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::can_read(db_& db, int id) const
+    operation_result SuggestionReviewCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
     {
-        return "The validation is not yet implemented.";
+        start_can_read(Model, MODEL)
+
+        auto suggestion = api::find_suggestion(db, token, new_entity.suggestion_id);
+        check_found(suggestion);
+
+        return_if (role < enums::UserRole::REVIEWER && suggestion.first.from_user_id != logged_in_user.get_id(),
+            403, "You can not read this suggestion.");
+
+        return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::can_update(db_& db, entity_fields& ef) const
+    operation_result SuggestionReviewCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
-        return "The validation is not yet implemented.";
+        start_can_update(Model, MODEL)
+
+        return_if (logged_in_user.get_id() != old_entity.reviewer_id,
+            403, "Only creator of this suggestion review can update it");
+        return_if (old_entity.decision_status != enums::DecisionStatus::REQUESTS_FEEDBACK,
+            400, "Only suggestion reviews with status REQUESTS_FEEDBACK can be updated.");
+
+        return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::can_delete(db_& db, int id) const
+    operation_result SuggestionReviewCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
     {
-        return "The validation is not yet implemented.";
+        start_can_delete(Model, MODEL)
+
+        return {405, "Deleting suggestions is forbidden. "};
     }
 
-    operation_result SuggestionReviewCrudlValidator::can_list(db_& db, string_map& filter) const
+    operation_result SuggestionReviewCrudlValidator::can_list(db_& db, http::LoginToken& token, string_map& filter) const
     {
-        return "";
+        start_can_list(Model, MODEL)
+
+        if (role >= enums::UserRole::REVIEWER) return ok_result;
+        return {403, "You can not list suggestion reviews."};
+
+        return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::get_model_name() const
+    string SuggestionReviewCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return STRING(model);
     }
 }

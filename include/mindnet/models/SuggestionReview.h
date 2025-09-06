@@ -45,8 +45,8 @@ namespace mindnet::models
         .set_group("Suggestions", 400)
         .set_columns({
             //
-            coldef(COLS::SUGGESTION_ID, FOREIGN_KEY),
-            coldef(COLS::REVIEWER_ID, MANDATORY).set_foreign_key("user"),
+            coldef(COLS::SUGGESTION_ID, FOREIGN_KEY | READONLY),
+            coldef(COLS::REVIEWER_ID, MANDATORY | READONLY).set_foreign_key("user"),
             coldef(COLS::DECISION_STATUS).set_enum_definition(enums::decision_status_to_enum_definition()),
             coldef(COLS::COMMENT),
             coldef(COLS::REVIEWED_AT, DATETIME)
@@ -56,7 +56,7 @@ namespace mindnet::models
     {
         int suggestion_id{};
         int reviewer_id{};
-        int decision_status{};
+        enums::DecisionStatus decision_status{};
         string comment;
         string reviewed_at;
 
