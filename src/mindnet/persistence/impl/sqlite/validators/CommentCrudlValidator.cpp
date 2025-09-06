@@ -101,6 +101,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string CommentCrudlValidator::get_model_name() const
     {
-        return "comment";
+        return STRING(model);
     }
 }

@@ -90,6 +90,6 @@ namespace mindnet::persistence::impl::sqlite::validators{
 
     operation_result MapCrudlValidator::get_model_name() const
     {
-        return "map";
+        return STRING(model);
     }
 }

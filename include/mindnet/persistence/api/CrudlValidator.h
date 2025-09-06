@@ -69,6 +69,7 @@ logged_user()
 if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
 
 #define find_model(model, id) api:: XPASTE(find_,model) (db, token, id);
+#define check_found(f) if (!f.second.empty()) return{400,f.second};
 
 
 
