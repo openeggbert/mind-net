@@ -25,6 +25,14 @@ namespace mindnet::persistence::api
         return !db->list(query_params, models::USER_DEFINITION, token).first.empty();
     }
 
+    bool has_map_name(db_ptr& db, http::LoginToken& token, string map_name)
+    {
+        string error;
+        http::QueryParams query_params;
+        query_params.filters.emplace("name", map_name);
+
+        return !db->list(query_params, models::MAP_DEFINITION, token).first.empty();
+    }
 
     string is_member_of_team(db_ptr& d, http::LoginToken& token, int team_id)
     {

@@ -80,5 +80,29 @@ namespace mindnet::enums
             access_right_to_string, 8, 0, 1, 2, 3, 4, 5, 6, 7
         };
     }
+    inline bool can_read(AccessRight access_right)
+    {
+        return access_right == AccessRight::READ || access_right == AccessRight::READ_DELETE || access_right == AccessRight::READ_WRITE || access_right == AccessRight::READ_WRITE_DELETE;
+    }
+    inline bool can_write(AccessRight access_right)
+    {
+        return access_right == AccessRight::WRITE || access_right == AccessRight::WRITE_DELETE || access_right == AccessRight::READ_WRITE || access_right == AccessRight::READ_WRITE_DELETE;
+    }
+    inline bool can_delete(AccessRight access_right)
+    {
+        return access_right == AccessRight::DELETE || access_right == AccessRight::WRITE_DELETE || access_right == AccessRight::READ_WRITE || access_right == AccessRight::READ_WRITE_DELETE;
+    }
+    inline bool can_read(int access_right)
+    {
+        return can_read(static_cast<AccessRight> (access_right));
+    }
+    inline bool can_write(int access_right)
+    {
+        return can_write(static_cast<AccessRight> (access_right));
+    }
+    inline bool can_delete(int access_right)
+    {
+        return can_delete(static_cast<AccessRight> (access_right));
+    }
 } // namespace mindnet::enums
 #endif // ACCESSRIGHT_H

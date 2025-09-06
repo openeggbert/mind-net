@@ -39,4 +39,14 @@ namespace mindnet::models
         data_json = text();
         reason = text();
     }
+    string History::validate()
+    {
+        test_ne(user_id, 0, "reviewer_id");
+        testt_not_empty(table_name, "table_name");
+        test_ne(record_id, 0, "record_id");
+        test_ne(cast64(operation), 0, "operation");
+        testt_not_empty(data_json, "data_json");
+
+        return "";
+    }
 }

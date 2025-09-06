@@ -47,4 +47,16 @@ namespace mindnet::models
         team_rights = number();
         other_rights = number();
     };
+    string Map::validate()
+    {
+        testt_between(name, 5, 80, "name")
+        testt_between(description, 0, 80, "description")
+        testt_between(category, 0, 40, "category")
+        test_ne(owner_id, 0, "owner_id");
+        test_between(owner_rights, 0, 7, "owner_rights")
+        test_between(team_rights, 0, 7, "team_rights")
+        test_between(other_rights, 0, 7, "other_rights")
+
+        return "";
+    }
 }

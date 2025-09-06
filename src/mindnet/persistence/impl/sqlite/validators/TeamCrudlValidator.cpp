@@ -72,3 +72,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return STRING(model);
     }
 }
+
+#undef Model
+#undef MODEL
+#undef model

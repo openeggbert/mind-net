@@ -30,7 +30,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
         start_can_read(Model, MODEL)
 
-        auto suggestion = api::find_suggestion(db, token, new_entity.suggestion_id);
+        auto suggestion = api::find_suggestion(db, token, entity.suggestion_id);
         check_found(suggestion);
 
         return_if (role < enums::UserRole::REVIEWER && suggestion.first.from_user_id != logged_in_user.get_id(),
@@ -73,3 +73,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return STRING(model);
     }
 }
+
+#undef Model
+#undef MODEL
+#undef model

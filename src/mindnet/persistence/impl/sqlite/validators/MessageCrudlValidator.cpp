@@ -34,7 +34,6 @@ namespace mindnet::persistence::impl::sqlite::validators
         return_if (entity.owner_id != logged_in_user.get_id(),
             403, "You can only read messages for your own user.");
 
-        //3. Request
         return ok_result;
     }
 
@@ -91,3 +90,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return STRING(model);
     }
 }
+
+#undef Model
+#undef MODEL
+#undef model

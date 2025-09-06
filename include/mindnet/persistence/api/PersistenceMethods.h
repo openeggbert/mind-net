@@ -48,6 +48,7 @@ namespace mindnet::persistence::api
 
     bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name);
     bool has_user_email(db_ptr& db, http::LoginToken& token, string user_mail);
+    bool has_map_name(db_ptr& db, http::LoginToken& token, string map_name);
 
     string is_member_of_team(db_ptr& db, http::LoginToken& token, int team_id);
 

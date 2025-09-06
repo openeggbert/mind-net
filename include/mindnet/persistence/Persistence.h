@@ -53,8 +53,6 @@ namespace mindnet::persistence
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name);
 
-
-        //
         entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
                                                                 ModelDefinition& def);
         std::pair<models::User, operation_result> find_logged_in_user(

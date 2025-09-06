@@ -102,7 +102,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         mandatory_filter(team_id)
 
-        auto is_member = api::is_member_of_team(db, token, filter["team_id"]);
+        auto is_member = api::is_member_of_team(db, token, stoi(filter["team_id"]));
         return_if (!is_member.empty(),
             403, "Only team members can list team members.")
 
@@ -114,3 +114,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return STRING(model);
     }
 }
+
+#undef Model
+#undef MODEL
+#undef model
