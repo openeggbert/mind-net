@@ -16,7 +16,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    operation_result UserCrudlValidator::can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const
+    operation_result UserCrudlValidator::can_create(db_& d, entity_fields& ef, http::LoginToken& login_token) const
     {
         //2. Authorization
         models::User new_user;

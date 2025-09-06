@@ -12,7 +12,7 @@
 #include "mindnet/models/misc/BaseModel.h"
 #include "mindnet/persistence/Persistence.h"
 #define create_h_methods()\
-operation_result can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const override;\
+operation_result can_create(db_& d, entity_fields& ef, http::LoginToken& login_token) const override;\
 operation_result can_read(db_ d, int id, http::LoginToken& login_token) const override;\
 operation_result can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const override;\
 operation_result can_delete(db_ d, int id, http::LoginToken& login_token) const override;\
@@ -38,7 +38,7 @@ namespace mindnet::persistence::api
     public:
         CrudlValidator() = default;
         virtual ~CrudlValidator() = default; // explicitly make it destructible
-        virtual operation_result can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const = 0;
+        virtual operation_result can_create(db_& d, entity_fields& ef, http::LoginToken& login_token) const = 0;
         virtual operation_result can_read(db_ d, int id, http::LoginToken& login_token) const = 0;
         virtual operation_result can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const = 0;
         virtual operation_result can_delete(db_ d, int id, http::LoginToken& login_token) const = 0;

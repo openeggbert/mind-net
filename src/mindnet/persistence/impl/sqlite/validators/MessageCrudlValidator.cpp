@@ -12,7 +12,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::MessageCrudlValidator;
-    operation_result MessageCrudlValidator::can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const
+    operation_result MessageCrudlValidator::can_create(db_& d, entity_fields& ef, http::LoginToken& login_token) const
     {
         //2. Authorization
         models::Message new_message;

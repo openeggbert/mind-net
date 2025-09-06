@@ -12,7 +12,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::CollectionCrudlValidator;
-    operation_result CollectionCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result CollectionCrudlValidator::can_create(db_& d, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);

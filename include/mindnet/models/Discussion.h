@@ -45,9 +45,9 @@ namespace mindnet::models
         .set_group("Collaboration", 300)
         .set_columns({
             //
-            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY).set_description("ID of the team this discussion belongs to"),
+            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("ID of the team this discussion belongs to"),
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the discussion"),
-            coldef(COLS::CREATED_BY, MANDATORY).set_foreign_key("user").set_description(
+            coldef(COLS::CREATED_BY, MANDATORY | READONLY).set_foreign_key("user").set_description(
                 "User ID who created the discussion"),
             coldef(COLS::IS_PINNED, BOOL).set_default_value(0).set_description(
                 "Whether this discussion is pinned to the top"),

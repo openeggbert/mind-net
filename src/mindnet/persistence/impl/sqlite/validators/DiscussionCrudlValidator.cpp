@@ -9,90 +9,147 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/models/Discussion.h"
+#include "mindnet/models/Team.h"
+#include "mindnet/models/TeamMember.h"
 #include "mindnet/persistence/Persistence.h"
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
-    operation_result DiscussionCrudlValidator::can_create(db_ d, entity_fields& ef) const
+
+    string is_member_of_team(db_& d, int team_id, http::LoginToken& login_token)
     {
-        // models::Map map;
-        // map.from_values(ef);
-        // err << map << commit;
-        // if (map.name.empty())
-        // {
-        //     return "Name must not be empty";
-        // }
-        // string error;
-        // http::QueryParams query_params;
-        // query_params.filters.emplace("name", map.name);
-        // if (!d->list(query_params, models::MAP_DEFINITION, error).empty())
-        // {
-        //     return "Map name already exists";
-        // }
+        auto team_result = d->read(team_id, models::TEAM_DEFINITION, login_token);
+        if (team_result.second.ko()) return team_result.second.error;
+        models::Team team;
+        team.from_values(team_result.first);
+
+        http::QueryParams query_params;
+        query_params.filters.emplace("team_id", std::to_string(team.get_id()));
+        query_params.filters.emplace("user_id", std::to_string(login_token.user_id));
+        query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
+        auto is_team_member_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, login_token);
+        if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
+        if (is_team_member_result.first.empty())
+        {
+            return "User is not member of team with id " + std::to_string(team.get_id()) + ".";
+        }
+        return "";
+    }
+
+    operation_result DiscussionCrudlValidator::can_create(db_& d, entity_fields& ef,
+                                                          http::LoginToken& login_token) const
+    {
+        //2. Authorization
+        logged_user()
+
         //
-        // if (map.description.size() > 50)
-        // {
-        //     return "Description must not be longer than 50 characters";
-        // }
-        // if (map.owner_id != 1)
-        // {
-        //     return "Only owner can create maps";
-        // }
-        // if (map.team_id != 0)
-        // {
-        //     return "Team maps are not supported yet";
-        // }
-        // if (map.owner_rights < 0 || map.owner_rights > 7)
-        // {
-        //     return "owner_rights must be between 0 and 7";
-        // }
-        // if (map.team_rights < 0 || map.team_rights > 7)
-        // {
-        //     return "team_rights must be between 0 and 7";
-        // }
-        // if (map.other_rights < 0 || map.other_rights > 7)
-        // {
-        //     return "other_rights must be between 0 and 7";
-        // }
-        // if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        // {
-        //     //todo
-        //     return "Owner rights must be Read+Write+Delete. This is temporary.";
-        // }
-        // if (map.team_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Team rights must be NONE. This is temporary.";
-        // }
-        // if (map.other_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Other rights must be NONE. This is temporary.";
-        // }
-        return "";
+        if (logged_in_user.role < enums::UserRole::EDITOR)
+        {
+            return operation_result(403, "User does not have permission to create a discussion.");
+        }
+
+        //3. Request
+        models::Discussion new_entity;
+        new_entity.from_values(ef);
+        err << new_entity << commit;
+
+        string is_member_of_team_result = is_member_of_team(d, new_entity.team_id, login_token);
+        if (!is_member_of_team_result.empty())
+        {
+            return operation_result(
+                403, "You can only create discussions for teams, you are member of. " + is_member_of_team_result);
+        }
+
+        if (new_entity.created_by != logged_in_user.get_id())
+            return operation_result(
+                400, "created_by must be set to the logged in user.");
+        if (new_entity.is_archived)
+            return operation_result(
+                400, "is_archived must be set to false during discussion creation.");
+
+        string error = new_entity.validate();
+        if (!error.empty()) return operation_result(400, error);
+
+        return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_read(db_ d, int id) const
+    operation_result DiscussionCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        logged_user()
+        if (logged_in_user.role == enums::UserRole::ADMIN) return ok_result;
+
+
+        auto discussion_result = d->read(id, models::DISCUSSION_DEFINITION, login_token);
+        if (discussion_result.second.ko()) return discussion_result.second;
+        models::Discussion discussion;
+        discussion.from_values(discussion_result.first);
+
+
+        string is_member_of_team_result = is_member_of_team(d, discussion.team_id, login_token);
+        if (!is_member_of_team_result.empty())
+        {
+            return operation_result(
+                403, "You can only create discussions for teams, you are member of. " + is_member_of_team_result);
+        }
+
+        return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result DiscussionCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        logged_user()
+
+        models::Discussion new_entity;
+        new_entity.from_values(ef);
+        models::Discussion old_entity;
+        auto old_entity_values = d->read(new_entity.get_id(), models::DISCUSSION_DEFINITION, login_token).first;
+        old_entity.from_values(old_entity_values);
+
+        if (old_entity.created_by != logged_in_user.get_id()) return operation_result(403, "You can only update your own discussion.");
+
+        string is_member_of_team_result = is_member_of_team(d, old_entity.team_id, login_token);
+        if (!is_member_of_team_result.empty())
+        {
+            return operation_result(
+                403, "You can only update discussions, you created." + is_member_of_team_result);
+        }
+
+        string error = new_entity.validate();
+        if (!error.empty()) return operation_result(400, error);
+        error = validate_readonly(old_entity_values, ef, models::TEAM_MEMBER_DEFINITION);
+        if (!error.empty()) return operation_result(400, error);
+
+
+        return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_delete(db_ d, int id) const
+    operation_result DiscussionCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
-    }
+        auto discussion_result = d->read(id, models::DISCUSSION_DEFINITION, login_token);
+        if (discussion_result.second.ko()) return discussion_result.second;
 
-    operation_result DiscussionCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+        return operation_result(403, "Deleting discussions is forbidden. Set is_archived to true.");    }
+
+    operation_result DiscussionCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,
+                                                        http::LoginToken& login_token) const
     {
-        return "";
-    }
+        //2. Authorization
+        logged_user()
+
+        if (filter.find("team_id") == filter.end()) return {403, "You can't filter without team_id."};
+
+        string is_member_of_team_result = is_member_of_team(d, stoi(filter["team_id"]), login_token);
+        if (!is_member_of_team_result.empty())
+        {
+            return operation_result(
+                403, "You can only list discussions for teams, you are member of. " + is_member_of_team_result);
+        }
+
+        return ok_result;    }
 
     string DiscussionCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return "discussion";
     }
 }
