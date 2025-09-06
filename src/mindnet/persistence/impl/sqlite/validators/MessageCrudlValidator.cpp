@@ -29,10 +29,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     operation_result MessageCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
     {
-
         start_can_read(Model, MODEL)
 
-        if (entity.owner_id != logged_in_user.get_id()) return operation_result(
+        return_if (entity.owner_id != logged_in_user.get_id(),
             403, "You can only read messages for your own user.");
 
         //3. Request
@@ -89,6 +88,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string MessageCrudlValidator::get_model_name() const
     {
-        return "message";
+        return STRING(model);
     }
 }

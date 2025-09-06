@@ -56,9 +56,8 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
         start_can_delete(Model, MODEL)
 
-        if (logged_in_user.role != enums::UserRole::ADMIN)
-            return operation_result(
-                403, "Only admins can delete a team. Contact admin");
+        return_if (logged_in_user.role != enums::UserRole::ADMIN,
+            403, "Only admins can delete a team. Contact admin");
 
         return ok_result;
     }
@@ -70,6 +69,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string TeamCrudlValidator::get_model_name() const
     {
-        return "team";
+        return STRING(model);
     }
 }

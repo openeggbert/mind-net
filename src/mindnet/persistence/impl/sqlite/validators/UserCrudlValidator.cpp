@@ -82,6 +82,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string UserCrudlValidator::get_model_name() const
     {
-        return "user";
+        return STRING(model);
     }
 }

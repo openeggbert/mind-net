@@ -24,7 +24,8 @@ operation_result can_list(db_& db, http::LoginToken& token, string_map& filter) 
 auto logged_in_user_pair = db->find_logged_in_user(token);\
 if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;\
 auto logged_in_user = logged_in_user_pair.first;\
-auto role = logged_in_user.role;
+auto role = logged_in_user.role;\
+auto is_admin = role == enums::UserRole::ADMIN;
 
 #define return_if(condition, status, message) if (condition) return operation_result(status, message);\
 
@@ -67,7 +68,7 @@ logged_user()
 #define mandatory_filter(field)\
 if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
 
-
+#define find_model(model, id) api:: XPASTE(find_,model) (db, token, id);
 
 
 

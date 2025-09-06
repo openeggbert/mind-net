@@ -26,18 +26,18 @@ namespace mindnet::persistence::api
     }
 
 
-    string is_member_of_team(db_& d, http::LoginToken& login_token, int team_id)
+    string is_member_of_team(db_& d, http::LoginToken& token, int team_id)
     {
-        auto team_result = d->read(team_id, models::TEAM_DEFINITION, login_token);
+        auto team_result = d->read(team_id, models::TEAM_DEFINITION, token);
         if (team_result.second.ko()) return team_result.second.error;
         models::Team team;
         team.from_values(team_result.first);
 
         http::QueryParams query_params;
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
-        query_params.filters.emplace("user_id", std::to_string(login_token.user_id));
+        query_params.filters.emplace("user_id", std::to_string(token.user_id));
         query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
-        auto is_team_member_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, login_token);
+        auto is_team_member_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, token);
         if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
         if (is_team_member_result.first.empty())
         {
