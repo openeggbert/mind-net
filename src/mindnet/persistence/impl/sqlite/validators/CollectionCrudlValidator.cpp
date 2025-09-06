@@ -12,7 +12,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::CollectionCrudlValidator;
-    operation_result CollectionCrudlValidator::can_create(db_& d, entity_fields& ef) const
+    operation_result CollectionCrudlValidator::can_create(db_& db, entity_fields& ef) const
     {
         // models::Map map;
         // map.from_values(ef);
@@ -69,22 +69,22 @@ namespace mindnet::persistence::impl::sqlite::validators
         return "";
     }
 
-    operation_result CollectionCrudlValidator::can_read(db_& d, int id) const
+    operation_result CollectionCrudlValidator::can_read(db_& db, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result CollectionCrudlValidator::can_update(db_& d, entity_fields& ef) const
+    operation_result CollectionCrudlValidator::can_update(db_& db, entity_fields& ef) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result CollectionCrudlValidator::can_delete(db_& d, int id) const
+    operation_result CollectionCrudlValidator::can_delete(db_& db, int id) const
     {
         return "The validation is not yet implemented.";
     }
 
-    operation_result CollectionCrudlValidator::can_list(db_& d, string_map& filter) const
+    operation_result CollectionCrudlValidator::can_list(db_& db, string_map& filter) const
     {
         return "";
     }

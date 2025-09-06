@@ -13,7 +13,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamMemberCrudlValidator;
-    operation_result TeamMemberCrudlValidator::can_create(db_& d, http::LoginToken& token, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
         //2. Authorization
         logged_user()
@@ -68,7 +68,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_read(db_& d, http::LoginToken& token, int id) const
+    operation_result TeamMemberCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
     {
         logged_user()
         if (logged_in_user.role == enums::UserRole::ADMIN) return ok_result;
@@ -108,7 +108,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_update(db_& d, http::LoginToken& token, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
         logged_user()
 
@@ -137,7 +137,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_delete(db_& d, http::LoginToken& token, int id) const
+    operation_result TeamMemberCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
     {
         auto team_member_result = d->read(id, models::TEAM_MEMBER_DEFINITION, login_token);
         if (team_member_result.second.ko()) return team_member_result.second;
@@ -145,7 +145,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return operation_result(403, "Deleting team members is forbidden. Set status to DELETED.");
     }
 
-    operation_result TeamMemberCrudlValidator::can_list(db_& d, string_map& filter,
+    operation_result TeamMemberCrudlValidator::can_list(db_& db, string_map& filter,
                                                         http::LoginToken& token) const
     {
         //2. Authorization

@@ -20,9 +20,18 @@ operation_result can_list(db_& db, http::LoginToken& token, string_map& filter) 
 [[nodiscard]] string get_model_name() const override;
 
 #define logged_user()\
-auto logged_in_user_pair = d->find_logged_in_user(token);\
+auto logged_in_user_pair = db->find_logged_in_user(token);\
 if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;\
 auto logged_in_user = logged_in_user_pair.first;\
+
+#define start_can_create(Model)\
+logged_user()\
+models::Model new_entity;\
+new_entity.from_values(ef);\
+\
+string error = new_entity.validate();\
+if (!error.empty()) return operation_result(400, error);
+
 
 namespace mindnet::persistence
 {

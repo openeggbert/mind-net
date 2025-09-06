@@ -19,7 +19,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     using impl::sqlite::validators::UserCrudlValidator;
 
 
-    operation_result DiscussionCrudlValidator::can_create(db_& d, entity_fields& ef,
+    operation_result DiscussionCrudlValidator::can_create(db_& db, entity_fields& ef,
                                                           http::LoginToken& token) const
     {
         //2. Authorization
@@ -56,7 +56,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_read(db_& d, http::LoginToken& token, int id) const
+    operation_result DiscussionCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
     {
         logged_user()
         if (logged_in_user.role == enums::UserRole::ADMIN) return ok_result;
@@ -78,7 +78,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_update(db_& d, http::LoginToken& token, entity_fields& ef) const
+    operation_result DiscussionCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
         logged_user()
 
@@ -107,7 +107,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::can_delete(db_& d, http::LoginToken& token, int id) const
+    operation_result DiscussionCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
     {
         auto discussion_result = d->read(id, models::DISCUSSION_DEFINITION, login_token);
         if (discussion_result.second.ko()) return discussion_result.second;
@@ -115,7 +115,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return operation_result(403, "Deleting discussions is forbidden. Set is_archived to true.");
     }
 
-    operation_result DiscussionCrudlValidator::can_list(db_& d, string_map& filter,
+    operation_result DiscussionCrudlValidator::can_list(db_& db, string_map& filter,
                                                         http::LoginToken& token) const
     {
         //2. Authorization

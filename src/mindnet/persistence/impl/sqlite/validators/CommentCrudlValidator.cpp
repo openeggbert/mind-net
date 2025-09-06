@@ -16,14 +16,14 @@ namespace mindnet::persistence::impl::sqlite::validators
     using impl::sqlite::validators::CommentCrudlValidator;
 
 
-    operation_result CommentCrudlValidator::can_create(db_& d, http::LoginToken& token, entity_fields& ef) const
+    operation_result CommentCrudlValidator::can_create(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
         models::Comment comment;
         comment.from_values(ef);
 
-        auto discussion_result = api::find_discussion(d, token, comment.discussion_id);
-        if (!discussion_result.second.empty()) return {400, "Discussion does not exist."};
-        auto is_team_member_result = api::is_member_of_team(d, token, discussion_result.first.team_id);
+        auto discussion = api::find_discussion(d, token, comment.discussion_id);
+        if (!discussion.second.empty()) return {400, "Discussion does not exist."};
+        auto is_team_member_result = api::is_member_of_team(d, token, discussion.first.team_id);
         if (!is_team_member_result.empty()) return {400, "Team does not exist."};
 
         if (comment.user_id != token.user_id) return {400, "You can only create comments for your own user."};
@@ -34,7 +34,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::can_read(db_& d, http::LoginToken& token, int id) const
+    operation_result CommentCrudlValidator::can_read(db_& db, http::LoginToken& token, int id) const
     {
         logged_user()
 
@@ -52,7 +52,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::can_update(db_& d, http::LoginToken& token, entity_fields& ef) const
+    operation_result CommentCrudlValidator::can_update(db_& db, http::LoginToken& token, entity_fields& ef) const
     {
         logged_user()
 
@@ -73,7 +73,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::can_delete(db_& d, http::LoginToken& token, int id) const
+    operation_result CommentCrudlValidator::can_delete(db_& db, http::LoginToken& token, int id) const
     {
         auto entity = api::find_comment(d, token, id);
 
@@ -82,7 +82,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return operation_result(403, "Deleting comments is forbidden. Set is_deleted to true.");
     }
 
-    operation_result CommentCrudlValidator::can_list(db_& d, http::LoginToken& token, string_map& filter) const
+    operation_result CommentCrudlValidator::can_list(db_& db, http::LoginToken& token, string_map& filter) const
     {
         //2. Authorization
         logged_user()
