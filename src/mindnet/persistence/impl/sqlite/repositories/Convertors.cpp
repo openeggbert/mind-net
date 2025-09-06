@@ -109,8 +109,8 @@ namespace mindnet::persistence::impl::sqlite::repositories
         foreign_key(TEAM_ID)
         foreign_key(USER_ID)
         mandatory_int(ROLE)
+        mandatory_int(STATUS)
         mandatory_int(JOINED_AT)
-        optional_int(IS_ACTIVE, 1)
         optional_int(LEFT_AT, 0)
 
         return fields;

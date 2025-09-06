@@ -79,8 +79,8 @@ CREATE TABLE team_member (
 	team_id INTEGER NOT NULL,
 	user_id INTEGER NOT NULL,
 	role INTEGER NOT NULL DEFAULT 0 CHECK (role IN (0,1,2,3,4)),
+	status INTEGER NOT NULL CHECK (status IN (0,1,2,3,4,5)),
 	joined_at DATETIME NOT NULL,
-	is_active BOOLEAN DEFAULT 1,
     left_at DATETIME,
 
     UNIQUE(team_id, user_id),

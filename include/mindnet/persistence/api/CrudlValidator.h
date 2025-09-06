@@ -18,6 +18,11 @@ operation_result can_delete(db_ d, int id, http::LoginToken& login_token) const 
 operation_result can_list(db_ d, std::map<std::string, std::string>& filter, http::LoginToken& login_token) const override;\
 [[nodiscard]] string get_model_name() const override;
 
+#define logged_user()\
+auto logged_in_user_pair = d->find_logged_in_user(login_token);\
+if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;\
+auto logged_in_user = logged_in_user_pair.first;\
+
 namespace mindnet::persistence
 {
     class Persistence;

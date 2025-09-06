@@ -49,8 +49,8 @@ namespace mindnet::models
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::ROLE, MANDATORY).set_default_value(0).set_enum_definition(
                 enums::user_role_to_enum_definition()),
+            coldef(COLS::STATUS, MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
             coldef(COLS::JOINED_AT, DATETIME | MANDATORY),
-            coldef(COLS::IS_ACTIVE, BOOL).set_default_value("1"),
             coldef(COLS::LEFT_AT, DATETIME),
 
         });
@@ -59,9 +59,9 @@ namespace mindnet::models
     {
         int team_id{};
         int user_id{};
-        int role{};
+        enums::UserRole role{};
+        enums::UserStatus status{};
         unixtime joined_at{};
-        bool is_active{true};
         unixtime left_at{};
 
         create_model_h_methods(Model, MODEL)
@@ -74,8 +74,8 @@ namespace mindnet::models
                 team_id == other.team_id &&
                 user_id == other.user_id &&
                 role == other.role &&
+                status == other.status &&
                 joined_at == other.joined_at &&
-                is_active == other.is_active &&
                 left_at == other.left_at;
         }
     };

@@ -25,6 +25,7 @@ namespace mindnet::persistence::impl::sqlite::validators
             403, "You can only create messages for your own user.");
         if (new_message.sent_at != 0) return operation_result(400, "sent_at must not be set during message creation.");
         if (!new_message.draft) return operation_result(400, "draft must be set to true during message creation.");
+        return ok_result;
     }
 
     operation_result MessageCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const

@@ -6,90 +6,100 @@
 #include "mindnet/persistence/impl/sqlite/validators/TeamCrudlValidator.h"
 
 #include "mindnet/Global.h"
+#include "mindnet/models/Team.h"
 #include "mindnet/persistence/Persistence.h"
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamCrudlValidator;
-    operation_result TeamCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result TeamCrudlValidator::can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
-        // models::Map map;
-        // map.from_values(ef);
-        // err << map << commit;
-        // if (map.name.empty())
-        // {
-        //     return "Name must not be empty";
-        // }
-        // string error;
-        // http::QueryParams query_params;
-        // query_params.filters.emplace("name", map.name);
-        // if (!d->list(query_params, models::MAP_DEFINITION, error).empty())
-        // {
-        //     return "Map name already exists";
-        // }
+        //2. Authorization
+        logged_user()
+
         //
-        // if (map.description.size() > 50)
-        // {
-        //     return "Description must not be longer than 50 characters";
-        // }
-        // if (map.owner_id != 1)
-        // {
-        //     return "Only owner can create maps";
-        // }
-        // if (map.team_id != 0)
-        // {
-        //     return "Team maps are not supported yet";
-        // }
-        // if (map.owner_rights < 0 || map.owner_rights > 7)
-        // {
-        //     return "owner_rights must be between 0 and 7";
-        // }
-        // if (map.team_rights < 0 || map.team_rights > 7)
-        // {
-        //     return "team_rights must be between 0 and 7";
-        // }
-        // if (map.other_rights < 0 || map.other_rights > 7)
-        // {
-        //     return "other_rights must be between 0 and 7";
-        // }
-        // if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        // {
-        //     //todo
-        //     return "Owner rights must be Read+Write+Delete. This is temporary.";
-        // }
-        // if (map.team_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Team rights must be NONE. This is temporary.";
-        // }
-        // if (map.other_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Other rights must be NONE. This is temporary.";
-        // }
-        return "";
+        if (logged_in_user.role < enums::UserRole::EDITOR)
+        {
+            return operation_result(403, "User does not have permission to create a team.");
+        }
+
+        //3. Request
+        models::Team new_entity;
+        new_entity.from_values(ef);
+        err << new_entity << commit;
+
+        string error = new_entity.validate();
+        if (!error.empty()) return operation_result(400, error);
+
+        if (new_entity.created_by != logged_in_user.get_id())
+            return operation_result(
+                400, "created_by must be set to the logged in user.");
+        if (new_entity.leader_id != logged_in_user.get_id())
+            return operation_result(
+                400, "leader_id must be set to the logged in user.");
+        return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_read(db_ d, int id) const
+    operation_result TeamCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result TeamCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        //2. Authorization
+        logged_user()
+        //
+        models::Team old_entity;
+        old_entity.from_values(ef);
+        models::Team new_entity;
+        new_entity.from_values(d->read(old_entity.get_id(), models::TEAM_DEFINITION, login_token).first);
+
+        //3. Request
+        string error = new_entity.validate();
+        if (!error.empty()) return operation_result(400, error);
+
+        if (logged_in_user.role != enums::UserRole::ADMIN && logged_in_user.get_id() != new_entity.leader_id)
+            return operation_result(
+                403, "Only team leader can update the team.");
+        if (old_entity.created_by != new_entity.created_by)
+            return
+                operation_result(400, "created_by cannot be changed");
+
+        if (old_entity.leader_id != new_entity.leader_id && logged_in_user.role != enums::UserRole::ADMIN)
+        {
+            return operation_result(400, "leader_id cannot be changed by yourself. Contact admin.");
+        }
+
+        return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_delete(db_ d, int id) const
+    operation_result TeamCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        //2. Authorization
+        auto logged_in_user_pair = d->find_logged_in_user(login_token);
+        if (logged_in_user_pair.second.ko()) return logged_in_user_pair.second;
+        auto logged_in_user = logged_in_user_pair.first;
+        //
+        models::Team team;
+        team.from_values(d->read(id, models::TEAM_DEFINITION, login_token).first);
+
+
+        if (logged_in_user.role != enums::UserRole::ADMIN)
+            return operation_result(
+                403, "Only admins can delete a team. Contact admin");
+
+        return ok_result;
     }
 
-    operation_result TeamCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    operation_result TeamCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,
+                                                  http::LoginToken& login_token) const
     {
-        return "";
+        return ok_result;
     }
 
     string TeamCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return "team";
     }
 }

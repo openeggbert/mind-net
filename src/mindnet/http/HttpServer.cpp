@@ -274,6 +274,7 @@ namespace mindnet::http
             result["unique"] = column_definition.is_unique();
             result["auto"] = column_definition.is_auto();
             if (column_definition.is_hidden()) { result["hidden"] = column_definition.is_hidden(); }
+            if (column_definition.is_readonly()) { result["readonly"] = column_definition.is_readonly(); }
             result["default_value"] = column_definition.get_default_value();
             if (!column_definition.get_description().empty())
                 result["description"] = column_definition.

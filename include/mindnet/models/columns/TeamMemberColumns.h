@@ -43,8 +43,8 @@ namespace mindnet::models::columns
         static constexpr const char* TEAM_ID = "team_id";
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* ROLE = "role";
+        static constexpr const char* STATUS = "status";
         static constexpr const char* JOINED_AT = "joined_at";
-        static constexpr const char* IS_ACTIVE = "is_active";
         static constexpr const char* LEFT_AT = "left_at";
     };
 }

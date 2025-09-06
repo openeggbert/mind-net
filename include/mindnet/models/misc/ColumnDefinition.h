@@ -26,13 +26,16 @@
 #include <set>
 
 #include "CustomAction.h"
+#include "asio/impl/read.hpp"
 #include "mindnet/models/misc/EnumDefinition.h"
 
 #define using_flags()\
 using misc::MANDATORY;\
 using misc::UNIQUE;\
 using misc::FOREIGN_KEY;\
+using misc::AUTO;\
 using misc::HIDDEN;\
+using misc::READONLY;\
 using misc::TEXT;\
 using misc::TEXTAREA;\
 using misc::INTEGER;\
@@ -50,13 +53,14 @@ namespace mindnet::models::misc
         FOREIGN_KEY = 1 << 2,
         AUTO = 1 << 3,
         HIDDEN = 1 << 4,
-        TEXT = 1 << 5,
-        TEXTAREA = 1 << 6,
-        INTEGER = 1 << 7,
-        REAL = 1 << 8,
-        BLOB = 1 << 9,
-        BOOL = 1 << 10,
-        DATETIME = 1 << 11
+        READONLY = 1 << 5,
+        TEXT = 1 << 6,
+        TEXTAREA = 1 << 7,
+        INTEGER = 1 << 8,
+        REAL = 1 << 9,
+        BLOB = 1 << 10,
+        BOOL = 1 << 11,
+        DATETIME = 1 << 12
     };
 
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
@@ -67,6 +71,7 @@ namespace mindnet::models::misc
             FOREIGN_KEY,
             AUTO,
             HIDDEN,
+            READONLY,
             TEXT,
             TEXTAREA,
             INTEGER,
@@ -88,7 +93,8 @@ namespace mindnet::models::misc
         std::optional<EnumDefinition> enum_definition;
         bool unique = false;
         bool auto_ = false;
-        bool hidden_ = false;
+        bool hidden = false;
+        bool readonly = false;
         std::string default_value;
         string description;
 
@@ -135,6 +141,7 @@ namespace mindnet::models::misc
                 auto_ = true;
                 column_type = mindnet::enums::ColumnType::INTEGER;
                 description = "Unique identifier of the record.";
+                readonly = true;
 
             }
             if (column_name == bc::CREATED_AT)
@@ -143,6 +150,7 @@ namespace mindnet::models::misc
                 auto_ = true;
                 column_type = mindnet::enums::ColumnType::DATETIME;
                 description = "Timestamp when the record was created.";
+                readonly = true;
             }
             if (column_name == bc::UPDATED_AT)
             {
@@ -207,7 +215,11 @@ namespace mindnet::models::misc
         }
         [[nodiscard]] const bool is_hidden() const
         {
-            return hidden_;
+            return hidden;
+        }
+        [[nodiscard]] const bool is_readonly() const
+        {
+            return readonly;
         }
         [[nodiscard]] const string& get_description() const
         {
@@ -276,7 +288,12 @@ namespace mindnet::models::misc
 
         ColumnDefinition& set_hidden()
         {
-            hidden_ = true;
+            hidden = true;
+            return *this;
+        }
+        ColumnDefinition& set_readonly()
+        {
+            readonly = true;
             return *this;
         }
 
@@ -299,6 +316,7 @@ namespace mindnet::models::misc
             if (flags_set.contains(FOREIGN_KEY)) set_foreign_key();
             if (flags_set.contains(AUTO)) set_auto();
             if (flags_set.contains(HIDDEN)) set_hidden();
+            if (flags_set.contains(READONLY)) set_readonly();
             //
             if (flags_set.contains(TEXT)) column_type = enums::ColumnType::TEXT;
             if (flags_set.contains(TEXTAREA)) column_type = enums::ColumnType::TEXTAREA;

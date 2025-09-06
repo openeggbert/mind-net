@@ -6,90 +6,161 @@
 #include "mindnet/persistence/impl/sqlite/validators/TeamMemberCrudlValidator.h"
 
 #include "mindnet/Global.h"
+#include "mindnet/models/Team.h"
+#include "mindnet/models/TeamMember.h"
 #include "mindnet/persistence/Persistence.h"
 
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamMemberCrudlValidator;
-    operation_result TeamMemberCrudlValidator::can_create(db_ d, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_create(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
-        // models::Map map;
-        // map.from_values(ef);
-        // err << map << commit;
-        // if (map.name.empty())
-        // {
-        //     return "Name must not be empty";
-        // }
-        // string error;
-        // http::QueryParams query_params;
-        // query_params.filters.emplace("name", map.name);
-        // if (!d->list(query_params, models::MAP_DEFINITION, error).empty())
-        // {
-        //     return "Map name already exists";
-        // }
+        //2. Authorization
+        logged_user()
+
         //
-        // if (map.description.size() > 50)
-        // {
-        //     return "Description must not be longer than 50 characters";
-        // }
-        // if (map.owner_id != 1)
-        // {
-        //     return "Only owner can create maps";
-        // }
-        // if (map.team_id != 0)
-        // {
-        //     return "Team maps are not supported yet";
-        // }
-        // if (map.owner_rights < 0 || map.owner_rights > 7)
-        // {
-        //     return "owner_rights must be between 0 and 7";
-        // }
-        // if (map.team_rights < 0 || map.team_rights > 7)
-        // {
-        //     return "team_rights must be between 0 and 7";
-        // }
-        // if (map.other_rights < 0 || map.other_rights > 7)
-        // {
-        //     return "other_rights must be between 0 and 7";
-        // }
-        // if (map.owner_rights != castint(enums::AccessRight::READ_WRITE_DELETE))
-        // {
-        //     //todo
-        //     return "Owner rights must be Read+Write+Delete. This is temporary.";
-        // }
-        // if (map.team_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Team rights must be NONE. This is temporary.";
-        // }
-        // if (map.other_rights != castint(enums::AccessRight::NONE))
-        // {
-        //     return "Other rights must be NONE. This is temporary.";
-        // }
-        return "";
+        if (logged_in_user.role < enums::UserRole::EDITOR)
+        {
+            return operation_result(403, "User does not have permission to create a team member.");
+        }
+
+        //3. Request
+        models::TeamMember new_entity;
+        new_entity.from_values(ef);
+        err << new_entity << commit;
+
+        auto team_result = d->read(new_entity.team_id, models::TEAM_DEFINITION, login_token);
+        if (team_result.second.ko()) return team_result.second;
+        models::Team team;
+        team.from_values(team_result.first);
+
+        auto team_leader_result = d->read(team.leader_id, models::USER_DEFINITION, login_token);
+        if (team_leader_result.second.ko()) return team_leader_result.second;
+        models::User team_leader;
+        team_leader.from_values(team_leader_result.first);
+
+
+        if (logged_in_user.get_id() == team_leader.get_id() || logged_in_user.role == enums::UserRole::ADMIN)
+        {
+        }
+        else if (logged_in_user.get_id() == new_entity.user_id)
+        {
+            if (new_entity.role != enums::UserRole::READER)
+            {
+                return operation_result(403, "Initial user role in team must be READER.");
+            }
+            if (new_entity.status != enums::UserStatus::PENDING)
+            {
+                return operation_result(403, "Initial user status in team must be PENDING.");
+            }
+        }
+        else
+        {
+            return operation_result(403, "You can only add members to your team.");
+        }
+        if (new_entity.left_at != 0)
+            return operation_result(
+                400, "left_at must be set to 0 during team member creation");
+
+        string error = new_entity.validate();
+        if (!error.empty()) return operation_result(400, error);
+
+        return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_read(db_ d, int id) const
+    operation_result TeamMemberCrudlValidator::can_read(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        logged_user()
+        if (logged_in_user.role == enums::UserRole::ADMIN) return ok_result;
+
+
+        auto team_member_result = d->read(id, models::TEAM_MEMBER_DEFINITION, login_token);
+        if (team_member_result.second.ko()) return team_member_result.second;
+        models::TeamMember team_member;
+        team_member.from_values(team_member_result.first);
+
+        auto team_result = d->read(team_member.team_id, models::TEAM_DEFINITION, login_token);
+        if (team_result.second.ko()) return team_result.second;
+        models::Team team;
+        team.from_values(team_result.first);
+
+        // auto team_leader_result = d->read(team.leader_id, models::USER_DEFINITION, login_token);
+        // if (team_leader_result.second.ko()) return team_leader_result.second;
+        // models::User team_leader;
+        // team_leader.from_values(team_leader_result.first);
+
+        if (logged_in_user.get_id() == team.leader_id) return ok_result;
+        if (logged_in_user.get_id() == team_member.user_id && team_member.status == enums::UserStatus::ACTIVE)
+            return
+                ok_result;
+
+        http::QueryParams query_params;
+        query_params.filters.emplace("team_id", std::to_string(team.get_id()));
+        query_params.filters.emplace("user_id", std::to_string(logged_in_user.get_id()));
+        query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
+        auto is_team_member_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, login_token);
+        if (is_team_member_result.second.ko()) return is_team_member_result.second;
+        if (is_team_member_result.first.empty())
+        {
+            return operation_result(403, "You can only read your own team members.");
+        }
+
+        return operation_result(403, "You can only read your own team members.");
     }
 
-    operation_result TeamMemberCrudlValidator::can_update(db_ d, entity_fields& ef) const
+    operation_result TeamMemberCrudlValidator::can_update(db_ d, entity_fields& ef, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        logged_user()
+
+        models::TeamMember old_entity;
+        old_entity.from_values(ef);
+        models::TeamMember new_entity;
+        new_entity.from_values(d->read(old_entity.get_id(), models::TEAM_MEMBER_DEFINITION, login_token).first);
+
+        auto team_result = d->read(old_entity.team_id, models::TEAM_DEFINITION, login_token);
+        if (team_result.second.ko()) return team_result.second;
+        models::Team team;
+        team.from_values(team_result.first);
+
+        if (logged_in_user.role != enums::UserRole::ADMIN && logged_in_user.get_id() != team.leader_id)
+        {
+            return operation_result(403, "Only team leader can update the team.");
+        }
+
+        return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::can_delete(db_ d, int id) const
+    operation_result TeamMemberCrudlValidator::can_delete(db_ d, int id, http::LoginToken& login_token) const
     {
-        return "The validation is not yet implemented.";
+        return operation_result(403, "Team members cannot be deleted. Set status to DELETED.");
     }
 
-    operation_result TeamMemberCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter) const
+    operation_result TeamMemberCrudlValidator::can_list(db_ d, std::map<std::string, std::string>& filter,
+                                                        http::LoginToken& login_token) const
     {
-        return "";
+        //2. Authorization
+        logged_user()
+
+        if (logged_in_user.role == enums::UserRole::ADMIN) return ok_result;
+
+        if (filter.find("team_id") == filter.end()) return {403, "You can't filter without team_id."};
+
+        http::QueryParams query_params;
+        query_params.filters.emplace("user_id", std::to_string(logged_in_user.get_id()));
+        query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
+        query_params.filters.emplace("team_id", filter["team_id"]);
+        auto member_of_teams_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, login_token);
+        if (member_of_teams_result.second.ko()) return member_of_teams_result.second;
+        if (member_of_teams_result.first.empty())
+        {
+            return operation_result(403, "Only team members can list team members.");
+        }
+
+        return ok_result;
     }
 
     string TeamMemberCrudlValidator::get_model_name() const
     {
-        return "todo";
+        return "team_member";
     }
 }
