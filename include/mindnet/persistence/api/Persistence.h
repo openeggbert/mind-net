@@ -17,7 +17,6 @@ namespace mindnet::persistence::api {
 
 namespace mindnet::persistence
 {
-    typedef mindnet::persistence::api::OperationResult operation_result;
     using mindnet::models::misc::ModelDefinition;
     using api::OperationResult;
     

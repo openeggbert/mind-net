@@ -71,7 +71,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     api::OperationResult UserCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
-        return operation_result(403, "You are not allowed to delete this user");
+        return OperationResult(403, "You are not allowed to delete this user");
     }
 
     api::OperationResult UserCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const

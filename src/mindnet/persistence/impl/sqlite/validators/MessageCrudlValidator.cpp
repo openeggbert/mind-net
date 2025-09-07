@@ -16,7 +16,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::MessageCrudlValidator;
 
-    operation_result MessageCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult MessageCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -27,7 +27,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult MessageCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -37,7 +37,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult MessageCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
         
@@ -60,7 +60,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult MessageCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
@@ -73,7 +73,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MessageCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult MessageCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 

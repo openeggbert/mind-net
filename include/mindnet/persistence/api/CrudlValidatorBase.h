@@ -12,6 +12,7 @@
 #include "ICrudlValidator.h"
 #include "OperationResult.h"
 #include "PersistenceMethods.h"
+#include "PersistenceTypedefs.h"
 #include "RequestContext.h"
 #include "mindnet/models/misc/BaseModel.h"
 
@@ -25,7 +26,7 @@ api::OperationResult validate_delete(const RequestContext&, const M& entity) con
 api::OperationResult validate_list(const RequestContext&, const string_map&) const;\
 [[nodiscard]] string get_model_name() const override;
 
-#define return_if(condition, status, message) if (condition) return operation_result(status, message);\
+#define return_if(condition, status, message) if (condition) return OperationResult(status, message);\
 
 #define mandatory_filter(field)\
 if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
@@ -52,8 +53,6 @@ namespace mindnet::models {
 
 namespace mindnet::persistence::api
 {
-    typedef std::expected<void, OperationResult> result_t;
-
     template <typename Derived, typename Model>
     class CrudlValidatorBase : public api::ICrudlValidator
     {
@@ -68,7 +67,7 @@ namespace mindnet::persistence::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
-                    { d.validate_create(ctx, m) } -> std::convertible_to<result_t>;
+                    { d.validate_create(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
                 "Derived must implement validate_create returning result_t"
             );
@@ -83,8 +82,8 @@ namespace mindnet::persistence::api
             if (auto error = entity.validate(); !error.empty())
                 return {400, error};
             ////
-            if (auto res = derived().validate_create(context, entity); !res)
-                return res.error();
+            if (auto res = derived().validate_create(context, entity); !res.ok())
+                return res;
 
             return ok_result;
         }
@@ -94,7 +93,7 @@ namespace mindnet::persistence::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
-                    { d.validate_read(ctx, m) } -> std::convertible_to<result_t>;
+                    { d.validate_read(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
                 "Derived must implement validate_read returning result_t"
             );
@@ -103,14 +102,17 @@ namespace mindnet::persistence::api
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
-            auto [values, read_err] = db->read(Model::get_definition(), token, id);
+            auto [values, read_err] = db->read(
+                //todo
+                db->get_model_definition(derived().get_model_name()).value(), token, id
+                );
             if (read_err.ko()) return read_err;
             //
             Model entity;
             entity.from_values(values);
             ////
-            if (auto res = derived().validate_read(context, entity); !res)
-                return res.error();
+            if (auto res = derived().validate_read(context, entity); !res.ok())
+                return res;
 
             return ok_result;
         }
@@ -118,9 +120,9 @@ namespace mindnet::persistence::api
         OperationResult can_update(IPersistence* db, http::LoginToken& token, entity_fields& ef) const
         {
             static_assert(
-                requires(const Derived& d, RequestContext const& ctx, const Model& old_m, const Model& new__m)
+                requires(const Derived& d, RequestContext const& ctx, const Model& old_m, const Model& new_m)
                 {
-                    { d.validate_update(ctx, old_m, new__m) } -> std::convertible_to<result_t>;
+                    { d.validate_update(ctx, old_m, new_m) } -> std::convertible_to<OperationResult>;
                 },
                 "Derived must implement validate_update returning result_t"
             );
@@ -132,7 +134,8 @@ namespace mindnet::persistence::api
             Model new_entity;
             new_entity.from_values(ef);
 
-            auto [old_values, read_err] = db->read(new_entity.get_id(), Model::definition(), token);
+            auto [old_values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(),
+                token, new_entity.get_id());
             if (read_err.ko()) return read_err;
 
             Model old_entity;
@@ -141,12 +144,13 @@ namespace mindnet::persistence::api
             if (auto error = new_entity.validate(); !error.empty())
                 return {400, error};
 
-            if (auto error = validate_readonly(old_values, ef, Model::get_definition()); !error.empty())
+            auto def = db->get_model_definition(derived().get_model_name()).value();
+            if (auto error = validate_readonly(old_values, ef, def); !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_update(
-                context, new_entity, old_entity); !res.has_value())
-                return res.error();
+                context, new_entity, old_entity); !res.ok())
+                return res;
 
             return ok_result;
         }
@@ -156,7 +160,7 @@ namespace mindnet::persistence::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
-                    { d.validate_delete(ctx, m) } -> std::convertible_to<result_t>;
+                    { d.validate_delete(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
                 "Derived must implement validate_delete returning result_t"
             );
@@ -165,14 +169,14 @@ namespace mindnet::persistence::api
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
-            auto [values, read_err] = db->read(Model::get_definition(), token, id);
+            auto [values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(), token, id);
             if (read_err.ko()) return read_err;
 
             Model entity;
             entity.from_values(values);
             ////
-            if (auto res = derived().validate_delete(context, entity); !res)
-                return res.error();
+            if (auto res = derived().validate_delete(context, entity); !res.ok())
+                return res;
 
             return ok_result;
         };
@@ -182,7 +186,7 @@ namespace mindnet::persistence::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const string_map& fm)
                 {
-                    { d.validate_list(ctx, fm) } -> std::convertible_to<result_t>;
+                    { d.validate_list(ctx, fm) } -> std::convertible_to<OperationResult>;
                 },
                 "Derived must implement validate_list returning result_t"
             );
@@ -191,8 +195,8 @@ namespace mindnet::persistence::api
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
-            if (auto res = derived().validate_list(context, filter); !res)
-                return res.error();
+            if (auto res = derived().validate_list(context, filter); !res.ok())
+                return res;
 
             return ok_result;
         };

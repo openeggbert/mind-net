@@ -63,6 +63,13 @@ git submodule update --init --recursive
 cd mind-net
 # Enable FTS5 feature of SQLite : edit third_party/sqlite/CMakeLists.txt
 # - add target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5) to 
+
+$<INSTALL_INTERFACE:include/>)
+ 
++target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5)
++
+ if (SQLITE_ENABLE_COLUMN_METADATA)
+
 # Switch to the develop branch
 git checkout develop
 # Create build directory

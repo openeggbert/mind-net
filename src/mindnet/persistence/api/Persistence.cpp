@@ -160,7 +160,7 @@ namespace mindnet::persistence
         return repository_names;
     }
 
-    operation_result Persistence::can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
+    OperationResult Persistence::can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
     {
         //Authentication
         if (token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
@@ -170,11 +170,11 @@ namespace mindnet::persistence
         {
             return v2->can_create(this, token, ef);
         }
-        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+        return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation CREATE cannot be validated.");
     };
 
-    operation_result Persistence::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
+    OperationResult Persistence::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
 
         //Authentication
@@ -187,14 +187,14 @@ namespace mindnet::persistence
             return v2->can_read(this, token, id);
 
         }
-        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+        return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation READ cannot be validated.");
 
 
         return ok_result;
     }
 
-    operation_result Persistence::can_update(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
+    OperationResult Persistence::can_update(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
     {
         //Authentication
         if (token.ko()) return {401, "Only logged in users can update."};
@@ -204,14 +204,14 @@ namespace mindnet::persistence
         {
             return v2->can_update(this, token, ef);
         }
-        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+        return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation UPDATE cannot be validated.");
 
 
         return ok_result;
     }
 
-    operation_result Persistence::can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id)
+    OperationResult Persistence::can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
         //Authentication
         if (token.ko()) return {401, "Only logged in users can delete."};
@@ -221,12 +221,12 @@ namespace mindnet::persistence
         {
             return v2->can_delete(this, token, id);
         }
-        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+        return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation DELETE cannot be validated.");
 
     }
 
-    operation_result Persistence::can_list(const ModelDefinition& model_definition, http::LoginToken& token, string_map& filter)
+    OperationResult Persistence::can_list(const ModelDefinition& model_definition, http::LoginToken& token, string_map& filter)
     {
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
@@ -236,7 +236,7 @@ namespace mindnet::persistence
         {
             return v2->can_list(this, token, filter);
         }
-        return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
+        return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation LIST cannot be validated.");
 
 
@@ -244,7 +244,7 @@ namespace mindnet::persistence
     };
 
 
-    std::pair<int, operation_result> Persistence::create(
+    std::pair<int, OperationResult> Persistence::create(
         const models::misc::ModelDefinition& def,
         http::LoginToken& token,
         entity_fields& fields)
@@ -259,7 +259,7 @@ namespace mindnet::persistence
         return {last_id, {500, error}};
     }
 
-    std::pair<entity_fields, operation_result> Persistence::read(const models::misc::ModelDefinition& def,
+    std::pair<entity_fields, OperationResult> Persistence::read(const models::misc::ModelDefinition& def,
                                     http::LoginToken& token, const int id)
     {
         string_map empty_map;
@@ -273,7 +273,7 @@ namespace mindnet::persistence
         return {ef, {500, error}};
     }
 
-    operation_result Persistence::update(
+    OperationResult Persistence::update(
         const models::misc::ModelDefinition& def, http::LoginToken& token,
         int id, entity_fields& fields
                              )
@@ -289,7 +289,7 @@ namespace mindnet::persistence
         if (error.empty()) {return ok_result;} else {return {500, error};}
     }
 
-    operation_result Persistence::remove(models::misc::ModelDefinition& def, http::LoginToken& token, int id)
+    OperationResult Persistence::remove(models::misc::ModelDefinition& def, http::LoginToken& token, int id)
     {
         string_map empty_map;
         auto result = can_delete(def.get_model_name(), token, id);
@@ -303,7 +303,7 @@ namespace mindnet::persistence
 
     }
 
-    std::pair<std::vector<entity_fields>, operation_result> Persistence::list(
+    std::pair<std::vector<entity_fields>, OperationResult> Persistence::list(
                                                  ModelDefinition& def,
                                                  http::LoginToken& token,
                                                  http::QueryParams& query_params)
