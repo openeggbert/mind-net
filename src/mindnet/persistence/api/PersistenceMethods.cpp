@@ -68,7 +68,6 @@ namespace mindnet::persistence::api
         return "";
     }
 
-
     gen_find_cpp(Comment, comment, COMMENT)
     gen_find_cpp(User, user, USER)
     gen_find_cpp(Message, message, MESSAGE)

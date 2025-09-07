@@ -33,12 +33,12 @@
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
 #define gen_find_h(Model, model) \
-std::pair<models::Model, string> find_##model(db_ptr& db, http::LoginToken& token, int id);
+std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id);
 
 #define gen_find_cpp(Model, model, MODEL)\
-std::pair<models::Model, string> find_##model(db_ptr& db, http::LoginToken& token, int id)\
+std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id)\
     {\
-        auto result = db->read(id, models::MODEL##_DEFINITION, token);\
+        auto result = ctx.db->read(id, models::MODEL##_DEFINITION, ctx.token);\
         if (result.second.ko()) return {{}, result.second.error};\
         models::Model entity;\
         entity.from_values(result.first);\

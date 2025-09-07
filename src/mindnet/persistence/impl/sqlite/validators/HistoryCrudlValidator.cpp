@@ -16,51 +16,51 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::HistoryCrudlValidator;
 
-    operation_result HistoryCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result HistoryCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_create(Model);
 
-        return_if (new_entity.user_id != logged_in_user.get_id(),
+
+        return_if (entity.user_id != ctx.logged_user.get_id(),
             403, "You can only create history for your own user.");
 
         return ok_result;
     }
 
-    operation_result HistoryCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
+    operation_result HistoryCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_read(Model, MODEL)
 
-        return_if (entity.user_id != logged_in_user.get_id() && !is_admin,
+
+        return_if (entity.user_id != ctx.logged_user.get_id() && ctx.logged_user.role != enums::UserRole::ADMIN,
             403, "You can only read history for your own user.");
 
         //3. Request
         return ok_result;
     }
 
-    operation_result HistoryCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result HistoryCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        start_can_update(Model, MODEL)
+
 
         return {405, "History cannot be updated."};
     }
 
-    operation_result HistoryCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
+    operation_result HistoryCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
     {
-        start_can_delete(Model, MODEL)
+
 
         return {405, "History cannot be deleted."};
 
     }
 
-    operation_result HistoryCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
+    operation_result HistoryCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
     {
-        start_can_list(Model, MODEL)
 
-        if (is_admin) return ok_result;
+
+        if (ctx.logged_user.role != enums::UserRole::ADMIN) return ok_result;
 
         mandatory_filter(user_id)
 
-        return_if (filter["user_id"] != std::to_string(logged_in_user.get_id()),
+        return_if (filter.at("user_id") != std::to_string(ctx.logged_user.get_id()),
             403, "You can only list history for your own user.");
 
         return ok_result;

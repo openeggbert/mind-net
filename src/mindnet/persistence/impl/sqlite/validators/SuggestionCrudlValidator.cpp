@@ -16,37 +16,37 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::SuggestionCrudlValidator;
 
-    operation_result SuggestionCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result SuggestionCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_create(Model);
 
-        return_if (new_entity.from_user_id != logged_in_user.get_id(),
+
+        return_if (entity.from_user_id != ctx.logged_user.get_id(),
             403, "You can create suggestion only for your user.")
-        return_if (db->has_repository(new_entity.table_name),
+        return_if (ctx.db->has_repository_with_name(entity.table_name),
             403, "There is no such model - value for table_name is invalid")
-        return_if (new_entity.review_count != 0,
+        return_if (entity.review_count != 0,
             403, "Review count must be 0 during suggestion creation.")
-        return_if (new_entity.status != enums::SuggestionStatus::PENDING && new_entity.status != enums::SuggestionStatus::DRAFT,
+        return_if (entity.status != enums::SuggestionStatus::PENDING && entity.status != enums::SuggestionStatus::DRAFT,
             403, "Status must be PENDING or DRAFT during suggestion creation.")
 
         return ok_result;
     }
 
-    operation_result SuggestionCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
+    operation_result SuggestionCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_read(Model, MODEL)
 
-        return_if (entity.from_user_id != logged_in_user.get_id() && role < enums::UserRole::REVIEWER,
+
+        return_if (entity.from_user_id != ctx.logged_user.get_id() && ctx.logged_user.role < enums::UserRole::REVIEWER,
             403, "You can not read this suggestion.");
 
         return ok_result;
     }
 
-    operation_result SuggestionCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result SuggestionCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        start_can_update(Model, MODEL)
 
-        return_if (logged_in_user.get_id() != new_entity.from_user_id,
+
+        return_if (ctx.logged_user.get_id() != new_entity.from_user_id,
             403, "Only author of this suggestion can update it.");
         return_if (old_entity.status == enums::SuggestionStatus::APPROVED,
             400, "Suggestion is approved and cannot be updated");
@@ -54,24 +54,24 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result SuggestionCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
+    operation_result SuggestionCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
     {
-        start_can_delete(Model, MODEL)
+
 
         return {405, "Deleting suggestions is forbidden. Set the suggestion status to cancelled."};
     }
 
-    operation_result SuggestionCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
+    operation_result SuggestionCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
     {
-        start_can_list(Model, MODEL)
-        if (role >= enums::UserRole::REVIEWER)
+
+        if (ctx.logged_user.role >= enums::UserRole::REVIEWER)
         {
             return ok_result;
         }
 
         mandatory_filter(from_user_id)
 
-        return_if (filter["from_user_id"] != std::to_string(logged_in_user.get_id()),
+        return_if (filter.at("from_user_id") != std::to_string(ctx.logged_user.get_id()),
             403, "You can only list suggestions for your own user.");
 
         return ok_result;

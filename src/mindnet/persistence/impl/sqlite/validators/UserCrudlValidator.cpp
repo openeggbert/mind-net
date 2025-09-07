@@ -48,16 +48,16 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     api::OperationResult UserCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        bool logged_in_user_updates_himself = ctx.token.user_id == old_entity.get_id();
+        bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
 
-        return_if (ctx.logged_user.role != enums::UserRole::ADMIN && !logged_in_user_updates_himself,
+        return_if (ctx.logged_user.role != enums::UserRole::ADMIN && !logged_user_updates_himself,
             403, "You can only update your own user.")
 
         return_if (new_entity.password_hash != "*",
             400, "password cannot be changed here, use /changepw endpoint instead");
 
         bool role_different = new_entity.role != old_entity.role;
-        return_if (role_different && logged_in_user_updates_himself,
+        return_if (role_different && logged_user_updates_himself,
             400, "role cannot be changed");
 
         return_if (role_different && ctx.logged_user.role != enums::UserRole::ADMIN,

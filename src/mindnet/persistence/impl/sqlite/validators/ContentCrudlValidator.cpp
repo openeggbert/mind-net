@@ -16,31 +16,31 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::ContentCrudlValidator;
 
-    operation_result ContentCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result ContentCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_create(Model);
-        return_if (role < enums::UserRole::EDITOR,403, "You can not create content.")
-        return_if (new_entity.version != 1,
+
+        return_if (ctx.logged_user.role < enums::UserRole::EDITOR,403, "You can not create content.")
+        return_if (entity.version != 1,
             404, "version must be 1 during message creation.");
 
         return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
+    operation_result ContentCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_read(Model, MODEL)
 
-        return_if (entity.owner_id != logged_in_user.get_id(),
+
+        return_if (entity.owner_id != ctx.logged_user.get_id(),
             403, "You can only read messages for your own user.");
 
         return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result ContentCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        start_can_update(Model, MODEL)
 
-        return_if (logged_in_user.get_id() != new_entity.owner_id,
+
+        return_if (ctx.logged_user.get_id() != new_entity.owner_id,
             403, "You can only update your own message.");
         return_if (old_entity.sent_at != 0 && new_entity.sent_at == 0,
             400, "sent_at cannot be changed, if already set");
@@ -59,11 +59,11 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
+    operation_result ContentCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
     {
-        start_can_delete(Model, MODEL)
 
-        return_if (logged_in_user.get_id() != entity.owner_id,
+
+        return_if (ctx.logged_user.get_id() != entity.owner_id,
             403, "You can only delete your own message.");
 
         return_if (entity.deleted_at == 0,
@@ -72,13 +72,13 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result ContentCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
+    operation_result ContentCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
     {
-        start_can_list(Model, MODEL)
+
 
         mandatory_filter(owner_id)
 
-        return_if (filter["owner_id"] != std::to_string(logged_in_user.get_id()),
+        return_if (filter["owner_id"] != std::to_string(ctx.logged_user.get_id()),
             403, "You can only list messages for your own user.");
 
         return ok_result;

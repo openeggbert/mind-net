@@ -27,10 +27,8 @@ api::OperationResult validate_list(const ValidatorContext&, const string_map&) c
 #define mandatory_filter(field)\
 if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
 
-#define find_model(model, id) api:: XPASTE(find_,model) (db, token, id);
+#define find_model(model, id) api:: XPASTE(find_,model) (ctx, id);
 #define check_found(f) if (!f.second.empty()) return{400,f.second};
-
-
 
 namespace mindnet::persistence::api
 {

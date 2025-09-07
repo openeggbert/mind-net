@@ -16,14 +16,14 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::MapCrudlValidator;
 
-    operation_result MapCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result MapCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_create(Model);
+
 
         return_if(api::has_user_name(db, token, new_entity.name),
                   409, "name already exists")
 
-        return_if(new_entity.owner_id != logged_in_user.get_id(),
+        return_if(new_entity.owner_id != logged_user.get_id(),
                   400, "Only owner can create maps")
 
         if (new_entity.team_id != 0)
@@ -35,11 +35,11 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MapCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
+    operation_result MapCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_read(Model, MODEL)
+
         if (is_admin) return ok_result;
-        if (entity.owner_id == logged_in_user.get_id()) return ok_result;
+        if (entity.owner_id == logged_user.get_id()) return ok_result;
         if (entity.team_id != 0 && mindnet::enums::can_read(entity.team_rights))
         {
             auto team = find_model(team, entity.team_id);
@@ -55,13 +55,13 @@ namespace mindnet::persistence::impl::sqlite::validators
         return {403, "You can not read this map."};
     }
 
-    operation_result MapCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result MapCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        start_can_update(Model, MODEL)
+
 
         using mindnet::enums::can_write;
 
-        bool owner_can_write = old_entity.owner_id == logged_in_user.get_id() && can_write(old_entity.owner_rights);
+        bool owner_can_write = old_entity.owner_id == logged_user.get_id() && can_write(old_entity.owner_rights);
         bool team_can_write = false;
 
         if (old_entity.team_id != 0 && mindnet::enums::can_write(old_entity.team_rights))
@@ -81,13 +81,13 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MapCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
+    operation_result MapCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
     {
-        start_can_delete(Model, MODEL)
+
 
         using mindnet::enums::can_delete;
 
-        bool owner_can_delete = entity.owner_id == logged_in_user.get_id() && can_delete(entity.owner_rights);
+        bool owner_can_delete = entity.owner_id == logged_user.get_id() && can_delete(entity.owner_rights);
         bool team_can_delete = false;
 
         if (entity.team_id != 0 && mindnet::enums::can_delete(entity.team_rights))
@@ -107,7 +107,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result MapCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
+    operation_result MapCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
     {
         http::QueryParams params;
         params.page_size = 100;

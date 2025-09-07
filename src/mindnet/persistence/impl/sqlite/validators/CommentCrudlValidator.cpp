@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::CommentCrudlValidator;
 
-    operation_result CommentCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result CommentCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_create(Model);
+
         
         auto discussion = find_model(discussion, new_entity.discussion_id);
         check_found(discussion);
@@ -33,9 +33,9 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
+    operation_result CommentCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
     {
-        start_can_read(Model, MODEL)
+
 
         auto comment = api::find_comment(db, token, id);
         return_if(!comment.second.empty(), 400, "Comment does not exist.")
@@ -50,26 +50,26 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
+    operation_result CommentCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        start_can_update(Model, MODEL)
 
-        return_if (old_entity.user_id != logged_in_user.get_id() && logged_in_user.role != enums::UserRole::ADMIN,
+
+        return_if (old_entity.user_id != logged_user.get_id() && logged_user.role != enums::UserRole::ADMIN,
             403, "You can only update your own comment.")
 
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
+    operation_result CommentCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
     {
-        start_can_delete(Model, MODEL)
+
 
         return operation_result(403, "Deleting comments is forbidden. Set is_deleted to true.");
     }
 
-    operation_result CommentCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
+    operation_result CommentCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
     {
-        start_can_list(Model, MODEL)
+
 
         mandatory_filter(discussion_id)
 
