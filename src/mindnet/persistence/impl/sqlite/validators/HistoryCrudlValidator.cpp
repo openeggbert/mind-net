@@ -16,35 +16,35 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::HistoryCrudlValidator;
 
-    operation_result HistoryCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
+    operation_result HistoryCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
-        return_if (entity.user_id != ctx.logged_user.get_id(),
+        return_if (entity.user_id != ctx.token.user_id,
             403, "You can only create history for your own user.");
 
         return ok_result;
     }
 
-    operation_result HistoryCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
+    operation_result HistoryCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
-        return_if (entity.user_id != ctx.logged_user.get_id() && ctx.logged_user.role != enums::UserRole::ADMIN,
+        return_if (entity.user_id != ctx.token.user_id && ctx.role != enums::UserRole::ADMIN,
             403, "You can only read history for your own user.");
 
         //3. Request
         return ok_result;
     }
 
-    operation_result HistoryCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
+    operation_result HistoryCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
         return {405, "History cannot be updated."};
     }
 
-    operation_result HistoryCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
+    operation_result HistoryCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
@@ -52,15 +52,15 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     }
 
-    operation_result HistoryCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
+    operation_result HistoryCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 
-        if (ctx.logged_user.role != enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role != enums::UserRole::ADMIN) return ok_result;
 
         mandatory_filter(user_id)
 
-        return_if (filter.at("user_id") != std::to_string(ctx.logged_user.get_id()),
+        return_if (filter.at("user_id") != std::to_string(ctx.token.user_id),
             403, "You can only list history for your own user.");
 
         return ok_result;

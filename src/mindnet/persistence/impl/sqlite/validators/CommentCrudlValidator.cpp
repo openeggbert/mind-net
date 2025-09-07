@@ -19,7 +19,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::CommentCrudlValidator;
 
-    operation_result CommentCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
+    operation_result CommentCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
         
@@ -33,7 +33,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
+    operation_result CommentCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -50,7 +50,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
+    operation_result CommentCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
@@ -60,14 +60,14 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
+    operation_result CommentCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
         return operation_result(403, "Deleting comments is forbidden. Set is_deleted to true.");
     }
 
-    operation_result CommentCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
+    operation_result CommentCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 

@@ -18,7 +18,7 @@ namespace mindnet::persistence
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using db_ = mindnet::persistence::Persistence*;
-    using api::ValidatorContext;
+    using api::RequestContext;
     using models::Suggestion;
 
     class SuggestionCrudlValidator : public api::CrudlValidatorBase<SuggestionCrudlValidator, models::Suggestion>

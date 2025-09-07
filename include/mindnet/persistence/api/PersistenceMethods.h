@@ -6,8 +6,8 @@
 #define MIND_NET_PERSISTENCEMETHODS_H
 #include <utility>
 
-#include "CrudlValidatorBase.h"
 #include "OperationResult.h"
+#include "RequestContext.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/models/User.h"
 #include "mindnet/models/Message.h"
@@ -32,10 +32,10 @@
 #include "mindnet/models/Reference.h"
 #include "mindnet/models/Link.h"
 #define gen_find_h(Model, model) \
-std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id);
+std::pair<models::Model, string> find_##model(const RequestContext& ctx, int id);
 
 #define gen_find_cpp(Model, model, MODEL)\
-std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id)\
+std::pair<models::Model, string> find_##model(const RequestContext& ctx, int id)\
     {\
         auto result = ctx.db->read(models::MODEL##_DEFINITION, ctx.token, id);\
         if (result.second.ko()) return {{}, result.second.error};\
@@ -47,13 +47,13 @@ std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id)\
 namespace mindnet::persistence::api
 {
     std::pair<models::User, api::OperationResult> find_logged_user(
-        db_ptr& db, http::LoginToken token);
+        IPersistence*& db, http::LoginToken token);
 
-    bool has_user_name(const ValidatorContext& ctx, string user_name);
-    bool has_user_email(const ValidatorContext& ctx, string user_mail);
-    bool has_map_name(const ValidatorContext& ctx, string map_name);
+    bool has_user_name(const RequestContext& ctx, string user_name);
+    bool has_user_email(const RequestContext& ctx, string user_mail);
+    bool has_map_name(const RequestContext& ctx, string map_name);
 
-    string is_member_of_team(const ValidatorContext& ctx, int team_id);
+    string is_member_of_team(const RequestContext& ctx, int team_id);
 
     gen_find_h(Collection, collection)
     gen_find_h(CollectionItem, collection_item)

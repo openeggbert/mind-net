@@ -27,6 +27,8 @@
 #include <set>
 
 #include "CustomAction.h"
+#include "mindnet/enums/ColumnType.h"
+#include "mindnet/models/columns/BaseColumns.h"
 #include "mindnet/models/misc/EnumDefinition.h"
 
 #define using_flags()\

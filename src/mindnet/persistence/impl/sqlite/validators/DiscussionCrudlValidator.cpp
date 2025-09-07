@@ -22,7 +22,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    operation_result DiscussionCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
+    operation_result DiscussionCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -41,7 +41,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
+    operation_result DiscussionCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -57,7 +57,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
+    operation_result DiscussionCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
@@ -71,14 +71,14 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result DiscussionCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
+    operation_result DiscussionCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
         return {403, "Deleting discussions is forbidden. Set is_archived to true."};
     }
 
-    operation_result DiscussionCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
+    operation_result DiscussionCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 

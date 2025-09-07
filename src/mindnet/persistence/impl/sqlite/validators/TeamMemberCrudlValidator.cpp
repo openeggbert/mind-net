@@ -17,20 +17,20 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamMemberCrudlValidator;
 
-    operation_result TeamMemberCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
+    operation_result TeamMemberCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
-        return_if(ctx.logged_user.role < enums::UserRole::EDITOR,
+        return_if(ctx.role < enums::UserRole::EDITOR,
                   403, "User does not have permission to create a team member.");
 
         auto team = find_model(team, entity.team_id);
         return_if(!team.second.empty(), 400, "Team does not exist.")
 
-        if (ctx.logged_user.get_id() == team.first.leader_id || ctx.logged_user.role == enums::UserRole::ADMIN)
+        if (ctx.token.user_id == team.first.leader_id || ctx.role == enums::UserRole::ADMIN)
         {
         }
-        else if (ctx.logged_user.get_id() == entity.user_id)
+        else if (ctx.token.user_id == entity.user_id)
         {
             return_if (entity.role != enums::UserRole::READER,
                 403, "Initial user role in team must be READER.")
@@ -48,7 +48,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
+    operation_result TeamMemberCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -58,9 +58,9 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto team = find_model(team, team_member.first.team_id)
         return_if(!team.second.empty(), 400, team.second);
 
-        return_if (ctx.logged_user.role == enums::UserRole::ADMIN,0, "")
-        return_if (ctx.logged_user.get_id() == team.first.leader_id,0, "")
-        return_if (ctx.logged_user.get_id() == team_member.first.user_id && team_member.first.status == enums::UserStatus::ACTIVE,
+        return_if (ctx.role == enums::UserRole::ADMIN,0, "")
+        return_if (ctx.token.user_id == team.first.leader_id,0, "")
+        return_if (ctx.token.user_id == team_member.first.user_id && team_member.first.status == enums::UserStatus::ACTIVE,
             0, "")
 
         auto is_member = api::is_member_of_team(ctx, team.first.get_id());
@@ -70,20 +70,20 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
+    operation_result TeamMemberCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
         auto team = find_model(team, old_entity.team_id)
         return_if (team.second.empty(), 400, team.second)
 
-        return_if (ctx.logged_user.role != enums::UserRole::ADMIN && ctx.logged_user.get_id() != team.first.leader_id,
+        return_if (ctx.role != enums::UserRole::ADMIN && ctx.token.user_id != team.first.leader_id,
             403, "Only team leader can update the team.")
 
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity)  const
+    operation_result TeamMemberCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
@@ -93,10 +93,10 @@ namespace mindnet::persistence::impl::sqlite::validators
         return operation_result(403, "Deleting team members is forbidden. Set status to DELETED.");
     }
 
-    operation_result TeamMemberCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
+    operation_result TeamMemberCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
-        if (ctx.logged_user.role == enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == enums::UserRole::ADMIN) return ok_result;
 
         mandatory_filter(team_id)
 

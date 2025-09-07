@@ -18,15 +18,15 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    api::OperationResult UserCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
+    api::OperationResult UserCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
         return_if (!g_configuration.allow_self_registration && ctx.token.ko(),
             401,"You must be logged in to create a user")
 
-        return_if (!g_configuration.allow_self_registration && ctx.token.ok() && ctx.logged_user.role != enums::UserRole::ADMIN,
+        return_if (!g_configuration.allow_self_registration && ctx.token.ok() && ctx.role != enums::UserRole::ADMIN,
             403,"You must be admin to create a user.")
 
-        return_if(ctx.logged_user.role != enums::UserRole::ADMIN && entity.role != g_configuration.default_user_role,
+        return_if(ctx.role != enums::UserRole::ADMIN && entity.role != g_configuration.default_user_role,
             400,"role" " must be equal to " + enums::user_role_to_string(g_configuration.default_user_role))
 
         return_if (api::has_user_name(ctx, entity.username),
@@ -41,16 +41,16 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    api::OperationResult UserCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
+    api::OperationResult UserCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    api::OperationResult UserCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
+    api::OperationResult UserCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
         bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
 
-        return_if (ctx.logged_user.role != enums::UserRole::ADMIN && !logged_user_updates_himself,
+        return_if (ctx.role != enums::UserRole::ADMIN && !logged_user_updates_himself,
             403, "You can only update your own user.")
 
         return_if (new_entity.password_hash != "*",
@@ -60,21 +60,21 @@ namespace mindnet::persistence::impl::sqlite::validators
         return_if (role_different && logged_user_updates_himself,
             400, "role cannot be changed");
 
-        return_if (role_different && ctx.logged_user.role != enums::UserRole::ADMIN,
+        return_if (role_different && ctx.role != enums::UserRole::ADMIN,
             400, "role cannot be changed");
 
-        return_if (old_entity.status != new_entity.status && ctx.logged_user.role  != enums::UserRole::ADMIN,
+        return_if (old_entity.status != new_entity.status && ctx.role  != enums::UserRole::ADMIN,
         400, "status cannot be changed by yourself")
 
         return ok_result;
     }
 
-    api::OperationResult UserCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity) const
+    api::OperationResult UserCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         return operation_result(403, "You are not allowed to delete this user");
     }
 
-    api::OperationResult UserCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
+    api::OperationResult UserCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
         return ok_result;
     }
