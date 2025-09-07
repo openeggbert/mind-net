@@ -224,8 +224,6 @@ namespace mindnet::persistence
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation DELETE cannot be validated.");
 
-
-        return ok_result;
     }
 
     operation_result Persistence::can_list(const ModelDefinition& model_definition, http::LoginToken& token, string_map& filter)

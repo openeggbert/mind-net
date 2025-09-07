@@ -4,15 +4,16 @@
 
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
+#include "mindnet/http/QueryParams.h"
 #include "mindnet/persistence/api/CrudlValidatorBase.h"
 
 namespace mindnet::persistence::api
 {
 
     std::pair<models::User, api::OperationResult> find_logged_user(
-        db_ptr& db, http::LoginToken token)
+        IPersistence*& db, http::LoginToken token)
     {
-        auto result = db->read(token.user_id, models::USER_DEFINITION, token);
+        auto result = db->read(models::USER_DEFINITION, token, token.user_id);
         if (result.second.ko())
         {
             return {models::User(), result.second};
@@ -28,7 +29,7 @@ namespace mindnet::persistence::api
         http::QueryParams query_params;
         query_params.filters.emplace("name", user_name);
 
-        return !ctx.db->list(query_params, models::USER_DEFINITION, ctx.token).first.empty();
+        return !ctx.db->list(models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
     bool has_user_email(const ValidatorContext& ctx, string user_email)
     {
@@ -36,7 +37,7 @@ namespace mindnet::persistence::api
         string error;
         http::QueryParams query_params;
         query_params.filters.emplace("email", user_email);
-        return !ctx.db->list(query_params, models::USER_DEFINITION, ctx.token).first.empty();
+        return !ctx.db->list(models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
 
     bool has_map_name(const ValidatorContext& ctx, string map_name)
@@ -45,12 +46,12 @@ namespace mindnet::persistence::api
         http::QueryParams query_params;
         query_params.filters.emplace("name", map_name);
 
-        return !ctx.db->list(query_params, models::MAP_DEFINITION, ctx.token).first.empty();
+        return !ctx.db->list(models::MAP_DEFINITION, ctx.token, query_params).first.empty();
     }
 
     string is_member_of_team(const ValidatorContext& ctx, int team_id)
     {
-        auto team_result = ctx.db->read(team_id, models::TEAM_DEFINITION, ctx.token);
+        auto team_result = ctx.db->read(models::TEAM_DEFINITION, ctx.token, team_id);
         if (team_result.second.ko()) return team_result.second.error;
         models::Team team;
         team.from_values(team_result.first);
@@ -59,7 +60,7 @@ namespace mindnet::persistence::api
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
         query_params.filters.emplace("user_id", std::to_string(ctx.token.user_id));
         query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
-        auto is_team_member_result = ctx.db->list(query_params, models::TEAM_MEMBER_DEFINITION, ctx.token);
+        auto is_team_member_result = ctx.db->list(models::TEAM_MEMBER_DEFINITION, ctx.token, query_params);
         if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
         if (is_team_member_result.first.empty())
         {

@@ -387,7 +387,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
         ([d_b_, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
         {
-            if (!d_b_->has_repository(model_name))
+            if (!d_b_->has_repository_with_name(model_name))
             {
                 return crow::response(404, "Model definition not found: " + model_name);
             }
@@ -424,7 +424,7 @@ namespace mindnet::http
             crow::json::wvalue result;
 
             crow::json::wvalue::list model_definitions_as_json;
-            for (auto& model_name : d_b_->list_repositories())
+            for (auto& model_name : d_b_->list_repository_names())
             {
                 //std::cout << model_name << std::endl;
                 auto model_definition_as_json = model_definition_to_json(model_name, fields_set);
@@ -504,7 +504,7 @@ namespace mindnet::http
             QueryParams query_params;
             query_params.add_filter(models::columns::UserColumns::USERNAME, credentials.username);
             LoginToken login_token{req};
-            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, login_token);
+            auto users = d_b_.get()->list(models::USER_DEFINITION, login_token, query_params);
             if (users.first.empty()) { return crow::response(401, "User does not exist."); }
             models::User user;
             user.from_values(users.first[0]);
@@ -551,7 +551,7 @@ namespace mindnet::http
             query_params.add_filter(models::columns::UserColumns::USERNAME, username);
             query_params.fields = {models::columns::UserColumns::USERNAME};
             LoginToken login_token{req};
-            auto users = d_b_.get()->list(query_params, models::USER_DEFINITION, login_token);
+            auto users = d_b_.get()->list(models::USER_DEFINITION, login_token, query_params);
             if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
@@ -569,7 +569,7 @@ namespace mindnet::http
 
             error.clear();
             auto fields_ = user.to_values();
-            d_b_.get()->create(models::USER_DEFINITION, fields_, login_token);
+            d_b_.get()->create(models::USER_DEFINITION, login_token, fields_);
             if (!error.empty())
             {
                 return crow::response{400, "Registration failed. " + error};

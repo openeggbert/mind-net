@@ -53,7 +53,7 @@ namespace mindnet::routes
             }
 
             http::LoginToken login_token{req};
-            auto last_inserted_id = db.get()->create(def, fields, login_token);
+            auto last_inserted_id = db.get()->create(def, login_token, fields);
             if (last_inserted_id.first == -1)
             {
                 return crow::response(500, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
@@ -77,7 +77,7 @@ namespace mindnet::routes
             string error;
             try
             {
-                auto read_result = db->read(id, def, login_token);
+                auto read_result = db->read(def, login_token, id);
                 if (read_result.second.ko())
                 {
                     error = read_result.second.error;
@@ -130,7 +130,7 @@ namespace mindnet::routes
             http::LoginToken login_token{req};
 
             string error;
-            auto success = db->update(id, fields, def, login_token);
+            auto success = db->update(def, login_token, id, fields);
             if (success.ko())
             {
                 return crow::response(
@@ -151,7 +151,7 @@ namespace mindnet::routes
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             string error;
             http::LoginToken login_token{req};
-            auto success = db->remove(id, def, login_token);
+            auto success = db->remove(def, login_token, id);
 
             if (success.ko())
             {
@@ -217,7 +217,7 @@ namespace mindnet::routes
             }
 
             http::LoginToken login_token{req};
-            auto all_records = db->list(query_params, def, login_token);
+            auto all_records = db->list(def, login_token, query_params);
             if (all_records.second.ko())
             {
                 return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + error);

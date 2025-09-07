@@ -4,16 +4,14 @@
 #ifndef IPERSISTENCE_H
 #define IPERSISTENCE_H
 
-#include "ICrudlValidator.h"
 #include "IRepository.h"
 #include "OperationResult.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 
-
-
 namespace mindnet::persistence::api
 {
+    class ICrudlValidator;
     using mindnet::models::misc::ModelDefinition;
     using validator = api::ICrudlValidator*;
 

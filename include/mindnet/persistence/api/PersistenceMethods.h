@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "CrudlValidatorBase.h"
-#include "IPersistence.h"
 #include "OperationResult.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/models/User.h"
@@ -38,7 +37,7 @@ std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id);
 #define gen_find_cpp(Model, model, MODEL)\
 std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id)\
     {\
-        auto result = ctx.db->read(id, models::MODEL##_DEFINITION, ctx.token);\
+        auto result = ctx.db->read(models::MODEL##_DEFINITION, ctx.token, id);\
         if (result.second.ko()) return {{}, result.second.error};\
         models::Model entity;\
         entity.from_values(result.first);\
@@ -47,8 +46,6 @@ std::pair<models::Model, string> find_##model(ValidatorContext& ctx, int id)\
 
 namespace mindnet::persistence::api
 {
-    using db_ptr = mindnet::persistence::IPersistence*;
-
     std::pair<models::User, api::OperationResult> find_logged_user(
         db_ptr& db, http::LoginToken token);
 

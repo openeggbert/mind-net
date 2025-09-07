@@ -8,15 +8,14 @@
 #include <map>
 #include <vector>
 
-#include "IPersistence.h"
 #include "OperationResult.h"
 
 namespace mindnet::persistence::api { class IPersistence; }
+
 namespace mindnet::http { struct LoginToken; }
 
 namespace mindnet::persistence::api
 {
-    using db_ptr = IPersistence*;
     using string = std::string;
 
     typedef std::variant<std::string, int64_t> entity_field;
@@ -28,15 +27,15 @@ namespace mindnet::persistence::api
     public:
         virtual ~ICrudlValidator() = default;
 
-        virtual OperationResult can_create(db_ptr db, http::LoginToken& token, entity_fields& ef) const = 0;
+        virtual OperationResult can_create(IPersistence* db, http::LoginToken& token, entity_fields& ef) const = 0;
 
-        virtual OperationResult can_read(db_ptr db, http::LoginToken& token, int id) const = 0;
+        virtual OperationResult can_read(IPersistence* db, http::LoginToken& token, int id) const = 0;
 
-        virtual OperationResult can_update(db_ptr db, http::LoginToken& token, entity_fields& ef) const = 0;
+        virtual OperationResult can_update(IPersistence* db, http::LoginToken& token, entity_fields& ef) const = 0;
 
-        virtual OperationResult can_delete(db_ptr db, http::LoginToken& token, int id) const = 0;
+        virtual OperationResult can_delete(IPersistence* db, http::LoginToken& token, int id) const = 0;
 
-        virtual OperationResult can_list(db_ptr db, http::LoginToken& token, string_map& filter) const = 0;
+        virtual OperationResult can_list(IPersistence* db, http::LoginToken& token, string_map& filter) const = 0;
 
         [[nodiscard]] virtual string get_model_name() const = 0;
 

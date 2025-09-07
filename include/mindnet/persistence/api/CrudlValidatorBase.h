@@ -8,14 +8,13 @@
 #include <expected>
 #include <concepts>
 #include <type_traits>
-#include <utility>
 
 #include "ICrudlValidator.h"
-#include "IPersistence.h"
-#include "PersistenceMethods.h"
-#include "mindnet/persistence/api/OperationResult.h"
+#include "OperationResult.h"
+#include "mindnet/models/misc/BaseModel.h"
+
 #include "mindnet/Helper.h"
-#include "mindnet/http/LoginToken.h"
+
 #define create_method_prototypes_for_CrudlValidatorBase(M)\
 api::OperationResult validate_create(const ValidatorContext&, const M& entity) const ;\
 api::OperationResult validate_read(const ValidatorContext&, const M& entity) const;\
@@ -32,23 +31,33 @@ if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You 
 #define find_model(model, id) api:: XPASTE(find_,model) (ctx, id);
 #define check_found(f) if (!f.second.empty()) return{400,f.second};
 
-namespace mindnet::persistence::api
-{
-    class Persistence;
+namespace mindnet::persistence::api {
+    class IPersistence;
+    class ICrudlValidator;
+}
+
+namespace mindnet::http {
+    class LoginToken;
+}
+
+namespace mindnet::models {
+    namespace misc {
+        class BaseModel;
+        class ModelDefinition;
+    }
+    class User;
 }
 
 namespace mindnet::persistence::api
 {
-    using db_ptr = mindnet::persistence::IPersistence*;
     typedef std::expected<void, OperationResult> result_t;
 
     struct ValidatorContext
     {
-        db_ptr db;
+        IPersistence* db;
         http::LoginToken& token;
         const models::User& logged_user;
     };
-
 
     template <typename Derived, typename Model>
     class CrudlValidatorBase : public api::ICrudlValidator
@@ -59,7 +68,7 @@ namespace mindnet::persistence::api
     public:
         virtual ~CrudlValidatorBase() = default;
 
-        OperationResult can_create(db_ptr db, http::LoginToken& token, entity_fields& ef) const
+        OperationResult can_create(IPersistence* db, http::LoginToken& token, entity_fields& ef) const
         {
             static_assert(
                 requires(const Derived& d, ValidatorContext const& ctx, const Model& m)
@@ -68,7 +77,6 @@ namespace mindnet::persistence::api
                 },
                 "Derived must implement validate_create returning result_t"
             );
-
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
@@ -86,7 +94,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_read(db_ptr db, http::LoginToken& token, int id) const
+        OperationResult can_read(IPersistence* db, http::LoginToken& token, int id) const
         {
             static_assert(
                 requires(const Derived& d, ValidatorContext const& ctx, const Model& m)
@@ -112,7 +120,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_update(db_ptr db, http::LoginToken& token, entity_fields& ef) const
+        OperationResult can_update(IPersistence* db, http::LoginToken& token, entity_fields& ef) const
         {
             static_assert(
                 requires(const Derived& d, ValidatorContext const& ctx, const Model& old_m, const Model& new__m)
@@ -148,7 +156,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_delete(db_ptr db, http::LoginToken& token, int id) const
+        OperationResult can_delete(IPersistence* db, http::LoginToken& token, int id) const
         {
             static_assert(
                 requires(const Derived& d, ValidatorContext const& ctx, const Model& m)
@@ -174,7 +182,7 @@ namespace mindnet::persistence::api
             return ok_result;
         };
 
-        OperationResult can_list(db_ptr db, http::LoginToken& token, string_map& filter) const
+        OperationResult can_list(IPersistence* db, http::LoginToken& token, string_map& filter) const
         {
             static_assert(
                 requires(const Derived& d, ValidatorContext const& ctx, const string_map& fm)
