@@ -5,9 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/TeamMemberCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Team.h"
 #include "mindnet/models/TeamMember.h"
-#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
 #define Model TeamMember

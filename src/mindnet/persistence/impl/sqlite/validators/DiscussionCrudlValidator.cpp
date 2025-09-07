@@ -11,7 +11,7 @@
 #include "mindnet/models/Discussion.h"
 #include "mindnet/models/Team.h"
 #include "mindnet/models/TeamMember.h"
-#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
 #define Model Discussion

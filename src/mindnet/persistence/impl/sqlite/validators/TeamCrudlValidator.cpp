@@ -2,12 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-
 #include "mindnet/persistence/impl/sqlite/validators/TeamCrudlValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/models/Team.h"
-#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 
 #define Model Team
 #define MODEL TEAM

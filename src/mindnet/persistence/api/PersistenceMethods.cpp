@@ -4,6 +4,8 @@
 
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
+#include "mindnet/persistence/api/CrudlValidatorBase.h"
+
 namespace mindnet::persistence::api
 {
 
@@ -20,44 +22,44 @@ namespace mindnet::persistence::api
         return {user, ok_result};
     }
 
-    bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name)
+    bool has_user_name(const ValidatorContext& ctx, string user_name)
     {
         string error;
         http::QueryParams query_params;
         query_params.filters.emplace("name", user_name);
 
-        return !db->list(query_params, models::USER_DEFINITION, token).first.empty();
+        return !ctx.db->list(query_params, models::USER_DEFINITION, ctx.token).first.empty();
     }
-    bool has_user_email(db_ptr& db, http::LoginToken& token, string user_email)
+    bool has_user_email(const ValidatorContext& ctx, string user_email)
     {
 
         string error;
         http::QueryParams query_params;
         query_params.filters.emplace("email", user_email);
-        return !db->list(query_params, models::USER_DEFINITION, token).first.empty();
+        return !ctx.db->list(query_params, models::USER_DEFINITION, ctx.token).first.empty();
     }
 
-    bool has_map_name(db_ptr& db, http::LoginToken& token, string map_name)
+    bool has_map_name(const ValidatorContext& ctx, string map_name)
     {
         string error;
         http::QueryParams query_params;
         query_params.filters.emplace("name", map_name);
 
-        return !db->list(query_params, models::MAP_DEFINITION, token).first.empty();
+        return !ctx.db->list(query_params, models::MAP_DEFINITION, ctx.token).first.empty();
     }
 
-    string is_member_of_team(db_ptr& d, http::LoginToken& token, int team_id)
+    string is_member_of_team(const ValidatorContext& ctx, int team_id)
     {
-        auto team_result = d->read(team_id, models::TEAM_DEFINITION, token);
+        auto team_result = ctx.db->read(team_id, models::TEAM_DEFINITION, ctx.token);
         if (team_result.second.ko()) return team_result.second.error;
         models::Team team;
         team.from_values(team_result.first);
 
         http::QueryParams query_params;
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
-        query_params.filters.emplace("user_id", std::to_string(token.user_id));
+        query_params.filters.emplace("user_id", std::to_string(ctx.token.user_id));
         query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
-        auto is_team_member_result = d->list(query_params, models::TEAM_MEMBER_DEFINITION, token);
+        auto is_team_member_result = ctx.db->list(query_params, models::TEAM_MEMBER_DEFINITION, ctx.token);
         if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
         if (is_team_member_result.first.empty())
         {

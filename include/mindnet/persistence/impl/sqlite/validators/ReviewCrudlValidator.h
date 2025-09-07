@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/CrudlValidator.h"
+#include "mindnet/persistence/api/CrudlValidatorBase.h"
 
 namespace mindnet::persistence
 {
@@ -18,13 +18,17 @@ namespace mindnet::persistence
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using db_ = mindnet::persistence::Persistence*;
+    using api::ValidatorContext;
+    using models::Review;
 
-    class ReviewCrudlValidator : public api::CrudlValidator
+    class ReviewCrudlValidator : public api::CrudlValidatorBase<ReviewCrudlValidator, models::Review>
     {
     public:
         ReviewCrudlValidator() = default;
         ~ReviewCrudlValidator() = default; // explicitly make it destructible
-        create_h_methods()
+        using Model = Review;
+
+        create_method_prototypes_for_CrudlValidatorBase(Review)
 
     };
 

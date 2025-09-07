@@ -6,7 +6,7 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/models/Content.h"
-#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 
 #define Model Content
 #define MODEL CONTENT

@@ -4,11 +4,10 @@
 #ifndef COLLECTIONITEMCRUDLVALIDATOR_H
 #define COLLECTIONITEMCRUDLVALIDATOR_H
 
-
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/CrudlValidator.h"
+#include "mindnet/persistence/api/CrudlValidatorBase.h"
 
 namespace mindnet::persistence
 {
@@ -18,13 +17,17 @@ namespace mindnet::persistence
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using db_ = mindnet::persistence::Persistence*;
+    using api::ValidatorContext;
+    using models::CollectionItem;
 
-    class CollectionItemCrudlValidator : public api::CrudlValidator
+    class CollectionItemCrudlValidator : public api::CrudlValidatorBase<CollectionItemCrudlValidator, models::CollectionItem>
     {
     public:
         CollectionItemCrudlValidator() = default;
         ~CollectionItemCrudlValidator() = default; // explicitly make it destructible
-        create_h_methods()
+        using Model = CollectionItem;
+
+        create_method_prototypes_for_CrudlValidatorBase(CollectionItem)
 
     };
 

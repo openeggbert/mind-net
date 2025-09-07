@@ -14,6 +14,23 @@
 #include "mindnet/persistence/api/OperationResult.h"
 #include "mindnet/Helper.h"
 #include "mindnet/http/LoginToken.h"
+#define create_method_prototypes_for_CrudlValidatorBase(M)\
+api::OperationResult validate_create(const ValidatorContext&, const M& entity) const ;\
+api::OperationResult validate_read(const ValidatorContext&, const M& entity) const;\
+api::OperationResult validate_update(const ValidatorContext&, const M& old_entity, const M& new_entity) const;\
+api::OperationResult validate_delete(const ValidatorContext&, const M& entity) const;\
+api::OperationResult validate_list(const ValidatorContext&, const string_map&) const;\
+[[nodiscard]] string get_model_name() const override;
+
+#define return_if(condition, status, message) if (condition) return operation_result(status, message);\
+
+#define mandatory_filter(field)\
+if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
+
+#define find_model(model, id) api:: XPASTE(find_,model) (db, token, id);
+#define check_found(f) if (!f.second.empty()) return{400,f.second};
+
+
 
 namespace mindnet::persistence::api
 {

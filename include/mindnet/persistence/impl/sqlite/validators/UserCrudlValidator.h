@@ -4,11 +4,9 @@
 #ifndef USERCRUDLVALIDATOR_H
 #define USERCRUDLVALIDATOR_H
 
-
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/CrudlValidator.h"
 #include "mindnet/persistence/api/CrudlValidatorBase.h"
 
 namespace mindnet::persistence
@@ -30,16 +28,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         using Model = User;
 
-        api::OperationResult validate_create(const ValidatorContext&, const User& entity) const ;
-        api::OperationResult validate_read(const ValidatorContext&, const User& entity) const;
-        api::OperationResult validate_update(const ValidatorContext&, const User& old_entity, const User& new_entity) const;
-        api::OperationResult validate_delete(const ValidatorContext&, const User& entity) const;
-        api::OperationResult validate_list(const ValidatorContext&, const string_map&) const;
-
-        [[nodiscard]] string get_model_name() const override;
-
-
-        //create_h_methods()
+        create_method_prototypes_for_CrudlValidatorBase(User)
 
     };
 

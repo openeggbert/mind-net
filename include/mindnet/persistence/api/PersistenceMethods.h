@@ -6,6 +6,7 @@
 #define MIND_NET_PERSISTENCEMETHODS_H
 #include <utility>
 
+#include "CrudlValidatorBase.h"
 #include "IPersistence.h"
 #include "OperationResult.h"
 #include "mindnet/http/LoginToken.h"
@@ -51,11 +52,11 @@ namespace mindnet::persistence::api
     std::pair<models::User, api::OperationResult> find_logged_user(
         db_ptr& db, http::LoginToken token);
 
-    bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name);
-    bool has_user_email(db_ptr& db, http::LoginToken& token, string user_mail);
-    bool has_map_name(db_ptr& db, http::LoginToken& token, string map_name);
+    bool has_user_name(const ValidatorContext& ctx, string user_name);
+    bool has_user_email(const ValidatorContext& ctx, string user_mail);
+    bool has_map_name(const ValidatorContext& ctx, string map_name);
 
-    string is_member_of_team(db_ptr& db, http::LoginToken& token, int team_id);
+    string is_member_of_team(const ValidatorContext& ctx, int team_id);
 
     gen_find_h(Collection, collection)
     gen_find_h(CollectionItem, collection_item)
