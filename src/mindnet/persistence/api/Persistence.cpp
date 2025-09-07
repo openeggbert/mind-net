@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../include/mindnet/persistence/api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
@@ -67,7 +67,7 @@ repositories[#model] = model##_repo;\
 repository_names.emplace_back(#model);
 
 #define add_validator(model, Model)\
-api::CrudlValidator* model##_validator = new mindnet::persistence::impl::sqlite::validators:: Model##CrudlValidator();\
+api::ICrudlValidator* model##_validator = new mindnet::persistence::impl::sqlite::validators:: Model##CrudlValidator();\
 validators[#model] = model##_validator;
 
 namespace mindnet::persistence
@@ -133,7 +133,7 @@ namespace mindnet::persistence
 
     Persistence::~Persistence()
     {
-        for (auto& e : list_repositories())
+        for (auto& e : list_repository_names())
         {
             delete get_repository(e);
         }
@@ -144,39 +144,21 @@ namespace mindnet::persistence
         return repositories.count(name) ? repositories[name] : nullptr;
     }
 
-    api::CrudlValidator* Persistence::get_validator(const std::string& name)
+    api::ICrudlValidator* Persistence::get_validator(const std::string& name)
     {
         return validators.count(name) ? validators[name] : nullptr;
     }
 
 
-    bool Persistence::has_repository(const std::string& name)
+    bool Persistence::has_repository_with_name(const std::string& name)
     {
         return repositories.count(name) > 0;
     }
 
-    std::vector<std::string>& Persistence::list_repositories()
+    std::vector<std::string>& Persistence::list_repository_names()
     {
         return repository_names;
     }
-
-    // bool Persistence::can_user_make_changes(http::LoginToken& login_token, mindnet::persistence::api::OperationResult& value)
-    // {
-    //     auto logged_in_user_pair = find_logged_in_user(login_token);
-    //     if (logged_in_user_pair.second.ko())
-    //     {
-    //         value = logged_in_user_pair.second;
-    //         return true;
-    //     }
-    //     auto logged_in_user = logged_in_user_pair.first;
-    //
-    //     if (logged_in_user.role < enums::UserRole::EDITOR)
-    //     {
-    //         value = operation_result(403, "User does not have permission to delete this resource.");
-    //         return true;
-    //     }
-    //     return false;
-    // }
 
     operation_result Persistence::can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token)
     {
@@ -342,7 +324,7 @@ namespace mindnet::persistence
 
     std::optional<ModelDefinition> Persistence::get_model_definition(const string& model_name)
     {
-        if (!has_repository(model_name))
+        if (!has_repository_with_name(model_name))
         {
             return std::nullopt;
         }
@@ -355,16 +337,4 @@ namespace mindnet::persistence
         return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
     }
 
-    std::pair<models::User, api::OperationResult> Persistence::find_logged_in_user(
-        http::LoginToken login_token)
-    {
-        auto result = this->read(login_token.user_id, models::USER_DEFINITION, login_token);
-        if (result.second.ko())
-        {
-            return {models::User(), result.second};
-        }
-        models::User user;
-        user.from_values(result.first);
-        return {user, ok_result};
-    }
 }

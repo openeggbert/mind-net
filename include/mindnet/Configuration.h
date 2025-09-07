@@ -6,9 +6,7 @@
 #define MIND_NET_CONFIGURATION_H
 
 #include <fstream>
-#include <sstream>
 #include <iostream>
-#include <algorithm>
 #include <map>
 
 #include "enums/UserRole.h"

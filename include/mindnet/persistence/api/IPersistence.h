@@ -4,18 +4,18 @@
 #ifndef IPERSISTENCE_H
 #define IPERSISTENCE_H
 
+#include "ICrudlValidator.h"
 #include "IRepository.h"
+#include "OperationResult.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 
-namespace mindnet::persistence::api {
-    class CrudlValidator;
-}
 
-namespace mindnet::persistence
+
+namespace mindnet::persistence::api
 {
     using mindnet::models::misc::ModelDefinition;
-    using validator = api::CrudlValidator*;
+    using validator = api::ICrudlValidator*;
 
     class IPersistence
     {
@@ -27,7 +27,9 @@ namespace mindnet::persistence
 
         virtual std::vector<std::string>& list_repository_names();
 
-        virtual api::result_t can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token) = 0;
+        typedef mindnet::persistence::api::OperationResult operation_result;
+
+        virtual operation_result can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token) = 0;
         virtual operation_result can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token) = 0;
         virtual operation_result can_update(const ModelDefinition& model_definition,entity_fields& ef, http::LoginToken& login_token) = 0;
         virtual operation_result can_delete(const ModelDefinition& model_definition,int id, http::LoginToken& login_token) = 0;
@@ -43,8 +45,7 @@ namespace mindnet::persistence
         //
         virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
                                                                 ModelDefinition& def) = 0;
-        virtual std::pair<models::User, operation_result> find_logged_in_user(
-            http::LoginToken login_token) = 0;
+
     };
 }
 #endif // IPERSISTENCE_H

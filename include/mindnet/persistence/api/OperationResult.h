@@ -7,6 +7,7 @@
 #define ok_result mindnet::persistence::api::OKOperationResult
 
 #include <utility>
+#include <string>
 
 namespace mindnet::persistence::api
 {

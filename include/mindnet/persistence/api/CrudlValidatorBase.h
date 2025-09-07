@@ -9,6 +9,8 @@
 #include <concepts>
 #include <type_traits>
 #include <utility>
+
+#include "ICrudlValidator.h"
 #include "IPersistence.h"
 #include "PersistenceMethods.h"
 #include "mindnet/persistence/api/OperationResult.h"
@@ -49,7 +51,7 @@ namespace mindnet::persistence::api
 
 
     template <typename Derived, typename Model>
-    class CrudlValidatorBase
+    class CrudlValidatorBase : public api::ICrudlValidator
     {
         static_assert(std::is_base_of_v<models::misc::BaseModel, Model>,
                       "Model must derive from BaseModel");
@@ -84,7 +86,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_read(db_ptr db, http::LoginToken& token, int id)
+        OperationResult can_read(db_ptr db, http::LoginToken& token, int id) const
         {
             static_assert(
                 requires(const Derived& d, ValidatorContext const& ctx, const Model& m)

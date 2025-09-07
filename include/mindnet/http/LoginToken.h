@@ -7,7 +7,6 @@
 #include "crow/http_request.h"
 #include "jwt-cpp/jwt.h"
 #include "mindnet/Configuration.h"
-#include "mindnet/models/User.h"
 
 namespace mindnet::persistence
 {

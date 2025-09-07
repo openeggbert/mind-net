@@ -20,16 +20,14 @@ namespace mindnet::persistence
     typedef mindnet::persistence::api::OperationResult operation_result;
     using mindnet::models::misc::ModelDefinition;
 
-    using validator = api::CrudlValidator*;
-    class Persistence : public IPersistence
+    class Persistence : public api::IPersistence
     {
     private:
         std::map<std::string, api::IRepository*> repositories;
         std::vector<std::string> repository_names;
-        std::map<std::string, validator> validators;
+        std::map<std::string, api::ICrudlValidator*> validators;
         api::IRepository* get_repository(const std::string& name);
-        api::CrudlValidator* get_validator(const std::string& name);
-        const std::vector<validator> empty_vector;
+        api::ICrudlValidator* get_validator(const std::string& name);
 
     public:
         Persistence();
