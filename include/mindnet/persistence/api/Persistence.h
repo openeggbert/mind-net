@@ -19,7 +19,8 @@ namespace mindnet::persistence
 {
     typedef mindnet::persistence::api::OperationResult operation_result;
     using mindnet::models::misc::ModelDefinition;
-
+    using api::OperationResult;
+    
     class Persistence : public api::IPersistence
     {
     private:
@@ -36,18 +37,19 @@ namespace mindnet::persistence
         bool has_repository_with_name(const std::string& name) override;
 
         std::vector<std::string>& list_repository_names() override;
-        // bool can_user_make_changes(http::LoginToken& login_token, mindnet::persistence::api::OperationResult& value);
-        operation_result can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token) override;
-        operation_result can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token) override;
-        operation_result can_update(const ModelDefinition& model_definition,entity_fields& ef, http::LoginToken& login_token) override;
-        operation_result can_delete(const ModelDefinition& model_definition,int id, http::LoginToken& login_token) override;
-        operation_result can_list(const ModelDefinition& model_definition,string_map& filter, http::LoginToken& login_token) override;
 
-        std::pair<int, operation_result> create(const ModelDefinition& def, entity_fields& fields, http::LoginToken& login_token) override;
-        std::pair<entity_fields, operation_result> read(int id, const ModelDefinition& def, http::LoginToken& login_token) override;
-        operation_result update(int id, entity_fields& fields, const ModelDefinition& def, http::LoginToken& login_token) override;
-        operation_result remove(int id, ModelDefinition& def, http::LoginToken& login_token) override;
-        std::pair<std::vector<entity_fields>, operation_result> list(http::QueryParams& query_params, ModelDefinition& def, http::LoginToken& login_token) override;
+         OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef) override;
+         OperationResult   can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) override;
+         OperationResult can_update(const ModelDefinition& model_definition, http::LoginToken& token,entity_fields& ef) override;
+         OperationResult can_delete(const ModelDefinition& model_definition, http::LoginToken& token,int id) override;
+         OperationResult   can_list(const ModelDefinition& model_definition, http::LoginToken& token,string_map& filter) override;
+//
+        std::pair<int, OperationResult>         create(const ModelDefinition& def, http::LoginToken& token, entity_fields& fields) override;
+        std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, http::LoginToken& token, int id) override;
+        OperationResult                         update(const ModelDefinition& def, http::LoginToken&  token, int id, entity_fields& fields) override;
+        OperationResult                         remove(ModelDefinition& def, http::LoginToken&  token, int id) override;
+        std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params) override;
+
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 

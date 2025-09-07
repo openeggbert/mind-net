@@ -160,31 +160,31 @@ namespace mindnet::persistence
         return repository_names;
     }
 
-    operation_result Persistence::can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token)
+    operation_result Persistence::can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
     {
         //Authentication
-        if (login_token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
+        if (token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
 
-        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_create(this, login_token, ef);
+            return v2->can_create(this, token, ef);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation CREATE cannot be validated.");
     };
 
-    operation_result Persistence::can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token)
+    operation_result Persistence::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
 
         //Authentication
-        if (login_token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
+        if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
 
 
-        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_read(this, login_token, id);
+            return v2->can_read(this, token, id);
 
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
@@ -194,15 +194,15 @@ namespace mindnet::persistence
         return ok_result;
     }
 
-    operation_result Persistence::can_update(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token)
+    operation_result Persistence::can_update(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
     {
         //Authentication
-        if (login_token.ko()) return {401, "Only logged in users can update."};
+        if (token.ko()) return {401, "Only logged in users can update."};
 
-        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_update(this, login_token, ef);
+            return v2->can_update(this, token, ef);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation UPDATE cannot be validated.");
@@ -211,15 +211,15 @@ namespace mindnet::persistence
         return ok_result;
     }
 
-    operation_result Persistence::can_delete(const ModelDefinition& model_definition, int id, http::LoginToken& login_token)
+    operation_result Persistence::can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
         //Authentication
-        if (login_token.ko()) return {401, "Only logged in users can delete."};
+        if (token.ko()) return {401, "Only logged in users can delete."};
 
-        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_delete(this, login_token, id);
+            return v2->can_delete(this, token, id);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation DELETE cannot be validated.");
@@ -228,16 +228,15 @@ namespace mindnet::persistence
         return ok_result;
     }
 
-    operation_result Persistence::can_list(const ModelDefinition& model_definition,
-                                 string_map& filter, http::LoginToken& login_token)
+    operation_result Persistence::can_list(const ModelDefinition& model_definition, http::LoginToken& token, string_map& filter)
     {
         //Authentication
-        if (login_token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
+        if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
 
-        api::CrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_list(this, login_token, filter);
+            return v2->can_list(this, token, filter);
         }
         return operation_result(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation LIST cannot be validated.");
@@ -247,10 +246,12 @@ namespace mindnet::persistence
     };
 
 
-    std::pair<int, operation_result> Persistence::create(const models::misc::ModelDefinition& def, entity_fields& fields,
-                                                          http::LoginToken& login_token)
+    std::pair<int, operation_result> Persistence::create(
+        const models::misc::ModelDefinition& def,
+        http::LoginToken& token,
+        entity_fields& fields)
     {
-        auto result = can_create(def.get_model_name(), fields, login_token);
+        auto result = can_create(def.get_model_name(), token, fields);
         if (result.ko())
         {
             return {-1, result};
@@ -260,11 +261,11 @@ namespace mindnet::persistence
         return {last_id, {500, error}};
     }
 
-    std::pair<entity_fields, operation_result> Persistence::read(const int id, const models::misc::ModelDefinition& def,
-                                    http::LoginToken& login_token)
+    std::pair<entity_fields, operation_result> Persistence::read(const models::misc::ModelDefinition& def,
+                                    http::LoginToken& token, const int id)
     {
         string_map empty_map;
-        auto result = can_read(def.get_model_name(), id, login_token);
+        auto result = can_read(def.get_model_name(), token, id);
         if (result.ko())
         {
             return {{}, result};
@@ -274,11 +275,13 @@ namespace mindnet::persistence
         return {ef, {500, error}};
     }
 
-    operation_result Persistence::update(int id, entity_fields& fields, const models::misc::ModelDefinition& def,
-                             http::LoginToken& login_token)
+    operation_result Persistence::update(
+        const models::misc::ModelDefinition& def, http::LoginToken& token,
+        int id, entity_fields& fields
+                             )
     {
         string_map empty_map;
-        auto result = can_update(def.get_model_name(), fields, login_token);
+        auto result = can_update(def.get_model_name(), token, fields);
         if (result.ko())
         {
             return result;
@@ -288,10 +291,10 @@ namespace mindnet::persistence
         if (error.empty()) {return ok_result;} else {return {500, error};}
     }
 
-    operation_result Persistence::remove(int id, models::misc::ModelDefinition& def, http::LoginToken& login_token)
+    operation_result Persistence::remove(models::misc::ModelDefinition& def, http::LoginToken& token, int id)
     {
         string_map empty_map;
-        auto result = can_delete(def.get_model_name(), id, login_token);
+        auto result = can_delete(def.get_model_name(), token, id);
         if (result.ko())
         {
             return result;
@@ -302,10 +305,12 @@ namespace mindnet::persistence
 
     }
 
-    std::pair<std::vector<entity_fields>, operation_result> Persistence::list(http::QueryParams& query_params, ModelDefinition& def,
-                                                 http::LoginToken& login_token)
+    std::pair<std::vector<entity_fields>, operation_result> Persistence::list(
+                                                 ModelDefinition& def,
+                                                 http::LoginToken& token,
+                                                 http::QueryParams& query_params)
     {
-        auto result = can_list(def.get_model_name(), query_params.filters, login_token);
+        auto result = can_list(def.get_model_name(), token, query_params.filters);
         if (result.ko())
         {
             return {{}, result};

@@ -6,6 +6,7 @@
 
 #include <variant>
 #include <map>
+#include <vector>
 
 #include "IPersistence.h"
 #include "OperationResult.h"

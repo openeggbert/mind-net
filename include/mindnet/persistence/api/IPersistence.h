@@ -27,19 +27,17 @@ namespace mindnet::persistence::api
 
         virtual std::vector<std::string>& list_repository_names();
 
-        typedef mindnet::persistence::api::OperationResult operation_result;
-
-        virtual operation_result can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token) = 0;
-        virtual operation_result can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token) = 0;
-        virtual operation_result can_update(const ModelDefinition& model_definition,entity_fields& ef, http::LoginToken& login_token) = 0;
-        virtual operation_result can_delete(const ModelDefinition& model_definition,int id, http::LoginToken& login_token) = 0;
-        virtual operation_result can_list(const ModelDefinition& model_definition,string_map& filter, http::LoginToken& login_token) = 0;
+        virtual OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef) = 0;
+        virtual OperationResult   can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) = 0;
+        virtual OperationResult can_update(const ModelDefinition& model_definition, http::LoginToken& token,entity_fields& ef) = 0;
+        virtual OperationResult can_delete(const ModelDefinition& model_definition, http::LoginToken& token,int id) = 0;
+        virtual OperationResult   can_list(const ModelDefinition& model_definition, http::LoginToken& token,string_map& filter) = 0;
         //
-        virtual std::pair<int, operation_result> create(const ModelDefinition& def, entity_fields& fields, http::LoginToken& login_token) = 0;
-        virtual std::pair<entity_fields, operation_result> read(int id, const ModelDefinition& def, http::LoginToken& login_token) = 0;
-        virtual operation_result update(int id, entity_fields& fields, const ModelDefinition& def, http::LoginToken& login_token) = 0;
-        virtual operation_result remove(int id, ModelDefinition& def, http::LoginToken& login_token) = 0;
-        virtual std::pair<std::vector<entity_fields>, operation_result> list(http::QueryParams& query_params, ModelDefinition& def, http::LoginToken& login_token) = 0;
+        virtual std::pair<int, OperationResult>         create(const ModelDefinition& def, http::LoginToken& token, entity_fields& fields) = 0;
+        virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, http::LoginToken& token, int id) = 0;
+        virtual OperationResult                         update(const ModelDefinition& def, http::LoginToken&  token, int id, entity_fields& fields) = 0;
+        virtual OperationResult                         remove(ModelDefinition& def, http::LoginToken&  token, int id) = 0;
+        virtual std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params) = 0;
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //
