@@ -45,10 +45,15 @@ namespace mindnet::models
 
     string TeamMember::validate()
     {
-        test_ne(team_id, 0, "team_id");
-        test_ne(user_id, 0, "user_id");
-        test_ne(joined_at, 0, "joined_at");
+        using columns::TeamMemberColumns;
 
-        return "";
+        validator_chain_vector list{
+
+        [this] { return test_ne(team_id, 0, TeamMemberColumns::TEAM_ID);},
+        [this] { return test_ne(user_id, 0, TeamMemberColumns::USER_ID);},
+        [this] { return test_ne(joined_at, 0, TeamMemberColumns::JOINED_AT);},
+        };
+        return ValidatorChain::run(list);
+
     }
 }

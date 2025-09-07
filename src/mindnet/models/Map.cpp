@@ -49,14 +49,17 @@ namespace mindnet::models
     };
     string Map::validate()
     {
-        testt_between(name, 5, 80, "name")
-        testt_between(description, 0, 80, "description")
-        testt_between(category, 0, 40, "category")
-        test_ne(owner_id, 0, "owner_id");
-        test_between(owner_rights, 0, 7, "owner_rights")
-        test_between(team_rights, 0, 7, "team_rights")
-        test_between(other_rights, 0, 7, "other_rights")
+        using columns::MapColumns;
 
-        return "";
+        validator_chain_vector list{
+        [this] { return testt_between(name, 5, 80, "name");},
+        [this] { return testt_between(description, 0, 80, "description");},
+        [this] { return testt_between(category, 0, 40, "category");},
+        [this] { return test_ne(owner_id, 0, "owner_id");},
+        [this] { return test_between(owner_rights, 0, 7, "owner_rights");},
+        [this] { return test_between(team_rights, 0, 7, "team_rights");},
+        [this] { return test_between(other_rights, 0, 7, "other_rights");},
+        };
+        return ValidatorChain::run(list);
     }
 }

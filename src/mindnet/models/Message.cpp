@@ -54,12 +54,15 @@ namespace mindnet::models
 
     string Message::validate()
     {
-        test_ne(owner_id, 0, "owner_id");
-        test_ne(sender_id, 0, "sender_id");
-        test_ne(recipient_id, 0, "recipient_id");
-        test_ne(sender_id, recipient_id, "sender_id and recipient_id must not be equal")
-        if (sender_id != owner_id && recipient_id != owner_id) return "sender_id and recipient_id must be either owner_id or recipient_id";
+        using columns::MessageColumns;
 
-        return "";
+        validator_chain_vector list{
+        [this] { return test_ne(owner_id, 0, MessageColumns::OWNER_ID);},
+        [this] { return test_ne(sender_id, 0, MessageColumns::SENDER_ID);},
+            [this] { return test_ne(recipient_id, 0, MessageColumns::RECIPIENT_ID);},
+        [this] { return test_ne(sender_id, recipient_id, "sender_id and recipient_id must not be equal");},
+        [this]{return test_false(sender_id != owner_id && recipient_id != owner_id, "sender_id and recipient_id must be either owner_id or recipient_id");},
+    };
+        return ValidatorChain::run(list);
     }
 }

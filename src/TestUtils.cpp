@@ -7,10 +7,25 @@
 
 namespace mindnet
 {
+    test_result test_ok()
+    {
+        return {};
+    }
+
+    test_result test_ko(string error)
+    {
+        return std::unexpected(error);
+    }
+
     test_result test_true(bool condition, string error_if_condition_not_met)
     {
         if(!condition) return std::unexpected(error_if_condition_not_met);
         return {};
+    }
+
+    test_result test_false(bool condition, string error_if_condition_not_met)
+    {
+        return test_true(!condition, error_if_condition_not_met);
     }
 
     test_result test_eq(int number, int eq_to, string field)

@@ -41,12 +41,15 @@ namespace mindnet::models
     }
     string History::validate()
     {
-        test_ne(user_id, 0, "reviewer_id");
-        testt_not_empty(table_name, "table_name");
-        test_ne(record_id, 0, "record_id");
-        test_ne(cast64(operation), 0, "operation");
-        testt_not_empty(data_json, "data_json");
+        using columns::HistoryColumns;
 
-        return "";
+        validator_chain_vector list{
+        [this] { return test_ne(user_id, 0, "reviewer_id");},
+        [this] { return testt_not_empty(table_name, "table_name");},
+        [this] { return test_ne(record_id, 0, "record_id");},
+        [this] { return test_ne(cast64(operation), 0, "operation");},
+        [this] { return testt_not_empty(data_json, "data_json");},
+        };
+        return ValidatorChain::run(list);
     }
 }

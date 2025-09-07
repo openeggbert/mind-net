@@ -38,11 +38,14 @@ namespace mindnet::models
 
     string Comment::validate()
     {
-        test_ne(discussion_id, 0, "discussion_id");
-        test_ne(user_id, 0, "user_id");
-        testt_not_empty(content, "content");
-        test_at_most(content.size(), 1000, "content");
+        using columns::CommentColumns;
 
-        return "";
+        validator_chain_vector list{
+        [this] { return test_ne(discussion_id, 0, "discussion_id");},
+        [this] { return test_ne(user_id, 0, "user_id");},
+        [this] { return testt_not_empty(content, "content");},
+        [this] { return test_at_most(content.size(), 1000, "content");},
+        };
+        return ValidatorChain::run(list);
     }
 }

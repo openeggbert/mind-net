@@ -36,11 +36,14 @@ namespace mindnet::models
 
     string Team::validate()
     {
-        testt_between(name, 5, 32, "name");
-        test_at_most(description.size(), 256, "description");
-        test_ne(created_by, 0, "created_by");
-        test_ne(leader_id, 0, "leader_id");
+        using columns::TeamColumns;
 
-        return "";
+        validator_chain_vector list{
+        [this] { return testt_between(name, 5, 32, TeamColumns::NAME);},
+        [this] { return test_at_most(description.size(), 256, TeamColumns::DESCRIPTION);},
+        [this] { return test_ne(created_by, 0, TeamColumns::CREATED_BY);},
+        [this] { return test_ne(leader_id, 0, TeamColumns::LEADER_ID);},
+        };
+        return ValidatorChain::run(list);
     }
 }

@@ -38,21 +38,29 @@ namespace mindnet::models
 
     string Discussion::validate()
     {
-        test_ne(team_id, 0, "team_id");
-        test_between(title.length(), 1, 80, "title");
-        for (char ch:title)
-        {
-            if (!isdigit(ch) && !isalpha(ch) && ch != '-' && ch != '_')
-            {
-                return "title must contain only letters, digits, - and _";
-            }
-            if (isalpha(ch) && !islower(ch))
-            {
-                return "title must contain only lowercase letters";
-            }
-        }
-        test_ne(created_by, 0, "created_by");
+        using columns::DiscussionColumns;
 
-        return "";
+        validator_chain_vector list{
+        [this] { return test_ne(team_id, 0, "team_id");},
+        [this] { return test_between(title.length(), 1, 80, "title");},
+        [this]
+        {
+            for (char ch:title)
+            {
+                if (!isdigit(ch) && !isalpha(ch) && ch != '-' && ch != '_')
+                {
+                    return test_ko("title must contain only letters, digits, - and _");
+                }
+                if (isalpha(ch) && !islower(ch))
+                {
+                    return test_ko("title must contain only lowercase letters");
+                }
+            }
+
+            return test_ok();
+        },
+        [this] { return test_ne(created_by, 0, "created_by");},
+        };
+        return ValidatorChain::run(list);
     }
 }

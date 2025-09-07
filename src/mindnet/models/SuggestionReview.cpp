@@ -38,7 +38,11 @@ namespace mindnet::models
 
     string SuggestionReview::validate()
     {
-        test_ne(reviewer_id, 0, "reviewer_id");
-        return "";
+        using columns::SuggestionReviewColumns;
+
+        validator_chain_vector list{
+        [this] { return test_ne(reviewer_id, 0, SuggestionReviewColumns::REVIEWER_ID);},
+        };
+        return ValidatorChain::run(list);
     }
 }

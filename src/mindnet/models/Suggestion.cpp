@@ -41,8 +41,12 @@ namespace mindnet::models
     };
     string Suggestion::validate()
     {
-        test_ne(from_user_id, 0, "from_user_id");
-        testt_not_empty(table_name, "table_name");
-        return "";
+        using columns::SuggestionColumns;
+
+        validator_chain_vector list{
+        [this] { return test_ne(from_user_id, 0, SuggestionColumns::FROM_USER_ID);},
+        [this] { return testt_not_empty(table_name, SuggestionColumns::TABLE_NAME);},
+        };
+        return ValidatorChain::run(list);
     }
 }

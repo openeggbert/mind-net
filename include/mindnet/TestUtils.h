@@ -6,6 +6,7 @@
 #define MIND_NET_TESTUTILS_H
 #include <expected>
 #include <string>
+
 namespace mindnet
 {
     using std::string;
@@ -21,8 +22,10 @@ namespace mindnet
             return "";
         }
     };
-
+    test_result test_ok();
+    test_result test_ko(string error);
     test_result test_true(bool condition, string error_if_condition_not_met);
+    test_result test_false(bool condition, string error_if_condition_not_met);
     test_result test_eq(int number, int eq_to, string field);
     test_result test_ne(int number, int eq_to, string field);
     test_result test_at_least(int number, int min_value, string field);

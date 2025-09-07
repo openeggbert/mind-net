@@ -34,6 +34,10 @@ namespace mindnet::models
     }
     string Content::validate()
     {
-        return "";
+        using columns::ContentColumns;
+
+        validator_chain_vector list{
+        };
+        return ValidatorChain::run(list);
     }
 }
