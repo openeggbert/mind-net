@@ -29,10 +29,13 @@ namespace mindnet::persistence::impl::sqlite::validators
             403,"You must be admin to create a user.")
 
         return_if(role != enums::UserRole::ADMIN && new_entity.role != g_configuration.default_user_role,
-            400,"role" " must be qual to " + enums::user_role_to_string(g_configuration.default_user_role))
+            400,"role" " must be equal to " + enums::user_role_to_string(g_configuration.default_user_role))
 
         return_if (api::has_user_name(db, token, new_entity.username),
             409, "username already exists")
+
+        return_if (new_entity.password_hash == "*",
+            400, "password_hash cannot be placeholder during user creation");
 
         return_if (api::has_user_email(db, token, new_entity.email),
             409, "email already exists");

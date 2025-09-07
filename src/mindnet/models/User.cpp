@@ -50,39 +50,30 @@ namespace mindnet::models
 
     string User::validate()
     {
-        testt_not_empty(username, "username");
-        testt_between(username, 5, 64, "username");
-        for (char ch : username)
-            if (!isdigit(ch) && !isalpha(ch))
-                return
-                    "username must contain only letters and digits";
-        if (isdigit(username[0])) return "username must not start with a digit";
+        test_result res;
+        using columns::UserColumns;
 
-        test_eq(password_hash.size(), 64, "password_hash");
-        test_at_most(display_name.size(), 64, "display_name");
-        //
-
-
-        if (!(profile_text.size() <= 256))
-            return "profile_text" " must not be greater than " +
-                std::to_string(256);
+        CHECK(testt_not_empty(username, UserColumns::USERNAME))
+        CHECK(testt_between(username, 5, 64, UserColumns::USERNAME))
+        CHECK(testt_is_alpha_or_digit((username), UserColumns::USERNAME))
+        CHECK(test_true(!isdigit(username[0]), "username must not start with a digit"))
+        CHECK(test_eq(password_hash.size(), 64, UserColumns::PASSWORD_HASH))
+        CHECK(test_at_most(display_name.size(), 64, UserColumns::DISPLAY_NAME))
+        CHECK(testt_at_most (profile_text, 256, UserColumns::PROFILE_TEXT))
 
         if (!email.empty())
         {
             std::regex email_pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-            if (!std::regex_match(email, email_pattern))
-            {
-                return "Invalid email format";
-            }
+            CHECK(test_true(std::regex_match(email, email_pattern),"Invalid email format"))
         }
 
         if (g_configuration.require_admin_approval_for_new_users)
         {
-            if (!(status == enums::UserStatus::PENDING)) return "status" " must be qual to PENDING";
+            CHECK(test_true(status == enums::UserStatus::PENDING, "status" " must be qual to PENDING"));
         }
         else
         {
-            if (!(status == enums::UserStatus::ACTIVE)) return "status" " must be qual to ACTIVE";
+            CHECK(test_true(status == enums::UserStatus::ACTIVE, "status" " must be qual to ACTIVE"));
         }
 
         return "";
