@@ -4,7 +4,7 @@
 #ifndef OPERATIONRESULT_H
 #define OPERATIONRESULT_H
 
-#define ok_result mindnet::persistence::api::OKOperationResult
+#define ok_result {}
 
 #include <utility>
 #include <string>
@@ -35,7 +35,6 @@ namespace mindnet::persistence::api
             return !ok();
         }
     };
-    extern const OperationResult OKOperationResult;
 }
 
 #endif // OPERATIONRESULT_H

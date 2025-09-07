@@ -16,7 +16,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamCrudlValidator;
 
-    operation_result TeamCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
         return_if (ctx.role < enums::UserRole::EDITOR,
@@ -30,12 +30,12 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult TeamCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
@@ -50,7 +50,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult TeamCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
@@ -60,7 +60,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult TeamCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
         return ok_result;
     }

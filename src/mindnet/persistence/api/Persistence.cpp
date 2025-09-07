@@ -107,28 +107,32 @@ namespace mindnet::persistence
         add_repository(reference, Reference, REFERENCE);
         add_repository(link, Link, LINK);
         //
-        add_validator(user, User)
-        add_validator(message, Message)
-        add_validator(team, Team)
-        add_validator(team_member, TeamMember)
-        add_validator(discussion, Discussion)
-        add_validator(comment, Comment)
-        add_validator(suggestion, Suggestion)
-        add_validator(suggestion_review, SuggestionReview)
-        add_validator(history, History)
-        add_validator(map, Map)
-        add_validator(content, Content)
-        add_validator(note, Note)
-        add_validator(property, Property)
-        add_validator(tag_type, TagType)
-        add_validator(tag, Tag)
-        add_validator(collection, Collection)
-        add_validator(collection_item, CollectionItem)
-        add_validator(review, Review)
-        add_validator(sm2_state, SM2State)
-        add_validator(question, Question)
-        add_validator(reference, Reference)
-        add_validator(link, Link)
+
+#define disable_validation
+
+        //add_validator(user, User)
+        // add_validator(message, Message)
+        // add_validator(team, Team)
+        // add_validator(team_member, TeamMember)
+        // add_validator(discussion, Discussion)
+        // add_validator(comment, Comment)
+        // add_validator(suggestion, Suggestion)
+        // add_validator(suggestion_review, SuggestionReview)
+        // add_validator(history, History)
+        // add_validator(map, Map)
+        // add_validator(content, Content)
+        // add_validator(note, Note)
+        // add_validator(property, Property)
+        // add_validator(tag_type, TagType)
+        // add_validator(tag, Tag)
+        // add_validator(collection, Collection)
+        // add_validator(collection_item, CollectionItem)
+        // add_validator(review, Review)
+        // add_validator(sm2_state, SM2State)
+        // add_validator(question, Question)
+        // add_validator(reference, Reference)
+        // add_validator(link, Link)
+
     }
 
     Persistence::~Persistence()
@@ -170,6 +174,9 @@ namespace mindnet::persistence
         {
             return v2->can_create(this, token, ef);
         }
+#ifdef disable_validation
+        return ok_result;
+#endif
         return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation CREATE cannot be validated.");
     };
@@ -187,6 +194,9 @@ namespace mindnet::persistence
             return v2->can_read(this, token, id);
 
         }
+#ifdef disable_validation
+        return ok_result;
+#endif
         return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation READ cannot be validated.");
 
@@ -204,6 +214,9 @@ namespace mindnet::persistence
         {
             return v2->can_update(this, token, ef);
         }
+#ifdef disable_validation
+        return ok_result;
+#endif
         return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation UPDATE cannot be validated.");
 
@@ -221,6 +234,9 @@ namespace mindnet::persistence
         {
             return v2->can_delete(this, token, id);
         }
+#ifdef disable_validation
+        return ok_result;
+#endif
         return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation DELETE cannot be validated.");
 
@@ -236,6 +252,9 @@ namespace mindnet::persistence
         {
             return v2->can_list(this, token, filter);
         }
+#ifdef disable_validation
+        return ok_result;
+#endif
         return OperationResult(500, "Validator is not implemented for " + model_definition.get_model_name() +
                                 ". Operation LIST cannot be validated.");
 
@@ -270,7 +289,14 @@ namespace mindnet::persistence
         }
         string error;
         entity_fields ef = get_repository(def.get_model_name())->read(id, error);
-        return {ef, {500, error}};
+        if (error.empty())
+        {
+            return {ef, {}};
+        } else
+        {
+            return {{}, {500, error}};
+        }
+
     }
 
     OperationResult Persistence::update(
@@ -278,7 +304,6 @@ namespace mindnet::persistence
         int id, entity_fields& fields
                              )
     {
-        string_map empty_map;
         auto result = can_update(def.get_model_name(), token, fields);
         if (result.ko())
         {

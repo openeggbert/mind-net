@@ -16,7 +16,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::HistoryCrudlValidator;
 
-    operation_result HistoryCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult HistoryCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -26,7 +26,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result HistoryCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult HistoryCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -37,14 +37,14 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result HistoryCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult HistoryCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
         return {405, "History cannot be updated."};
     }
 
-    operation_result HistoryCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult HistoryCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
@@ -52,7 +52,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     }
 
-    operation_result HistoryCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult HistoryCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 

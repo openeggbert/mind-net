@@ -16,7 +16,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::SuggestionReviewCrudlValidator;
 
-    operation_result SuggestionReviewCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult SuggestionReviewCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -26,7 +26,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult SuggestionReviewCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -39,7 +39,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult SuggestionReviewCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
@@ -51,14 +51,14 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result SuggestionReviewCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult SuggestionReviewCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
         return {405, "Deleting suggestions is forbidden. "};
     }
 
-    operation_result SuggestionReviewCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult SuggestionReviewCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 

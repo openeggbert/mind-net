@@ -19,64 +19,64 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::CommentCrudlValidator;
 
-    operation_result CommentCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult CommentCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
-        
-        auto discussion = find_model(discussion, new_entity.discussion_id);
+
+        auto discussion = find_model(discussion, entity.discussion_id);
         check_found(discussion);
-        auto is_team_member_result = api::is_member_of_team(db, token, discussion.first.team_id);
+        auto is_team_member_result = api::is_member_of_team(ctx, discussion.first.team_id);
         return_if (!is_team_member_result.empty(), 400, "Team does not exist.");
 
-        return_if (new_entity.user_id != token.user_id, 400, "You can only create comments for your own user.");
+        return_if (entity.user_id != ctx.token.user_id, 400, "You can only create comments for your own user.");
         
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult CommentCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
-        auto comment = api::find_comment(db, token, id);
+        auto comment = api::find_comment(ctx, entity.get_id());
         return_if(!comment.second.empty(), 400, "Comment does not exist.")
 
-        if (is_admin) return ok_result;
+        if (ctx.role == enums::UserRole::ADMIN) return ok_result;
 
-        auto discussion = api::find_discussion(db, token, comment.first.discussion_id);
+        auto discussion = api::find_discussion(ctx, comment.first.discussion_id);
         return_if(!discussion.second.empty(), 400, "Discussion does not exist.")
 
-        auto is_team_member_result = api::is_member_of_team(db, token, discussion.first.team_id);
+        auto is_team_member_result = api::is_member_of_team(ctx, discussion.first.team_id);
         return_if(!is_team_member_result.empty(), 400, "You are not a member of the team.")
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult CommentCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
-        return_if (old_entity.user_id != logged_user.get_id() && logged_user.role != enums::UserRole::ADMIN,
+        return_if (old_entity.user_id != ctx.token.user_id && ctx.role != enums::UserRole::ADMIN,
             403, "You can only update your own comment.")
 
         return ok_result;
     }
 
-    operation_result CommentCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult CommentCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
-        return operation_result(403, "Deleting comments is forbidden. Set is_deleted to true.");
+        return OperationResult(403, "Deleting comments is forbidden. Set is_deleted to true.");
     }
 
-    operation_result CommentCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult CommentCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
 
         mandatory_filter(discussion_id)
 
-        auto discussion = api::find_discussion(db, token, stoi(filter["discussion_id"]));
+        auto discussion = api::find_discussion(ctx, std::stoi(filter.at("discussion_id")));
         return_if (!discussion.second.empty(),400, discussion.second)
 
-        auto is_member_of_team_result = api::is_member_of_team(db, token, discussion.first.team_id);
+        auto is_member_of_team_result = api::is_member_of_team(ctx, discussion.first.team_id);
 
         return_if (!is_member_of_team_result.empty(),403, std::string("You can only list comments for teams, you are member of. ") + is_member_of_team_result)
 

@@ -244,10 +244,10 @@ namespace mindnet::http
         auto column_definition_to_json = [](mindnet::models::misc::ColumnDefinition& column_definition)
         {
             crow::json::wvalue result;
-            if (column_definition.is_hidden())
-            {
-                return result;
-            }
+            // if (column_definition.is_hidden())
+            // {
+            //     return result;
+            // }
 
             result["column_name"] = column_definition.get_column_name();
             result["column_type"] = mindnet::enums::column_type_to_string(column_definition.get_column_type());

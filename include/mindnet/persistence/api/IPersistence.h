@@ -21,9 +21,9 @@ namespace mindnet::persistence::api
         IPersistence() = default;
         virtual ~IPersistence() = default; // explicitly make it destructible
 
-        virtual bool has_repository_with_name(const std::string& name);
+        virtual bool has_repository_with_name(const std::string& name) = 0;
 
-        virtual std::vector<std::string>& list_repository_names();
+        virtual std::vector<std::string>& list_repository_names() = 0;
 
         virtual OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef) = 0;
         virtual OperationResult   can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) = 0;

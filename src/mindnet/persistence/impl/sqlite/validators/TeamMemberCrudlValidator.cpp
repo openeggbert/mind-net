@@ -17,7 +17,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TeamMemberCrudlValidator;
 
-    operation_result TeamMemberCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamMemberCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -48,7 +48,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamMemberCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
 
 
@@ -70,7 +70,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult TeamMemberCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
 
@@ -83,17 +83,17 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result TeamMemberCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult TeamMemberCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
 
         auto team_member = find_model(model, entity.user_id)
         return_if (team_member.second.empty(), 400, team_member.second)
 
-        return operation_result(403, "Deleting team members is forbidden. Set status to DELETED.");
+        return OperationResult(403, "Deleting team members is forbidden. Set status to DELETED.");
     }
 
-    operation_result TeamMemberCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult TeamMemberCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
         if (ctx.role == enums::UserRole::ADMIN) return ok_result;

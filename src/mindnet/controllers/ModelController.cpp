@@ -81,6 +81,8 @@ namespace mindnet::routes
                 if (read_result.second.ko())
                 {
                     error = read_result.second.error;
+                } else {
+                    values = read_result.first;
                 }
             }
             catch (std::runtime_error& e)
@@ -129,13 +131,13 @@ namespace mindnet::routes
 
             http::LoginToken login_token{req};
 
-            string error;
+
             auto success = db->update(def, login_token, id, fields);
             if (success.ko())
             {
                 return crow::response(
                     404, "Update failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
-                    error);
+                    success.error);
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
@@ -149,7 +151,7 @@ namespace mindnet::routes
             trace << "Delete lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
-            string error;
+
             http::LoginToken login_token{req};
             auto success = db->remove(def, login_token, id);
 
@@ -157,7 +159,7 @@ namespace mindnet::routes
             {
                 return crow::response(
                     404, "Delete failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
-                    error);
+                    success.error);
             }
 
             return crow::response(200, def.get_model_name() + " with id " + std::to_string(id) + " was deleted.");
@@ -200,7 +202,7 @@ namespace mindnet::routes
             {
                 test << "field: " << f << commit;
             }
-            string error;
+
             for (const auto& column : def.get_columns())
             {
                 if (!req.url_params.get(column.get_column_name()))
@@ -220,7 +222,7 @@ namespace mindnet::routes
             auto all_records = db->list(def, login_token, query_params);
             if (all_records.second.ko())
             {
-                return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + error);
+                return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.error);
             }
 
             crow::json::wvalue res;
