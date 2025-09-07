@@ -52,13 +52,13 @@ namespace mindnet::models
         using columns::MapColumns;
 
         validator_chain_vector list{
-        [this] { return testt_between(name, 5, 80, "name");},
-        [this] { return testt_between(description, 0, 80, "description");},
-        [this] { return testt_between(category, 0, 40, "category");},
-        [this] { return test_ne(owner_id, 0, "owner_id");},
-        [this] { return test_between(owner_rights, 0, 7, "owner_rights");},
-        [this] { return test_between(team_rights, 0, 7, "team_rights");},
-        [this] { return test_between(other_rights, 0, 7, "other_rights");},
+            [this] { return testt_between(name, 5, 80, MapColumns::NAME); },
+            [this] { return testt_between(description, 0, 80, MapColumns::DESCRIPTION); },
+            [this] { return testt_between(category, 0, 40, MapColumns::CATEGORY); },
+            [this] { return test_ne(owner_id, 0, MapColumns::OWNER_ID); },
+            [this] { return test_between(owner_rights, 0, 7, MapColumns::OWNER_RIGHTS); },
+            [this] { return test_between(team_rights, 0, 7, MapColumns::TEAM_RIGHTS); },
+            [this] { return test_between(other_rights, 0, 7, MapColumns::OTHER_RIGHTS); },
         };
         return ValidatorChain::run(list);
     }

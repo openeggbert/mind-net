@@ -41,10 +41,10 @@ namespace mindnet::models
         using columns::CommentColumns;
 
         validator_chain_vector list{
-        [this] { return test_ne(discussion_id, 0, "discussion_id");},
-        [this] { return test_ne(user_id, 0, "user_id");},
-        [this] { return testt_not_empty(content, "content");},
-        [this] { return test_at_most(content.size(), 1000, "content");},
+            [this] { return test_ne(discussion_id, 0, CommentColumns::DISCUSSION_ID); },
+            [this] { return test_ne(user_id, 0, CommentColumns::USER_ID); },
+            [this] { return testt_not_empty(content, CommentColumns::CONTENT); },
+            [this] { return test_at_most(content.size(), 1000, CommentColumns::CONTENT); },
         };
         return ValidatorChain::run(list);
     }
