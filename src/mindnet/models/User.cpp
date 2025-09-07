@@ -48,34 +48,40 @@ namespace mindnet::models
         status = static_cast<enums::UserStatus>(number());
     };
 
+    static const std::regex email_pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+
     string User::validate()
     {
-        test_result res;
         using columns::UserColumns;
 
-        CHECK(testt_not_empty(username, UserColumns::USERNAME))
-        CHECK(testt_between(username, 5, 64, UserColumns::USERNAME))
-        CHECK(testt_is_alpha_or_digit((username), UserColumns::USERNAME))
-        CHECK(test_true(!isdigit(username[0]), "username must not start with a digit"))
-        CHECK(test_eq(password_hash.size(), 64, UserColumns::PASSWORD_HASH))
-        CHECK(test_at_most(display_name.size(), 64, UserColumns::DISPLAY_NAME))
-        CHECK(testt_at_most (profile_text, 256, UserColumns::PROFILE_TEXT))
+        validator_chain_vector list{
+            [this] { return testt_not_empty(username, UserColumns::USERNAME); },
+            [this] { return testt_between(username, 5, 64, UserColumns::USERNAME); },
+            [this] { return testt_is_alpha_or_digit(username, UserColumns::USERNAME); },
+            [this] { return test_true(!isdigit(username[0]), "username must not start with a digit"); },
+            [this] { return test_eq(password_hash.size(), 64, UserColumns::PASSWORD_HASH); },
+            [this] { return test_at_most(display_name.size(), 64, UserColumns::DISPLAY_NAME); },
+            [this] { return testt_at_most(profile_text, 256, UserColumns::PROFILE_TEXT); },
+            [this]
+            {
+                if (email.empty()) return test_result{};
+                return test_true(
+                    std::regex_match(email, email_pattern),
+                    "Invalid email format");
+            },
+            [this]
+            {
+                return test_true(
+                    g_configuration.require_admin_approval_for_new_users
+                        ? status == enums::UserStatus::PENDING
+                        : status == enums::UserStatus::ACTIVE,
+                    g_configuration.require_admin_approval_for_new_users
+                        ? "status must be PENDING"
+                        : "status must be ACTIVE"
+                );
+            }
+        };
 
-        if (!email.empty())
-        {
-            std::regex email_pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-            CHECK(test_true(std::regex_match(email, email_pattern),"Invalid email format"))
-        }
-
-        if (g_configuration.require_admin_approval_for_new_users)
-        {
-            CHECK(test_true(status == enums::UserStatus::PENDING, "status" " must be qual to PENDING"));
-        }
-        else
-        {
-            CHECK(test_true(status == enums::UserStatus::ACTIVE, "status" " must be qual to ACTIVE"));
-        }
-
-        return "";
+        return ValidatorChain::run(list);
     }
 }
