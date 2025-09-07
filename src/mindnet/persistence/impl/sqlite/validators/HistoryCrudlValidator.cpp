@@ -6,7 +6,7 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/models/History.h"
-#include "mindnet/persistence/Persistence.h"
+#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
 
 #define Model History
 #define MODEL HISTORY

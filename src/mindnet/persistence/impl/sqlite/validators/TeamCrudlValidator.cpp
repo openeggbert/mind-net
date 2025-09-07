@@ -7,7 +7,7 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/models/Team.h"
-#include "mindnet/persistence/Persistence.h"
+#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
 
 #define Model Team
 #define MODEL TEAM

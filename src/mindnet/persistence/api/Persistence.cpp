@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/persistence/Persistence.h"
+#include "../../../../include/mindnet/persistence/api/Persistence.h"
 
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"

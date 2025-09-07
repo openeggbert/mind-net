@@ -5,7 +5,9 @@
 #ifndef MIND_NET_TESTUTILS_H
 #define MIND_NET_TESTUTILS_H
 #include <expected>
+#include <functional>
 #include <string>
+#include <vector>
 
 namespace mindnet
 {

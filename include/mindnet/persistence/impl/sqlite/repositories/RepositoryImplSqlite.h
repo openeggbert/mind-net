@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "mindnet/enums/Crudl.h"
-#include "mindnet/persistence/Persistence.h"
+#include "../../../api/Persistence.h"
 #include "mindnet/persistence/api/IRepository.h"
 
 namespace mindnet::persistence::impl::sqlite::repositories

@@ -7,7 +7,7 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/models/Reference.h"
-#include "mindnet/persistence/Persistence.h"
+#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
 
 namespace mindnet::persistence::impl::sqlite::validators
 {

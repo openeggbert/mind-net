@@ -25,7 +25,7 @@ namespace mindnet::persistence::api
         {
         }
 
-        bool ok() const
+        [[nodiscard]] bool ok() const
         {
             return status == 0;
         }

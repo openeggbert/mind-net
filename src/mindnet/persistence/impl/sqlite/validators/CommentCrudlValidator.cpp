@@ -8,7 +8,7 @@
 #include "mindnet/Global.h"
 #include "mindnet/models/Comment.h"
 #include "mindnet/models/Discussion.h"
-#include "mindnet/persistence/Persistence.h"
+#include "../../../../../../include/mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
 #define Model Comment

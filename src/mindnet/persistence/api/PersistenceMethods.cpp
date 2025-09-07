@@ -7,6 +7,18 @@
 namespace mindnet::persistence::api
 {
 
+    std::pair<models::User, api::OperationResult> find_logged_user(
+        db_ptr& db, http::LoginToken token)
+    {
+        auto result = db->read(token.user_id, models::USER_DEFINITION, token);
+        if (result.second.ko())
+        {
+            return {models::User(), result.second};
+        }
+        models::User user;
+        user.from_values(result.first);
+        return {user, ok_result};
+    }
 
     bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name)
     {

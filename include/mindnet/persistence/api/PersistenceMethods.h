@@ -6,7 +6,9 @@
 #define MIND_NET_PERSISTENCEMETHODS_H
 #include <utility>
 
-#include "CrudlValidator.h"
+#include "IPersistence.h"
+#include "OperationResult.h"
+#include "mindnet/http/LoginToken.h"
 #include "mindnet/models/User.h"
 #include "mindnet/models/Message.h"
 #include "mindnet/models/Team.h"
@@ -44,7 +46,10 @@ std::pair<models::Model, string> find_##model(db_ptr& db, http::LoginToken& toke
 
 namespace mindnet::persistence::api
 {
-    using db_ptr = mindnet::persistence::Persistence*;
+    using db_ptr = mindnet::persistence::IPersistence*;
+
+    std::pair<models::User, api::OperationResult> find_logged_user(
+        db_ptr& db, http::LoginToken token);
 
     bool has_user_name(db_ptr& db, http::LoginToken& token, string user_name);
     bool has_user_email(db_ptr& db, http::LoginToken& token, string user_mail);
