@@ -8,16 +8,12 @@
 
 #include "mindnet/Helper.h"
 #include "mindnet/persistence/api/CrudlValidatorBase.h"
-#include "mindnet/persistence/api/ICrudlValidator.h"
-
-namespace mindnet::persistence
-{
-    class Persistence;
-}
 
 namespace mindnet::persistence::impl::sqlite::validators
+
+
 {
-    using db_ = mindnet::persistence::Persistence*;
+    using db_ptr = mindnet::persistence::api::IPersistence*;
     using api::ValidatorContext;
     using models::User;
 

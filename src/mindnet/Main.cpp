@@ -11,7 +11,7 @@
 #include "mindnet/Global.h"
 #include "mindnet/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
-#include "../../include/mindnet/persistence/api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/controllers/ModelController.h"
 //
 #include "mindnet/models/User.h"

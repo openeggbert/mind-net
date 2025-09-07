@@ -6,10 +6,7 @@
 #define HELPER_H
 #include <string>
 
-#include "enums/ColumnType.h"
-#include "models/columns/BaseColumns.h"
 #include "models/misc/ColumnDefinition.h"
-#include "models/misc/EnumDefinition.h"
 #include "nlohmann/json_fwd.hpp"
 
 #define cast64 static_cast<int64_t>
