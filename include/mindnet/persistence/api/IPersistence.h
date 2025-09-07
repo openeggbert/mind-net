@@ -14,7 +14,6 @@ namespace mindnet::persistence::api {
 
 namespace mindnet::persistence
 {
-    typedef mindnet::persistence::api::OperationResult operation_result;
     using mindnet::models::misc::ModelDefinition;
     using validator = api::CrudlValidator*;
 
@@ -28,7 +27,7 @@ namespace mindnet::persistence
 
         virtual std::vector<std::string>& list_repository_names();
 
-        virtual operation_result can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token) = 0;
+        virtual api::result_t can_create(const ModelDefinition& model_definition, entity_fields& ef, http::LoginToken& login_token) = 0;
         virtual operation_result can_read(const ModelDefinition& model_definition, int id, http::LoginToken& login_token) = 0;
         virtual operation_result can_update(const ModelDefinition& model_definition,entity_fields& ef, http::LoginToken& login_token) = 0;
         virtual operation_result can_delete(const ModelDefinition& model_definition,int id, http::LoginToken& login_token) = 0;

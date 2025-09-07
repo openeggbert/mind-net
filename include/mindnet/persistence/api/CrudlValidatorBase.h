@@ -98,9 +98,9 @@ namespace mindnet::persistence::api
         OperationResult can_update(db_ptr db, http::LoginToken& token, entity_fields& ef) const
         {
             static_assert(
-                requires(const Derived& d, ValidatorContext const& ctx, const Model& m, const Model& old_m)
+                requires(const Derived& d, ValidatorContext const& ctx, const Model& old_m, const Model& new__m)
                 {
-                    { d.validate_update(ctx, m, old_m) } -> std::convertible_to<result_t>;
+                    { d.validate_update(ctx, old_m, new__m) } -> std::convertible_to<result_t>;
                 },
                 "Derived must implement validate_update returning result_t"
             );
@@ -177,14 +177,6 @@ namespace mindnet::persistence::api
             return ok_result;
         };
         [[nodiscard]] virtual string get_model_name() const = 0;
-
-        // protected:
-        // Odvozené validátory musí implementovat tyto metody
-        //     result_t validate_create(ValidatorContext, const Model&) const;
-        //     result_t validate_read(ValidatorContext, const Model&) const;
-        //     result_t validate_update(ValidatorContext, const Model&, const Model&) const;
-        //     result_t validate_delete(ValidatorContext, const Model&) const;
-        //     result_t validate_list(ValidatorContext, const string_map&) const;
 
     private:
         const Derived& derived() const { return static_cast<const Derived&>(*this); }

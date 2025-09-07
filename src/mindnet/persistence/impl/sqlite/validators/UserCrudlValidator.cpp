@@ -18,7 +18,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::UserCrudlValidator;
 
-    operation_result UserCrudlValidator::can_create(db_ db, http::LoginToken& token, entity_fields& ef) const
+    api::OperationResult UserCrudlValidator::validate_create(const ValidatorContext& ctx, const Model& entity) const
     {
         start_can_create(Model);
 
@@ -43,12 +43,12 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result UserCrudlValidator::can_read(db_ db, http::LoginToken& token, int id) const
+    api::OperationResult UserCrudlValidator::validate_read(const ValidatorContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    operation_result UserCrudlValidator::can_update(db_ db, http::LoginToken& token, entity_fields& ef) const
+    api::OperationResult UserCrudlValidator::validate_update(const ValidatorContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
         start_can_update(Model, MODEL)
 
@@ -73,12 +73,12 @@ namespace mindnet::persistence::impl::sqlite::validators
         return ok_result;
     }
 
-    operation_result UserCrudlValidator::can_delete(db_ db, http::LoginToken& token, int id) const
+    api::OperationResult UserCrudlValidator::validate_delete(const ValidatorContext& ctx, const Model& entity) const
     {
         return operation_result(403, "You are not allowed to delete this user");
     }
 
-    operation_result UserCrudlValidator::can_list(db_ db, http::LoginToken& token, string_map& filter) const
+    api::OperationResult UserCrudlValidator::validate_list(const ValidatorContext& ctx, const string_map& filter) const
     {
         return ok_result;
     }

@@ -30,14 +30,13 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         using Model = User;
 
+        api::OperationResult validate_create(const ValidatorContext&, const User& entity) const ;
+        api::OperationResult validate_read(const ValidatorContext&, const User& entity) const;
+        api::OperationResult validate_update(const ValidatorContext&, const User& old_entity, const User& new_entity) const;
+        api::OperationResult validate_delete(const ValidatorContext&, const User& entity) const;
+        api::OperationResult validate_list(const ValidatorContext&, const string_map&) const;
 
-        api::result_t validate_create(const ValidatorContext&, const User&) const ;
-        api::result_t validate_read(const ValidatorContext&, const User&) ;
-        api::result_t validate_update(const ValidatorContext&, const User& new_entity,  User& old_entity) const;
-        api::result_t validate_delete(const ValidatorContext&, const User&) ;
-        api::result_t validate_list(const ValidatorContext&, const string_map&) ;
-
-        [[nodiscard]] string get_model_name() const;
+        [[nodiscard]] string get_model_name() const override;
 
 
         //create_h_methods()
