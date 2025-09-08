@@ -110,7 +110,7 @@ namespace mindnet::persistence
 
 #define disable_validation
 
-        //add_validator(user, User)
+        // add_validator(user, User)
         // add_validator(message, Message)
         // add_validator(team, Team)
         // add_validator(team_member, TeamMember)
