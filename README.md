@@ -137,24 +137,68 @@ export JWT_SECRET={jwt_secret}
 ### Triggers
 
 ```
-//Trigger makes operations in datatabase
-enum TriggerType {
-before, 
-after, 
-instead_of, //Trigger is executed instead of the operation 
-around //like before and after together
+//Trigger makes operations in database
+
+enum TriggerPhase {
+Before, 
+After, 
+InsteadOf, //Trigger is executed instead of the operation 
+Around  //Like before and after together
 }
 
 class Trigger {
-Crudl crudl;
-string table_name;
-TriggerType type
+
+public:
+    virtual ~Trigger() = default;
+    virtual void run(const std::string& table, CrudlOperation op, const Record& record) = 0;
+ 
 condition (order>400 ...);
 bool validation_passed:
 int priority;
 string name;
 string description;
 }
+
+using TriggerPtr = std::shared_ptr<Trigger>;
+
+using CrudLMap = std::unordered_map<CrudL, std::vector<TriggerPtr>>;
+using PhaseMap = std::unordered_map<TriggerPhase, CrudLMap>;
+using TableMap = std::unordered_map<std::string, PhaseMap>;
+
+class TriggerRegistry {
+public:
+    void registerTrigger(const std::string& table, TriggerType triggerType, CrudlOperation op, TriggerPtr trigger) {
+        registry_[table][triggerType][op].push_back(trigger);
+    }
+
+    void execute(const std::string& table, TriggerType triggerType, CrudlOperation op, const Record& record) {
+        auto tableIt = registry_.find(table);
+        if (tableIt == registry_.end()) return;
+
+        auto phaseIt = tableIt->second.find(phase);
+        if (phaseIt == tableIt->second.end()) return;
+
+        auto crudIt = phaseIt->second.find(op);
+        if (crudIt == phaseIt->second.end()) return;
+
+        for (auto& trigger : crudIt->second) {
+            trigger->run(table, op, record);
+        }
+    private:
+        TableMap registry_;
+    }
+
+private:
+    TableMap registry_;
+};
+
+//TriggerRegistry registry;
+
+//registry.registerTrigger("note", Phase::Before, Crud::Update, std::make_shared<AuditTrigger>());
+//registry.registerTrigger("note", Phase::After, Crud::Update, std::make_shared<CascadeTrigger>());
+
+//registry.execute("note", Phase::Before, Crud::Update, record);
+
 ```
 
 Přidej parametr validation_passed: true/false do kontextu triggeru
