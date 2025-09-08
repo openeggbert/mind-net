@@ -81,3 +81,37 @@ JavaScript files are split into several modules.
 * Launching: `initializeFromURL();`
 
 
+## Components
+
+Autentization from localStorage or cookies
+
+```aiignore
+const apps = [
+    {name: "message_app", label: "📬 Message"},
+    {name: "discussion_app", label: "💬 Discussion"},
+    {name: "review_app", label: "✅ Review"},
+    {name: "zettelkast_app", label: "🧠 Zettelkast"}
+];
+```
+
+```
+
+```aiignore
+const token = localStorage.getItem("auth_token");
+
+fetch("https://api.mindnet.cz/v1/note", {
+  method: "POST", 
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`
+  },
+  body: JSON.stringify({
+    title: "New note",
+    content: "Note content..."
+  })
+})
+.then(res => res.json())
+.then(data => console.log("Note created:", data))
+.catch(err => console.error("Error:", err));
+
+```

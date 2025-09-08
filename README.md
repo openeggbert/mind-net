@@ -119,32 +119,67 @@ export JWT_SECRET={jwt_secret}
 
 ## BACKLOG
 
-- [ ] FEATURE Triggers
+
+### Critical
+- [ ] FEATURE Triggers - also add adding operations (as json) to history table
+- [ ] FEATURE User authentication
+  * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
+  * refresh token /refresh-token is valid 7 days (can be configured)
+  * when the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
+    without requiring re-authentication.
+- [ ] Zettelkasten component
+- [ ] Test component
+- [ ] property.key, tag_type.title - length should be limited
 - [ ] IMPROVEMENT Enums will be PascalCase, not all uppercase
 - [ ] BUG Update of boolean values in SQLite is not working.
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
+- [ ] FEATURE User authorization via Validators
+- [ ] FEATURE Log logging in, registration, logout, password changes
+- [ ] IMPROVEMENT Refactor struct Configuration
+- [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
+- [ ] TASK Check operator== implementations for all models
+- [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
+- [ ] /logout endpoint
+  ```
+  CROW_ROUTE(app, "/logout")([](const crow::request& req){
+  auto session = req.get_session();
+  session.clear(); // logout
+  return "Logged out";
+  });
+  ```
+
+### Extending
 - [ ] FEATURE New entity Flag
 - [ ] IMPROVEMENT Add logging to files
 - [ ] FEATURE Support for export to static HTML files
-- [ ] FEATURE Support for PostgresSQL storage
-- [ ] FEATURE User authentication
-  * via JWT token /login, which is valid 1 hour (can be configured)
-  * refresh token /refresh-token is valid 7 days (can be configured)
-  * When the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
-  without requiring re-authentication.
-- [ ] FEATURE User authorization via Validators
-- [ ] FEATURE Implement complex Filtering in REST API
+- [ ] FEATURE Create OpenAPI specification for the REST API
+- [ ] FEATURE new endpoint /info - shows some configuration entries (not all) + other information
+- [ ] IMPROVEMENT Paging - add First and Last buttons
+- [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast 
+- [ ] ModelDefinition - add title_column
+- [ ] bool custom_action.expand]
+- [ ] new entity File
+- [ ] Frontend : sort and order is missing
+- [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
+- [ ] New entity Session
+  ```aiignore
+   CREATE TABLE session (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    token TEXT NOT NULL UNIQUE,
+    expires_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+  ```
+
+
+### Experimenal
+- [ ] Chat component - Slack-like
 - [ ] FEATURE New table comment_reaction
 - [ ] FEATURE New table discussion_read_status
-- [ ] FEATURE Log logging in, registration, logout, password changes
-- [ ] FEATURE new endpoint /info - shows some configuration entries (not all) + other information
-- [ ] IMPROVEMENT Refactor struct Configuration
-- [ ] IMPROVEMENT Paging - add First and Last buttons
-- [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
-- [ ] FEATURE Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki
-- [ ] FEATURE Create OpenAPI specification for the REST API
-- [ ] TASK Check operator== implementations for all models
-- [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
+- [ ] FEATURE Support for PostgresSQL storage
+- [ ] FEATURE Implement complex Filtering in REST API
+
+
 
 ### Triggers
 

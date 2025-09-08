@@ -99,3 +99,8 @@ This highlights questions where the user consistently scores poorly.
     * User enters a number (0-5)
     * Application updates REVIEW_IN_X_DAYS, EASINESS_FACTOR, REPETITION, EXPIRES_AT
     * Continues to the next node
+
+**Test modes:**
+
+ - Full review - all notes under the current note
+ - DueOnly review - only notes due for review
