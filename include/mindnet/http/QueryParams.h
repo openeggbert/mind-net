@@ -29,6 +29,11 @@ namespace mindnet::http
         {
             filters[key] = value;
         }
+        void remove_filter(const std::string& key)
+        {
+            filters.erase(key);
+        }
+
     };
 }
 #endif // QUERYPARAMS_H

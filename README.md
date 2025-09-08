@@ -105,34 +105,45 @@ export JWT_SECRET={jwt_secret}
 
 # Project TODO / Roadmap
 
-## Emoji Legend
+## Legend
 - **BUG** – Issues, crashes, or bugs to fix
 - **FEATURE** – New functionality or enhancements
 - **IMPROVEMENT** – Improvements to existing code
 - **DOCUMENTATION** – Docs, guides, README updates
-- **Testing** – Writing or updating tests
-- **Task** – General task or chore
-- **Question / Discussion** – Questions, decisions, or discussions
-- **Performance** – Performance optimization
-- **Security** – Security-related changes
-- **Deprecation / Removal** – Removing old or deprecated code
+- **TESTING** – Writing or updating tests
+- **TASK** – General task or chore
+- **QUESTION / DISCUSSION** – Questions, decisions, or discussions
+- **PERFORMANCE** – Performance optimization
+- **SECURITY** – Security-related changes
+- **DEPRECATION / REMOVAL** – Removing old or deprecated code
 
 ## BACKLOG
 
+- [ ] FEATURE Triggers
+- [ ] IMPROVEMENT Enums will be PascalCase, not all uppercase
 - [ ] BUG Update of boolean values in SQLite is not working.
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [ ] FEATURE New entity Flag
 - [ ] IMPROVEMENT Add logging to files
 - [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Support for PostgresSQL storage
-- [ ] FEATURE User authentication (JWT or session token or ?)
+- [ ] FEATURE User authentication
+  * via JWT token /login, which is valid 1 hour (can be configured)
+  * refresh token /refresh-token is valid 7 days (can be configured)
+  * When the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
+  without requiring re-authentication.
 - [ ] FEATURE User authorization via Validators
-- [ ] FEATURE Implement Complex Filtering in REST API
+- [ ] FEATURE Implement complex Filtering in REST API
 - [ ] FEATURE New table comment_reaction
 - [ ] FEATURE New table discussion_read_status
-- [ ] FEATURE Triggers
 - [ ] FEATURE Log logging in, registration, logout, password changes
 - [ ] FEATURE new endpoint /info - shows some configuration entries (not all) + other information
+- [ ] IMPROVEMENT Refactor struct Configuration
+- [ ] IMPROVEMENT Paging - add First and Last buttons
+- [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
+- [ ] FEATURE Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki
+- [ ] FEATURE Create OpenAPI specification for the REST API
+- [ ] TASK Check operator== implementations for all models
 
 ### Triggers
 

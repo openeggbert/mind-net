@@ -2,7 +2,6 @@
 // Created by robertvokac on 7/31/25.
 //
 
-
 #include "mindnet/controllers/RestHelper.h"
 
 #include <string>
@@ -11,7 +10,7 @@
 
 #include "mindnet/Global.h"
 #include "mindnet/Helper.h"
-#include "../../../include/mindnet/models/misc/ModelDefinition.h"
+#include "mindnet/models/misc/ModelDefinition.h"
 
 namespace mindnet::controllers
 {

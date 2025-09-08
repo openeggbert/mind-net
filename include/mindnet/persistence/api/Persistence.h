@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/6/25.
 //
-#ifndef DB_H
-#define DB_H
+#ifndef PERSISTENCE_H
+#define PERSISTENCE_H
 
 #include "IPersistence.h"
 #include "IRepository.h"
@@ -56,4 +56,4 @@ namespace mindnet::persistence
                                                                 ModelDefinition& def) override;
     };
 }
-#endif // DB_H
+#endif // PERSISTENCE_H
