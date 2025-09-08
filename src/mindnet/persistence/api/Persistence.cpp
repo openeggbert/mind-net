@@ -141,6 +141,10 @@ namespace mindnet::persistence
         {
             delete get_repository(e);
         }
+        for (auto& e : validators)
+        {
+            delete e.second;
+        }
     }
 
     api::IRepository* Persistence::get_repository(const std::string& name)

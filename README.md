@@ -144,6 +144,7 @@ export JWT_SECRET={jwt_secret}
 - [ ] FEATURE Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki
 - [ ] FEATURE Create OpenAPI specification for the REST API
 - [ ] TASK Check operator== implementations for all models
+- [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
 
 ### Triggers
 

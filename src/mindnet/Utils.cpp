@@ -203,6 +203,12 @@ namespace mindnet
             {
                 in_quotes = !in_quotes;
             }
+            else if (c == '\\' && i + 1 < input.size() && input[i + 1] == '"')
+            {
+                // Escaped quote
+                current += '"';
+                ++i; // Skip next char
+            }
             else if (std::isspace(static_cast<unsigned char>(c)) && !in_quotes)
             {
                 if (!current.empty())
