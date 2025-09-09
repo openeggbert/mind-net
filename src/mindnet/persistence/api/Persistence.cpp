@@ -172,9 +172,10 @@ namespace mindnet::persistence
 
     OperationResult Persistence::can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
     {
+#ifndef disable_validation
         //Authentication
         if (token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
-
+#endif
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
@@ -189,10 +190,10 @@ namespace mindnet::persistence
 
     OperationResult Persistence::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
-
+#ifndef disable_validation
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
-
+#endif
 
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -212,8 +213,10 @@ namespace mindnet::persistence
 
     OperationResult Persistence::can_update(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef)
     {
+#ifndef disable_validation
         //Authentication
         if (token.ko()) return {401, "Only logged in users can update."};
+#endif
 
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -232,8 +235,10 @@ namespace mindnet::persistence
 
     OperationResult Persistence::can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
+#ifndef disable_validation
         //Authentication
         if (token.ko()) return {401, "Only logged in users can delete."};
+#endif
 
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -250,9 +255,10 @@ namespace mindnet::persistence
 
     OperationResult Persistence::can_list(const ModelDefinition& model_definition, http::LoginToken& token, string_map& filter)
     {
+#ifndef disable_validation
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
-
+#endif
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {

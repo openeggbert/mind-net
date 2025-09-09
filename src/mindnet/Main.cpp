@@ -101,9 +101,12 @@ bool commands_function_start(
     std::shared_ptr<mindnet::persistence::Persistence>& db,
     int& exit_status)
 {
-    bool custom_port = false;
     bool custom_host = false;
+    bool custom_port = false;
+    bool custom_frontend_port = false;
+
     int port = 8080;
+    int frontend_port = port;
     string host = "http://localhost";
     string static_directory = "static";
 
@@ -149,6 +152,36 @@ bool commands_function_start(
             else
             {
                 mindnet::fatal << "No port provided for option --port. Exiting." << commit;
+                exit_status = 1;
+                return true;
+            }
+        }
+        else if (argument == "-f" || argument == "--frontend-port")
+        {
+            if (i + 1 < arguments.size())
+            {
+                try
+                {
+                    frontend_port = std::stoi(arguments[i + 1]);
+                    if (frontend_port < 1 || frontend_port > 65535)
+                    {
+                        mindnet::fatal << "Frontend port must be between 1 and 65535" << commit;
+                        exit_status = 1;
+                        return true;
+                    }
+                    custom_frontend_port = true;
+                }
+                catch (std::exception& e)
+                {
+                    mindnet::fatal << "Invalid frontend port provided: " << arguments[i + 1] << commit;
+                    exit_status = 1;
+                    return true;
+                }
+                ++i;
+            }
+            else
+            {
+                mindnet::fatal << "No port provided for option --frontend-port. Exiting." << commit;
                 exit_status = 1;
                 return true;
             }
@@ -226,25 +259,19 @@ bool commands_function_start(
     //
 
 
-    if (custom_port)
-    {
-        mindnet::debug << "Custom port was provided: " << port << commit;
-    }
-    else
-    {
-        mindnet::debug << "Using default port: " << port << commit;
-    }
-    if (custom_host)
-    {
-        mindnet::debug << "Custom host was provided: " << host << commit;
-    }
-    else
-    {
-        mindnet::debug << "Using default host: " << host << commit;
-    }
-    mindnet::info << "Starting server on port " << port << commit;
+    if (custom_port) {mindnet::debug << "Custom port was provided: " << port << commit;}
+    else {mindnet::debug << "Using default port: " << port << commit;}
+
+    if (custom_frontend_port) {mindnet::debug << "Custom frontend port was provided: " << frontend_port << commit;}
+    else {mindnet::debug << "Using default frontendport: " << frontend_port << commit;}
+
+    if (custom_host) {mindnet::debug << "Custom host was provided: " << host << commit;}
+    else {mindnet::debug << "Using default host: " << host << commit;}
+
+    mindnet::info << "Starting backend on port " << port << commit;
+    mindnet::info << "Starting frontend on port " << frontend_port << commit;
     mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
-    server.run(host, port);
+    server.run(host, port, frontend_port);
     return false;
 }
 

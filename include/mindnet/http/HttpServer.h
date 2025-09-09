@@ -21,7 +21,7 @@ namespace mindnet::http
     public:
         HttpServer(std::shared_ptr<persistence::Persistence> db,
                    const std::string& directory_for_static_files = std::string("static"));
-        void run(const string& host = "http://localhost", int port = 8080);
+        void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
 
         template <typename T>
         void register_controller(T* controller, models::misc::ModelDefinition& definition)

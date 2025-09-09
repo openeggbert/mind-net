@@ -26,7 +26,7 @@ namespace mindnet::http
         create_authentication_endpoints(db_);
     }
 
-    void HttpServer::run(const string& host, int port)
+    void HttpServer::run(const string& host, int port, int frontend_port)
     {
         namespace fs = std::filesystem;
 
@@ -60,7 +60,7 @@ namespace mindnet::http
         }
         std::ofstream conf_js(conf_js_path);
         conf_js << "export const HOST = \"" << host << "\";" << std::endl;
-        conf_js << "export const PORT = " << port << ";" << std::endl;
+        conf_js << "export const PORT = " << frontend_port << ";" << std::endl;
         conf_js.close();
 
         crow_app.port(port).multithreaded().run();
