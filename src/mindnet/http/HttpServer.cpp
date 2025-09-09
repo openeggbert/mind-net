@@ -26,12 +26,12 @@ namespace mindnet::http
         create_authentication_endpoints(db_);
     }
 
-    void HttpServer::run(int port)
+    void HttpServer::run(const string& host, int port)
     {
         namespace fs = std::filesystem;
 
         ////
-#ifndef jstxt
+#ifdef jstxt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
@@ -53,14 +53,15 @@ namespace mindnet::http
 #endif
 
         //
-        fs::path port_js_path = fs::path(directory_for_static_files) / "port.js";
-        if (fs::exists(port_js_path))
+        fs::path conf_js_path = fs::path(directory_for_static_files) / "conf.js";
+        if (fs::exists(conf_js_path))
         {
-            fs::remove(port_js_path);
+            fs::remove(conf_js_path);
         }
-        std::ofstream port_js(port_js_path);
-        port_js << "export const PORT = " << port << ";" << std::endl;
-        port_js.close();
+        std::ofstream conf_js(conf_js_path);
+        conf_js << "export const HOST = \"" << host << "\";" << std::endl;
+        conf_js << "export const PORT = " << port << ";" << std::endl;
+        conf_js.close();
 
         crow_app.port(port).multithreaded().run();
     }
@@ -88,7 +89,7 @@ namespace mindnet::http
                 "index.html",
                 "styles.css",
                 "scripts.js",
-                "port.js",
+                "conf.js",
                 "favicon.png",
                 "api.js",
                 "schemas.js",

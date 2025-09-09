@@ -102,7 +102,9 @@ bool commands_function_start(
     int& exit_status)
 {
     bool custom_port = false;
+    bool custom_host = false;
     int port = 8080;
+    string host = "http://localhost";
     string static_directory = "static";
 
     const char* env_secret = std::getenv("JWT_SECRET");
@@ -147,6 +149,21 @@ bool commands_function_start(
             else
             {
                 mindnet::fatal << "No port provided for option --port. Exiting." << commit;
+                exit_status = 1;
+                return true;
+            }
+        }
+        else if (argument == "-h" || argument == "--host")
+        {
+            if (i + 1 < arguments.size())
+            {
+                host = arguments[i + 1];
+                custom_host = true;
+                ++i;
+            }
+            else
+            {
+                mindnet::fatal << "No host provided for option --host. Exiting." << commit;
                 exit_status = 1;
                 return true;
             }
@@ -217,9 +234,17 @@ bool commands_function_start(
     {
         mindnet::debug << "Using default port: " << port << commit;
     }
+    if (custom_host)
+    {
+        mindnet::debug << "Custom host was provided: " << host << commit;
+    }
+    else
+    {
+        mindnet::debug << "Using default host: " << host << commit;
+    }
     mindnet::info << "Starting server on port " << port << commit;
     mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
-    server.run(port);
+    server.run(host, port);
     return false;
 }
 

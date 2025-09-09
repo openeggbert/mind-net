@@ -1,9 +1,10 @@
-import { PORT } from "./port.js";
+import { HOST } from "./conf.js";
+import { PORT } from "./conf.js";
 import {showError} from "./dom.js";
 import {getEntitySchemas} from "./state.js";
 
 
-export const API_BASE = `http://localhost:${PORT}/api`;
+export const API_BASE = `${HOST}:${PORT}/api`;
 export const MODEL_DEFINITION_URL = `${API_BASE}/model_definition`;
 export const CACHE_KEY = "model_definition_cache";
 export const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours
