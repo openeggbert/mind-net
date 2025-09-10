@@ -81,7 +81,7 @@ namespace mindnet::persistence::api
             //
             if (auto error = entity.validate(); !error.empty())
                 return {400, error};
-            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name())) ; !error.empty())
+            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_create(context, entity); !res.ok())
@@ -149,7 +149,7 @@ namespace mindnet::persistence::api
             auto def = db->get_model_definition(derived().get_model_name()).value();
             if (auto error = validate_readonly(old_values, ef, def); !error.empty())
                 return {400, error};
-            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name())) ; !error.empty())
+            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_update(

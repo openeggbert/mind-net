@@ -69,7 +69,7 @@ namespace mindnet::persistence::impl::sqlite::validators
             return {
                 403,
                 std::string(
-                    "You do not have permission to list tag types for map with ID " + std::to_string(map_id) + ".")
+                    "You do not have permission to list tag types for map with ID " + std::to_string(tag_type.first.map_id) + ".")
             };
 
         return ok_result;
