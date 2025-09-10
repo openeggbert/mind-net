@@ -5,6 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/MessageCrudlValidator.h"
 
 #include "mindnet/Global.h"
+#include "mindnet/enums/SingleRight.h"
 #include "mindnet/models/Message.h"
 #include "mindnet/persistence/api/Persistence.h"
 
@@ -75,8 +76,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult MessageCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
-
-
         mandatory_filter(owner_id)
 
         return_if (filter.at("owner_id") != std::to_string(ctx.token.user_id),

@@ -42,8 +42,8 @@ namespace mindnet::models
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_columns({
-            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::TAG_TYPE_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::TAG_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
         });
 
 struct Model : misc::BaseModel

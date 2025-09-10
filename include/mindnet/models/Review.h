@@ -41,10 +41,11 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_group("Tests", 200)
         .set_columns({
-            coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY),
+            coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
+            coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::REVIEW_DATE, DATETIME),
-            coldef(COLS::GRADE, INTEGER),
+            coldef(COLS::GRADE, INTEGER | READONLY),
             coldef(COLS::RESPONSE_DATA),
             coldef(COLS::NOTES),
         });
@@ -54,7 +55,8 @@ struct Model : misc::BaseModel
 {
     int user_id{};
     int note_id{};
-    string review_date;
+    int question_id{};
+    unixtime review_date;
     int grade{};
     string response_data;
     string notes;
@@ -68,6 +70,7 @@ struct Model : misc::BaseModel
             updated_at == other.updated_at &&
             user_id == other.user_id &&
             note_id == other.note_id &&
+            question_id == other.question_id &&
             review_date == other.review_date &&
             grade == other.grade &&
             response_data == other.response_data &&

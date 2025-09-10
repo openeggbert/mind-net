@@ -41,12 +41,12 @@ namespace mindnet::models
 
     inline def PROPERTY_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
+        .set_rest_operations("rl")
         .set_columns({
             //
-            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::KEY, MANDATORY),
+            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY),
+            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY),
+            coldef(COLS::KEY, MANDATORY | READONLY),
             coldef(COLS::VALUE),
             //
         });

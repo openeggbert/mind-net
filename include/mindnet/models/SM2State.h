@@ -43,8 +43,9 @@ namespace mindnet::models
         .set_group("Tests", 200)
     .set_columns({
         //
-        coldef(COLS::USER_ID,FOREIGN_KEY | MANDATORY),
-        coldef(COLS::NOTE_ID,FOREIGN_KEY | MANDATORY),
+        coldef(COLS::USER_ID,FOREIGN_KEY | MANDATORY | READONLY),
+        coldef(COLS::NOTE_ID,FOREIGN_KEY | MANDATORY | READONLY),
+        coldef(COLS::QUESTION_ID,FOREIGN_KEY | MANDATORY | READONLY),
         coldef(COLS::REPETITIONS,INTEGER).set_default_value(0),
         coldef(COLS::INTERVAL,INTEGER).set_default_value(1),
         coldef(COLS::EF_TIMES_100,INTEGER).set_default_value(250),
@@ -57,11 +58,12 @@ namespace mindnet::models
     {
         int user_id{};
         int note_id{};
+        int question_id{};
         int repetitions{};
         int interval{1};
         int ef_times_100{250};
-        string next_review;
-        string last_review;
+        unixtime next_review;
+        unixtime last_review;
         int last_quality{};
 
         create_model_h_methods(Model, MODEL)
@@ -73,6 +75,7 @@ namespace mindnet::models
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
                 note_id == other.note_id &&
+                question_id == other.question_id &&
                 repetitions == other.repetitions &&
                 interval == other.interval &&
                 ef_times_100 == other.ef_times_100 &&

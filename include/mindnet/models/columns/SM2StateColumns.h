@@ -44,6 +44,7 @@ namespace mindnet::models::columns
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* NOTE_ID = "note_id";
+        static constexpr const char* QUESTION_ID = "question_id";
         static constexpr const char* REPETITIONS = "repetitions";
         static constexpr const char* INTERVAL = "interval";
         static constexpr const char* EF_TIMES_100 = "ef_times_100";

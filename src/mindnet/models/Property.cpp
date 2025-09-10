@@ -33,4 +33,16 @@ namespace mindnet::models
         key = text();
         value = text();
     };
+
+    string Property::validate()
+    {
+        using columns::PropertyColumns;
+
+        validator_chain_vector list{
+            [this] { return test_ne(map_id, 0, PropertyColumns::MAP_ID); },
+            [this] { return test_ne(note_id, 0, PropertyColumns::NOTE_ID); },
+            [this] { return testt_between(key, 1, 64, PropertyColumns::KEY); },
+        };
+        return ValidatorChain::run(list);
+    }
 }

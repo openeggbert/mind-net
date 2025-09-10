@@ -4,7 +4,9 @@
 
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
+#include "mindnet/enums/SingleRight.h"
 #include "mindnet/http/QueryParams.h"
+#include "mindnet/persistence/api/CrudlValidatorBase.h"
 
 namespace mindnet::persistence::api
 {
@@ -77,6 +79,32 @@ namespace mindnet::persistence::api
         models::Note note;
         note.from_values(notes.first.at(0));
         return {note.get_id(), ""};
+    }
+
+    bool has_right_for_map(
+        const RequestContext& ctx, const int map_id, const enums::SingleRight single_right)
+    {
+        if (ctx.role == enums::UserRole::ADMIN) { return true; }
+
+        auto map = find_model(map, map_id)
+        if (map.second.empty()) return false;
+
+        bool map_owner_and_can = ctx.token.user_id == map.first.owner_id && mindnet::enums::can(
+            single_right, map.first.owner_rights);
+        if (map_owner_and_can) return true;
+
+        bool map_team_member_and_can = false;
+
+        if (map.first.team_id != 0)
+        {
+            auto result = is_member_of_team(ctx, map.first.team_id);
+            map_team_member_and_can = !result.empty() && mindnet::enums::can(
+                enums::SingleRight::WRITE, map.first.team_rights);
+            if (map_team_member_and_can) return true;
+            bool other_can = mindnet::enums::can(single_right, map.first.other_rights);
+            if (other_can) return true;
+        }
+        return false;
     }
 
     gen_find_cpp(Comment, comment, COMMENT)

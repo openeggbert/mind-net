@@ -45,8 +45,8 @@ namespace mindnet::models
         .set_group("Other", 500)
         .set_columns({
             //
-            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY | READONLY),
             //
         })
     .add_custom_list_action("tag","List tags", {"tag_type_id","{id}"})

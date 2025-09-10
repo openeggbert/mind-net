@@ -43,9 +43,9 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_group("Other", 500)
         .set_columns({
-            coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY).set_description(
+            coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
                 "Foreign key referencing the collection"),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY).set_description("Foreign key referencing the note"),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description("Foreign key referencing the note"),
             coldef(COLS::ORDER_INDEX, INTEGER).set_description("Ordering index of the item within the collection"),
         });
 

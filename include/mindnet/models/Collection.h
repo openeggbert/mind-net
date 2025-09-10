@@ -45,7 +45,7 @@ namespace mindnet::models
             coldef(COLS::NAME, MANDATORY).set_description("Collection name"),
             coldef(COLS::DESCRIPTION).set_description("Collection description"),
             coldef(COLS::ORDER_INDEX, INTEGER).set_description("Order index for sorting"),
-            coldef(COLS::CREATED_BY).set_foreign_key("user").set_description("User ID who created this collection"),
+            coldef(COLS::CREATED_BY, READONLY).set_foreign_key("user").set_description("User ID who created this collection"),
             coldef(COLS::IS_PUBLIC, BOOL).set_default_value(0).set_description("Whether this collection is public"),
         })
     .add_custom_list_action("collection_item","List items", {"collection_id","{id}"})

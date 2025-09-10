@@ -23,6 +23,7 @@
 
 #include <string>
 
+#include "SingleRight.h"
 #include "mindnet/models/misc/EnumDefinition.h"
 
 namespace mindnet::enums
@@ -104,5 +105,18 @@ namespace mindnet::enums
     {
         return can_delete(static_cast<AccessRight> (access_right));
     }
+
+    inline bool can(SingleRight single_right, int access_right)
+    {
+        switch (single_right)
+        {
+        case SingleRight::NONE: return false;
+        case SingleRight::READ: return can_read(access_right);
+        case SingleRight::WRITE: return can_write(access_right);
+        case SingleRight::DELETE: return can_delete(access_right);
+        default: return false;
+        }
+    }
+
 } // namespace mindnet::enums
 #endif // ACCESSRIGHT_H

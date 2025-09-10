@@ -41,9 +41,9 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_group("Links", 100)
         .set_columns({
-            coldef(COLS::FROM_NOTE_ID, MANDATORY).set_foreign_key("note").set_description(
+            coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note").set_description(
                 "ID of the note this link is from"),
-            coldef(COLS::TO_URL, MANDATORY).set_description("URL this link points to"),
+            coldef(COLS::TO_URL, MANDATORY | READONLY).set_description("URL this link points to"),
         });
 
     struct Model : misc::BaseModel

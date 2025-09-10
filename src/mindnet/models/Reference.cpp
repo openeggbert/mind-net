@@ -31,4 +31,14 @@ namespace mindnet::models
         to_note_id = number();
         label = text();
     };
+    string Reference::validate()
+    {
+        using columns::ReferenceColumns;
+
+        validator_chain_vector list{
+        [this] { return test_ne(from_note_id, 0, ReferenceColumns::FROM_NOTE_ID);},
+            [this] { return test_ne(to_note_id, 0, ReferenceColumns::TO_NOTE_ID);},
+        };
+        return ValidatorChain::run(list);
+    }
 }

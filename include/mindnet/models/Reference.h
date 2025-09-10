@@ -42,8 +42,8 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_group("Links", 100)
         .set_columns({
-            coldef(COLS::FROM_NOTE_ID, MANDATORY).set_foreign_key("note"),
-            coldef(COLS::TO_NOTE_ID, MANDATORY).set_foreign_key("note"),
+            coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
+            coldef(COLS::TO_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
             coldef(COLS::LABEL),
         });
     ;

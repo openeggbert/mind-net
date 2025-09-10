@@ -2,22 +2,23 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/models/Tag.h"
+#include "mindnet/models/CollectionItem.h"
 
 namespace mindnet::models
 {
-    entity_fields Tag::to_values() const
+    entity_fields CollectionItem::to_values() const
     {
         entity_fields result;
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
+        result.push_back(collection_id);
         result.push_back(note_id);
-        result.push_back(tag_type_id);
+        result.push_back(order_index);
         return result;
     }
 
-    void Tag::from_values(const entity_fields& values)
+    void CollectionItem::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -26,16 +27,18 @@ namespace mindnet::models
         set_id(number());
         created_at = number();
         updated_at = number();
+        collection_id = number();
         note_id = number();
-        tag_type_id = number();
+        order_index = number();
     };
-    string Tag::validate()
+
+    string CollectionItem::validate()
     {
-        using columns::TagColumns;
+        using columns::CollectionItemColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(note_id, 0, TagColumns::NOTE_ID); },
-            [this] { return test_ne(tag_type_id, 0, TagColumns::TAG_TYPE_ID); },
+            [this] { return test_ne(collection_id, 0, CollectionItemColumns::COLLECTION_ID); },
+            [this] { return test_ne(note_id, 0, CollectionItemColumns::NOTE_ID); },
         };
         return ValidatorChain::run(list);
     }

@@ -1,0 +1,81 @@
+//
+// Created by robertvokac on 8/6/25.
+//
+
+#include "mindnet/persistence/impl/sqlite/validators/PropertyCrudlValidator.h"
+
+#include "mindnet/Global.h"
+#include "mindnet/models/Property.h"
+#include "mindnet/persistence/api/Persistence.h"
+
+#define Model Property
+#define MODEL PROPERTY
+#define model property
+
+namespace mindnet::persistence::impl::sqlite::validators
+{
+    using impl::sqlite::validators::PropertyCrudlValidator;
+
+    OperationResult PropertyCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    {
+        return_if (ctx.role < enums::UserRole::EDITOR,
+               403, "User does not have permission to create a property.")
+
+        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::WRITE))
+        {return ok_result;}
+        return {403, "You do not have permission to create a property for this map."};
+    }
+
+    OperationResult PropertyCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    {
+        auto map = find_model(map, entity.map_id)
+        if (map.second.empty()) return {400, map.second};
+
+        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::READ))
+        {return ok_result;}
+        return {403, "You do not have permission to read this property."};
+
+    }
+
+    OperationResult PropertyCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    {
+        if(!has_right_for_map(ctx, old_entity.map_id, enums::SingleRight::WRITE))
+            return {403, "You do not have permission to update this property."};
+
+        return ok_result;
+    }
+
+    OperationResult PropertyCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    {
+
+        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::DELETE))
+        {return ok_result;}
+        return {403, "You do not have permission to delete this property."};
+
+        return ok_result;
+    }
+
+    OperationResult PropertyCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    {
+        mandatory_filter(note_id)
+        auto note_id = std::stoi(filter.at("note_id"));
+        auto note = find_model(note, note_id);
+        if (note.second.empty()) return {400, note.second};
+
+        int map_id = note.first.map_id;
+
+        if(!has_right_for_map(ctx, map_id, enums::SingleRight::READ))
+        return {403, std::string("You do not have permission to list properties for note with ID " + std::to_string(note_id) + ".")};
+
+        return ok_result;
+    }
+
+    string PropertyCrudlValidator::get_model_name() const
+    {
+        return STRING(model);
+    }
+}
+
+#undef Model
+#undef MODEL
+#undef model

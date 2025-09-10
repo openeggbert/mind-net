@@ -29,4 +29,15 @@ namespace mindnet::models
         from_note_id = number();
         to_url = text();
     };
+
+    string Link::validate()
+    {
+        using columns::LinkColumns;
+
+        validator_chain_vector list{
+            [this] { return test_ne(from_note_id, 0, LinkColumns::FROM_NOTE_ID); },
+            [this] { return testt_not_empty(to_url, LinkColumns::TO_URL); },
+        };
+        return ValidatorChain::run(list);
+    }
 }
