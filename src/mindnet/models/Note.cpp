@@ -39,4 +39,14 @@ namespace mindnet::models
         importance = static_cast<enums::Importance>(number());
         difficulty = static_cast<enums::Difficulty>(number());
     }
+    string Note::validate()
+    {
+        using columns::NoteColumns;
+
+        validator_chain_vector list{
+            [this] { return test_ne(map_id, 0, NoteColumns::MAP_ID); },
+            [this] { return testt_between(title, 1, 256, NoteColumns::TITLE); },
+        };
+        return ValidatorChain::run(list);
+    }
 }

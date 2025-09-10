@@ -125,6 +125,28 @@ namespace mindnet::models::misc
 
     };
 
+    inline string validate_enums(const entity_fields& fields_, const ModelDefinition& def_)
+    {
+        auto columns = def_.get_columns();
+        for (int i = 0; i < fields_.size(); i++)
+        {
+            auto column = columns[i];
+
+            if (column.get_enum_definition().has_value())
+            {
+                auto value = fields_[i];
+                int64_t value_int64_t = std::get<int64_t>(value);
+
+                if (!column.get_enum_definition()->is_value_valid(value_int64_t))
+                {
+                }
+                return "Invalid enum value for column '" + column.get_column_name() +
+                    "'. Please provide a valid value from the allowed enum options.";
+            }
+        }
+        return "";
+    }
+    
     inline string validate_readonly(entity_fields& old_, entity_fields& new_, ModelDefinition& def_)
     {
         if (old_.size() != new_.size()) return "The number of fields in the entity has changed";

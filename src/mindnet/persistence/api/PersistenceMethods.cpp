@@ -67,6 +67,18 @@ namespace mindnet::persistence::api
         return "";
     }
 
+    std::pair<int, string> find_note_for_content(const RequestContext& ctx, int content_id)
+    {
+        http::QueryParams query_params;
+        query_params.filters.emplace("content_id", std::to_string(content_id));
+        auto notes = ctx.db->list(models::NOTE_DEFINITION, ctx.token, query_params);
+        if (notes.second.ko()) return {-1,notes.second.error};
+        if (notes.first.empty()) return {-1, std::string("There is no note with content id") + std::to_string(content_id)};
+        models::Note note;
+        note.from_values(notes.first.at(0));
+        return {note.get_id(), ""};
+    }
+
     gen_find_cpp(Comment, comment, COMMENT)
     gen_find_cpp(User, user, USER)
     gen_find_cpp(Message, message, MESSAGE)

@@ -46,10 +46,10 @@ namespace mindnet::models
         .set_all_rest_operations()
         .set_columns({
             //
-            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY).set_description("Map, this note belongs to."),
+            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("Map, this note belongs to."),
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the note."),
             coldef(COLS::PARENT_NOTE_ID).set_foreign_key("note").set_description("Parent note, if any."),
-            coldef(COLS::CONTENT_ID, FOREIGN_KEY).set_description("Content associated with this note."),
+            coldef(COLS::CONTENT_ID, FOREIGN_KEY | UNIQUE).set_description("Content associated with this note."),
             coldef(COLS::SIBLING_POSITION, MANDATORY).set_description("Position among sibling notes."),
             coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
                                      set_description("Importance level of the note."),

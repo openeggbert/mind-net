@@ -52,8 +52,8 @@ namespace mindnet::persistence::api
     bool has_user_name(const RequestContext& ctx, string user_name);
     bool has_user_email(const RequestContext& ctx, string user_mail);
     bool has_map_name(const RequestContext& ctx, string map_name);
-
     string is_member_of_team(const RequestContext& ctx, int team_id);
+    std::pair<int, string> find_note_for_content(const RequestContext& ctx, int content_id);
 
     gen_find_h(Collection, collection)
     gen_find_h(CollectionItem, collection_item)

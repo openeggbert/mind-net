@@ -125,6 +125,17 @@ namespace mindnet::models::misc
             check_index_is_valid(index);
             return enum_to_string_pointer_function(values[index]);
         }
+        bool is_value_valid(const short value) const
+        {
+            for (int i = 0; i < value_count; ++i)
+            {
+                if (values[i] == value)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     };
 }
 #endif // ENUMDEFINITION_H

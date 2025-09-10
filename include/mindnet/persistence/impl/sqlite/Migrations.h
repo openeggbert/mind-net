@@ -232,7 +232,7 @@ CREATE TABLE note (
 	map_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     parent_note_id INTEGER,
-    content_id INTEGER,
+    content_id INTEGER UNIQUE,
     sibling_position INTEGER NOT NULL,
     importance INTEGER DEFAULT 0 CHECK (importance IN (0, 1, 2, 3)),
     difficulty INTEGER DEFAULT 0 CHECK (difficulty IN (0, 1, 2, 3, 4)),
@@ -257,7 +257,7 @@ CREATE TABLE property(
 
 	FOREIGN KEY (map_id) REFERENCES map(id) /*ON DELETE CASCADE*/,
     FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
-	unique (map_id, note_id, key)
+	UNIQUE (map_id, note_id, key)
 );
 
 CREATE INDEX idx_property_map_note_key ON property(map_id, note_id, key);

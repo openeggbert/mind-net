@@ -47,7 +47,7 @@ namespace mindnet::models
         .set_group("Other", 500)
         .set_columns({
             //
-            coldef(COLS::VALUE, TEXT | MANDATORY).set_description("Content value/body"),
+            coldef(COLS::VALUE, TEXTAREA | MANDATORY).set_description("Content value/body"),
             coldef(COLS::FORMAT, INTEGER).set_default_value(0).set_enum_definition(
                 enums::content_format_to_enum_definition()).set_description("Content format type"),
             coldef(COLS::VERSION, INTEGER).set_default_value("1").set_description("Content version number"),

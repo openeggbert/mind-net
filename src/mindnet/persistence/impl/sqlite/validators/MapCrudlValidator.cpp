@@ -20,7 +20,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if(api::has_user_name(ctx, entity.name),
+        return_if(api::has_map_name(ctx, entity.name),
                   409, "name already exists")
 
         return_if(entity.owner_id != ctx.token.user_id,
