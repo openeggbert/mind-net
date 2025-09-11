@@ -67,7 +67,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         }
         while (true)
         {
-            auto maps = ctx.db->list(models::NOTE_DEFINITION, ctx.token, params);
+            auto maps = ctx.db.list(models::NOTE_DEFINITION, ctx.token, params);
             if (maps.second.ko()) return maps.second;
             if (maps.first.empty()) break;
             for (auto& values : maps.first)

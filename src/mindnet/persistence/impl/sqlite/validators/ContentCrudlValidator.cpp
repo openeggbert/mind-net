@@ -31,7 +31,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto result = find_note_for_content(ctx, entity.get_id());
         if (!result.second.empty()) return {400, result.second};
 
-        return ctx.db->can_read(models::NOTE_DEFINITION, ctx.token, result.first);
+        return ctx.db.can_read(models::NOTE_DEFINITION, ctx.token, result.first);
     }
 
     OperationResult ContentCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
@@ -41,7 +41,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto one = find_model(note, old_entity.get_id());
 
         auto ef = one.first.to_values();
-        return ctx.db->can_update(models::NOTE_DEFINITION, ctx.token, ef);
+        return ctx.db.can_update(models::NOTE_DEFINITION, ctx.token, ef);
     }
 
     OperationResult ContentCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
@@ -49,7 +49,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto result = find_note_for_content(ctx, entity.get_id());
         if (!result.second.empty()) return {400, result.second};
 
-        return ctx.db->can_delete(models::NOTE_DEFINITION, ctx.token, result.first);
+        return ctx.db.can_delete(models::NOTE_DEFINITION, ctx.token, result.first);
     }
 
     OperationResult ContentCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const

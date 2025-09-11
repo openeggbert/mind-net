@@ -108,7 +108,7 @@ namespace mindnet::persistence
         add_repository(link, Link, LINK);
         //
 
-#define disable_validation
+//#define disable_validation
 
 #ifndef disable_validation
         add_validator(user, User)
@@ -179,7 +179,7 @@ namespace mindnet::persistence
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_create(this, token, ef);
+            return v2->can_create(*this, token, ef);
         }
 #ifdef disable_validation
         return ok_result;
@@ -198,8 +198,7 @@ namespace mindnet::persistence
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_read(this, token, id);
-
+            return v2->can_read(*this, token, id);
         }
 #ifdef disable_validation
         return ok_result;
@@ -221,7 +220,7 @@ namespace mindnet::persistence
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_update(this, token, ef);
+            return v2->can_update(*this, token, ef);
         }
 #ifdef disable_validation
         return ok_result;
@@ -243,7 +242,7 @@ namespace mindnet::persistence
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_delete(this, token, id);
+            return v2->can_delete(*this, token, id);
         }
 #ifdef disable_validation
         return ok_result;
@@ -262,7 +261,7 @@ namespace mindnet::persistence
         api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_list(this, token, filter);
+            return v2->can_list(*this, token, filter);
         }
 #ifdef disable_validation
         return ok_result;

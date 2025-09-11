@@ -22,7 +22,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         return_if (entity.from_user_id != ctx.token.user_id,
             403, "You can create suggestion only for your user.")
-        return_if (ctx.db->has_repository_with_name(entity.table_name),
+        return_if (ctx.db.has_repository_with_name(entity.table_name),
             403, "There is no such model - value for table_name is invalid")
         return_if (entity.review_count != 0,
             403, "Review count must be 0 during suggestion creation.")

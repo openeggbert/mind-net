@@ -38,7 +38,7 @@ std::pair<models::Model, string> find_##model(const RequestContext& ctx, int id)
 #define gen_find_cpp(Model, model, MODEL)\
 std::pair<models::Model, string> find_##model(const RequestContext& ctx, int id)\
     {\
-        auto result = ctx.db->read(models::MODEL##_DEFINITION, ctx.token, id);\
+        auto result = ctx.db.read(models::MODEL##_DEFINITION, ctx.token, id);\
         if (result.second.ko()) return {{}, result.second.error};\
         models::Model entity;\
         entity.from_values(result.first);\
@@ -48,7 +48,7 @@ std::pair<models::Model, string> find_##model(const RequestContext& ctx, int id)
 namespace mindnet::persistence::api
 {
     std::pair<models::User, api::OperationResult> find_logged_user(
-        IPersistence*& db, http::LoginToken token);
+        IPersistence& db, http::LoginToken token);
 
     bool has_user_name(const RequestContext& ctx, string user_name);
     bool has_user_email(const RequestContext& ctx, string user_mail);
