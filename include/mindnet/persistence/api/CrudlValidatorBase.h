@@ -28,6 +28,12 @@ api::OperationResult validate_list(const RequestContext&, const string_map&) con
 
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);\
 
+#define assert_role(ROLE) \
+return_if (ctx.role < enums::UserRole:: ROLE ,403, "User does not have permission for this action.")
+
+#define assert_admin() assert_role(ADMIN)
+#define assert_editor() assert_role(EDITOR)
+
 #define mandatory_filter(field)\
 if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
 

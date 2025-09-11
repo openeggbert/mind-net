@@ -1,6 +1,14 @@
 //
 // Created by robertvokac on 7/31/25.
 //
+//
+#define plugin_base
+#define plugin_zettelkasten
+#define plugin_email
+#define plugin_chat
+#define plugin_suggestion
+#define plugin_test
+//
 #include <iostream>
 #include <filesystem>
 
@@ -14,15 +22,15 @@
 #include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/controllers/ModelController.h"
 //
+#ifdef plugin_base
 #include "mindnet/models/User.h"
-#include "mindnet/models/Message.h"
 #include "mindnet/models/Team.h"
 #include "mindnet/models/TeamMember.h"
-#include "mindnet/models/Discussion.h"
-#include "mindnet/models/Comment.h"
-#include "mindnet/models/Suggestion.h"
-#include "mindnet/models/SuggestionReview.h"
 #include "mindnet/models/History.h"
+#endif
+
+
+#ifdef plugin_zettelkasten
 #include "mindnet/models/Map.h"
 #include "mindnet/models/Content.h"
 #include "mindnet/models/Note.h"
@@ -31,11 +39,30 @@
 #include "mindnet/models/Tag.h"
 #include "mindnet/models/Collection.h"
 #include "mindnet/models/CollectionItem.h"
+#include "mindnet/models/Reference.h"
+#include "mindnet/models/Link.h"
+#endif
+
+#ifdef plugin_email
+#include "mindnet/models/Message.h"
+#endif
+
+#ifdef plugin_chat
+#include "mindnet/models/Discussion.h"
+#include "mindnet/models/Comment.h"
+#endif
+
+#ifdef plugin_suggestion
+#include "mindnet/models/Suggestion.h"
+#include "mindnet/models/SuggestionReview.h"
+#endif
+
+#ifdef plugin_test
 #include "mindnet/models/Review.h"
 #include "mindnet/models/SM2State.h"
 #include "mindnet/models/Question.h"
-#include "mindnet/models/Reference.h"
-#include "mindnet/models/Link.h"
+#endif
+
 //
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
@@ -234,15 +261,15 @@ bool commands_function_start(
 
     mindnet::routes::ModelController controller;
 
+
+#ifdef plugin_base
     add_controller(USER)
-    add_controller(MESSAGE)
     add_controller(TEAM)
     add_controller(TEAM_MEMBER)
-    add_controller(DISCUSSION)
-    add_controller(COMMENT)
-    add_controller(SUGGESTION)
-    add_controller(SUGGESTION_REVIEW)
     add_controller(HISTORY)
+#endif
+
+#ifdef plugin_zettelkasten
     add_controller(MAP)
     add_controller(CONTENT)
     add_controller(NOTE)
@@ -251,11 +278,39 @@ bool commands_function_start(
     add_controller(TAG)
     add_controller(COLLECTION)
     add_controller(COLLECTION_ITEM)
+    add_controller(REFERENCE)
+    add_controller(LINK)
+#endif
+
+#ifdef plugin_email
+    add_controller(MESSAGE)
+#endif
+
+#ifdef plugin_chat
+    add_controller(DISCUSSION)
+    add_controller(COMMENT)
+#endif
+
+#ifdef plugin_suggestion
+    add_controller(SUGGESTION)
+    add_controller(SUGGESTION_REVIEW)
+#endif
+
+#ifdef plugin_test
     add_controller(REVIEW)
     add_controller(SM2_STATE)
     add_controller(QUESTION)
-    add_controller(REFERENCE)
-    add_controller(LINK)
+#endif
+
+
+
+
+
+
+
+
+
+
     //
 
 
@@ -263,7 +318,7 @@ bool commands_function_start(
     else {mindnet::debug << "Using default port: " << port << commit;}
 
     if (custom_frontend_port) {mindnet::debug << "Custom frontend port was provided: " << frontend_port << commit;}
-    else {mindnet::debug << "Using default frontendport: " << frontend_port << commit;}
+    else {mindnet::debug << "Using default frontend port: " << frontend_port << commit;}
 
     if (custom_host) {mindnet::debug << "Custom host was provided: " << host << commit;}
     else {mindnet::debug << "Using default host: " << host << commit;}

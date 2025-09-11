@@ -19,7 +19,6 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult TagTypeCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-
         return_if (ctx.role < enums::UserRole::EDITOR,
                   403, "User does not have permission to create a property.")
 

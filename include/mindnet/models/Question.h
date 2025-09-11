@@ -44,7 +44,7 @@ namespace mindnet::models
         .set_group("Tests", 200)
         .set_columns(
             {
-                coldef(COLS::NOTE_ID, MANDATORY).set_foreign_key("note"),
+                coldef(COLS::NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
                 coldef(COLS::QUESTION_TEXT, TEXTAREA | MANDATORY),
                 coldef(COLS::ANSWERS_JSON, TEXT),
             });
