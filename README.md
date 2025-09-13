@@ -128,7 +128,8 @@ openssl rand -base64 32
 - [ ] Zettelkasten component
 - [ ] Test component
 - [ ] New table concept : title, disambiguation, note_id
-- [ ] New table source: type:book/web, title, author, year, page_number, url
+- [ ] New table source: type:book/web, title, author, year, page_number, url, map_id
+- [ ] New table idea: string title, string content, bool important, bool public
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab 
 - [ ] property.key, tag_type.title - length should be limited
 - [ ] IMPROVEMENT Enums will be PascalCase, not all uppercase
@@ -163,6 +164,7 @@ openssl rand -base64 32
 - [ ] Frontend : sort and order is missing
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
 - [ ] New entity Session
+- [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
   ```aiignore
    CREATE TABLE session (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

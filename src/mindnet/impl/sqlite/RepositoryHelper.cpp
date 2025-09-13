@@ -177,14 +177,9 @@ namespace mindnet::impl::sqlite
             return false;
         }
 
-        if (!fields.empty())
-        {
-            fields.erase(fields.begin());
-        }
-        if (!fields.empty())
-        {
-            fields.erase(fields.begin());
-        }
+        fields.erase(fields.begin(),
+                     fields.begin() + std::min<size_t>(2, fields.size()));
+
         fields.push_back(id);
 
         Utils::fill_sqlite_query(*query_ptr, fields, false);
