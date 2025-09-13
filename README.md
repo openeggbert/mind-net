@@ -127,7 +127,7 @@ openssl rand -base64 32
     without requiring re-authentication.
 - [ ] Zettelkasten component
 - [ ] Test component
-- [ ] New table concept
+- [ ] New table concept : title, disambiguation, note_id
 - [ ] New table source: type:book/web, title, author, year, page_number, url
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab 
 - [ ] property.key, tag_type.title - length should be limited
