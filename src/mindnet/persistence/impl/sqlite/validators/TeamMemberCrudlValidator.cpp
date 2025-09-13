@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/TeamMemberCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/TeamMember.h"
+#include "mindnet/plugins/core/models/TeamMember.h"
 #include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
@@ -22,21 +22,21 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if(ctx.role < enums::UserRole::EDITOR,
+        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR,
                   403, "User does not have permission to create a team member.");
 
         auto team = find_model(team, entity.team_id);
         return_if(!team.second.empty(), 400, "Team does not exist.")
 
-        if (ctx.token.user_id == team.first.leader_id || ctx.role == enums::UserRole::ADMIN)
+        if (ctx.token.user_id == team.first.leader_id || ctx.role == plugins::core::enums::UserRole::ADMIN)
         {
         }
         else if (ctx.token.user_id == entity.user_id)
         {
-            return_if (entity.role != enums::UserRole::READER,
+            return_if (entity.role != plugins::core::enums::UserRole::READER,
                 403, "Initial user role in team must be READER.")
 
-            return_if (entity.status != enums::UserStatus::PENDING,
+            return_if (entity.status != plugins::core::enums::UserStatus::PENDING,
                 403, "Initial user status in team must be PENDING.")
         }
         else
@@ -59,9 +59,9 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto team = find_model(team, team_member.first.team_id)
         return_if(!team.second.empty(), 400, team.second);
 
-        return_if (ctx.role == enums::UserRole::ADMIN,0, "")
+        return_if (ctx.role == plugins::core::enums::UserRole::ADMIN,0, "")
         return_if (ctx.token.user_id == team.first.leader_id,0, "")
-        return_if (ctx.token.user_id == team_member.first.user_id && team_member.first.status == enums::UserStatus::ACTIVE,
+        return_if (ctx.token.user_id == team_member.first.user_id && team_member.first.status == plugins::core::enums::UserStatus::ACTIVE,
             0, "")
 
         auto is_member = api::is_member_of_team(ctx, team.first.get_id());
@@ -78,7 +78,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto team = find_model(team, old_entity.team_id)
         return_if (team.second.empty(), 400, team.second)
 
-        return_if (ctx.role != enums::UserRole::ADMIN && ctx.token.user_id != team.first.leader_id,
+        return_if (ctx.role != plugins::core::enums::UserRole::ADMIN && ctx.token.user_id != team.first.leader_id,
             403, "Only team leader can update the team.")
 
         return ok_result;
@@ -97,7 +97,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult TeamMemberCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
-        if (ctx.role == enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
 
         mandatory_filter(team_id)
 

@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/MessageCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/Message.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/mail/models/Message.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Message

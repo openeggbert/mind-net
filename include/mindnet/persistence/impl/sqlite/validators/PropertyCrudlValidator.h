@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Property;
+    using mindnet::plugins::zettelkasten::models::Property;
 
-    class PropertyCrudlValidator : public api::CrudlValidatorBase<PropertyCrudlValidator, models::Property>
+    class PropertyCrudlValidator : public api::CrudlValidatorBase<PropertyCrudlValidator, Property>
     {
     public:
         PropertyCrudlValidator() = default;

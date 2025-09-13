@@ -6,14 +6,14 @@
 #define MIND_NET_ISERVICE_H
 #include "crow/json.h"
 #include "http/QueryParams.h"
-#include "models/misc/ModelDefinition.h"
+#include "model/ModelDefinition.h"
 #include "persistence/api/ICrudlValidator.h"
 #include "mindnet/persistence/api/IPersistence.h"
 
 namespace mindnet{
     using validator = persistence::api::ICrudlValidator*;
     using persistence::api::OperationResult;
-    using models::misc::ModelDefinition;
+    using model::ModelDefinition;
     using persistence::api::DbPtr;
 
 class IService
@@ -36,13 +36,13 @@ public:
     //
     virtual entity_fields request_to_entity_fields(
         crow::json::rvalue& body,
-        enums::Crudl crudl,
+        plugins::core::enums::Crudl crudl,
         ModelDefinition& def
         ) = 0;
 
 private:
     virtual OperationResult can_create(
-        const models::misc::ModelDefinition& model_definition,
+        const model::ModelDefinition& model_definition,
         http::LoginToken& token, entity_fields& ef) = 0;
     virtual OperationResult   can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) = 0;
     virtual OperationResult can_update(const ModelDefinition& model_definition, http::LoginToken& token,entity_fields& ef) = 0;

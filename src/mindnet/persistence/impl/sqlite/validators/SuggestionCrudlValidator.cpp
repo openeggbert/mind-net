@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/SuggestionCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Suggestion.h"
+#include "mindnet/plugins/suggestion/models/Suggestion.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Suggestion
@@ -27,7 +27,7 @@ namespace mindnet::persistence::impl::sqlite::validators
             403, "There is no such model - value for table_name is invalid")
         return_if (entity.review_count != 0,
             403, "Review count must be 0 during suggestion creation.")
-        return_if (entity.status != enums::SuggestionStatus::PENDING && entity.status != enums::SuggestionStatus::DRAFT,
+        return_if (entity.status != plugins::suggestion::enums::SuggestionStatus::PENDING && entity.status != plugins::suggestion::enums::SuggestionStatus::DRAFT,
             403, "Status must be PENDING or DRAFT during suggestion creation.")
 
         return ok_result;
@@ -37,7 +37,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if (entity.from_user_id != ctx.token.user_id && ctx.role < enums::UserRole::REVIEWER,
+        return_if (entity.from_user_id != ctx.token.user_id && ctx.role < plugins::core::enums::UserRole::REVIEWER,
             403, "You can not read this suggestion.");
 
         return ok_result;
@@ -49,7 +49,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         return_if (ctx.token.user_id != new_entity.from_user_id,
             403, "Only author of this suggestion can update it.");
-        return_if (old_entity.status == enums::SuggestionStatus::APPROVED,
+        return_if (old_entity.status == plugins::suggestion::enums::SuggestionStatus::APPROVED,
             400, "Suggestion is approved and cannot be updated");
 
         return ok_result;
@@ -65,7 +65,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult SuggestionCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
 
-        if (ctx.role >= enums::UserRole::REVIEWER)
+        if (ctx.role >= plugins::core::enums::UserRole::REVIEWER)
         {
             return ok_result;
         }

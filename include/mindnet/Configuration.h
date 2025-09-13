@@ -9,7 +9,7 @@
 #include <iostream>
 #include <map>
 
-#include "enums/UserRole.h"
+#include "plugins/core/enums/UserRole.h"
 
 namespace mindnet
 {
@@ -55,7 +55,7 @@ namespace mindnet
         bool allow_public_access{true};
         bool allow_self_registration{true};
         bool require_admin_approval_for_new_users{false};
-        enums::UserRole default_user_role{enums::UserRole::READER};
+        plugins::core::enums::UserRole default_user_role{plugins::core::enums::UserRole::READER};
         std::string jwt_secret{};
 
         bool string_to_bool(std::string& str)
@@ -81,7 +81,7 @@ namespace mindnet
             if (map_contains(map, "require_admin_approval_for_new_users"))
                 require_admin_approval_for_new_users = string_to_bool(
                     map["require_admin_approval_for_new_users"]);
-            if (map_contains(map, "default_user_role")) default_user_role = enums::string_to_user_role(map["default_user_role"]);
+            if (map_contains(map, "default_user_role")) default_user_role = plugins::core::enums::string_to_user_role(map["default_user_role"]);
             if (map_contains(map, "jwt_secret")) jwt_secret = map["jwt_secret"];
         }
     };

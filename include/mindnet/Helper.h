@@ -6,7 +6,7 @@
 #define HELPER_H
 #include <string>
 
-#include "models/misc/ColumnDefinition.h"
+#include "model/ColumnDefinition.h"
 #include "nlohmann/json_fwd.hpp"
 
 #define cast64 static_cast<int64_t>
@@ -27,7 +27,7 @@ typedef std::vector<entity_field> entity_fields;
 using std::endl;
 typedef std::map<std::string, std::string> string_map;
 
-typedef mindnet::models::misc::ColumnDefinition column_definition;
+typedef mindnet::model::ColumnDefinition column_definition;
 typedef std::vector<column_definition> column_definitions;
 
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";

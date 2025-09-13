@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/16/25.
 //
 
-#include "../../../include/mindnet/http/ModelEndpointGenerator.h"
+#include "mindnet/http/ModelEndpointGenerator.h"
 #include "crow.h"
 #include "mindnet/Configuration.h"
 #include "mindnet/Utils.h"
@@ -12,7 +12,7 @@
 namespace mindnet::http
 {
     using http::RestHelper;
-    using enums::Crudl;
+    using plugins::core::enums::Crudl;
 
     void ModelEndpointGenerator::create_model_endpoint(
         crow::SimpleApp& app,
@@ -45,7 +45,7 @@ namespace mindnet::http
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            entity_fields fields = service_ptr->request_to_entity_fields(body, enums::Crudl::CREATE, def);
+            entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::CREATE, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
@@ -122,7 +122,7 @@ namespace mindnet::http
             {
                 return crow::response(400, "Invalid input. id in body is not equal to id in url.");
             }
-            entity_fields fields = service_ptr->request_to_entity_fields(body, enums::Crudl::UPDATE, def);
+            entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::UPDATE, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(

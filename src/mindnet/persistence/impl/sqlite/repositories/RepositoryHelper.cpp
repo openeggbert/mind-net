@@ -18,7 +18,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "mindnet/models/Content.h"
+#include "mindnet/plugins/zettelkasten/models/Content.h"
 #include <vector>
 
 #include "mindnet/Utils.h"
@@ -29,7 +29,6 @@
 namespace mindnet::persistence::impl::sqlite
 {
     using std::vector;
-    using models::columns::ContentColumns;
     using sqlite::SQLITE_FILE_NAME;
 
     void set_foreign_key_pragma(SQLite::Database& db)
@@ -42,7 +41,7 @@ namespace mindnet::persistence::impl::sqlite
         db.exec("PRAGMA temp_store = MEMORY;");
     }
 
-    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, string& error)
+    int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
     {
         std::string sql = Utils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
@@ -84,7 +83,7 @@ namespace mindnet::persistence::impl::sqlite
         return db.getLastInsertRowid();
     }
 
-    entity_fields read_model(models::misc::ModelDefinition& def, const int id, string& error)
+    entity_fields read_model(model::ModelDefinition& def, const int id, string& error)
     {
         std::string sql = Utils::generate_select_one_sql(def.get_model_name());
         debug << "Going to execute select one SQL: " << sql << commit;
@@ -123,16 +122,16 @@ namespace mindnet::persistence::impl::sqlite
             {
                 switch (column.get_column_type())
                 {
-                case enums::ColumnType::TEXTAREA:
-                case enums::ColumnType::TEXT:
+                case mindnet::model::ColumnType::TEXTAREA:
+                case mindnet::model::ColumnType::TEXT:
                     {
                         string text = (*query_ptr).getColumn(i).getString();
                         result.push_back(text);
                     }
                     break;
-                case enums::ColumnType::BOOL:
-                case enums::ColumnType::DATETIME:
-                case enums::ColumnType::INTEGER:
+                case mindnet::model::ColumnType::BOOL:
+                case mindnet::model::ColumnType::DATETIME:
+                case mindnet::model::ColumnType::INTEGER:
                     {
                         int number = (*query_ptr).getColumn(i);
                         result.push_back(number);
@@ -156,7 +155,7 @@ namespace mindnet::persistence::impl::sqlite
         throw std::runtime_error(def.get_model_name() + " not found");
     }
 
-    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, string& error)
+    bool update_model(int id, model::ModelDefinition& def, entity_fields& fields, string& error)
     {
         std::string sql = Utils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
@@ -208,7 +207,7 @@ namespace mindnet::persistence::impl::sqlite
         }
     }
 
-    bool delete_model(models::misc::ModelDefinition& def, const int id, string& error)
+    bool delete_model(model::ModelDefinition& def, const int id, string& error)
     {
         string sql = Utils::generate_delete_sql(def);
         debug << "Going to execute delete SQL: " << sql << commit;
@@ -260,7 +259,7 @@ namespace mindnet::persistence::impl::sqlite
     }
 
     void bind_query_filters(
-        models::misc::ModelDefinition& def,
+        model::ModelDefinition& def,
         http::QueryParams& query_params,
         SQLite::Statement& query,
         int& bind_index)
@@ -271,7 +270,7 @@ namespace mindnet::persistence::impl::sqlite
             {
                 auto key = filter.first;
                 auto value = filter.second;
-                enums::ColumnType column_type{enums::ColumnType::TEXT};
+                mindnet::model::ColumnType column_type{mindnet::model::ColumnType::TEXT};
                 bool column_type_found = false;
                 for (auto& column : def.get_columns())
                 {
@@ -289,13 +288,13 @@ namespace mindnet::persistence::impl::sqlite
                 }
                 switch (column_type)
                 {
-                case enums::ColumnType::TEXTAREA:
-                case enums::ColumnType::TEXT:
+                case mindnet::model::ColumnType::TEXTAREA:
+                case mindnet::model::ColumnType::TEXT:
                     query.bind(bind_index++, value);
                     break;
-                case enums::ColumnType::BOOL:
-                case enums::ColumnType::DATETIME:
-                case enums::ColumnType::INTEGER:
+                case mindnet::model::ColumnType::BOOL:
+                case mindnet::model::ColumnType::DATETIME:
+                case mindnet::model::ColumnType::INTEGER:
                     query.bind(bind_index++, stoi(value));
                     break;
                 default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
@@ -305,7 +304,7 @@ namespace mindnet::persistence::impl::sqlite
     }
 
     std::vector<entity_fields> list_models(
-        models::misc::ModelDefinition& def,
+        model::ModelDefinition& def,
         http::QueryParams& query_params,
         string& error
     )
@@ -376,16 +375,16 @@ namespace mindnet::persistence::impl::sqlite
                 {
                     switch (column.get_column_type())
                     {
-                    case enums::ColumnType::TEXTAREA:
-                    case enums::ColumnType::TEXT:
+                    case mindnet::model::ColumnType::TEXTAREA:
+                    case mindnet::model::ColumnType::TEXT:
                         {
                             string text = (*query_ptr).getColumn(i).getString();
                             result.push_back(text);
                         }
                         break;
-                    case enums::ColumnType::BOOL:
-                    case enums::ColumnType::DATETIME:
-                    case enums::ColumnType::INTEGER:
+                    case mindnet::model::ColumnType::BOOL:
+                    case mindnet::model::ColumnType::DATETIME:
+                    case mindnet::model::ColumnType::INTEGER:
                         {
                             int number = (*query_ptr).getColumn(i);
                             result.push_back(number);

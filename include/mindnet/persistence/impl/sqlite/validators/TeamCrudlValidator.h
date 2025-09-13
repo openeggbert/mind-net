@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Team;
+    using mindnet::plugins::core::models::Team;
 
-    class TeamCrudlValidator : public api::CrudlValidatorBase<TeamCrudlValidator, models::Team>
+    class TeamCrudlValidator : public api::CrudlValidatorBase<TeamCrudlValidator, Team>
     {
     public:
         TeamCrudlValidator() = default;

@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/HistoryCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/History.h"
+#include "mindnet/plugins/core/models/History.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model History
@@ -31,7 +31,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if (entity.user_id != ctx.token.user_id && ctx.role != enums::UserRole::ADMIN,
+        return_if (entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::ADMIN,
             403, "You can only read history for your own user.");
 
         //3. Request
@@ -57,7 +57,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        if (ctx.role != enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role != plugins::core::enums::UserRole::ADMIN) return ok_result;
 
         mandatory_filter(user_id)
 

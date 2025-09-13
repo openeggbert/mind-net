@@ -2,7 +2,7 @@
 // Created by robertvokac on 7/31/25.
 //
 //
-#define plugin_base
+#define plugin_core
 #define plugin_zettelkasten
 #define plugin_email
 #define plugin_chat
@@ -20,47 +20,47 @@
 #include "mindnet/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/persistence/api/Persistence.h"
-#include "../../include/mindnet/http/ModelEndpointGenerator.h"
+#include "mindnet/http/ModelEndpointGenerator.h"
 //
-#ifdef plugin_base
-#include "mindnet/models/User.h"
-#include "mindnet/models/Team.h"
-#include "mindnet/models/TeamMember.h"
-#include "mindnet/models/History.h"
+#ifdef plugin_core
+#include "mindnet/plugins/core/models/User.h"
+#include "mindnet/plugins/core/models/Team.h"
+#include "mindnet/plugins/core/models/TeamMember.h"
+#include "mindnet/plugins/core/models/History.h"
 #endif
 
 
 #ifdef plugin_zettelkasten
-#include "mindnet/models/Map.h"
-#include "mindnet/models/Content.h"
-#include "mindnet/models/Note.h"
-#include "mindnet/models/Property.h"
-#include "mindnet/models/TagType.h"
-#include "mindnet/models/Tag.h"
-#include "mindnet/models/Collection.h"
-#include "mindnet/models/CollectionItem.h"
-#include "mindnet/models/Reference.h"
-#include "mindnet/models/Link.h"
+#include "mindnet/plugins/zettelkasten/models/Map.h"
+#include "mindnet/plugins/zettelkasten/models/Content.h"
+#include "mindnet/plugins/zettelkasten/models/Note.h"
+#include "mindnet/plugins/zettelkasten/models/Property.h"
+#include "mindnet/plugins/zettelkasten/models/TagType.h"
+#include "mindnet/plugins/zettelkasten/models/Tag.h"
+#include "mindnet/plugins/zettelkasten/models/Collection.h"
+#include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
+#include "mindnet/plugins/zettelkasten/models/Reference.h"
+#include "mindnet/plugins/zettelkasten/models/Link.h"
+#include "mindnet/plugins/zettelkasten/models/Question.h"
 #endif
 
 #ifdef plugin_email
-#include "mindnet/models/Message.h"
+#include "mindnet/plugins/mail/models/Message.h"
 #endif
 
 #ifdef plugin_chat
-#include "mindnet/models/Discussion.h"
-#include "mindnet/models/Comment.h"
+#include "mindnet/plugins/chat/models/Discussion.h"
+#include "mindnet/plugins/chat/models/Comment.h"
 #endif
 
 #ifdef plugin_suggestion
-#include "mindnet/models/Suggestion.h"
-#include "mindnet/models/SuggestionReview.h"
+#include "mindnet/plugins/suggestion/models/Suggestion.h"
+#include "mindnet/plugins/suggestion/models/SuggestionReview.h"
 #endif
 
 #ifdef plugin_test
-#include "mindnet/models/Review.h"
-#include "mindnet/models/SM2State.h"
-#include "mindnet/models/Question.h"
+#include "mindnet/plugins/test/models/Review.h"
+#include "mindnet/plugins/test/models/SM2State.h"
 #endif
 
 //
@@ -68,7 +68,7 @@
 #include "mindnet/Service.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/persistence/impl/sqlite/validators/CollectionCrudlValidator.h"
-#define add_controller(model) server.create_model_endpoint(&controller, mindnet::models::model##_DEFINITION);
+#define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
 using mindnet::commit;
 
@@ -265,44 +265,44 @@ bool commands_function_start(
     mindnet::http::ModelEndpointGenerator controller;
 
 
-#ifdef plugin_base
-    add_controller(USER)
-    add_controller(TEAM)
-    add_controller(TEAM_MEMBER)
-    add_controller(HISTORY)
+#ifdef plugin_core
+    add_controller(core, USER)
+    add_controller(core, TEAM)
+    add_controller(core, TEAM_MEMBER)
+    add_controller(core, HISTORY)
 #endif
 
 #ifdef plugin_zettelkasten
-    add_controller(MAP)
-    add_controller(CONTENT)
-    add_controller(NOTE)
-    add_controller(PROPERTY)
-    add_controller(TAG_TYPE)
-    add_controller(TAG)
-    add_controller(COLLECTION)
-    add_controller(COLLECTION_ITEM)
-    add_controller(REFERENCE)
-    add_controller(LINK)
+    add_controller(zettelkasten, MAP)
+    add_controller(zettelkasten, CONTENT)
+    add_controller(zettelkasten, NOTE)
+    add_controller(zettelkasten, PROPERTY)
+    add_controller(zettelkasten, TAG_TYPE)
+    add_controller(zettelkasten, TAG)
+    add_controller(zettelkasten, COLLECTION)
+    add_controller(zettelkasten, COLLECTION_ITEM)
+    add_controller(zettelkasten, REFERENCE)
+    add_controller(zettelkasten, LINK)
+    add_controller(zettelkasten, QUESTION)
 #endif
 
 #ifdef plugin_email
-    add_controller(MESSAGE)
+    add_controller(mail, MESSAGE)
 #endif
 
 #ifdef plugin_chat
-    add_controller(DISCUSSION)
-    add_controller(COMMENT)
+    add_controller(chat, DISCUSSION)
+    add_controller(chat, COMMENT)
 #endif
 
 #ifdef plugin_suggestion
-    add_controller(SUGGESTION)
-    add_controller(SUGGESTION_REVIEW)
+    add_controller(suggestion, SUGGESTION)
+    add_controller(suggestion, SUGGESTION_REVIEW)
 #endif
 
 #ifdef plugin_test
-    add_controller(REVIEW)
-    add_controller(SM2_STATE)
-    add_controller(QUESTION)
+    add_controller(test, REVIEW)
+    add_controller(test, SM2_STATE)
 #endif
 
 
@@ -394,8 +394,7 @@ int main(int argc, char** argv)
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
     migrate_schema_if_needed();
-    std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<
-        mindnet::persistence::api::Persistence>();
+    std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<mindnet::persistence::api::Persistence>();
     std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
     return run_command(arguments, service);
 }

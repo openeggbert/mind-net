@@ -11,7 +11,7 @@
 
 namespace mindnet::persistence::api
 {
-    using mindnet::models::misc::ModelDefinition;
+    using mindnet::model::ModelDefinition;
 
     class IPersistence
     {
@@ -31,7 +31,7 @@ namespace mindnet::persistence::api
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //
-        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
+        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, plugins::core::enums::Crudl crudl,
                                                                 ModelDefinition& def) = 0;
 
     };

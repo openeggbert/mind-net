@@ -19,12 +19,12 @@ namespace mindnet::http
     class HttpServer
     {
     public:
-        HttpServer(ServicePtr service_ptr,
+        HttpServer(ServicePtr& service_ptr,
                    const std::string& directory_for_static_files = std::string("static"));
         void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
 
         template <typename T>
-        void create_model_endpoint(T* controller, models::misc::ModelDefinition& definition)
+        void create_model_endpoint(T* controller, model::ModelDefinition& definition)
         {
             controller->create_model_endpoint(crow_app, service_ptr_, definition);
         }

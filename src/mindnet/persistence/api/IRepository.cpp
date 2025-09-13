@@ -8,7 +8,7 @@ namespace mindnet::persistence::api
 {
     IRepository::IRepository(
         api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer_,
-        models::misc::ModelDefinition& model_definition_
+        model::ModelDefinition& model_definition_
     ) :
         request_to_entity_fields_pointer_(convert_rest_request_to_entity_fields_pointer_),
         model_definition(model_definition_)

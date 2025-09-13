@@ -34,7 +34,7 @@ namespace mindnet
 {
     using validator = persistence::api::ICrudlValidator*;
     using persistence::api::OperationResult;
-    using models::misc::ModelDefinition;
+    using model::ModelDefinition;
 
 
     Service::Service(const DbPtr& db_) : IService(db_), db_ptr(db_)
@@ -170,7 +170,7 @@ namespace mindnet
     };
 
     entity_fields Service::request_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl, ModelDefinition& def
+        crow::json::rvalue& body, plugins::core::enums::Crudl crudl, ModelDefinition& def
     )
     {
         return db_ptr->request_to_entity_fields(body, crudl, def);

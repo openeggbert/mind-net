@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/PropertyCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Property.h"
+#include "mindnet/plugins/zettelkasten/models/Property.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Property
@@ -19,10 +19,10 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult PropertyCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if (ctx.role < enums::UserRole::EDITOR,
+        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,
                403, "User does not have permission to create a property.")
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::WRITE))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
         {return ok_result;}
         return {403, "You do not have permission to create a property for this map."};
     }
@@ -32,7 +32,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto map = find_model(map, entity.map_id)
         if (map.second.empty()) return {400, map.second};
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::READ))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
         {return ok_result;}
         return {403, "You do not have permission to read this property."};
 
@@ -40,7 +40,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult PropertyCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        if(!has_right_for_map(ctx, old_entity.map_id, enums::SingleRight::WRITE))
+        if(!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::WRITE))
             return {403, "You do not have permission to update this property."};
 
         return ok_result;
@@ -49,7 +49,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult PropertyCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::DELETE))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
         {return ok_result;}
         return {403, "You do not have permission to delete this property."};
 
@@ -61,11 +61,11 @@ namespace mindnet::persistence::impl::sqlite::validators
         mandatory_filter(note_id)
         auto note_id = std::stoi(filter.at("note_id"));
         auto note = find_model(note, note_id);
-        if (note.second.empty()) return {400, note.second};
+        if (!note.second.empty()) return {400, note.second};
 
         int map_id = note.first.map_id;
 
-        if(!has_right_for_map(ctx, map_id, enums::SingleRight::READ))
+        if(!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::READ))
         return {403, std::string("You do not have permission to list properties for note with ID " + std::to_string(note_id) + ".")};
 
         return ok_result;

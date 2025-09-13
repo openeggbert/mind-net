@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Note;
+    using mindnet::plugins::zettelkasten::models::Note;
 
-    class NoteCrudlValidator : public api::CrudlValidatorBase<NoteCrudlValidator, models::Note>
+    class NoteCrudlValidator : public api::CrudlValidatorBase<NoteCrudlValidator, Note>
     {
     public:
         NoteCrudlValidator() = default;

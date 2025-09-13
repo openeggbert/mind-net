@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/SuggestionReviewCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/SuggestionReview.h"
+#include "mindnet/plugins/suggestion/models/SuggestionReview.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model SuggestionReview
@@ -21,7 +21,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if (ctx.role < enums::UserRole::REVIEWER,
+        return_if (ctx.role < plugins::core::enums::UserRole::REVIEWER,
             403, "You can not create suggestion reviews.");
 
         return ok_result;
@@ -34,7 +34,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto suggestion = api::find_suggestion(ctx, entity.suggestion_id);
         check_found(suggestion);
 
-        return_if (ctx.role < enums::UserRole::REVIEWER && suggestion.first.from_user_id != ctx.token.user_id,
+        return_if (ctx.role < plugins::core::enums::UserRole::REVIEWER && suggestion.first.from_user_id != ctx.token.user_id,
             403, "You can not read this suggestion.");
 
         return ok_result;
@@ -46,7 +46,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
         return_if (ctx.token.user_id != old_entity.reviewer_id,
             403, "Only creator of this suggestion review can update it");
-        return_if (old_entity.decision_status != enums::DecisionStatus::REQUESTS_FEEDBACK,
+        return_if (old_entity.decision_status != plugins::suggestion::enums::DecisionStatus::REQUESTS_FEEDBACK,
             400, "Only suggestion reviews with status REQUESTS_FEEDBACK can be updated.");
 
         return ok_result;
@@ -63,7 +63,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        if (ctx.role >= enums::UserRole::REVIEWER) return ok_result;
+        if (ctx.role >= plugins::core::enums::UserRole::REVIEWER) return ok_result;
         return {403, "You can not list suggestion reviews."};
 
         return ok_result;

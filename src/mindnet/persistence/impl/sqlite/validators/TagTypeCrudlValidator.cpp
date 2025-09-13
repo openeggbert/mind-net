@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/TagTypeCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/TagType.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/zettelkasten/models/TagType.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model TagType
@@ -20,10 +20,10 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult TagTypeCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if (ctx.role < enums::UserRole::EDITOR,
+        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,
                   403, "User does not have permission to create a property.")
 
-           if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::WRITE))
+           if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
            {return ok_result;}
         return {403, "You do not have permission to create a tag type for this map."};
 
@@ -34,7 +34,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto map = find_model(map, entity.map_id)
              if (map.second.empty()) return {400, map.second};
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::READ))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
         {return ok_result;}
         return {403, "You do not have permission to read this tag type."};
 
@@ -48,7 +48,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult TagTypeCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::DELETE))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
         {return ok_result;}
         return {403, "You do not have permission to delete this tag_type."};
 
@@ -59,7 +59,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));
 
-        if(!has_right_for_map(ctx, map_id, enums::SingleRight::READ))
+        if(!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::READ))
             return {403, std::string("You do not have permission to list tag types for map with ID " + std::to_string(map_id) + ".")};
 
         return ok_result;

@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/CollectionItemCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/CollectionItem.h"
+#include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model CollectionItem

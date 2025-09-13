@@ -14,7 +14,7 @@
 #include "PersistenceMethods.h"
 #include "PersistenceTypedefs.h"
 #include "RequestContext.h"
-#include "mindnet/models/misc/BaseModel.h"
+#include "../../model/BaseModel.h"
 
 #include "mindnet/Helper.h"
 
@@ -29,7 +29,7 @@ api::OperationResult validate_list(const RequestContext&, const string_map&) con
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);\
 
 #define assert_role(ROLE) \
-return_if (ctx.role < enums::UserRole:: ROLE ,403, "User does not have permission for this action.")
+return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE ,403, "User does not have permission for this action.")
 
 #define assert_admin() assert_role(ADMIN)
 #define assert_editor() assert_role(EDITOR)
@@ -49,14 +49,6 @@ namespace mindnet::http {
     class LoginToken;
 }
 
-namespace mindnet::models {
-    namespace misc {
-        class BaseModel;
-        class ModelDefinition;
-    }
-    class User;
-}
-
 namespace mindnet::persistence::api
 {
     typedef std::function<ICrudlValidator*(const std::string&)> GetValidatorFunc;
@@ -64,7 +56,7 @@ namespace mindnet::persistence::api
     template <typename Derived, typename Model>
     class CrudlValidatorBase : public api::ICrudlValidator
     {
-        static_assert(std::is_base_of_v<models::misc::BaseModel, Model>,
+        static_assert(std::is_base_of_v<model::BaseModel, Model>,
                       "Model must derive from BaseModel");
 
     private:
@@ -91,7 +83,7 @@ namespace mindnet::persistence::api
             //
             if (auto error = entity.validate(); !error.empty())
                 return {400, error};
-            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
+            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_create(context, entity); !res.ok())
@@ -159,7 +151,7 @@ namespace mindnet::persistence::api
             auto def = db->get_model_definition(derived().get_model_name()).value();
             if (auto error = validate_readonly(old_values, ef, def); !error.empty())
                 return {400, error};
-            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
+            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_update(

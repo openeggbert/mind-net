@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Collection;
+    using mindnet::plugins::zettelkasten::models::Collection;
 
-    class CollectionCrudlValidator : public api::CrudlValidatorBase<CollectionCrudlValidator, models::Collection>
+    class CollectionCrudlValidator : public api::CrudlValidatorBase<CollectionCrudlValidator, Collection>
     {
     public:
         CollectionCrudlValidator() = default;

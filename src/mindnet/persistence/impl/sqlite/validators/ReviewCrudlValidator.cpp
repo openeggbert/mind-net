@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/ReviewCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/Review.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/test/models/Review.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Review

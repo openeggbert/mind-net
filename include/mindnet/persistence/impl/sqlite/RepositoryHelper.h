@@ -22,7 +22,7 @@
 
 #include <iostream>
 
-#include "mindnet/models/Content.h"
+#include "../../../plugins/zettelkasten/models/Content.h"
 #include <vector>
 
 #include "mindnet/Utils.h"
@@ -37,16 +37,16 @@ namespace mindnet::persistence::impl::sqlite
 
     void set_foreign_key_pragma(SQLite::Database& db);
 
-    int create_model(const entity_fields& fields, const models::misc::ModelDefinition& definition, string& error);
+    int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);
 
-    entity_fields read_model(models::misc::ModelDefinition& def, int id, string& error);
+    entity_fields read_model(model::ModelDefinition& def, int id, string& error);
 
-    bool update_model(int id, models::misc::ModelDefinition& def, entity_fields& fields, string& error);
+    bool update_model(int id, model::ModelDefinition& def, entity_fields& fields, string& error);
 
-    bool delete_model(models::misc::ModelDefinition& def, int id, string& error);
+    bool delete_model(model::ModelDefinition& def, int id, string& error);
 
     std::vector<entity_fields> list_models(
-        models::misc::ModelDefinition& def,
+        model::ModelDefinition& def,
         mindnet::http::QueryParams& query_params,
         string& error
     );

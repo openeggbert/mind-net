@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/SM2StateCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/SM2State.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/test/models/SM2State.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model SM2State

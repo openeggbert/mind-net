@@ -4,28 +4,28 @@
 
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
-#include "mindnet/enums/SingleRight.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/http/QueryParams.h"
 #include "mindnet/persistence/api/CrudlValidatorBase.h"
 
 namespace mindnet::persistence::api
 {
-    std::pair<models::User, api::OperationResult> find_logged_user(
+    std::pair<plugins::core::models::User, api::OperationResult> find_logged_user(
         DbPtr& db, http::LoginToken token)
     {
         if (token.user_id == 0)
         {
-            models::User u;
-            u.role = enums::UserRole::GUEST;
-            u.status = enums::UserStatus::ACTIVE;
+            plugins::core::models::User u;
+            u.role = plugins::core::enums::UserRole::GUEST;
+            u.status = plugins::core::enums::UserStatus::ACTIVE;
             return {u, ok_result};
         }
-        auto result = db->read(models::USER_DEFINITION, token, token.user_id);
+        auto result = db->read(plugins::core::models::USER_DEFINITION, token, token.user_id);
         if (result.second.ko())
         {
-            return {models::User(), result.second};
+            return {plugins::core::models::User(), result.second};
         }
-        models::User user;
+        plugins::core::models::User user;
         user.from_values(result.first);
         return {user, ok_result};
     }
@@ -36,7 +36,7 @@ namespace mindnet::persistence::api
         http::QueryParams query_params;
         query_params.filters.emplace("name", user_name);
 
-        return !ctx.db->list(models::USER_DEFINITION, ctx.token, query_params).first.empty();
+        return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
     bool has_user_email(const RequestContext& ctx, string user_email)
     {
@@ -44,7 +44,7 @@ namespace mindnet::persistence::api
         string error;
         http::QueryParams query_params;
         query_params.filters.emplace("email", user_email);
-        return !ctx.db->list(models::USER_DEFINITION, ctx.token, query_params).first.empty();
+        return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
 
     bool has_map_name(const RequestContext& ctx, string map_name)
@@ -53,21 +53,21 @@ namespace mindnet::persistence::api
         http::QueryParams query_params;
         query_params.filters.emplace("name", map_name);
 
-        return !ctx.db->list(models::MAP_DEFINITION, ctx.token, query_params).first.empty();
+        return !ctx.db->list(plugins::zettelkasten::models::MAP_DEFINITION, ctx.token, query_params).first.empty();
     }
 
     string is_member_of_team(const RequestContext& ctx, int team_id)
     {
-        auto team_result = ctx.db->read(models::TEAM_DEFINITION, ctx.token, team_id);
+        auto team_result = ctx.db->read(plugins::core::models::TEAM_DEFINITION, ctx.token, team_id);
         if (team_result.second.ko()) return team_result.second.error;
-        models::Team team;
+        plugins::core::models::Team team;
         team.from_values(team_result.first);
 
         http::QueryParams query_params;
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
         query_params.filters.emplace("user_id", std::to_string(ctx.token.user_id));
-        query_params.filters.emplace("status", std::to_string(cast64(enums::UserStatus::ACTIVE)));
-        auto is_team_member_result = ctx.db->list(models::TEAM_MEMBER_DEFINITION, ctx.token, query_params);
+        query_params.filters.emplace("status", std::to_string(cast64(plugins::core::enums::UserStatus::ACTIVE)));
+        auto is_team_member_result = ctx.db->list(plugins::core::models::TEAM_MEMBER_DEFINITION, ctx.token, query_params);
         if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
         if (is_team_member_result.first.empty())
         {
@@ -80,23 +80,23 @@ namespace mindnet::persistence::api
     {
         http::QueryParams query_params;
         query_params.filters.emplace("content_id", std::to_string(content_id));
-        auto notes = ctx.db->list(models::NOTE_DEFINITION, ctx.token, query_params);
+        auto notes = ctx.db->list(plugins::zettelkasten::models::NOTE_DEFINITION, ctx.token, query_params);
         if (notes.second.ko()) return {-1,notes.second.error};
         if (notes.first.empty()) return {-1, std::string("There is no note with content id") + std::to_string(content_id)};
-        models::Note note;
+        plugins::zettelkasten::models::Note note;
         note.from_values(notes.first.at(0));
         return {note.get_id(), ""};
     }
 
     bool has_right_for_map(
-        const RequestContext& ctx, const int map_id, const enums::SingleRight single_right)
+        const RequestContext& ctx, const int map_id, const plugins::core::enums::SingleRight single_right)
     {
-        if (ctx.role == enums::UserRole::ADMIN) { return true; }
+        if (ctx.role == plugins::core::enums::UserRole::ADMIN) { return true; }
 
         auto map = find_model(map, map_id)
-        if (map.second.empty()) return false;
+        if (!map.second.empty()) return false;
 
-        bool map_owner_and_can = ctx.token.user_id == map.first.owner_id && mindnet::enums::can(
+        bool map_owner_and_can = ctx.token.user_id == map.first.owner_id && can(
             single_right, map.first.owner_rights_int());
         if (map_owner_and_can) return true;
 
@@ -105,35 +105,39 @@ namespace mindnet::persistence::api
         if (map.first.team_id != 0)
         {
             auto result = is_member_of_team(ctx, map.first.team_id);
-            map_team_member_and_can = !result.empty() && mindnet::enums::can(
-                enums::SingleRight::WRITE, map.first.team_rights_int());
+            map_team_member_and_can = !result.empty() && can(
+                plugins::core::enums::SingleRight::WRITE, map.first.team_rights_int());
             if (map_team_member_and_can) return true;
-            bool other_can = mindnet::enums::can(single_right, map.first.other_rights_int());
-            if (other_can) return true;
+
         }
+
+        bool other_can = can(single_right, map.first.other_rights_int());
+        if (other_can) return true;
+
+
         return false;
     }
 
-    gen_find_cpp(Comment, comment, COMMENT)
-    gen_find_cpp(User, user, USER)
-    gen_find_cpp(Message, message, MESSAGE)
-    gen_find_cpp(Team, team, TEAM)
-    gen_find_cpp(TeamMember, team_member, TEAM_MEMBER)
-    gen_find_cpp(Discussion, discussion, DISCUSSION)
-    gen_find_cpp(Suggestion, suggestion, SUGGESTION)
-    gen_find_cpp(SuggestionReview, suggestion_review, SUGGESTION_REVIEW)
-    gen_find_cpp(History, history, HISTORY)
-    gen_find_cpp(Map, map, MAP)
-    gen_find_cpp(Content, content, CONTENT)
-    gen_find_cpp(Note, note, NOTE)
-    gen_find_cpp(Property, property, PROPERTY)
-    gen_find_cpp(TagType, tag_type, TAG_TYPE)
-    gen_find_cpp(Tag, tag, TAG)
-    gen_find_cpp(Collection, collection, COLLECTION)
-    gen_find_cpp(CollectionItem, collection_item, COLLECTION_ITEM)
-    gen_find_cpp(Review, review, REVIEW)
-    gen_find_cpp(SM2State, sm2_state, SM2_STATE)
-    gen_find_cpp(Question, question, QUESTION)
-    gen_find_cpp(Reference, reference, REFERENCE)
-    gen_find_cpp(Link, link, LINK)
+    gen_find_cpp(chat, Comment, comment, COMMENT)
+    gen_find_cpp(core, User, user, USER)
+    gen_find_cpp(mail, Message, message, MESSAGE)
+    gen_find_cpp(core, Team, team, TEAM)
+    gen_find_cpp(core, TeamMember, team_member, TEAM_MEMBER)
+    gen_find_cpp(chat, Discussion, discussion, DISCUSSION)
+    gen_find_cpp(suggestion, Suggestion, suggestion, SUGGESTION)
+    gen_find_cpp(suggestion, SuggestionReview, suggestion_review, SUGGESTION_REVIEW)
+    gen_find_cpp(core, History, history, HISTORY)
+    gen_find_cpp(zettelkasten, Map, map, MAP)
+    gen_find_cpp(zettelkasten, Content, content, CONTENT)
+    gen_find_cpp(zettelkasten, Note, note, NOTE)
+    gen_find_cpp(zettelkasten, Property, property, PROPERTY)
+    gen_find_cpp(zettelkasten, TagType, tag_type, TAG_TYPE)
+    gen_find_cpp(zettelkasten, Tag, tag, TAG)
+    gen_find_cpp(zettelkasten, Collection, collection, COLLECTION)
+    gen_find_cpp(zettelkasten, CollectionItem, collection_item, COLLECTION_ITEM)
+    gen_find_cpp(test, Review, review, REVIEW)
+    gen_find_cpp(test, SM2State, sm2_state, SM2_STATE)
+    gen_find_cpp(zettelkasten, Question, question, QUESTION)
+    gen_find_cpp(zettelkasten, Reference, reference, REFERENCE)
+    gen_find_cpp(zettelkasten, Link, link, LINK)
 }

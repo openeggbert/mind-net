@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/TagCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/Tag.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/zettelkasten/models/Tag.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Tag
@@ -24,7 +24,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if(has_right_for_map(ctx, tag_type.first.map_id, enums::SingleRight::WRITE))
+        if(has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::WRITE))
         {return ok_result;}
         return {403, "You do not have permission to create a tag for this map."};
     }
@@ -38,7 +38,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto map = find_model(map, tag_type.first.map_id)
              if (map.second.empty()) return {400, map.second};
 
-        if(has_right_for_map(ctx, tag_type.first.map_id, enums::SingleRight::READ))
+        if(has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::READ))
         {return ok_result;}
         return {403, "You do not have permission to read this tag."};
     }
@@ -53,7 +53,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if(has_right_for_map(ctx, tag_type.first.map_id, enums::SingleRight::DELETE))
+        if(has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::DELETE))
         {return ok_result;}
         return {403, "You do not have permission to delete this tag_type."};
     }
@@ -66,7 +66,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto tag_type = find_model(tag_type, tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (!has_right_for_map(ctx, tag_type.first.map_id, enums::SingleRight::READ))
+        if (!has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::READ))
             return {
                 403,
                 std::string(

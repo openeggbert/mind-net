@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/TeamCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Team.h"
+#include "mindnet/plugins/core/models/Team.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Team
@@ -20,7 +20,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult TeamCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
-        return_if (ctx.role < enums::UserRole::EDITOR,
+        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,
             403, "User does not have permission to create a team.");
 
         return_if (entity.created_by != ctx.token.user_id,
@@ -40,12 +40,12 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if (ctx.role != enums::UserRole::ADMIN && ctx.token.user_id != new_entity.leader_id,
+        return_if (ctx.role != plugins::core::enums::UserRole::ADMIN && ctx.token.user_id != new_entity.leader_id,
             403, "Only team leader can update the team.")
         return_if (old_entity.created_by != new_entity.created_by,
             400, "created_by cannot be changed")
 
-        return_if (old_entity.leader_id != new_entity.leader_id && ctx.role != enums::UserRole::ADMIN,
+        return_if (old_entity.leader_id != new_entity.leader_id && ctx.role != plugins::core::enums::UserRole::ADMIN,
             400, "leader_id cannot be changed by yourself. Contact admin.")
 
         return ok_result;
@@ -55,7 +55,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if (ctx.role != enums::UserRole::ADMIN,
+        return_if (ctx.role != plugins::core::enums::UserRole::ADMIN,
             403, "Only admins can delete a team. Contact admin");
 
         return ok_result;

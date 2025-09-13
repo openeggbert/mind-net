@@ -7,28 +7,28 @@
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
 #include "mindnet/http/LoginToken.h"
-#include "mindnet/models/User.h"
-#include "mindnet/models/Message.h"
-#include "mindnet/models/Team.h"
-#include "mindnet/models/TeamMember.h"
-#include "mindnet/models/Discussion.h"
-#include "mindnet/models/Comment.h"
-#include "mindnet/models/Suggestion.h"
-#include "mindnet/models/SuggestionReview.h"
-#include "mindnet/models/History.h"
-#include "mindnet/models/Map.h"
-#include "mindnet/models/Content.h"
-#include "mindnet/models/Note.h"
-#include "mindnet/models/Property.h"
-#include "mindnet/models/TagType.h"
-#include "mindnet/models/Tag.h"
-#include "mindnet/models/Collection.h"
-#include "mindnet/models/CollectionItem.h"
-#include "mindnet/models/Review.h"
-#include "mindnet/models/SM2State.h"
-#include "mindnet/models/Question.h"
-#include "mindnet/models/Reference.h"
-#include "mindnet/models/Link.h"
+#include "mindnet/plugins/core/models/User.h"
+#include "mindnet/plugins/mail/models/Message.h"
+#include "mindnet/plugins/core/models/Team.h"
+#include "mindnet/plugins/core/models/TeamMember.h"
+#include "mindnet/plugins/chat/models/Discussion.h"
+#include "mindnet/plugins/chat/models/Comment.h"
+#include "mindnet/plugins/suggestion/models/Suggestion.h"
+#include "mindnet/plugins/suggestion/models/SuggestionReview.h"
+#include "mindnet/plugins/core/models/History.h"
+#include "mindnet/plugins/zettelkasten/models/Map.h"
+#include "mindnet/plugins/zettelkasten/models/Content.h"
+#include "mindnet/plugins/zettelkasten/models/Note.h"
+#include "mindnet/plugins/zettelkasten/models/Property.h"
+#include "mindnet/plugins/zettelkasten/models/TagType.h"
+#include "mindnet/plugins/zettelkasten/models/Tag.h"
+#include "mindnet/plugins/zettelkasten/models/Collection.h"
+#include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
+#include "mindnet/plugins/test/models/Review.h"
+#include "mindnet/plugins/test/models/SM2State.h"
+#include "mindnet/plugins/zettelkasten/models/Question.h"
+#include "mindnet/plugins/zettelkasten/models/Reference.h"
+#include "mindnet/plugins/zettelkasten/models/Link.h"
 
 #include "mindnet/persistence/impl/sqlite/repositories/Convertors.h"
 #include "mindnet/persistence/impl/sqlite/repositories/RepositoryImplSqlite.h"
@@ -36,10 +36,10 @@
 #define MODEL_JOIN(x) x##_DEFINITION
 #define FUNCTION_JOIN(x) request_to_entity_fields_##x
 
-#define add_repository(model, Model, MODEL) \
+#define add_repository(plugin, model, Model, MODEL) \
 api::IRepository* model##_repo = new RepositoryImplSqlite(\
 & FUNCTION_JOIN(model),\
-models :: MODEL_JOIN(MODEL)\
+plugins:: plugin :: models :: MODEL_JOIN(MODEL)\
 );\
 repositories[#model] = model##_repo;\
 repository_names.emplace_back(#model);
@@ -57,29 +57,35 @@ namespace mindnet::persistence::api
         //         );
         // repositories["user"] = user_repo;;
 
-        add_repository(user, User, USER);
-        add_repository(message, Message, MESSAGE);
-        add_repository(team, Team, TEAM);
-        add_repository(team_member, TeamMember, TEAM_MEMBER);
-        add_repository(discussion, Discussion, DISCUSSION);
-        add_repository(comment, Comment, COMMENT);
-        add_repository(suggestion, Suggestion, SUGGESTION);
-        add_repository(suggestion_review, SuggestionReview, SUGGESTION_REVIEW);
-        add_repository(history, History, HISTORY);
-        add_repository(map, Map, MAP);
-        add_repository(content, Content, CONTENT);
-        add_repository(note, Note, NOTE);
-        add_repository(property, Property, PROPERTY);
-        add_repository(tag_type, TagType, TAG_TYPE);
-        add_repository(tag, Tag, TAG);
-        add_repository(collection, Collection, COLLECTION);
-        add_repository(collection_item, CollectionItem, COLLECTION_ITEM);
-        add_repository(review, Review, REVIEW);
-        add_repository(sm2_state, SM2State, SM2_STATE);
-        add_repository(question, Question, QUESTION);
-        add_repository(reference, Reference, REFERENCE);
-        add_repository(link, Link, LINK);
+        add_repository(core, user, User, USER);
+        add_repository(core, team, Team, TEAM);
+        add_repository(core, team_member, TeamMember, TEAM_MEMBER);
+        add_repository(core, history, History, HISTORY);
         //
+        add_repository(zettelkasten, map, Map, MAP);
+        add_repository(zettelkasten, content, Content, CONTENT);
+        add_repository(zettelkasten, note, Note, NOTE);
+        add_repository(zettelkasten, property, Property, PROPERTY);
+        add_repository(zettelkasten, tag_type, TagType, TAG_TYPE);
+        add_repository(zettelkasten, tag, Tag, TAG);
+        add_repository(zettelkasten, collection, Collection, COLLECTION);
+        add_repository(zettelkasten, collection_item, CollectionItem, COLLECTION_ITEM);
+        add_repository(zettelkasten, question, Question, QUESTION);
+        add_repository(zettelkasten, reference, Reference, REFERENCE);
+        add_repository(zettelkasten, link, Link, LINK);
+        //
+        add_repository(test, review, Review, REVIEW);
+        add_repository(test, sm2_state, SM2State, SM2_STATE);
+        //
+        add_repository(chat, discussion, Discussion, DISCUSSION);
+        add_repository(chat, comment, Comment, COMMENT);
+        //
+        add_repository(mail, message, Message, MESSAGE);
+        //
+        add_repository(suggestion,  suggestion, Suggestion, SUGGESTION);
+        add_repository(suggestion,suggestion_review, SuggestionReview, SUGGESTION_REVIEW);
+        //
+
 
     }
 
@@ -112,7 +118,7 @@ namespace mindnet::persistence::api
 
 
     std::pair<int, OperationResult> Persistence::create(
-        const models::misc::ModelDefinition& def,
+        const model::ModelDefinition& def,
         http::LoginToken& token,
         entity_fields& fields)
     {
@@ -122,7 +128,7 @@ namespace mindnet::persistence::api
         return {last_id, {500, error}};
     }
 
-    std::pair<entity_fields, OperationResult> Persistence::read(const models::misc::ModelDefinition& def,
+    std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,
                                     http::LoginToken& token, const int id)
     {
 
@@ -139,7 +145,7 @@ namespace mindnet::persistence::api
     }
 
     OperationResult Persistence::update(
-        const models::misc::ModelDefinition& def, http::LoginToken& token,
+        const model::ModelDefinition& def, http::LoginToken& token,
         int id, entity_fields& fields
                              )
     {
@@ -149,7 +155,7 @@ namespace mindnet::persistence::api
         if (error.empty()) {return ok_result;} else {return {500, error};}
     }
 
-    OperationResult Persistence::remove(models::misc::ModelDefinition& def, http::LoginToken& token, int id)
+    OperationResult Persistence::remove(model::ModelDefinition& def, http::LoginToken& token, int id)
     {
         string_map empty_map;
 
@@ -188,7 +194,7 @@ namespace mindnet::persistence::api
     }
 
     entity_fields Persistence::request_to_entity_fields(
-        crow::json::rvalue& body, const enums::Crudl crudl, models::misc::ModelDefinition& def)
+        crow::json::rvalue& body, const plugins::core::enums::Crudl crudl, model::ModelDefinition& def)
     {
         return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
     }

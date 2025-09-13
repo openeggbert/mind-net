@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/ReferenceCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/Reference.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/zettelkasten/models/Reference.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Reference

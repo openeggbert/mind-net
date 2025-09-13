@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Map;
+    using mindnet::plugins::zettelkasten::models::Map;
 
-    class MapCrudlValidator : public api::CrudlValidatorBase<MapCrudlValidator, models::Map>
+    class MapCrudlValidator : public api::CrudlValidatorBase<MapCrudlValidator, Map>
     {
     public:
         MapCrudlValidator() = default;

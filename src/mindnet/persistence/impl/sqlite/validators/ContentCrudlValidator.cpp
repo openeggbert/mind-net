@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/ContentCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Content.h"
+#include "mindnet/plugins/zettelkasten/models/Content.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Content
@@ -20,7 +20,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult ContentCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
 
-        return_if (ctx.role < enums::UserRole::EDITOR,403, "You can not create content.")
+        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,403, "You can not create content.")
         return_if (entity.version != 1,
             404, "version must be 1 during message creation.");
 

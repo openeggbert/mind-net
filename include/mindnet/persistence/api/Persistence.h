@@ -8,12 +8,12 @@
 #include "IRepository.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
-#include "mindnet/models/misc/ModelDefinition.h"
+#include "../../model/ModelDefinition.h"
 #include "mindnet/persistence/api/OperationResult.h"
 
 namespace mindnet::persistence::api
 {
-    using mindnet::models::misc::ModelDefinition;
+    using mindnet::model::ModelDefinition;
     using api::OperationResult;
     
     class Persistence : public api::IPersistence
@@ -41,7 +41,7 @@ namespace mindnet::persistence::api
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 
-        entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl,
+        entity_fields request_to_entity_fields(crow::json::rvalue& body, plugins::core::enums::Crudl crudl,
                                                                 ModelDefinition& def) override;
     };
 }

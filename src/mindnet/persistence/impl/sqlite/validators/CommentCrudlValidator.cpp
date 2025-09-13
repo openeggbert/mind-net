@@ -6,12 +6,13 @@
 #include "mindnet/persistence/impl/sqlite/validators/CommentCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Comment.h"
-#include "mindnet/models/Discussion.h"
+#include "mindnet/plugins/chat/models/Comment.h"
+#include "mindnet/plugins/chat/models/Discussion.h"
 #include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
-#define Model Comment
+
+#define Model mindnet::plugins::chat::models::Comment
 #define MODEL COMMENT
 #define model comment
 
@@ -41,7 +42,7 @@ namespace mindnet::persistence::impl::sqlite::validators
         auto comment = api::find_comment(ctx, entity.get_id());
         return_if(!comment.second.empty(), 400, "Comment does not exist.")
 
-        if (ctx.role == enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
 
         auto discussion = api::find_discussion(ctx, comment.first.discussion_id);
         return_if(!discussion.second.empty(), 400, "Discussion does not exist.")
@@ -55,7 +56,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        return_if (old_entity.user_id != ctx.token.user_id && ctx.role != enums::UserRole::ADMIN,
+        return_if (old_entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::ADMIN,
             403, "You can only update your own comment.")
 
         return ok_result;

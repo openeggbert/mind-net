@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Comment;
+    using mindnet::plugins::chat::models::Comment;
 
-    class CommentCrudlValidator : public api::CrudlValidatorBase<CommentCrudlValidator, models::Comment>
+    class CommentCrudlValidator : public api::CrudlValidatorBase<CommentCrudlValidator, Comment>
     {
     public:
         CommentCrudlValidator() = default;

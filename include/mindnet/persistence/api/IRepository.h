@@ -26,8 +26,8 @@
 
 #include "crow/json.h"
 #include "mindnet/Helper.h"
-#include "mindnet/enums/Crudl.h"
-#include "mindnet/models/misc/ModelDefinition.h"
+#include "../../plugins/core/enums/Crudl.h"
+#include "../../model/ModelDefinition.h"
 #include "mindnet/http/QueryParams.h"
 
 #define string_for(COLUMN) body[cols::COLUMN].s()
@@ -54,12 +54,12 @@ if (\
     fields.emplace_back(FOREIGN_KEY_NULL);\
 }
 
-#define start_of_request_to_entity_fields(Model)\
-typedef models::columns::Model##Columns cols;\
+#define start_of_request_to_entity_fields(plugin, Model)\
+typedef plugins :: plugin :: columns::Model##Columns cols;\
         entity_fields fields;\
 \
-bool create = crudl == enums::Crudl::CREATE;\
-bool update = crudl == enums::Crudl::UPDATE;\
+bool create = crudl == mindnet::plugins::core::enums::Crudl::CREATE;\
+bool update = crudl == mindnet::plugins::core::enums::Crudl::UPDATE;\
 if (!create && !update)\
 {\
     return fields;\
@@ -80,7 +80,7 @@ fields.emplace_back(cast64(Utils::currentUnixTimestamp()));
 
 namespace mindnet::persistence::api
 {
-    typedef entity_fields (*request_to_entity_fields_pointer)(crow::json::rvalue&, enums::Crudl);
+    typedef entity_fields (*request_to_entity_fields_pointer)(crow::json::rvalue&, mindnet::plugins::core::enums::Crudl);
 
     using std::string;
 
@@ -90,20 +90,20 @@ namespace mindnet::persistence::api
         virtual ~IRepository() = default;
         IRepository(
         api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
-        models::misc::ModelDefinition& model_definition
+        model::ModelDefinition& model_definition
         );
         virtual int create(const entity_fields& fields, string& error) = 0;
         virtual entity_fields read(int id, string& error) = 0;
         virtual bool update(int id, entity_fields& fields, string& error) = 0;
         virtual bool remove(int id, string& error) = 0;
         virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;
-        [[nodiscard]] virtual mindnet::models::misc::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) =
+        [[nodiscard]] virtual mindnet::model::ModelDefinition& get_model_definition() = 0;
+        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, mindnet::plugins::core::enums::Crudl crudl) =
         0;
 
     protected:
         request_to_entity_fields_pointer request_to_entity_fields_pointer_ = nullptr;
-        models::misc::ModelDefinition model_definition;
+        model::ModelDefinition model_definition;
     };
 }
 

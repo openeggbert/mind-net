@@ -6,9 +6,9 @@
 #define MIND_NET_CONVERTORS_H
 #include "crow/json.h"
 #include "mindnet/Helper.h"
-#include "mindnet/enums/Crudl.h"
+#include "../../../../plugins/core/enums/Crudl.h"
 
-#define method_arguments() crow::json::rvalue& body, enums::Crudl crudl
+#define method_arguments() crow::json::rvalue& body, mindnet::plugins::core::enums::Crudl crudl
 namespace mindnet::persistence::impl::sqlite::repositories
 {
     entity_fields request_to_entity_fields_user(method_arguments());

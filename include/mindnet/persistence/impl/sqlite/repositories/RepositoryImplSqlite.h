@@ -27,7 +27,7 @@
 
 #include <vector>
 
-#include "mindnet/enums/Crudl.h"
+#include "../../../../plugins/core/enums/Crudl.h"
 #include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/IRepository.h"
 
@@ -40,7 +40,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
     public:
         RepositoryImplSqlite(
             api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
-            models::misc::ModelDefinition& model_definition
+            model::ModelDefinition& model_definition
             );
         ~RepositoryImplSqlite() override;
 
@@ -49,8 +49,8 @@ namespace mindnet::persistence::impl::sqlite::repositories
         bool update(int id, entity_fields& fields, string& error) override;
         bool remove(int id, string& error) override;
         std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;
-        [[nodiscard]] models::misc::ModelDefinition& get_model_definition() override;
-        entity_fields request_to_entity_fields(crow::json::rvalue& body, enums::Crudl crudl) override;
+        [[nodiscard]] model::ModelDefinition& get_model_definition() override;
+        entity_fields request_to_entity_fields(crow::json::rvalue& body, plugins::core::enums::Crudl crudl) override;
     };
 }
 #endif // REPOSITORYIMPLSQLITE_H

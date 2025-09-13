@@ -7,7 +7,7 @@
 
 #include "IPersistence.h"
 #include "IRepository.h"
-#include "mindnet/enums/UserStatus.h"
+#include "../../plugins/core/enums/UserStatus.h"
 #include "mindnet/http/LoginToken.h"
 
 namespace mindnet::persistence::api
@@ -16,8 +16,8 @@ namespace mindnet::persistence::api
     {
         DbPtr& db;
         http::LoginToken& token;
-        enums::UserRole role{};
-        enums::UserStatus status{};
+        plugins::core::enums::UserRole role{};
+        plugins::core::enums::UserStatus status{};
 
     };
 }

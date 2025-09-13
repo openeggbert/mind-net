@@ -5,8 +5,8 @@
 #include "mindnet/persistence/impl/sqlite/validators/CollectionCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/enums/SingleRight.h"
-#include "mindnet/models/Collection.h"
+#include "mindnet/plugins/core/enums/SingleRight.h"
+#include "mindnet/plugins/zettelkasten/models/Collection.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Collection

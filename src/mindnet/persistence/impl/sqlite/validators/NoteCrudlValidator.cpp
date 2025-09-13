@@ -5,7 +5,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/NoteCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Note.h"
+#include "mindnet/plugins/zettelkasten/models/Note.h"
 #include "mindnet/persistence/api/Persistence.h"
 
 #define Model Note
@@ -19,10 +19,10 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult NoteCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if (ctx.role < enums::UserRole::EDITOR,
+        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,
                403, "User does not have permission to create a note.")
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::WRITE))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
         {return ok_result;}
         return {403, "You do not have permission to create a note for this map."};
     }
@@ -30,9 +30,9 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult NoteCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
         auto map = find_model(map, entity.map_id)
-        if (map.second.empty()) return {400, map.second};
+        if (!map.second.empty()) return {400, map.second};
 
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::READ))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
         {return ok_result;}
         return {403, "You do not have permission to read this note."};
     }
@@ -40,7 +40,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     OperationResult NoteCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
 
-        if(!has_right_for_map(ctx, old_entity.map_id, enums::SingleRight::WRITE))
+        if(!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::WRITE))
         return {403, "You do not have permission to update this note."};
 
         return_if (old_entity.content_id != 0 && new_entity.content_id == 0,
@@ -51,7 +51,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult NoteCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
     {
-        if(has_right_for_map(ctx, entity.map_id, enums::SingleRight::DELETE))
+        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
         {return ok_result;}
         return {403, "You do not have permission to delete this note."};
 
@@ -68,12 +68,12 @@ namespace mindnet::persistence::impl::sqlite::validators
         }
         while (true)
         {
-            auto maps = ctx.db->list(models::NOTE_DEFINITION, ctx.token, params);
+            auto maps = ctx.db->list(plugins::zettelkasten::models::NOTE_DEFINITION, ctx.token, params);
             if (maps.second.ko()) return maps.second;
             if (maps.first.empty()) break;
             for (auto& values : maps.first)
             {
-                models::Note note;
+                Note note;
                 note.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, note.get_id());
                 if (check_result.ko()) return {400, std::string("You request list containing note with ID ") + std::to_string(note.get_id()) + ", but you cannot read this note. Modify your query."};

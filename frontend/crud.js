@@ -270,13 +270,19 @@ export async function renderEntityList(entity) {
 
 
     const json = await apiFetch(url.toString());
-    if (!json) return;
-    const items = json.items || [];
+
+// when error or empty response, continue anyway
+    const items = json?.items || [];
+
     const schema = getEntitySchemas()[entity];
     if (!schema) return;
 
-    setTotalPages(json.total_pages || 1);
-    const listFields = schema.fields.filter(f => !f.auto && f.list !== false && !isColumnHidden(entity, f.name));
+// set total pages safely (1 as default)
+    setTotalPages(json?.total_pages || 1);
+
+    const listFields = schema.fields.filter(
+        f => !f.auto && f.list !== false && !isColumnHidden(entity, f.name)
+    );
 
 
     let html = `<h3>${schema.label} List</h3>`;

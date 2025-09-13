@@ -26,7 +26,7 @@
 
 #include "mindnet/Utils.h"
 #include "mindnet/persistence/impl/sqlite/Migrations.h"
-#include "../../../../../include/mindnet/persistence/impl/sqlite/MigrationColumns.h"
+#include "mindnet/persistence/impl/sqlite/MigrationColumns.h"
 #include <openssl/sha.h>
 #include <iomanip>
 

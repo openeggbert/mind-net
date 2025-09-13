@@ -8,9 +8,7 @@
 #include "mindnet/persistence/impl/sqlite/validators/UserCrudlValidator.h"
 
 #include "mindnet/Global.h"
-#include "mindnet/models/Discussion.h"
-#include "mindnet/models/Team.h"
-#include "mindnet/models/TeamMember.h"
+#include "mindnet/plugins/chat/models/Discussion.h"
 #include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/PersistenceMethods.h"
 
@@ -25,7 +23,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     OperationResult DiscussionCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if (ctx.role < enums::UserRole::EDITOR,
+        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,
             403, "User does not have permission to create a discussion.")
 
         string is_member_of_team_result = api::is_member_of_team(ctx, entity.team_id);
@@ -44,7 +42,7 @@ namespace mindnet::persistence::impl::sqlite::validators
     {
 
 
-        if (ctx.role == enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
 
         auto discussion = find_model(model, entity.get_id())
         check_found(discussion)
@@ -64,7 +62,7 @@ namespace mindnet::persistence::impl::sqlite::validators
             403, "You can only update your own discussion.")
 
         string is_member_of_team_result = api::is_member_of_team(ctx, old_entity.team_id);
-        return_if (!is_member_of_team_result.empty() && ctx.role != enums::UserRole::ADMIN,
+        return_if (!is_member_of_team_result.empty() && ctx.role != plugins::core::enums::UserRole::ADMIN,
             403, "You can only update discussions, you created." + is_member_of_team_result);
 
         return ok_result;

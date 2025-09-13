@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::History;
+    using mindnet::plugins::core::models::History;
 
-    class HistoryCrudlValidator : public api::CrudlValidatorBase<HistoryCrudlValidator, models::History>
+    class HistoryCrudlValidator : public api::CrudlValidatorBase<HistoryCrudlValidator, History>
     {
     public:
         HistoryCrudlValidator() = default;

@@ -15,9 +15,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     using db_ptr = mindnet::persistence::api::IPersistence*;
     using api::RequestContext;
-    using models::User;
+    using mindnet::plugins::core::models::User;
 
-    class UserCrudlValidator : public api::CrudlValidatorBase<UserCrudlValidator, models::User>
+    class UserCrudlValidator : public api::CrudlValidatorBase<UserCrudlValidator, User>
     {
     public:
         UserCrudlValidator() = default;

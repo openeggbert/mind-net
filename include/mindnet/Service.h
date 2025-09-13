@@ -9,7 +9,7 @@
 namespace mindnet{
     using validator = persistence::api::ICrudlValidator*;
     using persistence::api::OperationResult;
-    using models::misc::ModelDefinition;
+    using model::ModelDefinition;
 
 
 class Service : public IService
@@ -36,7 +36,7 @@ public:
     std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 
     entity_fields request_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl,ModelDefinition& def
+        crow::json::rvalue& body, plugins::core::enums::Crudl crudl,ModelDefinition& def
         ) override;
 
 private:

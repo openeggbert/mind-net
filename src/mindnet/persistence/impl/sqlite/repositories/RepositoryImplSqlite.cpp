@@ -32,7 +32,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
 {
     RepositoryImplSqlite::RepositoryImplSqlite(
         api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer_,
-        models::misc::ModelDefinition& model_definition_
+        model::ModelDefinition& model_definition_
         ) : IRepository(convert_rest_request_to_entity_fields_pointer_,
             model_definition_)
     {
@@ -67,13 +67,13 @@ namespace mindnet::persistence::impl::sqlite::repositories
         return persistence::impl::sqlite::list_models(get_model_definition(), query_params, error);
     }
 
-    models::misc::ModelDefinition& RepositoryImplSqlite::get_model_definition()
+    model::ModelDefinition& RepositoryImplSqlite::get_model_definition()
     {
         return model_definition;
     }
 
     entity_fields RepositoryImplSqlite::request_to_entity_fields(
-        crow::json::rvalue& body, enums::Crudl crudl)
+        crow::json::rvalue& body, plugins::core::enums::Crudl crudl)
     {
         return request_to_entity_fields_pointer_(body, crudl);
     }

@@ -12,13 +12,13 @@
 #include "mindnet/Service.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
-#include "mindnet/models/User.h"
+#include "mindnet/plugins/core/models/User.h"
 
 namespace mindnet::http
 {
-    HttpServer::HttpServer(ServicePtr service_ptr,
+    HttpServer::HttpServer(ServicePtr& service_ptr,
                            const std::string& directory_for_static_files_)
-        : service_ptr_(std::move(service_ptr)),
+        : service_ptr_(service_ptr),
           directory_for_static_files(directory_for_static_files_)
     {
         create_web_endpoints();
@@ -32,7 +32,7 @@ namespace mindnet::http
         namespace fs = std::filesystem;
 
         ////
-#ifdef jstxt
+#ifndef jstxt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
@@ -243,7 +243,7 @@ namespace mindnet::http
             }
         };
 
-        auto column_definition_to_json = [](mindnet::models::misc::ColumnDefinition& column_definition)
+        auto column_definition_to_json = [](mindnet::model::ColumnDefinition& column_definition)
         {
             crow::json::wvalue result;
             // if (column_definition.is_hidden())
@@ -252,7 +252,7 @@ namespace mindnet::http
             // }
 
             result["column_name"] = column_definition.get_column_name();
-            result["column_type"] = mindnet::enums::column_type_to_string(column_definition.get_column_type());
+            result["column_type"] = column_type_to_string(column_definition.get_column_type());
             result["mandatory"] = column_definition.is_mandatory();
             result["primary_key"] = column_definition.is_primary_key();
             result["foreign_key"] = column_definition.get_foreign_key();
@@ -286,7 +286,7 @@ namespace mindnet::http
         };
 
 
-        auto custom_action_to_json = [](const mindnet::models::misc::CustomAction& custom_action)
+        auto custom_action_to_json = [](const mindnet::model::CustomAction& custom_action)
         {
             crow::json::wvalue result;
 
@@ -342,7 +342,7 @@ namespace mindnet::http
             crow::json::wvalue::list crudl_list;
             for (auto e : model_definition->get_allowed_rest_operations())
             {
-                crudl_list.push_back(mindnet::enums::crudl_to_string(e));
+                crudl_list.push_back(crudl_to_string(e));
             }
 
             if (fields_set_empty || fields_set.contains("allowed_rest_operations"))
@@ -504,11 +504,11 @@ namespace mindnet::http
             }
             string error;
             QueryParams query_params;
-            query_params.add_filter(models::columns::UserColumns::USERNAME, credentials.username);
+            query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, credentials.username);
             LoginToken login_token{req};
-            auto users = service_ptr.get()->list(models::USER_DEFINITION, login_token, query_params);
+            auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (users.first.empty()) { return crow::response(401, "User does not exist."); }
-            models::User user;
+            plugins::core::models::User user;
             user.from_values(users.first[0]);
 
             string expected_password_hash = user.password_hash;
@@ -550,28 +550,28 @@ namespace mindnet::http
             //
             string error;
             QueryParams query_params;
-            query_params.add_filter(models::columns::UserColumns::USERNAME, username);
-            query_params.fields = {models::columns::UserColumns::USERNAME};
+            query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
+            query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
             LoginToken login_token{req};
-            auto users = service_ptr.get()->list(models::USER_DEFINITION, login_token, query_params);
+            auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
 
             std::string hashed = hash_password(password);
-            models::User user;
+            plugins::core::models::User user;
             user.username = username;
             user.password_hash = hashed;
             user.display_name = display_name;
-            user.role = enums::UserRole::READER;
+            user.role = plugins::core::enums::UserRole::READER;
             user.profile_text = profile_text;
             user.last_login = 0;
             user.email = email;
-            user.status = enums::UserStatus::PENDING;
+            user.status = plugins::core::enums::UserStatus::PENDING;
 
             error.clear();
             auto fields_ = user.to_values();
-            service_ptr.get()->create(models::USER_DEFINITION, login_token, fields_);
+            service_ptr.get()->create(plugins::core::models::USER_DEFINITION, login_token, fields_);
             if (!error.empty())
             {
                 return crow::response{400, "Registration failed. " + error};

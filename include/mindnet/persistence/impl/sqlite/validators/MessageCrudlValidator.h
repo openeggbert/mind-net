@@ -19,9 +19,9 @@ namespace mindnet::persistence::impl::sqlite::validators
 {
     //using db_ = mindnet::persistence::Persistence*;
     using api::RequestContext;
-    using models::Message;
+    using mindnet::plugins::mail::models::Message;
 
-    class MessageCrudlValidator : public api::CrudlValidatorBase<MessageCrudlValidator, models::Message>
+    class MessageCrudlValidator : public api::CrudlValidatorBase<MessageCrudlValidator, Message>
     {
     public:
         MessageCrudlValidator() = default;
