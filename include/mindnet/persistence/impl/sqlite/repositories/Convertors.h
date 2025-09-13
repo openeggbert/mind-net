@@ -8,6 +8,59 @@
 #include "mindnet/Helper.h"
 #include "../../../../plugins/core/enums/Crudl.h"
 
+#define start_of_request_to_entity_fields(plugin, Model)\
+typedef plugins :: plugin :: columns::Model##Columns cols;\
+entity_fields fields;\
+\
+bool create = crudl == mindnet::plugins::core::enums::Crudl::CREATE;\
+bool update = crudl == mindnet::plugins::core::enums::Crudl::UPDATE;\
+if (!create && !update)\
+{\
+return fields;\
+}\
+\
+fields.emplace_back(0);\
+\
+if (create)\
+{\
+fields.emplace_back(cast64(Utils::currentUnixTimestamp()));\
+}\
+else\
+{\
+fields.emplace_back(cast64(0));\
+}\
+fields.emplace_back(cast64(Utils::currentUnixTimestamp()));
+
+
+
+
+#define string_for(COLUMN) body[cols::COLUMN].s()
+#define int_for(COLUMN) cast64(body[cols::COLUMN])
+#define mandatory_string(COLUMN) fields.emplace_back(string_for(COLUMN));
+#define mandatory_int(COLUMN) fields.emplace_back(int_for(COLUMN));
+
+#define optional_string(COLUMN, DEFAULT_VALUE) \
+if (body.has(cols::COLUMN)) {fields.emplace_back(string_for(COLUMN));}\
+else{fields.emplace_back(DEFAULT_VALUE);}
+
+#define optional_int(COLUMN, DEFAULT_VALUE) \
+if (body.has(cols::COLUMN)) {fields.emplace_back(int_for(COLUMN));}\
+else{fields.emplace_back(DEFAULT_VALUE);}
+
+#define foreign_key(COLUMN)\
+if (\
+body.has(cols::COLUMN) &&\
+body[cols::COLUMN] != 0)\
+{\
+mandatory_int(COLUMN);\
+} else\
+{\
+fields.emplace_back(FOREIGN_KEY_NULL);\
+}
+
+
+
+
 #define method_arguments() crow::json::rvalue& body, mindnet::plugins::core::enums::Crudl crudl
 namespace mindnet::persistence::impl::sqlite::repositories
 {

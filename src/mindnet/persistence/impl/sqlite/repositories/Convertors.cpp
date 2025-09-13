@@ -26,7 +26,6 @@
 #include <string>
 
 #include "mindnet/plugins/core/enums/Crudl.h"
-#include "mindnet/persistence/api/IRepository.h"
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
 #include "mindnet/plugins/core/columns/UserColumns.h"
 #include "mindnet/plugins/mail/columns/MessageColumns.h"
