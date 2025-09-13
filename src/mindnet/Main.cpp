@@ -14,7 +14,6 @@
 
 #include "mindnet/Utils.h"
 #include <memory>
-#include <sstream>
 
 #include "mindnet/Global.h"
 #include "mindnet/ExitStatus.h"
@@ -68,7 +67,6 @@
 #include "mindnet/api/PluginRegistry.h"
 #include "mindnet/impl/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
-#include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
 #define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
 using mindnet::commit;
