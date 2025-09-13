@@ -57,12 +57,16 @@ namespace mindnet::plugins::mail::models
         using columns::MessageColumns;
 
         validator_chain_vector list{
-        [this] { return test_ne(owner_id, 0, MessageColumns::OWNER_ID);},
-        [this] { return test_ne(sender_id, 0, MessageColumns::SENDER_ID);},
-            [this] { return test_ne(recipient_id, 0, MessageColumns::RECIPIENT_ID);},
-        [this] { return test_ne(sender_id, recipient_id, "sender_id and recipient_id must not be equal");},
-        [this]{return test_false(sender_id != owner_id && recipient_id != owner_id, "sender_id and recipient_id must be either owner_id or recipient_id");},
-    };
+            [this] { return test_ne(owner_id, 0, MessageColumns::OWNER_ID); },
+            [this] { return test_ne(sender_id, 0, MessageColumns::SENDER_ID); },
+            [this] { return test_ne(recipient_id, 0, MessageColumns::RECIPIENT_ID); },
+            [this] { return test_ne(sender_id, recipient_id, "sender_id and recipient_id must not be equal"); },
+            [this]
+            {
+                return test_false(sender_id != owner_id && recipient_id != owner_id,
+                                  "sender_id and recipient_id must be either owner_id or recipient_id");
+            },
+        };
         return ValidatorChain::run(list);
     }
 }

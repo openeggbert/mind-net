@@ -50,14 +50,17 @@ namespace mindnet::plugins::zettelkasten::models
             coldef(COLS::CATEGORY),
             coldef(COLS::OWNER_ID, MANDATORY).set_foreign_key("user"),
             coldef(COLS::TEAM_ID, FOREIGN_KEY),
-            coldef(COLS::OWNER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(core::enums::access_right_to_enum_definition()),
-            coldef(COLS::TEAM_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(core::enums::access_right_to_enum_definition()),
-            coldef(COLS::OTHER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(core::enums::access_right_to_enum_definition()),
+            coldef(COLS::OWNER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(
+                core::enums::access_right_to_enum_definition()),
+            coldef(COLS::TEAM_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(
+                core::enums::access_right_to_enum_definition()),
+            coldef(COLS::OTHER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(
+                core::enums::access_right_to_enum_definition()),
         })
-    .add_custom_list_action("note", "List notes", {"map_id","{id}"})
-    .add_custom_create_action("note", "Add note", {"map_id","{id}"})
-    .add_custom_list_action("tag_type", "List tags", {"map_id","{id}"})
-    .add_custom_create_action("tag_type","Add tag", {"map_id","{id}"});
+        .add_custom_list_action("note", "List notes", {"map_id", "{id}"})
+        .add_custom_create_action("note", "Add note", {"map_id", "{id}"})
+        .add_custom_list_action("tag_type", "List tags", {"map_id", "{id}"})
+        .add_custom_create_action("tag_type", "Add tag", {"map_id", "{id}"});
 
 
     struct Model : mindnet::model::BaseModel
@@ -70,9 +73,9 @@ namespace mindnet::plugins::zettelkasten::models
         core::enums::AccessRight owner_rights{7};
         core::enums::AccessRight team_rights{7};
         core::enums::AccessRight other_rights{7};
-        int owner_rights_int() {return cast64(owner_rights);}
-        int team_rights_int() {return cast64(team_rights);}
-        int other_rights_int() {return cast64(other_rights);}
+        int owner_rights_int() { return cast64(owner_rights); }
+        int team_rights_int() { return cast64(team_rights); }
+        int other_rights_int() { return cast64(other_rights); }
 
 
         create_model_h_methods(Model, MODEL)

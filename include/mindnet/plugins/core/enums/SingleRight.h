@@ -67,7 +67,6 @@ namespace mindnet::plugins::core::enums
             single_right_to_string, 4, 0, 1, 2, 3
         };
     }
-
 } // namespace mindnet::enums
 
 #endif // SINGLERIGHT_H

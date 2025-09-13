@@ -33,7 +33,6 @@
 
 namespace mindnet::plugins::mail::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
@@ -44,25 +43,24 @@ namespace mindnet::plugins::mail::models
         .set_group("Collaboration", 300)
         .set_columns(
             {
-                coldef(COLS::OWNER_ID,MANDATORY | READONLY).set_foreign_key("user"),
-                coldef(COLS::SENDER_ID,MANDATORY).set_foreign_key("user"),
-                coldef(COLS::RECIPIENT_ID,MANDATORY).set_foreign_key("user"),
+                coldef(COLS::OWNER_ID, MANDATORY | READONLY).set_foreign_key("user"),
+                coldef(COLS::SENDER_ID, MANDATORY).set_foreign_key("user"),
+                coldef(COLS::RECIPIENT_ID, MANDATORY).set_foreign_key("user"),
                 coldef(COLS::SUBJECT),
-                coldef(COLS::IMPORTANT,BOOL).set_default_value(0),
-                coldef(COLS::BODY,TEXTAREA | MANDATORY),
-                coldef(COLS::SENT_AT,DATETIME),
-                coldef(COLS::SYSTEM_MESSAGE,BOOL | READONLY).set_default_value(0),
+                coldef(COLS::IMPORTANT, BOOL).set_default_value(0),
+                coldef(COLS::BODY, TEXTAREA | MANDATORY),
+                coldef(COLS::SENT_AT, DATETIME),
+                coldef(COLS::SYSTEM_MESSAGE, BOOL | READONLY).set_default_value(0),
                 coldef(COLS::FOLDER),
-                coldef(COLS::DRAFT,BOOL).set_default_value(0),
-                coldef(COLS::IS_READ,BOOL).set_default_value(0),
-                coldef(COLS::DELETED_AT,DATETIME),
-                coldef(COLS::STARRED,BOOL).set_default_value(0)
+                coldef(COLS::DRAFT, BOOL).set_default_value(0),
+                coldef(COLS::IS_READ, BOOL).set_default_value(0),
+                coldef(COLS::DELETED_AT, DATETIME),
+                coldef(COLS::STARRED, BOOL).set_default_value(0)
             })
-    .add_custom_list_action("message","Inbox", {"todo","{id}"})
-    .add_custom_list_action("message","Sent", {"todo","{id}"})
-    .add_custom_list_action("message","Drafts", {"todo","{id}"})
-    .add_custom_create_action("collection_item","Compose", {"todo","{id}"})
-    ;
+        .add_custom_list_action("message", "Inbox", {"todo", "{id}"})
+        .add_custom_list_action("message", "Sent", {"todo", "{id}"})
+        .add_custom_list_action("message", "Drafts", {"todo", "{id}"})
+        .add_custom_create_action("collection_item", "Compose", {"todo", "{id}"});
     // *** Definition of model ends ***
 
     struct Model : mindnet::model::BaseModel

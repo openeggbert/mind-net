@@ -38,9 +38,9 @@ namespace mindnet::persistence::api
 
         return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
+
     bool has_user_email(const RequestContext& ctx, string user_email)
     {
-
         string error;
         http::QueryParams query_params;
         query_params.filters.emplace("email", user_email);
@@ -67,7 +67,8 @@ namespace mindnet::persistence::api
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
         query_params.filters.emplace("user_id", std::to_string(ctx.token.user_id));
         query_params.filters.emplace("status", std::to_string(cast64(plugins::core::enums::UserStatus::ACTIVE)));
-        auto is_team_member_result = ctx.db->list(plugins::core::models::TEAM_MEMBER_DEFINITION, ctx.token, query_params);
+        auto is_team_member_result = ctx.db->list(plugins::core::models::TEAM_MEMBER_DEFINITION, ctx.token,
+                                                  query_params);
         if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
         if (is_team_member_result.first.empty())
         {
@@ -81,8 +82,10 @@ namespace mindnet::persistence::api
         http::QueryParams query_params;
         query_params.filters.emplace("content_id", std::to_string(content_id));
         auto notes = ctx.db->list(plugins::zettelkasten::models::NOTE_DEFINITION, ctx.token, query_params);
-        if (notes.second.ko()) return {-1,notes.second.error};
-        if (notes.first.empty()) return {-1, std::string("There is no note with content id") + std::to_string(content_id)};
+        if (notes.second.ko()) return {-1, notes.second.error};
+        if (notes.first.empty()) return {
+            -1, std::string("There is no note with content id") + std::to_string(content_id)
+        };
         plugins::zettelkasten::models::Note note;
         note.from_values(notes.first.at(0));
         return {note.get_id(), ""};
@@ -108,7 +111,6 @@ namespace mindnet::persistence::api
             map_team_member_and_can = !result.empty() && can(
                 plugins::core::enums::SingleRight::WRITE, map.first.team_rights_int());
             if (map_team_member_and_can) return true;
-
         }
 
         bool other_can = can(single_right, map.first.other_rights_int());

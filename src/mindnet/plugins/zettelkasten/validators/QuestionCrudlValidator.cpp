@@ -18,14 +18,16 @@ namespace mindnet::plugins::zettelkasten::validators
     using validators::QuestionCrudlValidator;
     using mindnet::OperationResult;
 
-    OperationResult QuestionCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const {
-    auto note = find_model(note, entity.note_id);
-    if (note.second.empty()) return {400, note.second};
+    OperationResult QuestionCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    {
+        auto note = find_model(note, entity.note_id);
+        if (note.second.empty()) return {400, note.second};
 
-    if(has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::WRITE))
-    {return ok_result;}
-    return {403, "You do not have permission to create a question for this note."};
-
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::WRITE))
+        {
+            return ok_result;
+        }
+        return {403, "You do not have permission to create a question for this note."};
     }
 
     OperationResult QuestionCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
@@ -33,38 +35,42 @@ namespace mindnet::plugins::zettelkasten::validators
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if(has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::READ))
-        {return ok_result;}
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::READ))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to delete this question for this note."};
-
     }
 
-    OperationResult QuestionCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult QuestionCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                            const Model& new_entity) const
     {
         auto note = find_model(note, old_entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if(has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::WRITE))
-        {return ok_result;}
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::WRITE))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to update this question for this note."};
-
     }
 
-    OperationResult QuestionCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult QuestionCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if(has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::DELETE))
-        {return ok_result;}
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::DELETE))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to update this question for this note."};
-
     }
 
     OperationResult QuestionCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(note_id)
-auto note_id = std::stoi(filter.at("note_id"));
+        auto note_id = std::stoi(filter.at("note_id"));
 
         auto note = find_model(tag_type, note_id);
         if (note.second.empty()) return {400, note.second};
@@ -73,7 +79,8 @@ auto note_id = std::stoi(filter.at("note_id"));
             return {
                 403,
                 std::string(
-                    "You do not have permission to list questions for map with ID " + std::to_string(note.first.map_id) + ".")
+                    "You do not have permission to list questions for map with ID " + std::to_string(note.first.map_id)
+                    + ".")
             };
 
         return ok_result;

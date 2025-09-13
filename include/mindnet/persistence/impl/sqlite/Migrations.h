@@ -193,7 +193,8 @@ CREATE TABLE map (
 	FOREIGN KEY(owner_id) REFERENCES user(id),
     FOREIGN KEY(team_id) REFERENCES team(id)
 );
-)",        R"(
+)",
+        R"(
 CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -204,7 +205,8 @@ CREATE TABLE content (
     version INTEGER DEFAULT 1
 );
 CREATE INDEX idx_content_value ON content(value);
-)",R"(
+)",
+        R"(
 CREATE VIRTUAL TABLE content_fts USING fts5(
     value,
     format UNINDEXED,
@@ -223,7 +225,8 @@ END;
 CREATE TRIGGER content_au AFTER UPDATE ON content BEGIN
   UPDATE content_fts SET value = new.value WHERE rowid = old.id;
 END;
-)",R"(
+)",
+        R"(
 CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -244,7 +247,8 @@ CREATE TABLE note (
 
 CREATE INDEX idx_note_content_id ON note(content_id);
 CREATE INDEX idx_note_map_id ON note(map_id);
-)",R"(
+)",
+        R"(
 CREATE TABLE property(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -325,7 +329,7 @@ CREATE TABLE collection_item (
 	FOREIGN KEY(note_id) REFERENCES note(id)
 );
 )",
-            	R"(
+        R"(
         		CREATE TABLE question (
         	id INTEGER PRIMARY KEY AUTOINCREMENT,
         	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

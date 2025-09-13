@@ -81,7 +81,8 @@ namespace mindnet
             if (map_contains(map, "require_admin_approval_for_new_users"))
                 require_admin_approval_for_new_users = string_to_bool(
                     map["require_admin_approval_for_new_users"]);
-            if (map_contains(map, "default_user_role")) default_user_role = plugins::core::enums::string_to_user_role(map["default_user_role"]);
+            if (map_contains(map, "default_user_role")) default_user_role = plugins::core::enums::string_to_user_role(
+                map["default_user_role"]);
             if (map_contains(map, "jwt_secret")) jwt_secret = map["jwt_secret"];
         }
     };

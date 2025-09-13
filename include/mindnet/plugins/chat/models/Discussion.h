@@ -34,7 +34,6 @@
 
 namespace mindnet::plugins::chat::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
@@ -45,7 +44,8 @@ namespace mindnet::plugins::chat::models
         .set_group("Collaboration", 300)
         .set_columns({
             //
-            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("ID of the team this discussion belongs to"),
+            coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(
+                "ID of the team this discussion belongs to"),
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the discussion"),
             coldef(COLS::CREATED_BY, MANDATORY | READONLY).set_foreign_key("user").set_description(
                 "User ID who created the discussion"),
@@ -54,9 +54,8 @@ namespace mindnet::plugins::chat::models
             coldef(COLS::IS_ARCHIVED, BOOL).set_default_value(0).set_description(
                 "Whether this discussion is archived or not"),
         })
-    .add_custom_list_action("comment","List comments", {"discussion_id","{id}"})
-    .add_custom_create_action("comment","Add comment", {"discussion_id","{id}"})
-    ;
+        .add_custom_list_action("comment", "List comments", {"discussion_id", "{id}"})
+        .add_custom_create_action("comment", "Add comment", {"discussion_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {
@@ -76,8 +75,8 @@ namespace mindnet::plugins::chat::models
                 team_id == other.team_id &&
                 title == other.title &&
                 created_by == other.created_by &&
-                    is_pinned == other.is_pinned &&
-                    is_archived == other.is_archived;
+                is_pinned == other.is_pinned &&
+                is_archived == other.is_archived;
         }
     };
 }

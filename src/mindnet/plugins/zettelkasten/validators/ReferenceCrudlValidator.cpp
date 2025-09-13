@@ -18,26 +18,28 @@ namespace mindnet::plugins::zettelkasten::validators
     using validators::ReferenceCrudlValidator;
     using mindnet::OperationResult;
 
-    OperationResult ReferenceCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const {
+    OperationResult ReferenceCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    {
         assert_editor()
         return ok_result;
     }
 
     OperationResult ReferenceCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-           return ok_result;
+        return ok_result;
     }
 
-    OperationResult ReferenceCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult ReferenceCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                             const Model& new_entity) const
     {
         assert_editor()
-          return ok_result;
+        return ok_result;
     }
 
-    OperationResult ReferenceCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult ReferenceCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
-           return ok_result;
+        return ok_result;
     }
 
     OperationResult ReferenceCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const

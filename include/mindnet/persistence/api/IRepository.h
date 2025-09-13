@@ -33,7 +33,8 @@
 
 namespace mindnet::persistence::api
 {
-    typedef entity_fields (*request_to_entity_fields_pointer)(crow::json::rvalue&, mindnet::plugins::core::enums::Crudl);
+    typedef entity_fields (*
+        request_to_entity_fields_pointer)(crow::json::rvalue&, mindnet::plugins::core::enums::Crudl);
 
     using std::string;
 
@@ -42,8 +43,8 @@ namespace mindnet::persistence::api
     public:
         virtual ~IRepository() = default;
         IRepository(
-        api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
-        model::ModelDefinition& model_definition
+            api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
+            model::ModelDefinition& model_definition
         );
         virtual int create(const entity_fields& fields, string& error) = 0;
         virtual entity_fields read(int id, string& error) = 0;
@@ -51,7 +52,8 @@ namespace mindnet::persistence::api
         virtual bool remove(int id, string& error) = 0;
         virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;
         [[nodiscard]] virtual mindnet::model::ModelDefinition& get_model_definition() = 0;
-        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body, mindnet::plugins::core::enums::Crudl crudl) =
+        virtual entity_fields request_to_entity_fields(crow::json::rvalue& body,
+                                                       mindnet::plugins::core::enums::Crudl crudl) =
         0;
 
     protected:

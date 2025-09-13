@@ -39,10 +39,10 @@ namespace mindnet::plugins::core::models
         using columns::TeamColumns;
 
         validator_chain_vector list{
-        [this] { return testt_between(name, 5, 32, TeamColumns::NAME);},
-        [this] { return test_at_most(description.size(), 256, TeamColumns::DESCRIPTION);},
-        [this] { return test_ne(created_by, 0, TeamColumns::CREATED_BY);},
-        [this] { return test_ne(leader_id, 0, TeamColumns::LEADER_ID);},
+            [this] { return testt_between(name, 5, 32, TeamColumns::NAME); },
+            [this] { return test_at_most(description.size(), 256, TeamColumns::DESCRIPTION); },
+            [this] { return test_ne(created_by, 0, TeamColumns::CREATED_BY); },
+            [this] { return test_ne(leader_id, 0, TeamColumns::LEADER_ID); },
         };
         return ValidatorChain::run(list);
     }

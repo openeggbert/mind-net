@@ -315,7 +315,8 @@ namespace mindnet
      * @param count A boolean flag. If true, modifies the query to ignore sorting and pagination, suitable for row count queries. Default is false.
      * @return The constructed SQL query as a string.
      */
-    string Utils::generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params, bool count)
+    string Utils::generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params,
+                                          bool count)
     {
         auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
         if (!query_params.filters.empty())

@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::core::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::core::models::Team;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::core::validators
         using Model = Team;
 
         create_method_prototypes_for_CrudlValidatorBase(Team)
-
     };
-
 }
 #endif // TEAMCRUDLVALIDATOR_H

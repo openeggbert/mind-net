@@ -19,8 +19,6 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult MapCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-
-
         return_if(has_map_name(ctx, entity.name),
                   409, "name already exists")
 
@@ -38,7 +36,6 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult MapCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-
         if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
         if (entity.owner_id == ctx.token.user_id) return ok_result;
         if (entity.team_id != 0 && plugins::core::enums::can_read(entity.team_rights))
@@ -56,10 +53,9 @@ namespace mindnet::plugins::zettelkasten::validators
         return {403, "You can not read this map."};
     }
 
-    OperationResult MapCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult MapCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                       const Model& new_entity) const
     {
-
-
         using plugins::core::enums::can_write;
 
         bool owner_can_write = old_entity.owner_id == ctx.token.user_id && can_write(old_entity.owner_rights);
@@ -82,10 +78,8 @@ namespace mindnet::plugins::zettelkasten::validators
         return ok_result;
     }
 
-    OperationResult MapCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult MapCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
-
-
         using plugins::core::enums::can_delete;
 
         bool owner_can_delete = entity.owner_id == ctx.token.user_id && can_delete(entity.owner_rights);
@@ -110,7 +104,6 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult MapCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
-
         http::QueryParams params;
         params.page_size = 100;
         for (auto& [key, value] : filter)
@@ -127,7 +120,11 @@ namespace mindnet::plugins::zettelkasten::validators
                 plugins::zettelkasten::models::Map map;
                 map.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, map.get_id());
-                if (check_result.ko()) return {400, std::string("You request list containing map with ID ") + std::to_string(map.get_id()) + ", but you cannot read this map. The reason: " + check_result.error};
+                if (check_result.ko()) return {
+                    400,
+                    std::string("You request list containing map with ID ") + std::to_string(map.get_id()) +
+                    ", but you cannot read this map. The reason: " + check_result.error
+                };
             }
             params.page_number++;
         }
@@ -136,7 +133,7 @@ namespace mindnet::plugins::zettelkasten::validators
 
     string MapCrudlValidator::get_model_name() const
     {
-        experiment <<  STRINGIFY(model) << commit;
+        experiment << STRINGIFY(model) << commit;
         err << "ERROR: " << STRINGIFY(model) << commit;
         return STRINGIFY(model);
     }

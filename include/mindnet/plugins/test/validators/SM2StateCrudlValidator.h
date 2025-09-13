@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::test::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::test::models::SM2State;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::test::validators
         using Model = SM2State;
 
         create_method_prototypes_for_CrudlValidatorBase(SM2State)
-
     };
-
 }
 #endif // SM2STATECRUDLVALIDATOR_H

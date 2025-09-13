@@ -15,7 +15,7 @@ namespace mindnet::persistence::api
 {
     using mindnet::model::ModelDefinition;
     using mindnet::OperationResult;
-    
+
     class Persistence : public api::IPersistence
     {
     private:
@@ -32,17 +32,21 @@ namespace mindnet::persistence::api
 
         std::vector<std::string>& list_model_names() override;
 
-        std::pair<int, OperationResult>         create(const ModelDefinition& def, http::LoginToken& token, entity_fields& fields) override;
-        std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, http::LoginToken& token, int id) override;
-        OperationResult                         update(const ModelDefinition& def, http::LoginToken&  token, int id, entity_fields& fields) override;
-        OperationResult                         remove(ModelDefinition& def, http::LoginToken&  token, int id) override;
-        std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params) override;
+        std::pair<int, OperationResult> create(const ModelDefinition& def, http::LoginToken& token,
+                                               entity_fields& fields) override;
+        std::pair<entity_fields, OperationResult>
+        read(const ModelDefinition& def, http::LoginToken& token, int id) override;
+        OperationResult update(const ModelDefinition& def, http::LoginToken& token, int id,
+                               entity_fields& fields) override;
+        OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id) override;
+        std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token,
+                                                                    http::QueryParams& query_params) override;
 
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 
         entity_fields request_to_entity_fields(crow::json::rvalue& body, plugins::core::enums::Crudl crudl,
-                                                                ModelDefinition& def) override;
+                                               ModelDefinition& def) override;
     };
 }
 #endif // PERSISTENCE_H

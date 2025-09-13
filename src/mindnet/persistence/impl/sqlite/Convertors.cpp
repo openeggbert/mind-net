@@ -147,7 +147,7 @@ namespace mindnet::persistence::impl::sqlite
         optional_int(STATUS, 0)
         optional_string(DATA_JSON, "")
         optional_int(REVIEW_COUNT, 0)
-        
+
         return fields;
     }
 
@@ -159,7 +159,7 @@ namespace mindnet::persistence::impl::sqlite
         optional_int(DECISION_STATUS, 0)
         optional_string(COMMENT, "")
         optional_int(REVIEWED_AT, 0)
-        
+
         return fields;
     }
 
@@ -214,7 +214,7 @@ namespace mindnet::persistence::impl::sqlite
         mandatory_int(SIBLING_POSITION)
         optional_int(IMPORTANCE, 0);
         optional_int(DIFFICULTY, 0);
-        
+
         return fields;
     }
 
@@ -256,7 +256,7 @@ namespace mindnet::persistence::impl::sqlite
         mandatory_int(ORDER_INDEX);
         foreign_key(CREATED_BY);
         optional_int(IS_PUBLIC, 0);
-        
+
         return fields;
     }
 

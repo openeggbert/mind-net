@@ -33,10 +33,9 @@ namespace mindnet::persistence::impl::sqlite
     RepositoryImplSqlite::RepositoryImplSqlite(
         api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer_,
         model::ModelDefinition& model_definition_
-        ) : IRepository(convert_rest_request_to_entity_fields_pointer_,
-            model_definition_)
+    ) : IRepository(convert_rest_request_to_entity_fields_pointer_,
+                    model_definition_)
     {
-
     }
 
     RepositoryImplSqlite::~RepositoryImplSqlite() = default;

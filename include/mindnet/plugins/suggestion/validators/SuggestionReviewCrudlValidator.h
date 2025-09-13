@@ -13,11 +13,11 @@
 
 namespace mindnet::plugins::suggestion::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::suggestion::models::SuggestionReview;
 
-    class SuggestionReviewCrudlValidator : public persistence::api::CrudlValidatorBase<SuggestionReviewCrudlValidator, SuggestionReview>
+    class SuggestionReviewCrudlValidator : public persistence::api::CrudlValidatorBase<
+            SuggestionReviewCrudlValidator, SuggestionReview>
     {
     public:
         SuggestionReviewCrudlValidator() = default;
@@ -25,8 +25,6 @@ namespace mindnet::plugins::suggestion::validators
         using Model = SuggestionReview;
 
         create_method_prototypes_for_CrudlValidatorBase(SuggestionReview)
-
     };
-
 }
 #endif // SUGGESTIONREVIEWCRUDLVALIDATOR_H

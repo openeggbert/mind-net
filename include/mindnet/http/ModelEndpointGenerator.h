@@ -14,7 +14,7 @@ namespace mindnet::http
     {
     public:
         void create_model_endpoint(crow::SimpleApp& app, ServicePtr& service_ptr,
-                             model::ModelDefinition& def);
+                                   model::ModelDefinition& def);
     };
 }
 #endif // MAPCONTROLLER_H

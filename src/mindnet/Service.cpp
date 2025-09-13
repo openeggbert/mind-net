@@ -39,7 +39,7 @@ namespace mindnet
 
     Service::Service(const DbPtr& db_) : IService(db_), db_ptr(db_)
     {
-//#define disable_validation
+        //#define disable_validation
 
 #ifndef disable_validation
 
@@ -71,9 +71,11 @@ namespace mindnet
         add_validator(test, review, Review)
         add_validator(test, sm2_state, SM2State)
 
-        for (auto& e : validators) {
+        for (auto& e : validators)
+        {
             e.second->set_validator_func(
-                [this](const std::string& name) {
+                [this](const std::string& name)
+                {
                     return this->get_validator(name);
                 }
             );
@@ -88,7 +90,6 @@ namespace mindnet
         {
             delete e.second;
         }
-
     };
 
     bool Service::has_model(const std::string& model_name)
@@ -199,8 +200,10 @@ namespace mindnet
             return v2->can_create(db_ptr, token, ef);
         }
 
-        return {500, "Validator is not implemented for " + model_definition.get_model_name() +
-                               ". Operation CREATE cannot be validated."};
+        return {
+            500, "Validator is not implemented for " + model_definition.get_model_name() +
+            ". Operation CREATE cannot be validated."
+        };
     };
 
     OperationResult Service::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
@@ -214,8 +217,10 @@ namespace mindnet
         {
             return v2->can_read(db_ptr, token, id);
         }
-        return {500, "Validator is not implemented for " + model_definition.get_model_name() +
-                               ". Operation READ cannot be validated."};
+        return {
+            500, "Validator is not implemented for " + model_definition.get_model_name() +
+            ". Operation READ cannot be validated."
+        };
     }
 
     OperationResult Service::can_update(const ModelDefinition& model_definition, http::LoginToken& token,
@@ -229,9 +234,10 @@ namespace mindnet
         {
             return v2->can_update(db_ptr, token, ef);
         }
-        return {500, "Validator is not implemented for " + model_definition.get_model_name() +
-                               ". Operation UPDATE cannot be validated."};
-
+        return {
+            500, "Validator is not implemented for " + model_definition.get_model_name() +
+            ". Operation UPDATE cannot be validated."
+        };
     }
 
     OperationResult Service::can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id)
@@ -244,8 +250,10 @@ namespace mindnet
         {
             return v2->can_delete(db_ptr, token, id);
         }
-        return {500, "Validator is not implemented for " + model_definition.get_model_name() +
-                               ". Operation DELETE cannot be validated."};
+        return {
+            500, "Validator is not implemented for " + model_definition.get_model_name() +
+            ". Operation DELETE cannot be validated."
+        };
     }
 
     OperationResult Service::can_list(const ModelDefinition& model_definition, http::LoginToken& token,
@@ -258,8 +266,9 @@ namespace mindnet
         {
             return v2->can_list(db_ptr, token, filter);
         }
-        return {500, "Validator is not implemented for " + model_definition.get_model_name() +
-                               ". Operation LIST cannot be validated."};
-
+        return {
+            500, "Validator is not implemented for " + model_definition.get_model_name() +
+            ". Operation LIST cannot be validated."
+        };
     }
 }

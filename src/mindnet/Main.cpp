@@ -258,7 +258,7 @@ bool commands_function_start(
         exit_status = 1;
         return true;
     }
-    
+
 
     mindnet::http::HttpServer server{service_ptr, static_directory};
 
@@ -306,25 +306,17 @@ bool commands_function_start(
 #endif
 
 
-
-
-
-
-
-
-
-
     //
 
 
-    if (custom_port) {mindnet::debug << "Custom port was provided: " << port << commit;}
-    else {mindnet::debug << "Using default port: " << port << commit;}
+    if (custom_port) { mindnet::debug << "Custom port was provided: " << port << commit; }
+    else { mindnet::debug << "Using default port: " << port << commit; }
 
-    if (custom_frontend_port) {mindnet::debug << "Custom frontend port was provided: " << frontend_port << commit;}
-    else {mindnet::debug << "Using default frontend port: " << frontend_port << commit;}
+    if (custom_frontend_port) { mindnet::debug << "Custom frontend port was provided: " << frontend_port << commit; }
+    else { mindnet::debug << "Using default frontend port: " << frontend_port << commit; }
 
-    if (custom_host) {mindnet::debug << "Custom host was provided: " << host << commit;}
-    else {mindnet::debug << "Using default host: " << host << commit;}
+    if (custom_host) { mindnet::debug << "Custom host was provided: " << host << commit; }
+    else { mindnet::debug << "Using default host: " << host << commit; }
 
     mindnet::info << "Starting backend on port " << port << commit;
     mindnet::info << "Starting frontend on port " << frontend_port << commit;
@@ -394,7 +386,8 @@ int main(int argc, char** argv)
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
     migrate_schema_if_needed();
-    std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<mindnet::persistence::api::Persistence>();
+    std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<
+        mindnet::persistence::api::Persistence>();
     std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
     return run_command(arguments, service);
 }

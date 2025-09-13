@@ -19,11 +19,13 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult NoteCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,
-               403, "User does not have permission to create a note.")
+        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR,
+                  403, "User does not have permission to create a note.")
 
-        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
-        {return ok_result;}
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to create a note for this map."};
     }
 
@@ -32,27 +34,31 @@ namespace mindnet::plugins::zettelkasten::validators
         auto map = find_model(map, entity.map_id)
         if (!map.second.empty()) return {400, map.second};
 
-        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
-        {return ok_result;}
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to read this note."};
     }
 
-    OperationResult NoteCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult NoteCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                        const Model& new_entity) const
     {
+        if (!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::WRITE))
+            return {403, "You do not have permission to update this note."};
 
-        if(!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::WRITE))
-        return {403, "You do not have permission to update this note."};
+        return_if(old_entity.content_id != 0 && new_entity.content_id == 0,
+                  400, "content_id cannot be set to 0, if already set");
 
-        return_if (old_entity.content_id != 0 && new_entity.content_id == 0,
-            400, "content_id cannot be set to 0, if already set");
-        
         return ok_result;
     }
 
-    OperationResult NoteCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult NoteCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
-        if(has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
-        {return ok_result;}
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to delete this note."};
 
         return ok_result;
@@ -76,7 +82,11 @@ namespace mindnet::plugins::zettelkasten::validators
                 Note note;
                 note.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, note.get_id());
-                if (check_result.ko()) return {400, std::string("You request list containing note with ID ") + std::to_string(note.get_id()) + ", but you cannot read this note. Modify your query."};
+                if (check_result.ko()) return {
+                    400,
+                    std::string("You request list containing note with ID ") + std::to_string(note.get_id()) +
+                    ", but you cannot read this note. Modify your query."
+                };
             }
             params.page_number++;
         }

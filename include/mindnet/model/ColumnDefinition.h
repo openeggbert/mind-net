@@ -144,7 +144,6 @@ namespace mindnet::model
                 column_type = mindnet::model::ColumnType::INTEGER;
                 description = "Unique identifier of the record.";
                 readonly = true;
-
             }
             if (column_name == bc::CREATED_AT)
             {
@@ -215,14 +214,17 @@ namespace mindnet::model
         {
             return auto_;
         }
+
         [[nodiscard]] const bool is_hidden() const
         {
             return hidden;
         }
+
         [[nodiscard]] const bool is_readonly() const
         {
             return readonly;
         }
+
         [[nodiscard]] const string& get_description() const
         {
             return description;
@@ -259,11 +261,13 @@ namespace mindnet::model
             default_value = value;
             return *this;
         }
+
         ColumnDefinition& set_default_value(int value)
         {
             default_value = std::to_string(value);
             return *this;
         }
+
         ColumnDefinition& set_description(string str)
         {
             description = str;
@@ -276,12 +280,15 @@ namespace mindnet::model
             if (column_name.ends_with("_id"))
             {
                 foreign_key = column_name.substr(0, column_name.size() - 3);
-            } else
+            }
+            else
             {
-                throw std::invalid_argument("foreign_key must be set to the name of the column ending with _id, if set_foreign_key(string) method is called");
+                throw std::invalid_argument(
+                    "foreign_key must be set to the name of the column ending with _id, if set_foreign_key(string) method is called");
             }
             return *this;
         }
+
         ColumnDefinition& set_auto()
         {
             auto_ = true;
@@ -293,6 +300,7 @@ namespace mindnet::model
             hidden = true;
             return *this;
         }
+
         ColumnDefinition& set_readonly()
         {
             readonly = true;
@@ -330,6 +338,7 @@ namespace mindnet::model
 
             return *this;
         }
+
     public:
     };
 }

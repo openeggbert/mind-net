@@ -29,13 +29,14 @@ namespace mindnet::plugins::zettelkasten::validators
         return ok_result;
     }
 
-    OperationResult CollectionCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult CollectionCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                              const Model& new_entity) const
     {
         assert_editor()
         return ok_result;
     }
 
-    OperationResult CollectionCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult CollectionCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
 

@@ -41,7 +41,7 @@ namespace mindnet::persistence::impl::sqlite
         RepositoryImplSqlite(
             api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
             model::ModelDefinition& model_definition
-            );
+        );
         ~RepositoryImplSqlite() override;
 
         int create(const entity_fields& fields, string& error) override;

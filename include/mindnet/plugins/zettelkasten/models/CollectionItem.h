@@ -33,7 +33,6 @@
 
 namespace mindnet::plugins::zettelkasten::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
@@ -45,7 +44,8 @@ namespace mindnet::plugins::zettelkasten::models
         .set_columns({
             coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
                 "Foreign key referencing the collection"),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description("Foreign key referencing the note"),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
+                "Foreign key referencing the note"),
             coldef(COLS::ORDER_INDEX, INTEGER).set_description("Ordering index of the item within the collection"),
         });
 

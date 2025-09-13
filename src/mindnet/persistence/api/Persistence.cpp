@@ -82,11 +82,9 @@ namespace mindnet::persistence::api
         //
         add_repository(mail, message, Message, MESSAGE);
         //
-        add_repository(suggestion,  suggestion, Suggestion, SUGGESTION);
-        add_repository(suggestion,suggestion_review, SuggestionReview, SUGGESTION_REVIEW);
+        add_repository(suggestion, suggestion, Suggestion, SUGGESTION);
+        add_repository(suggestion, suggestion_review, SuggestionReview, SUGGESTION_REVIEW);
         //
-
-
     }
 
     Persistence::~Persistence()
@@ -95,14 +93,12 @@ namespace mindnet::persistence::api
         {
             delete get_repository(e);
         }
-
     }
 
     api::IRepository* Persistence::get_repository(const std::string& name)
     {
         return repositories.count(name) ? repositories[name] : nullptr;
     }
-
 
 
     bool Persistence::has_model_with_name(const std::string& name)
@@ -116,43 +112,40 @@ namespace mindnet::persistence::api
     }
 
 
-
     std::pair<int, OperationResult> Persistence::create(
         const model::ModelDefinition& def,
         http::LoginToken& token,
         entity_fields& fields)
     {
-
         string error;
         int last_id = get_repository(def.get_model_name())->create(fields, error);
         return {last_id, {500, error}};
     }
 
     std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,
-                                    http::LoginToken& token, const int id)
+                                                                http::LoginToken& token, const int id)
     {
-
         string error;
         entity_fields ef = get_repository(def.get_model_name())->read(id, error);
         if (error.empty())
         {
             return {ef, {}};
-        } else
+        }
+        else
         {
             return {{}, {500, error}};
         }
-
     }
 
     OperationResult Persistence::update(
         const model::ModelDefinition& def, http::LoginToken& token,
         int id, entity_fields& fields
-                             )
+    )
     {
-
         string error;
         get_repository(def.get_model_name())->update(id, fields, error);
-        if (error.empty()) {return ok_result;} else {return {500, error};}
+        if (error.empty()) { return ok_result; }
+        else { return {500, error}; }
     }
 
     OperationResult Persistence::remove(model::ModelDefinition& def, http::LoginToken& token, int id)
@@ -161,26 +154,25 @@ namespace mindnet::persistence::api
 
         string error;
         get_repository(def.get_model_name())->remove(id, error);
-        if (error.empty()) {return ok_result;} else {return {500, error};}
-
+        if (error.empty()) { return ok_result; }
+        else { return {500, error}; }
     }
 
     std::pair<std::vector<entity_fields>, OperationResult> Persistence::list(
-                                                 ModelDefinition& def,
-                                                 http::LoginToken& token,
-                                                 http::QueryParams& query_params)
+        ModelDefinition& def,
+        http::LoginToken& token,
+        http::QueryParams& query_params)
     {
-
         string error;
         auto l = get_repository(def.get_model_name())->list(query_params, error);
         if (error.empty())
         {
             return {l, ok_result};
-        } else
+        }
+        else
         {
             return {{}, {500, error}};
         }
-
     }
 
     std::optional<ModelDefinition> Persistence::get_model_definition(const string& model_name)
@@ -198,5 +190,4 @@ namespace mindnet::persistence::api
     {
         return get_repository(def.get_model_name())->request_to_entity_fields(body, crudl);
     }
-
 }

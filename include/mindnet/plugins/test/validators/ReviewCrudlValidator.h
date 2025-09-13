@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::test::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::test::models::Review;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::test::validators
         using Model = Review;
 
         create_method_prototypes_for_CrudlValidatorBase(Review)
-
     };
-
 }
 #endif // REVIEWCRUDLVALIDATOR_H

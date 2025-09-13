@@ -21,23 +21,26 @@ namespace mindnet::plugins::core::validators
 
     OperationResult UserCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if (!g_configuration.allow_self_registration && ctx.token.ko(),
-            401,"You must be logged in to create a user")
+        return_if(!g_configuration.allow_self_registration && ctx.token.ko(),
+                  401, "You must be logged in to create a user")
 
-        return_if (!g_configuration.allow_self_registration && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::ADMIN,
-            403,"You must be admin to create a user.")
+        return_if(
+            !g_configuration.allow_self_registration && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::
+            ADMIN,
+            403, "You must be admin to create a user.")
 
         return_if(ctx.role != plugins::core::enums::UserRole::ADMIN && entity.role != g_configuration.default_user_role,
-            400,"role" " must be equal to " + plugins::core::enums::user_role_to_string(g_configuration.default_user_role))
+                  400, "role" " must be equal to " + plugins::core::enums::user_role_to_string(g_configuration.
+                      default_user_role))
 
-        return_if (has_user_name(ctx, entity.username),
-            409, "username already exists")
+        return_if(has_user_name(ctx, entity.username),
+                  409, "username already exists")
 
-        return_if (entity.password_hash == "*",
-            400, "password_hash cannot be placeholder during user creation");
+        return_if(entity.password_hash == "*",
+                  400, "password_hash cannot be placeholder during user creation");
 
-        return_if (has_user_email(ctx, entity.email),
-            409, "email already exists");
+        return_if(has_user_email(ctx, entity.email),
+                  409, "email already exists");
 
         return ok_result;
     }
@@ -47,25 +50,26 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult UserCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult UserCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                        const Model& new_entity) const
     {
         bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
 
-        return_if (ctx.role != plugins::core::enums::UserRole::ADMIN && !logged_user_updates_himself,
-            403, "You can only update your own user.")
+        return_if(ctx.role != plugins::core::enums::UserRole::ADMIN && !logged_user_updates_himself,
+                  403, "You can only update your own user.")
 
-        return_if (new_entity.password_hash != "*",
-            400, "password cannot be changed here, use /changepw endpoint instead");
+        return_if(new_entity.password_hash != "*",
+                  400, "password cannot be changed here, use /changepw endpoint instead");
 
         bool role_different = new_entity.role != old_entity.role;
-        return_if (role_different && logged_user_updates_himself,
-            400, "role cannot be changed");
+        return_if(role_different && logged_user_updates_himself,
+                  400, "role cannot be changed");
 
-        return_if (role_different && ctx.role != plugins::core::enums::UserRole::ADMIN,
-            400, "role cannot be changed");
+        return_if(role_different && ctx.role != plugins::core::enums::UserRole::ADMIN,
+                  400, "role cannot be changed");
 
-        return_if (old_entity.status != new_entity.status && ctx.role  != plugins::core::enums::UserRole::ADMIN,
-        400, "status cannot be changed by yourself")
+        return_if(old_entity.status != new_entity.status && ctx.role != plugins::core::enums::UserRole::ADMIN,
+                  400, "status cannot be changed by yourself")
 
         return ok_result;
     }

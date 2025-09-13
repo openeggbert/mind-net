@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::core::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::core::models::History;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::core::validators
         using Model = History;
 
         create_method_prototypes_for_CrudlValidatorBase(History)
-
     };
-
 }
 #endif // HISTORYCRUDLVALIDATOR_H

@@ -19,10 +19,9 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult ContentCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-
-        return_if (ctx.role < plugins::core::enums::UserRole::EDITOR,403, "You can not create content.")
-        return_if (entity.version != 1,
-            404, "version must be 1 during message creation.");
+        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR, 403, "You can not create content.")
+        return_if(entity.version != 1,
+                  404, "version must be 1 during message creation.");
 
         return ok_result;
     }
@@ -42,7 +41,8 @@ namespace mindnet::plugins::zettelkasten::validators
         return note_validator->can_read(ctx.db, ctx.token, note_id.first);
     }
 
-    OperationResult ContentCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult ContentCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                           const Model& new_entity) const
     {
         auto result = find_note_for_content(ctx, old_entity.get_id());
         if (!result.second.empty()) return {400, result.second};
@@ -56,7 +56,7 @@ namespace mindnet::plugins::zettelkasten::validators
         return note_validator->can_update(ctx.db, ctx.token, ef);
     }
 
-    OperationResult ContentCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult ContentCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         auto result = find_note_for_content(ctx, entity.get_id());
         if (!result.second.empty()) return {400, result.second};
@@ -70,7 +70,6 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult ContentCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
-
         return {405, "Method not allowed"};
     }
 

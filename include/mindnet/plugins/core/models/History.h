@@ -34,7 +34,6 @@
 
 namespace mindnet::plugins::core::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();

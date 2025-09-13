@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::chat::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::chat::models::Discussion;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::chat::validators
         using Model = Discussion;
 
         create_method_prototypes_for_CrudlValidatorBase(Discussion)
-
     };
-
 }
 #endif // DISCUSSIONCRUDLVALIDATOR_H

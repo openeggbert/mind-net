@@ -51,33 +51,32 @@ namespace mindnet::plugins::test::models
         });
 
 
-struct Model : mindnet::model::BaseModel
-{
-    int user_id{};
-    int note_id{};
-    int question_id{};
-    unixtime review_date;
-    int grade{};
-    string response_data;
-    string notes;
-
-    create_model_h_methods(Model, MODEL)
-
-    bool operator==(const Model& other) const
+    struct Model : mindnet::model::BaseModel
     {
-        return id == other.id &&
-            created_at == other.created_at &&
-            updated_at == other.updated_at &&
-            user_id == other.user_id &&
-            note_id == other.note_id &&
-            question_id == other.question_id &&
-            review_date == other.review_date &&
-            grade == other.grade &&
-            response_data == other.response_data &&
-            notes == other.notes;
-    }
-};
+        int user_id{};
+        int note_id{};
+        int question_id{};
+        unixtime review_date;
+        int grade{};
+        string response_data;
+        string notes;
 
+        create_model_h_methods(Model, MODEL)
+
+        bool operator==(const Model& other) const
+        {
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                user_id == other.user_id &&
+                note_id == other.note_id &&
+                question_id == other.question_id &&
+                review_date == other.review_date &&
+                grade == other.grade &&
+                response_data == other.response_data &&
+                notes == other.notes;
+        }
+    };
 }
 #undef Model
 #undef MODEL

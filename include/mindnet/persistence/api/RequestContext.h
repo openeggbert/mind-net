@@ -18,7 +18,6 @@ namespace mindnet::persistence::api
         http::LoginToken& token;
         plugins::core::enums::UserRole role{};
         plugins::core::enums::UserStatus status{};
-
     };
 }
 #endif // REQUESTCONTEXT_H

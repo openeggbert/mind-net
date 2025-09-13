@@ -49,9 +49,8 @@ namespace mindnet::plugins::zettelkasten::models
             coldef(COLS::TITLE, MANDATORY | READONLY),
             //
         })
-    .add_custom_list_action("tag","List tags", {"tag_type_id","{id}"})
-    .add_custom_create_action("tag","Add tag", {"tag_type_id","{id}"})
-    ;
+        .add_custom_list_action("tag", "List tags", {"tag_type_id", "{id}"})
+        .add_custom_create_action("tag", "Add tag", {"tag_type_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

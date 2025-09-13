@@ -50,25 +50,22 @@ namespace mindnet::model
         string_map params;
 
     public:
-
         CustomAction(
             plugins::core::enums::Crudl crudl_,
-            std::string  model_name_,
-            std::string  label_,
+            std::string model_name_,
+            std::string label_,
             const string_map& params_ = {}
         ) :
-        crudl(plugins::core::enums::crudl_to_string(static_cast<int>(crudl_))),
-        model_name(std::move(model_name_)),
-        label(std::move(label_)),
-        params(params_)
+            crudl(plugins::core::enums::crudl_to_string(static_cast<int>(crudl_))),
+            model_name(std::move(model_name_)),
+            label(std::move(label_)),
+            params(params_)
         {
             std::string action_ = label;
-            for (auto & c: action_) c = std::tolower(c);
+            for (auto& c : action_) c = std::tolower(c);
             std::replace(action_.begin(), action_.end(), ' ', '_');
             action = action_;
         }
-
-
     };
 }
 #endif // CUSTOMACTION_H

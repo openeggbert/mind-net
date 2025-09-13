@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::zettelkasten::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::zettelkasten::models::Link;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::zettelkasten::validators
         using Model = Link;
 
         create_method_prototypes_for_CrudlValidatorBase(Link)
-
     };
-
 }
 #endif // LINKCRUDLVALIDATOR_H

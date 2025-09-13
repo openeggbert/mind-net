@@ -14,7 +14,6 @@
 namespace mindnet::plugins::suggestion::validators
 
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::suggestion::models::Suggestion;
 
@@ -26,8 +25,6 @@ namespace mindnet::plugins::suggestion::validators
         using Model = Suggestion;
 
         create_method_prototypes_for_CrudlValidatorBase(Suggestion)
-
     };
-
 }
 #endif // SUGGESTIONCRUDLVALIDATOR_H

@@ -40,6 +40,7 @@ namespace mindnet::plugins::zettelkasten::models
         importance = static_cast<enums::Importance>(number());
         difficulty = static_cast<enums::Difficulty>(number());
     }
+
     string Note::validate()
     {
         using columns::NoteColumns;

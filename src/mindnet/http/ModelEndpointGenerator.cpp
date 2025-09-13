@@ -58,7 +58,8 @@ namespace mindnet::http
             auto last_inserted_id = service_ptr.get()->create(def, login_token, fields);
             if (last_inserted_id.first == -1)
             {
-                return crow::response(500, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
+                return crow::response(
+                    500, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
             }
 
             crow::json::wvalue res = RestHelper::rjson_to_wjson(body);
@@ -83,7 +84,9 @@ namespace mindnet::http
                 if (read_result.second.ko())
                 {
                     error = read_result.second.error;
-                } else {
+                }
+                else
+                {
                     values = read_result.first;
                 }
             }
@@ -224,7 +227,9 @@ namespace mindnet::http
             auto all_records = service_ptr->list(def, login_token, query_params);
             if (all_records.second.ko())
             {
-                return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.error);
+                return crow::response(
+                    500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
+                    error);
             }
 
             crow::json::wvalue res;

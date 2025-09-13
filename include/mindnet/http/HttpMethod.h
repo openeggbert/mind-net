@@ -69,6 +69,5 @@ namespace mindnet::http
             return HttpMethod::GET;
         }
     }
-
 } // namespace mindnet::http
 #endif // HTTPMETHOD_H

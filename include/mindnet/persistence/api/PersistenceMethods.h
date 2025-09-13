@@ -55,7 +55,8 @@ namespace mindnet::persistence::api
     bool has_map_name(const RequestContext& ctx, string map_name);
     string is_member_of_team(const RequestContext& ctx, int team_id);
     std::pair<int, string> find_note_for_content(const RequestContext& ctx, int content_id);
-    bool has_right_for_map(const RequestContext& ctx, const int map_id, const plugins::core::enums::SingleRight single_right);
+    bool has_right_for_map(const RequestContext& ctx, const int map_id,
+                           const plugins::core::enums::SingleRight single_right);
 
     gen_find_h(zettelkasten, Collection, collection)
     gen_find_h(zettelkasten, CollectionItem, collection_item)

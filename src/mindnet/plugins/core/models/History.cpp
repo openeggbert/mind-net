@@ -39,6 +39,7 @@ namespace mindnet::plugins::core::models
         data_json = text();
         reason = text();
     }
+
     string History::validate()
     {
         using columns::HistoryColumns;

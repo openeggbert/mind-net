@@ -39,7 +39,8 @@ namespace mindnet::plugins::zettelkasten::models
         try
         {
             team_id = number();
-        } catch (const std::exception& e)
+        }
+        catch (const std::exception& e)
         {
             team_id = 0;
         }
@@ -47,6 +48,7 @@ namespace mindnet::plugins::zettelkasten::models
         team_rights = static_cast<core::enums::AccessRight>(number());
         other_rights = static_cast<core::enums::AccessRight>(number());
     };
+
     string Map::validate()
     {
         using columns::MapColumns;

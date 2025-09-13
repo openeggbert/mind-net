@@ -56,17 +56,16 @@ namespace mindnet::plugins::zettelkasten::models
             coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the note.")
         })
-    .add_custom_list_action("note","List children", {"parent_note_id","{id}"})
-    .add_custom_create_action("note","Add child", {"parent_note_id","{id}"})
-    .add_custom_list_action("tag","List tags", {"note_id","{id}"})
-    .add_custom_create_action("tag","Add tag", {"note_id","{id}"})
-    .add_custom_list_action("property","List properties", {"note_id","{id}"})
-    .add_custom_create_action("property", "Add property", {"note_id","{id}"})
-    .add_custom_list_action("reference", "List references", {"from_note_id","{id}"})
-    .add_custom_create_action("reference", "Add reference", {"from_note_id","{id}"})
-    .add_custom_list_action("link", "List links", {"from_note_id","{id}"})
-    .add_custom_create_action("link", "Add link", {"from_note_id","{id}"})
-    ;
+        .add_custom_list_action("note", "List children", {"parent_note_id", "{id}"})
+        .add_custom_create_action("note", "Add child", {"parent_note_id", "{id}"})
+        .add_custom_list_action("tag", "List tags", {"note_id", "{id}"})
+        .add_custom_create_action("tag", "Add tag", {"note_id", "{id}"})
+        .add_custom_list_action("property", "List properties", {"note_id", "{id}"})
+        .add_custom_create_action("property", "Add property", {"note_id", "{id}"})
+        .add_custom_list_action("reference", "List references", {"from_note_id", "{id}"})
+        .add_custom_create_action("reference", "Add reference", {"from_note_id", "{id}"})
+        .add_custom_list_action("link", "List links", {"from_note_id", "{id}"})
+        .add_custom_create_action("link", "Add link", {"from_note_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

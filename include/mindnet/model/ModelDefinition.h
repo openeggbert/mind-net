@@ -64,10 +64,12 @@ namespace mindnet::model
         {
             return model_name;
         }
+
         [[nodiscard]] const string& get_group() const
         {
             return group;
         }
+
         [[nodiscard]] int get_group_order_index() const
         {
             return group_order_index;
@@ -226,7 +228,6 @@ namespace mindnet::model
         {
             return add_custom_action(plugins::core::enums::Crudl::CREATE, model_name_, label_, params_);
         }
-
     };
 }
 

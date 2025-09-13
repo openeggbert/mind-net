@@ -56,9 +56,9 @@ namespace mindnet::http
                 return;
             }
         }
-        bool ok() {return status == 200;}
-        bool ko() {return !ok();}
 
+        bool ok() { return status == 200; }
+        bool ko() { return !ok(); }
     };
 }
 

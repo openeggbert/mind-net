@@ -87,6 +87,7 @@ namespace mindnet::plugins::core::enums
             crudl_to_string, 6, 0, 1, 2, 3, 4, 5
         };
     }
+
     static const constexpr char* CRUDL = "CRUDL";
 } // namespace mindnet::enums
 

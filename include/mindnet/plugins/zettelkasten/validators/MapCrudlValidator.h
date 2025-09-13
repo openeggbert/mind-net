@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::zettelkasten::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::zettelkasten::models::Map;
 
@@ -25,9 +24,7 @@ namespace mindnet::plugins::zettelkasten::validators
         using Model = Map;
 
         create_method_prototypes_for_CrudlValidatorBase(Map)
-
     };
-
 }
 
 

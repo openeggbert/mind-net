@@ -29,6 +29,7 @@ namespace mindnet::plugins::zettelkasten::models
         note_id = number();
         tag_type_id = number();
     };
+
     string Tag::validate()
     {
         using columns::TagColumns;

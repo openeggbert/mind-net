@@ -53,8 +53,7 @@ namespace mindnet::plugins::zettelkasten::models
             coldef(COLS::VERSION, INTEGER).set_default_value("1").set_description("Content version number"),
             //
         })
-    .add_custom_list_action("note","Get note", {"content_id","{id}"})
-    ;
+        .add_custom_list_action("note", "Get note", {"content_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

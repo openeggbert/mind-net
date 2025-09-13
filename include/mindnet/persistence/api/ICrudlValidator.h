@@ -11,7 +11,10 @@
 #include "IPersistence.h"
 #include "../../OperationResult.h"
 
-namespace mindnet::http { struct LoginToken; }
+namespace mindnet::http
+{
+    struct LoginToken;
+}
 
 namespace mindnet::persistence::api
 {
@@ -53,4 +56,3 @@ namespace mindnet::persistence::api
     };
 }
 #endif // ICRUDLVALIDATOR_H
-

@@ -24,9 +24,7 @@ namespace mindnet::plugins::core::validators
         using Model = User;
 
         create_method_prototypes_for_CrudlValidatorBase(User)
-
     };
-
 }
 
 #endif // USERCRUDLVALIDATOR_H

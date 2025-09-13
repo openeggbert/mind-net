@@ -15,15 +15,19 @@ namespace mindnet
     typedef std::expected<void, string> test_result;
     typedef std::vector<std::function<test_result()>> validator_chain_vector;
 
-    struct ValidatorChain {
-        template<typename Preds>
-        static string run(const Preds& preds) {
-            for (auto& pred : preds) {
+    struct ValidatorChain
+    {
+        template <typename Preds>
+        static string run(const Preds& preds)
+        {
+            for (auto& pred : preds)
+            {
                 if (auto res = pred(); !res) return res.error();
             }
             return "";
         }
     };
+
     test_result test_ok();
     test_result test_ko(string error);
     test_result test_true(bool condition, string error_if_condition_not_met);

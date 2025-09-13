@@ -45,7 +45,7 @@ namespace mindnet::plugins::test::models
         using columns::ReviewColumns;
 
         validator_chain_vector list{
-            [this] { return std::unexpected("Validation for Review was not yet implemented.");},
+            [this] { return std::unexpected("Validation for Review was not yet implemented."); },
         };
         return ValidatorChain::run(list);
     }

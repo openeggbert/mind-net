@@ -34,7 +34,6 @@
 
 namespace mindnet::plugins::chat::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
@@ -55,9 +54,8 @@ namespace mindnet::plugins::chat::models
             coldef(COLS::IS_DELETED, BOOL).set_default_value(0).
                                            set_description("Whether this comment has been deleted"),
         })
-    .add_custom_list_action("comment","List subcomments", {"parent_comment_id","{id}"})
-    .add_custom_create_action("comment","Add subcomment", {"parent_comment_id","{id}"})
-    ;
+        .add_custom_list_action("comment", "List subcomments", {"parent_comment_id", "{id}"})
+        .add_custom_create_action("comment", "Add subcomment", {"parent_comment_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

@@ -20,41 +20,46 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult TagCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if(has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::WRITE))
-        {return ok_result;}
+        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::WRITE))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to create a tag for this map."};
     }
 
     OperationResult TagCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
         auto map = find_model(map, tag_type.first.map_id)
-             if (map.second.empty()) return {400, map.second};
+        if (map.second.empty()) return {400, map.second};
 
-        if(has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::READ))
-        {return ok_result;}
+        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::READ))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to read this tag."};
     }
 
-    OperationResult TagCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult TagCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                       const Model& new_entity) const
     {
         return {405, "Update of tag_type is forbidden."};
     }
 
-    OperationResult TagCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult TagCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if(has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::DELETE))
-        {return ok_result;}
+        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::DELETE))
+        {
+            return ok_result;
+        }
         return {403, "You do not have permission to delete this tag_type."};
     }
 
@@ -70,7 +75,8 @@ namespace mindnet::plugins::zettelkasten::validators
             return {
                 403,
                 std::string(
-                    "You do not have permission to list tag types for map with ID " + std::to_string(tag_type.first.map_id) + ".")
+                    "You do not have permission to list tag types for map with ID " + std::to_string(
+                        tag_type.first.map_id) + ".")
             };
 
         return ok_result;

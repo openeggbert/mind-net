@@ -32,7 +32,6 @@
 
 namespace mindnet::plugins::zettelkasten::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
@@ -45,12 +44,12 @@ namespace mindnet::plugins::zettelkasten::models
             coldef(COLS::NAME, MANDATORY).set_description("Collection name"),
             coldef(COLS::DESCRIPTION).set_description("Collection description"),
             coldef(COLS::ORDER_INDEX, INTEGER).set_description("Order index for sorting"),
-            coldef(COLS::CREATED_BY, READONLY).set_foreign_key("user").set_description("User ID who created this collection"),
+            coldef(COLS::CREATED_BY, READONLY).set_foreign_key("user").set_description(
+                "User ID who created this collection"),
             coldef(COLS::IS_PUBLIC, BOOL).set_default_value(0).set_description("Whether this collection is public"),
         })
-    .add_custom_list_action("collection_item","List items", {"collection_id","{id}"})
-    .add_custom_create_action("collection_item","Add item", {"collection_id","{id}"})
-    ;
+        .add_custom_list_action("collection_item", "List items", {"collection_id", "{id}"})
+        .add_custom_create_action("collection_item", "Add item", {"collection_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

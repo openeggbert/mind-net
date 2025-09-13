@@ -12,11 +12,11 @@
 
 namespace mindnet::plugins::zettelkasten::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::zettelkasten::models::CollectionItem;
 
-    class CollectionItemCrudlValidator : public persistence::api::CrudlValidatorBase<CollectionItemCrudlValidator, CollectionItem>
+    class CollectionItemCrudlValidator : public persistence::api::CrudlValidatorBase<
+            CollectionItemCrudlValidator, CollectionItem>
     {
     public:
         CollectionItemCrudlValidator() = default;
@@ -24,8 +24,6 @@ namespace mindnet::plugins::zettelkasten::validators
         using Model = CollectionItem;
 
         create_method_prototypes_for_CrudlValidatorBase(CollectionItem)
-
     };
-
 }
 #endif // COLLECTIONITEMCRUDLVALIDATOR_H

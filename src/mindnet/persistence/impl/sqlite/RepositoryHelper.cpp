@@ -358,7 +358,8 @@ namespace mindnet::persistence::impl::sqlite
         //         (*query_ptr).bind(bind_index++, order_to_string(query_params.order.value()));
         //     }
         // }
-        experiment << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) << commit;
+        experiment << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) <<
+            commit;
         (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size));
         experiment << "Binding index " << bind_index << " with value " + std::to_string(
             query_params.page_size * (query_params.page_number - 1)) << commit;

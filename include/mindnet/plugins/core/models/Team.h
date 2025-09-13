@@ -33,23 +33,22 @@
 
 namespace mindnet::plugins::core::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
 
     inline def TEAM_DEFINITION =
         def(COLS::MODEL_NAME).set_rest_operations("rl")
-        .set_group("Collaboration", 300)
-        .set_columns({
-            //
-            coldef(COLS::NAME,MANDATORY),
-            coldef(COLS::DESCRIPTION),
-            coldef(COLS::CREATED_BY, READONLY | MANDATORY).set_foreign_key("user"),
-            coldef(COLS::LEADER_ID,MANDATORY).set_foreign_key("user"),
+                             .set_group("Collaboration", 300)
+                             .set_columns({
+                                 //
+                                 coldef(COLS::NAME, MANDATORY),
+                                 coldef(COLS::DESCRIPTION),
+                                 coldef(COLS::CREATED_BY, READONLY | MANDATORY).set_foreign_key("user"),
+                                 coldef(COLS::LEADER_ID, MANDATORY).set_foreign_key("user"),
 
-            //
-        });
+                                 //
+                             });
 
     struct Model : mindnet::model::BaseModel
     {

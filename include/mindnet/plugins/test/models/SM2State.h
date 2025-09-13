@@ -32,7 +32,6 @@
 
 namespace mindnet::plugins::test::models
 {
-
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
@@ -41,18 +40,18 @@ namespace mindnet::plugins::test::models
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Tests", 200)
-    .set_columns({
-        //
-        coldef(COLS::USER_ID,FOREIGN_KEY | MANDATORY | READONLY),
-        coldef(COLS::NOTE_ID,FOREIGN_KEY | MANDATORY | READONLY),
-        coldef(COLS::QUESTION_ID,FOREIGN_KEY | MANDATORY | READONLY),
-        coldef(COLS::REPETITIONS,INTEGER).set_default_value(0),
-        coldef(COLS::INTERVAL,INTEGER).set_default_value(1),
-        coldef(COLS::EF_TIMES_100,INTEGER).set_default_value(250),
-        coldef(COLS::NEXT_REVIEW,DATETIME),
-        coldef(COLS::LAST_REVIEW,DATETIME),
-        coldef(COLS::LAST_QUALITY,INTEGER).set_default_value(0),
-    });
+        .set_columns({
+            //
+            coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::QUESTION_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
+            coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
+            coldef(COLS::EF_TIMES_100, INTEGER).set_default_value(250),
+            coldef(COLS::NEXT_REVIEW, DATETIME),
+            coldef(COLS::LAST_REVIEW, DATETIME),
+            coldef(COLS::LAST_QUALITY, INTEGER).set_default_value(0),
+        });
 
     struct Model : mindnet::model::BaseModel
     {

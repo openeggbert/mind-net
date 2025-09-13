@@ -11,7 +11,6 @@
 
 namespace mindnet::persistence::api
 {
-
     typedef std::expected<void, OperationResult> result_t;
 }
 

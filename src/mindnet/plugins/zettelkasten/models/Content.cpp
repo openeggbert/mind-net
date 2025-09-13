@@ -32,6 +32,7 @@ namespace mindnet::plugins::zettelkasten::models
         format = static_cast<enums::ContentFormat>(number());
         version = number();
     }
+
     string Content::validate()
     {
         using columns::ContentColumns;

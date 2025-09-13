@@ -26,8 +26,7 @@ mindnet::OperationResult validate_delete(const RequestContext&, const M& entity)
 mindnet::OperationResult validate_list(const RequestContext&, const string_map&) const;\
 [[nodiscard]] string get_model_name() const override;
 
-#define return_if(condition, status, message) if (condition) return OperationResult(status, message);\
-
+#define return_if(condition, status, message) if (condition) return OperationResult(status, message);
 #define assert_role(ROLE) \
 return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE ,403, "User does not have permission for this action.")
 
@@ -40,12 +39,14 @@ if (filter.find( STRINGIFY(field) ) == filter.end()) return {403, std::string("Y
 #define find_model(model, id) XPASTE(find_,model) (ctx, id);
 #define check_found(f) if (!f.second.empty()) return{400,f.second};
 
-namespace mindnet::persistence::api {
+namespace mindnet::persistence::api
+{
     class IPersistence;
     class ICrudlValidator;
 }
 
-namespace mindnet::http {
+namespace mindnet::http
+{
     class LoginToken;
 }
 
@@ -61,6 +62,7 @@ namespace mindnet::persistence::api
 
     private:
         GetValidatorFunc get_validator_func_ = nullptr;
+
     public:
         virtual ~CrudlValidatorBase() = default;
 
@@ -83,7 +85,8 @@ namespace mindnet::persistence::api
             //
             if (auto error = entity.validate(); !error.empty())
                 return {400, error};
-            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
+            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()); !error.
+                empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_create(context, entity); !res.ok())
@@ -109,7 +112,7 @@ namespace mindnet::persistence::api
             auto [values, read_err] = db->read(
                 //todo
                 db->get_model_definition(derived().get_model_name()).value(), token, id
-                );
+            );
             if (read_err.ko()) return read_err;
             //
             Model entity;
@@ -139,7 +142,7 @@ namespace mindnet::persistence::api
             new_entity.from_values(ef);
 
             auto [old_values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(),
-                token, new_entity.get_id());
+                                                   token, new_entity.get_id());
             if (read_err.ko()) return read_err;
 
             Model old_entity;
@@ -151,7 +154,8 @@ namespace mindnet::persistence::api
             auto def = db->get_model_definition(derived().get_model_name()).value();
             if (auto error = validate_readonly(old_values, ef, def); !error.empty())
                 return {400, error};
-            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
+            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()); !error.
+                empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_update(
@@ -211,10 +215,7 @@ namespace mindnet::persistence::api
         void set_validator_func(GetValidatorFunc func) override { get_validator_func_ = func; }
         [[nodiscard]] GetValidatorFunc get_validator_func() const { return get_validator_func_; }
 
-
-
     private:
-
         const Derived& derived() const { return static_cast<const Derived&>(*this); }
     };
 }

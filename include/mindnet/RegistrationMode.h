@@ -8,9 +8,9 @@ namespace mindnet
 {
     enum class AccessMode
     {
-        Free = 0,                   // Anybody can register, account is active immediately.
-        RequiresAdminApproval = 1,  // User is registered, but must be approved by admin
-        AdminAddsUsers = 2,         // Endpoint /register is disabled. Only admin can add new users.
+        Free = 0, // Anybody can register, account is active immediately.
+        RequiresAdminApproval = 1, // User is registered, but must be approved by admin
+        AdminAddsUsers = 2, // Endpoint /register is disabled. Only admin can add new users.
     };
 }
 #endif // REGISTRATIONMODE_H

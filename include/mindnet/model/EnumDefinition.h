@@ -67,6 +67,7 @@ namespace mindnet::model
 
             va_end(args);
         };
+
         EnumDefinition(const EnumDefinition& other)
             : value_count(other.value_count),
               enum_to_string_pointer_function(other.enum_to_string_pointer_function)
@@ -125,6 +126,7 @@ namespace mindnet::model
             check_index_is_valid(index);
             return enum_to_string_pointer_function(values[index]);
         }
+
         bool is_value_valid(const short value) const
         {
             for (int i = 0; i < value_count; ++i)

@@ -18,31 +18,32 @@ namespace mindnet::plugins::zettelkasten::validators
     using validators::LinkCrudlValidator;
     using mindnet::OperationResult;
 
-    OperationResult LinkCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const {
+    OperationResult LinkCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    {
         assert_editor()
-           return ok_result;
+        return ok_result;
     }
 
     OperationResult LinkCrudlValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-           return ok_result;
+        return ok_result;
     }
 
-    OperationResult LinkCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult LinkCrudlValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+                                                        const Model& new_entity) const
     {
         assert_editor()
-           return ok_result;
+        return ok_result;
     }
 
-    OperationResult LinkCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity)  const
+    OperationResult LinkCrudlValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
-           return ok_result;
+        return ok_result;
     }
 
     OperationResult LinkCrudlValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
-
         return ok_result;
     }
 

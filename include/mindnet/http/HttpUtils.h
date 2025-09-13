@@ -11,6 +11,5 @@
 
 namespace mindnet::http
 {
-
 }
 #endif //MINI_WIKI_HTTPUTILS_H

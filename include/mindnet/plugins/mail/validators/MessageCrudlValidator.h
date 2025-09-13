@@ -13,7 +13,6 @@
 
 namespace mindnet::plugins::mail::validators
 {
-
     using persistence::api::RequestContext;
     using mindnet::plugins::mail::models::Message;
 
@@ -25,8 +24,6 @@ namespace mindnet::plugins::mail::validators
         using Model = Message;
 
         create_method_prototypes_for_CrudlValidatorBase(Message)
-
     };
-
 }
 #endif // MESSAGECRUDLVALIDATOR_H

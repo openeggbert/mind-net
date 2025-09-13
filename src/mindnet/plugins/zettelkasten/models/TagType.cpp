@@ -29,6 +29,7 @@ namespace mindnet::plugins::zettelkasten::models
         map_id = number();
         title = text();
     };
+
     string TagType::validate()
     {
         using columns::TagTypeColumns;

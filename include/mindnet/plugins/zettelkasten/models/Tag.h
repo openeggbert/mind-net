@@ -46,20 +46,19 @@ namespace mindnet::plugins::zettelkasten::models
             coldef(COLS::TAG_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
         });
 
-struct Model : mindnet::model::BaseModel
-{
-    int note_id;
-    int tag_type_id;
-
-    create_model_h_methods(Model, MODEL)
-
-    bool operator==(const Tag& other) const
+    struct Model : mindnet::model::BaseModel
     {
-        return id == other.id && note_id == other.note_id && tag_type_id == other.tag_type_id &&
-            created_at == other.created_at && updated_at == other.updated_at;
-    }
-};
+        int note_id;
+        int tag_type_id;
 
+        create_model_h_methods(Model, MODEL)
+
+        bool operator==(const Tag& other) const
+        {
+            return id == other.id && note_id == other.note_id && tag_type_id == other.tag_type_id &&
+                created_at == other.created_at && updated_at == other.updated_at;
+        }
+    };
 }
 #undef Model
 #undef MODEL

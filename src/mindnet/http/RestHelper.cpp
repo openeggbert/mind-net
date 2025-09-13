@@ -18,7 +18,7 @@ namespace mindnet::http
                                                    const model::ModelDefinition& def,
                                                    const std::set<std::string>& fields_vector_filter)
     {
-        if (values.empty()) {throw std::runtime_error("Empty values");}
+        if (values.empty()) { throw std::runtime_error("Empty values"); }
         crow::json::wvalue res;
         auto columns = def.get_columns();
 
@@ -41,7 +41,7 @@ namespace mindnet::http
     }
 
     string RestHelper::check_body_is_valid(const crow::json::rvalue& body, const model::ModelDefinition& def,
-                                        const bool id_wanted)
+                                           const bool id_wanted)
     {
         for (auto column_ : def.get_columns())
         {

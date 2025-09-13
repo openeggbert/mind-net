@@ -123,7 +123,6 @@ namespace mindnet::model
         {
             os << to_json();
         };
-
     };
 
     inline string validate_enums(const entity_fields& fields_, const ModelDefinition& def_)
@@ -147,7 +146,7 @@ namespace mindnet::model
         }
         return "";
     }
-    
+
     inline string validate_readonly(entity_fields& old_, entity_fields& new_, ModelDefinition& def_)
     {
         if (old_.size() != new_.size()) return "The number of fields in the entity has changed";

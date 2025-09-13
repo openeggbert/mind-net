@@ -44,11 +44,10 @@ namespace mindnet::plugins::core::models
 
         validator_chain_vector list{
 
-        [this] { return test_ne(team_id, 0, TeamMemberColumns::TEAM_ID);},
-        [this] { return test_ne(user_id, 0, TeamMemberColumns::USER_ID);},
-        [this] { return test_ne(joined_at, 0, TeamMemberColumns::JOINED_AT);},
+            [this] { return test_ne(team_id, 0, TeamMemberColumns::TEAM_ID); },
+            [this] { return test_ne(user_id, 0, TeamMemberColumns::USER_ID); },
+            [this] { return test_ne(joined_at, 0, TeamMemberColumns::JOINED_AT); },
         };
         return ValidatorChain::run(list);
-
     }
 }
