@@ -7,14 +7,14 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::zettelkasten::validators
 {
-    using persistence::api::RequestContext;
+    using api::RequestContext;
     using mindnet::plugins::zettelkasten::models::Property;
 
-    class PropertyValidator : public persistence::api::ValidatorBase<PropertyValidator, Property>
+    class PropertyValidator : public api::ValidatorBase<PropertyValidator, Property>
     {
     public:
         PropertyValidator() = default;

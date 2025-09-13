@@ -7,15 +7,15 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::core::validators
 {
-    using db_ptr = mindnet::persistence::api::IPersistence*;
-    using persistence::api::RequestContext;
+    using db_ptr = mindnet::api::IPersistence*;
+    using api::RequestContext;
     using mindnet::plugins::core::models::User;
 
-    class UserValidator : public persistence::api::ValidatorBase<UserValidator, User>
+    class UserValidator : public api::ValidatorBase<UserValidator, User>
     {
     public:
         UserValidator() = default;

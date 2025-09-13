@@ -7,7 +7,7 @@
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/zettelkasten/models/TagType.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model TagType
 #define MODEL TAG_TYPE

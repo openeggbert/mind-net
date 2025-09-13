@@ -3,36 +3,36 @@
 //
 
 #include "mindnet/Service.h"
-#include "../../include/mindnet/plugins/core/validators/UserValidator.h"
-#include "../../include/mindnet/plugins/mail/validators/MessageValidator.h"
-#include "../../include/mindnet/plugins/core/validators/TeamValidator.h"
-#include "../../include/mindnet/plugins/core/validators/TeamMemberValidator.h"
-#include "../../include/mindnet/plugins/chat/validators/DiscussionValidator.h"
-#include "../../include/mindnet/plugins/chat/validators/CommentValidator.h"
-#include "../../include/mindnet/plugins/suggestion/validators/SuggestionValidator.h"
-#include "../../include/mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
-#include "../../include/mindnet/plugins/core/validators/HistoryValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/MapValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/ContentValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/NoteValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/PropertyValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/TagTypeValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/TagValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
-#include "../../include/mindnet/plugins/test/validators/ReviewValidator.h"
-#include "../../include/mindnet/plugins/test/validators/SM2StateValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/QuestionValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/ReferenceValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/LinkValidator.h"
+#include "mindnet/plugins/core/validators/UserValidator.h"
+#include "mindnet/plugins/mail/validators/MessageValidator.h"
+#include "mindnet/plugins/core/validators/TeamValidator.h"
+#include "mindnet/plugins/core/validators/TeamMemberValidator.h"
+#include "mindnet/plugins/chat/validators/DiscussionValidator.h"
+#include "mindnet/plugins/chat/validators/CommentValidator.h"
+#include "mindnet/plugins/suggestion/validators/SuggestionValidator.h"
+#include "mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
+#include "mindnet/plugins/core/validators/HistoryValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/MapValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/ContentValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/NoteValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/PropertyValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/TagTypeValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/TagValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
+#include "mindnet/plugins/test/validators/ReviewValidator.h"
+#include "mindnet/plugins/test/validators/SM2StateValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/QuestionValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/ReferenceValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/LinkValidator.h"
 //
 #define add_validator(plugin, model, Model)\
-persistence::api::IValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##Validator();\
+api::IValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##Validator();\
 validators[#model] = model##_validator;
 
 namespace mindnet
 {
-    using validator = persistence::api::IValidator*;
+    using validator = api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
 
@@ -180,7 +180,7 @@ namespace mindnet
         return db_ptr->request_to_entity_fields(body, crudl, def);
     };
 
-    persistence::api::IValidator* Service::get_validator(const std::string& name)
+    api::IValidator* Service::get_validator(const std::string& name)
     {
         return validators.count(name) ? validators[name] : nullptr;
     }
@@ -191,7 +191,7 @@ namespace mindnet
         //Authentication
         if (token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
 
-        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_create(db_ptr, token, ef);
@@ -208,7 +208,7 @@ namespace mindnet
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
 
-        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_read(db_ptr, token, id);
@@ -225,7 +225,7 @@ namespace mindnet
         //Authentication
         if (token.ko()) return {401, "Only logged in users can update."};
 
-        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_update(db_ptr, token, ef);
@@ -241,7 +241,7 @@ namespace mindnet
         //Authentication
         if (token.ko()) return {401, "Only logged in users can delete."};
 
-        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_delete(db_ptr, token, id);
@@ -257,7 +257,7 @@ namespace mindnet
     {
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
-        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_list(db_ptr, token, filter);

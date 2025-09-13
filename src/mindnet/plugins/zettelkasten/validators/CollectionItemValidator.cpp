@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model CollectionItem
 #define MODEL COLLECTION_ITEM

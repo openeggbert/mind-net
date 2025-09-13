@@ -8,14 +8,14 @@
 
 namespace mindnet
 {
-    using validator = persistence::api::IValidator*;
+    using validator = api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
 
     class Service : public IService
     {
     private:
-        std::map<std::string, persistence::api::IValidator*> validators;
+        std::map<std::string, api::IValidator*> validators;
         DbPtr db_ptr;
 
     public:
@@ -43,7 +43,7 @@ namespace mindnet
         ) override;
 
     private:
-        persistence::api::IValidator* get_validator(const std::string& name);
+        api::IValidator* get_validator(const std::string& name);
         OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token,
                                    entity_fields& ef) override;
         OperationResult can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) override;

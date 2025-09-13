@@ -6,9 +6,9 @@
 #define MIND_NET_PERSISTENCETYPEDEFS_H
 #include <expected>
 
-#include "../../OperationResult.h"
+#include "../OperationResult.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     typedef std::expected<void, OperationResult> result_t;
 }

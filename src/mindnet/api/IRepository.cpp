@@ -2,9 +2,9 @@
 // Created by robertvokac on 8/30/25.
 //
 // IRepository.cpp
-#include "mindnet/persistence/api/IRepository.h"
+#include "mindnet/api/IRepository.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     IRepository::IRepository(
         api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer_,

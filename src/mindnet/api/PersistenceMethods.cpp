@@ -2,13 +2,13 @@
 // Created by robertvokac on 9/6/25.
 //
 
-#include "mindnet/persistence/api/PersistenceMethods.h"
+#include "mindnet/api/PersistenceMethods.h"
 
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/http/QueryParams.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "mindnet/api/ValidatorBase.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     std::pair<plugins::core::models::User, mindnet::OperationResult> find_logged_user(
         DbPtr& db, http::LoginToken token)

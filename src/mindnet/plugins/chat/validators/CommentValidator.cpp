@@ -3,13 +3,13 @@
 //
 
 
-#include "../../../../../include/mindnet/plugins/chat/validators/CommentValidator.h"
+#include "mindnet/plugins/chat/validators/CommentValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/chat/models/Comment.h"
 #include "mindnet/plugins/chat/models/Discussion.h"
-#include "mindnet/persistence/api/Persistence.h"
-#include "mindnet/persistence/api/PersistenceMethods.h"
+#include "mindnet/api/PersistenceMethods.h"
+#include "mindnet/api/Persistence.h"
 
 
 #define Model mindnet::plugins::chat::models::Comment

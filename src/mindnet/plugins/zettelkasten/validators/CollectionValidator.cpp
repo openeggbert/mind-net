@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/zettelkasten/models/Collection.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Collection
 #define MODEL COLLECTION

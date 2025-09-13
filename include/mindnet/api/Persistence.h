@@ -8,10 +8,10 @@
 #include "IRepository.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
-#include "../../model/ModelDefinition.h"
-#include "../../OperationResult.h"
+#include "../model/ModelDefinition.h"
+#include "../OperationResult.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     using mindnet::model::ModelDefinition;
     using mindnet::OperationResult;

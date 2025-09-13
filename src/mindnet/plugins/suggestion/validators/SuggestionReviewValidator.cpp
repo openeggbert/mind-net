@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
+#include "mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/suggestion/models/SuggestionReview.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model SuggestionReview
 #define MODEL SUGGESTION_REVIEW

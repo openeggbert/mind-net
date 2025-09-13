@@ -7,7 +7,7 @@
 #include "mindnet/Configuration.h"
 #include "mindnet/Utils.h"
 #include "mindnet/http/RestHelper.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
+#include "mindnet/impl/sqlite/RepositoryHelper.h"
 
 namespace mindnet::http
 {

@@ -7,14 +7,14 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::zettelkasten::validators
 {
-    using persistence::api::RequestContext;
+    using api::RequestContext;
     using mindnet::plugins::zettelkasten::models::CollectionItem;
 
-    class CollectionItemValidator : public persistence::api::ValidatorBase<
+    class CollectionItemValidator : public api::ValidatorBase<
             CollectionItemValidator, CollectionItem>
     {
     public:

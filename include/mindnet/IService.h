@@ -7,15 +7,15 @@
 #include "crow/json.h"
 #include "http/QueryParams.h"
 #include "model/ModelDefinition.h"
-#include "persistence/api/IValidator.h"
-#include "mindnet/persistence/api/IPersistence.h"
+#include "api/IValidator.h"
+#include "api/IPersistence.h"
 
 namespace mindnet
 {
-    using validator = persistence::api::IValidator*;
+    using validator = api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
-    using persistence::api::DbPtr;
+    using api::DbPtr;
 
     class IService
     {

@@ -19,7 +19,7 @@
 #include "mindnet/Global.h"
 #include "mindnet/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 #include "mindnet/http/ModelEndpointGenerator.h"
 //
 #ifdef plugin_core
@@ -65,8 +65,8 @@
 //
 #include "mindnet/IService.h"
 #include "mindnet/Service.h"
-#include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
+#include "mindnet/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
 #define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
 using mindnet::commit;
@@ -75,7 +75,7 @@ void migrate_schema_if_needed()
 {
     mindnet::trace << "Migrating schema, if needed" << commit;
 
-    bool migrationResult = mindnet::persistence::impl::
+    bool migrationResult = mindnet::impl::
         sqlite::SqliteDatabaseMigration::getInstance()->migrate();
     if (migrationResult)
     {
@@ -146,111 +146,61 @@ bool commands_function_start(
         return 1;
     }
 
-    for (int i = 1; i < arguments.size(); ++i)
-    {
+    auto require_value = [&](int& i, const std::string& option) -> std::string {
+        if (i + 1 >= arguments.size()) {
+            mindnet::fatal << "No value provided for option " << option << ". Exiting." << commit;
+            exit_status = 1;
+            throw std::runtime_error(std::string("Missing argument for ") + option);
+        }
+        return arguments[++i]; // consume next argument
+    };
+
+    auto parse_port = [&](const std::string& value, const std::string& what) -> int {
+        try {
+            int p = std::stoi(value);
+            if (p < 1 || p > 65535) {
+                mindnet::fatal << what << " must be between 1 and 65535" << commit;
+                exit_status = 1;
+                throw std::runtime_error("invalid port range");
+            }
+            return p;
+        } catch (...) {
+            mindnet::fatal << "Invalid " << what << " provided: " << value << commit;
+            exit_status = 1;
+            throw;
+        }
+    };
+
+    for (int i = 1; i < arguments.size(); ++i) {
         const auto& argument = arguments[i];
-        if (argument[0] != '-')
-        {
+        if (argument[0] != '-') {
             mindnet::fatal << "Option must start with \"-\": " << argument << commit;
             exit_status = 1;
             return true;
         }
-        if (argument == "-p" || argument == "--port")
-        {
-            if (i + 1 < arguments.size())
-            {
-                try
-                {
-                    port = std::stoi(arguments[i + 1]);
-                    if (port < 1 || port > 65535)
-                    {
-                        mindnet::fatal << "Port must be between 1 and 65535" << commit;
-                        exit_status = 1;
-                        return true;
-                    }
-                    custom_port = true;
-                }
-                catch (std::exception& e)
-                {
-                    mindnet::fatal << "Invalid port provided: " << arguments[i + 1] << commit;
-                    exit_status = 1;
-                    return true;
-                }
-                ++i;
-            }
-            else
-            {
-                mindnet::fatal << "No port provided for option --port. Exiting." << commit;
-                exit_status = 1;
-                return true;
-            }
+
+        if (argument == "-p" || argument == "--port") {
+            port = parse_port(require_value(i, argument), "Port");
+            custom_port = true;
         }
-        else if (argument == "-f" || argument == "--frontend-port")
-        {
-            if (i + 1 < arguments.size())
-            {
-                try
-                {
-                    frontend_port = std::stoi(arguments[i + 1]);
-                    if (frontend_port < 1 || frontend_port > 65535)
-                    {
-                        mindnet::fatal << "Frontend port must be between 1 and 65535" << commit;
-                        exit_status = 1;
-                        return true;
-                    }
-                    custom_frontend_port = true;
-                }
-                catch (std::exception& e)
-                {
-                    mindnet::fatal << "Invalid frontend port provided: " << arguments[i + 1] << commit;
-                    exit_status = 1;
-                    return true;
-                }
-                ++i;
-            }
-            else
-            {
-                mindnet::fatal << "No port provided for option --frontend-port. Exiting." << commit;
-                exit_status = 1;
-                return true;
-            }
+        else if (argument == "-f" || argument == "--frontend-port") {
+            frontend_port = parse_port(require_value(i, argument), "Frontend port");
+            custom_frontend_port = true;
         }
-        else if (argument == "-h" || argument == "--host")
-        {
-            if (i + 1 < arguments.size())
-            {
-                host = arguments[i + 1];
-                custom_host = true;
-                ++i;
-            }
-            else
-            {
-                mindnet::fatal << "No host provided for option --host. Exiting." << commit;
-                exit_status = 1;
-                return true;
-            }
+        else if (argument == "-h" || argument == "--host") {
+            host = require_value(i, argument);
+            custom_host = true;
         }
-        else if (argument == "-s" || argument == "--static-directory")
-        {
-            if (i + 1 < arguments.size())
-            {
-                static_directory = arguments[i + 1];
-                ++i;
-            }
-            else
-            {
-                mindnet::fatal << "No path provided for option --static-directory. Exiting." << commit;
-                exit_status = 1;
-                return true;
-            }
+        else if (argument == "-s" || argument == "--static-directory") {
+            static_directory = require_value(i, argument);
         }
-        else
-        {
+        else {
             mindnet::fatal << "Unknown option for start command: " << argument << commit;
             exit_status = 1;
             return true;
         }
     }
+
     if (!std::filesystem::exists(static_directory) || !std::filesystem::is_directory(static_directory))
     {
         mindnet::fatal << "Static directory does not exist: " << static_directory << commit;
@@ -381,8 +331,8 @@ int main(int argc, char** argv)
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
     migrate_schema_if_needed();
-    std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<
-        mindnet::persistence::api::Persistence>();
+    std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
+        mindnet::api::Persistence>();
     std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
     return run_command(arguments, service);
 }

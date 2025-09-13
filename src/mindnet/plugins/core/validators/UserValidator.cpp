@@ -8,7 +8,7 @@
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/models/User.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model User
 #define MODEL USER

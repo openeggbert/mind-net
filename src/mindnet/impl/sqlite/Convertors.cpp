@@ -26,7 +26,7 @@
 #include <string>
 
 #include "mindnet/plugins/core/enums/Crudl.h"
-#include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
+#include "mindnet/impl/sqlite/RepositoryHelper.h"
 #include "mindnet/plugins/core/columns/UserColumns.h"
 #include "mindnet/plugins/mail/columns/MessageColumns.h"
 #include "mindnet/plugins/core/columns/TeamColumns.h"
@@ -49,9 +49,9 @@
 #include "mindnet/plugins/zettelkasten/columns/QuestionColumns.h"
 #include "mindnet/plugins/zettelkasten/columns/ReferenceColumns.h"
 #include "mindnet/plugins/zettelkasten/columns/LinkColumns.h"
-#include "../../../../../include/mindnet/persistence/impl/sqlite/Convertors.h"
+#include "mindnet/impl/sqlite/Convertors.h"
 
-namespace mindnet::persistence::impl::sqlite
+namespace mindnet::impl::sqlite
 {
     //todo : rework to one generic method
     entity_fields request_to_entity_fields_user(

@@ -3,14 +3,14 @@
 //
 
 
-#include "../../../../../include/mindnet/plugins/chat/validators/DiscussionValidator.h"
+#include "mindnet/plugins/chat/validators/DiscussionValidator.h"
 
-#include "../../../../../include/mindnet/plugins/core/validators/UserValidator.h"
+#include "mindnet/plugins/core/validators/UserValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/chat/models/Discussion.h"
-#include "mindnet/persistence/api/Persistence.h"
-#include "mindnet/persistence/api/PersistenceMethods.h"
+#include "mindnet/api/Persistence.h"
+#include "mindnet/api/PersistenceMethods.h"
 
 #define Model Discussion
 #define MODEL DISCUSSION

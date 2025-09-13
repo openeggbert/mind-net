@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/mail/validators/MessageValidator.h"
+#include "mindnet/plugins/mail/validators/MessageValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/mail/models/Message.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Message
 #define MODEL MESSAGE

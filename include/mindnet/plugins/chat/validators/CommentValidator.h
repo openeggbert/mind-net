@@ -7,14 +7,14 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::chat::validators
 {
-    using persistence::api::RequestContext;
+    using api::RequestContext;
     using mindnet::plugins::chat::models::Comment;
 
-    class CommentValidator : public persistence::api::ValidatorBase<CommentValidator, Comment>
+    class CommentValidator : public api::ValidatorBase<CommentValidator, Comment>
     {
     public:
         CommentValidator() = default;

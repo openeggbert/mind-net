@@ -9,14 +9,14 @@
 #include <vector>
 
 #include "IPersistence.h"
-#include "../../OperationResult.h"
+#include "../OperationResult.h"
 
 namespace mindnet::http
 {
     struct LoginToken;
 }
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     class IValidator;
     typedef std::function<IValidator*(const std::string&)> GetValidatorFunc;

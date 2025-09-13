@@ -27,11 +27,9 @@
 
 #include <vector>
 
-#include "../../../plugins/core/enums/Crudl.h"
-#include "mindnet/persistence/api/Persistence.h"
-#include "mindnet/persistence/api/IRepository.h"
+#include "mindnet/api/IRepository.h"
 
-namespace mindnet::persistence::impl::sqlite
+namespace mindnet::impl::sqlite
 {
     using std::vector;
 

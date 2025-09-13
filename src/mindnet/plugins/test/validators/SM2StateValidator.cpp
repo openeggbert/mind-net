@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/test/validators/SM2StateValidator.h"
+#include "mindnet/plugins/test/validators/SM2StateValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/test/models/SM2State.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model SM2State
 #define MODEL SM2_STATE

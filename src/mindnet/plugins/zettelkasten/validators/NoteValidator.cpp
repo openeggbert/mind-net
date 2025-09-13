@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/zettelkasten/validators/NoteValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/NoteValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/zettelkasten/models/Note.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Note
 #define MODEL NOTE

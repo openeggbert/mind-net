@@ -7,7 +7,7 @@
 #include <string>
 #include <climits>
 
-namespace mindnet::persistence::impl::sqlite
+namespace mindnet::impl::sqlite
 {
     constexpr int MIGRATION_COUNT = 23;
     inline std::string migrations[MIGRATION_COUNT] = {

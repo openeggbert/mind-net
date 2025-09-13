@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
@@ -30,8 +30,8 @@
 #include "mindnet/plugins/zettelkasten/models/Reference.h"
 #include "mindnet/plugins/zettelkasten/models/Link.h"
 
-#include "../../../../include/mindnet/persistence/impl/sqlite/Convertors.h"
-#include "../../../../include/mindnet/persistence/impl/sqlite/RepositoryImplSqlite.h"
+#include "mindnet/impl/sqlite/Convertors.h"
+#include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
 
 #define MODEL_JOIN(x) x##_DEFINITION
 #define FUNCTION_JOIN(x) request_to_entity_fields_##x
@@ -44,9 +44,9 @@ plugins:: plugin :: models :: MODEL_JOIN(MODEL)\
 repositories[#model] = model##_repo;\
 repository_names.emplace_back(#model);
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
-    using namespace mindnet::persistence::impl::sqlite;
+    using namespace mindnet::impl::sqlite;
 
     Persistence::Persistence()
     {

@@ -26,11 +26,11 @@
 
 #include "crow/json.h"
 #include "mindnet/Helper.h"
-#include "../../plugins/core/enums/Crudl.h"
-#include "../../model/ModelDefinition.h"
+#include "../plugins/core/enums/Crudl.h"
+#include "../model/ModelDefinition.h"
 #include "mindnet/http/QueryParams.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     typedef entity_fields (*
         request_to_entity_fields_pointer)(crow::json::rvalue&, mindnet::plugins::core::enums::Crudl);

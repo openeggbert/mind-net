@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/zettelkasten/validators/MapValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/MapValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/zettelkasten/models/Map.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Map
 #define MODEL MAP

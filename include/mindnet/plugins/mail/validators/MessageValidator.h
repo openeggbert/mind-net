@@ -7,14 +7,14 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::mail::validators
 {
-    using persistence::api::RequestContext;
+    using api::RequestContext;
     using mindnet::plugins::mail::models::Message;
 
-    class MessageValidator : public persistence::api::ValidatorBase<MessageValidator, Message>
+    class MessageValidator : public api::ValidatorBase<MessageValidator, Message>
     {
     public:
         MessageValidator() = default;

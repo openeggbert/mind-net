@@ -9,11 +9,11 @@
 #include <type_traits>
 
 #include "IValidator.h"
-#include "../../OperationResult.h"
+#include "../OperationResult.h"
 #include "PersistenceMethods.h"
-#include "PersistenceTypedefs.h"
-#include "RequestContext.h"
-#include "../../model/BaseModel.h"
+#include "../api/PersistenceTypedefs.h"
+#include "../api/RequestContext.h"
+#include "../model/BaseModel.h"
 
 #include "mindnet/Helper.h"
 
@@ -38,7 +38,7 @@ if (filter.find( STRINGIFY(field) ) == filter.end()) return {403, std::string("Y
 #define find_model(model, id) XPASTE(find_,model) (ctx, id);
 #define check_found(f) if (!f.second.empty()) return{400,f.second};
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     class IPersistence;
     class IValidator;
@@ -49,7 +49,7 @@ namespace mindnet::http
     class LoginToken;
 }
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     typedef std::function<IValidator*(const std::string&)> GetValidatorFunc;
 

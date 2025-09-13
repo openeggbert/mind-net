@@ -6,7 +6,6 @@
 #define MIND_NET_CONVERTORS_H
 #include "crow/json.h"
 #include "mindnet/Helper.h"
-#include "../../../plugins/core/enums/Crudl.h"
 
 #define start_of_request_to_entity_fields(plugin, Model)\
 typedef plugins :: plugin :: columns::Model##Columns cols;\
@@ -57,7 +56,7 @@ fields.emplace_back(FOREIGN_KEY_NULL);\
 
 #define method_arguments() crow::json::rvalue& body, mindnet::plugins::core::enums::Crudl crudl
 
-namespace mindnet::persistence::impl::sqlite
+namespace mindnet::impl::sqlite
 {
     entity_fields request_to_entity_fields_user(method_arguments());
     entity_fields request_to_entity_fields_message(method_arguments());

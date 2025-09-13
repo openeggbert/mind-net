@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/core/validators/HistoryValidator.h"
+#include "mindnet/plugins/core/validators/HistoryValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/models/History.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model History
 #define MODEL HISTORY

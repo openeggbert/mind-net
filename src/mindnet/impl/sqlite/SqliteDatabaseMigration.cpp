@@ -21,19 +21,19 @@
 #include <iostream>
 #include <string>
 
-#include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/impl/sqlite/SqliteDatabaseMigration.h"
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #include "mindnet/Utils.h"
-#include "mindnet/persistence/impl/sqlite/Migrations.h"
-#include "mindnet/persistence/impl/sqlite/MigrationColumns.h"
+#include "mindnet/impl/sqlite/Migrations.h"
+#include "mindnet/impl/sqlite/MigrationColumns.h"
 #include <openssl/sha.h>
 #include <iomanip>
 
 #include "mindnet/Global.h"
-#include "mindnet/persistence/impl/sqlite/SqliteFileName.h"
+#include "mindnet/impl/sqlite/SqliteFileName.h"
 
-namespace mindnet::persistence::impl::sqlite
+namespace mindnet::impl::sqlite
 {
     using models::fields::MigrationColumns;
 

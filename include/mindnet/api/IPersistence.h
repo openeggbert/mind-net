@@ -5,11 +5,11 @@
 #define IPERSISTENCE_H
 
 #include "IRepository.h"
-#include "../../OperationResult.h"
+#include "../OperationResult.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     using mindnet::model::ModelDefinition;
 
@@ -39,6 +39,6 @@ namespace mindnet::persistence::api
                                                        ModelDefinition& def) = 0;
     };
 
-    typedef std::shared_ptr<mindnet::persistence::api::IPersistence> DbPtr;
+    typedef std::shared_ptr<mindnet::api::IPersistence> DbPtr;
 }
 #endif // IPERSISTENCE_H

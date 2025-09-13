@@ -6,7 +6,8 @@
 #define MIND_NET_PERSISTENCEMETHODS_H
 #include <utility>
 
-#include "../../OperationResult.h"
+#include "IPersistence.h"
+#include "../OperationResult.h"
 #include "RequestContext.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/http/LoginToken.h"
@@ -45,7 +46,7 @@ std::pair< mindnet::plugins:: plugin ::models::Model, string> find_##model(const
         return {entity, ""};\
     }
 
-namespace mindnet::persistence::api
+namespace mindnet::api
 {
     std::pair<plugins::core::models::User, mindnet::OperationResult> find_logged_user(
         DbPtr& db, http::LoginToken token);

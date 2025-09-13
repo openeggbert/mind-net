@@ -7,14 +7,14 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::core::validators
 {
-    using persistence::api::RequestContext;
+    using api::RequestContext;
     using mindnet::plugins::core::models::History;
 
-    class HistoryValidator : public persistence::api::ValidatorBase<HistoryValidator, History>
+    class HistoryValidator : public api::ValidatorBase<HistoryValidator, History>
     {
     public:
         HistoryValidator() = default;

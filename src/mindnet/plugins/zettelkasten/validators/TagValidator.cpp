@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "../../../../../include/mindnet/plugins/zettelkasten/validators/TagValidator.h"
+#include "mindnet/plugins/zettelkasten/validators/TagValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/zettelkasten/models/Tag.h"
-#include "mindnet/persistence/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Tag
 #define MODEL TAG_H

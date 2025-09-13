@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // mind-net : Mind map software.
-// Copyright (C) 2025-2025 the original author or authors.
+// Copyright (C) 2023-2023 the original author or authors.
 //
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,23 +13,36 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-#ifndef SQLITEFILENAME_H
-#define SQLITEFILENAME_H
+#ifndef SQLITEDATABASEMIGRATION_H
+#define SQLITEDATABASEMIGRATION_H
 
 #include <string>
 
-namespace mindnet::persistence::impl::sqlite
-{
-    inline std::string SQLITE_FILE_NAME = "./mindnet.sqlite3";
-}
+#include "mindnet/Utils.h"
 
-#endif // SQLITEFILENAME_H
+namespace mindnet::impl::sqlite
+{
+    /**
+     *
+    * @author <a href="mailto:mail@robertvokac.com">Robert Vokac</a>
+     */
+    class SqliteDatabaseMigration
+    {
+    private:
+        //Not meant to be instantiated
+        SqliteDatabaseMigration();
+
+    public:
+        SqliteDatabaseMigration(const SqliteDatabaseMigration&) = delete;
+        SqliteDatabaseMigration& operator=(const SqliteDatabaseMigration&) = delete;
+
+        static SqliteDatabaseMigration* getInstance();
+        static void destroyInstance();
+        bool migrate();
+    };
+}
+#endif // SQLITEDATABASEMIGRATION_H

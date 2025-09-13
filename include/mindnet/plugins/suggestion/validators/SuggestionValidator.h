@@ -7,15 +7,15 @@
 #include <memory>
 
 #include "mindnet/Helper.h"
-#include "mindnet/persistence/api/ValidatorBase.h"
+#include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::suggestion::validators
 
 {
-    using persistence::api::RequestContext;
+    using api::RequestContext;
     using mindnet::plugins::suggestion::models::Suggestion;
 
-    class SuggestionValidator : public persistence::api::ValidatorBase<SuggestionValidator, Suggestion>
+    class SuggestionValidator : public api::ValidatorBase<SuggestionValidator, Suggestion>
     {
     public:
         SuggestionValidator() = default;
