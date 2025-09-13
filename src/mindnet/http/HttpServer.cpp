@@ -32,7 +32,8 @@ namespace mindnet::http
         namespace fs = std::filesystem;
 
         ////
-#ifndef jstxt
+//#define jstxt
+#ifdef jstxt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
