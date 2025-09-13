@@ -67,7 +67,7 @@
 #include "mindnet/IService.h"
 #include "mindnet/Service.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
-#include "mindnet/persistence/impl/sqlite/validators/CollectionCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionCrudlValidator.h"
 #define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
 using mindnet::commit;
@@ -382,7 +382,7 @@ int main(int argc, char** argv)
 {
     auto loggers = {
         &mindnet::fatal, &mindnet::err, &mindnet::warn,
-        &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::test
+        &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::experiment
     };
 
     for (auto* logger : loggers)

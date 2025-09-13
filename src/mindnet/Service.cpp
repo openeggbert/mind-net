@@ -3,37 +3,37 @@
 //
 
 #include "mindnet/Service.h"
-#include "mindnet/persistence/impl/sqlite/validators/UserCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/MessageCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/TeamCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/TeamMemberCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/DiscussionCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/CommentCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/SuggestionCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/SuggestionReviewCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/HistoryCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/MapCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/ContentCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/NoteCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/PropertyCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/TagTypeCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/TagCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/CollectionCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/CollectionItemCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/ReviewCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/SM2StateCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/QuestionCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/ReferenceCrudlValidator.h"
-#include "mindnet/persistence/impl/sqlite/validators/LinkCrudlValidator.h"
+#include "../../include/mindnet/plugins/core/validators/UserCrudlValidator.h"
+#include "../../include/mindnet/plugins/mail/validators/MessageCrudlValidator.h"
+#include "../../include/mindnet/plugins/core/validators/TeamCrudlValidator.h"
+#include "../../include/mindnet/plugins/core/validators/TeamMemberCrudlValidator.h"
+#include "../../include/mindnet/plugins/chat/validators/DiscussionCrudlValidator.h"
+#include "../../include/mindnet/plugins/chat/validators/CommentCrudlValidator.h"
+#include "../../include/mindnet/plugins/suggestion/validators/SuggestionCrudlValidator.h"
+#include "../../include/mindnet/plugins/suggestion/validators/SuggestionReviewCrudlValidator.h"
+#include "../../include/mindnet/plugins/core/validators/HistoryCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/MapCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/ContentCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/NoteCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/PropertyCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/TagTypeCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/TagCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionItemCrudlValidator.h"
+#include "../../include/mindnet/plugins/test/validators/ReviewCrudlValidator.h"
+#include "../../include/mindnet/plugins/test/validators/SM2StateCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/QuestionCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/ReferenceCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/LinkCrudlValidator.h"
 //
-#define add_validator(model, Model)\
-persistence::api::ICrudlValidator* model##_validator = new mindnet::persistence::impl::sqlite::validators:: Model##CrudlValidator();\
+#define add_validator(plugin, model, Model)\
+persistence::api::ICrudlValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##CrudlValidator();\
 validators[#model] = model##_validator;
 
 namespace mindnet
 {
     using validator = persistence::api::ICrudlValidator*;
-    using persistence::api::OperationResult;
+    using mindnet::OperationResult;
     using model::ModelDefinition;
 
 
@@ -43,28 +43,33 @@ namespace mindnet
 
 #ifndef disable_validation
 
-        add_validator(user, User)
-        add_validator(message, Message)
-        add_validator(team, Team)
-        add_validator(team_member, TeamMember)
-        add_validator(discussion, Discussion)
-        add_validator(comment, Comment)
-        add_validator(suggestion, Suggestion)
-        add_validator(suggestion_review, SuggestionReview)
-        add_validator(history, History)
-        add_validator(map, Map)
-        add_validator(content, Content)
-        add_validator(note, Note)
-        add_validator(property, Property)
-        add_validator(tag_type, TagType)
-        add_validator(tag, Tag)
-        add_validator(collection, Collection)
-        add_validator(collection_item, CollectionItem)
-        add_validator(review, Review)
-        add_validator(sm2_state, SM2State)
-        add_validator(question, Question)
-        add_validator(reference, Reference)
-        add_validator(link, Link)
+        add_validator(core, user, User)
+        add_validator(core, team, Team)
+        add_validator(core, team_member, TeamMember)
+        add_validator(core, history, History)
+        //
+        add_validator(mail, message, Message)
+        //
+        add_validator(chat, discussion, Discussion)
+        add_validator(chat, comment, Comment)
+        //
+        add_validator(suggestion, suggestion, Suggestion)
+        add_validator(suggestion, suggestion_review, SuggestionReview)
+        //
+        add_validator(zettelkasten, map, Map)
+        add_validator(zettelkasten, content, Content)
+        add_validator(zettelkasten, note, Note)
+        add_validator(zettelkasten, property, Property)
+        add_validator(zettelkasten, tag_type, TagType)
+        add_validator(zettelkasten, tag, Tag)
+        add_validator(zettelkasten, collection, Collection)
+        add_validator(zettelkasten, collection_item, CollectionItem)
+        add_validator(zettelkasten, question, Question)
+        add_validator(zettelkasten, reference, Reference)
+        add_validator(zettelkasten, link, Link)
+        //
+        add_validator(test, review, Review)
+        add_validator(test, sm2_state, SM2State)
 
         for (auto& e : validators) {
             e.second->set_validator_func(

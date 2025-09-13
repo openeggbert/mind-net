@@ -14,7 +14,7 @@ namespace mindnet
     Logger info(INFO);
     Logger debug(DEBUG);
     Logger trace(TRACE);
-    Logger test(TEST);
+    Logger experiment(EXPERIMENT);
     //
     Logger& log = info;
 }

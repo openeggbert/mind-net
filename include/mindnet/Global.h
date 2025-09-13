@@ -19,7 +19,7 @@ namespace mindnet
     extern Logger info;
     extern Logger debug;
     extern Logger trace;
-    extern Logger test;
+    extern Logger experiment;
     //
     extern Logger& log;
 }

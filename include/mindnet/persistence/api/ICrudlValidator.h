@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "IPersistence.h"
-#include "OperationResult.h"
+#include "../../OperationResult.h"
 
 namespace mindnet::http { struct LoginToken; }
 

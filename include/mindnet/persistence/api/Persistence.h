@@ -9,12 +9,12 @@
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 #include "../../model/ModelDefinition.h"
-#include "mindnet/persistence/api/OperationResult.h"
+#include "../../OperationResult.h"
 
 namespace mindnet::persistence::api
 {
     using mindnet::model::ModelDefinition;
-    using api::OperationResult;
+    using mindnet::OperationResult;
     
     class Persistence : public api::IPersistence
     {

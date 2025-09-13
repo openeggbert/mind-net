@@ -48,7 +48,8 @@ namespace mindnet
      *           broken, potentially stopping the whole system. For example, inability
      *           to connect to a crucial database.
      *
-     * TEST    - Used for experimental features and test-related logging. Helps in
+     * EXPERIMENT
+     *         - Used for experimental features and test-related logging. Helps in
      *           isolating test output from regular application logs and debugging
      *           test-specific behaviors.
      *
@@ -63,10 +64,10 @@ namespace mindnet
         INFO = 3, ///< Informational message about normal application events.
         DEBUG = 4, ///< Useful for debugging and troubleshooting.
         TRACE = 5, ///< Fine-grained, highly detailed information for step-by-step tracing.
-        TEST = 100, ///< Used for experimental features and test-related logging.
+        EXPERIMENT = 100, ///< Used for experimental features and test-related logging.
     };
 
-    inline LogLevel max_log_level = TEST;
+    inline LogLevel max_log_level = EXPERIMENT;
 
     inline std::string log_level_to_string(const LogLevel& log_level)
     {
@@ -78,7 +79,7 @@ namespace mindnet
         case INFO: return "INFO";
         case DEBUG: return "DEBUG";
         case TRACE: return "TRACE";
-        case TEST: return "TEST";
+        case EXPERIMENT: return "EXPERIMENT";
         default: throw std::runtime_error("Unknown log level: " + std::to_string(log_level));
         }
     }
@@ -93,7 +94,7 @@ namespace mindnet
         case INFO: return ConsoleColor::GREEN;
         case DEBUG: return ConsoleColor::BLUE;
         case TRACE: return ConsoleColor::PURPLE;
-        case TEST: return ConsoleColor::CYAN;
+        case EXPERIMENT: return ConsoleColor::CYAN;
         default: throw std::runtime_error("Unknown log level: " + std::to_string(log_level));
         }
     }

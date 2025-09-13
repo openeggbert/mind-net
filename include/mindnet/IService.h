@@ -12,7 +12,7 @@
 
 namespace mindnet{
     using validator = persistence::api::ICrudlValidator*;
-    using persistence::api::OperationResult;
+    using mindnet::OperationResult;
     using model::ModelDefinition;
     using persistence::api::DbPtr;
 

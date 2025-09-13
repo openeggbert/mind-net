@@ -10,7 +10,7 @@
 #include <type_traits>
 
 #include "ICrudlValidator.h"
-#include "OperationResult.h"
+#include "../../OperationResult.h"
 #include "PersistenceMethods.h"
 #include "PersistenceTypedefs.h"
 #include "RequestContext.h"
@@ -19,11 +19,11 @@
 #include "mindnet/Helper.h"
 
 #define create_method_prototypes_for_CrudlValidatorBase(M)\
-api::OperationResult validate_create(const RequestContext&, const M& entity) const ;\
-api::OperationResult validate_read(const RequestContext&, const M& entity) const;\
-api::OperationResult validate_update(const RequestContext&, const M& old_entity, const M& new_entity) const;\
-api::OperationResult validate_delete(const RequestContext&, const M& entity) const;\
-api::OperationResult validate_list(const RequestContext&, const string_map&) const;\
+mindnet::OperationResult validate_create(const RequestContext&, const M& entity) const ;\
+mindnet::OperationResult validate_read(const RequestContext&, const M& entity) const;\
+mindnet::OperationResult validate_update(const RequestContext&, const M& old_entity, const M& new_entity) const;\
+mindnet::OperationResult validate_delete(const RequestContext&, const M& entity) const;\
+mindnet::OperationResult validate_list(const RequestContext&, const string_map&) const;\
 [[nodiscard]] string get_model_name() const override;
 
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);\
@@ -37,7 +37,7 @@ return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE ,403, "User
 #define mandatory_filter(field)\
 if (filter.find( STRINGIFY(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRINGIFY(field) + "."};
 
-#define find_model(model, id) api:: XPASTE(find_,model) (ctx, id);
+#define find_model(model, id) XPASTE(find_,model) (ctx, id);
 #define check_found(f) if (!f.second.empty()) return{400,f.second};
 
 namespace mindnet::persistence::api {

@@ -202,7 +202,7 @@ namespace mindnet::http
 
             for (auto& f : query_params.fields)
             {
-                test << "field: " << f << commit;
+                experiment << "field: " << f << commit;
             }
 
             for (const auto& column : def.get_columns())
