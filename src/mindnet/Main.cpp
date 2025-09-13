@@ -128,7 +128,7 @@ void load_args(int argc, char** argv, std::vector<std::string>& arguments)
 
 bool commands_function_start(
     std::vector<std::string>& arguments,
-    mindnet::persistence::api::DbPtr& db,
+    std::shared_ptr<mindnet::IService>& service_ptr,
     int& exit_status)
 {
     bool custom_host = false;
@@ -260,7 +260,7 @@ bool commands_function_start(
     }
     
 
-    mindnet::http::HttpServer server{db, static_directory};
+    mindnet::http::HttpServer server{service_ptr, static_directory};
 
     mindnet::routes::ModelController controller;
 
@@ -335,7 +335,7 @@ bool commands_function_start(
 
 bool commands_function_help(
     std::vector<std::string>& arguments,
-    mindnet::persistence::api::DbPtr& db,
+    std::shared_ptr<mindnet::IService>& service_ptr,
     int& exit_status)
 {
     mindnet::warn << "Help is not yet implemented." << commit;
@@ -344,7 +344,7 @@ bool commands_function_help(
 
 bool commands_function_unknown(
     std::vector<std::string>& arguments,
-    mindnet::persistence::api::DbPtr& db,
+    std::shared_ptr<mindnet::IService>& service_ptr,
     int& exit_status)
 {
     mindnet::err << "Unknown command: " << arguments[0] << commit;
@@ -353,13 +353,13 @@ bool commands_function_unknown(
 
 bool run_command(
     std::vector<std::string>& arguments,
-    mindnet::persistence::api::DbPtr& db)
+    std::shared_ptr<mindnet::IService>& service_ptr)
 {
     int exit_status = 0;
     auto arg0 = arguments[0];
     typedef bool (*commands_function)(
         std::vector<std::string>&,
-        mindnet::persistence::api::DbPtr& db,
+        std::shared_ptr<mindnet::IService>& service_ptr,
         int&
     );
 
@@ -369,12 +369,12 @@ bool run_command(
 
     if (commands.find(arg0) == commands.end())
     {
-        commands_function_unknown(arguments, db, exit_status);
+        commands_function_unknown(arguments, service_ptr, exit_status);
         return true;
     }
 
     commands_function command = commands[arg0];
-    command(arguments, db, exit_status);
+    command(arguments, service_ptr, exit_status);
     return exit_status;
 }
 
@@ -397,5 +397,5 @@ int main(int argc, char** argv)
     std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<
         mindnet::persistence::api::Persistence>();
     std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
-    return run_command(arguments, db);
+    return run_command(arguments, service);
 }

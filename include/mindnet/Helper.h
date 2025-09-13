@@ -13,7 +13,8 @@
 #define castint static_cast<int>
 #define PASTE(a,b) a##b
 #define XPASTE(a,b) PASTE(a,b)
-#define STRING(s) #s
+#define STRINGIFY_HELPER(x) #x
+#define STRINGIFY(x) STRINGIFY_HELPER(x)
 
 typedef long long ll;
 typedef unsigned long long ull;

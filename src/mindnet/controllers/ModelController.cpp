@@ -14,8 +14,10 @@ namespace mindnet::routes
     using controllers::RestHelper;
     using enums::Crudl;
 
-    void ModelController::register_routes(crow::SimpleApp& app, persistence::api::DbPtr& db,
-                                          models::misc::ModelDefinition& def)
+    void ModelController::register_routes(
+        crow::SimpleApp& app,
+        ServicePtr& service_ptr,
+        ModelDefinition& def)
     {
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
         {
@@ -30,7 +32,7 @@ namespace mindnet::routes
                 }
             }
         };
-        auto create_lambda_function = [&db, &def](const crow::request& req)
+        auto create_lambda_function = [&service_ptr, &def](const crow::request& req)
         {
             trace << "Create lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::CREATE))
@@ -43,7 +45,7 @@ namespace mindnet::routes
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            entity_fields fields = db->request_to_entity_fields(body, enums::Crudl::CREATE, def);
+            entity_fields fields = service_ptr->request_to_entity_fields(body, enums::Crudl::CREATE, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
@@ -53,7 +55,7 @@ namespace mindnet::routes
             }
 
             http::LoginToken login_token{req};
-            auto last_inserted_id = db.get()->create(def, login_token, fields);
+            auto last_inserted_id = service_ptr.get()->create(def, login_token, fields);
             if (last_inserted_id.first == -1)
             {
                 return crow::response(500, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
@@ -65,7 +67,7 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
-        auto read_lambda_function = [&db, &def, &split_string_by_commas](const crow::request& req, int id)
+        auto read_lambda_function = [&service_ptr, &def, &split_string_by_commas](const crow::request& req, int id)
         {
             trace << "Read lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::READ))
@@ -77,7 +79,7 @@ namespace mindnet::routes
             string error;
             try
             {
-                auto read_result = db->read(def, login_token, id);
+                auto read_result = service_ptr->read(def, login_token, id);
                 if (read_result.second.ko())
                 {
                     error = read_result.second.error;
@@ -103,7 +105,7 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
-        auto update_lambda_function = [&db, &def](const crow::request& req, int id)
+        auto update_lambda_function = [&service_ptr, &def](const crow::request& req, int id)
         {
             trace << "Update lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::UPDATE))
@@ -120,7 +122,7 @@ namespace mindnet::routes
             {
                 return crow::response(400, "Invalid input. id in body is not equal to id in url.");
             }
-            entity_fields fields = db->request_to_entity_fields(body, enums::Crudl::UPDATE, def);
+            entity_fields fields = service_ptr->request_to_entity_fields(body, enums::Crudl::UPDATE, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
@@ -132,7 +134,7 @@ namespace mindnet::routes
             http::LoginToken login_token{req};
 
 
-            auto success = db->update(def, login_token, id, fields);
+            auto success = service_ptr->update(def, login_token, id, fields);
             if (success.ko())
             {
                 return crow::response(
@@ -146,14 +148,14 @@ namespace mindnet::routes
             return crow::response(200, res);
         };
 
-        auto delete_lambda_function = [&db, &def](const crow::request& req, int id)
+        auto delete_lambda_function = [&service_ptr, &def](const crow::request& req, int id)
         {
             trace << "Delete lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::DELETE))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
 
             http::LoginToken login_token{req};
-            auto success = db->remove(def, login_token, id);
+            auto success = service_ptr->remove(def, login_token, id);
 
             if (success.ko())
             {
@@ -165,7 +167,7 @@ namespace mindnet::routes
             return crow::response(200, def.get_model_name() + " with id " + std::to_string(id) + " was deleted.");
         };
 
-        auto list_lambda_function = [&db, &def, &split_string_by_commas](const crow::request& req)
+        auto list_lambda_function = [&service_ptr, &def, &split_string_by_commas](const crow::request& req)
         {
             trace << "List lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::LIST))
@@ -219,7 +221,7 @@ namespace mindnet::routes
             }
 
             http::LoginToken login_token{req};
-            auto all_records = db->list(def, login_token, query_params);
+            auto all_records = service_ptr->list(def, login_token, query_params);
             if (all_records.second.ko())
             {
                 return crow::response(500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.error);

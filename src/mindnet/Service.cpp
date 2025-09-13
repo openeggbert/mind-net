@@ -39,7 +39,7 @@ namespace mindnet
 
     Service::Service(const DbPtr& db_) : IService(db_), db_ptr(db_)
     {
-        //#define disable_validation
+//#define disable_validation
 
 #ifndef disable_validation
 

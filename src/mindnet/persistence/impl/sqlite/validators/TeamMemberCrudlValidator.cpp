@@ -110,7 +110,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string TeamMemberCrudlValidator::get_model_name() const
     {
-        return STRING(model);
+        return STRINGIFY(model);
     }
 }
 

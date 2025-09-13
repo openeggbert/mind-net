@@ -80,7 +80,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string SuggestionCrudlValidator::get_model_name() const
     {
-        return STRING(model);
+        return STRINGIFY(model);
     }
 }
 

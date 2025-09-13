@@ -67,9 +67,13 @@ namespace mindnet::models
         string category;
         int owner_id{};
         int team_id{};
-        int owner_rights{7};
-        int team_rights{7};
-        int other_rights{7};
+        enums::AccessRight owner_rights{7};
+        enums::AccessRight team_rights{7};
+        enums::AccessRight other_rights{7};
+        int owner_rights_int() {return cast64(owner_rights);}
+        int team_rights_int() {return cast64(team_rights);}
+        int other_rights_int() {return cast64(other_rights);}
+
 
         create_model_h_methods(Model, MODEL)
 

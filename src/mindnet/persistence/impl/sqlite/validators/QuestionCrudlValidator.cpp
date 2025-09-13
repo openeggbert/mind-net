@@ -81,7 +81,7 @@ auto note_id = std::stoi(filter.at("note_id"));
 
     string QuestionCrudlValidator::get_model_name() const
     {
-        return STRING(model);
+        return STRINGIFY(model);
     }
 }
 

@@ -13,6 +13,13 @@ namespace mindnet::persistence::api
     std::pair<models::User, api::OperationResult> find_logged_user(
         DbPtr& db, http::LoginToken token)
     {
+        if (token.user_id == 0)
+        {
+            models::User u;
+            u.role = enums::UserRole::GUEST;
+            u.status = enums::UserStatus::ACTIVE;
+            return {u, ok_result};
+        }
         auto result = db->read(models::USER_DEFINITION, token, token.user_id);
         if (result.second.ko())
         {
@@ -90,7 +97,7 @@ namespace mindnet::persistence::api
         if (map.second.empty()) return false;
 
         bool map_owner_and_can = ctx.token.user_id == map.first.owner_id && mindnet::enums::can(
-            single_right, map.first.owner_rights);
+            single_right, map.first.owner_rights_int());
         if (map_owner_and_can) return true;
 
         bool map_team_member_and_can = false;
@@ -99,9 +106,9 @@ namespace mindnet::persistence::api
         {
             auto result = is_member_of_team(ctx, map.first.team_id);
             map_team_member_and_can = !result.empty() && mindnet::enums::can(
-                enums::SingleRight::WRITE, map.first.team_rights);
+                enums::SingleRight::WRITE, map.first.team_rights_int());
             if (map_team_member_and_can) return true;
-            bool other_can = mindnet::enums::can(single_right, map.first.other_rights);
+            bool other_can = mindnet::enums::can(single_right, map.first.other_rights_int());
             if (other_can) return true;
         }
         return false;

@@ -181,6 +181,7 @@ namespace mindnet::persistence::api
     {
         if (!has_model_with_name(model_name))
         {
+            warn << "Model " << model_name << " not found" << commit;
             return std::nullopt;
         }
         return get_repository(model_name)->get_model_definition();

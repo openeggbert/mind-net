@@ -35,7 +35,7 @@ return_if (ctx.role < enums::UserRole:: ROLE ,403, "User does not have permissio
 #define assert_editor() assert_role(EDITOR)
 
 #define mandatory_filter(field)\
-if (filter.find( STRING(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRING(field) + "."};
+if (filter.find( STRINGIFY(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRINGIFY(field) + "."};
 
 #define find_model(model, id) api:: XPASTE(find_,model) (ctx, id);
 #define check_found(f) if (!f.second.empty()) return{400,f.second};

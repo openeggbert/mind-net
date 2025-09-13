@@ -9,21 +9,22 @@
 #include "mindnet/Global.h"
 #include "jwt-cpp/jwt.h"
 #include "mindnet/Configuration.h"
+#include "mindnet/Service.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/models/User.h"
 
 namespace mindnet::http
 {
-    HttpServer::HttpServer(persistence::api::DbPtr db,
+    HttpServer::HttpServer(ServicePtr service_ptr,
                            const std::string& directory_for_static_files_)
-        : db_(std::move(db)),
+        : service_ptr_(std::move(service_ptr)),
           directory_for_static_files(directory_for_static_files_)
     {
         create_web_endpoints();
 
-        create_model_definition_endpoints(db_);
-        create_authentication_endpoints(db_);
+        create_model_definition_endpoints(service_ptr);
+        create_authentication_endpoints(service_ptr);
     }
 
     void HttpServer::run(const string& host, int port, int frontend_port)
@@ -225,7 +226,7 @@ namespace mindnet::http
         "suggestion_review",
     };
 
-    void HttpServer::create_model_definition_endpoints(const persistence::api::DbPtr& d_b_)
+    void HttpServer::create_model_definition_endpoints(const ServicePtr& service_ptr)
     {
         //todo: remove this duplicity
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
@@ -310,12 +311,12 @@ namespace mindnet::http
         };
 
 
-        auto model_definition_to_json = [column_definition_to_json, d_b_, custom_action_to_json](
+        auto model_definition_to_json = [column_definition_to_json, service_ptr, custom_action_to_json](
             string& model_name,
             const std::set<string>& fields_set
         )
         {
-            auto model_definition = d_b_->get_model_definition(model_name);
+            auto model_definition = service_ptr->get_model_definition(model_name);
             crow::json::wvalue res;
             if (
                 model_definition->get_allowed_rest_operations().empty()
@@ -386,9 +387,9 @@ namespace mindnet::http
 
         //READ
         CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
-        ([d_b_, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
+        ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
         {
-            if (!d_b_->has_model_with_name(model_name))
+            if (!service_ptr->has_model(model_name))
             {
                 return crow::response(404, "Model definition not found: " + model_name);
             }
@@ -416,7 +417,7 @@ namespace mindnet::http
 
         // LIST
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::GET)
-        ([d_b_, model_definition_to_json, split_string_by_commas](const crow::request& req)
+        ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req)
         {
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
@@ -425,7 +426,7 @@ namespace mindnet::http
             crow::json::wvalue result;
 
             crow::json::wvalue::list model_definitions_as_json;
-            for (auto& model_name : d_b_->list_model_names())
+            for (auto& model_name : service_ptr->list_model_names())
             {
                 //std::cout << model_name << std::endl;
                 auto model_definition_as_json = model_definition_to_json(model_name, fields_set);
@@ -492,9 +493,9 @@ namespace mindnet::http
         // return secret;
     }
 
-    void HttpServer::create_authentication_endpoints(const persistence::api::DbPtr& d_b_)
+    void HttpServer::create_authentication_endpoints(const ServicePtr& service_ptr)
     {
-        CROW_ROUTE(crow_app, "/login").methods("POST"_method)([d_b_](const crow::request& req)
+        CROW_ROUTE(crow_app, "/login").methods("POST"_method)([service_ptr](const crow::request& req)
         {
             UserCredentials credentials = req;
             if (!credentials.error.empty())
@@ -505,7 +506,7 @@ namespace mindnet::http
             QueryParams query_params;
             query_params.add_filter(models::columns::UserColumns::USERNAME, credentials.username);
             LoginToken login_token{req};
-            auto users = d_b_.get()->list(models::USER_DEFINITION, login_token, query_params);
+            auto users = service_ptr.get()->list(models::USER_DEFINITION, login_token, query_params);
             if (users.first.empty()) { return crow::response(401, "User does not exist."); }
             models::User user;
             user.from_values(users.first[0]);
@@ -552,7 +553,7 @@ namespace mindnet::http
             query_params.add_filter(models::columns::UserColumns::USERNAME, username);
             query_params.fields = {models::columns::UserColumns::USERNAME};
             LoginToken login_token{req};
-            auto users = d_b_.get()->list(models::USER_DEFINITION, login_token, query_params);
+            auto users = service_ptr.get()->list(models::USER_DEFINITION, login_token, query_params);
             if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
@@ -570,7 +571,7 @@ namespace mindnet::http
 
             error.clear();
             auto fields_ = user.to_values();
-            d_b_.get()->create(models::USER_DEFINITION, login_token, fields_);
+            service_ptr.get()->create(models::USER_DEFINITION, login_token, fields_);
             if (!error.empty())
             {
                 return crow::response{400, "Registration failed. " + error};

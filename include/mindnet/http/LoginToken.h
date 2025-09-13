@@ -13,7 +13,7 @@ namespace mindnet::http
     struct LoginToken
     {
         std::string username;
-        int user_id;
+        int user_id{};
         std::string msg;
         int status{};
 

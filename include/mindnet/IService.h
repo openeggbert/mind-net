@@ -50,6 +50,8 @@ private:
     virtual OperationResult   can_list(const ModelDefinition& model_definition, http::LoginToken& token,string_map& filter) = 0;
 
 };
+    typedef std::shared_ptr<mindnet::IService> ServicePtr;
+
 }
 
 #endif //MIND_NET_ISERVICE_H

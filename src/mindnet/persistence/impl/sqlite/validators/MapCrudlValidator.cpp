@@ -126,7 +126,7 @@ namespace mindnet::persistence::impl::sqlite::validators
                 models::Map map;
                 map.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, map.get_id());
-                if (check_result.ko()) return {400, std::string("You request list containing map with ID ") + std::to_string(map.get_id()) + ", but you cannot read this map. Modify your query."};
+                if (check_result.ko()) return {400, std::string("You request list containing map with ID ") + std::to_string(map.get_id()) + ", but you cannot read this map. The reason: " + check_result.error};
             }
             params.page_number++;
         }
@@ -135,6 +135,10 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string MapCrudlValidator::get_model_name() const
     {
-        return STRING(model);
+        test<< STRINGIFY(model) << commit;
+        return STRINGIFY(model);
     }
 }
+#undef Model
+#undef MODEL
+#undef model

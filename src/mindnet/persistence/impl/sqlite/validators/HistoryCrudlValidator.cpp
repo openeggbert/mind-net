@@ -69,7 +69,7 @@ namespace mindnet::persistence::impl::sqlite::validators
 
     string HistoryCrudlValidator::get_model_name() const
     {
-        return STRING(model);
+        return STRINGIFY(model);
     }
 }
 

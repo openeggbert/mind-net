@@ -17,9 +17,9 @@ namespace mindnet::models
         result.push_back(category);
         result.push_back(owner_id);
         result.push_back(team_id);
-        result.push_back(owner_rights);
-        result.push_back(team_rights);
-        result.push_back(other_rights);
+        result.push_back(cast64(owner_rights));
+        result.push_back(cast64(team_rights));
+        result.push_back(cast64(other_rights));
         return result;
     }
 
@@ -43,9 +43,9 @@ namespace mindnet::models
         {
             team_id = 0;
         }
-        owner_rights = number();
-        team_rights = number();
-        other_rights = number();
+        owner_rights = static_cast<enums::AccessRight>(number());
+        team_rights = static_cast<enums::AccessRight>(number());
+        other_rights = static_cast<enums::AccessRight>(number());
     };
     string Map::validate()
     {
@@ -56,9 +56,9 @@ namespace mindnet::models
             [this] { return testt_between(description, 0, 80, MapColumns::DESCRIPTION); },
             [this] { return testt_between(category, 0, 40, MapColumns::CATEGORY); },
             [this] { return test_ne(owner_id, 0, MapColumns::OWNER_ID); },
-            [this] { return test_between(owner_rights, 0, 7, MapColumns::OWNER_RIGHTS); },
-            [this] { return test_between(team_rights, 0, 7, MapColumns::TEAM_RIGHTS); },
-            [this] { return test_between(other_rights, 0, 7, MapColumns::OTHER_RIGHTS); },
+            [this] { return test_between(cast64(owner_rights), 0, 7, MapColumns::OWNER_RIGHTS); },
+            [this] { return test_between(cast64(team_rights), 0, 7, MapColumns::TEAM_RIGHTS); },
+            [this] { return test_between(cast64(other_rights), 0, 7, MapColumns::OTHER_RIGHTS); },
         };
         return ValidatorChain::run(list);
     }

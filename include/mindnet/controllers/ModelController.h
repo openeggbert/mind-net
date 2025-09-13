@@ -6,14 +6,14 @@
 
 
 #include "crow.h"
-#include "../persistence/api/Persistence.h"
+#include "mindnet/IService.h"
 
 namespace mindnet::routes
 {
     class ModelController
     {
     public:
-        void register_routes(crow::SimpleApp& app, persistence::api::DbPtr& db,
+        void register_routes(crow::SimpleApp& app, ServicePtr& service_ptr,
                              models::misc::ModelDefinition& def);
     };
 }
