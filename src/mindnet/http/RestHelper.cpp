@@ -2,7 +2,7 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#include "mindnet/controllers/RestHelper.h"
+#include "../../../include/mindnet/http/RestHelper.h"
 
 #include <string>
 #include <crow.h>
@@ -12,7 +12,7 @@
 #include "mindnet/Helper.h"
 #include "mindnet/models/misc/ModelDefinition.h"
 
-namespace mindnet::controllers
+namespace mindnet::http
 {
     crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values,
                                                    const models::misc::ModelDefinition& def,

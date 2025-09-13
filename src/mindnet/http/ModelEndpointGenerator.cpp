@@ -2,19 +2,19 @@
 // Created by robertvokac on 8/16/25.
 //
 
-#include "mindnet/controllers/ModelController.h"
+#include "../../../include/mindnet/http/ModelEndpointGenerator.h"
 #include "crow.h"
 #include "mindnet/Configuration.h"
 #include "mindnet/Utils.h"
-#include "mindnet/controllers/RestHelper.h"
+#include "mindnet/http/RestHelper.h"
 #include "mindnet/persistence/impl/sqlite/RepositoryHelper.h"
 
-namespace mindnet::routes
+namespace mindnet::http
 {
-    using controllers::RestHelper;
+    using http::RestHelper;
     using enums::Crudl;
 
-    void ModelController::register_routes(
+    void ModelEndpointGenerator::create_model_endpoint(
         crow::SimpleApp& app,
         ServicePtr& service_ptr,
         ModelDefinition& def)

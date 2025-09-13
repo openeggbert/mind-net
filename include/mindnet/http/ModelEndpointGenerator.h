@@ -8,12 +8,12 @@
 #include "crow.h"
 #include "mindnet/IService.h"
 
-namespace mindnet::routes
+namespace mindnet::http
 {
-    class ModelController
+    class ModelEndpointGenerator
     {
     public:
-        void register_routes(crow::SimpleApp& app, ServicePtr& service_ptr,
+        void create_model_endpoint(crow::SimpleApp& app, ServicePtr& service_ptr,
                              models::misc::ModelDefinition& def);
     };
 }

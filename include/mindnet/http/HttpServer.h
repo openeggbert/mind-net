@@ -24,9 +24,9 @@ namespace mindnet::http
         void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
 
         template <typename T>
-        void register_controller(T* controller, models::misc::ModelDefinition& definition)
+        void create_model_endpoint(T* controller, models::misc::ModelDefinition& definition)
         {
-            controller->register_routes(crow_app, service_ptr_, definition);
+            controller->create_model_endpoint(crow_app, service_ptr_, definition);
         }
 
         crow::SimpleApp& get_crow_app();

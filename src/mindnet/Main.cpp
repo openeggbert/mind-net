@@ -20,7 +20,7 @@
 #include "mindnet/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/persistence/api/Persistence.h"
-#include "mindnet/controllers/ModelController.h"
+#include "../../include/mindnet/http/ModelEndpointGenerator.h"
 //
 #ifdef plugin_base
 #include "mindnet/models/User.h"
@@ -68,7 +68,7 @@
 #include "mindnet/Service.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/persistence/impl/sqlite/validators/CollectionCrudlValidator.h"
-#define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
+#define add_controller(model) server.create_model_endpoint(&controller, mindnet::models::model##_DEFINITION);
 
 using mindnet::commit;
 
@@ -262,7 +262,7 @@ bool commands_function_start(
 
     mindnet::http::HttpServer server{service_ptr, static_directory};
 
-    mindnet::routes::ModelController controller;
+    mindnet::http::ModelEndpointGenerator controller;
 
 
 #ifdef plugin_base

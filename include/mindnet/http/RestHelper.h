@@ -11,7 +11,7 @@
 #include "mindnet/Helper.h"
 #include "../models/misc/ModelDefinition.h"
 
-namespace mindnet::controllers
+namespace mindnet::http
 {
     class RestHelper
     {
