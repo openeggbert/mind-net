@@ -118,7 +118,6 @@ openssl rand -base64 32
 
 ## BACKLOG
 
-
 ### Critical
 - [ ] FEATURE Triggers - also add adding operations (as json) to history table
 - [ ] FEATURE User authentication
@@ -128,6 +127,9 @@ openssl rand -base64 32
     without requiring re-authentication.
 - [ ] Zettelkasten component
 - [ ] Test component
+- [ ] New table concept
+- [ ] New table source: type:book/web, title, author, year, page_number, url
+- [ ] Tree view: via vis.js, clicking on node opens the node in a new tab 
 - [ ] property.key, tag_type.title - length should be limited
 - [ ] IMPROVEMENT Enums will be PascalCase, not all uppercase
 - [ ] BUG Update of boolean values in SQLite is not working.

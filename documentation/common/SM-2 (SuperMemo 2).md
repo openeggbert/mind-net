@@ -103,4 +103,7 @@ This highlights questions where the user consistently scores poorly.
 **Test modes:**
 
  - Full review - all notes under the current note
- - DueOnly review - only notes due for review
+ - Due Only review - only notes due for review
+ - Date range review - notes created within a date range
+ - Tags review - notes with a specific tag
+ - Collection review - notes from a specific collection
