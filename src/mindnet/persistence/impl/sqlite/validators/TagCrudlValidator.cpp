@@ -16,6 +16,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::TagCrudlValidator;
+    using api::OperationResult;
 
     OperationResult TagCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {

@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "mindnet/enums/Crudl.h"
-#include "../../../api/Persistence.h"
+#include "mindnet/persistence/api/Persistence.h"
 #include "mindnet/persistence/api/IRepository.h"
 
 namespace mindnet::persistence::impl::sqlite::repositories
@@ -40,7 +40,7 @@ namespace mindnet::persistence::impl::sqlite::repositories
     public:
         RepositoryImplSqlite(
             api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
-            ModelDefinition& model_definition
+            models::misc::ModelDefinition& model_definition
             );
         ~RepositoryImplSqlite() override;
 

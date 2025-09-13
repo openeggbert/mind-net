@@ -11,11 +11,7 @@
 #include "mindnet/models/misc/ModelDefinition.h"
 #include "mindnet/persistence/api/OperationResult.h"
 
-namespace mindnet::persistence::api {
-    class CrudlValidator;
-}
-
-namespace mindnet::persistence
+namespace mindnet::persistence::api
 {
     using mindnet::models::misc::ModelDefinition;
     using api::OperationResult;
@@ -25,24 +21,17 @@ namespace mindnet::persistence
     private:
         std::map<std::string, api::IRepository*> repositories;
         std::vector<std::string> repository_names;
-        std::map<std::string, api::ICrudlValidator*> validators;
+
         api::IRepository* get_repository(const std::string& name);
-        api::ICrudlValidator* get_validator(const std::string& name);
 
     public:
         Persistence();
-        ~Persistence();
+        ~Persistence() override;
 
-        bool has_repository_with_name(const std::string& name) override;
+        bool has_model_with_name(const std::string& name) override;
 
-        std::vector<std::string>& list_repository_names() override;
+        std::vector<std::string>& list_model_names() override;
 
-         OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef) override;
-         OperationResult   can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) override;
-         OperationResult can_update(const ModelDefinition& model_definition, http::LoginToken& token,entity_fields& ef) override;
-         OperationResult can_delete(const ModelDefinition& model_definition, http::LoginToken& token,int id) override;
-         OperationResult   can_list(const ModelDefinition& model_definition, http::LoginToken& token,string_map& filter) override;
-//
         std::pair<int, OperationResult>         create(const ModelDefinition& def, http::LoginToken& token, entity_fields& fields) override;
         std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, http::LoginToken& token, int id) override;
         OperationResult                         update(const ModelDefinition& def, http::LoginToken&  token, int id, entity_fields& fields) override;

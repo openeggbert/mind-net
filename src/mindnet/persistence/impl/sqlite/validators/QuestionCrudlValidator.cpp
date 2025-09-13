@@ -16,6 +16,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::QuestionCrudlValidator;
+    using api::OperationResult;
 
     OperationResult QuestionCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const {
     auto note = find_model(note, entity.note_id);

@@ -8,11 +8,6 @@
 #include "jwt-cpp/jwt.h"
 #include "mindnet/Configuration.h"
 
-namespace mindnet::persistence
-{
-    class Persistence;
-}
-
 namespace mindnet::http
 {
     struct LoginToken

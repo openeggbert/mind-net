@@ -16,6 +16,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::LinkCrudlValidator;
+    using api::OperationResult;
 
     OperationResult LinkCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const {
         assert_editor()

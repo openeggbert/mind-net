@@ -15,7 +15,7 @@
 
 namespace mindnet::http
 {
-    HttpServer::HttpServer(std::shared_ptr<persistence::Persistence> db,
+    HttpServer::HttpServer(persistence::api::DbPtr db,
                            const std::string& directory_for_static_files_)
         : db_(std::move(db)),
           directory_for_static_files(directory_for_static_files_)
@@ -225,7 +225,7 @@ namespace mindnet::http
         "suggestion_review",
     };
 
-    void HttpServer::create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_)
+    void HttpServer::create_model_definition_endpoints(const persistence::api::DbPtr& d_b_)
     {
         //todo: remove this duplicity
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
@@ -388,7 +388,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
         ([d_b_, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
         {
-            if (!d_b_->has_repository_with_name(model_name))
+            if (!d_b_->has_model_with_name(model_name))
             {
                 return crow::response(404, "Model definition not found: " + model_name);
             }
@@ -425,7 +425,7 @@ namespace mindnet::http
             crow::json::wvalue result;
 
             crow::json::wvalue::list model_definitions_as_json;
-            for (auto& model_name : d_b_->list_repository_names())
+            for (auto& model_name : d_b_->list_model_names())
             {
                 //std::cout << model_name << std::endl;
                 auto model_definition_as_json = model_definition_to_json(model_name, fields_set);
@@ -492,7 +492,7 @@ namespace mindnet::http
         // return secret;
     }
 
-    void HttpServer::create_authentication_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_)
+    void HttpServer::create_authentication_endpoints(const persistence::api::DbPtr& d_b_)
     {
         CROW_ROUTE(crow_app, "/login").methods("POST"_method)([d_b_](const crow::request& req)
         {

@@ -64,7 +64,10 @@
 #endif
 
 //
+#include "mindnet/IService.h"
+#include "mindnet/Service.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/persistence/impl/sqlite/validators/CollectionCrudlValidator.h"
 #define add_controller(model) server.register_controller(&controller, mindnet::models::model##_DEFINITION);
 
 using mindnet::commit;
@@ -125,7 +128,7 @@ void load_args(int argc, char** argv, std::vector<std::string>& arguments)
 
 bool commands_function_start(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::persistence::Persistence>& db,
+    mindnet::persistence::api::DbPtr& db,
     int& exit_status)
 {
     bool custom_host = false;
@@ -332,7 +335,7 @@ bool commands_function_start(
 
 bool commands_function_help(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::persistence::Persistence>& db,
+    mindnet::persistence::api::DbPtr& db,
     int& exit_status)
 {
     mindnet::warn << "Help is not yet implemented." << commit;
@@ -341,7 +344,7 @@ bool commands_function_help(
 
 bool commands_function_unknown(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::persistence::Persistence>& db,
+    mindnet::persistence::api::DbPtr& db,
     int& exit_status)
 {
     mindnet::err << "Unknown command: " << arguments[0] << commit;
@@ -350,13 +353,13 @@ bool commands_function_unknown(
 
 bool run_command(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::persistence::Persistence>& db)
+    mindnet::persistence::api::DbPtr& db)
 {
     int exit_status = 0;
     auto arg0 = arguments[0];
     typedef bool (*commands_function)(
         std::vector<std::string>&,
-        std::shared_ptr<mindnet::persistence::Persistence>& db,
+        mindnet::persistence::api::DbPtr& db,
         int&
     );
 
@@ -391,6 +394,8 @@ int main(int argc, char** argv)
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
     migrate_schema_if_needed();
-    auto db = std::make_shared<mindnet::persistence::Persistence>();
+    std::shared_ptr<mindnet::persistence::api::IPersistence> db = std::make_shared<
+        mindnet::persistence::api::Persistence>();
+    std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
     return run_command(arguments, db);
 }

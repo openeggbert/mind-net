@@ -14,7 +14,7 @@ namespace mindnet::routes
     using controllers::RestHelper;
     using enums::Crudl;
 
-    void ModelController::register_routes(crow::SimpleApp& app, std::shared_ptr<persistence::Persistence>& db,
+    void ModelController::register_routes(crow::SimpleApp& app, persistence::api::DbPtr& db,
                                           models::misc::ModelDefinition& def)
     {
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)

@@ -59,16 +59,20 @@ namespace mindnet::models {
 
 namespace mindnet::persistence::api
 {
+    typedef std::function<ICrudlValidator*(const std::string&)> GetValidatorFunc;
+
     template <typename Derived, typename Model>
     class CrudlValidatorBase : public api::ICrudlValidator
     {
         static_assert(std::is_base_of_v<models::misc::BaseModel, Model>,
                       "Model must derive from BaseModel");
 
+    private:
+        GetValidatorFunc get_validator_func_ = nullptr;
     public:
         virtual ~CrudlValidatorBase() = default;
 
-        OperationResult can_create(IPersistence& db, http::LoginToken& token, entity_fields& ef) const
+        OperationResult can_create(DbPtr& db, http::LoginToken& token, entity_fields& ef) const
         {
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
@@ -87,7 +91,7 @@ namespace mindnet::persistence::api
             //
             if (auto error = entity.validate(); !error.empty())
                 return {400, error};
-            if (auto error = models::misc::validate_enums(ef, db.get_model_definition(get_model_name()).value()) ; !error.empty())
+            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_create(context, entity); !res.ok())
@@ -96,7 +100,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_read(IPersistence& db, http::LoginToken& token, int id) const
+        OperationResult can_read(DbPtr& db, http::LoginToken& token, int id) const
         {
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
@@ -110,9 +114,9 @@ namespace mindnet::persistence::api
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
-            auto [values, read_err] = db.read(
+            auto [values, read_err] = db->read(
                 //todo
-                db.get_model_definition(derived().get_model_name()).value(), token, id
+                db->get_model_definition(derived().get_model_name()).value(), token, id
                 );
             if (read_err.ko()) return read_err;
             //
@@ -125,7 +129,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_update(IPersistence& db, http::LoginToken& token, entity_fields& ef) const
+        OperationResult can_update(DbPtr& db, http::LoginToken& token, entity_fields& ef) const
         {
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& old_m, const Model& new_m)
@@ -142,7 +146,7 @@ namespace mindnet::persistence::api
             Model new_entity;
             new_entity.from_values(ef);
 
-            auto [old_values, read_err] = db.read(db.get_model_definition(derived().get_model_name()).value(),
+            auto [old_values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(),
                 token, new_entity.get_id());
             if (read_err.ko()) return read_err;
 
@@ -152,10 +156,10 @@ namespace mindnet::persistence::api
             if (auto error = new_entity.validate(); !error.empty())
                 return {400, error};
 
-            auto def = db.get_model_definition(derived().get_model_name()).value();
+            auto def = db->get_model_definition(derived().get_model_name()).value();
             if (auto error = validate_readonly(old_values, ef, def); !error.empty())
                 return {400, error};
-            if (auto error = models::misc::validate_enums(ef, db.get_model_definition(get_model_name()).value()) ; !error.empty())
+            if (auto error = models::misc::validate_enums(ef, db->get_model_definition(get_model_name()).value()) ; !error.empty())
                 return {400, error};
             ////
             if (auto res = derived().validate_update(
@@ -165,7 +169,7 @@ namespace mindnet::persistence::api
             return ok_result;
         }
 
-        OperationResult can_delete(IPersistence& db, http::LoginToken& token, int id) const
+        OperationResult can_delete(DbPtr& db, http::LoginToken& token, int id) const
         {
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
@@ -179,7 +183,7 @@ namespace mindnet::persistence::api
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
-            auto [values, read_err] = db.read(db.get_model_definition(derived().get_model_name()).value(), token, id);
+            auto [values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(), token, id);
             if (read_err.ko()) return read_err;
 
             Model entity;
@@ -191,7 +195,7 @@ namespace mindnet::persistence::api
             return ok_result;
         };
 
-        OperationResult can_list(IPersistence& db, http::LoginToken& token, string_map& filter) const
+        OperationResult can_list(DbPtr& db, http::LoginToken& token, string_map& filter) const
         {
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const string_map& fm)
@@ -212,7 +216,13 @@ namespace mindnet::persistence::api
         };
         [[nodiscard]] virtual string get_model_name() const = 0;
 
+        void set_validator_func(GetValidatorFunc func) override { get_validator_func_ = func; }
+        [[nodiscard]] GetValidatorFunc get_validator_func() const { return get_validator_func_; }
+
+
+
     private:
+
         const Derived& derived() const { return static_cast<const Derived&>(*this); }
     };
 }

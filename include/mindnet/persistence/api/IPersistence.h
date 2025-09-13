@@ -11,9 +11,7 @@
 
 namespace mindnet::persistence::api
 {
-    class ICrudlValidator;
     using mindnet::models::misc::ModelDefinition;
-    using validator = api::ICrudlValidator*;
 
     class IPersistence
     {
@@ -21,16 +19,10 @@ namespace mindnet::persistence::api
         IPersistence() = default;
         virtual ~IPersistence() = default; // explicitly make it destructible
 
-        virtual bool has_repository_with_name(const std::string& name) = 0;
+        virtual bool has_model_with_name(const std::string& name) = 0;
 
-        virtual std::vector<std::string>& list_repository_names() = 0;
-
-        virtual OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token, entity_fields& ef) = 0;
-        virtual OperationResult   can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) = 0;
-        virtual OperationResult can_update(const ModelDefinition& model_definition, http::LoginToken& token,entity_fields& ef) = 0;
-        virtual OperationResult can_delete(const ModelDefinition& model_definition, http::LoginToken& token,int id) = 0;
-        virtual OperationResult   can_list(const ModelDefinition& model_definition, http::LoginToken& token,string_map& filter) = 0;
-        //
+        virtual std::vector<std::string>& list_model_names() = 0;
+ //
         virtual std::pair<int, OperationResult>         create(const ModelDefinition& def, http::LoginToken& token, entity_fields& fields) = 0;
         virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, http::LoginToken& token, int id) = 0;
         virtual OperationResult                         update(const ModelDefinition& def, http::LoginToken&  token, int id, entity_fields& fields) = 0;
@@ -43,5 +35,7 @@ namespace mindnet::persistence::api
                                                                 ModelDefinition& def) = 0;
 
     };
+
+    typedef std::shared_ptr<mindnet::persistence::api::IPersistence> DbPtr;
 }
 #endif // IPERSISTENCE_H

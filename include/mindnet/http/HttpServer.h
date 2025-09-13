@@ -19,7 +19,7 @@ namespace mindnet::http
     class HttpServer
     {
     public:
-        HttpServer(std::shared_ptr<persistence::Persistence> db,
+        HttpServer(persistence::api::DbPtr db,
                    const std::string& directory_for_static_files = std::string("static"));
         void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
 
@@ -33,13 +33,13 @@ namespace mindnet::http
 
     private:
         crow::SimpleApp crow_app;
-        std::shared_ptr<persistence::Persistence> db_;
+        persistence::api::DbPtr db_;
         std::unordered_map<std::string, CachedFile> file_cache;
         std::string directory_for_static_files;
         //
         void create_web_endpoints();
-        void create_model_definition_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_);
-        void create_authentication_endpoints(const std::shared_ptr<persistence::Persistence>& d_b_);
+        void create_model_definition_endpoints(const persistence::api::DbPtr& d_b_);
+        void create_authentication_endpoints(const persistence::api::DbPtr& d_b_);
     };
 }
 

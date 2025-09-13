@@ -15,6 +15,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::HistoryCrudlValidator;
+    using api::OperationResult;
 
     OperationResult HistoryCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {

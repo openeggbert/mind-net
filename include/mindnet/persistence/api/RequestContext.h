@@ -14,7 +14,7 @@ namespace mindnet::persistence::api
 {
     struct RequestContext
     {
-        IPersistence& db;
+        DbPtr& db;
         http::LoginToken& token;
         enums::UserRole role{};
         enums::UserStatus status{};

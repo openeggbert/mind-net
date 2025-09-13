@@ -16,6 +16,7 @@
 namespace mindnet::persistence::impl::sqlite::validators
 {
     using impl::sqlite::validators::SM2StateCrudlValidator;
+    using api::OperationResult;
 
     OperationResult SM2StateCrudlValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
