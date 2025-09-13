@@ -485,13 +485,6 @@ namespace mindnet::http
     string get_jwt_secret()
     {
         return g_configuration.jwt_secret;
-        // const char* env_secret = std::getenv("JWT_SECRET");
-        // std::string secret = env_secret ? env_secret : "";
-        // if (secret.empty())
-        // {
-        //     throw std::runtime_error("JWT_SECRET environment variable is not set.");
-        // }
-        // return secret;
     }
 
     void HttpServer::create_authentication_endpoints(const ServicePtr& service_ptr)

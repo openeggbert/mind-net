@@ -96,8 +96,7 @@ cmake --build .
 #Generate JWT Secret
 openssl rand -base64 32
 
-#Export JWT Secret
-export JWT_SECRET={jwt_secret}
+#Configure in mindnet.properties
 
 # Run the application
 ./mind_net start --port 8888 -s /home/johndoe/Desktop/mindnet/frontend

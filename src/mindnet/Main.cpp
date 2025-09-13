@@ -139,13 +139,6 @@ bool commands_function_start(
     string host = "http://localhost";
     string static_directory = "static";
 
-    const char* env_secret = std::getenv("JWT_SECRET");
-    if (!env_secret)
-    {
-        mindnet::err << "JWT_SECRET environment variable is not set." << commit;
-        return 1;
-    }
-
     auto require_value = [&](int& i, const std::string& option) -> std::string {
         if (i + 1 >= arguments.size()) {
             mindnet::fatal << "No value provided for option " << option << ". Exiting." << commit;
