@@ -65,7 +65,9 @@
 //
 #include "mindnet/IService.h"
 #include "mindnet/Service.h"
+#include "mindnet/api/PluginRegistry.h"
 #include "mindnet/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/plugins/core/CorePluginFactory.h"
 #include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
 #define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
@@ -308,6 +310,11 @@ bool run_command(
     return exit_status;
 }
 
+void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugin_registry)
+{
+    plugin_registry->register_plugin(mindnet::plugins::core::CorePluginFactory().create());
+}
+
 int main(int argc, char** argv)
 {
     auto loggers = {
@@ -326,6 +333,10 @@ int main(int argc, char** argv)
     migrate_schema_if_needed();
     std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
         mindnet::api::Persistence>();
+
+    std::shared_ptr<mindnet::api::PluginRegistry> plugin_registry = std::make_shared<mindnet::api::PluginRegistry>();
+    register_plugins(plugin_registry);
+
     std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
     return run_command(arguments, service);
 }
