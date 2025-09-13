@@ -100,7 +100,6 @@ namespace mindnet::persistence::api
         return repositories.count(name) ? repositories[name] : nullptr;
     }
 
-
     bool Persistence::has_model_with_name(const std::string& name)
     {
         return repositories.count(name) > 0;
@@ -110,7 +109,6 @@ namespace mindnet::persistence::api
     {
         return repository_names;
     }
-
 
     std::pair<int, OperationResult> Persistence::create(
         const model::ModelDefinition& def,

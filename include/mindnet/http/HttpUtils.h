@@ -8,7 +8,6 @@
 #include "crow.h"
 #include <string>
 
-
 namespace mindnet::http
 {
 }

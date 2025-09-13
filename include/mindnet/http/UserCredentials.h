@@ -6,7 +6,6 @@
 #define MIND_NET_USERCREDENTIALS_H
 #include "crow/http_request.h"
 
-
 namespace mindnet::http
 {
     struct UserCredentials
@@ -52,6 +51,5 @@ namespace mindnet::http
         }
     };
 }
-
 
 #endif //MIND_NET_USERCREDENTIALS_H

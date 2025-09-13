@@ -24,5 +24,4 @@ namespace mindnet
     extern Logger& log;
 }
 
-
 #endif //GLOBAL_H

@@ -25,9 +25,7 @@
 #ifndef TEAMCOLUMNS_H
 #define TEAMCOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
-
 
 namespace mindnet::plugins::core::columns
 {

@@ -20,7 +20,6 @@
 #ifndef COLLECTIONITEM_H
 #define COLLECTIONITEM_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 

@@ -20,7 +20,6 @@
 #ifndef DISCUSSION_H
 #define DISCUSSION_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 
@@ -30,7 +29,6 @@
 #define COLS columns::DiscussionColumns
 #include "../columns/DiscussionColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::chat::models
 {

@@ -25,9 +25,7 @@
 #ifndef NOTECOLUMNS_H
 #define NOTECOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
-
 
 namespace mindnet::plugins::zettelkasten::columns
 {

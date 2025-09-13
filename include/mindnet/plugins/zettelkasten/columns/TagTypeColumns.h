@@ -25,7 +25,6 @@
 #ifndef TAGTYPECOLUMNS_H
 #define TAGTYPECOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
 #include "mindnet/Helper.h"
 #include "../../../model/ColumnType.h"

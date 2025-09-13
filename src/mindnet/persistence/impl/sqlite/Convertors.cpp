@@ -308,7 +308,6 @@ namespace mindnet::persistence::impl::sqlite
         return fields;
     }
 
-
     entity_fields request_to_entity_fields_reference(method_arguments())
     {
         start_of_request_to_entity_fields(zettelkasten, Reference)

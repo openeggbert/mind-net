@@ -95,7 +95,6 @@ namespace mindnet::persistence::impl::sqlite
         set_foreign_key_pragma(db);
         set_temp_store_pragma(db);
 
-
         SQLite::Statement* query_ptr = nullptr;
 
         try
@@ -109,11 +108,9 @@ namespace mindnet::persistence::impl::sqlite
             return {};
         }
 
-
         entity_fields result;
         auto columns = def.get_columns();
         (*query_ptr).bind(1, id);
-
 
         if ((*query_ptr).executeStep())
         {
@@ -320,7 +317,6 @@ namespace mindnet::persistence::impl::sqlite
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
         set_foreign_key_pragma(db);
-
 
         SQLite::Statement* query_ptr = nullptr;
 

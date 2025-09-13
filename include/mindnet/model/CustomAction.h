@@ -20,7 +20,6 @@
 #ifndef CUSTOMACTION_H
 #define CUSTOMACTION_H
 
-
 #include <map>
 
 #include "ostream"

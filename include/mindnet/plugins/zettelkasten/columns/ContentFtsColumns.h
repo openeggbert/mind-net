@@ -28,7 +28,6 @@
 #include "mindnet/Helper.h"
 #include "mindnet/enums/ColumnType.h"
 
-
 namespace mindnet::plugins::zettelkasten::columns
 {
     struct ContentFtsColumns : model::BaseColumns

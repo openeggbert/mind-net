@@ -119,7 +119,6 @@ INSERT INTO "migration" VALUES (1,0)
             }
         }
 
-
         bool validateTableExists(SQLite::Database& db)
         {
             trace << "validateTableExists()" << commit;

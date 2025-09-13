@@ -27,7 +27,6 @@ namespace mindnet
     {
     }
 
-
     void ConsolePrinter::set_timestamp_function(print_timestamp_function fn)
     {
         print_timestamp_function_pointer = fn;

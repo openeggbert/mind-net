@@ -30,7 +30,6 @@
 #include "../../model/ModelDefinition.h"
 #include "mindnet/http/QueryParams.h"
 
-
 namespace mindnet::persistence::api
 {
     typedef entity_fields (*

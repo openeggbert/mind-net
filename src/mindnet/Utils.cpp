@@ -144,7 +144,6 @@ namespace mindnet
         return value + offset;
     }
 
-
     // Convert decimal integer to base-26 string (a=0, b=1, ..., z=25, aa=26, etc.)
     std::string Utils::decimalToBase26(int number)
     {

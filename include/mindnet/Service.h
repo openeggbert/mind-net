@@ -8,15 +8,14 @@
 
 namespace mindnet
 {
-    using validator = persistence::api::ICrudlValidator*;
+    using validator = persistence::api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
-
 
     class Service : public IService
     {
     private:
-        std::map<std::string, persistence::api::ICrudlValidator*> validators;
+        std::map<std::string, persistence::api::IValidator*> validators;
         DbPtr db_ptr;
 
     public:
@@ -37,7 +36,6 @@ namespace mindnet
         std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token,
                                                                     http::QueryParams& query_params) override;
 
-
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 
         entity_fields request_to_entity_fields(
@@ -45,7 +43,7 @@ namespace mindnet
         ) override;
 
     private:
-        persistence::api::ICrudlValidator* get_validator(const std::string& name);
+        persistence::api::IValidator* get_validator(const std::string& name);
         OperationResult can_create(const ModelDefinition& model_definition, http::LoginToken& token,
                                    entity_fields& ef) override;
         OperationResult can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id) override;

@@ -24,7 +24,6 @@
 
 #include "SingleRight.h"
 
-
 namespace mindnet::plugins::core::enums
 {
     /**

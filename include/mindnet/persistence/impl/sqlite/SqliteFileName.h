@@ -18,14 +18,12 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-
 /**
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 #ifndef SQLITEFILENAME_H
 #define SQLITEFILENAME_H
-
 
 #include <string>
 

@@ -25,9 +25,7 @@
 #ifndef MESSAGECOLUMNS_H
 #define MESSAGECOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
-
 
 namespace mindnet::plugins::mail::columns
 {

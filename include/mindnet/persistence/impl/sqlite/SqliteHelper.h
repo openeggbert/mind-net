@@ -4,7 +4,6 @@
 #ifndef SQLITEHELPER_H
 #define SQLITEHELPER_H
 
-
 #include <string>
 
 #endif // SQLITEHELPER_H

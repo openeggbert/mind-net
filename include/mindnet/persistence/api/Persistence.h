@@ -42,7 +42,6 @@ namespace mindnet::persistence::api
         std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token,
                                                                     http::QueryParams& query_params) override;
 
-
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 
         entity_fields request_to_entity_fields(crow::json::rvalue& body, plugins::core::enums::Crudl crudl,

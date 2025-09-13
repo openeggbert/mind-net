@@ -90,5 +90,4 @@ namespace mindnet
     inline const Configuration g_configuration(loadProperties("./mindnet.properties"));
 }
 
-
 #endif //MIND_NET_CONFIGURATION_H

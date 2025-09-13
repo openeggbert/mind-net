@@ -6,7 +6,7 @@
 
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/http/QueryParams.h"
-#include "mindnet/persistence/api/CrudlValidatorBase.h"
+#include "mindnet/persistence/api/ValidatorBase.h"
 
 namespace mindnet::persistence::api
 {
@@ -115,7 +115,6 @@ namespace mindnet::persistence::api
 
         bool other_can = can(single_right, map.first.other_rights_int());
         if (other_can) return true;
-
 
         return false;
     }

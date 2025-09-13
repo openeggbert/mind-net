@@ -29,7 +29,6 @@
 #include "mindnet/plugins/core/models/History.h"
 #endif
 
-
 #ifdef plugin_zettelkasten
 #include "mindnet/plugins/zettelkasten/models/Map.h"
 #include "mindnet/plugins/zettelkasten/models/Content.h"
@@ -67,7 +66,7 @@
 #include "mindnet/IService.h"
 #include "mindnet/Service.h"
 #include "mindnet/persistence/impl/sqlite/SqliteDatabaseMigration.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionCrudlValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
 #define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
 using mindnet::commit;
@@ -259,11 +258,9 @@ bool commands_function_start(
         return true;
     }
 
-
     mindnet::http::HttpServer server{service_ptr, static_directory};
 
     mindnet::http::ModelEndpointGenerator controller;
-
 
 #ifdef plugin_core
     add_controller(core, USER)
@@ -305,9 +302,7 @@ bool commands_function_start(
     add_controller(test, SM2_STATE)
 #endif
 
-
     //
-
 
     if (custom_port) { mindnet::debug << "Custom port was provided: " << port << commit; }
     else { mindnet::debug << "Using default port: " << port << commit; }

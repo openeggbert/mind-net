@@ -20,7 +20,6 @@
 #ifndef QUESTION_H
 #define QUESTION_H
 
-
 #include <string>
 
 #include "../../../model/BaseModel.h"
@@ -30,7 +29,6 @@
 #define COLS columns::QuestionColumns
 #include "../columns/QuestionColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::zettelkasten::models
 {
@@ -55,7 +53,6 @@ namespace mindnet::plugins::zettelkasten::models
         int note_id{};
         string question_text;
         string answers_json;
-
 
         create_model_h_methods(Model, MODEL)
 

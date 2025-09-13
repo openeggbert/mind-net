@@ -4,7 +4,6 @@
 #ifndef MAPCONTROLLER_H
 #define MAPCONTROLLER_H
 
-
 #include "crow.h"
 #include "mindnet/IService.h"
 

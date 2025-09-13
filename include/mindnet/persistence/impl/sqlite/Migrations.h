@@ -7,7 +7,6 @@
 #include <string>
 #include <climits>
 
-
 namespace mindnet::persistence::impl::sqlite
 {
     constexpr int MIGRATION_COUNT = 23;
@@ -432,9 +431,7 @@ CREATE TABLE link(
 CREATE INDEX idx_link_from_note ON link(from_note_id);
 )",
 
-
     };
 }
-
 
 #endif //MIGRATIONS_H

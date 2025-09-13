@@ -5,7 +5,6 @@
 #define ORDER_H
 #include "mindnet/Helper.h"
 
-
 namespace mindnet::http
 {
     enum class Order
@@ -37,6 +36,5 @@ namespace mindnet::http
         throw std::runtime_error(std::string("Unknown order: ") + string);
     }
 }
-
 
 #endif // ORDER_H

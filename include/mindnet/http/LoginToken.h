@@ -62,5 +62,4 @@ namespace mindnet::http
     };
 }
 
-
 #endif // LOGINTOKEN_H

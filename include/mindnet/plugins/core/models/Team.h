@@ -20,7 +20,6 @@
 #ifndef TEAM_H
 #define TEAM_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 

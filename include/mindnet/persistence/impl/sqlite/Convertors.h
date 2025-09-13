@@ -31,7 +31,6 @@ fields.emplace_back(cast64(0));\
 }\
 fields.emplace_back(cast64(Utils::currentUnixTimestamp()));
 
-
 #define string_for(COLUMN) body[cols::COLUMN].s()
 #define int_for(COLUMN) cast64(body[cols::COLUMN])
 #define mandatory_string(COLUMN) fields.emplace_back(string_for(COLUMN));
@@ -55,7 +54,6 @@ mandatory_int(COLUMN);\
 {\
 fields.emplace_back(FOREIGN_KEY_NULL);\
 }
-
 
 #define method_arguments() crow::json::rvalue& body, mindnet::plugins::core::enums::Crudl crudl
 

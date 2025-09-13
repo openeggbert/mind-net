@@ -69,7 +69,6 @@ namespace mindnet
 
         static void sqlite_exec(SQLite::Statement& query);
 
-
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
         static string generate_select_one_sql(const std::string& table_name);

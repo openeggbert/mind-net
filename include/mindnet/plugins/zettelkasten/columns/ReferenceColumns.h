@@ -27,7 +27,6 @@
 
 #include "../../../model/BaseColumns.h"
 
-
 namespace mindnet::plugins::zettelkasten::columns
 {
     struct ReferenceColumns : model::BaseColumns

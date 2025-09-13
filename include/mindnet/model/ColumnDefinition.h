@@ -199,7 +199,6 @@ namespace mindnet::model
             return enum_definition;
         }
 
-
         [[nodiscard]] const bool is_unique() const
         {
             return unique || primary_key;
@@ -231,7 +230,6 @@ namespace mindnet::model
         }
 
         // Setters
-
 
         /**
      * Sets the enum definition
@@ -342,6 +340,5 @@ namespace mindnet::model
     public:
     };
 }
-
 
 #endif // COLUMNDEFINITION_H

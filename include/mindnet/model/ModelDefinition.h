@@ -75,7 +75,6 @@ namespace mindnet::model
             return group_order_index;
         }
 
-
         /** @return The column definitions */
         [[nodiscard]] const column_definitions& get_columns() const
         {

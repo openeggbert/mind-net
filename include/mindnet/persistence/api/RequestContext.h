@@ -4,7 +4,6 @@
 #ifndef REQUESTCONTEXT_H
 #define REQUESTCONTEXT_H
 
-
 #include "IPersistence.h"
 #include "IRepository.h"
 #include "../../plugins/core/enums/UserStatus.h"

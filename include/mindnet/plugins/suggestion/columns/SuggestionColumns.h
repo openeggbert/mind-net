@@ -25,9 +25,7 @@
 #ifndef SUGGESTIONCOLUMNS_H
 #define SUGGESTIONCOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
-
 
 namespace mindnet::plugins::suggestion::columns
 {

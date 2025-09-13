@@ -20,7 +20,6 @@
 #ifndef TEAMMEMBER_H
 #define TEAMMEMBER_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 
@@ -32,7 +31,6 @@
 #include "../enums/UserStatus.h"
 #include "mindnet/plugins/core/enums/UserRole.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::core::models
 {

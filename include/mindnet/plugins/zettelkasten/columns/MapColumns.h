@@ -29,7 +29,6 @@
 #include "mindnet/Helper.h"
 #include "../../../model/ColumnType.h"
 
-
 namespace mindnet::plugins::zettelkasten::columns
 {
     struct MapColumns : model::BaseColumns

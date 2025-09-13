@@ -20,7 +20,6 @@
 #ifndef USERROLE_H
 #define USERROLE_H
 
-
 #include <string>
 
 #include "../../../model/EnumDefinition.h"

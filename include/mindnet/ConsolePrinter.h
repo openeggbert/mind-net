@@ -81,7 +81,6 @@ namespace mindnet
             return *this;
         }
 
-
         void set_timestamp_function(print_timestamp_function fn);
 
         void flush(bool new_line);

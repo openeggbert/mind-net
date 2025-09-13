@@ -25,9 +25,7 @@
 #ifndef HISTORYCOLUMNS_H
 #define HISTORYCOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
-
 
 namespace mindnet::plugins::core::columns
 {

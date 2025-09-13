@@ -50,7 +50,6 @@ namespace mindnet::plugins::test::models
             coldef(COLS::NOTES),
         });
 
-
     struct Model : mindnet::model::BaseModel
     {
         int user_id{};

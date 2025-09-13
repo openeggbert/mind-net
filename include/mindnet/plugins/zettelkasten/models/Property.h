@@ -20,7 +20,6 @@
 #ifndef PROPERTY_H
 #define PROPERTY_H
 
-
 #include <string>
 #include <utility>
 
@@ -31,7 +30,6 @@
 #define COLS columns::PropertyColumns
 #include "../columns/PropertyColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::zettelkasten::models
 {

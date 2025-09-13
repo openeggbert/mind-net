@@ -20,7 +20,6 @@
 #ifndef SUGGESTION_H
 #define SUGGESTION_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 
@@ -31,7 +30,6 @@
 #include "../columns/SuggestionColumns.h"
 #include "../enums/SuggestionStatus.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::suggestion::models
 {

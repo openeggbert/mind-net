@@ -20,11 +20,9 @@
 #ifndef USERSTATUS_H
 #define USERSTATUS_H
 
-
 #include <string>
 
 #include "../../../model/EnumDefinition.h"
-
 
 namespace mindnet::plugins::core::enums
 {

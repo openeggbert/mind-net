@@ -20,7 +20,6 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 
@@ -30,7 +29,6 @@
 #define COLS columns::HistoryColumns
 #include "../columns/HistoryColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::core::models
 {

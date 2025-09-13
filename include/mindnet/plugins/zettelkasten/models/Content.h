@@ -20,7 +20,6 @@
 #ifndef CONTENT_H
 #define CONTENT_H
 
-
 #include <string>
 
 #include "../../../model/BaseModel.h"

@@ -7,12 +7,12 @@
 #include "crow/json.h"
 #include "http/QueryParams.h"
 #include "model/ModelDefinition.h"
-#include "persistence/api/ICrudlValidator.h"
+#include "persistence/api/IValidator.h"
 #include "mindnet/persistence/api/IPersistence.h"
 
 namespace mindnet
 {
-    using validator = persistence::api::ICrudlValidator*;
+    using validator = persistence::api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
     using persistence::api::DbPtr;
@@ -24,7 +24,6 @@ namespace mindnet
         {
         };
         virtual ~IService() = default;
-
 
         virtual bool has_model(const std::string& name) = 0;
         virtual std::vector<std::string>& list_model_names() = 0;

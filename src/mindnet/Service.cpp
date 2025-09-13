@@ -3,39 +3,38 @@
 //
 
 #include "mindnet/Service.h"
-#include "../../include/mindnet/plugins/core/validators/UserCrudlValidator.h"
-#include "../../include/mindnet/plugins/mail/validators/MessageCrudlValidator.h"
-#include "../../include/mindnet/plugins/core/validators/TeamCrudlValidator.h"
-#include "../../include/mindnet/plugins/core/validators/TeamMemberCrudlValidator.h"
-#include "../../include/mindnet/plugins/chat/validators/DiscussionCrudlValidator.h"
-#include "../../include/mindnet/plugins/chat/validators/CommentCrudlValidator.h"
-#include "../../include/mindnet/plugins/suggestion/validators/SuggestionCrudlValidator.h"
-#include "../../include/mindnet/plugins/suggestion/validators/SuggestionReviewCrudlValidator.h"
-#include "../../include/mindnet/plugins/core/validators/HistoryCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/MapCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/ContentCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/NoteCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/PropertyCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/TagTypeCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/TagCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionItemCrudlValidator.h"
-#include "../../include/mindnet/plugins/test/validators/ReviewCrudlValidator.h"
-#include "../../include/mindnet/plugins/test/validators/SM2StateCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/QuestionCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/ReferenceCrudlValidator.h"
-#include "../../include/mindnet/plugins/zettelkasten/validators/LinkCrudlValidator.h"
+#include "../../include/mindnet/plugins/core/validators/UserValidator.h"
+#include "../../include/mindnet/plugins/mail/validators/MessageValidator.h"
+#include "../../include/mindnet/plugins/core/validators/TeamValidator.h"
+#include "../../include/mindnet/plugins/core/validators/TeamMemberValidator.h"
+#include "../../include/mindnet/plugins/chat/validators/DiscussionValidator.h"
+#include "../../include/mindnet/plugins/chat/validators/CommentValidator.h"
+#include "../../include/mindnet/plugins/suggestion/validators/SuggestionValidator.h"
+#include "../../include/mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
+#include "../../include/mindnet/plugins/core/validators/HistoryValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/MapValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/ContentValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/NoteValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/PropertyValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/TagTypeValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/TagValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
+#include "../../include/mindnet/plugins/test/validators/ReviewValidator.h"
+#include "../../include/mindnet/plugins/test/validators/SM2StateValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/QuestionValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/ReferenceValidator.h"
+#include "../../include/mindnet/plugins/zettelkasten/validators/LinkValidator.h"
 //
 #define add_validator(plugin, model, Model)\
-persistence::api::ICrudlValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##CrudlValidator();\
+persistence::api::IValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##Validator();\
 validators[#model] = model##_validator;
 
 namespace mindnet
 {
-    using validator = persistence::api::ICrudlValidator*;
+    using validator = persistence::api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
-
 
     Service::Service(const DbPtr& db_) : IService(db_), db_ptr(db_)
     {
@@ -169,7 +168,6 @@ namespace mindnet
         return db_ptr->list(def, token, query_params);
     };
 
-
     std::optional<ModelDefinition> Service::get_model_definition(const string& model_name)
     {
         return db_ptr->get_model_definition(model_name);
@@ -182,11 +180,10 @@ namespace mindnet
         return db_ptr->request_to_entity_fields(body, crudl, def);
     };
 
-    persistence::api::ICrudlValidator* Service::get_validator(const std::string& name)
+    persistence::api::IValidator* Service::get_validator(const std::string& name)
     {
         return validators.count(name) ? validators[name] : nullptr;
     }
-
 
     OperationResult Service::can_create(const ModelDefinition& model_definition, http::LoginToken& token,
                                         entity_fields& ef)
@@ -194,7 +191,7 @@ namespace mindnet
         //Authentication
         if (token.ko() && model_definition.get_model_name() != "user") return {401, "Only logged in users can create."};
 
-        persistence::api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_create(db_ptr, token, ef);
@@ -211,8 +208,7 @@ namespace mindnet
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
 
-
-        persistence::api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_read(db_ptr, token, id);
@@ -229,7 +225,7 @@ namespace mindnet
         //Authentication
         if (token.ko()) return {401, "Only logged in users can update."};
 
-        persistence::api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_update(db_ptr, token, ef);
@@ -245,7 +241,7 @@ namespace mindnet
         //Authentication
         if (token.ko()) return {401, "Only logged in users can delete."};
 
-        persistence::api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_delete(db_ptr, token, id);
@@ -261,7 +257,7 @@ namespace mindnet
     {
         //Authentication
         if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
-        persistence::api::ICrudlValidator* v2 = get_validator(model_definition.get_model_name());
+        persistence::api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_list(db_ptr, token, filter);

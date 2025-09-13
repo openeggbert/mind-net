@@ -20,7 +20,6 @@
 #ifndef TAG_H
 #define TAG_H
 
-
 #include <string>
 
 #include "../../../model/BaseModel.h"
@@ -30,7 +29,6 @@
 #define COLS columns::TagColumns
 #include "../columns/TagColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::zettelkasten::models
 {

@@ -82,5 +82,4 @@ namespace mindnet::persistence::api
     gen_find_h(core, User, user)
 }
 
-
 #endif //MIND_NET_PERSISTENCEMETHODS_H

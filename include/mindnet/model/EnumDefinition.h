@@ -20,7 +20,6 @@
 #ifndef ENUMDEFINITION_H
 #define ENUMDEFINITION_H
 
-
 #include <cstdarg>
 #include <stdexcept>
 #include <string>

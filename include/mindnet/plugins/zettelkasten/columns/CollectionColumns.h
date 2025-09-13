@@ -25,11 +25,9 @@
 #ifndef COLLECTIONCOLUMNS_H
 #define COLLECTIONCOLUMNS_H
 
-
 #include "../../../model/BaseColumns.h"
 #include "mindnet/Helper.h"
 #include "../../../model/ColumnType.h"
-
 
 namespace mindnet::plugins::zettelkasten::columns
 {

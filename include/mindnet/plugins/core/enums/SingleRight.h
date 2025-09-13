@@ -20,7 +20,6 @@
 #ifndef SINGLERIGHT_H
 #define SINGLERIGHT_H
 
-
 #include <string>
 
 #include "../../../model/EnumDefinition.h"

@@ -20,7 +20,6 @@
 #ifndef COMMENT_H
 #define COMMENT_H
 
-
 #include <string>
 #include "../../../model/BaseModel.h"
 
@@ -30,7 +29,6 @@
 #define COLS columns::CommentColumns
 #include "../columns/CommentColumns.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::chat::models
 {

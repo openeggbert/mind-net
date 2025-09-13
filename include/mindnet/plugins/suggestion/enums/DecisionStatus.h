@@ -20,7 +20,6 @@
 #ifndef DECISIONSTATUS_H
 #define DECISIONSTATUS_H
 
-
 #include <string>
 
 #include "../../../model/EnumDefinition.h"

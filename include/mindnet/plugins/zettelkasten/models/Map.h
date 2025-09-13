@@ -20,7 +20,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-
 #include <string>
 #include <utility>
 
@@ -32,7 +31,6 @@
 #include "../columns/MapColumns.h"
 #include "../../core/enums/AccessRight.h"
 // ***** MACROS : END *****
-
 
 namespace mindnet::plugins::zettelkasten::models
 {
@@ -62,7 +60,6 @@ namespace mindnet::plugins::zettelkasten::models
         .add_custom_list_action("tag_type", "List tags", {"map_id", "{id}"})
         .add_custom_create_action("tag_type", "Add tag", {"map_id", "{id}"});
 
-
     struct Model : mindnet::model::BaseModel
     {
         string name;
@@ -76,7 +73,6 @@ namespace mindnet::plugins::zettelkasten::models
         int owner_rights_int() { return cast64(owner_rights); }
         int team_rights_int() { return cast64(team_rights); }
         int other_rights_int() { return cast64(other_rights); }
-
 
         create_model_h_methods(Model, MODEL)
 
