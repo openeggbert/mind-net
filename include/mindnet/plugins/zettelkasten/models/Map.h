@@ -70,9 +70,9 @@ namespace mindnet::plugins::zettelkasten::models
         core::enums::AccessRight owner_rights{7};
         core::enums::AccessRight team_rights{7};
         core::enums::AccessRight other_rights{7};
-        int owner_rights_int() { return cast64(owner_rights); }
-        int team_rights_int() { return cast64(team_rights); }
-        int other_rights_int() { return cast64(other_rights); }
+        int owner_rights_int() const { return cast64(owner_rights); }
+        int team_rights_int() const { return cast64(team_rights); }
+        int other_rights_int() const { return cast64(other_rights); }
 
         create_model_h_methods(Model, MODEL)
 

@@ -30,10 +30,12 @@ namespace mindnet::plugins::zettelkasten
         REGISTER_MODEL(link, Link, LINK)
         REGISTER_MODEL(map, Map, MAP)
         REGISTER_MODEL(note, Note, NOTE)
-        REGISTER_MODEL(property, Property, PROPERTY)
-        REGISTER_MODEL(question, Question, QUESTION)
-        REGISTER_MODEL(reference, Reference, REFERENCE)
         REGISTER_MODEL(tag, Tag, TAG)
+        REGISTER_MODEL(property, Property, PROPERTY)
+
+        REGISTER_MODEL(reference, Reference, REFERENCE)
+
+        REGISTER_MODEL(question, Question, QUESTION)
         REGISTER_MODEL(tag_type, TagType, TAG_TYPE)
 
         plugin->close_for_changes();

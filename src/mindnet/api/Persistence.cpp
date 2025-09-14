@@ -7,30 +7,7 @@
 #include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
 #include "mindnet/http/LoginToken.h"
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/plugins/mail/models/Message.h"
-#include "mindnet/plugins/core/models/Team.h"
-#include "mindnet/plugins/core/models/TeamMember.h"
-#include "mindnet/plugins/chat/models/Discussion.h"
-#include "mindnet/plugins/chat/models/Comment.h"
-#include "mindnet/plugins/suggestion/models/Suggestion.h"
-#include "mindnet/plugins/suggestion/models/SuggestionReview.h"
-#include "mindnet/plugins/core/models/History.h"
-#include "mindnet/plugins/zettelkasten/models/Map.h"
-#include "mindnet/plugins/zettelkasten/models/Content.h"
-#include "mindnet/plugins/zettelkasten/models/Note.h"
-#include "mindnet/plugins/zettelkasten/models/Property.h"
-#include "mindnet/plugins/zettelkasten/models/TagType.h"
-#include "mindnet/plugins/zettelkasten/models/Tag.h"
-#include "mindnet/plugins/zettelkasten/models/Collection.h"
-#include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
-#include "mindnet/plugins/test/models/Review.h"
-#include "mindnet/plugins/test/models/SM2State.h"
-#include "mindnet/plugins/zettelkasten/models/Question.h"
-#include "mindnet/plugins/zettelkasten/models/Reference.h"
-#include "mindnet/plugins/zettelkasten/models/Link.h"
 
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
 
 namespace mindnet::api
@@ -46,7 +23,7 @@ namespace mindnet::api
             for (auto& model_registration: plugin->get_model_registrations())
             {
                 auto model_definition = model_registration->model_definition;
-                api::IRepository* repo = new RepositoryImplSqlite(
+                IRepository* repo = new RepositoryImplSqlite(
                     model_registration->convert_rest_request_to_entity_fields_pointer,
                     model_definition);
                 auto model_name = model_definition.get_model_name();
@@ -81,7 +58,7 @@ namespace mindnet::api
     }
 
     std::pair<int, OperationResult> Persistence::create(
-        const model::ModelDefinition& def,
+        const ModelDefinition& def,
         http::LoginToken& token,
         entity_fields& fields)
     {

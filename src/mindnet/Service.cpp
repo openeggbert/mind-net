@@ -3,28 +3,6 @@
 //
 
 #include "mindnet/Service.h"
-#include "mindnet/plugins/core/validators/UserValidator.h"
-#include "mindnet/plugins/mail/validators/MessageValidator.h"
-#include "mindnet/plugins/core/validators/TeamValidator.h"
-#include "mindnet/plugins/core/validators/TeamMemberValidator.h"
-#include "mindnet/plugins/chat/validators/DiscussionValidator.h"
-#include "mindnet/plugins/chat/validators/CommentValidator.h"
-#include "mindnet/plugins/suggestion/validators/SuggestionValidator.h"
-#include "mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
-#include "mindnet/plugins/core/validators/HistoryValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/MapValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/ContentValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/NoteValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/PropertyValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/TagTypeValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/TagValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
-#include "mindnet/plugins/test/validators/ReviewValidator.h"
-#include "mindnet/plugins/test/validators/SM2StateValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/QuestionValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/ReferenceValidator.h"
-#include "mindnet/plugins/zettelkasten/validators/LinkValidator.h"
 //
 #define add_validator(plugin, model, Model)\
 api::IValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##Validator();\
@@ -32,46 +10,31 @@ validators[#model] = model##_validator;
 
 namespace mindnet
 {
+    static constexpr bool VALIDATION_ENABLED = true;
     using validator = api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
 
-    Service::Service(const DbPtr& db_, const api::PluginRegistryPtr& plugin_registry_ptr_) : IService(db_), db_ptr(db_), plugin_registry_ptr(plugin_registry_ptr_)
+    Service::Service(const DbPtr& db_, const api::PluginRegistryPtr& plugin_registry_ptr_) : IService(db_), db_ptr(db_),
+        plugin_registry_ptr(plugin_registry_ptr_)
     {
-        //#define disable_validation
+        for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
+        {
+            if (!VALIDATION_ENABLED) break;
+            auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
+            for (auto& model_registration : plugin->get_model_registrations())
+            {
+                auto model_definition = model_registration->model_definition;
+                const auto& model_name = model_definition.get_model_name();
 
-#ifndef disable_validation
-
-        add_validator(core, user, User)
-        add_validator(core, team, Team)
-        add_validator(core, team_member, TeamMember)
-        add_validator(core, history, History)
-        //
-        add_validator(mail, message, Message)
-        //
-        add_validator(chat, discussion, Discussion)
-        add_validator(chat, comment, Comment)
-        //
-        add_validator(suggestion, suggestion, Suggestion)
-        add_validator(suggestion, suggestion_review, SuggestionReview)
-        //
-        add_validator(zettelkasten, map, Map)
-        add_validator(zettelkasten, content, Content)
-        add_validator(zettelkasten, note, Note)
-        add_validator(zettelkasten, property, Property)
-        add_validator(zettelkasten, tag_type, TagType)
-        add_validator(zettelkasten, tag, Tag)
-        add_validator(zettelkasten, collection, Collection)
-        add_validator(zettelkasten, collection_item, CollectionItem)
-        add_validator(zettelkasten, question, Question)
-        add_validator(zettelkasten, reference, Reference)
-        add_validator(zettelkasten, link, Link)
-        //
-        add_validator(test, review, Review)
-        add_validator(test, sm2_state, SM2State)
+                api::IValidator* validator = model_registration->validator.get();
+                validators[model_name] = validator;
+            }
+        }
 
         for (auto& e : validators)
         {
+            if (!VALIDATION_ENABLED) break;
             e.second->set_validator_func(
                 [this](const std::string& name)
                 {
@@ -79,8 +42,6 @@ namespace mindnet
                 }
             );
         }
-
-#endif
     }
 
     Service::~Service()
@@ -104,67 +65,67 @@ namespace mindnet
     std::pair<int, OperationResult> Service::create(const ModelDefinition& def, http::LoginToken& token,
                                                     entity_fields& fields)
     {
-#ifndef disable_validation
-
-        auto result = can_create(def.get_model_name(), token, fields);
-        if (result.ko())
+        if (VALIDATION_ENABLED)
         {
-            return {-1, result};
+            auto result = can_create(def.get_model_name(), token, fields);
+            if (result.ko())
+            {
+                return {-1, result};
+            }
         }
-#endif
         return db_ptr->create(def, token, fields);
     };
 
     std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, http::LoginToken& token, int id)
     {
-#ifndef disable_validation
-
-        auto result = can_read(def.get_model_name(), token, id);
-        if (result.ko())
+        if (VALIDATION_ENABLED)
         {
-            return {{}, result};
+            auto result = can_read(def.get_model_name(), token, id);
+            if (result.ko())
+            {
+                return {{}, result};
+            }
         }
-#endif
         return db_ptr->read(def, token, id);
     };
 
     OperationResult Service::update(const ModelDefinition& def, http::LoginToken& token, int id, entity_fields& fields)
     {
-#ifndef disable_validation
-
-        auto result = can_update(def.get_model_name(), token, fields);
-        if (result.ko())
+        if (VALIDATION_ENABLED)
         {
-            return result;
+            auto result = can_update(def.get_model_name(), token, fields);
+            if (result.ko())
+            {
+                return result;
+            }
         }
-#endif
         return db_ptr->update(def, token, id, fields);
     };
 
     OperationResult Service::remove(ModelDefinition& def, http::LoginToken& token, int id)
     {
-#ifndef disable_validation
-
-        auto result = can_delete(def.get_model_name(), token, id);
-        if (result.ko())
+        if (VALIDATION_ENABLED)
         {
-            return result;
+            auto result = can_delete(def.get_model_name(), token, id);
+            if (result.ko())
+            {
+                return result;
+            }
         }
-#endif
         return db_ptr->remove(def, token, id);
     };
 
     std::pair<std::vector<entity_fields>, OperationResult> Service::list(
         ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params)
     {
-#ifndef disable_validation
-
-        auto result = can_list(def.get_model_name(), token, query_params.filters);
-        if (result.ko())
+        if (VALIDATION_ENABLED)
         {
-            return {{}, result};
+            auto result = can_list(def.get_model_name(), token, query_params.filters);
+            if (result.ko())
+            {
+                return {{}, result};
+            }
         }
-#endif
         return db_ptr->list(def, token, query_params);
     };
 
