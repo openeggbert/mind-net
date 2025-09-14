@@ -477,8 +477,6 @@ namespace mindnet::http
             }
             result["items"] = std::move(model_definitions_as_json);
             return crow::response(200, result);
-
-            //return model_definition_to_json(model_name);
         });
     }
 
@@ -495,6 +493,7 @@ namespace mindnet::http
             result["name"] = g_configuration.name;
             result["description"] = g_configuration.description;
             result["version"] = STRINGIFY(MIND_NET_VERSION);
+            result["build_time"] = MIND_NET_BUILD_TIME;
             result["environment"] = environment_to_string(g_configuration.environment);
             //
             result["host"] = g_configuration.host;
