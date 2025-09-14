@@ -5,6 +5,7 @@
 #ifndef MIND_NET_SERVICE_H
 #define MIND_NET_SERVICE_H
 #include "IService.h"
+#include "api/PluginRegistry.h"
 
 namespace mindnet
 {
@@ -17,9 +18,10 @@ namespace mindnet
     private:
         std::map<std::string, api::IValidator*> validators;
         DbPtr db_ptr;
+        api::PluginRegistryPtr plugin_registry_ptr;
 
     public:
-        Service(const DbPtr& db_ptr);
+        Service(const DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
         ~Service() override;
 
         bool has_model(const std::string& model_name) override;
@@ -41,6 +43,7 @@ namespace mindnet
         entity_fields request_to_entity_fields(
             crow::json::rvalue& body, plugins::core::enums::Crudl crudl, ModelDefinition& def
         ) override;
+        const api::PluginRegistryPtr get_plugin_registry() const;
 
     private:
         api::IValidator* get_validator(const std::string& name);
@@ -52,6 +55,7 @@ namespace mindnet
         OperationResult can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id) override;
         OperationResult can_list(const ModelDefinition& model_definition, http::LoginToken& token,
                                  string_map& filter) override;
+
         //
     };
 }

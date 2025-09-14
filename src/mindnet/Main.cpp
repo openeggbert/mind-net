@@ -2,12 +2,7 @@
 // Created by robertvokac on 7/31/25.
 //
 //
-#define plugin_core
-#define plugin_zettelkasten
-#define plugin_email
-#define plugin_chat
-#define plugin_suggestion
-#define plugin_test
+
 //
 #include <iostream>
 #include <filesystem>
@@ -20,53 +15,17 @@
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/api/Persistence.h"
 #include "mindnet/http/ModelEndpointGenerator.h"
-//
-#ifdef plugin_core
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/plugins/core/models/Team.h"
-#include "mindnet/plugins/core/models/TeamMember.h"
-#include "mindnet/plugins/core/models/History.h"
-#endif
 
-#ifdef plugin_zettelkasten
-#include "mindnet/plugins/zettelkasten/models/Map.h"
-#include "mindnet/plugins/zettelkasten/models/Content.h"
-#include "mindnet/plugins/zettelkasten/models/Note.h"
-#include "mindnet/plugins/zettelkasten/models/Property.h"
-#include "mindnet/plugins/zettelkasten/models/TagType.h"
-#include "mindnet/plugins/zettelkasten/models/Tag.h"
-#include "mindnet/plugins/zettelkasten/models/Collection.h"
-#include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
-#include "mindnet/plugins/zettelkasten/models/Reference.h"
-#include "mindnet/plugins/zettelkasten/models/Link.h"
-#include "mindnet/plugins/zettelkasten/models/Question.h"
-#endif
-
-#ifdef plugin_email
-#include "mindnet/plugins/mail/models/Message.h"
-#endif
-
-#ifdef plugin_chat
-#include "mindnet/plugins/chat/models/Discussion.h"
-#include "mindnet/plugins/chat/models/Comment.h"
-#endif
-
-#ifdef plugin_suggestion
-#include "mindnet/plugins/suggestion/models/Suggestion.h"
-#include "mindnet/plugins/suggestion/models/SuggestionReview.h"
-#endif
-
-#ifdef plugin_test
-#include "mindnet/plugins/test/models/Review.h"
-#include "mindnet/plugins/test/models/SM2State.h"
-#endif
-
-//
 #include "mindnet/IService.h"
 #include "mindnet/Service.h"
 #include "mindnet/api/PluginRegistry.h"
 #include "mindnet/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/plugins/chat/ChatPluginFactory.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
+#include "mindnet/plugins/mail/MailPluginFactory.h"
+#include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
+#include "mindnet/plugins/test/TestPluginFactory.h"
+#include "mindnet/plugins/zettelkasten/ZettelkastenPluginFactory.h"
 #define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
 using mindnet::commit;
@@ -205,47 +164,14 @@ bool commands_function_start(
 
     mindnet::http::ModelEndpointGenerator controller;
 
-#ifdef plugin_core
-    add_controller(core, USER)
-    add_controller(core, TEAM)
-    add_controller(core, TEAM_MEMBER)
-    add_controller(core, HISTORY)
-#endif
-
-#ifdef plugin_zettelkasten
-    add_controller(zettelkasten, MAP)
-    add_controller(zettelkasten, CONTENT)
-    add_controller(zettelkasten, NOTE)
-    add_controller(zettelkasten, PROPERTY)
-    add_controller(zettelkasten, TAG_TYPE)
-    add_controller(zettelkasten, TAG)
-    add_controller(zettelkasten, COLLECTION)
-    add_controller(zettelkasten, COLLECTION_ITEM)
-    add_controller(zettelkasten, REFERENCE)
-    add_controller(zettelkasten, LINK)
-    add_controller(zettelkasten, QUESTION)
-#endif
-
-#ifdef plugin_email
-    add_controller(mail, MESSAGE)
-#endif
-
-#ifdef plugin_chat
-    add_controller(chat, DISCUSSION)
-    add_controller(chat, COMMENT)
-#endif
-
-#ifdef plugin_suggestion
-    add_controller(suggestion, SUGGESTION)
-    add_controller(suggestion, SUGGESTION_REVIEW)
-#endif
-
-#ifdef plugin_test
-    add_controller(test, REVIEW)
-    add_controller(test, SM2_STATE)
-#endif
-
-    //
+    for (auto& plugin_name : service_ptr->get_plugin_registry()->get_plugin_names_sorted_by_dependencies())
+    {
+        auto plugin = service_ptr->get_plugin_registry()->get_plugin(plugin_name);
+        for (auto& model_registration: plugin->get_model_registrations())
+        {
+            server.create_model_endpoint(&controller, model_registration->model_definition);
+        }
+    }
 
     if (custom_port) { mindnet::debug << "Custom port was provided: " << port << commit; }
     else { mindnet::debug << "Using default port: " << port << commit; }
@@ -311,6 +237,11 @@ bool run_command(
 void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugin_registry)
 {
     plugin_registry->register_plugin(mindnet::plugins::core::CorePluginFactory().create());
+    // plugin_registry->register_plugin(mindnet::plugins::zettelkasten::ZettelkastenPluginFactory().create());
+    // plugin_registry->register_plugin(mindnet::plugins::test::TestPluginFactory().create());
+    // plugin_registry->register_plugin(mindnet::plugins::mail::MailPluginFactory().create());
+    // plugin_registry->register_plugin(mindnet::plugins::chat::ChatPluginFactory().create());
+    // plugin_registry->register_plugin(mindnet::plugins::suggestion::SuggestionPluginFactory().create());
 }
 
 int main(int argc, char** argv)
@@ -332,9 +263,9 @@ int main(int argc, char** argv)
     std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
         mindnet::api::Persistence>();
 
-    std::shared_ptr<mindnet::api::PluginRegistry> plugin_registry = std::make_shared<mindnet::api::PluginRegistry>();
-    register_plugins(plugin_registry);
+    mindnet::api::PluginRegistryPtr plugin_registry_ptr = std::make_shared<mindnet::api::PluginRegistry>();
+    register_plugins(plugin_registry_ptr);
 
-    std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db);
+    std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db, plugin_registry_ptr);
     return run_command(arguments, service);
 }

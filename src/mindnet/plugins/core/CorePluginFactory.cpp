@@ -1,26 +1,28 @@
-
-
 #include "mindnet/plugins/core/CorePluginFactory.h"
 
 #include "mindnet/impl/sqlite/Convertors.h"
-#include "mindnet/plugins/core/models/User.h"
+#include "mindnet/plugins/core/validators/HistoryValidator.h"
+#include "mindnet/plugins/core/validators/TeamMemberValidator.h"
+#include "mindnet/plugins/core/validators/TeamValidator.h"
 #include "mindnet/plugins/core/validators/UserValidator.h"
 
-namespace mindnet::plugins::core {
-api::PluginPtr CorePluginFactory::create() const
+namespace mindnet::plugins::core
 {
-    auto plugin = std::make_shared<api::Plugin>(
-        "core",
-        "core models",
-        std::vector<std::string>{},
-        false
-    );
-    plugin->register_model(
-        models::USER_DEFINITION,
-        std::make_shared<validators::UserValidator>(),
-        impl::sqlite::request_to_entity_fields_user);
+    api::PluginPtr CorePluginFactory::create() const
+    {
+        auto plugin = std::make_shared<api::Plugin>(
+            "core",
+            "core models",
+            std::vector<std::string>{},
+            false
+        );
 
-    plugin->close_for_changes();
-    return plugin;
-}
+        REGISTER_MODEL(user, User, USER)
+        REGISTER_MODEL(team, Team, TEAM)
+        REGISTER_MODEL(team_member, TeamMember, TEAM_MEMBER)
+        REGISTER_MODEL(history, History, HISTORY)
+
+        plugin->close_for_changes();
+        return plugin;
+    }
 }

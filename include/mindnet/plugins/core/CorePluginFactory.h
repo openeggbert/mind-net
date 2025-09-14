@@ -8,10 +8,10 @@
 
 namespace mindnet::plugins::core
 {
-    class CorePluginFactory : public mindnet::api::PluginFactory
+    class CorePluginFactory : public api::PluginFactory
     {
     public:
-        mindnet::api::PluginPtr create() const override;
+        [[nodiscard]] api::PluginPtr create() const override;
     };
 }
 

@@ -14,7 +14,7 @@
 namespace mindnet::api
 {
     struct CyclicDependencyException : public std::runtime_error {
-        CyclicDependencyException(const std::string& msg) : std::runtime_error(msg) {}
+        explicit CyclicDependencyException(const std::string& msg) : std::runtime_error(msg) {}
     };
 
     class PluginRegistry
@@ -24,13 +24,15 @@ namespace mindnet::api
         ~PluginRegistry() = default;
 
         bool has_plugin_name(const std::string& plugin_name) const;
-        std::vector<std::string> get_plugin_names() const;
-        std::vector<std::string> get_plugin_names_sorted_by_dependencies() const;
-        PluginPtr get_plugin(const std::string& plugin_name) const;
+        [[nodiscard]] std::vector<std::string> get_plugin_names() const;
+        [[nodiscard]] std::vector<std::string> get_plugin_names_sorted_by_dependencies() const;
+        [[nodiscard]] PluginPtr get_plugin(const std::string& plugin_name) const;
         void register_plugin(const PluginPtr& plugin);
-        int get_plugin_count() const;
+        [[nodiscard]] int get_plugin_count() const;
     private:
         std::map<std::string, PluginPtr> plugins;
     };
+    typedef std::shared_ptr<PluginRegistry> PluginRegistryPtr;
+
 }
 #endif // PLUGINREGISTRY_H

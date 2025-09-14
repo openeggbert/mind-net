@@ -8,11 +8,15 @@
 
 namespace mindnet::api
 {
-    Plugin::Plugin(const std::string& name, const std::string& description,
-                   const std::vector<std::string>& plugins_which_this_plugin_depends_on, bool has_app)
-        : name(name), description(description),
-          plugins_which_this_plugin_depends_on(plugins_which_this_plugin_depends_on), has_app_(has_app)
+    Plugin::Plugin(const std::string& name_, const std::string& description_,
+                   const std::vector<std::string>& plugins_which_this_plugin_depends_on_, bool has_app_)
+        : name(name_), description(description_),
+          plugins_which_this_plugin_depends_on(plugins_which_this_plugin_depends_on_), has_app_(has_app_)
     {
+        if (get_name() != "core")
+        {
+            plugins_which_this_plugin_depends_on.emplace_back("core");
+        }
     }
 
     // ----------------------------

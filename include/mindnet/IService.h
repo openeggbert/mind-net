@@ -9,6 +9,7 @@
 #include "model/ModelDefinition.h"
 #include "api/IValidator.h"
 #include "api/IPersistence.h"
+#include "api/PluginRegistry.h"
 
 namespace mindnet
 {
@@ -45,6 +46,7 @@ namespace mindnet
             plugins::core::enums::Crudl crudl,
             ModelDefinition& def
         ) = 0;
+        virtual const api::PluginRegistryPtr get_plugin_registry() const = 0;
 
     private:
         virtual OperationResult can_create(

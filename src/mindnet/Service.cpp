@@ -36,7 +36,7 @@ namespace mindnet
     using mindnet::OperationResult;
     using model::ModelDefinition;
 
-    Service::Service(const DbPtr& db_) : IService(db_), db_ptr(db_)
+    Service::Service(const DbPtr& db_, const api::PluginRegistryPtr& plugin_registry_ptr_) : IService(db_), db_ptr(db_), plugin_registry_ptr(plugin_registry_ptr_)
     {
         //#define disable_validation
 
@@ -266,5 +266,10 @@ namespace mindnet
             500, "Validator is not implemented for " + model_definition.get_model_name() +
             ". Operation LIST cannot be validated."
         };
+    }
+
+    const api::PluginRegistryPtr Service::get_plugin_registry() const
+    {
+        return plugin_registry_ptr;
     }
 }

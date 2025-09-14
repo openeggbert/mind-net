@@ -17,10 +17,10 @@ namespace mindnet::api
     {
     public:
         Plugin(
-            const std::string& name,
-            const std::string& description,
-            const std::vector<std::string>& plugins_which_this_plugin_depends_on,
-            bool has_app);
+            const std::string& name_,
+            const std::string& description_,
+            const std::vector<std::string>& plugins_which_this_plugin_depends_on_,
+            bool has_app_);
         ~Plugin() = default;
 
         const std::string& get_name() const;
