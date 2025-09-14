@@ -132,7 +132,6 @@ openssl rand -base64 32
 - [ ] New table idea: string title, string content, bool important, bool public
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab 
 - [ ] property.key, tag_type.title - length should be limited
-- [ ] IMPROVEMENT Enums will be PascalCase, not all uppercase
 - [ ] BUG Update of boolean values in SQLite is not working.
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [ ] FEATURE User authorization via Validators
@@ -323,4 +322,4 @@ FOREIGN KEY(discussion_id) REFERENCES discussion(id)
 
 ## Done
 
-
+- [x] IMPROVEMENT Enums will be PascalCase, not all uppercase

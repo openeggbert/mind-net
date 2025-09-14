@@ -12,35 +12,35 @@ namespace mindnet::model
 {
     enum class ColumnType
     {
-        TEXT,
-        TEXTAREA,
-        INTEGER,
-        BOOL,
-        DATETIME,
-        REAL,
-        BLOB,
+        Text,
+        TextArea,
+        Integer,
+        Bool,
+        DateTime,
+        Real,
+        Blob,
     };
 
     inline std::string column_type_to_string(ColumnType column_type)
     {
         switch (column_type)
         {
-        case ColumnType::TEXT:
-            return "TEXT";
-        case ColumnType::TEXTAREA:
-            return "TEXTAREA";
-        case ColumnType::INTEGER:
-            return "INTEGER";
-        case ColumnType::REAL:
-            return "REAL";
-        case ColumnType::BLOB:
-            return "BLOB";
-        case ColumnType::BOOL:
-            return "BOOL";
-        case ColumnType::DATETIME:
-            return "DATETIME";
+        case ColumnType::Text:
+            return "Text";
+        case ColumnType::TextArea:
+            return "TextArea";
+        case ColumnType::Integer:
+            return "Integer";
+        case ColumnType::Real:
+            return "Real";
+        case ColumnType::Blob:
+            return "Blob";
+        case ColumnType::Bool:
+            return "Bool";
+        case ColumnType::DateTime:
+            return "DateTime";
         default:
-            return "UNKNOWN";
+            return "Unknown`";
         }
     }
 
@@ -53,16 +53,16 @@ namespace mindnet::model
     {
         switch (column_type)
         {
-        case ColumnType::TEXT:
-        case ColumnType::TEXTAREA:
+        case ColumnType::Text:
+        case ColumnType::TextArea:
             return PrimitiveColumnType::Text;
-        case ColumnType::INTEGER:
-        case ColumnType::BOOL:
-        case ColumnType::DATETIME:
+        case ColumnType::Integer:
+        case ColumnType::Bool:
+        case ColumnType::DateTime:
             return PrimitiveColumnType::Number;
 
-        case ColumnType::REAL:
-        case ColumnType::BLOB:
+        case ColumnType::Real:
+        case ColumnType::Blob:
         default:
             return PrimitiveColumnType::Unknown;
         }

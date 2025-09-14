@@ -23,7 +23,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::WRITE))
+        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -38,7 +38,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto map = find_model(map, tag_type.first.map_id)
         if (map.second.empty()) return {400, map.second};
 
-        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::READ))
+        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -56,7 +56,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto tag_type = find_model(tag_type, entity.tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::DELETE))
+        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -71,7 +71,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto tag_type = find_model(tag_type, tag_type_id);
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (!has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::READ))
+        if (!has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

@@ -20,10 +20,10 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult TagTypeValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR,
+        return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a property.")
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -35,7 +35,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto map = find_model(map, entity.map_id)
         if (map.second.empty()) return {400, map.second};
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -50,7 +50,7 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult TagTypeValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -62,7 +62,7 @@ namespace mindnet::plugins::zettelkasten::validators
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));
 
-        if (!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::READ))
+        if (!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

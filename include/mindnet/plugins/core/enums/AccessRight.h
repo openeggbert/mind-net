@@ -33,35 +33,35 @@ namespace mindnet::plugins::core::enums
     enum class AccessRight
     {
         // read=4 write=2 delete=1
-        NONE = 0,
-        DELETE = 1,
-        WRITE = 2,
-        WRITE_DELETE = 3,
-        READ = 4,
-        READ_DELETE = 5,
-        READ_WRITE = 6,
-        READ_WRITE_DELETE = 7,
+        None = 0,
+        Delete = 1,
+        Write = 2,
+        WriteDelete = 3,
+        Read = 4,
+        ReadDelete = 5,
+        ReadWrite = 6,
+        ReadWriteDelete = 7,
     };
 
     inline std::string access_right_to_string(AccessRight access_right)
     {
         switch (access_right)
         {
-        case AccessRight::NONE:
+        case AccessRight::None:
             return "None";
-        case AccessRight::DELETE:
+        case AccessRight::Delete:
             return "Delete";
-        case AccessRight::WRITE:
+        case AccessRight::Write:
             return "Write";
-        case AccessRight::WRITE_DELETE:
+        case AccessRight::WriteDelete:
             return "Write+Delete";
-        case AccessRight::READ:
+        case AccessRight::Read:
             return "Read";
-        case AccessRight::READ_DELETE:
+        case AccessRight::ReadDelete:
             return "Read+Delete";
-        case AccessRight::READ_WRITE:
+        case AccessRight::ReadWrite:
             return "Read+Write";
-        case AccessRight::READ_WRITE_DELETE:
+        case AccessRight::ReadWriteDelete:
             return "Read+Write+Delete";
         default:
             return "Unknown";
@@ -82,20 +82,20 @@ namespace mindnet::plugins::core::enums
 
     inline bool can_read(AccessRight access_right)
     {
-        return access_right == AccessRight::READ || access_right == AccessRight::READ_DELETE || access_right ==
-            AccessRight::READ_WRITE || access_right == AccessRight::READ_WRITE_DELETE;
+        return access_right == AccessRight::Read || access_right == AccessRight::ReadDelete || access_right ==
+            AccessRight::ReadWrite || access_right == AccessRight::ReadWriteDelete;
     }
 
     inline bool can_write(AccessRight access_right)
     {
-        return access_right == AccessRight::WRITE || access_right == AccessRight::WRITE_DELETE || access_right ==
-            AccessRight::READ_WRITE || access_right == AccessRight::READ_WRITE_DELETE;
+        return access_right == AccessRight::Write || access_right == AccessRight::WriteDelete || access_right ==
+            AccessRight::ReadWrite || access_right == AccessRight::ReadWriteDelete;
     }
 
     inline bool can_delete(AccessRight access_right)
     {
-        return access_right == AccessRight::DELETE || access_right == AccessRight::WRITE_DELETE || access_right ==
-            AccessRight::READ_WRITE || access_right == AccessRight::READ_WRITE_DELETE;
+        return access_right == AccessRight::Delete || access_right == AccessRight::WriteDelete || access_right ==
+            AccessRight::ReadWrite || access_right == AccessRight::ReadWriteDelete;
     }
 
     inline bool can_read(int access_right)
@@ -117,10 +117,10 @@ namespace mindnet::plugins::core::enums
     {
         switch (single_right)
         {
-        case SingleRight::NONE: return false;
-        case SingleRight::READ: return can_read(access_right);
-        case SingleRight::WRITE: return can_write(access_right);
-        case SingleRight::DELETE: return can_delete(access_right);
+        case SingleRight::None: return false;
+        case SingleRight::Read: return can_read(access_right);
+        case SingleRight::Write: return can_write(access_right);
+        case SingleRight::Delete: return can_delete(access_right);
         default: return false;
         }
     }

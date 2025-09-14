@@ -73,8 +73,8 @@ namespace mindnet::plugins::core::models
             {
                 return test_true(
                     g_configuration.require_admin_approval_for_new_users
-                        ? status == enums::UserStatus::PENDING
-                        : status == enums::UserStatus::ACTIVE,
+                        ? status == enums::UserStatus::Pending
+                        : status == enums::UserStatus::Active,
                     g_configuration.require_admin_approval_for_new_users
                         ? "status must be PENDING"
                         : "status must be ACTIVE"

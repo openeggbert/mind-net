@@ -26,8 +26,8 @@ namespace mindnet::plugins::suggestion::validators
         return_if(entity.review_count != 0,
                   403, "Review count must be 0 during suggestion creation.")
         return_if(
-            entity.status != plugins::suggestion::enums::SuggestionStatus::PENDING && entity.status != plugins::
-            suggestion::enums::SuggestionStatus::DRAFT,
+            entity.status != plugins::suggestion::enums::SuggestionStatus::Pending && entity.status != plugins::
+            suggestion::enums::SuggestionStatus::Draft,
             403, "Status must be PENDING or DRAFT during suggestion creation.")
 
         return ok_result;
@@ -35,7 +35,7 @@ namespace mindnet::plugins::suggestion::validators
 
     OperationResult SuggestionValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(entity.from_user_id != ctx.token.user_id && ctx.role < plugins::core::enums::UserRole::REVIEWER,
+        return_if(entity.from_user_id != ctx.token.user_id && ctx.role < plugins::core::enums::UserRole::Reviewer,
                   403, "You can not read this suggestion.");
 
         return ok_result;
@@ -46,7 +46,7 @@ namespace mindnet::plugins::suggestion::validators
     {
         return_if(ctx.token.user_id != new_entity.from_user_id,
                   403, "Only author of this suggestion can update it.");
-        return_if(old_entity.status == plugins::suggestion::enums::SuggestionStatus::APPROVED,
+        return_if(old_entity.status == plugins::suggestion::enums::SuggestionStatus::Approved,
                   400, "Suggestion is approved and cannot be updated");
 
         return ok_result;
@@ -59,7 +59,7 @@ namespace mindnet::plugins::suggestion::validators
 
     OperationResult SuggestionValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
-        if (ctx.role >= plugins::core::enums::UserRole::REVIEWER)
+        if (ctx.role >= plugins::core::enums::UserRole::Reviewer)
         {
             return ok_result;
         }

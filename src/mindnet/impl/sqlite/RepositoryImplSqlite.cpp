@@ -74,8 +74,8 @@ namespace mindnet::impl::sqlite
         crow::json::rvalue& body, plugins::core::enums::Crudl crudl)
     {
         entity_fields result;
-        bool create = crudl == plugins::core::enums::Crudl::CREATE;
-        bool update = crudl == plugins::core::enums::Crudl::UPDATE;
+        bool create = crudl == plugins::core::enums::Crudl::Create;
+        bool update = crudl == plugins::core::enums::Crudl::Update;
         if (!create && !update)
         {
             throw std::runtime_error(std::string("Invalid crudl ") + crudl_to_string(crudl));

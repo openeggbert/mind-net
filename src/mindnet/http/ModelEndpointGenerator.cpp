@@ -35,7 +35,7 @@ namespace mindnet::http
         auto create_lambda_function = [&service_ptr, &def](const crow::request& req)
         {
             trace << "Create lambda function called" << commit;
-            if (!def.get_allowed_rest_operations().contains(Crudl::CREATE))
+            if (!def.get_allowed_rest_operations().contains(Crudl::Create))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
@@ -45,7 +45,7 @@ namespace mindnet::http
             if (!body_check_result.empty())
                 return crow::response(400, "Invalid input. " + body_check_result);
 
-            entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::CREATE, def);
+            entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::Create, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
@@ -71,7 +71,7 @@ namespace mindnet::http
         auto read_lambda_function = [&service_ptr, &def, &split_string_by_commas](const crow::request& req, int id)
         {
             trace << "Read lambda function called" << commit;
-            if (!def.get_allowed_rest_operations().contains(Crudl::READ))
+            if (!def.get_allowed_rest_operations().contains(Crudl::Read))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             entity_fields values;
 
@@ -111,7 +111,7 @@ namespace mindnet::http
         auto update_lambda_function = [&service_ptr, &def](const crow::request& req, int id)
         {
             trace << "Update lambda function called" << commit;
-            if (!def.get_allowed_rest_operations().contains(Crudl::UPDATE))
+            if (!def.get_allowed_rest_operations().contains(Crudl::Update))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             crow::json::rvalue body = crow::json::load(req.body);
             if (!body)
@@ -125,7 +125,7 @@ namespace mindnet::http
             {
                 return crow::response(400, "Invalid input. id in body is not equal to id in url.");
             }
-            entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::UPDATE, def);
+            entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::Update, def);
             if (fields.size() != def.get_columns().size())
             {
                 return crow::response(
@@ -154,7 +154,7 @@ namespace mindnet::http
         auto delete_lambda_function = [&service_ptr, &def](const crow::request& req, int id)
         {
             trace << "Delete lambda function called" << commit;
-            if (!def.get_allowed_rest_operations().contains(Crudl::DELETE))
+            if (!def.get_allowed_rest_operations().contains(Crudl::Delete))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
 
             http::LoginToken login_token{req};
@@ -173,7 +173,7 @@ namespace mindnet::http
         auto list_lambda_function = [&service_ptr, &def, &split_string_by_commas](const crow::request& req)
         {
             trace << "List lambda function called" << commit;
-            if (!def.get_allowed_rest_operations().contains(Crudl::LIST))
+            if (!def.get_allowed_rest_operations().contains(Crudl::List))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             int page_number = req.url_params.get("page_number") ? std::stoi(req.url_params.get("page_number")) : 1;
             int page_size = req.url_params.get("page_size") ? std::stoi(req.url_params.get("page_size")) : 20;
@@ -198,7 +198,7 @@ namespace mindnet::http
             query_params.page_size = page_size;
             query_params.total_items = 0;
             query_params.sort = sort;
-            query_params.order = order.empty() ? http::Order::ASC : http::string_to_order(order);
+            query_params.order = order.empty() ? http::Order::Asc : http::string_to_order(order);
 
 
             split_string_by_commas(fields, query_params.fields);

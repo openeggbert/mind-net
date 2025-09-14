@@ -88,7 +88,7 @@ namespace mindnet::model
     {
     private:
         std::string column_name;
-        ColumnType column_type = ColumnType::TEXT;
+        ColumnType column_type = ColumnType::Text;
         bool mandatory = false;
         bool primary_key = false;
         std::string foreign_key;
@@ -132,7 +132,7 @@ namespace mindnet::model
             using bc = BaseColumns;
             if (ends_with_id(column_name))
             {
-                column_type = mindnet::model::ColumnType::INTEGER;
+                column_type = mindnet::model::ColumnType::Integer;
             }
 
             if (column_name == bc::ID)
@@ -141,7 +141,7 @@ namespace mindnet::model
                 mandatory = true;
                 unique = true;
                 auto_ = true;
-                column_type = mindnet::model::ColumnType::INTEGER;
+                column_type = mindnet::model::ColumnType::Integer;
                 description = "Unique identifier of the record.";
                 readonly = true;
             }
@@ -149,14 +149,14 @@ namespace mindnet::model
             {
                 mandatory = true;
                 auto_ = true;
-                column_type = mindnet::model::ColumnType::DATETIME;
+                column_type = mindnet::model::ColumnType::DateTime;
                 description = "Timestamp when the record was created.";
                 readonly = true;
             }
             if (column_name == bc::UPDATED_AT)
             {
                 auto_ = true;
-                column_type = mindnet::model::ColumnType::DATETIME;
+                column_type = mindnet::model::ColumnType::DateTime;
                 description = "Timestamp of the last update to the record.";
             }
             flags(flags_);
@@ -243,7 +243,7 @@ namespace mindnet::model
         ColumnDefinition& set_enum_definition(std::optional<EnumDefinition> value)
         {
             enum_definition = value;
-            column_type = mindnet::model::ColumnType::INTEGER;
+            column_type = mindnet::model::ColumnType::Integer;
             return *this;
         }
 
@@ -330,13 +330,13 @@ namespace mindnet::model
             if (flags_set.contains(HIDDEN)) set_hidden();
             if (flags_set.contains(READONLY)) set_readonly();
             //
-            if (flags_set.contains(TEXT)) column_type = mindnet::model::ColumnType::TEXT;
-            if (flags_set.contains(TEXTAREA)) column_type = mindnet::model::ColumnType::TEXTAREA;
-            if (flags_set.contains(INTEGER)) column_type = mindnet::model::ColumnType::INTEGER;
-            if (flags_set.contains(REAL)) column_type = mindnet::model::ColumnType::REAL;
-            if (flags_set.contains(BLOB)) column_type = mindnet::model::ColumnType::BLOB;
-            if (flags_set.contains(BOOL)) column_type = mindnet::model::ColumnType::BOOL;
-            if (flags_set.contains(DATETIME)) column_type = mindnet::model::ColumnType::DATETIME;
+            if (flags_set.contains(TEXT)) column_type = mindnet::model::ColumnType::Text;
+            if (flags_set.contains(TEXTAREA)) column_type = mindnet::model::ColumnType::TextArea;
+            if (flags_set.contains(INTEGER)) column_type = mindnet::model::ColumnType::Integer;
+            if (flags_set.contains(REAL)) column_type = mindnet::model::ColumnType::Real;
+            if (flags_set.contains(BLOB)) column_type = mindnet::model::ColumnType::Blob;
+            if (flags_set.contains(BOOL)) column_type = mindnet::model::ColumnType::Bool;
+            if (flags_set.contains(DATETIME)) column_type = mindnet::model::ColumnType::DateTime;
 
             return *this;
         }

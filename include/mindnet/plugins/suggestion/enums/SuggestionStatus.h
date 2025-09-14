@@ -28,35 +28,35 @@ namespace mindnet::plugins::suggestion::enums
 {
     enum class SuggestionStatus
     {
-        DRAFT = 0,
-        PENDING = 1,
-        UNDER_REVIEW = 2,
-        APPROVED = 3,
-        REJECTED = 4,
-        CANCELLED = 5,
-        REQUESTS_FEEDBACK = 6
+        Draft = 0,
+        Pending = 1,
+        UnderReview = 2,
+        Approved = 3,
+        Rejected = 4,
+        Cancelled = 5,
+        RequestsFeedback = 6
     };
 
     inline std::string suggestion_status_to_string(const SuggestionStatus status)
     {
         switch (status)
         {
-        case SuggestionStatus::DRAFT:
-            return "draft";
-        case SuggestionStatus::PENDING:
-            return "pending";
-        case SuggestionStatus::UNDER_REVIEW:
-            return "under_review";
-        case SuggestionStatus::APPROVED:
-            return "approved";
-        case SuggestionStatus::REJECTED:
-            return "rejected";
-        case SuggestionStatus::CANCELLED:
-            return "cancelled";
-        case SuggestionStatus::REQUESTS_FEEDBACK:
-            return "requests_feedback";
+        case SuggestionStatus::Draft:
+            return "Draft";
+        case SuggestionStatus::Pending:
+            return "Pending";
+        case SuggestionStatus::UnderReview:
+            return "UnderReview";
+        case SuggestionStatus::Approved:
+            return "Approved";
+        case SuggestionStatus::Rejected:
+            return "Rejected";
+        case SuggestionStatus::Cancelled:
+            return "Cancelled";
+        case SuggestionStatus::RequestsFeedback:
+            return "RequestsFeedback";
         default:
-            return "unknown";
+            return "Unknown";
         }
     }
 

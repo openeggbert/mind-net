@@ -19,10 +19,10 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult PropertyValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR,
+        return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a property.")
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::WRITE))
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -34,7 +34,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto map = find_model(map, entity.map_id)
         if (map.second.empty()) return {400, map.second};
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::READ))
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -44,7 +44,7 @@ namespace mindnet::plugins::zettelkasten::validators
     OperationResult PropertyValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
                                                             const Model& new_entity) const
     {
-        if (!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::WRITE))
+        if (!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
             return {403, "You do not have permission to update this property."};
 
         return ok_result;
@@ -52,7 +52,7 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult PropertyValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
     {
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::DELETE))
+        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -70,7 +70,7 @@ namespace mindnet::plugins::zettelkasten::validators
 
         int map_id = note.first.map_id;
 
-        if (!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::READ))
+        if (!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

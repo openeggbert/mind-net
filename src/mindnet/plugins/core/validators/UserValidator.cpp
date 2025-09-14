@@ -26,10 +26,10 @@ namespace mindnet::plugins::core::validators
 
         return_if(
             !g_configuration.allow_self_registration && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::
-            ADMIN,
+            Admin,
             403, "You must be admin to create a user.")
 
-        return_if(ctx.role != plugins::core::enums::UserRole::ADMIN && entity.role != g_configuration.default_user_role,
+        return_if(ctx.role != plugins::core::enums::UserRole::Admin && entity.role != g_configuration.default_user_role,
                   400, "role" " must be equal to " + plugins::core::enums::user_role_to_string(g_configuration.
                       default_user_role))
 
@@ -55,7 +55,7 @@ namespace mindnet::plugins::core::validators
     {
         bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
 
-        return_if(ctx.role != plugins::core::enums::UserRole::ADMIN && !logged_user_updates_himself,
+        return_if(ctx.role != plugins::core::enums::UserRole::Admin && !logged_user_updates_himself,
                   403, "You can only update your own user.")
 
         return_if(new_entity.password_hash != "*",
@@ -65,10 +65,10 @@ namespace mindnet::plugins::core::validators
         return_if(role_different && logged_user_updates_himself,
                   400, "role cannot be changed");
 
-        return_if(role_different && ctx.role != plugins::core::enums::UserRole::ADMIN,
+        return_if(role_different && ctx.role != plugins::core::enums::UserRole::Admin,
                   400, "role cannot be changed");
 
-        return_if(old_entity.status != new_entity.status && ctx.role != plugins::core::enums::UserRole::ADMIN,
+        return_if(old_entity.status != new_entity.status && ctx.role != plugins::core::enums::UserRole::Admin,
                   400, "status cannot be changed by yourself")
 
         return ok_result;

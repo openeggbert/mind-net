@@ -30,18 +30,18 @@ namespace mindnet::plugins::zettelkasten::enums
      */
     enum class ContentFormat
     {
-        MARKDOWN = 0, HTML = 1, PLAIN = 2
+        Markdown = 0, Html = 1, Plain = 2
     };
 
     inline std::string content_format_to_string(ContentFormat format)
     {
         switch (format)
         {
-        case ContentFormat::MARKDOWN:
+        case ContentFormat::Markdown:
             return "Markdown";
-        case ContentFormat::HTML:
-            return "HTML";
-        case ContentFormat::PLAIN:
+        case ContentFormat::Html:
+            return "Html";
+        case ContentFormat::Plain:
             return "Plain";
         default:
             return "Unknown";

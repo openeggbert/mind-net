@@ -119,16 +119,16 @@ namespace mindnet::impl::sqlite
             {
                 switch (column.get_column_type())
                 {
-                case mindnet::model::ColumnType::TEXTAREA:
-                case mindnet::model::ColumnType::TEXT:
+                case mindnet::model::ColumnType::TextArea:
+                case mindnet::model::ColumnType::Text:
                     {
                         string text = (*query_ptr).getColumn(i).getString();
                         result.push_back(text);
                     }
                     break;
-                case mindnet::model::ColumnType::BOOL:
-                case mindnet::model::ColumnType::DATETIME:
-                case mindnet::model::ColumnType::INTEGER:
+                case mindnet::model::ColumnType::Bool:
+                case mindnet::model::ColumnType::DateTime:
+                case mindnet::model::ColumnType::Integer:
                     {
                         int number = (*query_ptr).getColumn(i);
                         result.push_back(number);
@@ -262,7 +262,7 @@ namespace mindnet::impl::sqlite
             {
                 auto key = filter.first;
                 auto value = filter.second;
-                mindnet::model::ColumnType column_type{mindnet::model::ColumnType::TEXT};
+                mindnet::model::ColumnType column_type{mindnet::model::ColumnType::Text};
                 bool column_type_found = false;
                 for (auto& column : def.get_columns())
                 {
@@ -280,13 +280,13 @@ namespace mindnet::impl::sqlite
                 }
                 switch (column_type)
                 {
-                case mindnet::model::ColumnType::TEXTAREA:
-                case mindnet::model::ColumnType::TEXT:
+                case mindnet::model::ColumnType::TextArea:
+                case mindnet::model::ColumnType::Text:
                     query.bind(bind_index++, value);
                     break;
-                case mindnet::model::ColumnType::BOOL:
-                case mindnet::model::ColumnType::DATETIME:
-                case mindnet::model::ColumnType::INTEGER:
+                case mindnet::model::ColumnType::Bool:
+                case mindnet::model::ColumnType::DateTime:
+                case mindnet::model::ColumnType::Integer:
                     query.bind(bind_index++, stoi(value));
                     break;
                 default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
@@ -367,16 +367,16 @@ namespace mindnet::impl::sqlite
                 {
                     switch (column.get_column_type())
                     {
-                    case mindnet::model::ColumnType::TEXTAREA:
-                    case mindnet::model::ColumnType::TEXT:
+                    case mindnet::model::ColumnType::TextArea:
+                    case mindnet::model::ColumnType::Text:
                         {
                             string text = (*query_ptr).getColumn(i).getString();
                             result.push_back(text);
                         }
                         break;
-                    case mindnet::model::ColumnType::BOOL:
-                    case mindnet::model::ColumnType::DATETIME:
-                    case mindnet::model::ColumnType::INTEGER:
+                    case mindnet::model::ColumnType::Bool:
+                    case mindnet::model::ColumnType::DateTime:
+                    case mindnet::model::ColumnType::Integer:
                         {
                             int number = (*query_ptr).getColumn(i);
                             result.push_back(number);

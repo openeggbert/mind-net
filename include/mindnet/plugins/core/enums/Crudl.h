@@ -32,24 +32,24 @@ namespace mindnet::plugins::core::enums
      */
     enum class Crudl
     {
-        UNDEFINED = 0, CREATE = 1, READ = 2, UPDATE = 3, DELETE = 4, LIST = 5
+        Undefined = 0, Create = 1, Read = 2, Update = 3, Delete = 4, List = 5
     };
 
     inline std::string crudl_to_string(Crudl difficulty)
     {
         switch (difficulty)
         {
-        case Crudl::UNDEFINED:
+        case Crudl::Undefined:
             return "Undefined";
-        case Crudl::CREATE:
+        case Crudl::Create:
             return "Create";
-        case Crudl::READ:
+        case Crudl::Read:
             return "Read";
-        case Crudl::UPDATE:
+        case Crudl::Update:
             return "Update";
-        case Crudl::DELETE:
+        case Crudl::Delete:
             return "Delete";
-        case Crudl::LIST:
+        case Crudl::List:
             return "List";
         default:
             return "Unknown";
@@ -67,17 +67,17 @@ namespace mindnet::plugins::core::enums
         switch (lowercase_ch)
         {
         case 'c':
-            return Crudl::CREATE;
+            return Crudl::Create;
         case 'r':
-            return Crudl::READ;
+            return Crudl::Read;
         case 'u':
-            return Crudl::UPDATE;
+            return Crudl::Update;
         case 'd':
-            return Crudl::DELETE;
+            return Crudl::Delete;
         case 'l':
-            return Crudl::LIST;
+            return Crudl::List;
         default:
-            return Crudl::UNDEFINED;
+            return Crudl::Undefined;
         }
     }
 

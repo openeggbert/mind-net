@@ -30,20 +30,20 @@ namespace mindnet::plugins::zettelkasten::enums
      */
     enum class Importance
     {
-        UNDEFINED = 0, LOW = 1, MEDIUM = 2, HIGH = 3
+        Undefined = 0, Low = 1, Medium = 2, High = 3
     };
 
     inline std::string importance_to_string(Importance importance)
     {
         switch (importance)
         {
-        case Importance::UNDEFINED:
+        case Importance::Undefined:
             return "Undefined";
-        case Importance::LOW:
+        case Importance::Low:
             return "Low";
-        case Importance::MEDIUM:
+        case Importance::Medium:
             return "Medium";
-        case Importance::HIGH:
+        case Importance::High:
             return "High";
         default:
             return "Unknown";

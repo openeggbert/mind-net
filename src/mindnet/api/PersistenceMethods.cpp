@@ -16,8 +16,8 @@ namespace mindnet::api
         if (token.user_id == 0)
         {
             plugins::core::models::User u;
-            u.role = plugins::core::enums::UserRole::GUEST;
-            u.status = plugins::core::enums::UserStatus::ACTIVE;
+            u.role = plugins::core::enums::UserRole::Guest;
+            u.status = plugins::core::enums::UserStatus::Active;
             return {u, ok_result};
         }
         auto result = db->read(plugins::core::models::USER_DEFINITION, token, token.user_id);
@@ -66,7 +66,7 @@ namespace mindnet::api
         http::QueryParams query_params;
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
         query_params.filters.emplace("user_id", std::to_string(ctx.token.user_id));
-        query_params.filters.emplace("status", std::to_string(cast64(plugins::core::enums::UserStatus::ACTIVE)));
+        query_params.filters.emplace("status", std::to_string(cast64(plugins::core::enums::UserStatus::Active)));
         auto is_team_member_result = ctx.db->list(plugins::core::models::TEAM_MEMBER_DEFINITION, ctx.token,
                                                   query_params);
         if (is_team_member_result.second.ko()) return is_team_member_result.second.error;
@@ -94,7 +94,7 @@ namespace mindnet::api
     bool has_right_for_map(
         const RequestContext& ctx, const int map_id, const plugins::core::enums::SingleRight single_right)
     {
-        if (ctx.role == plugins::core::enums::UserRole::ADMIN) { return true; }
+        if (ctx.role == plugins::core::enums::UserRole::Admin) { return true; }
 
         auto map = find_model(map, map_id)
         if (!map.second.empty()) return false;
@@ -109,7 +109,7 @@ namespace mindnet::api
         {
             auto result = is_member_of_team(ctx, map.first.team_id);
             map_team_member_and_can = !result.empty() && can(
-                plugins::core::enums::SingleRight::WRITE, map.first.team_rights_int());
+                plugins::core::enums::SingleRight::Write, map.first.team_rights_int());
             if (map_team_member_and_can) return true;
         }
 

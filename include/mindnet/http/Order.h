@@ -9,16 +9,16 @@ namespace mindnet::http
 {
     enum class Order
     {
-        ASC,
-        DESC,
+        Asc,
+        Desc,
     };
 
     inline string order_to_string(const Order& order)
     {
         switch (order)
         {
-        case Order::ASC: return "ASC";
-        case Order::DESC: return "DESC";
+        case Order::Asc: return "ASC";
+        case Order::Desc: return "DESC";
         default: throw std::runtime_error(std::string("Unknown order: ") + std::to_string(cast64(order)));
         }
     }
@@ -27,11 +27,11 @@ namespace mindnet::http
     {
         if (string == "ASC" || string == "asc")
         {
-            return Order::ASC;
+            return Order::Asc;
         }
         if (string == "DESC" || string == "desc")
         {
-            return Order::DESC;
+            return Order::Desc;
         }
         throw std::runtime_error(std::string("Unknown order: ") + string);
     }

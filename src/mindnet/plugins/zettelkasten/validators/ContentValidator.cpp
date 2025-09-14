@@ -19,7 +19,7 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult ContentValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR, 403, "You can not create content.")
+        return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not create content.")
         return_if(entity.version != 1,
                   404, "version must be 1 during message creation.");
 

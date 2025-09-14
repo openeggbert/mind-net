@@ -55,7 +55,7 @@ namespace mindnet
         bool allow_public_access{true};
         bool allow_self_registration{true};
         bool require_admin_approval_for_new_users{false};
-        plugins::core::enums::UserRole default_user_role{plugins::core::enums::UserRole::READER};
+        plugins::core::enums::UserRole default_user_role{plugins::core::enums::UserRole::Reader};
         std::string jwt_secret{};
 
         bool string_to_bool(std::string& str)

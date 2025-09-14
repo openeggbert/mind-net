@@ -23,7 +23,7 @@ namespace mindnet::plugins::chat::validators
 
     OperationResult DiscussionValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::EDITOR,
+        return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a discussion.")
 
         string is_member_of_team_result = is_member_of_team(ctx, entity.team_id);
@@ -40,7 +40,7 @@ namespace mindnet::plugins::chat::validators
 
     OperationResult DiscussionValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-        if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
 
         auto discussion = find_model(model, entity.get_id())
         check_found(discussion)
@@ -59,7 +59,7 @@ namespace mindnet::plugins::chat::validators
                   403, "You can only update your own discussion.")
 
         string is_member_of_team_result = is_member_of_team(ctx, old_entity.team_id);
-        return_if(!is_member_of_team_result.empty() && ctx.role != plugins::core::enums::UserRole::ADMIN,
+        return_if(!is_member_of_team_result.empty() && ctx.role != plugins::core::enums::UserRole::Admin,
                   403, "You can only update discussions, you created." + is_member_of_team_result);
 
         return ok_result;

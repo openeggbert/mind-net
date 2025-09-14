@@ -73,8 +73,8 @@ namespace mindnet::plugins::zettelkasten::models
         int parent_note_id{};
         int content_id{};
         int sibling_position{};
-        enums::Importance importance{enums::Importance::UNDEFINED};
-        enums::Difficulty difficulty{enums::Difficulty::UNDEFINED};
+        enums::Importance importance{enums::Importance::Undefined};
+        enums::Difficulty difficulty{enums::Difficulty::Undefined};
 
         create_model_h_methods(Model, MODEL)
 

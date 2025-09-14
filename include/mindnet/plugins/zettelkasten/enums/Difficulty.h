@@ -30,22 +30,22 @@ namespace mindnet::plugins::zettelkasten::enums
      */
     enum class Difficulty
     {
-        UNDEFINED = 0, EASY = 1, MEDIUM = 2, HARD = 3, EXPERT = 4
+        Undefined = 0, Easy = 1, Medium = 2, Hard = 3, Expert = 4
     };
 
     inline std::string difficulty_to_string(Difficulty difficulty)
     {
         switch (difficulty)
         {
-        case Difficulty::UNDEFINED:
+        case Difficulty::Undefined:
             return "Undefined";
-        case Difficulty::EASY:
+        case Difficulty::Easy:
             return "Easy";
-        case Difficulty::MEDIUM:
+        case Difficulty::Medium:
             return "Medium";
-        case Difficulty::HARD:
+        case Difficulty::Hard:
             return "Hard";
-        case Difficulty::EXPERT:
+        case Difficulty::Expert:
             return "Expert";
         default:
             return "Unknown";

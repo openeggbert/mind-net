@@ -38,7 +38,7 @@ namespace mindnet::plugins::chat::validators
         auto comment = find_comment(ctx, entity.get_id());
         return_if(!comment.second.empty(), 400, "Comment does not exist.")
 
-        if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
 
         auto discussion = find_discussion(ctx, comment.first.discussion_id);
         return_if(!discussion.second.empty(), 400, "Discussion does not exist.")
@@ -51,7 +51,7 @@ namespace mindnet::plugins::chat::validators
     OperationResult CommentValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
-        return_if(old_entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::ADMIN,
+        return_if(old_entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::Admin,
                   403, "You can only update your own comment.")
 
         return ok_result;

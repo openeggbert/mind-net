@@ -155,7 +155,7 @@ namespace mindnet::model
             for (char ch : ops_as_string)
             {
                 plugins::core::enums::Crudl crudl = plugins::core::enums::char_to_crudl(ch);
-                if (crudl == plugins::core::enums::Crudl::UNDEFINED)
+                if (crudl == plugins::core::enums::Crudl::Undefined)
                 {
                     throw std::invalid_argument("Invalid value for allowed_rest_operations: ");
                 }
@@ -217,7 +217,7 @@ namespace mindnet::model
             std::string label_,
             const std::vector<std::string>& params_)
         {
-            return add_custom_action(plugins::core::enums::Crudl::LIST, model_name_, label_, params_);
+            return add_custom_action(plugins::core::enums::Crudl::List, model_name_, label_, params_);
         }
 
         [[nodiscard]] ModelDefinition& add_custom_create_action(
@@ -225,7 +225,7 @@ namespace mindnet::model
             std::string label_,
             const std::vector<std::string>& params_)
         {
-            return add_custom_action(plugins::core::enums::Crudl::CREATE, model_name_, label_, params_);
+            return add_custom_action(plugins::core::enums::Crudl::Create, model_name_, label_, params_);
         }
     };
 }

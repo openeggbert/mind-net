@@ -20,7 +20,7 @@ namespace mindnet::plugins::suggestion::validators
     OperationResult SuggestionReviewValidator::validate_create(const RequestContext& ctx,
                                                                     const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::REVIEWER,
+        return_if(ctx.role < plugins::core::enums::UserRole::Reviewer,
                   403, "You can not create suggestion reviews.");
 
         return ok_result;
@@ -32,7 +32,7 @@ namespace mindnet::plugins::suggestion::validators
         check_found(suggestion);
 
         return_if(
-            ctx.role < plugins::core::enums::UserRole::REVIEWER && suggestion.first.from_user_id != ctx.token.user_id,
+            ctx.role < plugins::core::enums::UserRole::Reviewer && suggestion.first.from_user_id != ctx.token.user_id,
             403, "You can not read this suggestion.");
 
         return ok_result;
@@ -43,7 +43,7 @@ namespace mindnet::plugins::suggestion::validators
     {
         return_if(ctx.token.user_id != old_entity.reviewer_id,
                   403, "Only creator of this suggestion review can update it");
-        return_if(old_entity.decision_status != plugins::suggestion::enums::DecisionStatus::REQUESTS_FEEDBACK,
+        return_if(old_entity.decision_status != plugins::suggestion::enums::DecisionStatus::RequestsFeedback,
                   400, "Only suggestion reviews with status REQUESTS_FEEDBACK can be updated.");
 
         return ok_result;
@@ -58,7 +58,7 @@ namespace mindnet::plugins::suggestion::validators
     OperationResult SuggestionReviewValidator::validate_list(const RequestContext& ctx,
                                                                   const string_map& filter) const
     {
-        if (ctx.role >= plugins::core::enums::UserRole::REVIEWER) return ok_result;
+        if (ctx.role >= plugins::core::enums::UserRole::Reviewer) return ok_result;
         return {403, "You can not list suggestion reviews."};
 
         return ok_result;

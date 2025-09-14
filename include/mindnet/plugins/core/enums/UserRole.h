@@ -44,26 +44,26 @@ namespace mindnet::plugins::core::enums
      */
     enum class UserRole
     {
-        GUEST = 0,
-        READER = 1,
-        EDITOR = 2,
-        REVIEWER = 3,
-        ADMIN = 4
+        Guest = 0,
+        Reader = 1,
+        Editor = 2,
+        Reviewer = 3,
+        Admin = 4
     };
 
     inline std::string user_role_to_string(const UserRole role)
     {
         switch (role)
         {
-        case UserRole::GUEST:
+        case UserRole::Guest:
             return "Guest";
-        case UserRole::READER:
+        case UserRole::Reader:
             return "Reader";
-        case UserRole::EDITOR:
+        case UserRole::Editor:
             return "Editor";
-        case UserRole::REVIEWER:
+        case UserRole::Reviewer:
             return "Reviewer";
-        case UserRole::ADMIN:
+        case UserRole::Admin:
             return "Admin";
         default:
             return "Unknown";
@@ -77,11 +77,11 @@ namespace mindnet::plugins::core::enums
 
     inline UserRole string_to_user_role(const std::string& role_str)
     {
-        if (role_str == "Guest") return UserRole::GUEST;
-        if (role_str == "Reader") return UserRole::READER;
-        if (role_str == "Editor") return UserRole::EDITOR;
-        if (role_str == "Reviewer") return UserRole::REVIEWER;
-        if (role_str == "Admin") return UserRole::ADMIN;
+        if (role_str == "Guest") return UserRole::Guest;
+        if (role_str == "Reader") return UserRole::Reader;
+        if (role_str == "Editor") return UserRole::Editor;
+        if (role_str == "Reviewer") return UserRole::Reviewer;
+        if (role_str == "Admin") return UserRole::Admin;
         throw std::runtime_error("Invalid user role: " + role_str);
     }
 

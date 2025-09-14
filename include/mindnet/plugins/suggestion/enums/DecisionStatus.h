@@ -28,26 +28,26 @@ namespace mindnet::plugins::suggestion::enums
 {
     enum class DecisionStatus
     {
-        APPROVED = 2,
-        REJECTED = 3,
-        CANCELLED = 4,
-        REQUESTS_FEEDBACK = 5
+        Approved = 2,
+        Rejected = 3,
+        Cancelled = 4,
+        RequestsFeedback = 5
     };
 
     inline std::string decision_status_to_string(const DecisionStatus status)
     {
         switch (status)
         {
-        case DecisionStatus::APPROVED:
-            return "approved";
-        case DecisionStatus::REJECTED:
-            return "rejected";
-        case DecisionStatus::CANCELLED:
-            return "cancelled";
-        case DecisionStatus::REQUESTS_FEEDBACK:
-            return "requests_feedback";
+        case DecisionStatus::Approved:
+            return "Approved";
+        case DecisionStatus::Rejected:
+            return "Rejected";
+        case DecisionStatus::Cancelled:
+            return "Cancelled";
+        case DecisionStatus::RequestsFeedback:
+            return "RequestsFeedback";
         default:
-            return "unknown";
+            return "Unknown";
         }
     }
 

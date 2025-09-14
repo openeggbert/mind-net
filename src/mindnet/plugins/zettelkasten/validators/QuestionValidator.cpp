@@ -23,7 +23,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::WRITE))
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -35,7 +35,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::READ))
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -48,7 +48,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto note = find_model(note, old_entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::WRITE))
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -60,7 +60,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::DELETE))
+        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -75,7 +75,7 @@ namespace mindnet::plugins::zettelkasten::validators
         auto note = find_model(tag_type, note_id);
         if (note.second.empty()) return {400, note.second};
 
-        if (!has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::READ))
+        if (!has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

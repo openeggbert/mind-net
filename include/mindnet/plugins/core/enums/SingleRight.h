@@ -32,23 +32,23 @@ namespace mindnet::plugins::core::enums
      */
     enum class SingleRight
     {
-        NONE = 0,
-        READ = 1,
-        WRITE = 2,
-        DELETE = 3
+        None = 0,
+        Read = 4,
+        Write = 2,
+        Delete = 1
     };
 
     inline std::string single_right_to_string(SingleRight single_right)
     {
         switch (single_right)
         {
-        case SingleRight::NONE:
+        case SingleRight::None:
             return "None";
-        case SingleRight::DELETE:
+        case SingleRight::Delete:
             return "Delete";
-        case SingleRight::WRITE:
+        case SingleRight::Write:
             return "Write";
-        case SingleRight::READ:
+        case SingleRight::Read:
             return "Read";
         default:
             return "Unknown";
@@ -63,7 +63,7 @@ namespace mindnet::plugins::core::enums
     inline mindnet::model::EnumDefinition single_right_to_enum_definition()
     {
         return mindnet::model::EnumDefinition{
-            single_right_to_string, 4, 0, 1, 2, 3
+            single_right_to_string, 4, 0, 4, 2, 1
         };
     }
 } // namespace mindnet::enums

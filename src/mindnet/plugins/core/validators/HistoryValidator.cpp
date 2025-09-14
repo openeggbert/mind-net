@@ -27,7 +27,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult HistoryValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::ADMIN,
+        return_if(entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::Admin,
                   403, "You can only read history for your own user.");
 
         //3. Request
@@ -47,7 +47,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult HistoryValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
     {
-        if (ctx.role != plugins::core::enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role != plugins::core::enums::UserRole::Admin) return ok_result;
 
         mandatory_filter(user_id)
 

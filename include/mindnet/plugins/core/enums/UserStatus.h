@@ -31,41 +31,41 @@ namespace mindnet::plugins::core::enums
      * @brief Enumerates different statuses a user can have within the system.
      *
      * This enumeration defines various user statuses for managing user accounts:
-     * - PENDING: Account created but not yet activated
-     * - ACTIVE: Normal active account 
-     * - DEACTIVATED: Account manually deactivated
-     * - BANNED: Account banned for violations
-     * - SUSPENDED: Account temporarily suspended
-     * - DELETED: Account marked as deleted
+     * - Pending: Account created but not yet activated
+     * - Active: Normal active account
+     * - Deactivated: Account manually deactivated
+     * - Banned: Account banned for violations
+     * - Suspended: Account temporarily suspended
+     * - Deleted: Account marked as deleted
      */
     enum class UserStatus
     {
-        PENDING = 0,
-        ACTIVE = 1,
-        DEACTIVATED = 2,
-        BANNED = 3,
-        SUSPENDED = 4,
-        DELETED = 5
+        Pending = 0,
+        Active = 1,
+        Deactivated = 2,
+        Banned = 3,
+        Suspended = 4,
+        Deleted = 5
     };
 
     inline std::string user_status_to_string(const UserStatus status)
     {
         switch (status)
         {
-        case UserStatus::PENDING:
-            return "pending";
-        case UserStatus::ACTIVE:
-            return "active";
-        case UserStatus::DEACTIVATED:
-            return "deactivated";
-        case UserStatus::BANNED:
-            return "banned";
-        case UserStatus::SUSPENDED:
-            return "suspended";
-        case UserStatus::DELETED:
-            return "deleted";
+        case UserStatus::Pending:
+            return "Pending";
+        case UserStatus::Active:
+            return "Active";
+        case UserStatus::Deactivated:
+            return "Deactivated";
+        case UserStatus::Banned:
+            return "Banned";
+        case UserStatus::Suspended:
+            return "Suspended";
+        case UserStatus::Deleted:
+            return "Deleted";
         default:
-            return "unknown";
+            return "Unknown";
         }
     }
 

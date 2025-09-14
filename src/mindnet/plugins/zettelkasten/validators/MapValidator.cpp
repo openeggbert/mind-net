@@ -36,7 +36,7 @@ namespace mindnet::plugins::zettelkasten::validators
 
     OperationResult MapValidator::validate_read(const RequestContext& ctx, const Model& entity) const
     {
-        if (ctx.role == plugins::core::enums::UserRole::ADMIN) return ok_result;
+        if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
         if (entity.owner_id == ctx.token.user_id) return ok_result;
         if (entity.team_id != 0 && plugins::core::enums::can_read(entity.team_rights))
         {

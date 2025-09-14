@@ -28,26 +28,26 @@ namespace mindnet::plugins::zettelkasten::enums
 {
     enum class QuestionType
     {
-        SINGLE = 0,
-        MULTI = 1,
-        TRUEFALSE = 2,
-        TEXT = 3
+        Single = 0,
+        Multi = 1,
+        TrueFalse = 2,
+        Text = 3
     };
 
     inline std::string question_type_to_string(const QuestionType type)
     {
         switch (type)
         {
-        case QuestionType::SINGLE:
-            return "single";
-        case QuestionType::MULTI:
-            return "multi";
-        case QuestionType::TRUEFALSE:
-            return "truefalse";
-        case QuestionType::TEXT:
-            return "text";
+        case QuestionType::Single:
+            return "Single";
+        case QuestionType::Multi:
+            return "Multi";
+        case QuestionType::TrueFalse:
+            return "TrueFalse";
+        case QuestionType::Text:
+            return "Text";
         default:
-            return "unknown";
+            return "Unknown";
         }
     }
 

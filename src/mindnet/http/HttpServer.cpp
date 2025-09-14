@@ -557,11 +557,11 @@ namespace mindnet::http
             user.username = username;
             user.password_hash = hashed;
             user.display_name = display_name;
-            user.role = plugins::core::enums::UserRole::READER;
+            user.role = plugins::core::enums::UserRole::Reader;
             user.profile_text = profile_text;
             user.last_login = 0;
             user.email = email;
-            user.status = plugins::core::enums::UserStatus::PENDING;
+            user.status = plugins::core::enums::UserStatus::Pending;
 
             error.clear();
             auto fields_ = user.to_values();
