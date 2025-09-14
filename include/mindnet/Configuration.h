@@ -23,6 +23,25 @@
 #define MIND_NET_VERSION_LABEL snapshot
 #define MIND_NET_VERSION MIND_NET_VERSION_MAYOR.MIND_NET_VERSION_MINOR.MIND_NET_VERSION_PATCH-MIND_NET_VERSION_LABEL
 
+// #Example:
+//
+// #Identification
+// name=Robert Vokac
+// description=Zettelkasten system for Robert Vokac
+// environment=Development
+// #
+// #host=
+// #port=
+// #frontend_port=
+//
+// #Access
+// access_mode=EveryoneCanDoEverything
+// registration_mode=Free
+// default_user_role=Reader
+//
+// #Secrets
+// jwt_secret=***
+
 namespace mindnet
 {
     inline string_map loadProperties(const std::string& filename)
