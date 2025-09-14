@@ -42,6 +42,7 @@ namespace mindnet::plugins::zettelkasten::models
             [this] { return test_ne(map_id, 0, PropertyColumns::MAP_ID); },
             [this] { return test_ne(note_id, 0, PropertyColumns::NOTE_ID); },
             [this] { return testt_between(key, 1, 64, PropertyColumns::KEY); },
+            [this] { return testt_between(key, 1, 256, PropertyColumns::VALUE); },
         };
         return ValidatorChain::run(list);
     }

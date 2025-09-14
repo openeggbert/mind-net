@@ -119,6 +119,7 @@ openssl rand -base64 32
 ## BACKLOG
 
 ### Critical
+- [ ] IMPROVEMENT Refactor struct Configuration
 - [ ] FEATURE Triggers - also add adding operations (as json) to history table
 - [ ] FEATURE User authentication
   * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
@@ -130,13 +131,10 @@ openssl rand -base64 32
 - [ ] New table concept : title, disambiguation, note_id
 - [ ] New table source: type:book/web, title, author, year, page_number, url, map_id
 - [ ] New table idea: string title, string content, bool important, bool public
-- [ ] Tree view: via vis.js, clicking on node opens the node in a new tab 
-- [ ] property.key, tag_type.title - length should be limited
 - [ ] BUG Update of boolean values in SQLite is not working.
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [ ] FEATURE User authorization via Validators
 - [ ] FEATURE Log logging in, registration, logout, password changes
-- [ ] IMPROVEMENT Refactor struct Configuration
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
 - [ ] TASK Check operator== implementations for all models
 - [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
@@ -172,7 +170,7 @@ openssl rand -base64 32
     expires_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
   ```
-
+- [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 
 ### Experimenal
 - [ ] Chat component - Slack-like
