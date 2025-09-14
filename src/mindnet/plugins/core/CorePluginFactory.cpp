@@ -1,5 +1,6 @@
 #include "mindnet/plugins/core/CorePluginFactory.h"
 
+#include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 #include "mindnet/plugins/core/validators/HistoryValidator.h"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.h"
 #include "mindnet/plugins/core/validators/TeamValidator.h"
@@ -20,6 +21,7 @@ namespace mindnet::plugins::core
         REGISTER_MODEL(team, Team, TEAM)
         REGISTER_MODEL(team_member, TeamMember, TEAM_MEMBER)
         REGISTER_MODEL(history, History, HISTORY)
+        plugin->register_trigger(std::make_shared<triggers::HistoryCommonTrigger>());
 
         plugin->close_for_changes();
         return plugin;

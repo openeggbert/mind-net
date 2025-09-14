@@ -79,6 +79,16 @@ namespace mindnet::api
         model_registrations.push_back(registration);
     }
 
+    void Plugin::register_trigger(const TriggerPtr& trigger)
+    {
+        return triggers.push_back(trigger);
+    }
+
+    const std::vector<TriggerPtr>& Plugin::get_triggers() const
+    {
+        return triggers;
+    }
+
     const std::vector<std::shared_ptr<ModelRegistration>>& Plugin::get_model_registrations() const
     {
         return model_registrations;

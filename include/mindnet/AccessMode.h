@@ -14,7 +14,7 @@ namespace mindnet
         MaintenanceMode = 10 // API is disabled, only admins can access
     };
 
-    inline string access_mode_to_string(AccessMode access_mode)
+    inline std::string access_mode_to_string(AccessMode access_mode)
     {
         switch (access_mode)
         {

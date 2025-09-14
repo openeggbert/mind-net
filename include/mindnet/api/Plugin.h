@@ -8,6 +8,7 @@
 
 #include "IValidator.h"
 #include "ModelRegistration.h"
+#include "Trigger.h"
 #include "jwt-cpp/jwt.h"
 #include "mindnet/impl/sqlite/RepositoryHelper.h"
 
@@ -32,7 +33,10 @@ namespace mindnet::api
         void register_model(
             ModelDefinition& model_definition,
             const std::shared_ptr<IValidator>& validator);
+        void register_trigger(const TriggerPtr& trigger);
+        const std::vector<TriggerPtr>& get_triggers() const;
         const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
+
 
     private:
         std::string name;
@@ -41,6 +45,7 @@ namespace mindnet::api
         bool has_app_ = false;
         bool is_closed_for_changes_ = false;
         std::vector<std::shared_ptr<ModelRegistration>> model_registrations;
+        std::vector<TriggerPtr> triggers;
     };
 
     typedef std::shared_ptr<Plugin> PluginPtr;

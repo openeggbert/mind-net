@@ -6,6 +6,7 @@
 #define MIND_NET_SERVICE_H
 #include "IService.h"
 #include "api/PluginRegistry.h"
+#include "api/TriggerRegistry.h"
 
 namespace mindnet
 {
@@ -19,6 +20,7 @@ namespace mindnet
         std::map<std::string, api::IValidator*> validators;
         DbPtr db_ptr;
         api::PluginRegistryPtr plugin_registry_ptr;
+        api::TriggerRegistryPtr trigger_registry_ptr;
 
     public:
         Service(const DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
@@ -43,7 +45,7 @@ namespace mindnet
         entity_fields request_to_entity_fields(
             crow::json::rvalue& body, plugins::core::enums::Crudl crudl, ModelDefinition& def
         ) override;
-        const api::PluginRegistryPtr get_plugin_registry() const;
+        const api::PluginRegistryPtr get_plugin_registry() const override;
 
     private:
         api::IValidator* get_validator(const std::string& name);

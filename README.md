@@ -147,6 +147,7 @@ openssl rand -base64 32
   ```
 
 ### Extending
+- [ ] Improve documentation
 - [ ] FEATURE New entity Flag
 - [ ] IMPROVEMENT Add logging to files
 - [ ] FEATURE Support for export to static HTML files
@@ -176,79 +177,6 @@ openssl rand -base64 32
 - [ ] FEATURE New table discussion_read_status
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] FEATURE Implement complex Filtering in REST API
-
-
-
-### Triggers
-
-```
-//Trigger makes operations in database
-
-enum TriggerPhase {
-Before, 
-After, 
-InsteadOf, //Trigger is executed instead of the operation 
-Around  //Like before and after together
-}
-
-class Trigger {
-
-public:
-    virtual ~Trigger() = default;
-    virtual void run(const std::string& table, CrudlOperation op, const Record& record) = 0;
- 
-condition (order>400 ...);
-bool validation_passed:
-int priority;
-string name;
-string description;
-}
-
-using TriggerPtr = std::shared_ptr<Trigger>;
-
-using CrudLMap = std::unordered_map<CrudL, std::vector<TriggerPtr>>;
-using PhaseMap = std::unordered_map<TriggerPhase, CrudLMap>;
-using TableMap = std::unordered_map<std::string, PhaseMap>;
-
-class TriggerRegistry {
-public:
-    void registerTrigger(const std::string& table, TriggerType triggerType, CrudlOperation op, TriggerPtr trigger) {
-        registry_[table][triggerType][op].push_back(trigger);
-    }
-
-    void execute(const std::string& table, TriggerType triggerType, CrudlOperation op, const Record& record) {
-        auto tableIt = registry_.find(table);
-        if (tableIt == registry_.end()) return;
-
-        auto phaseIt = tableIt->second.find(phase);
-        if (phaseIt == tableIt->second.end()) return;
-
-        auto crudIt = phaseIt->second.find(op);
-        if (crudIt == phaseIt->second.end()) return;
-
-        for (auto& trigger : crudIt->second) {
-            trigger->run(table, op, record);
-        }
-    private:
-        TableMap registry_;
-    }
-
-private:
-    TableMap registry_;
-};
-
-//TriggerRegistry registry;
-
-//registry.registerTrigger("note", Phase::Before, Crud::Update, std::make_shared<AuditTrigger>());
-//registry.registerTrigger("note", Phase::After, Crud::Update, std::make_shared<CascadeTrigger>());
-
-//registry.execute("note", Phase::Before, Crud::Update, record);
-
-```
-
-Přidej parametr validation_passed: true/false do kontextu triggeru
-
-
 
 ### Implement Complex Filtering in REST API
 
