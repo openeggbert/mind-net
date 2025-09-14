@@ -9,6 +9,10 @@
 #include "mindnet/http/RestHelper.h"
 #include "mindnet/impl/sqlite/RepositoryHelper.h"
 
+#define check_maintenance_mode()\
+if (g_configuration.access_mode == AccessMode::MaintenanceMode)\
+return crow::response(503, "Maintenance Mode. Service Unavailable.");
+
 namespace mindnet::http
 {
     using http::RestHelper;
@@ -34,6 +38,8 @@ namespace mindnet::http
         };
         auto create_lambda_function = [&service_ptr, &def](const crow::request& req)
         {
+            check_maintenance_mode()
+
             trace << "Create lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::Create))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
@@ -70,6 +76,8 @@ namespace mindnet::http
 
         auto read_lambda_function = [&service_ptr, &def, &split_string_by_commas](const crow::request& req, int id)
         {
+            check_maintenance_mode()
+
             trace << "Read lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::Read))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
@@ -110,6 +118,8 @@ namespace mindnet::http
 
         auto update_lambda_function = [&service_ptr, &def](const crow::request& req, int id)
         {
+            check_maintenance_mode()
+
             trace << "Update lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::Update))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
@@ -153,6 +163,8 @@ namespace mindnet::http
 
         auto delete_lambda_function = [&service_ptr, &def](const crow::request& req, int id)
         {
+            check_maintenance_mode()
+
             trace << "Delete lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::Delete))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
@@ -172,6 +184,8 @@ namespace mindnet::http
 
         auto list_lambda_function = [&service_ptr, &def, &split_string_by_commas](const crow::request& req)
         {
+            check_maintenance_mode()
+
             trace << "List lambda function called" << commit;
             if (!def.get_allowed_rest_operations().contains(Crudl::List))
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");

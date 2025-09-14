@@ -185,6 +185,9 @@ bool commands_function_start(
     mindnet::info << "Starting backend on port " << port << commit;
     mindnet::info << "Starting frontend on port " << frontend_port << commit;
     mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
+    mindnet::g_configuration.host = host;
+    mindnet::g_configuration.port = port;
+    mindnet::g_configuration.frontend_port = frontend_port;
     server.run(host, port, frontend_port);
     return false;
 }
@@ -246,6 +249,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 
 int main(int argc, char** argv)
 {
+    mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
     auto loggers = {
         &mindnet::fatal, &mindnet::err, &mindnet::warn,
         &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::experiment

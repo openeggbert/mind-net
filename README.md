@@ -119,7 +119,6 @@ openssl rand -base64 32
 ## BACKLOG
 
 ### Critical
-- [ ] IMPROVEMENT Refactor struct Configuration
 - [ ] FEATURE Triggers - also add adding operations (as json) to history table
 - [ ] FEATURE User authentication
   * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
@@ -152,7 +151,6 @@ openssl rand -base64 32
 - [ ] IMPROVEMENT Add logging to files
 - [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Create OpenAPI specification for the REST API
-- [ ] FEATURE new endpoint /info - shows some configuration entries (not all) + other information
 - [ ] IMPROVEMENT Paging - add First and Last buttons
 - [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast 
 - [ ] ModelDefinition - add title_column
@@ -172,7 +170,7 @@ openssl rand -base64 32
   ```
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 
-### Experimenal
+### Experimental
 - [ ] Chat component - Slack-like
 - [ ] FEATURE New table comment_reaction
 - [ ] FEATURE New table discussion_read_status
@@ -321,3 +319,5 @@ FOREIGN KEY(discussion_id) REFERENCES discussion(id)
 ## Done
 
 - [x] IMPROVEMENT Enums will be PascalCase, not all uppercase
+- [x] IMPROVEMENT Refactor struct Configuration
+- [x] FEATURE new endpoints /info and /health - shows some configuration entries (not all) + other information

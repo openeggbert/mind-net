@@ -13,9 +13,24 @@
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/User.h"
+#define check_maintenance_mode()\
+if (g_configuration.access_mode == AccessMode::MaintenanceMode)\
+return crow::response(503, "Maintenance Mode. Service Unavailable.");
 
 namespace mindnet::http
 {
+    namespace Labels
+    {
+        static const std::string DAY = " day ";
+        static const std::string DAYS = " days ";
+        static const std::string HOUR = " hour ";
+        static const std::string HOURS = " hours ";
+        static const std::string MINUTE = " minute ";
+        static const std::string MINUTES = " minutes ";
+        static const std::string SECOND = " second";
+        static const std::string SECONDS = " seconds";
+    }
+
     HttpServer::HttpServer(ServicePtr& service_ptr,
                            const std::string& directory_for_static_files_)
         : service_ptr_(service_ptr),
@@ -25,6 +40,8 @@ namespace mindnet::http
 
         create_model_definition_endpoints(service_ptr);
         create_authentication_endpoints(service_ptr);
+        create_info_endpoint(service_ptr);
+        create_health_endpoint(service_ptr);
     }
 
     void HttpServer::run(const string& host, int port, int frontend_port)
@@ -79,6 +96,14 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/web/<string>")
         ([this](const crow::request& req, crow::response& res, const std::string& file_name)
         {
+            if (g_configuration.access_mode == AccessMode::MaintenanceMode)
+            {
+                res.code = 503;
+                res.write("Maintenance Mode. Service Unavailable.");
+                res.end();
+                return;
+            }                
+
             if (file_name.find("..") != std::string::npos)
             {
                 res.code = 403;
@@ -212,24 +237,21 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/web")
         ([](const crow::request&, crow::response& res)
         {
+            if (g_configuration.access_mode == AccessMode::MaintenanceMode)
+            {
+                res.code = 503;
+                res.write("Maintenance Mode. Service Unavailable.");
+                res.end();
+                return;
+            }
+            
             res.redirect("/web/index.html");
             res.end();
         });
     }
 
-    const std::pmr::set<string> forbidden_model_names = {
-        "comment",
-        "discussion",
-        "message",
-        "review",
-        "sm2_state",
-        "suggestion",
-        "suggestion_review",
-    };
-
     void HttpServer::create_model_definition_endpoints(const ServicePtr& service_ptr)
-    {
-        //todo: remove this duplicity
+    {        
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
         {
             if (!string_.empty())
@@ -321,7 +343,6 @@ namespace mindnet::http
             crow::json::wvalue res;
             if (
                 model_definition->get_allowed_rest_operations().empty()
-                //|| forbidden_model_names.contains(model_name)
             )
             {
                 return res;
@@ -383,13 +404,19 @@ namespace mindnet::http
 
         //CREATE
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::POST)
-            ([] { return crow::response(405, "Method not allowed for model_definition.");; });
+            ([]
+            {
+                check_maintenance_mode()
+                return crow::response(405, "Method not allowed for model_definition.");
+            });
 
 
         //READ
         CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
         ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
         {
+            check_maintenance_mode()
+            
             if (!service_ptr->has_model(model_name))
             {
                 return crow::response(404, "Model definition not found: " + model_name);
@@ -410,16 +437,27 @@ namespace mindnet::http
 
         // UPDATE
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::PUT)
-            ([] { return crow::response(405, "Method not allowed for model_definition.");; });
+            ([]
+            {
+                check_maintenance_mode()
+                return crow::response(405, "Method not allowed for model_definition.");;
+            });
 
         // DELETE
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::DELETE)
-            ([] { return crow::response(405, "Method not allowed for model_definition.");; });
+            ([]
+            {
+                check_maintenance_mode()
+
+                return crow::response(405, "Method not allowed for model_definition.");;
+            });
 
         // LIST
         CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::GET)
         ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req)
         {
+            check_maintenance_mode()
+            
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::set<string> fields_set;
@@ -444,6 +482,89 @@ namespace mindnet::http
         });
     }
 
+    void HttpServer::create_info_endpoint(const ServicePtr& service_ptr)
+    {
+        //READ
+        CROW_ROUTE(crow_app, "/info").methods(crow::HTTPMethod::GET)
+        ([service_ptr](const crow::request& req)
+        {
+            check_maintenance_mode()
+            
+            nlohmann::ordered_json result;
+
+            result["name"] = g_configuration.name;
+            result["description"] = g_configuration.description;
+            result["version"] = STRINGIFY(MIND_NET_VERSION);
+            result["environment"] = environment_to_string(g_configuration.environment);
+            //
+            result["host"] = g_configuration.host;
+            result["port"] = g_configuration.port;
+            result["frontend_port"] = g_configuration.frontend_port;
+            //
+            result["access_mode"] = access_mode_to_string(g_configuration.access_mode);
+            result["registration_mode"] = registration_mode_to_string(g_configuration.registration_mode);
+            result["default_user_role"] = plugins::core::enums::user_role_to_string(g_configuration.default_user_role);
+
+            return crow::response(200, result.dump(2));
+
+        });
+
+    }
+    void HttpServer::create_health_endpoint(const ServicePtr& service_ptr)
+    {
+        //READ
+        CROW_ROUTE(crow_app, "/health").methods(crow::HTTPMethod::GET)
+        ([service_ptr](const crow::request& req)
+        {
+            auto print_duration = [](ll start_time, ll end_time)
+            {
+                static const int SECONDS_PER_DAY = 24 * 60 * 60;
+                static const int SECONDS_PER_HOUR = 60 * 60;
+                static const int SECONDS_PER_MINUTE = 60;
+
+                ll elapsed_seconds = end_time - start_time;
+                short days = 0;
+                short hours = 0;
+                short minutes = 0;
+                short seconds = 0;
+                days = elapsed_seconds / SECONDS_PER_DAY;
+                elapsed_seconds -= days * SECONDS_PER_DAY;
+                hours = elapsed_seconds / SECONDS_PER_HOUR;
+                elapsed_seconds -= hours * SECONDS_PER_HOUR;
+                minutes = elapsed_seconds / SECONDS_PER_MINUTE;
+                elapsed_seconds -= minutes * SECONDS_PER_MINUTE;
+                seconds = elapsed_seconds;
+                std::ostringstream oss;
+                if (days > 0)
+                {
+                    oss << days << (days == 1 ? Labels::DAY : Labels::DAYS);
+                }
+                if (hours > 0)
+                {
+                    oss<< hours << (hours == 1 ? Labels::HOUR : Labels::HOURS);
+                }
+                if (minutes > 0)
+                {
+                    oss << minutes << (minutes == 1 ? Labels::MINUTE : Labels::MINUTES);
+                }
+                oss << seconds << (seconds == 1 ? Labels::SECOND : Labels::SECONDS);
+
+                return oss.str();
+            };
+
+            nlohmann::ordered_json result;
+
+            auto now = Utils::currentUnixTimestamp();
+            result["status"] = g_configuration.access_mode == AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
+            result["uptime"] = print_duration(start_time, now);
+            result["timestamp"] = Utils::unixToFormattedString(now);
+            result["started_at"] = Utils::unixToFormattedString(start_time);
+
+            return crow::response(200, result.dump(2));
+
+        });
+
+    }
     inline std::string hash_password(const std::string& pass)
     {
         unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -491,6 +612,8 @@ namespace mindnet::http
     {
         CROW_ROUTE(crow_app, "/login").methods("POST"_method)([service_ptr](const crow::request& req)
         {
+            check_maintenance_mode()
+            
             UserCredentials credentials = req;
             if (!credentials.error.empty())
             {
@@ -531,6 +654,12 @@ namespace mindnet::http
 
         CROW_ROUTE(crow_app, "/register").methods("POST"_method)([=](const crow::request& req)
         {
+            check_maintenance_mode()
+            
+            if (g_configuration.registration_mode == RegistrationMode::AdminAddsUsers)
+            {
+                return crow::response{405, "Endpoint /register is disabled. Only admin can add new users."};
+            }
             auto body = crow::json::load(req.body);
             if (!body || !body.has("username") || !body.has("password"))
                 return crow::response{400};
@@ -576,6 +705,8 @@ namespace mindnet::http
 
         CROW_ROUTE(crow_app, "/protected")([](const crow::request& req)
         {
+            check_maintenance_mode()
+            
             LoginToken login_token{req};
             return crow::response(login_token.status, login_token.msg);
         });

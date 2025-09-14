@@ -39,6 +39,8 @@ namespace mindnet::http
         //
         void create_web_endpoints();
         void create_model_definition_endpoints(const ServicePtr& service_ptr);
+        void create_info_endpoint(const ServicePtr& service_ptr);
+        void create_health_endpoint(const ServicePtr& service_ptr);
         void create_authentication_endpoints(const ServicePtr& service_ptr);
     };
 }

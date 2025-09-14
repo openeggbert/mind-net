@@ -21,11 +21,11 @@ namespace mindnet::plugins::core::validators
 
     OperationResult UserValidator::validate_create(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(!g_configuration.allow_self_registration && ctx.token.ko(),
+        return_if(g_configuration.registration_mode == RegistrationMode::AdminAddsUsers && ctx.token.ko(),
                   401, "You must be logged in to create a user")
 
         return_if(
-            !g_configuration.allow_self_registration && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::
+            g_configuration.registration_mode == RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::
             Admin,
             403, "You must be admin to create a user.")
 

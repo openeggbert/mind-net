@@ -167,7 +167,7 @@ namespace mindnet
     OperationResult Service::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
         //Authentication
-        if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can read."};
+        if (token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly) return {401, "Only logged in users can read."};
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -217,7 +217,7 @@ namespace mindnet
                                       string_map& filter)
     {
         //Authentication
-        if (token.ko() && !g_configuration.allow_public_access) return {401, "Only logged in users can list."};
+        if (token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly) return {401, "Only logged in users can list."};
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {

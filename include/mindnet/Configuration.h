@@ -9,7 +9,19 @@
 #include <iostream>
 #include <map>
 
+#include "AccessMode.h"
+#include "Environment.h"
+#include "RegistrationMode.h"
 #include "plugins/core/enums/UserRole.h"
+#define if_map_has(key) if (map_contains(map, #key))
+#define save_enum(key) if_map_has(key) key = string_to_##key(map[ #key]);
+#define save_text(key) if_map_has(key) key = map[ #key];
+#define save_number(key) if_map_has(key) key = std::stoi(map[ #key]);
+#define MIND_NET_VERSION_MAYOR 0
+#define MIND_NET_VERSION_MINOR 0
+#define MIND_NET_VERSION_PATCH 0
+#define MIND_NET_VERSION_LABEL snapshot
+#define MIND_NET_VERSION MIND_NET_VERSION_MAYOR.MIND_NET_VERSION_MINOR.MIND_NET_VERSION_PATCH-MIND_NET_VERSION_LABEL
 
 namespace mindnet
 {
@@ -52,10 +64,18 @@ namespace mindnet
 
     struct Configuration
     {
-        bool allow_public_access{true};
-        bool allow_self_registration{true};
-        bool require_admin_approval_for_new_users{false};
+        //identification
+        std::string name;
+        std::string description;
+        Environment environment{Environment::Production};
+        mutable unsigned short port{};
+        mutable unsigned short frontend_port{};
+        mutable std::string host{};
+        //access
+        AccessMode access_mode{AccessMode::EveryoneCanDoEverything};
+        RegistrationMode registration_mode{RegistrationMode::Free};
         plugins::core::enums::UserRole default_user_role{plugins::core::enums::UserRole::Reader};
+        //secrets
         std::string jwt_secret{};
 
         bool string_to_bool(std::string& str)
@@ -65,25 +85,28 @@ namespace mindnet
             throw std::runtime_error("Invalid boolean value: " + str);
         }
 
-        bool map_contains(string_map& map, std::string key)
+        bool map_contains(string_map& map, const std::string& key)
         {
             return map.find(key) != map.end();
         }
 
         Configuration(string_map map)
         {
-            if (map_contains(map, "allow_public_access"))
-                allow_public_access = string_to_bool(
-                    map["allow_public_access"]);
-            if (map_contains(map, "allow_self_registration"))
-                allow_self_registration = string_to_bool(
-                    map["allow_self_registration"]);
-            if (map_contains(map, "require_admin_approval_for_new_users"))
-                require_admin_approval_for_new_users = string_to_bool(
-                    map["require_admin_approval_for_new_users"]);
-            if (map_contains(map, "default_user_role")) default_user_role = plugins::core::enums::string_to_user_role(
-                map["default_user_role"]);
-            if (map_contains(map, "jwt_secret")) jwt_secret = map["jwt_secret"];
+            save_text(name)
+            save_text(description)
+            save_enum(environment)
+            //
+            save_number(port)
+            save_number(frontend_port)
+            save_text(host)
+            //
+            save_enum(access_mode)
+            save_enum(registration_mode)
+            if_map_has(default_user_role) default_user_role = plugins::core::enums::string_to_user_role(map[ "default_user_role"]);
+            //
+            save_text(jwt_secret)
+            //
+
         }
     };
 
