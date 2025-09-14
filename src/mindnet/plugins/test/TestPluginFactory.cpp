@@ -2,7 +2,6 @@
 
 #include "mindnet/plugins/test/TestPluginFactory.h"
 
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/plugins/test/validators/ReviewValidator.h"
 #include "mindnet/plugins/test/validators/SM2StateValidator.h"
 

@@ -10,7 +10,7 @@ validators[#model] = model##_validator;
 
 namespace mindnet
 {
-    static constexpr bool VALIDATION_ENABLED = true;
+    static constexpr bool VALIDATION_ENABLED = false;
     using validator = api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;

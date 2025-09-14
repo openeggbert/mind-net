@@ -7,8 +7,7 @@
 #define REGISTER_MODEL(model, Model, MODEL)\
 plugin->register_model(\
         models::MODEL##_DEFINITION,\
-        std::make_shared<validators::Model##Validator>(),\
-        impl::sqlite::request_to_entity_fields_##model );
+        std::make_shared<validators::Model##Validator>());
 
 #include "Plugin.h"
 

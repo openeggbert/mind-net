@@ -8,12 +8,6 @@ using namespace std;
 
 namespace mindnet
 {
-
-
-    //
-    // Tests
-    //
-
     TEST(UtilsTest, LetterToDecimal_Valid)
     {
         EXPECT_EQ(Utils::letterToDecimal('a'), 0);

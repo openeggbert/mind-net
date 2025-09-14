@@ -1,5 +1,4 @@
 #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/plugins/suggestion/validators/SuggestionValidator.h"
 #include "mindnet/plugins/suggestion/validators/SuggestionReviewValidator.h"
 

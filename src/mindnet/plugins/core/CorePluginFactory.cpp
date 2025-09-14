@@ -1,6 +1,5 @@
 #include "mindnet/plugins/core/CorePluginFactory.h"
 
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/plugins/core/validators/HistoryValidator.h"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.h"
 #include "mindnet/plugins/core/validators/TeamValidator.h"

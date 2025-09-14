@@ -1,7 +1,5 @@
 
-
 #include "mindnet/plugins/chat/ChatPluginFactory.h"
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/plugins/chat/validators/CommentValidator.h"
 #include "mindnet/plugins/chat/validators/DiscussionValidator.h"
 

@@ -58,8 +58,8 @@ namespace mindnet::api
 
     void Plugin::register_model(
         ModelDefinition& model_definition,
-        std::shared_ptr<IValidator> validator,
-        api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer)
+        const std::shared_ptr<IValidator>& validator
+        )
     {
         if (is_closed_for_changes_)
         {
@@ -68,13 +68,11 @@ namespace mindnet::api
         }
 
         std::shared_ptr<IRepository> repository = std::make_shared<impl::sqlite::RepositoryImplSqlite>(
-        convert_rest_request_to_entity_fields_pointer,
             model_definition);
 
         auto registration = std::make_shared<ModelRegistration>(
             model_definition,
             validator,
-            convert_rest_request_to_entity_fields_pointer,
             repository
             );
 

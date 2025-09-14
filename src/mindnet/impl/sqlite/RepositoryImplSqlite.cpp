@@ -32,10 +32,8 @@
 namespace mindnet::impl::sqlite
 {
     RepositoryImplSqlite::RepositoryImplSqlite(
-        api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer_,
         model::ModelDefinition& model_definition_
-    ) : IRepository(convert_rest_request_to_entity_fields_pointer_,
-                    model_definition_)
+    ) : IRepository(model_definition_)
     {
     }
 
@@ -75,6 +73,77 @@ namespace mindnet::impl::sqlite
     entity_fields RepositoryImplSqlite::request_to_entity_fields(
         crow::json::rvalue& body, plugins::core::enums::Crudl crudl)
     {
-        return request_to_entity_fields_pointer_(body, crudl);
+        entity_fields result;
+        bool create = crudl == plugins::core::enums::Crudl::CREATE;
+        bool update = crudl == plugins::core::enums::Crudl::UPDATE;
+        if (!create && !update)
+        {
+            throw std::runtime_error(std::string("Invalid crudl ") + crudl_to_string(crudl));
+        }
+        //id
+        result.emplace_back(0);
+        //created at
+        if (create) { result.emplace_back(static_cast<int64_t>(Utils::currentUnixTimestamp())); }
+        else { result.emplace_back(static_cast<int64_t>(0)); }
+        //updated at
+        result.emplace_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+
+
+        for (auto& col : model_definition.get_columns())
+        {
+
+            auto column_name = col.get_column_name();
+            if (
+                column_name == model::BaseColumns::ID ||
+                column_name == model::BaseColumns::CREATED_AT ||
+                column_name == model::BaseColumns::UPDATED_AT
+                ) continue;
+            bool mandatory = col.is_mandatory();
+            bool has_value = body.has(col.get_column_name());
+            auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
+            if (mandatory && !has_value)
+            {
+                throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");
+            }
+
+            switch (find_primitive_column_type(col.get_column_type()))
+            {
+            case model::PrimitiveColumnType::Text:
+                {
+                    result.emplace_back(
+                        has_value
+                            ? rvalue.s()
+                            : col.get_default_value());
+                }
+                break;
+            case model::PrimitiveColumnType::Number:
+                {
+                    if (col.get_foreign_key().empty())
+                    {
+                        result.emplace_back(
+                            has_value
+                                ? cast64(rvalue)
+                                : (col.get_default_value().empty()
+                                       ? cast64(0)
+                                       : cast64(std::stoi(col.get_default_value()))));
+                    }
+                    else
+                    {
+                        if (has_value && rvalue != 0)
+                        {
+                            result.emplace_back(cast64(rvalue));
+                        }
+                        else
+                        {
+                            result.emplace_back(FOREIGN_KEY_NULL);
+                        }
+                    }
+                    break;
+                    default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));
+                }
+            }
+
+        }
+        return result;
     }
 }

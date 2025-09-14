@@ -208,6 +208,10 @@ namespace mindnet::model
         {
             return default_value;
         }
+        [[nodiscard]] const std::string get_default_int_value() const
+        {
+            return default_value;
+        }
 
         [[nodiscard]] const bool is_auto() const
         {

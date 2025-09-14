@@ -2,7 +2,6 @@
 
 #include "mindnet/plugins/mail/MailPluginFactory.h"
 
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/plugins/mail/validators/MessageValidator.h"
 
 namespace mindnet::plugins::mail

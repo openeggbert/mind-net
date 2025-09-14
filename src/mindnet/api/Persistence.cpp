@@ -4,7 +4,6 @@
 
 #include "mindnet/api/Persistence.h"
 
-#include "mindnet/Configuration.h"
 #include "mindnet/Global.h"
 #include "mindnet/http/LoginToken.h"
 
@@ -24,7 +23,6 @@ namespace mindnet::api
             {
                 auto model_definition = model_registration->model_definition;
                 IRepository* repo = new RepositoryImplSqlite(
-                    model_registration->convert_rest_request_to_entity_fields_pointer,
                     model_definition);
                 auto model_name = model_definition.get_model_name();
                 repositories[model_name] = repo;

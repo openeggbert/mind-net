@@ -32,9 +32,6 @@
 
 namespace mindnet::api
 {
-    typedef entity_fields (*
-        request_to_entity_fields_pointer)(crow::json::rvalue&, mindnet::plugins::core::enums::Crudl);
-
     using std::string;
 
     class IRepository
@@ -42,7 +39,6 @@ namespace mindnet::api
     public:
         virtual ~IRepository() = default;
         IRepository(
-            api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
             model::ModelDefinition& model_definition
         );
         virtual int create(const entity_fields& fields, string& error) = 0;
@@ -56,7 +52,6 @@ namespace mindnet::api
         0;
 
     protected:
-        request_to_entity_fields_pointer request_to_entity_fields_pointer_ = nullptr;
         model::ModelDefinition model_definition;
     };
 }

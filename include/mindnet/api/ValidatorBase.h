@@ -11,7 +11,6 @@
 #include "IValidator.h"
 #include "../OperationResult.h"
 #include "PersistenceMethods.h"
-#include "../api/PersistenceTypedefs.h"
 #include "../api/RequestContext.h"
 #include "../model/BaseModel.h"
 
@@ -72,7 +71,7 @@ namespace mindnet::api
                 {
                     { d.validate_create(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_create returning result_t"
+                "Derived must implement validate_create returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -101,7 +100,7 @@ namespace mindnet::api
                 {
                     { d.validate_read(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_read returning result_t"
+                "Derived must implement validate_read returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -130,7 +129,7 @@ namespace mindnet::api
                 {
                     { d.validate_update(ctx, old_m, new_m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_update returning result_t"
+                "Derived must implement validate_update returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -171,7 +170,7 @@ namespace mindnet::api
                 {
                     { d.validate_delete(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_delete returning result_t"
+                "Derived must implement validate_delete returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -197,7 +196,7 @@ namespace mindnet::api
                 {
                     { d.validate_list(ctx, fm) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_list returning result_t"
+                "Derived must implement validate_list returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);

@@ -31,8 +31,7 @@ namespace mindnet::api
         bool is_closed_for_changes() const;
         void register_model(
             ModelDefinition& model_definition,
-            std::shared_ptr<IValidator> validator,
-            api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer);
+            const std::shared_ptr<IValidator>& validator);
         const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
 
     private:

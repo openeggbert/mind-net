@@ -1,7 +1,6 @@
 
 
 #include "mindnet/plugins/zettelkasten/ZettelkastenPluginFactory.h"
-#include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/plugins/zettelkasten/validators/CollectionValidator.h"
 #include "mindnet/plugins/zettelkasten/validators/CollectionItemValidator.h"
 #include "mindnet/plugins/zettelkasten/validators/ContentValidator.h"

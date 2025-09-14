@@ -37,7 +37,6 @@ namespace mindnet::impl::sqlite
     {
     public:
         RepositoryImplSqlite(
-            api::request_to_entity_fields_pointer convert_rest_request_to_entity_fields_pointer,
             model::ModelDefinition& model_definition
         );
         ~RepositoryImplSqlite() override;

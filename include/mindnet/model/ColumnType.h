@@ -6,6 +6,8 @@
 
 #include <string>
 
+#include "PrimitiveColumnType.h"
+
 namespace mindnet::model
 {
     enum class ColumnType
@@ -45,6 +47,25 @@ namespace mindnet::model
     inline std::string column_type_to_string(int column_type)
     {
         return column_type_to_string(static_cast<ColumnType>(column_type));
+    }
+
+    inline PrimitiveColumnType find_primitive_column_type(const ColumnType& column_type)
+    {
+        switch (column_type)
+        {
+        case ColumnType::TEXT:
+        case ColumnType::TEXTAREA:
+            return PrimitiveColumnType::Text;
+        case ColumnType::INTEGER:
+        case ColumnType::BOOL:
+        case ColumnType::DATETIME:
+            return PrimitiveColumnType::Number;
+
+        case ColumnType::REAL:
+        case ColumnType::BLOB:
+        default:
+            return PrimitiveColumnType::Unknown;
+        }
     }
 }
 
