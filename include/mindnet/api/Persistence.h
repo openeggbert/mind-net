@@ -6,6 +6,7 @@
 
 #include "IPersistence.h"
 #include "IRepository.h"
+#include "PluginRegistry.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 #include "../model/ModelDefinition.h"
@@ -21,11 +22,11 @@ namespace mindnet::api
     private:
         std::map<std::string, api::IRepository*> repositories;
         std::vector<std::string> repository_names;
-
         api::IRepository* get_repository(const std::string& name);
 
+
     public:
-        Persistence();
+        Persistence(PluginRegistryPtr& get_plugin_registry);
         ~Persistence() override;
 
         bool has_model_with_name(const std::string& name) override;

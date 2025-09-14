@@ -41,7 +41,7 @@ namespace mindnet::plugins::core::models
     inline def USER_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("crl")
-        .set_group("Collaboration", 300)
+        .set_group("Core", 300)
         .set_columns({
             //
             coldef(COLS::USERNAME, MANDATORY | UNIQUE | READONLY),

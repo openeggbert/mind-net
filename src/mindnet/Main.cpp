@@ -26,8 +26,8 @@
 #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
 #include "mindnet/plugins/test/TestPluginFactory.h"
 #include "mindnet/plugins/zettelkasten/ZettelkastenPluginFactory.h"
-#define add_controller(plugin, model) server.create_model_endpoint(&controller, mindnet::plugins :: plugin :: models::model##_DEFINITION);
 
+#define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
 using mindnet::commit;
 
 void migrate_schema_if_needed()
@@ -236,12 +236,12 @@ bool run_command(
 
 void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugin_registry)
 {
-    plugin_registry->register_plugin(mindnet::plugins::core::CorePluginFactory().create());
-    // plugin_registry->register_plugin(mindnet::plugins::zettelkasten::ZettelkastenPluginFactory().create());
-    // plugin_registry->register_plugin(mindnet::plugins::test::TestPluginFactory().create());
-    // plugin_registry->register_plugin(mindnet::plugins::mail::MailPluginFactory().create());
-    // plugin_registry->register_plugin(mindnet::plugins::chat::ChatPluginFactory().create());
-    // plugin_registry->register_plugin(mindnet::plugins::suggestion::SuggestionPluginFactory().create());
+    REGISTER_PLUGIN(core, Core)
+    REGISTER_PLUGIN(zettelkasten, Zettelkasten)
+    REGISTER_PLUGIN(test, Test)
+    // REGISTER_PLUGIN(mail, Mail)
+    // REGISTER_PLUGIN(chat, Chat)
+    // REGISTER_PLUGIN(suggestion, Suggestion)
 }
 
 int main(int argc, char** argv)
@@ -260,11 +260,12 @@ int main(int argc, char** argv)
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
     migrate_schema_if_needed();
-    std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
-        mindnet::api::Persistence>();
 
     mindnet::api::PluginRegistryPtr plugin_registry_ptr = std::make_shared<mindnet::api::PluginRegistry>();
     register_plugins(plugin_registry_ptr);
+
+    std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
+        mindnet::api::Persistence>(plugin_registry_ptr);
 
     std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::Service>(db, plugin_registry_ptr);
     return run_command(arguments, service);

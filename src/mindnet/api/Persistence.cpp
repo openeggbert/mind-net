@@ -33,58 +33,28 @@
 #include "mindnet/impl/sqlite/Convertors.h"
 #include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
 
-#define MODEL_JOIN(x) x##_DEFINITION
-#define FUNCTION_JOIN(x) request_to_entity_fields_##x
-
-#define add_repository(plugin, model, Model, MODEL) \
-api::IRepository* model##_repo = new RepositoryImplSqlite(\
-& FUNCTION_JOIN(model),\
-plugins:: plugin :: models :: MODEL_JOIN(MODEL)\
-);\
-repositories[#model] = model##_repo;\
-repository_names.emplace_back(#model);
-
 namespace mindnet::api
 {
     using namespace mindnet::impl::sqlite;
 
-    Persistence::Persistence()
+    Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {
-        // IRepository* user_repo =
-        //     new RepositoryImplSqlite(
-        //         &request_to_entity_fields_user,
-        //         models::USER_DEFINITION
-        //         );
-        // repositories["user"] = user_repo;;
 
-        add_repository(core, user, User, USER);
-        add_repository(core, team, Team, TEAM);
-        add_repository(core, team_member, TeamMember, TEAM_MEMBER);
-        add_repository(core, history, History, HISTORY);
-        //
-        add_repository(zettelkasten, map, Map, MAP);
-        add_repository(zettelkasten, content, Content, CONTENT);
-        add_repository(zettelkasten, note, Note, NOTE);
-        add_repository(zettelkasten, property, Property, PROPERTY);
-        add_repository(zettelkasten, tag_type, TagType, TAG_TYPE);
-        add_repository(zettelkasten, tag, Tag, TAG);
-        add_repository(zettelkasten, collection, Collection, COLLECTION);
-        add_repository(zettelkasten, collection_item, CollectionItem, COLLECTION_ITEM);
-        add_repository(zettelkasten, question, Question, QUESTION);
-        add_repository(zettelkasten, reference, Reference, REFERENCE);
-        add_repository(zettelkasten, link, Link, LINK);
-        //
-        add_repository(test, review, Review, REVIEW);
-        add_repository(test, sm2_state, SM2State, SM2_STATE);
-        //
-        add_repository(chat, discussion, Discussion, DISCUSSION);
-        add_repository(chat, comment, Comment, COMMENT);
-        //
-        add_repository(mail, message, Message, MESSAGE);
-        //
-        add_repository(suggestion, suggestion, Suggestion, SUGGESTION);
-        add_repository(suggestion, suggestion_review, SuggestionReview, SUGGESTION_REVIEW);
-        //
+        for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
+        {
+            auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
+            for (auto& model_registration: plugin->get_model_registrations())
+            {
+                auto model_definition = model_registration->model_definition;
+                api::IRepository* repo = new RepositoryImplSqlite(
+                    model_registration->convert_rest_request_to_entity_fields_pointer,
+                    model_definition);
+                auto model_name = model_definition.get_model_name();
+                repositories[model_name] = repo;
+                repository_names.emplace_back(model_name);
+            }
+        }
+
     }
 
     Persistence::~Persistence()
@@ -95,7 +65,7 @@ namespace mindnet::api
         }
     }
 
-    api::IRepository* Persistence::get_repository(const std::string& name)
+    IRepository* Persistence::get_repository(const std::string& name)
     {
         return repositories.count(name) ? repositories[name] : nullptr;
     }
@@ -129,10 +99,7 @@ namespace mindnet::api
         {
             return {ef, {}};
         }
-        else
-        {
-            return {{}, {500, error}};
-        }
+        return {{}, {500, error}};
     }
 
     OperationResult Persistence::update(
@@ -143,7 +110,7 @@ namespace mindnet::api
         string error;
         get_repository(def.get_model_name())->update(id, fields, error);
         if (error.empty()) { return ok_result; }
-        else { return {500, error}; }
+        return {500, error};
     }
 
     OperationResult Persistence::remove(model::ModelDefinition& def, http::LoginToken& token, int id)
@@ -167,10 +134,7 @@ namespace mindnet::api
         {
             return {l, ok_result};
         }
-        else
-        {
-            return {{}, {500, error}};
-        }
+        return {{}, {500, error}};
     }
 
     std::optional<ModelDefinition> Persistence::get_model_definition(const string& model_name)

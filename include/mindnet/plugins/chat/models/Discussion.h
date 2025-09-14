@@ -39,7 +39,7 @@ namespace mindnet::plugins::chat::models
     inline def DISCUSSION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("Collaboration", 300)
+        .set_group("Chat", 300)
         .set_columns({
             //
             coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(

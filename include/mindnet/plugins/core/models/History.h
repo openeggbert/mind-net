@@ -38,7 +38,7 @@ namespace mindnet::plugins::core::models
     inline def HISTORY_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
-        .set_group("Other", 500)
+        .set_group("Core", 500)
         .set_columns({
             //
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User ID who made the change"),
