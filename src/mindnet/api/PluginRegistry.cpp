@@ -25,7 +25,6 @@ namespace mindnet::api
         return keys;
     }
 
-
     std::vector<std::string> PluginRegistry::get_plugin_names_sorted_by_dependencies() const {
         std::unordered_map<std::string, PluginPtr> plugin_map;
         for (auto& p : plugins) {
@@ -42,10 +41,12 @@ namespace mindnet::api
             if (visit_state[name] == 2) return;
 
             visit_state[name] = 1;
-            auto plugin = plugin_map[name];
+            auto plugin = plugin_map.at(name); // must exist, otherwise error elsewhere
             for (auto& dep : plugin->depends_on_plugins()) {
                 if (plugin_map.find(dep) == plugin_map.end()) {
-                    throw std::runtime_error("Dependency not found: " + dep);
+                    throw MissingDependencyException(
+                        "Plugin '" + name + "' depends on missing plugin: " += dep
+                    );
                 }
                 dfs(dep);
             }
@@ -61,6 +62,7 @@ namespace mindnet::api
 
         return sorted;
     }
+
 
     PluginPtr PluginRegistry::get_plugin(const std::string& plugin_name) const
     {

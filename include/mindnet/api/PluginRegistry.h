@@ -13,9 +13,15 @@
 
 namespace mindnet::api
 {
-    struct CyclicDependencyException : public std::runtime_error {
+    struct CyclicDependencyException : std::runtime_error {
         explicit CyclicDependencyException(const std::string& msg) : std::runtime_error(msg) {}
     };
+
+    struct MissingDependencyException : std::runtime_error {
+        explicit MissingDependencyException(const std::string& message)
+            : std::runtime_error(message) {}
+    };
+
 
     class PluginRegistry
     {
