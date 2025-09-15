@@ -17,6 +17,14 @@ namespace mindnet::http
         std::string msg;
         int status{};
 
+        LoginToken(const std::string& username, int user_id, const std::string& msg, int status)
+            : username(username),
+              user_id(user_id),
+              msg(msg),
+              status(status)
+        {
+        }
+
         LoginToken(const crow::request& req)
         {
             auto auth = req.get_header_value("Authorization"); // Bearer <token>

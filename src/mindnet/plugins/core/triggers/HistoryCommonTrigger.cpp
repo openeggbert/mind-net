@@ -5,6 +5,9 @@
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 
 #include "mindnet/Global.h"
+#include "mindnet/http/LoginToken.h"
+#include "mindnet/plugins/core/models/History.h"
+#include "mindnet/plugins/zettelkasten/models/Note.h"
 
 namespace mindnet::plugins::core::triggers
 {
@@ -31,6 +34,7 @@ namespace mindnet::plugins::core::triggers
         const entity_fields fields,
         const http::QueryParams query_params)
     {
+        if (def.get_model_name() == "history") return;
         experiment << "Trigger: " << commit;
         experiment << "Hello trigger " << commit;
         experiment << "get_name " << get_name() << commit;
@@ -54,6 +58,38 @@ namespace mindnet::plugins::core::triggers
         experiment << "id " << id << commit;
         experiment << "fields.size() " << fields.size() << commit;
         experiment << "query_params.fields.size() " << query_params.fields.size() << commit;
+        http::LoginToken token {"", user_id, "", 200};
 
+        models::History history;
+
+        history.user_id = 1;//user_id;
+        history.ip_address = "";
+        history.table_name = def.get_model_name();
+        history.record_id = id;
+        history.operation = operation;
+        if (operation == enums::Crudl::Create || operation == enums::Crudl::Update)
+        {
+            history.data_json = model_to_json(fields, def).dump(4);
+        }
+        history.reason = "reason 1";
+        auto f = history.to_values();
+        int64_t now = static_cast<int64_t>(Utils::currentUnixTimestamp());
+        // f[1] = now;
+        // f[2] = now;
+        //if (user_id == 0) f[3] = FOREIGN_KEY_NULL;
+
+
+
+        run_create(models::HISTORY_DEFINITION, token,f, stack_depth);
+
+        // auto result = run_read(zettelkasten::models::NOTE_DEFINITION, token, 1, stack_depth);
+        //         if (result.second.ko()) experiment << result.second.error << commit;
+        //         if (result.second.ok())
+        //         {
+        //             zettelkasten::models::Note note;
+        //             note.from_values(result.first);
+        //             std::cout << note << std::endl;
+        //         }
+        //     }
     }
 }

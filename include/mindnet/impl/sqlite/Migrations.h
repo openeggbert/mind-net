@@ -161,7 +161,7 @@ CREATE TABLE history (
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     --
-    user_id INTEGER NOT NULL,
+    user_id INTEGER,
     ip_address TEXT,
 	table_name TEXT NOT NULL,
 	record_id INTEGER NOT NULL,

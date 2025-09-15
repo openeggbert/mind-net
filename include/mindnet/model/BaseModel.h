@@ -64,6 +64,26 @@ auto text = [&values, &i]\
 
 namespace mindnet::model
 {
+    [[nodiscard]] inline JSON model_to_json(
+        entity_fields fields,
+        const ModelDefinition& definition)
+    {
+        JSON json;
+        int index = 0;
+
+        for (auto& e : definition.get_columns())
+        {
+            auto field = e.get_column_name();
+            std::visit([&json, &field](const auto& value)
+            {
+                json[field] = value;
+            }, fields[index]);
+            index++;
+        }
+        return json;
+    };
+
+
     using std::string;
     using type = ColumnType;
     using coldef = ColumnDefinition;
@@ -98,21 +118,7 @@ namespace mindnet::model
 
         [[nodiscard]] JSON to_json() const
         {
-            JSON json;
-            int index = 0;
-            entity_fields fields = to_values();
-            auto definition = get_definition();
-
-            for (auto& e : definition.get_columns())
-            {
-                auto field = e.get_column_name();
-                std::visit([&json, &field](const auto& value)
-                {
-                    json[field] = value;
-                }, fields[index]);
-                index++;
-            }
-            return json;
+            return model_to_json(to_values(), get_definition());
         };
 
         // [[nodiscard]] bool equals(const BaseModel &other) const

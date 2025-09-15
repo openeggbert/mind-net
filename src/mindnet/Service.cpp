@@ -8,6 +8,8 @@
 namespace mindnet
 {
     static constexpr bool VALIDATION_ENABLED = false;
+    static constexpr bool TRIGGERS_ENABLED = false;
+
     using validator = api::IValidator*;
     using mindnet::OperationResult;
     using model::ModelDefinition;
@@ -36,7 +38,7 @@ namespace mindnet
                     validators[model_name] = validator;
                 }
             }
-            {
+            if (TRIGGERS_ENABLED) {
                 std::vector<api::TriggerPtr> triggers;
                 for (auto& t : plugin->get_triggers())
                 {
@@ -58,13 +60,17 @@ namespace mindnet
                               return a->get_priority() > b->get_priority();
                           });
 
-                for (auto& t : triggers)
+                for (auto& trigger : triggers)
                 {
                     {
-
-    ////////////////////////////
+                        trigger->set_service_ptr(this);
+                        trigger->set_create_fn(&Service::create);
+                        trigger->set_read_fn(&Service::read);
+                        trigger->set_update_fn(&Service::update);
+                        trigger->set_delete_fn(&Service::remove);
+                        trigger->set_list_fn(&Service::list);
                     }
-                    auto operations = t->get_operations();
+                    auto operations = trigger->get_operations();
                     using plugins::core::enums::Crudl;
                     if (operations.empty())
                         operations = {
@@ -77,10 +83,10 @@ namespace mindnet
                     for (auto& operation : operations)
                     {
                         trigger_registry_ptr->register_trigger(
-                            t->get_table(),
-                            t->get_phase(),
+                            trigger->get_table(),
+                            trigger->get_phase(),
                             operation,
-                            t
+                            trigger
                         );
                     };
                 }

@@ -6,20 +6,36 @@
 
 #include <memory>
 #include <string>
-
+#include <vector>
 #include "mindnet/OperationResult.h"
 #include "mindnet/TriggerPhase.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
-#include <vector>
-
 #include "mindnet/http/QueryParams.h"
 #include "mindnet/model/ModelDefinition.h"
+
+namespace mindnet {
+    namespace http
+    {
+        struct LoginToken;
+    }
+
+    class Service; }
 
 namespace mindnet::api
 {
     class Trigger
     {
     public:
+    public:
+        using Service = mindnet::Service;
+
+        using CreateFn = std::pair<int, OperationResult>(Service::*)(const model::ModelDefinition&, http::LoginToken&, entity_fields&, int);
+        using ReadFn   = std::pair<entity_fields, OperationResult>(Service::*)(const model::ModelDefinition&, http::LoginToken&, int, int);
+        using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, http::LoginToken&, int, entity_fields&, int);
+        using DeleteFn = OperationResult(Service::*)(model::ModelDefinition&, http::LoginToken&, int, int);
+        using ListFn   = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(model::ModelDefinition&, http::LoginToken&, http::QueryParams&, int);
+
+
           Trigger(
             const std::string& name_,
             const std::string& description_,
@@ -37,6 +53,40 @@ namespace mindnet::api
         }
 
         virtual ~Trigger() = default;
+
+
+
+        void set_service_ptr(Service* svc) { service_ptr = svc; }
+        void set_create_fn(CreateFn fn) { create_fn = fn; }
+        void set_read_fn(ReadFn fn) { read_fn = fn; }
+        void set_update_fn(UpdateFn fn) { update_fn = fn; }
+        void set_delete_fn(DeleteFn fn) { delete_fn = fn; }
+        void set_list_fn(ListFn fn) { list_fn = fn; }
+
+        std::pair<int, OperationResult> run_create(const model::ModelDefinition& def, http::LoginToken& token, entity_fields& fields, int depth)
+        {
+            return (service_ptr->*create_fn)(def, token, fields, depth);
+        }
+
+        std::pair<entity_fields, OperationResult> run_read(const model::ModelDefinition& def, http::LoginToken& token, int id, int depth)
+        {
+            return (service_ptr->*read_fn)(def, token, id, depth);
+        }
+
+        OperationResult run_update(const model::ModelDefinition& def, http::LoginToken& token, int id, entity_fields& fields, int depth)
+        {
+            return (service_ptr->*update_fn)(def, token, id, fields, depth);
+        }
+
+        OperationResult run_delete(model::ModelDefinition& def, http::LoginToken& token, int id, int depth)
+        {
+            return (service_ptr->*delete_fn)(def, token, id, depth);
+        }
+
+        std::pair<std::vector<entity_fields>, OperationResult> run_list(model::ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params, int depth)
+        {
+            return (service_ptr->*list_fn)(def, token, query_params, depth);
+        }
 
         virtual void run(
             plugins::core::enums::Crudl operation,
@@ -67,6 +117,13 @@ namespace mindnet::api
         std::vector<plugins::core::enums::Crudl> operations;
         TriggerPhase phase = TriggerPhase::Before;
         std::string table;
+        ////
+        Service* service_ptr;
+        CreateFn create_fn = nullptr;
+        ReadFn read_fn     = nullptr;
+        UpdateFn update_fn = nullptr;
+        DeleteFn delete_fn = nullptr;
+        ListFn list_fn     = nullptr;
 
     };
 

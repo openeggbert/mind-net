@@ -152,7 +152,7 @@ namespace mindnet::impl::sqlite
         throw std::runtime_error(def.get_model_name() + " not found");
     }
 
-    bool update_model(int id, model::ModelDefinition& def, entity_fields& fields, string& error)
+    bool update_model(int id, model::ModelDefinition& def, entity_fields& fields_, string& error)
     {
         std::string sql = Utils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
@@ -177,12 +177,13 @@ namespace mindnet::impl::sqlite
             return false;
         }
 
-        fields.erase(fields.begin(),
-                     fields.begin() + std::min<size_t>(2, fields.size()));
+        entity_fields fields_copy = fields_;
+        fields_copy.erase(fields_copy.begin(),
+                     fields_copy.begin() + std::min<size_t>(2, fields_copy.size()));
 
-        fields.push_back(id);
+        fields_copy.push_back(id);
 
-        Utils::fill_sqlite_query(*query_ptr, fields, false);
+        Utils::fill_sqlite_query(*query_ptr, fields_copy, false);
         try
         {
             Utils::sqlite_exec(*query_ptr);
