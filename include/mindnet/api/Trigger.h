@@ -20,7 +20,7 @@ namespace mindnet::api
     class Trigger
     {
     public:
-        Trigger(
+          Trigger(
             const std::string& name_,
             const std::string& description_,
             int priority_,
@@ -37,8 +37,10 @@ namespace mindnet::api
         }
 
         virtual ~Trigger() = default;
+
         virtual void run(
             plugins::core::enums::Crudl operation,
+            int stack_depth,
             const OperationResult& validation_result,
             const OperationResult& action_result,
             model::ModelDefinition def,
@@ -65,7 +67,10 @@ namespace mindnet::api
         std::vector<plugins::core::enums::Crudl> operations;
         TriggerPhase phase = TriggerPhase::Before;
         std::string table;
+
     };
+
+
 
     typedef std::shared_ptr<Trigger> TriggerPtr;
 }

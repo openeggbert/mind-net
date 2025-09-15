@@ -15,6 +15,7 @@ namespace mindnet::plugins::core::triggers
         ~HistoryCommonTrigger() = default;
         void run(
             plugins::core::enums::Crudl operation,
+            int stack_depth,
             const OperationResult& validation_result,
             const OperationResult& action_result,
             const model::ModelDefinition def,

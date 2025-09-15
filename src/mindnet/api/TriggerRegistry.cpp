@@ -18,9 +18,9 @@ namespace mindnet::api
     }
 
     void TriggerRegistry::execute(
-        const std::string& table,
         TriggerPhase phase,
         const plugins::core::enums::Crudl& operation,
+        int stack_depth,
         const OperationResult& validation_result,
         const OperationResult& action_result,
         const mindnet::model::ModelDefinition& def,
@@ -30,7 +30,7 @@ namespace mindnet::api
         const http::QueryParams& query_params)
     {
         std::cout << registry_.size() << std::endl;
-        std::vector<std::string> v{table, "*"};
+        std::vector<std::string> v{def.get_model_name(), "*"};
         for (auto& s : v)
         {
             auto tableIt = registry_.find(s);
@@ -44,7 +44,7 @@ namespace mindnet::api
 
             for (auto& trigger : crudIt->second)
             {
-                trigger->run(operation, validation_result, action_result,
+                trigger->run(operation, ++stack_depth, validation_result, action_result,
                              def, user_id, id, fields, query_params);
             }
         }

@@ -31,9 +31,9 @@ namespace mindnet::api
             TriggerPtr& trigger);
 
         void execute(
-            const std::string& table,
             TriggerPhase phase,
             const plugins::core::enums::Crudl& operation,
+            int stack_depth,
             const OperationResult& validation_result,
             const OperationResult& action_result,
             const mindnet::model::ModelDefinition& def,

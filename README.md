@@ -138,6 +138,7 @@ openssl rand -base64 32
 - [ ] TASK Check operator== implementations for all models
 - [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
 - [ ] /logout endpoint
+- [ ] New table log
   ```
   CROW_ROUTE(app, "/logout")([](const crow::request& req){
   auto session = req.get_session();
@@ -159,8 +160,8 @@ openssl rand -base64 32
 - [ ] new entity File
 - [ ] Frontend : sort and order is missing
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
-- [ ] New entity Session
 - [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
+- [ ] New entity Session
   ```aiignore
    CREATE TABLE session (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

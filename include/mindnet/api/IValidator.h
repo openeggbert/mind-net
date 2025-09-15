@@ -23,10 +23,6 @@ namespace mindnet::api
 
     using string = std::string;
 
-    typedef std::variant<std::string, int64_t> entity_field;
-    typedef std::vector<entity_field> entity_fields;
-    typedef std::map<std::string, std::string> string_map;
-
     class IValidator
     {
     public:

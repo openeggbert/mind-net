@@ -31,14 +31,14 @@ namespace mindnet
         std::vector<std::string>& list_model_names() override;
 
         std::pair<int, OperationResult> create(const ModelDefinition& def, http::LoginToken& token,
-                                               entity_fields& fields) override;
+                                               entity_fields& fields, int stack_depth = 0) ;
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, http::LoginToken& token, int id) override;
+        read(const ModelDefinition& def, http::LoginToken& token, int id, int stack_depth = 0) ;
         OperationResult update(const ModelDefinition& def, http::LoginToken& token, int id,
-                               entity_fields& fields) override;
-        OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id) override;
+                               entity_fields& fields, int stack_depth = 0) ;
+        OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id, int stack_depth = 0) ;
         std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token,
-                                                                    http::QueryParams& query_params) override;
+                                                                    http::QueryParams& query_params, int stack_depth = 0) ;
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 

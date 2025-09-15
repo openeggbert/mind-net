@@ -30,14 +30,14 @@ namespace mindnet
         virtual std::vector<std::string>& list_model_names() = 0;
         //
         virtual std::pair<int, OperationResult> create(const ModelDefinition& def, http::LoginToken& token,
-                                                       entity_fields& fields) = 0;
+                                                       entity_fields& fields, int stack_depth = 0) = 0;
         virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, http::LoginToken& token,
-                                                               int id) = 0;
+                                                               int id, int stack_depth = 0) = 0;
         virtual OperationResult update(const ModelDefinition& def, http::LoginToken& token, int id,
-                                       entity_fields& fields) = 0;
-        virtual OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id) = 0;
+                                       entity_fields& fields, int stack_depth = 0) = 0;
+        virtual OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id, int stack_depth = 0) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
-            ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params) = 0;
+            ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params, int stack_depth = 0) = 0;
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //

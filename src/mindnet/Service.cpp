@@ -4,9 +4,6 @@
 
 #include "mindnet/Service.h"
 //
-#define add_validator(plugin, model, Model)\
-api::IValidator* model##_validator = new mindnet::plugins:: plugin ::validators:: Model##Validator();\
-validators[#model] = model##_validator;
 
 namespace mindnet
 {
@@ -19,11 +16,11 @@ namespace mindnet
     Service::Service(
         const DbPtr& db_,
         const api::PluginRegistryPtr& plugin_registry_ptr_
-        ) :
-    IService(db_),
-    db_ptr(db_),
-    plugin_registry_ptr(plugin_registry_ptr_),
-    trigger_registry_ptr(std::make_shared<api::TriggerRegistry>())
+    ) :
+        IService(db_),
+        db_ptr(db_),
+        plugin_registry_ptr(plugin_registry_ptr_),
+        trigger_registry_ptr(std::make_shared<api::TriggerRegistry>())
     {
         for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
         {
@@ -43,6 +40,16 @@ namespace mindnet
                 std::vector<api::TriggerPtr> triggers;
                 for (auto& t : plugin->get_triggers())
                 {
+                    if (t->get_phase() == TriggerPhase::Around)
+                    {
+                        throw std::runtime_error(
+                            std::string("TriggerPhase Around is not yet supported: ") + t->get_name());
+                    }
+                    if (t->get_phase() == TriggerPhase::InsteadOf)
+                    {
+                        throw std::runtime_error(
+                            std::string("TriggerPhase InsteadOf is not yet supported: ") + t->get_name());
+                    }
                     triggers.push_back(t);
                 };
                 std::sort(triggers.begin(), triggers.end(),
@@ -53,6 +60,10 @@ namespace mindnet
 
                 for (auto& t : triggers)
                 {
+                    {
+
+    ////////////////////////////
+                    }
                     auto operations = t->get_operations();
                     using plugins::core::enums::Crudl;
                     if (operations.empty())
@@ -104,64 +115,96 @@ namespace mindnet
     std::vector<std::string>& Service::list_model_names()
     {
         return db_ptr->list_model_names();
-    };
+    }
+
+    static constexpr int MAX_TRIGGER_DEPTH = 32;
 
     std::pair<int, OperationResult> Service::create(const ModelDefinition& def, http::LoginToken& token,
-                                                    entity_fields& fields)
+                                                    entity_fields& fields, int stack_depth)
     {
-        auto result = can_create(def.get_model_name(), token, fields);
-        if (result.ko())
-        {
-            return {-1, result};
-        }
+        if(stack_depth > MAX_TRIGGER_DEPTH) return {-1, {500, "Max trigger depth exceeded"}};
 
-        return db_ptr->create(def, token, fields);
+        auto action = Crudl::Create;
+        auto validation_result = can_create(def.get_model_name(), token, fields);
+        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, {}, def, token.user_id, 0, fields);
+        if (validation_result.ko())
+        {
+            return {-1, validation_result};
+        }
+        auto action_result = db_ptr->create(def, token, fields);
+        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second, def, token.user_id, action_result.first, fields);
+        return action_result;
     };
 
     std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, http::LoginToken& token,
-                                                            int id)
+                                                            int id, int stack_depth)
     {
-        debug << "Calling read for " << def.get_model_name() << commit;
-        auto result = can_read(def.get_model_name(), token, id);
-        if (result.ko())
-        {
-            return {{}, result};
-        }
+        if(stack_depth > MAX_TRIGGER_DEPTH) return {api::empty_entity_fields, {500, "Max trigger depth exceeded"}};
 
-        trigger_registry_ptr->execute(
-            def.get_model_name(),
-            TriggerPhase::Before,
-            plugins::core::enums::Crudl::Read,
-            result,
-            {},
-            def,
-            token.user_id,
-            id
-        );
-        return db_ptr->read(def, token, id);
+        auto action = Crudl::Read;
+        debug << "Calling read for " << def.get_model_name() << commit;
+        auto validation_result = can_read(def.get_model_name(), token, id);
+
+
+        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, {}, def, token.user_id, id);
+        if (validation_result.ko())
+        {
+            return {{}, validation_result};
+        }
+        auto action_result = db_ptr->read(def, token, id);
+        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second, def, token.user_id, id, action_result.first);
+        return action_result;
     };
 
     OperationResult Service::update(const ModelDefinition& def, http::LoginToken& token, int id,
-                                    entity_fields& fields)
+                                    entity_fields& fields, int stack_depth)
     {
-        auto result = can_update(def.get_model_name(), token, fields);
-        if (result.ko())
+        if(stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
+        auto action = Crudl::Update;
+        auto validation_result = can_update(def.get_model_name(), token, fields);
+        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, {}, def, token.user_id, id, fields);
+        if (validation_result.ko())
         {
-            return result;
+            return validation_result;
         }
-
-        return db_ptr->update(def, token, id, fields);
+        auto action_result = db_ptr->update(def, token, id, fields);
+        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result, def, token.user_id, id, fields);
+        return action_result;
     };
 
-    OperationResult Service::remove(ModelDefinition& def, http::LoginToken& token, int id)
+    OperationResult Service::remove(ModelDefinition& def, http::LoginToken& token, int id, int stack_depth)
     {
-        return db_ptr->remove(def, token, id);
+        if(stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
+        auto action = Crudl::Delete;
+        auto validation_result = can_delete(def.get_model_name(), token, id);
+        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, {}, def, token.user_id, id);
+
+        if (validation_result.ko())
+        {
+            return validation_result;
+        }
+        auto action_result = db_ptr->remove(def, token, id);
+        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result, def, token.user_id,
+                                      id);
+
+        return action_result;
     };
 
     std::pair<std::vector<entity_fields>, OperationResult> Service::list(
-        ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params)
+        ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params, int stack_depth)
     {
-        return db_ptr->list(def, token, query_params);
+        if(stack_depth > MAX_TRIGGER_DEPTH) return {{}, {500, "Max trigger depth exceeded"}};
+        auto action = Crudl::List;
+        auto validation_result = can_list(def.get_model_name(), token, query_params.filters);
+        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, {}, def, token.user_id, 0, api::empty_entity_fields, query_params);
+
+        if (validation_result.ko())
+        {
+            return {{}, validation_result};
+        }
+        auto action_result = db_ptr->list(def, token, query_params);
+        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second, def, token.user_id, 0, api::empty_entity_fields, query_params);
+        return action_result;
     };
 
     std::optional<ModelDefinition> Service::get_model_definition(const string& model_name)
