@@ -20,19 +20,19 @@
 #include "mindnet/plugins/suggestion/models/Suggestion.h"
 #include "mindnet/plugins/suggestion/models/SuggestionReview.h"
 #include "mindnet/plugins/core/models/History.h"
-#include "mindnet/plugins/zettelkasten/models/Map.h"
-#include "mindnet/plugins/zettelkasten/models/Content.h"
-#include "mindnet/plugins/zettelkasten/models/Note.h"
-#include "mindnet/plugins/zettelkasten/models/Property.h"
-#include "mindnet/plugins/zettelkasten/models/TagType.h"
-#include "mindnet/plugins/zettelkasten/models/Tag.h"
-#include "mindnet/plugins/zettelkasten/models/Collection.h"
-#include "mindnet/plugins/zettelkasten/models/CollectionItem.h"
+#include "mindnet/plugins/slipbox/models/Map.h"
+#include "mindnet/plugins/slipbox/models/Content.h"
+#include "mindnet/plugins/slipbox/models/Note.h"
+#include "mindnet/plugins/slipbox/models/Property.h"
+#include "mindnet/plugins/slipbox/models/TagType.h"
+#include "mindnet/plugins/slipbox/models/Tag.h"
+#include "mindnet/plugins/slipbox/models/Collection.h"
+#include "mindnet/plugins/slipbox/models/CollectionItem.h"
 #include "mindnet/plugins/test/models/Review.h"
 #include "mindnet/plugins/test/models/SM2State.h"
-#include "mindnet/plugins/zettelkasten/models/Question.h"
-#include "mindnet/plugins/zettelkasten/models/Reference.h"
-#include "mindnet/plugins/zettelkasten/models/Link.h"
+#include "mindnet/plugins/slipbox/models/Question.h"
+#include "mindnet/plugins/slipbox/models/Reference.h"
+#include "mindnet/plugins/slipbox/models/Link.h"
 #define gen_find_h(plugin, Model, model) \
 std::pair<plugins :: plugin :: models::Model, string> find_##model(const RequestContext& ctx, int id);
 
@@ -59,25 +59,25 @@ namespace mindnet::api
     bool has_right_for_map(const RequestContext& ctx, const int map_id,
                            const plugins::core::enums::SingleRight single_right);
 
-    gen_find_h(zettelkasten, Collection, collection)
-    gen_find_h(zettelkasten, CollectionItem, collection_item)
+    gen_find_h(slipbox, Collection, collection)
+    gen_find_h(slipbox, CollectionItem, collection_item)
     gen_find_h(chat, Comment, comment)
-    gen_find_h(zettelkasten, Content, content)
+    gen_find_h(slipbox, Content, content)
     gen_find_h(chat, Discussion, discussion)
     gen_find_h(core, History, history)
-    gen_find_h(zettelkasten, Link, link)
-    gen_find_h(zettelkasten, Map, map)
+    gen_find_h(slipbox, Link, link)
+    gen_find_h(slipbox, Map, map)
     gen_find_h(mail, Message, message)
-    gen_find_h(zettelkasten, Note, note)
-    gen_find_h(zettelkasten, Property, property)
-    gen_find_h(zettelkasten, Question, question)
-    gen_find_h(zettelkasten, Reference, reference)
+    gen_find_h(slipbox, Note, note)
+    gen_find_h(slipbox, Property, property)
+    gen_find_h(slipbox, Question, question)
+    gen_find_h(slipbox, Reference, reference)
     gen_find_h(test, Review, review)
     gen_find_h(test, SM2State, sm2state)
     gen_find_h(suggestion, Suggestion, suggestion)
     gen_find_h(suggestion, SuggestionReview, suggestion_review)
-    gen_find_h(zettelkasten, Tag, tag)
-    gen_find_h(zettelkasten, TagType, tag_type)
+    gen_find_h(slipbox, Tag, tag)
+    gen_find_h(slipbox, TagType, tag_type)
     gen_find_h(core, Team, team)
     gen_find_h(core, TeamMember, team_member)
     gen_find_h(core, User, user)

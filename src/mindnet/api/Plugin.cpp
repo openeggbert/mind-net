@@ -57,7 +57,7 @@ namespace mindnet::api
     }
 
     void Plugin::register_model(
-        ModelDefinition& model_definition,
+        model::ModelDefinition& model_definition,
         const std::shared_ptr<IValidator>& validator
         )
     {
@@ -82,6 +82,21 @@ namespace mindnet::api
     void Plugin::register_trigger(const TriggerPtr& trigger)
     {
         return triggers.push_back(trigger);
+    }
+
+    void Plugin::register_migrations(const MigrationScriptsPtr& migration_scripts)
+    {
+        migration_scripts_ = migration_scripts;
+    }
+
+    MigrationScriptsPtr Plugin::get_migration_scripts() const
+    {
+        return migration_scripts_;
+    }
+
+    void Plugin::destroy_migration_scripts()
+    {
+        migration_scripts_.reset();
     }
 
     const std::vector<TriggerPtr>& Plugin::get_triggers() const

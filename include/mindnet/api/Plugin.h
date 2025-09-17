@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "IValidator.h"
+#include "MigrationScripts.h"
 #include "ModelRegistration.h"
 #include "Trigger.h"
 #include "jwt-cpp/jwt.h"
@@ -31,12 +31,14 @@ namespace mindnet::api
         void close_for_changes();
         bool is_closed_for_changes() const;
         void register_model(
-            ModelDefinition& model_definition,
+            model::ModelDefinition& model_definition,
             const std::shared_ptr<IValidator>& validator);
         void register_trigger(const TriggerPtr& trigger);
+        void register_migrations(const MigrationScriptsPtr& migration_scripts);
+        [[nodiscard]] MigrationScriptsPtr get_migration_scripts() const;
+        void destroy_migration_scripts();
         const std::vector<TriggerPtr>& get_triggers() const;
         const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
-
 
     private:
         std::string name;
@@ -46,6 +48,7 @@ namespace mindnet::api
         bool is_closed_for_changes_ = false;
         std::vector<std::shared_ptr<ModelRegistration>> model_registrations;
         std::vector<TriggerPtr> triggers;
+        MigrationScriptsPtr migration_scripts_ = nullptr;
     };
 
     typedef std::shared_ptr<Plugin> PluginPtr;

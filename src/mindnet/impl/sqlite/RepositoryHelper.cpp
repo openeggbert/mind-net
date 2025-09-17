@@ -18,7 +18,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "mindnet/plugins/zettelkasten/models/Content.h"
+#include "mindnet/plugins/slipbox/models/Content.h"
 #include <vector>
 
 #include "mindnet/Utils.h"

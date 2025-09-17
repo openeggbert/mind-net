@@ -53,7 +53,7 @@ namespace mindnet::api
         http::QueryParams query_params;
         query_params.filters.emplace("name", map_name);
 
-        return !ctx.db->list(plugins::zettelkasten::models::MAP_DEFINITION, ctx.token, query_params).first.empty();
+        return !ctx.db->list(plugins::slipbox::models::MAP_DEFINITION, ctx.token, query_params).first.empty();
     }
 
     string is_member_of_team(const RequestContext& ctx, int team_id)
@@ -81,12 +81,12 @@ namespace mindnet::api
     {
         http::QueryParams query_params;
         query_params.filters.emplace("content_id", std::to_string(content_id));
-        auto notes = ctx.db->list(plugins::zettelkasten::models::NOTE_DEFINITION, ctx.token, query_params);
+        auto notes = ctx.db->list(plugins::slipbox::models::NOTE_DEFINITION, ctx.token, query_params);
         if (notes.second.ko()) return {-1, notes.second.error};
         if (notes.first.empty()) return {
             -1, std::string("There is no note with content id") + std::to_string(content_id)
         };
-        plugins::zettelkasten::models::Note note;
+        plugins::slipbox::models::Note note;
         note.from_values(notes.first.at(0));
         return {note.get_id(), ""};
     }
@@ -128,17 +128,17 @@ namespace mindnet::api
     gen_find_cpp(suggestion, Suggestion, suggestion, SUGGESTION)
     gen_find_cpp(suggestion, SuggestionReview, suggestion_review, SUGGESTION_REVIEW)
     gen_find_cpp(core, History, history, HISTORY)
-    gen_find_cpp(zettelkasten, Map, map, MAP)
-    gen_find_cpp(zettelkasten, Content, content, CONTENT)
-    gen_find_cpp(zettelkasten, Note, note, NOTE)
-    gen_find_cpp(zettelkasten, Property, property, PROPERTY)
-    gen_find_cpp(zettelkasten, TagType, tag_type, TAG_TYPE)
-    gen_find_cpp(zettelkasten, Tag, tag, TAG)
-    gen_find_cpp(zettelkasten, Collection, collection, COLLECTION)
-    gen_find_cpp(zettelkasten, CollectionItem, collection_item, COLLECTION_ITEM)
+    gen_find_cpp(slipbox, Map, map, MAP)
+    gen_find_cpp(slipbox, Content, content, CONTENT)
+    gen_find_cpp(slipbox, Note, note, NOTE)
+    gen_find_cpp(slipbox, Property, property, PROPERTY)
+    gen_find_cpp(slipbox, TagType, tag_type, TAG_TYPE)
+    gen_find_cpp(slipbox, Tag, tag, TAG)
+    gen_find_cpp(slipbox, Collection, collection, COLLECTION)
+    gen_find_cpp(slipbox, CollectionItem, collection_item, COLLECTION_ITEM)
     gen_find_cpp(test, Review, review, REVIEW)
     gen_find_cpp(test, SM2State, sm2_state, SM2_STATE)
-    gen_find_cpp(zettelkasten, Question, question, QUESTION)
-    gen_find_cpp(zettelkasten, Reference, reference, REFERENCE)
-    gen_find_cpp(zettelkasten, Link, link, LINK)
+    gen_find_cpp(slipbox, Question, question, QUESTION)
+    gen_find_cpp(slipbox, Reference, reference, REFERENCE)
+    gen_find_cpp(slipbox, Link, link, LINK)
 }

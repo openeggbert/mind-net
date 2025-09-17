@@ -7,7 +7,7 @@
 #include "mindnet/Global.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/plugins/core/models/History.h"
-#include "mindnet/plugins/zettelkasten/models/Note.h"
+#include "mindnet/plugins/slipbox/models/Note.h"
 
 namespace mindnet::plugins::core::triggers
 {
@@ -62,7 +62,7 @@ namespace mindnet::plugins::core::triggers
 
         models::History history;
 
-        history.user_id = 1;//user_id;
+        history.user_id = user_id;
         history.ip_address = "";
         history.table_name = def.get_model_name();
         history.record_id = id;
@@ -82,11 +82,11 @@ namespace mindnet::plugins::core::triggers
 
         run_create(models::HISTORY_DEFINITION, token,f, stack_depth);
 
-        // auto result = run_read(zettelkasten::models::NOTE_DEFINITION, token, 1, stack_depth);
+        // auto result = run_read(slipbox::models::NOTE_DEFINITION, token, 1, stack_depth);
         //         if (result.second.ko()) experiment << result.second.error << commit;
         //         if (result.second.ok())
         //         {
-        //             zettelkasten::models::Note note;
+        //             slipbox::models::Note note;
         //             note.from_values(result.first);
         //             std::cout << note << std::endl;
         //         }

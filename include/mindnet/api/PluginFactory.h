@@ -9,6 +9,8 @@ plugin->register_model(\
         models::MODEL##_DEFINITION,\
         std::make_shared<validators::Model##Validator>());
 
+#define REGISTER_MIGRATIONS(Plugin, DatabaseType) plugin->register_migrations(std::make_shared<migrations:: Plugin##DatabaseType##MigrationScripts>());
+
 #include "Plugin.h"
 
 namespace mindnet::api

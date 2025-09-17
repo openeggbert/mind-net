@@ -119,7 +119,6 @@ openssl rand -base64 32
 ## BACKLOG
 
 ### Critical
-- [ ] FEATURE Triggers - also add adding operations (as json) to history table
 - [ ] FEATURE User authentication
   * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
   * refresh token /refresh-token is valid 7 days (can be configured)
@@ -134,31 +133,18 @@ openssl rand -base64 32
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [ ] FEATURE User authorization via Validators
 - [ ] FEATURE Log logging in, registration, logout, password changes
-- [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
 - [ ] TASK Check operator== implementations for all models
-- [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
-- [ ] /logout endpoint
-- [ ] New table log
-  ```
-  CROW_ROUTE(app, "/logout")([](const crow::request& req){
-  auto session = req.get_session();
-  session.clear(); // logout
-  return "Logged out";
-  });
-  ```
-
-### Extending
-- [ ] Improve documentation
 - [ ] FEATURE New entity Flag
-- [ ] IMPROVEMENT Add logging to files
-- [ ] FEATURE Support for export to static HTML files
-- [ ] FEATURE Create OpenAPI specification for the REST API
-- [ ] IMPROVEMENT Paging - add First and Last buttons
-- [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast 
-- [ ] ModelDefinition - add title_column
-- [ ] bool custom_action.expand]
-- [ ] new entity File
-- [ ] Frontend : sort and order is missing
+- [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
+- [ ] /logout endpoint
+```
+CROW_ROUTE(app, "/logout")([](const crow::request& req){
+auto session = req.get_session();
+session.clear(); // logout
+return "Logged out";
+});
+  ```
+- [ ] New table log
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
 - [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
 - [ ] New entity Session
@@ -170,6 +156,19 @@ openssl rand -base64 32
     expires_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
   ```
+
+### Extending
+- [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
+- [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
+- [ ] Improve documentation
+- [ ] IMPROVEMENT Add logging to files
+- [ ] FEATURE Support for export to static HTML files
+- [ ] FEATURE Create OpenAPI specification for the REST API
+- [ ] IMPROVEMENT Paging - add First and Last buttons
+- [ ] ModelDefinition - add title_column
+- [ ] bool custom_action.expand
+- [ ] new entity File
+- [ ] Frontend : sort and order is missing
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 
 ### Experimental
@@ -250,3 +249,4 @@ FOREIGN KEY(discussion_id) REFERENCES discussion(id)
 - [x] IMPROVEMENT Enums will be PascalCase, not all uppercase
 - [x] IMPROVEMENT Refactor struct Configuration
 - [x] FEATURE new endpoints /info and /health - shows some configuration entries (not all) + other information
+- [x] FEATURE Triggers - also add adding operations (as json) to history table

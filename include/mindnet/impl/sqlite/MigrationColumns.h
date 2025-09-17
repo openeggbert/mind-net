@@ -25,7 +25,7 @@
 #ifndef MIGRATIONCOLUMNS_H
 #define MIGRATIONCOLUMNS_H
 
-namespace mindnet::models::fields
+namespace mindnet::impl::sqlite
 {
     struct MigrationColumns
     {
@@ -37,8 +37,8 @@ namespace mindnet::models::fields
 
         static constexpr const char* MODEL_NAME = "migration";
 
-        static constexpr const char* ID = "id";
-        static constexpr const char* MAX_MIGRATION_NUMBER = "max_migration_number";
+        static constexpr const char* PLUGIN = "plugin";
+        static constexpr const char* LAST_MIGRATION_NUMBER = "last_migration_number";
     };
 }
 #endif // MIGRATIONCOLUMNS_H

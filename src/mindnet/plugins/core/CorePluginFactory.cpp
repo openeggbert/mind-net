@@ -1,5 +1,6 @@
 #include "mindnet/plugins/core/CorePluginFactory.h"
 
+#include "../../../../include/mindnet/plugins/core/migrations/CoreSQLiteMigrationScripts.h"
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 #include "mindnet/plugins/core/validators/HistoryValidator.h"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.h"
@@ -8,14 +9,16 @@
 
 namespace mindnet::plugins::core
 {
+    const string CORE_PLUGIN_NAME = "core";
     api::PluginPtr CorePluginFactory::create() const
     {
         auto plugin = std::make_shared<api::Plugin>(
-            "core",
+            CORE_PLUGIN_NAME,
             "core models",
             std::vector<std::string>{},
             false
         );
+        REGISTER_MIGRATIONS(Core, SQLite)
 
         REGISTER_MODEL(user, User, USER)
         REGISTER_MODEL(team, Team, TEAM)

@@ -10,8 +10,10 @@
 #include <map>
 
 #include "AccessMode.h"
+#include "DatabaseType.h"
 #include "Environment.h"
 #include "RegistrationMode.h"
+#include "api/MigrationScripts.h"
 #include "plugins/core/enums/UserRole.h"
 #define if_map_has(key) if (map_contains(map, #key))
 #define save_enum(key) if_map_has(key) key = string_to_##key(map[ #key]);
@@ -23,24 +25,27 @@
 #define MIND_NET_VERSION_LABEL snapshot
 #define MIND_NET_VERSION MIND_NET_VERSION_MAYOR.MIND_NET_VERSION_MINOR.MIND_NET_VERSION_PATCH-MIND_NET_VERSION_LABEL
 #define MIND_NET_BUILD_TIME std::string(__DATE__) + " " + __TIME__
-// #Example:
-//
-// #Identification
-// name=Robert Vokac
-// description=Zettelkasten system for Robert Vokac
-// environment=Development
-// #
-// #host=
-// #port=
-// #frontend_port=
-//
-// #Access
-// access_mode=EveryoneCanDoEverything
-// registration_mode=Free
-// default_user_role=Reader
-//
-// #Secrets
-// jwt_secret=***
+/*
+#Example:
+
+#Identification
+name=Robert Vokac
+description=Zettelkasten system for Robert Vokac
+environment=Development
+#
+#host=
+#port=
+#frontend_port=
+database_type=SQLite
+
+#Access
+access_mode=EveryoneCanDoEverything
+registration_mode=Free
+default_user_role=Reader
+
+#Secrets
+jwt_secret=***
+*/
 
 namespace mindnet
 {
@@ -90,6 +95,7 @@ namespace mindnet
         mutable unsigned short port{};
         mutable unsigned short frontend_port{};
         mutable std::string host{};
+        DatabaseType database_type{DatabaseType::Unknown};
         //access
         AccessMode access_mode{AccessMode::EveryoneCanDoEverything};
         RegistrationMode registration_mode{RegistrationMode::Free};
@@ -118,6 +124,8 @@ namespace mindnet
             save_number(port)
             save_number(frontend_port)
             save_text(host)
+            using mindnet::string_to_database_type;
+            save_enum(database_type)
             //
             save_enum(access_mode)
             save_enum(registration_mode)

@@ -4,17 +4,17 @@
 #ifndef IVALIDATOR_H
 #define IVALIDATOR_H
 
-#include <variant>
-#include <map>
-#include <vector>
+#include <functional>
+#include <memory>
 
-#include "IPersistence.h"
 #include "../OperationResult.h"
+#include "mindnet/Helper.h"
 
 namespace mindnet::http
 {
     struct LoginToken;
 }
+namespace mindnet::api { class IPersistence; }
 
 namespace mindnet::api
 {
@@ -27,6 +27,8 @@ namespace mindnet::api
     {
     public:
         virtual ~IValidator() = default;
+
+        typedef std::shared_ptr<IPersistence> DbPtr;
 
         virtual OperationResult can_create(DbPtr& db, http::LoginToken& token, entity_fields& ef) const = 0;
 

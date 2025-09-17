@@ -25,24 +25,41 @@
 #include "mindnet/plugins/mail/MailPluginFactory.h"
 #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
 #include "mindnet/plugins/test/TestPluginFactory.h"
-#include "mindnet/plugins/zettelkasten/ZettelkastenPluginFactory.h"
+#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
 using mindnet::commit;
 
-void migrate_schema_if_needed()
+void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_ptr)
 {
     mindnet::trace << "Migrating schema, if needed" << commit;
 
-    bool migrationResult = mindnet::impl::
-        sqlite::SqliteDatabaseMigration::getInstance()->migrate();
-    if (migrationResult)
+    mindnet::DatabaseType database_type = mindnet::g_configuration.database_type;
+    if (database_type != mindnet::DatabaseType::SQLite)
     {
-        mindnet::trace << "Migrating schema: OK. Success." << commit;
-        return;
+        mindnet::err << "SQLite database is only supported, but you configured " <<
+            mindnet::database_type_to_string(database_type) << commit;
+        exit(mindnet::ExitStatus::MIGRATION_FAILED);
     }
-    mindnet::err << "Migrating schema: KO. Failed." << commit;
-    exit(mindnet::ExitStatus::MIGRATION_FAILED);
+    for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
+    {
+        mindnet::debug << "Migrating schema for plugin " << plugin_name << commit;
+        auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
+        auto migration_scripts = plugin->get_migration_scripts();
+        if (migration_scripts == nullptr) {continue;}
+        bool migration_result = mindnet::impl::
+            sqlite::SqliteDatabaseMigration::getInstance()->migrate(plugin_name, migration_scripts);
+        if (migration_result)
+        {
+            mindnet::trace << "Migrating schema for plugin " << plugin_name << ": OK. Success." << commit;
+            migration_scripts.reset();
+            continue;
+        }
+        migration_scripts.reset();
+        mindnet::err << "Migrating schema for plugin " << plugin_name << ": KO. Failed." << commit;
+        exit(mindnet::ExitStatus::MIGRATION_FAILED);
+    }
+
 }
 
 void print_logo()
@@ -98,8 +115,10 @@ bool commands_function_start(
     string host = "http://localhost";
     string static_directory = "static";
 
-    auto require_value = [&](int& i, const std::string& option) -> std::string {
-        if (i + 1 >= arguments.size()) {
+    auto require_value = [&](int& i, const std::string& option) -> std::string
+    {
+        if (i + 1 >= arguments.size())
+        {
             mindnet::fatal << "No value provided for option " << option << ". Exiting." << commit;
             exit_status = 1;
             throw std::runtime_error(std::string("Missing argument for ") + option);
@@ -107,46 +126,58 @@ bool commands_function_start(
         return arguments[++i]; // consume next argument
     };
 
-    auto parse_port = [&](const std::string& value, const std::string& what) -> int {
-        try {
+    auto parse_port = [&](const std::string& value, const std::string& what) -> int
+    {
+        try
+        {
             int p = std::stoi(value);
-            if (p < 1 || p > 65535) {
+            if (p < 1 || p > 65535)
+            {
                 mindnet::fatal << what << " must be between 1 and 65535" << commit;
                 exit_status = 1;
                 throw std::runtime_error("invalid port range");
             }
             return p;
-        } catch (...) {
+        }
+        catch (...)
+        {
             mindnet::fatal << "Invalid " << what << " provided: " << value << commit;
             exit_status = 1;
             throw;
         }
     };
 
-    for (int i = 1; i < arguments.size(); ++i) {
+    for (int i = 1; i < arguments.size(); ++i)
+    {
         const auto& argument = arguments[i];
-        if (argument[0] != '-') {
+        if (argument[0] != '-')
+        {
             mindnet::fatal << "Option must start with \"-\": " << argument << commit;
             exit_status = 1;
             return true;
         }
 
-        if (argument == "-p" || argument == "--port") {
+        if (argument == "-p" || argument == "--port")
+        {
             port = parse_port(require_value(i, argument), "Port");
             custom_port = true;
         }
-        else if (argument == "-f" || argument == "--frontend-port") {
+        else if (argument == "-f" || argument == "--frontend-port")
+        {
             frontend_port = parse_port(require_value(i, argument), "Frontend port");
             custom_frontend_port = true;
         }
-        else if (argument == "-h" || argument == "--host") {
+        else if (argument == "-h" || argument == "--host")
+        {
             host = require_value(i, argument);
             custom_host = true;
         }
-        else if (argument == "-s" || argument == "--static-directory") {
+        else if (argument == "-s" || argument == "--static-directory")
+        {
             static_directory = require_value(i, argument);
         }
-        else {
+        else
+        {
             mindnet::fatal << "Unknown option for start command: " << argument << commit;
             exit_status = 1;
             return true;
@@ -167,7 +198,7 @@ bool commands_function_start(
     for (auto& plugin_name : service_ptr->get_plugin_registry()->get_plugin_names_sorted_by_dependencies())
     {
         auto plugin = service_ptr->get_plugin_registry()->get_plugin(plugin_name);
-        for (auto& model_registration: plugin->get_model_registrations())
+        for (auto& model_registration : plugin->get_model_registrations())
         {
             server.create_model_endpoint(&controller, model_registration->model_definition);
         }
@@ -240,7 +271,7 @@ bool run_command(
 void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugin_registry)
 {
     REGISTER_PLUGIN(core, Core)
-    REGISTER_PLUGIN(zettelkasten, Zettelkasten)
+    REGISTER_PLUGIN(slipbox, SlipBox)
     REGISTER_PLUGIN(test, Test)
     // REGISTER_PLUGIN(mail, Mail)
     // REGISTER_PLUGIN(chat, Chat)
@@ -263,10 +294,11 @@ int main(int argc, char** argv)
     print_logo();
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
-    migrate_schema_if_needed();
 
     mindnet::api::PluginRegistryPtr plugin_registry_ptr = std::make_shared<mindnet::api::PluginRegistry>();
     register_plugins(plugin_registry_ptr);
+
+    migrate_schema_if_needed(plugin_registry_ptr);
 
     std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
         mindnet::api::Persistence>(plugin_registry_ptr);

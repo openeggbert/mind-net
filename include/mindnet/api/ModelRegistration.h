@@ -4,18 +4,22 @@
 
 #ifndef MIND_NET_MODELREGISTRATION_H
 #define MIND_NET_MODELREGISTRATION_H
-#include "IValidator.h"
+#include <utility>
+#include <memory>
+#include "mindnet/api/IValidator.h"
 #include "mindnet/model/ModelDefinition.h"
 
 namespace mindnet::api
 {
+    class IRepository;
+
     struct ModelRegistration
     {
         ModelRegistration(
-            const model::ModelDefinition& model_definition,
+            model::ModelDefinition model_definition,
             const std::shared_ptr<IValidator>& validator,
             const std::shared_ptr<IRepository>& repository)
-            : model_definition(model_definition),
+            : model_definition(std::move(model_definition)),
               validator(validator),
               repository(repository)
         {

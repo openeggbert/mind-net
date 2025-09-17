@@ -23,6 +23,7 @@
 #include <string>
 
 #include "mindnet/Utils.h"
+#include "mindnet/api/MigrationScripts.h"
 
 namespace mindnet::impl::sqlite
 {
@@ -42,7 +43,7 @@ namespace mindnet::impl::sqlite
 
         static SqliteDatabaseMigration* getInstance();
         static void destroyInstance();
-        bool migrate();
+        bool migrate(const string& plugin_name, api::MigrationScriptsPtr& migration_scripts);
     };
 }
 #endif // SQLITEDATABASEMIGRATION_H

@@ -1,8 +1,10 @@
 //
 // Created by robertvokac on 9/8/25.
 //
+#ifndef ACCESSMODE_H
+#define ACCESSMODE_H
 
-#ifndef MIND_NET_ACCESSMODE_H
+
 namespace mindnet
 {
     enum class AccessMode
@@ -52,7 +54,4 @@ namespace mindnet
         };
     }
 }
-
-#define MIND_NET_ACCESSMODE_H
-
-#endif //MIND_NET_ACCESSMODE_H
+#endif // ACCESSMODE_H
