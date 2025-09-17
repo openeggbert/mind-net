@@ -147,6 +147,7 @@ return "Logged out";
 - [ ] New table log
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
 - [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
+- [ ] FEATURE Support for export to static HTML files
 - [ ] New entity Session
   ```aiignore
    CREATE TABLE session (
@@ -162,7 +163,6 @@ return "Logged out";
 - [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
 - [ ] Improve documentation
 - [ ] IMPROVEMENT Add logging to files
-- [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Create OpenAPI specification for the REST API
 - [ ] IMPROVEMENT Paging - add First and Last buttons
 - [ ] ModelDefinition - add title_column

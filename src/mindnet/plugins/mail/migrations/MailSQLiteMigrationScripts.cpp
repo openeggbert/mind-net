@@ -17,8 +17,8 @@ namespace mindnet::plugins::mail::migrations
             R"(
 CREATE TABLE message (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	owner_id INTEGER NOT NULL,
 	sender_id INTEGER NOT NULL,

@@ -17,8 +17,8 @@ namespace mindnet::plugins::chat::migrations
             R"(
 CREATE TABLE discussion (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
   team_id INTEGER NOT NULL,
   title TEXT NOT NULL,
@@ -33,8 +33,8 @@ CREATE TABLE discussion (
             R"(
 CREATE TABLE comment (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
   discussion_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE comment (
 
   FOREIGN KEY (discussion_id) REFERENCES discussion(id),
   FOREIGN KEY (user_id) REFERENCES user(id),
-  FOREIGN KEY(parent_comment_id) REFERENCES comment(id) /*ON DELETE CASCADE*/
+  FOREIGN KEY(parent_comment_id) REFERENCES comment(id)
 );
 )",
         };

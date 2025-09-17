@@ -7,8 +7,8 @@
 
 namespace mindnet
 {
-    static constexpr bool VALIDATION_ENABLED = false;
-    static constexpr bool TRIGGERS_ENABLED = false;
+    static constexpr bool VALIDATION_ENABLED = true;
+    static constexpr bool TRIGGERS_ENABLED = true;
 
     using validator = api::IValidator*;
     using mindnet::OperationResult;

@@ -145,9 +145,10 @@ namespace mindnet::model
 
                 if (!column.get_enum_definition()->is_value_valid(value_int64_t))
                 {
+                    return "Invalid enum value " + std::to_string(value_int64_t) + " for column '" + column.get_column_name() +
+                        "'. Please provide a valid value from the allowed enum options.";
                 }
-                return "Invalid enum value for column '" + column.get_column_name() +
-                    "'. Please provide a valid value from the allowed enum options.";
+
             }
         }
         return "";

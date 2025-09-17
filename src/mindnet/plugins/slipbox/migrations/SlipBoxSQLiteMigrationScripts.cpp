@@ -16,8 +16,8 @@ namespace mindnet::plugins::slipbox::migrations
         R"(
 CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
@@ -37,11 +37,11 @@ CREATE TABLE map (
         R"(
 CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	value TEXT NOT NULL,
-	format INTEGER DEFAULT 0 CHECK (format IN (0, 1, 2)),
+	format INTEGER DEFAULT 0,
     version INTEGER DEFAULT 1
 );
 CREATE INDEX idx_content_value ON content(value);
@@ -69,20 +69,20 @@ END;
         R"(
 CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	map_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     parent_note_id INTEGER,
     content_id INTEGER UNIQUE,
     sibling_position INTEGER NOT NULL,
-    importance INTEGER DEFAULT 0 CHECK (importance IN (0, 1, 2, 3)),
-    difficulty INTEGER DEFAULT 0 CHECK (difficulty IN (0, 1, 2, 3, 4)),
+    importance INTEGER DEFAULT 0,
+    difficulty INTEGER DEFAULT 0,
 
-    FOREIGN KEY (map_id) REFERENCES map(id) /*ON DELETE CASCADE*/,
+    FOREIGN KEY (map_id) REFERENCES map(id) ,
 	FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE SET NULL,
-    FOREIGN KEY (parent_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
+    FOREIGN KEY (parent_note_id) REFERENCES note(id)
 );
 
 CREATE INDEX idx_note_content_id ON note(content_id);
@@ -91,16 +91,16 @@ CREATE INDEX idx_note_map_id ON note(map_id);
         R"(
 CREATE TABLE property(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
     map_id INTEGER NOT NULL,
 	note_id INTEGER NOT NULL,
 	key TEXT NOT NULL,
 	value TEXT,
 
-	FOREIGN KEY (map_id) REFERENCES map(id) /*ON DELETE CASCADE*/,
-    FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
+	FOREIGN KEY (map_id) REFERENCES map(id) ,
+    FOREIGN KEY (note_id) REFERENCES note(id) ,
 	UNIQUE (map_id, note_id, key)
 );
 
@@ -110,29 +110,29 @@ CREATE INDEX idx_property_map_note_key ON property(map_id, note_id, key);
         R"(
 CREATE TABLE tag_type (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
     map_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 
-	FOREIGN KEY (map_id) REFERENCES map(id) /*ON DELETE CASCADE*/,
+	FOREIGN KEY (map_id) REFERENCES map(id) ,
     UNIQUE(map_id, title)
 );
 )",
         R"(
 CREATE TABLE tag (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	note_id INTEGER NOT NULL,
 	tag_type_id INTEGER NOT NULL,
 
 	UNIQUE (note_id, tag_type_id),
 
-	FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
-	FOREIGN KEY (tag_type_id) REFERENCES tag_type(id) /*ON DELETE CASCADE*/
+	FOREIGN KEY (note_id) REFERENCES note(id) ,
+	FOREIGN KEY (tag_type_id) REFERENCES tag_type(id)
 );
 
 CREATE INDEX idx_tag_note_id ON tag(note_id);
@@ -141,8 +141,8 @@ CREATE INDEX idx_tag_note_id ON tag(note_id);
         R"(
 CREATE TABLE collection (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	name TEXT NOT NULL,
 	description TEXT,
@@ -156,8 +156,8 @@ CREATE TABLE collection (
         R"(
 CREATE TABLE collection_item (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	collection_id INTEGER NOT NULL,
 	note_id INTEGER NOT NULL,
@@ -172,13 +172,13 @@ CREATE TABLE collection_item (
         R"(
         		CREATE TABLE question (
         	id INTEGER PRIMARY KEY AUTOINCREMENT,
-        	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        	created_at DATETIME ,
+        	updated_at DATETIME ,
 --
         			note_id INTEGER,
         			question_text TEXT NOT NULL,
         			answers_json TEXT, -- answers as a json object
-                    FOREIGN KEY (note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
+                    FOREIGN KEY (note_id) REFERENCES note(id)
         		);
 
             	--answers_json
@@ -192,8 +192,8 @@ CREATE TABLE collection_item (
         R"(
 CREATE TABLE reference(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME ,
+    updated_at DATETIME ,
     --
 	from_note_id INTEGER NOT NULL,
 	to_note_id INTEGER NOT NULL,
@@ -202,8 +202,8 @@ CREATE TABLE reference(
 	CHECK (from_note_id <> to_note_id),
     UNIQUE (from_note_id, to_note_id),
 
-	FOREIGN KEY (from_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/,
-	FOREIGN KEY (to_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
+	FOREIGN KEY (from_note_id) REFERENCES note(id) ,
+	FOREIGN KEY (to_note_id) REFERENCES note(id)
 );
 
 CREATE INDEX idx_reference_from_to ON reference(from_note_id, to_note_id);
@@ -212,15 +212,15 @@ CREATE INDEX idx_reference_from_to ON reference(from_note_id, to_note_id);
         R"(
 CREATE TABLE link(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME ,
+    updated_at DATETIME ,
     --
 	from_note_id INTEGER NOT NULL,
 	to_url TEXT NOT NULL,
 
 	UNIQUE(from_note_id, to_url),
 
-	FOREIGN KEY (from_note_id) REFERENCES note(id) /*ON DELETE CASCADE*/
+	FOREIGN KEY (from_note_id) REFERENCES note(id)
 );
 
 CREATE INDEX idx_link_from_note ON link(from_note_id);

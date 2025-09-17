@@ -45,11 +45,11 @@ namespace mindnet::plugins::core::models
         using columns::HistoryColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(user_id, 0, HistoryColumns::USER_ID); },
+            [this] { return test_at_least(user_id, 0, HistoryColumns::USER_ID); },
             [this] { return testt_not_empty(table_name, HistoryColumns::TABLE_NAME); },
-            [this] { return test_ne(record_id, 0, HistoryColumns::RECORD_ID); },
+            [this] { return test_true(operation == enums::Crudl::List ? true : record_id != 0, "Record ID must not be 0");},
             [this] { return test_ne(cast64(operation), 0, HistoryColumns::OPERATION); },
-            [this] { return testt_not_empty(data_json, HistoryColumns::DATA_JSON); },
+            [this] { return test_true(operation == enums::Crudl::List ? true : !data_json.empty(), "data_json must not be empty");},
         };
         return ValidatorChain::run(list);
     }

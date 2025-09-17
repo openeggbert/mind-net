@@ -17,24 +17,24 @@ namespace mindnet::plugins::core::migrations
             R"(
 CREATE TABLE user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	username TEXT NOT NULL UNIQUE,
 	password_hash TEXT,
 	display_name TEXT,
-	role INTEGER NOT NULL DEFAULT 0 CHECK (role IN (0,1,2,3,4)),
+	role INTEGER NOT NULL DEFAULT 0,
 	profile_text TEXT,
     last_login DATETIME,
     email TEXT UNIQUE,
-	status INTEGER NOT NULL CHECK (status IN (0,1,2,3,4,5))
+	status INTEGER NOT NULL
 );
 )",
             R"(
 CREATE TABLE team (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	name TEXT NOT NULL,
 	description TEXT,
@@ -48,13 +48,13 @@ CREATE TABLE team (
             R"(
 CREATE TABLE team_member (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
 	team_id INTEGER NOT NULL,
 	user_id INTEGER NOT NULL,
-	role INTEGER NOT NULL DEFAULT 0 CHECK (role IN (0,1,2,3,4)),
-	status INTEGER NOT NULL CHECK (status IN (0,1,2,3,4,5)),
+	role INTEGER NOT NULL DEFAULT 0,
+	status INTEGER NOT NULL,
 	joined_at DATETIME NOT NULL,
     left_at DATETIME,
 
@@ -68,14 +68,14 @@ CREATE TABLE team_member (
             R"(
 CREATE TABLE history (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	created_at DATETIME,
+	updated_at DATETIME,
     --
     user_id INTEGER,
     ip_address TEXT,
 	table_name TEXT NOT NULL,
 	record_id INTEGER NOT NULL,
-	operation INTEGER NOT NULL CHECK (operation IN (1, 2, 3, 4, 5)),
+	operation INTEGER NOT NULL,
 	data_json TEXT NOT NULL,
     reason TEXT,
 

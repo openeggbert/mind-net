@@ -34,8 +34,8 @@
 
 namespace mindnet::plugins::core::models
 {
-    using mindnet::model::def;
-    using mindnet::model::coldef;
+    using model::def;
+    using model::coldef;
     using_flags();
 
     inline def TEAM_MEMBER_DEFINITION =
