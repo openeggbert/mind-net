@@ -11,7 +11,7 @@ namespace mindnet::plugins::mail
     class MailPluginFactory : public api::PluginFactory
     {
     public:
-        api::PluginPtr create() const override;
+        [[nodiscard]] api::PluginPtr create() const override;
     };
 }
 

@@ -297,8 +297,9 @@ export async function renderEntityList(entity) {
     </label>`;
     });
     html += `
-    <button id="applyFilters" style="padding:6px 12px; font-size:1rem; margin-right:5px;">Search</button>
     <button id="clearFilters" style="padding:6px 12px; font-size:1rem;">Clear</button>
+    <button id="applyFilters" style="padding:6px 12px; font-size:1rem; margin-right:5px;">Search</button>
+    
 </div>`;
 
 

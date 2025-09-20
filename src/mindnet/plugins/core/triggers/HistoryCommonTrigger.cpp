@@ -26,8 +26,8 @@ namespace mindnet::plugins::core::triggers
     void HistoryCommonTrigger::run(
         plugins::core::enums::Crudl operation,
         int stack_depth,
-        const OperationResult& validation_result,
-        const OperationResult& action_result,
+        OperationResult& validation_result,
+        OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
         int user_id,
         int id,
@@ -74,14 +74,16 @@ namespace mindnet::plugins::core::triggers
         history.reason = "reason 1";
         auto f = history.to_values();
         int64_t now = static_cast<int64_t>(Utils::currentUnixTimestamp());
-        // f[1] = now;
-        // f[2] = now;
-        //if (user_id == 0) f[3] = FOREIGN_KEY_NULL;
+        f[1] = now;
+        f[2] = now;
 
+        auto create_result = run_create(models::HISTORY_DEFINITION, token, f, stack_depth);
 
-
-        run_create(models::HISTORY_DEFINITION, token,f, stack_depth);
-
+        if (create_result.second.ko())
+        {
+            action_result.status = 500;
+            action_result.error = create_result.second.error;
+        }
         // auto result = run_read(slipbox::models::NOTE_DEFINITION, token, 1, stack_depth);
         //         if (result.second.ko()) experiment << result.second.error << commit;
         //         if (result.second.ok())

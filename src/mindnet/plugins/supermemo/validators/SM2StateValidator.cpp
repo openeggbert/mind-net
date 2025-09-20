@@ -2,18 +2,18 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/test/validators/SM2StateValidator.h"
+#include "mindnet/plugins/supermemo/validators/SM2StateValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/test/models/SM2State.h"
+#include "mindnet/plugins/supermemo/models/SM2State.h"
 #include "mindnet/api/Persistence.h"
 
 #define Model SM2State
 #define MODEL SM2_STATE
 #define model sm2_state
 
-namespace mindnet::plugins::test::validators
+namespace mindnet::plugins::supermemo::validators
 {
     using validators::SM2StateValidator;
     using mindnet::OperationResult;

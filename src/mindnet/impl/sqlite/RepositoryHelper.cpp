@@ -65,8 +65,7 @@ namespace mindnet::impl::sqlite
             return -1;
         }
 
-        Utils::fill_sqlite_query(*query_ptr, fields
-                                 , true
+        Utils::fill_sqlite_query(*query_ptr, fields, definition, true
         );
 
         try
@@ -183,7 +182,7 @@ namespace mindnet::impl::sqlite
 
         fields_copy.push_back(id);
 
-        Utils::fill_sqlite_query(*query_ptr, fields_copy, false);
+        Utils::fill_sqlite_query(*query_ptr, fields_copy, def);
         try
         {
             Utils::sqlite_exec(*query_ptr);
@@ -226,7 +225,7 @@ namespace mindnet::impl::sqlite
 
         entity_fields fields;
         fields.push_back(id);
-        Utils::fill_sqlite_query(*query_ptr, fields, false);
+        Utils::fill_sqlite_query(*query_ptr, fields, def);
         try
         {
             Utils::sqlite_exec(*query_ptr);

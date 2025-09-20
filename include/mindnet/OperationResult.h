@@ -36,6 +36,7 @@ namespace mindnet
             return !ok();
         }
     };
+    inline OperationResult empty_result;
 }
 
 #endif // OPERATIONRESULT_H

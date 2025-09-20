@@ -118,28 +118,14 @@ namespace mindnet::impl::sqlite
                 break;
             case model::PrimitiveColumnType::Number:
                 {
-                    if (col.get_foreign_key().empty())
-                    {
-                        result.emplace_back(
-                            has_value
-                                ? cast64(rvalue)
-                                : (col.get_default_value().empty()
-                                       ? cast64(0)
-                                       : cast64(std::stoi(col.get_default_value()))));
-                    }
-                    else
-                    {
-                        if (has_value && rvalue != 0)
-                        {
-                            result.emplace_back(cast64(rvalue));
-                        }
-                        else
-                        {
-                            result.emplace_back(FOREIGN_KEY_NULL);
-                        }
-                    }
+                    result.emplace_back(
+                        has_value
+                            ? cast64(rvalue)
+                            : (col.get_default_value().empty()
+                                   ? cast64(0)
+                                   : cast64(std::stoi(col.get_default_value()))));
                     break;
-                    default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));
+                default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));
                 }
             }
 

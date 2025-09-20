@@ -2,9 +2,9 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/test/models/Review.h"
+#include "mindnet/plugins/supermemo/models/Review.h"
 
-namespace mindnet::plugins::test::models
+namespace mindnet::plugins::supermemo::models
 {
     entity_fields Review::to_values() const
     {

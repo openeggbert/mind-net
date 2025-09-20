@@ -91,8 +91,8 @@ namespace mindnet::api
         virtual void run(
             plugins::core::enums::Crudl operation,
             int stack_depth,
-            const OperationResult& validation_result,
-            const OperationResult& action_result,
+            OperationResult& validation_result,
+            OperationResult& action_result,
             model::ModelDefinition def,
             int user_id,
             int id,

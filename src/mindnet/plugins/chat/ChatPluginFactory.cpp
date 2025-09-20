@@ -12,8 +12,7 @@ namespace mindnet::plugins::chat
         auto plugin = std::make_shared<api::Plugin>(
             CHAT_PLUGIN_NAME,
             "Slack like",
-            std::vector<std::string>{},
-            false
+            std::vector<std::string>{"chat"}
         );
         REGISTER_MIGRATIONS(Chat, SQLite)
 

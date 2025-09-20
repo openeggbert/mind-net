@@ -2,15 +2,15 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#include "mindnet/plugins/test/migrations/TestSQLiteMigrationScripts.h"
+#include "mindnet/plugins/supermemo/migrations/SuperMemoSQLiteMigrationScripts.h"
 
-namespace mindnet::plugins::test::migrations
+namespace mindnet::plugins::supermemo::migrations
 {
-    TestSQLiteMigrationScripts::TestSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
+    SuperMemoSQLiteMigrationScripts::SuperMemoSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
     {
     }
 
-    void TestSQLiteMigrationScripts::define_migrations()
+    void SuperMemoSQLiteMigrationScripts::define_migrations()
     {
         migrations = {
             R"(

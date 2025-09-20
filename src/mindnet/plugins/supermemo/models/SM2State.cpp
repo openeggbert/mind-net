@@ -2,9 +2,9 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/test/models/SM2State.h"
+#include "mindnet/plugins/supermemo/models/SM2State.h"
 
-namespace mindnet::plugins::test::models
+namespace mindnet::plugins::supermemo::models
 {
     entity_fields SM2State::to_values() const
     {

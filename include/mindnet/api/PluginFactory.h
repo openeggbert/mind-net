@@ -20,7 +20,7 @@ namespace mindnet::api
     public:
         virtual ~PluginFactory() = default;
 
-        virtual PluginPtr create() const = 0;
+        [[nodiscard]] virtual PluginPtr create() const = 0;
     };
 }
 #endif // PLUGINFACTORY_H

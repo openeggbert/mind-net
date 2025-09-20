@@ -22,8 +22,7 @@ namespace mindnet::plugins::slipbox
         auto plugin = std::make_shared<api::Plugin>(
             SLIP_BOX_PLUGIN_NAME,
             "slip_box",
-            std::vector<std::string>{},
-            true
+            std::vector<std::string>{"slip_box"}
         );
 
         REGISTER_MIGRATIONS(SlipBox, SQLite)

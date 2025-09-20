@@ -9,10 +9,10 @@
 #include "mindnet/Helper.h"
 #include "../../../api/ValidatorBase.h"
 
-namespace mindnet::plugins::test::validators
+namespace mindnet::plugins::supermemo::validators
 {
     using api::RequestContext;
-    using mindnet::plugins::test::models::Review;
+    using mindnet::plugins::supermemo::models::Review;
 
     class ReviewValidator : public api::ValidatorBase<ReviewValidator, Review>
     {

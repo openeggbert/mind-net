@@ -193,6 +193,12 @@ namespace mindnet::model
             return foreign_key;
         }
 
+        /** @return The column foreign_key */
+        [[nodiscard]] const bool is_foreign_key() const
+        {
+            return !foreign_key.empty();
+        }
+
         /** @return The enum definition */
         [[nodiscard]] const std::optional<EnumDefinition>& get_enum_definition() const
         {

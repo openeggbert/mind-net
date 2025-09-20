@@ -14,9 +14,7 @@ namespace mindnet::plugins::core
     {
         auto plugin = std::make_shared<api::Plugin>(
             CORE_PLUGIN_NAME,
-            "core models",
-            std::vector<std::string>{},
-            false
+            "core models"
         );
         REGISTER_MIGRATIONS(Core, SQLite)
 

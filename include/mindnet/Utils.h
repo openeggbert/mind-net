@@ -81,6 +81,7 @@ namespace mindnet
         static string generate_delete_sql(const model::ModelDefinition& definition);
 
         static void fill_sqlite_query(SQLite::Statement& query, const entity_fields& values,
+                                      const model::ModelDefinition& model_definition,
                                       bool auto_increment = false);
     };
 

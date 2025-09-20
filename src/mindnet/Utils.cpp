@@ -358,6 +358,7 @@ namespace mindnet
     void Utils::fill_sqlite_query(
         SQLite::Statement& query,
         const entity_fields& values,
+        const model::ModelDefinition& model_definition,
         bool auto_increment)
     {
         std::size_t values_size = values.size();
@@ -377,35 +378,35 @@ namespace mindnet
             throw std::out_of_range("Less values provided than query parameters");
         }
 
+        auto& columns = model_definition.get_columns();
         for (size_t i = 0; i < values.size(); ++i)
         {
             if (auto_increment && i == 0)
             {
                 continue;
             }
+            auto& column = columns[i];
+            auto& column_name = column.get_column_name();
             std::visit([&](auto&& val) -> void
             {
                 using T = std::decay_t<decltype(val)>;
 
-                debug << "binding index " << i << " with value \"" << val << "\"" << commit;
-
                 int index = static_cast<int>(i + 1 + (auto_increment ? -1 : 0));
                 if constexpr (std::is_same_v<T, std::string>)
                 {
-                    if (FOREIGN_KEY_NULL == val)
-                    {
-                        debug << "binding index " << i << " with value NULL" << commit;
-                        query.bind(index, nullptr);
-                    }
-                    else
-                    {
-                        debug << "binding index " << i << " with value" << commit;
-                        query.bind(index, val);
-                    }
+                    debug << "binding index " << i << " " << column_name << " with value: \"" << val << "\"" << commit;
+                    query.bind(index, val);
                 }
                 else if constexpr (std::is_same_v<T, int64_t>)
                 {
+                    if (val == 0 && column.is_foreign_key())
+                    {
+                        debug << "binding index " << i << " " << column_name << " with value: NULL" << commit;
+                        query.bind(index, nullptr);
+                    } else {
+                    debug << "binding index " << i << " " << column_name << " with value: " << val << commit;
                     query.bind(index, val);
+                    }
                 }
                 else
                 {

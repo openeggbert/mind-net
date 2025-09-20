@@ -2,18 +2,18 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/test/validators/ReviewValidator.h"
+#include "mindnet/plugins/supermemo/validators/ReviewValidator.h"
 
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/test/models/Review.h"
+#include "mindnet/plugins/supermemo/models/Review.h"
 #include "mindnet/api/Persistence.h"
 
 #define Model Review
 #define MODEL REVIEW
 #define model review
 
-namespace mindnet::plugins::test::validators
+namespace mindnet::plugins::supermemo::validators
 {
     using validators::ReviewValidator;
     using mindnet::OperationResult;

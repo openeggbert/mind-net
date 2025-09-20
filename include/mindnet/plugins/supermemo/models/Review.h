@@ -30,7 +30,7 @@
 #include "../columns/ReviewColumns.h"
 // ***** MACROS : END *****
 
-namespace mindnet::plugins::test::models
+namespace mindnet::plugins::supermemo::models
 {
     using mindnet::model::def;
     using mindnet::model::coldef;

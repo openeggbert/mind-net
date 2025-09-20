@@ -9,9 +9,11 @@
 namespace mindnet::api
 {
     Plugin::Plugin(const std::string& name_, const std::string& description_,
-                   const std::vector<std::string>& plugins_which_this_plugin_depends_on_, bool has_app_)
+                   std::vector<string> apps_,
+                   const std::vector<std::string>& plugins_which_this_plugin_depends_on_)
         : name(name_), description(description_),
-          plugins_which_this_plugin_depends_on(plugins_which_this_plugin_depends_on_), has_app_(has_app_)
+          apps(std::move(apps_)),
+          plugins_which_this_plugin_depends_on(plugins_which_this_plugin_depends_on_)
     {
         if (get_name() != "core")
         {
@@ -37,9 +39,9 @@ namespace mindnet::api
         return plugins_which_this_plugin_depends_on;
     }
 
-    bool Plugin::has_app() const
+    std::vector<string> Plugin::get_apps() const
     {
-        return has_app_;
+        return apps;
     }
 
     bool Plugin::is_closed_for_changes() const

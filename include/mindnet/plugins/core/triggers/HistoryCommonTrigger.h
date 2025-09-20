@@ -12,12 +12,12 @@ namespace mindnet::plugins::core::triggers
     public:
         HistoryCommonTrigger();
 
-        ~HistoryCommonTrigger() = default;
+        ~HistoryCommonTrigger() override = default;
         void run(
             plugins::core::enums::Crudl operation,
             int stack_depth,
-            const OperationResult& validation_result,
-            const OperationResult& action_result,
+            OperationResult& validation_result,
+            OperationResult& action_result,
             const model::ModelDefinition def,
             int user_id,
             int id,

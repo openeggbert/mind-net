@@ -11,8 +11,7 @@ namespace mindnet::plugins::suggestion
         auto plugin = std::make_shared<api::Plugin>(
             SUGGESTION_PLUGIN_NAME,
             "approving changes",
-            std::vector<std::string>{},
-            false
+            std::vector<std::string>{"suggestion"}
         );
 
         REGISTER_MIGRATIONS(Suggestion, SQLite)

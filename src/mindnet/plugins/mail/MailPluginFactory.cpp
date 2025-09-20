@@ -12,8 +12,7 @@ namespace mindnet::plugins::mail
         auto plugin = std::make_shared<api::Plugin>(
             MAIL_PLUGIN_NAME,
             "e-mail",
-            std::vector<std::string>{},
-            false
+            std::vector<std::string>{"mail"}
         );
 
         REGISTER_MIGRATIONS(Mail, SQLite)

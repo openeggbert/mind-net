@@ -22,29 +22,33 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef REVIEWCOLUMNS_H
-#define REVIEWCOLUMNS_H
+#ifndef SM2STATECOLUMNS_H
+#define SM2STATECOLUMNS_H
 
 #include "../../../model/BaseColumns.h"
+#include "mindnet/Helper.h"
+#include "../../../model/ColumnType.h"
 
-namespace mindnet::plugins::test::columns
+namespace mindnet::plugins::supermemo::columns
 {
-    struct ReviewColumns : model::BaseColumns
+    struct SM2StateColumns : model::BaseColumns
     {
-        ReviewColumns() = delete;
+        SM2StateColumns() = delete;
 
-        ReviewColumns(const ReviewColumns&) = delete;
-        ReviewColumns& operator=(const ReviewColumns&) = delete;
+        SM2StateColumns(const SM2StateColumns&) = delete;
+        SM2StateColumns& operator=(const SM2StateColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "review";
+        static constexpr const char* MODEL_NAME = "sm2_state";
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* QUESTION_ID = "question_id";
-        static constexpr const char* REVIEW_DATE = "review_date";
-        static constexpr const char* GRADE = "grade";
-        static constexpr const char* RESPONSE_DATA = "response_data";
-        static constexpr const char* NOTES = "notes";
+        static constexpr const char* REPETITIONS = "repetitions";
+        static constexpr const char* INTERVAL = "interval";
+        static constexpr const char* EF_TIMES_100 = "ef_times_100";
+        static constexpr const char* NEXT_REVIEW = "next_review";
+        static constexpr const char* LAST_REVIEW = "last_review";
+        static constexpr const char* LAST_QUALITY = "last_quality";
     };
 }
-#endif // REVIEWCOLUMNS_H
+#endif // SM2STATECOLUMNS_H

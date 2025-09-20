@@ -20,16 +20,17 @@ namespace mindnet::api
         Plugin(
             const std::string& name_,
             const std::string& description_,
-            const std::vector<std::string>& plugins_which_this_plugin_depends_on_,
-            bool has_app_);
+            std::vector<string> apps_ = {},
+            const std::vector<std::string>& plugins_which_this_plugin_depends_on_ = {}
+            );
         ~Plugin() = default;
 
-        const std::string& get_name() const;
-        const std::string& get_description() const;
-        const std::vector<std::string>& depends_on_plugins() const;
-        bool has_app() const;
+        [[nodiscard]] const std::string& get_name() const;
+        [[nodiscard]] const std::string& get_description() const;
+        [[nodiscard]] const std::vector<std::string>& depends_on_plugins() const;
+        [[nodiscard]] std::vector<string> get_apps() const;
         void close_for_changes();
-        bool is_closed_for_changes() const;
+        [[nodiscard]] bool is_closed_for_changes() const;
         void register_model(
             model::ModelDefinition& model_definition,
             const std::shared_ptr<IValidator>& validator);
@@ -37,14 +38,14 @@ namespace mindnet::api
         void register_migrations(const MigrationScriptsPtr& migration_scripts);
         [[nodiscard]] MigrationScriptsPtr get_migration_scripts() const;
         void destroy_migration_scripts();
-        const std::vector<TriggerPtr>& get_triggers() const;
-        const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
+        [[nodiscard]] const std::vector<TriggerPtr>& get_triggers() const;
+        [[nodiscard]] const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
 
     private:
         std::string name;
         std::string description;
         std::vector<string> plugins_which_this_plugin_depends_on;
-        bool has_app_ = false;
+        std::vector<string> apps;
         bool is_closed_for_changes_ = false;
         std::vector<std::shared_ptr<ModelRegistration>> model_registrations;
         std::vector<TriggerPtr> triggers;

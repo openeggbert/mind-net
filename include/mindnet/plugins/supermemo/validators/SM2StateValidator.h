@@ -9,10 +9,10 @@
 #include "mindnet/Helper.h"
 #include "../../../api/ValidatorBase.h"
 
-namespace mindnet::plugins::test::validators
+namespace mindnet::plugins::supermemo::validators
 {
     using api::RequestContext;
-    using mindnet::plugins::test::models::SM2State;
+    using mindnet::plugins::supermemo::models::SM2State;
 
     class SM2StateValidator : public api::ValidatorBase<SM2StateValidator, SM2State>
     {

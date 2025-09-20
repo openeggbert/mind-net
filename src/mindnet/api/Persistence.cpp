@@ -62,7 +62,7 @@ namespace mindnet::api
     {
         string error;
         int last_id = get_repository(def.get_model_name())->create(fields, error);
-        return {last_id, {500, error}};
+        return {last_id, {last_id < 0 ? 500 : 0, error}};
     }
 
     std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,

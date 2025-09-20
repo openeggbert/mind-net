@@ -28,8 +28,8 @@
 #include "mindnet/plugins/slipbox/models/Tag.h"
 #include "mindnet/plugins/slipbox/models/Collection.h"
 #include "mindnet/plugins/slipbox/models/CollectionItem.h"
-#include "mindnet/plugins/test/models/Review.h"
-#include "mindnet/plugins/test/models/SM2State.h"
+#include "mindnet/plugins/supermemo/models/Review.h"
+#include "mindnet/plugins/supermemo/models/SM2State.h"
 #include "mindnet/plugins/slipbox/models/Question.h"
 #include "mindnet/plugins/slipbox/models/Reference.h"
 #include "mindnet/plugins/slipbox/models/Link.h"
@@ -72,8 +72,8 @@ namespace mindnet::api
     gen_find_h(slipbox, Property, property)
     gen_find_h(slipbox, Question, question)
     gen_find_h(slipbox, Reference, reference)
-    gen_find_h(test, Review, review)
-    gen_find_h(test, SM2State, sm2state)
+    gen_find_h(supermemo, Review, review)
+    gen_find_h(supermemo, SM2State, sm2state)
     gen_find_h(suggestion, Suggestion, suggestion)
     gen_find_h(suggestion, SuggestionReview, suggestion_review)
     gen_find_h(slipbox, Tag, tag)
