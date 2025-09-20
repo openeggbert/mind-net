@@ -1,6 +1,19 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(mind_net)
 
+
+# Default build type (if user doesn't specify -DCMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
+        set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif ()
+
+# Optimization and binary size reduction
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -ffunction-sections -fdata-sections")
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -Wl,--gc-sections -s")
+
+
+
+
 find_package(OpenSSL REQUIRED)
 
 

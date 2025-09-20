@@ -127,7 +127,6 @@ openssl rand -base64 32
     without requiring re-authentication.
 - [ ] Slip Box component
 - [ ] Super Memo component
-- [ ] New table source: type:book/web, title, author, year, page_number, url, map_id
 - [ ] New table idea: string title, string content, bool important, bool public
 - [ ] BUG Update of boolean values in SQLite is not working.
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
@@ -227,3 +226,4 @@ return "Logged out";
 - [x] ModelDefinition - add title_column
 - [x] IMPROVEMENT Paging - add First and Last buttons
 - [x] New table concept : title, disambiguation, note_id
+- [x] New table source: type:book/web, title, author, year, page_number, url, map_id

@@ -254,7 +254,7 @@ namespace mindnet
     {
         if (!VALIDATION_ENABLED) return ok_result;
         //Authentication
-        if (token.ko() && model_definition.get_model_name() != "user")
+        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko() && model_definition.get_model_name() != "user")
             return {
                 401, "Only logged in users can create."
             };
@@ -275,7 +275,7 @@ namespace mindnet
     {
         if (!VALIDATION_ENABLED) return ok_result;
         //Authentication
-        if (token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly)
+        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly)
             return {
                 401, "Only logged in users can read."
             };
@@ -296,7 +296,7 @@ namespace mindnet
     {
         if (!VALIDATION_ENABLED) return ok_result;
         //Authentication
-        if (token.ko()) return {401, "Only logged in users can update."};
+        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko()) return {401, "Only logged in users can update."};
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -313,7 +313,7 @@ namespace mindnet
     {
         if (!VALIDATION_ENABLED) return ok_result;
         //Authentication
-        if (token.ko()) return {401, "Only logged in users can delete."};
+        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko()) return {401, "Only logged in users can delete."};
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -331,7 +331,7 @@ namespace mindnet
     {
         if (!VALIDATION_ENABLED) return ok_result;
         //Authentication
-        if (token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly)
+        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly)
             return {
                 401, "Only logged in users can list."
             };

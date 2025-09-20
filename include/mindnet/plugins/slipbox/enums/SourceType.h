@@ -17,8 +17,9 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef QUESTIONTYPE_H
-#define QUESTIONTYPE_H
+#ifndef SOURCETYPE_H
+#define SOURCETYPE_H
+
 
 #include <string>
 
@@ -26,42 +27,45 @@
 
 namespace mindnet::plugins::slipbox::enums
 {
-    enum class QuestionType
+    enum class SourceType
     {
-        Single = 0,
-        Multi = 1,
-        TrueFalse = 2,
-        Text = 3
+        BOOK = 0,
+        ARTICLE = 1,
+        PAPER = 2,
+        WEBSITE = 3,
+        VIDEO = 4,
     };
 
-    inline std::string question_type_to_string(const QuestionType type)
+    inline std::string source_type_to_string(const SourceType type)
     {
         switch (type)
         {
-        case QuestionType::Single:
-            return "Single";
-        case QuestionType::Multi:
-            return "Multi";
-        case QuestionType::TrueFalse:
-            return "TrueFalse";
-        case QuestionType::Text:
-            return "Text";
+        case SourceType::BOOK:
+            return "Book";
+        case SourceType::ARTICLE:
+            return "Article";
+        case SourceType::PAPER:
+            return "Paper";
+        case SourceType::WEBSITE:
+            return "Website";
+        case SourceType::VIDEO:
+            return "Video";
         default:
             return "Unknown";
         }
     }
 
-    inline std::string question_type_to_string(int type)
+    inline std::string source_type_to_string(int type)
     {
-        return question_type_to_string(static_cast<QuestionType>(type));
+        return source_type_to_string(static_cast<SourceType>(type));
     }
 
-    inline mindnet::model::EnumDefinition question_type_to_enum_definition()
+    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
     {
         return mindnet::model::EnumDefinition{
-            question_type_to_string, 4, 0, 1, 2, 3
+            source_type_to_string, 4, 0, 1, 2, 3
         };
     }
 } // namespace mindnet::enums
 
-#endif // QUESTIONTYPE_H
+#endif // SOURCETYPE_H

@@ -81,7 +81,7 @@ namespace mindnet::impl::sqlite
             throw std::runtime_error(std::string("Invalid crudl ") + crudl_to_string(crudl));
         }
         //id
-        result.emplace_back(0);
+        result.emplace_back(update ? static_cast<int64_t>(body["id"]) : 0);
         //created at
         if (create) { result.emplace_back(static_cast<int64_t>(Utils::currentUnixTimestamp())); }
         else { result.emplace_back(static_cast<int64_t>(0)); }

@@ -161,6 +161,7 @@ namespace mindnet::model
         for (int i = 0; i < old_.size(); i++)
         {
             auto column = columns[i];
+            if (column.get_column_name() == BaseColumns::CREATED_AT) continue;
             if (column.is_readonly() && old_[i] != new_[i])
             {
                 return "Value of column " + column.get_column_name() + " is readonly and cannot be changed.";

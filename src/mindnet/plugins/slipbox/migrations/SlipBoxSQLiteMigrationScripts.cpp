@@ -233,10 +233,10 @@ CREATE TABLE concept(
     created_at DATETIME ,
     updated_at DATETIME ,
     --
+    map_id INTEGER NOT NULL,
+    note_id INTEGER,
 	title TEXT NOT NULL,
 	disambiguation TEXT,
-    note_id INTEGER,
-    map_id INTEGER NOT NULL,
 
 	UNIQUE(map_id, title, disambiguation),
 
@@ -247,6 +247,32 @@ CREATE TABLE concept(
 CREATE INDEX idx_concept_note ON concept(note_id);
 CREATE INDEX idx_concept_title ON concept(title);
 )");
+
+		add_migration("V14__create_source.sql",R"(
+CREATE TABLE source(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME ,
+    updated_at DATETIME ,
+    --
+    map_id INTEGER NOT NULL,
+	title TEXT NOT NULL,
+	author TEXT,
+	year INTEGER,
+	publisher TEXT,
+    edition TEXT,
+    pages TEXT,
+	url TEXT,
+    type INTEGER NOT NULL,
+
+	UNIQUE(map_id, title),
+
+    FOREIGN KEY (map_id) REFERENCES map(id)
+);
+
+CREATE INDEX idx_source_title ON source(title);
+)");
+
+
 
 
     }
