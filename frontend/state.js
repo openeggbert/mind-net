@@ -36,12 +36,13 @@ export const setSelectedAction = (value) => { _state.selectedAction = value; };
 export const setSelectedActionId = (value) => { _state.selectedActionId = value; };
 export const setCurrentPage = (value) => { _state.currentPage = value; };
 export const setPageSize = (value) => {
+    if(value < 5 ) value = 5;
     _state.pageSize = value;
-    localStorage.setItem("currentPage", value); // persist
+    alert("pageSize=" + value)
+    localStorage.setItem("pageSize",value); // persist
 };
 export const setTotalPages = (value) => {
     _state.totalPages = value;
-    localStorage.setItem("pageSize", value); // persist
 };
 
 export const actionLabels = {

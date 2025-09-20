@@ -17,17 +17,18 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef QUESTION_H
-#define QUESTION_H
+#ifndef CONCEPT_H
+#define CONCEPT_H
 
 #include <string>
+#include <utility>
 
 #include "../../../model/BaseModel.h"
 // ***** MACROS : START *****
-#define Model Question
-#define MODEL QUESTION
-#define COLS columns::QuestionColumns
-#include "../columns/QuestionColumns.h"
+#define Model Concept
+#define MODEL CONCEPT
+#define COLS columns::ConceptColumns
+#include "../columns/ConceptColumns.h"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -36,39 +37,38 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def QUESTION_DEFINITION =
+    inline def CONCEPT_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
-        .set_group("Tests", 200).set_title_column(COLS::QUESTION_TEXT)
-        .set_columns(
-            {
-                coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY),
-                coldef(COLS::QUESTION_TEXT, TEXTAREA | MANDATORY),
-                coldef(COLS::ANSWERS_JSON, TEXT),
-            });
-    // *** Definition of model ends ***
+        .set_all_rest_operations().set_title_column(COLS::TITLE)
+        .set_group("Other", 500)
+        .set_title_column(COLS::TITLE)
+        .set_columns({
+            //
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::DISAMBIGUATION),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY),
+            coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY)
+        });
 
     struct Model : mindnet::model::BaseModel
     {
+        string title;
+        string disambiguation;
         int note_id{};
-        string question_text;
-        string answers_json;
+        int map_id{};
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
+        bool operator==(const Concept& other) const
         {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                note_id == other.note_id &&
-                question_text == other.question_text &&
-                answers_json == other.answers_json;
+            return id == other.id && title == other.title && disambiguation == other.disambiguation &&
+                note_id == other.note_id && created_at == other.created_at && updated_at == other.updated_at &&
+                    map_id == other.map_id;
         }
     };
 }
-
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // QUESTION_H
+
+#endif // CONCEPT_H

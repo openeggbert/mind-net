@@ -119,14 +119,14 @@ openssl rand -base64 32
 ## BACKLOG
 
 ### Critical
+- [ ] Reorder columns of tables, if needed
 - [ ] FEATURE User authentication
   * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
   * refresh token /refresh-token is valid 7 days (can be configured)
   * when the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
     without requiring re-authentication.
-- [ ] Zettelkasten component
-- [ ] Test component
-- [ ] New table concept : title, disambiguation, note_id
+- [ ] Slip Box component
+- [ ] Super Memo component
 - [ ] New table source: type:book/web, title, author, year, page_number, url, map_id
 - [ ] New table idea: string title, string content, bool important, bool public
 - [ ] BUG Update of boolean values in SQLite is not working.
@@ -172,8 +172,6 @@ return "Logged out";
 
 ### Experimental
 - [ ] Chat component - Slack-like
-- [ ] FEATURE New table comment_reaction
-- [ ] FEATURE New table discussion_read_status
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] FEATURE Implement complex Filtering in REST API
 
@@ -220,29 +218,6 @@ return "Logged out";
 
 ---
 
-
-  
-### New table comment_reaction
-
-CREATE TABLE comment_reaction (
-comment_id INTEGER,
-user_id INTEGER NOT NULL,
-type TEXT NOT NULL, -- např. 'like', 'heart', 'laugh'
-FOREIGN KEY(comment_id) REFERENCES comment(id),
-FOREIGN KEY(user_id) REFERENCES user(id)
-);
-
-### New table discussion_read_status
-
-CREATE TABLE discussion_read_status (
-user_id INTEGER NOT NULL,
-discussion_id INTEGER NOT NULL,
-last_read_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY(user_id, discussion_id),
-FOREIGN KEY(user_id) REFERENCES user(id),
-FOREIGN KEY(discussion_id) REFERENCES discussion(id)
-);
-
 ## Done
 
 - [x] IMPROVEMENT Enums will be PascalCase, not all uppercase
@@ -251,3 +226,4 @@ FOREIGN KEY(discussion_id) REFERENCES discussion(id)
 - [x] FEATURE Triggers - also add adding operations (as json) to history table
 - [x] ModelDefinition - add title_column
 - [x] IMPROVEMENT Paging - add First and Last buttons
+- [x] New table concept : title, disambiguation, note_id

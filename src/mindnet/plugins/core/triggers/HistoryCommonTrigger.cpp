@@ -72,6 +72,9 @@ namespace mindnet::plugins::core::triggers
         if (operation == enums::Crudl::Create || operation == enums::Crudl::Update)
         {
             history.data_json = model_to_json(fields, def).dump(4);
+        } else
+        {
+            history.data_json = "{}";
         }
         history.reason = "reason 1";
         auto f = history.to_values();

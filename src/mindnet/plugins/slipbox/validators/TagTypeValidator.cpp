@@ -23,11 +23,12 @@ namespace mindnet::plugins::slipbox::validators
         return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a property.")
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
-            return ok_result;
+            return {403, "You do not have permission to create a tag type for this map."};
         }
-        return {403, "You do not have permission to create a tag type for this map."};
+        return ok_result;
+
     }
 
     OperationResult TagTypeValidator::validate_read(const RequestContext& ctx, const Model& entity) const
@@ -35,11 +36,11 @@ namespace mindnet::plugins::slipbox::validators
         auto map = find_model(map, entity.map_id)
         if (map.second.empty()) return {400, map.second};
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
-            return ok_result;
+            return {403, "You do not have permission to read this tag type."};
         }
-        return {403, "You do not have permission to read this tag type."};
+        return ok_result;
     }
 
     OperationResult TagTypeValidator::validate_update(const RequestContext& ctx, const Model& old_entity,

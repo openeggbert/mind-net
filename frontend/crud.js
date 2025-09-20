@@ -249,7 +249,7 @@ export async function renderEntityList(entity) {
     const currentSort = queryParams.sort || '';
     const currentOrder = queryParams.order || 'asc';
 
-    // --- NEW: načti číslo stránky a velikost stránky z URL, pokud existují ---
+    // --- NEW: load page number from URL if it exists ---
     const urlPage = Number(queryParams.others.page_number);
     const urlSize = Number(queryParams.others.page_size);
 
@@ -421,7 +421,8 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     const pageSizeSelect = document.getElementById("pageSizeSelect");
     if (pageSizeSelect) {
         pageSizeSelect.addEventListener("change", e => {
-            const size = Number(e.target.value);
+            let size = Number(e.target.value);
+            if(size < 5) {size = 5;}
             setPageSize(size);
             setCurrentPage(1);
 
