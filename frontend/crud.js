@@ -355,11 +355,44 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     const currentPage = getCurrentPage();
     const totalPages = getTotalPages();
     html += `</tbody></table>`;
-    html += `<div style="margin-top:10px;text-align:center;">
-        <button ${currentPage <= 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">Previous</button>
-        Page ${currentPage} of ${totalPages}
-        <button ${currentPage >= totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">Next</button>
-    </div>`;
+// calculate surrounding range (±2 pages around current)
+    const delta = 2;
+    let startPage = Math.max(1, currentPage - delta);
+    let endPage = Math.min(totalPages, currentPage + delta);
+    if (currentPage <= delta) {
+        endPage = Math.min(totalPages, 1 + delta * 2);
+    }
+    if (currentPage + delta >= totalPages) {
+        startPage = Math.max(1, totalPages - delta * 2);
+    }
+
+    html += `<div style="margin-top:10px;text-align:center;">`;
+
+// First / Prev
+    html += `<button style="margin-left:5px; margin-right:5px;" ${currentPage === 1 ? "disabled" : ""} onclick="changePage(1)">&laquo; First</button>`;
+    html += `<button style="margin-left:5px; margin-right:5px;" ${currentPage === 1 ? "disabled" : ""} onclick="changePage(${currentPage - 1})">&lsaquo; Prev</button>`;
+
+// Numeric links
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            html += `<span style="margin:0 5px; font-weight:bold;">[${i}]</span>`;
+        } else {
+            html += `<a href="#" onclick="changePage(${i});return false;" style="margin:0 5px;">${i}</a>`;
+        }
+    }
+
+// Next / Last
+    html += `<button style="margin-left:5px; margin-right:5px;" ${currentPage === totalPages ? "disabled" : ""} onclick="changePage(${currentPage + 1})">Next &rsaquo;</button>`;
+    html += `<button style="margin-left:5px; margin-right:5px;" ${currentPage === totalPages ? "disabled" : ""} onclick="changePage(${totalPages})">Last &raquo;</button>`;
+
+// Go to page input
+    html += `
+    <input type="number" id="gotoPageInput" min="1" max="${totalPages}" value="${currentPage}" style="width:60px; margin-left:10px;padding-top:2px;padding-bottom:2px;">
+    <button id="gotoPageBtn">Go</button> 
+    <span style="color:grey; margin-left:10px;">Total pages: ${totalPages}</span>
+</div>`;
+
+
     contentArea.innerHTML = `
     <div id="columnSelectorContainer">${renderColumnSelector(entity)}</div>
     <div id="tableContainer">
@@ -368,7 +401,7 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
 `;
 
 
-// --- přiřazení řazení na kliknutí hlaviček ---
+    // --- Assign sorting on header click ---
     document.querySelectorAll("#tableContainer th.sortable").forEach(th => {
         th.onclick = () => {
             const field = th.dataset.field;
@@ -377,10 +410,7 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     });
 
 
-
-
-
-// teď už prvek existuje → můžeme přiřadit listener
+// element now exists -> we can assign listener
     const pageSizeSelect = document.getElementById("pageSizeSelect");
     if (pageSizeSelect) {
         pageSizeSelect.addEventListener("change", e => {
@@ -479,7 +509,17 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
         renderEntityList(entity);
     };
 
-
+    const gotoBtn = document.getElementById("gotoPageBtn");
+    if (gotoBtn) {
+        gotoBtn.onclick = () => {
+            const val = Number(document.getElementById("gotoPageInput").value);
+            if (val >= 1 && val <= getTotalPages()) {
+                changePage(val);
+            } else {
+                alert(`Please enter a number between 1 and ${getTotalPages()}`);
+            }
+        };
+    }
 
 
 

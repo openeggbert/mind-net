@@ -164,7 +164,6 @@ return "Logged out";
 - [ ] Improve documentation
 - [ ] IMPROVEMENT Add logging to files
 - [ ] FEATURE Create OpenAPI specification for the REST API
-- [ ] IMPROVEMENT Paging - add First and Last buttons
 - [ ] bool custom_action.expand
 - [ ] new entity File
 - [ ] Frontend : sort and order is missing
@@ -250,3 +249,4 @@ FOREIGN KEY(discussion_id) REFERENCES discussion(id)
 - [x] FEATURE new endpoints /info and /health - shows some configuration entries (not all) + other information
 - [x] FEATURE Triggers - also add adding operations (as json) to history table
 - [x] ModelDefinition - add title_column
+- [x] IMPROVEMENT Paging - add First and Last buttons
