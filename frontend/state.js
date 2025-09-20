@@ -9,7 +9,7 @@ const _state = {
     selectedActionId: null,
 
     currentPage: 1,
-    pageSize: 10,
+    pageSize: Number(localStorage.getItem("pageSize")) || 10, // load from localStorage
     totalPages: 1,
 };
 
@@ -35,8 +35,14 @@ export const setSelectedEntity = (value) => { _state.selectedEntity = value; };
 export const setSelectedAction = (value) => { _state.selectedAction = value; };
 export const setSelectedActionId = (value) => { _state.selectedActionId = value; };
 export const setCurrentPage = (value) => { _state.currentPage = value; };
-export const setPageSize = (value) => { _state.pageSize = value; };
-export const setTotalPages = (value) => { _state.totalPages = value; };
+export const setPageSize = (value) => {
+    _state.pageSize = value;
+    localStorage.setItem("currentPage", value); // persist
+};
+export const setTotalPages = (value) => {
+    _state.totalPages = value;
+    localStorage.setItem("pageSize", value); // persist
+};
 
 export const actionLabels = {
     list: '📋 List',

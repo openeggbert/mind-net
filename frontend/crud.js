@@ -245,15 +245,22 @@ export async function renderEntityList(entity) {
     contentArea.innerHTML = `<p class="loading">Loading...</p>`;
     const url = new URL(`${API_BASE}/${entity}`);
 
-
     const queryParams = getQueryParams();
     const currentSort = queryParams.sort || '';
     const currentOrder = queryParams.order || 'asc';
 
+    // --- NEW: načti číslo stránky a velikost stránky z URL, pokud existují ---
+    const urlPage = Number(queryParams.others.page_number);
+    const urlSize = Number(queryParams.others.page_size);
 
+    if (urlPage) setCurrentPage(urlPage);
+    if (urlSize) setPageSize(urlSize);
+
+    const pageSize = getPageSize();
 
     url.searchParams.set("page_number", getCurrentPage());
-    url.searchParams.set("page_size", getPageSize());
+    url.searchParams.set("page_size", pageSize);
+
 
 
     if (currentSort) url.searchParams.set('sort', currentSort);
@@ -414,11 +421,20 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     const pageSizeSelect = document.getElementById("pageSizeSelect");
     if (pageSizeSelect) {
         pageSizeSelect.addEventListener("change", e => {
-            setPageSize(Number(e.target.value));
+            const size = Number(e.target.value);
+            setPageSize(size);
             setCurrentPage(1);
+
+            // --- NEW: update URL params ---
+            const params = new URLSearchParams(window.location.search);
+            params.set("page_number", 1);
+            params.set("page_size", size);
+            history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+
             renderEntityList(entity);
         });
     }
+
 
     const applyFiltersBtn = document.getElementById("applyFilters");
     if (applyFiltersBtn) applyFiltersBtn.onclick = () => {

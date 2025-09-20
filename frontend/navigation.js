@@ -1,18 +1,16 @@
-
 // ========================================
-// 7. Navigation a menu
+// 7. Navigation and menu
 // ========================================
 import {API_BASE, apiFetch} from "./api.js";
 import {
     actionLabels,
     getSelectedEntity, getEntityLabels, getSelectedActionId, getCurrentPage, getTotalPages, getEntities,
     getSelectedAction, getActions, setSelectedEntity, setSelectedAction, setSelectedActionId,
-    getEntitySchemas, setCurrentPage,
+    getEntitySchemas, setCurrentPage, getPageSize,
 } from "./state.js";
 import {contentArea, crudMenu, entityNav, entityTitle, showError} from "./dom.js";
 import {renderEntityForm, renderEntityList, renderEntityRead} from "./crud.js";
 import {renderMapExplore} from "./explore.js";
-
 
 
 export function renderEntityNav() {
@@ -24,7 +22,7 @@ export function renderEntityNav() {
     const mainPanelEntities = [];
     const groupedEntities = {};
 
-    // --- Rozdělení entit na hlavní panel a skupiny ---
+    // --- Split entities into main panel and groups ---
     entities.forEach(entity => {
         const schema = schemas[entity];
         if (!schema) return;
@@ -36,8 +34,7 @@ export function renderEntityNav() {
             groupedEntities[schema.group].push(entity);
         }
     });
-
-    // --- Seřazení hlavního panelu ---
+    // --- Sort main panel ---
     mainPanelEntities.forEach(entity => {
         const link = document.createElement('a');
         link.href = `?entity=${encodeURIComponent(entity)}`;
@@ -52,14 +49,14 @@ export function renderEntityNav() {
         entityNav.appendChild(link);
     });
 
-    // --- Seřazení skupin podle group_order_index první entity ---
+    // --- Sort groups by group_order_index of first entity ---
     const sortedGroups = Object.entries(groupedEntities).sort(([, entitiesA], [, entitiesB]) => {
         const idxA = schemas[entitiesA[0]].group_order_index || 0;
         const idxB = schemas[entitiesB[0]].group_order_index || 0;
         return idxA - idxB;
     });
 
-    // --- Vykreslení submenu ---
+    // --- Render submenu ---
     sortedGroups.forEach(([groupName, groupEntities]) => {
         const wrapper = document.createElement('div');
         wrapper.className = "dropdown";
@@ -98,7 +95,6 @@ export function renderEntityNav() {
 }
 
 
-
 export function renderCrudMenu() {
     crudMenu.innerHTML = "";
 
@@ -107,9 +103,9 @@ export function renderCrudMenu() {
 
     const allowedOps = schemas[entity]?.allowedOperations || [];
 
-    if (allowedOps.length === 0) return; // nic k vykreslení
+    if (allowedOps.length === 0) return; // nothing to render
 
-    // List bude vždy první
+    // List will always be first
     const sortedActions = [...allowedOps];
     const listIndex = sortedActions.indexOf("list");
     if (listIndex > -1) {
@@ -157,7 +153,7 @@ export function selectAction(action, id = null) {
     setSelectedAction(action);
     setSelectedActionId(id);
 
-    // If it's explore but no ID was provided, use default map
+    // If it's explore but no ID was provided, use default map 
     if (getSelectedAction() === 'explore' && !getSelectedActionId() && getSelectedEntity() === 'map') {
         setSelectedActionId(1);
     }
@@ -193,12 +189,19 @@ export function selectAction(action, id = null) {
         contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[getSelectedAction()]}</span> not implemented for ${getEntityLabels()[getSelectedEntity()]}.</p>`;
     }
 }
+
 export function changePage(page) {
     if (page < 1) page = 1;
     if (page > getTotalPages()) page = getTotalPages();
     setCurrentPage(page);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("page_number", page);
+    params.set("page_size", getPageSize());
+    history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+
     renderEntityList(getSelectedEntity());
 }
 
-window.changePage = changePage;
 
+window.changePage = changePage;
