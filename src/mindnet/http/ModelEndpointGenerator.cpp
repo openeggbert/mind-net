@@ -269,24 +269,24 @@ namespace mindnet::http
         };
 
         //CREATE
-        app.route_dynamic(string("/api/") + def.get_model_name()).methods(crow::HTTPMethod::POST)
+        app.route_dynamic(string("/api/v1/") + def.get_model_name()).methods(crow::HTTPMethod::POST)
             (create_lambda_function);
 
 
         //READ
-        app.route_dynamic(string("/api/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::GET)
+        app.route_dynamic(string("/api/v1/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::GET)
             (read_lambda_function);
 
         // UPDATE
-        app.route_dynamic(string("/api/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::PUT)
+        app.route_dynamic(string("/api/v1/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::PUT)
             (update_lambda_function);
 
         // DELETE
-        app.route_dynamic(string("/api/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::DELETE)
+        app.route_dynamic(string("/api/v1/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::DELETE)
             (delete_lambda_function);
 
         // LIST
-        app.route_dynamic(string("/api/") + def.get_model_name()).methods(crow::HTTPMethod::GET)
+        app.route_dynamic(string("/api/v1/") + def.get_model_name()).methods(crow::HTTPMethod::GET)
             (list_lambda_function);
     }
 }

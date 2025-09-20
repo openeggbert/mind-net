@@ -408,7 +408,7 @@ namespace mindnet::http
         };
 
         //CREATE
-        CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::POST)
+        CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::POST)
             ([]
             {
                 check_maintenance_mode()
@@ -417,7 +417,7 @@ namespace mindnet::http
 
 
         //READ
-        CROW_ROUTE(crow_app, "/api/model_definition/<string>").methods(crow::HTTPMethod::GET)
+        CROW_ROUTE(crow_app, "/api/v1/model_definition/<string>").methods(crow::HTTPMethod::GET)
         ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
         {
             check_maintenance_mode()
@@ -441,7 +441,7 @@ namespace mindnet::http
         });
 
         // UPDATE
-        CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::PUT)
+        CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::PUT)
             ([]
             {
                 check_maintenance_mode()
@@ -449,7 +449,7 @@ namespace mindnet::http
             });
 
         // DELETE
-        CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::DELETE)
+        CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::DELETE)
             ([]
             {
                 check_maintenance_mode()
@@ -458,7 +458,7 @@ namespace mindnet::http
             });
 
         // LIST
-        CROW_ROUTE(crow_app, "/api/model_definition").methods(crow::HTTPMethod::GET)
+        CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::GET)
         ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req)
         {
             check_maintenance_mode()
@@ -614,7 +614,7 @@ namespace mindnet::http
 
     void HttpServer::create_authentication_endpoints(const ServicePtr& service_ptr)
     {
-        CROW_ROUTE(crow_app, "/login").methods("POST"_method)([service_ptr](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/login").methods("POST"_method)([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
             
@@ -656,7 +656,7 @@ namespace mindnet::http
             }
         });
 
-        CROW_ROUTE(crow_app, "/register").methods("POST"_method)([=](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/register").methods("POST"_method)([=](const crow::request& req)
         {
             check_maintenance_mode()
             
@@ -707,7 +707,7 @@ namespace mindnet::http
             return crow::response{201, "Registration successful"};
         });
 
-        CROW_ROUTE(crow_app, "/protected")([](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/protected")([](const crow::request& req)
         {
             check_maintenance_mode()
             
