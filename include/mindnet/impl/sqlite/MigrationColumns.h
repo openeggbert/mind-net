@@ -37,7 +37,7 @@ namespace mindnet::impl::sqlite
 
         static constexpr const char* MODEL_NAME = "migration";
 
-        static constexpr const char* PLUGIN = "plugin";
+        static constexpr const char* PLUGIN_NAME = "plugin_name";
         static constexpr const char* LAST_MIGRATION_NUMBER = "last_migration_number";
     };
 }

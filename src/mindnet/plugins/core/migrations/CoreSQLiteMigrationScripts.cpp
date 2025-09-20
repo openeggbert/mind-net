@@ -12,9 +12,7 @@ namespace mindnet::plugins::core::migrations
 
     void CoreSQLiteMigrationScripts::define_migrations()
     {
-        migrations = {
-
-            R"(
+        add_migration("V1__create_user.sql", R"(
 CREATE TABLE user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -29,8 +27,9 @@ CREATE TABLE user (
     email TEXT UNIQUE,
 	status INTEGER NOT NULL
 );
-)",
-            R"(
+)");
+
+        add_migration("V2__create_team.sql", R"(
 CREATE TABLE team (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -44,8 +43,9 @@ CREATE TABLE team (
 	FOREIGN KEY(created_by) REFERENCES user(id),
     FOREIGN KEY(leader_id) REFERENCES user(id)
 );
-)",
-            R"(
+)");
+
+        add_migration("V3__create_team_member.sql", R"(
 CREATE TABLE team_member (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -63,9 +63,9 @@ CREATE TABLE team_member (
 	FOREIGN KEY(team_id) REFERENCES team(id),
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
-)",
+)");
 
-            R"(
+        add_migration("V4__create_history.sql", R"(
 CREATE TABLE history (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -81,8 +81,6 @@ CREATE TABLE history (
 
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
-)",
-
-        };
+)");
     }
 }

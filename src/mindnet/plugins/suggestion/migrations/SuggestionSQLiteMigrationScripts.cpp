@@ -12,9 +12,9 @@ namespace mindnet::plugins::suggestion::migrations
 
     void SuggestionSQLiteMigrationScripts::define_migrations()
     {
-        migrations = {
 
-            R"(
+
+    	add_migration("V1__create_suggestion.sql",R"(
 CREATE TABLE suggestion (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -31,8 +31,8 @@ CREATE TABLE suggestion (
     FOREIGN KEY(parent_suggestion_id) REFERENCES suggestion(id),
 	FOREIGN KEY(from_user_id) REFERENCES user(id)
 );
-)",
-            R"(
+)");
+    	add_migration("V2__create_suggestion_review.sql",R"(
 CREATE TABLE suggestion_review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -47,7 +47,7 @@ CREATE TABLE suggestion_review (
 	FOREIGN KEY(suggestion_id) REFERENCES suggestion(id),
 	FOREIGN KEY(reviewer_id) REFERENCES user(id)
 );
-)",
-        };
+)");
+
     }
 }

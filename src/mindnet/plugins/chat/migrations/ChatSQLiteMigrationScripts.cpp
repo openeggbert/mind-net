@@ -12,9 +12,9 @@ namespace mindnet::plugins::chat::migrations
 
     void ChatSQLiteMigrationScripts::define_migrations()
     {
-        migrations = {
 
-            R"(
+
+        	add_migration("V1__???.sql",R"(
 CREATE TABLE discussion (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -29,8 +29,8 @@ CREATE TABLE discussion (
   FOREIGN KEY (team_id) REFERENCES team(id),
   FOREIGN KEY (created_by) REFERENCES user(id)
 );
-)",
-            R"(
+)");
+    	add_migration("V2__???.sql",R"(
 CREATE TABLE comment (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -46,7 +46,7 @@ CREATE TABLE comment (
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY(parent_comment_id) REFERENCES comment(id)
 );
-)",
-        };
+)");
+
     }
 }

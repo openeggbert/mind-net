@@ -12,8 +12,8 @@ namespace mindnet::plugins::supermemo::migrations
 
     void SuperMemoSQLiteMigrationScripts::define_migrations()
     {
-        migrations = {
-            R"(
+
+        add_migration("V1__create_review.sql",R"(
 CREATE TABLE review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -32,8 +32,8 @@ CREATE TABLE review (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-)",
-            R"(
+)");
+        add_migration("V2__create_sm18_state.sql",R"(
 -- SM-2 state for each note and user
 CREATE TABLE sm2_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,7 +59,7 @@ UNIQUE (user_id, question_id),
     FOREIGN KEY (question_id) REFERENCES question(id) ,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
-)",
-        };
+)");
+
     }
 }

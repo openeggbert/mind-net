@@ -93,7 +93,7 @@ namespace mindnet::impl::sqlite
             std::string SQL_CREATE_TABLE_MIGRATION =
                 R"(
 CREATE TABLE "migration" (
-                "plugin" TEXT NOT NULL,
+                "plugin_name" TEXT NOT NULL,
                 "last_migration_number" INTEGER NOT NULL,
                 PRIMARY KEY("plugin")
             );
@@ -111,7 +111,7 @@ CREATE TABLE "migration" (
                     MigrationColumns::LAST_MIGRATION_NUMBER +
                     std::string(" AS L FROM ") +
                     MigrationColumns::MODEL_NAME +
-                    " WHERE " + MigrationColumns::PLUGIN + "= '" + plugin_name + "'"
+                    " WHERE " + MigrationColumns::PLUGIN_NAME + "= '" + plugin_name + "'"
                 )
             );
             try
@@ -216,7 +216,7 @@ CREATE TABLE "migration" (
                 std::string(MigrationColumns::MODEL_NAME) +
                 " SET " + MigrationColumns::LAST_MIGRATION_NUMBER +
                 " = ?" +
-                " WHERE " + MigrationColumns::PLUGIN +
+                " WHERE " + MigrationColumns::PLUGIN_NAME +
                 " = '" + plugin_name + "'"
             );
             int i = 0;
@@ -289,7 +289,7 @@ CREATE TABLE "migration" (
                         debug << "Skipping already finished migration " << migrationNumber << std::endl;
                         continue;
                     }
-                    std::string sql = migration_scripts_ptr->get_migration(migrationNumber - 1);
+                    std::string sql = migration_scripts_ptr->get_sql(migrationNumber);
 
                     bool migrated = executeSQL(db, sql, migrationNumber);
 

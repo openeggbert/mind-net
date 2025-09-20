@@ -3,6 +3,7 @@
 //
 #ifndef MIGRATIONSCRIPTS_H
 #define MIGRATIONSCRIPTS_H
+#include <regex>
 #include <string>
 #include <vector>
 
@@ -16,6 +17,15 @@
 namespace mindnet::api
 {
 
+    struct MigrationScript
+    {
+        const int number;
+        const std::string name;
+        const std::string file_name;
+        const std::string sql;
+    };
+
+    const std::regex sql_file_name_format("^V(\\d+)__([a-zA-Z0-9_]+)\\.sql$");
     class MigrationScripts
     {
     public:
@@ -28,33 +38,72 @@ namespace mindnet::api
             return migrations.size();
         }
 
-        const std::string& get_migration(size_t migration_number)
+        const std::string& get_sql(size_t migration_number)
         {
             ensure_defined();
-            if (migration_number >= migrations.size())
-            {
-                throw std::out_of_range(
-                    "Migration number " + std::to_string(migration_number) +
-                    " out of range " + std::to_string(migrations.size() - 1));
-            }
+            ensury_migration_number_is_in_range(migration_number);
 
-            return migrations[migration_number];
+            return migrations[migration_number-1].sql;
         }
 
-        DatabaseType get_database_type() const { return database_type; }
+        std::string get_migration_name(size_t migration_number)
+        {
+            ensury_migration_number_is_in_range(migration_number);
+            return migrations[migration_number-1].name;
+        }
+
+        std::string get_migration_file_name(size_t migration_number)
+        {
+            ensury_migration_number_is_in_range(migration_number);
+            return migrations[migration_number-1].file_name;
+        }
+
+        [[nodiscard]] const DatabaseType& get_database_type() const { return database_type; }
 
     protected:
         virtual void define_migrations() = 0;
 
-        std::vector<std::string> migrations;
+        void add_migration(const std::string& sql_file_name, const std::string& sql)
+        {
+            std::smatch match;
+            if (!std::regex_match(sql_file_name, match, sql_file_name_format))
+            {
+                throw std::runtime_error("Invalid format for sql file name: " + sql_file_name);
+            }
+
+            const int migration_number = std::stoi(match[1]);
+            const std::string migration_name = match[2];
+            int last_migration_number = get_count();
+            const int expected_next_migration_number = last_migration_number + 1;
+            if (migration_number != expected_next_migration_number)
+            {
+                throw std::runtime_error("Invalid number for sql file name: " + sql_file_name);
+            }
+            MigrationScript migration_script{
+                migration_number, migration_name, sql_file_name, sql
+            };
+            migrations.emplace_back(migration_script);
+        }
 
     private:
+        std::vector<MigrationScript> migrations;
+
         void ensure_defined()
         {
             if (!defined)
             {
                 define_migrations();
                 defined = true;
+            }
+        }
+
+        void ensury_migration_number_is_in_range(size_t migration_number)
+        {
+            if (migration_number > migrations.size() || migration_number < 1)
+            {
+                throw std::out_of_range(
+                    "Migration number " + std::to_string(migration_number) +
+                    " out of range " + std::to_string(migrations.size() - 1));
             }
         }
 

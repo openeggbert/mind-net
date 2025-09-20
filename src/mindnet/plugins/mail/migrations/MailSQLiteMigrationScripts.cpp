@@ -12,9 +12,9 @@ namespace mindnet::plugins::mail::migrations
 
     void MailSQLiteMigrationScripts::define_migrations()
     {
-        migrations = {
 
-            R"(
+
+    	add_migration("V1__???.sql",R"(
 CREATE TABLE message (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -38,8 +38,8 @@ CREATE TABLE message (
 	FOREIGN KEY(recipient_id) REFERENCES user(id),
 	FOREIGN KEY(owner_id) REFERENCES user(id)
 );
-)",
+)");
 
-        };
+
     }
 }
