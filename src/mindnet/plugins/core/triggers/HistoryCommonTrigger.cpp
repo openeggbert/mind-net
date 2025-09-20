@@ -64,7 +64,7 @@ namespace mindnet::plugins::core::triggers
 
         models::History history;
 
-        history.user_id = 1;
+        history.user_id = user_id;
         history.ip_address = "";
         history.table_name = def.get_model_name();
         history.record_id = id;
