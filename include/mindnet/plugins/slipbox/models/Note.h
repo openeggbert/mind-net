@@ -49,7 +49,7 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the note."),
             coldef(COLS::PARENT_NOTE_ID).set_foreign_key("note").set_description("Parent note, if any."),
             coldef(COLS::CONTENT_ID, FOREIGN_KEY | UNIQUE).set_description("Content associated with this note."),
-            coldef(COLS::SIBLING_POSITION, INTEGER | MANDATORY).set_description("Position among sibling notes."),
+            coldef(COLS::SIBLING_ORDER, INTEGER | AUTO).set_description("Order among sibling notes."),
             coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
                                      set_description("Importance level of the note."),
             coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::difficulty_to_enum_definition()).
@@ -72,7 +72,7 @@ namespace mindnet::plugins::slipbox::models
         string title;
         int parent_note_id{};
         int content_id{};
-        int sibling_position{};
+        int sibling_order{};
         enums::Importance importance{enums::Importance::Undefined};
         enums::Difficulty difficulty{enums::Difficulty::Undefined};
 
@@ -81,7 +81,7 @@ namespace mindnet::plugins::slipbox::models
         bool operator==(const Model& other) const
         {
             return id == other.id && map_id == other.map_id &&
-                sibling_position == other.sibling_position && title == other.title &&
+                sibling_order == other.sibling_order && title == other.title &&
                 content_id == other.content_id && parent_note_id == other.parent_note_id &&
                 importance == other.importance && difficulty == other.difficulty &&
                 created_at == other.created_at && updated_at == other.updated_at;

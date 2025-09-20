@@ -42,7 +42,7 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* TITLE = "title";
         static constexpr const char* PARENT_NOTE_ID = "parent_note_id";
         static constexpr const char* CONTENT_ID = "content_id";
-        static constexpr const char* SIBLING_POSITION = "sibling_position";
+        static constexpr const char* SIBLING_ORDER = "sibling_order";
         static constexpr const char* IMPORTANCE = "importance";
         static constexpr const char* DIFFICULTY = "difficulty";
     };

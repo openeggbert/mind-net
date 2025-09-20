@@ -1,5 +1,8 @@
 # Chat
 
+ * Use server sent events (SSE)
+   * https://github.com/CrowCpp/crow/issues/99
+
 🎨 What makes Slack like Slack (and what you can replicate)
 ✅ 1. Purple Theme
 

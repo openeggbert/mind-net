@@ -76,7 +76,7 @@ CREATE TABLE note (
     title TEXT NOT NULL,
     parent_note_id INTEGER,
     content_id INTEGER UNIQUE,
-    sibling_position INTEGER NOT NULL,
+    sibling_order INTEGER NOT NULL,
     importance INTEGER DEFAULT 0,
     difficulty INTEGER DEFAULT 0,
 

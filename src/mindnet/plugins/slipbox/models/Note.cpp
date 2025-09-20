@@ -16,7 +16,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(title);
         result.push_back(parent_note_id);
         result.push_back(content_id);
-        result.push_back(sibling_position);
+        result.push_back(sibling_order);
         result.push_back(cast64(importance));
         result.push_back(cast64(difficulty));
         return result;
@@ -36,7 +36,7 @@ namespace mindnet::plugins::slipbox::models
         title = text();
         parent_note_id = number();
         content_id = number();
-        sibling_position = number();
+        sibling_order = number();
         importance = static_cast<enums::Importance>(number());
         difficulty = static_cast<enums::Difficulty>(number());
     }
