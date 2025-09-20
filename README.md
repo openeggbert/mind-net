@@ -137,6 +137,7 @@ openssl rand -base64 32
 - [ ] FEATURE New entity Flag
 - [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
 - [ ] /logout endpoint
+- [ ] Use SM-18, new entity review_session
 ```
 CROW_ROUTE(app, "/logout")([](const crow::request& req){
 auto session = req.get_session();

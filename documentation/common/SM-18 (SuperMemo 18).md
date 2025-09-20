@@ -1,4 +1,4 @@
-# SM-2 (SuperMemo 2)
+# SM-18 (SuperMemo 18)
 
 User defines the quality of the knowledge (0-5).
 
@@ -89,7 +89,7 @@ This highlights questions where the user consistently scores poorly.
 
 ## Component Test
 
-**Scenario:**
+### Scenario ###
 
 - Frontend shows
     * title of the question.
@@ -100,10 +100,22 @@ This highlights questions where the user consistently scores poorly.
     * Application updates REVIEW_IN_X_DAYS, EASINESS_FACTOR, REPETITION, EXPIRES_AT
     * Continues to the next node
 
-**Test modes:**
+### Test modes ###
 
- - Full review - all notes under the current note
+**Scope:** 
+ - Full review - all notes
  - Due Only review - only notes due for review
+
+**Filter:**
+ - Notes under the current note
  - Date range review - notes created within a date range
  - Tags review - notes with a specific tag
  - Collection review - notes from a specific collection
+
+
+## External links
+
+ * https://en.wikipedia.org/wiki/SuperMemo
+ * https://supermemo.guru/wiki/First_steps_of_SuperMemo
+ * https://www.super-memory.com/
+ * 
