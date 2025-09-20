@@ -6,14 +6,14 @@
 
 namespace mindnet::plugins::slipbox::migrations
 {
-    SlipBoxSQLiteMigrationScripts::SlipBoxSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
+	SlipBoxSQLiteMigrationScripts::SlipBoxSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
     {
     }
 
     void SlipBoxSQLiteMigrationScripts::define_migrations()
     {
 
-        add_migration("V1__???.sql",R"(
+        add_migration("V1__create_map.sql",R"(
 CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -34,7 +34,7 @@ CREATE TABLE map (
     FOREIGN KEY(team_id) REFERENCES team(id)
 );
 )");
-        add_migration("V2__???.sql",R"(
+        add_migration("V2__create_content.sql",R"(
 CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -46,7 +46,7 @@ CREATE TABLE content (
 );
 CREATE INDEX idx_content_value ON content(value);
 )");
-        add_migration("V3__???.sql",R"(
+        add_migration("V3__create_content_fts.sql",R"(
 CREATE VIRTUAL TABLE content_fts USING fts5(
     value,
     format UNINDEXED,
@@ -66,7 +66,7 @@ CREATE TRIGGER content_au AFTER UPDATE ON content BEGIN
   UPDATE content_fts SET value = new.value WHERE rowid = old.id;
 END;
 )");
-        add_migration("V4__???.sql",R"(
+        add_migration("V4__create_note.sql",R"(
 CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -88,7 +88,7 @@ CREATE TABLE note (
 CREATE INDEX idx_note_content_id ON note(content_id);
 CREATE INDEX idx_note_map_id ON note(map_id);
 )");
-        add_migration("V5__???.sql",R"(
+        add_migration("V5__create_property.sql",R"(
 CREATE TABLE property(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -107,7 +107,7 @@ CREATE TABLE property(
 CREATE INDEX idx_property_map_note_key ON property(map_id, note_id, key);
 
 )");
-        add_migration("V6__???.sql",R"(
+        add_migration("V6__create_tag_type.sql",R"(
 CREATE TABLE tag_type (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -120,7 +120,7 @@ CREATE TABLE tag_type (
     UNIQUE(map_id, title)
 );
 )");
-        add_migration("V7__???.sql",R"(
+        add_migration("V7__create_tag.sql",R"(
 CREATE TABLE tag (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -138,7 +138,7 @@ CREATE TABLE tag (
 CREATE INDEX idx_tag_note_id ON tag(note_id);
 
 )");
-        add_migration("V8__???.sql",R"(
+        add_migration("V8__create_collection.sql",R"(
 CREATE TABLE collection (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -153,7 +153,7 @@ CREATE TABLE collection (
     FOREIGN KEY (created_by) REFERENCES user(id)
 );
 )");
-        add_migration("V9__???.sql",R"(
+        add_migration("V9__create_collection_item.sql",R"(
 CREATE TABLE collection_item (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -169,7 +169,7 @@ CREATE TABLE collection_item (
 	FOREIGN KEY(note_id) REFERENCES note(id)
 );
 )");
-        add_migration("V10__???.sql",R"(
+        add_migration("V10__create_question.sql",R"(
         		CREATE TABLE question (
         	id INTEGER PRIMARY KEY AUTOINCREMENT,
         	created_at DATETIME ,
@@ -189,7 +189,7 @@ CREATE TABLE collection_item (
         		--]
         )");
 
-        add_migration("V11__???.sql",R"(
+        add_migration("V11__create_reference.sql",R"(
 CREATE TABLE reference(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME ,
@@ -209,7 +209,7 @@ CREATE TABLE reference(
 CREATE INDEX idx_reference_from_to ON reference(from_note_id, to_note_id);
 
 )");
-        add_migration("V12__???.sql",R"(
+        add_migration("V12__create_link.sql",R"(
 CREATE TABLE link(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME ,
@@ -226,6 +226,6 @@ CREATE TABLE link(
 CREATE INDEX idx_link_from_note ON link(from_note_id);
 )");
 
-        
+
     }
 }

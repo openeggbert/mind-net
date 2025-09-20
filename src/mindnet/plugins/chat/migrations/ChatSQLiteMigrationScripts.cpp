@@ -14,7 +14,7 @@ namespace mindnet::plugins::chat::migrations
     {
 
 
-        	add_migration("V1__???.sql",R"(
+        	add_migration("V1__create_discussion.sql",R"(
 CREATE TABLE discussion (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -30,7 +30,7 @@ CREATE TABLE discussion (
   FOREIGN KEY (created_by) REFERENCES user(id)
 );
 )");
-    	add_migration("V2__???.sql",R"(
+    	add_migration("V2__create_comment.sql",R"(
 CREATE TABLE comment (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,

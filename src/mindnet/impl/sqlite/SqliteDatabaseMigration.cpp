@@ -95,7 +95,7 @@ namespace mindnet::impl::sqlite
 CREATE TABLE "migration" (
                 "plugin_name" TEXT NOT NULL,
                 "last_migration_number" INTEGER NOT NULL,
-                PRIMARY KEY("plugin")
+                PRIMARY KEY("plugin_name")
             );
 )";
             return executeSQL(db, SQL_CREATE_TABLE_MIGRATION, 0);
@@ -275,40 +275,47 @@ CREATE TABLE "migration" (
                     err << "Database validation failed." << commit;
                     return false;
                 }
-                trace << "Going to find out the maxMigrationNumber" << commit;
-                int maxMigrationNumber = get_last_migration_number(db);
-                trace << std::string(std::string("maxMigrationNumber=") + std::to_string(maxMigrationNumber)).c_str() <<
+                trace << "Going to find out the max_migration_number" << commit;
+                int max_migration_number = get_last_migration_number(db);
+                trace << std::string(std::string("max_migration_number=") + std::to_string(max_migration_number)).c_str() <<
                     commit;
-                if (maxMigrationNumber == -1) return false;
-                for (int migrationNumber = (maxMigrationNumber == 0 ? 1 : maxMigrationNumber + 1); migrationNumber <=
-                     migration_scripts_ptr->get_count(); migrationNumber++)
+                if (max_migration_number == -1) return false;
+
+
+                int last_applied = max_migration_number; // number of last applied migration from DB
+                int available = migration_scripts_ptr->get_count(); // how many migrations are available
+
+                trace << "last_applied=" << last_applied
+                      << ", available=" << available << commit;
+
+                for (int migration_number = last_applied + 1;
+                     migration_number <= available;
+                     migration_number++)
                 {
-                    debug << "Going to migrate migration " << migrationNumber << commit;
-                    if (migrationNumber <= maxMigrationNumber)
-                    {
-                        debug << "Skipping already finished migration " << migrationNumber << std::endl;
-                        continue;
-                    }
-                    std::string sql = migration_scripts_ptr->get_sql(migrationNumber);
+                    debug << "Going to migrate migration "
+                          << migration_scripts_ptr->get_migration_file_name(migration_number) << commit;
 
-                    bool migrated = executeSQL(db, sql, migrationNumber);
+                    std::string sql = migration_scripts_ptr->get_sql(migration_number);
 
+                    bool migrated = executeSQL(db, sql, migration_number);
                     if (migrated)
                     {
-                        bool updated = update_migration_number(db, migrationNumber);
+                        bool updated = update_migration_number(db, migration_number);
                         if (!updated)
                         {
-                            err << "Migration " << migrationNumber <<
-                                " failed, it could not be updated in the database. " << commit;
+                            err << "Migration " << migration_number
+                                << " failed, it could not be updated in the database." << commit;
                             return false;
                         }
                     }
                     else
                     {
-                        err << "Migration " << migrationNumber << " failed." << commit;
+                        err << "Migration " << migration_number << " failed." << commit;
                         return false;
                     }
                 }
+
+                
             }
             catch (std::exception& e)
             {

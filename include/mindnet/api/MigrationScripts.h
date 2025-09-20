@@ -63,7 +63,7 @@ namespace mindnet::api
     protected:
         virtual void define_migrations() = 0;
 
-        void add_migration(const std::string& sql_file_name, const std::string& sql)
+        void add_migration(const std::string sql_file_name, const std::string sql)
         {
             std::smatch match;
             if (!std::regex_match(sql_file_name, match, sql_file_name_format))
@@ -73,7 +73,7 @@ namespace mindnet::api
 
             const int migration_number = std::stoi(match[1]);
             const std::string migration_name = match[2];
-            int last_migration_number = get_count();
+            int last_migration_number = migrations.size();
             const int expected_next_migration_number = last_migration_number + 1;
             if (migration_number != expected_next_migration_number)
             {
@@ -99,11 +99,11 @@ namespace mindnet::api
 
         void ensury_migration_number_is_in_range(size_t migration_number)
         {
-            if (migration_number > migrations.size() || migration_number < 1)
+            if (migration_number < 1 || migration_number > migrations.size())
             {
                 throw std::out_of_range(
                     "Migration number " + std::to_string(migration_number) +
-                    " out of range " + std::to_string(migrations.size() - 1));
+                    " out of range (1.." + std::to_string(migrations.size()) + ")");
             }
         }
 

@@ -6,10 +6,11 @@ using namespace mindnet::api;
 
 // Helper function to create a plugin
 PluginPtr make_plugin(const std::string& name,
-                      const std::vector<std::string>& deps = {},
-                      bool has_app = false)
+                      const std::vector<std::string>& apps = {},
+                      const std::vector<std::string>& deps = {}
+                      )
 {
-    auto plugin = std::make_shared<Plugin>(name, "desc", deps, has_app);
+    auto plugin = std::make_shared<Plugin>(name, "desc", apps, deps);
     plugin->close_for_changes(); // required by registry
     return plugin;
 }
@@ -74,7 +75,7 @@ TEST(PluginRegistryTest, MissingDependencyThrows)
     PluginRegistry registry;
     auto core = make_plugin("core");
     // plugin C has explicit dependency on X (which doesn't exist)
-    auto c = make_plugin("C", {"X"});
+    auto c = make_plugin("C", {}, {"X"});
 
     registry.register_plugin(core);
     registry.register_plugin(c);
@@ -89,8 +90,8 @@ TEST(PluginRegistryTest, CyclicDependencyThrows)
 {
     PluginRegistry registry;
     auto core = make_plugin("core");
-    auto a = make_plugin("A", {"B"}); // A depends on B (+ core) 
-    auto b = make_plugin("B", {"A"}); // B depends on A (+ core)
+    auto a = make_plugin("A", {},{"B"}); // A depends on B (+ core)
+    auto b = make_plugin("B", {},{"A"}); // B depends on A (+ core)
 
     registry.register_plugin(core);
     registry.register_plugin(a);

@@ -14,7 +14,7 @@ namespace mindnet::plugins::mail::migrations
     {
 
 
-    	add_migration("V1__???.sql",R"(
+    	add_migration("V1__create_message.sql",R"(
 CREATE TABLE message (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
