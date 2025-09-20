@@ -40,7 +40,7 @@ namespace mindnet::plugins::suggestion::models
     inline def SUGGESTION_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("Suggestions", 400)
+        .set_group("Suggestions", 400).set_title_column(COLS::REVIEWER_ID)
         .set_columns({
             //
             coldef(COLS::SUGGESTION_ID, FOREIGN_KEY | READONLY),

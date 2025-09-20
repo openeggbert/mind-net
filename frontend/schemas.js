@@ -72,7 +72,13 @@ export function mapColumnType(colType) {
 }
 
 export function findTitleField(item) {
-    const preferred = ["name", "title", "username", "subject"];
+    // If backend provides title_column, use it
+    if (item.title_column) {
+        return item.title_column;
+    }
+
+    // Fallback: legacy heuristic
+    const preferred = ["name", "title", "subject"];
     for (const p of preferred) {
         if (item.columns.find(c => c.column_name === p)) {
             return p;

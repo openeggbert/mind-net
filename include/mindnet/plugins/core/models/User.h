@@ -42,6 +42,7 @@ namespace mindnet::plugins::core::models
         def(COLS::MODEL_NAME)
         .set_rest_operations("crl")
         .set_group("Core", 300)
+        .set_title_column(COLS::USERNAME)
         .set_columns({
             //
             coldef(COLS::USERNAME, MANDATORY | UNIQUE | READONLY),

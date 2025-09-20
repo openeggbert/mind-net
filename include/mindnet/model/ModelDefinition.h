@@ -47,6 +47,7 @@ namespace mindnet::model
         std::set<plugins::core::enums::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
         std::vector<CustomAction> custom_actions{};
+        std::string title_column;
 
     public:
         /**
@@ -97,7 +98,11 @@ namespace mindnet::model
         {
             return custom_actions;
         }
-
+        const std::string& get_title_column() const
+        {
+            return title_column;
+        }
+        //Setters
         ModelDefinition& set_group(const string& group_, const int group_order_index_ = 0)
         {
             group = group_;
@@ -186,6 +191,11 @@ namespace mindnet::model
             virtual_table = value;
             return *this;
         }
+        ModelDefinition& set_title_column(std::string title_column_)
+        {
+            title_column = title_column_;
+            return *this;
+        }
 
         [[nodiscard]] ModelDefinition& add_custom_action(
             plugins::core::enums::Crudl crudl_,
@@ -211,7 +221,6 @@ namespace mindnet::model
             return *this;
         }
 
-    public:
         [[nodiscard]] ModelDefinition& add_custom_list_action(
             std::string model_name_,
             std::string label_,

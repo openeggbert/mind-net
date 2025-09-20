@@ -101,12 +101,17 @@ namespace mindnet::impl::sqlite
             bool mandatory = col.is_mandatory();
             bool has_value = body.has(col.get_column_name());
             auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
+            crow::json::type crow_json_type = rvalue.t();
+
+            auto primitive_column_type = find_primitive_column_type(col.get_column_type());
+
+            debug <<"rvalue="<<rvalue<<commit;
             if (mandatory && !has_value)
             {
                 throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");
             }
 
-            switch (find_primitive_column_type(col.get_column_type()))
+            switch (primitive_column_type)
             {
             case model::PrimitiveColumnType::Text:
                 {
@@ -118,12 +123,19 @@ namespace mindnet::impl::sqlite
                 break;
             case model::PrimitiveColumnType::Number:
                 {
-                    result.emplace_back(
-                        has_value
-                            ? cast64(rvalue)
-                            : (col.get_default_value().empty()
-                                   ? cast64(0)
-                                   : cast64(std::stoi(col.get_default_value()))));
+                    if (has_value && crow_json_type == crow::json::type::String && rvalue == "")
+                    {
+                        result.emplace_back(cast64(0));
+                    }
+                    else
+                    {
+                        result.emplace_back(
+                            has_value
+                                ? cast64(rvalue)
+                                : (col.get_default_value().empty()
+                                       ? cast64(0)
+                                       : cast64(col.get_default_int_value())));
+                    }
                     break;
                 default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));
                 }

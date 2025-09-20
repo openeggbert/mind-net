@@ -45,11 +45,50 @@ export async function apiFetch(url, options = {}) {
     }
 }
 
+function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 * 1000) { // cache for 24 hours
+    const key = `titlecache:${entityName}:${entityId}`;
+    localStorage.setItem(key, JSON.stringify({
+        value,
+        expires: Date.now() + ttlMs
+    }));
+}
+
+function getTitleCache(entityName, entityId) {
+    const key = `titlecache:${entityName}:${entityId}`;
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    try {
+        const {value, expires} = JSON.parse(raw);
+        if (Date.now() > expires) {
+            localStorage.removeItem(key);
+            return null;
+        }
+        return value;
+    } catch {
+        localStorage.removeItem(key);
+        return null;
+    }
+}
+
 export async function resolveForeignKeyValue(fkEntity, id) {
     if (!id) return "";
     const schema = getEntitySchemas()[fkEntity];
     if (!schema) return id;
+
+    // 1. Try cache
+    const cached = getTitleCache(fkEntity, id);
+    if (cached) return cached;
+
+    // 2. Fetch from API
     const json = await apiFetch(`${API_BASE}/${fkEntity}/${id}`);
     if (!json) return id;
-    return json[schema.titleField] ?? id;
+
+    // 3. Determine correct title field
+    const titleField = schema.title_column || schema.titleField || "id";
+    const value = json[titleField] ?? id;
+
+    // 4. Save to cache
+    setTitleCache(fkEntity, id, value);
+
+    return value;
 }

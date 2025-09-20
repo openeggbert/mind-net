@@ -81,7 +81,7 @@ namespace mindnet::model
             index++;
         }
         return json;
-    };
+    }
 
 
     using std::string;

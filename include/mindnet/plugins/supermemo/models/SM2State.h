@@ -39,7 +39,7 @@ namespace mindnet::plugins::supermemo::models
     inline def SM2_STATE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("Tests", 200)
+        .set_group("Tests", 200).set_title_column(COLS::INTERVAL)
         .set_columns({
             //
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),

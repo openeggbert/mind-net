@@ -39,7 +39,7 @@ namespace mindnet::plugins::slipbox::models
     inline def QUESTION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("Tests", 200)
+        .set_group("Tests", 200).set_title_column(COLS::QUESTION_TEXT)
         .set_columns(
             {
                 coldef(COLS::NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),

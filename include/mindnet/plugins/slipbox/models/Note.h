@@ -42,7 +42,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline def NOTE_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
+        .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_columns({
             //
             coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("Map, this note belongs to."),

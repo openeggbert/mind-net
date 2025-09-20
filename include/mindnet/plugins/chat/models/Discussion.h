@@ -40,6 +40,7 @@ namespace mindnet::plugins::chat::models
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Chat", 300)
+        .set_title_column(COLS::TITLE)
         .set_columns({
             //
             coldef(COLS::TEAM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(

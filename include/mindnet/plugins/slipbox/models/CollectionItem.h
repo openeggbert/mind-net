@@ -37,7 +37,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline def COLLECTION_ITEM_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME).set_title_column(COLS::NOTE_ID)
         .set_all_rest_operations()
         .set_group("Other", 500)
         .set_columns({

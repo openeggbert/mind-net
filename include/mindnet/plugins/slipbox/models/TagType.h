@@ -40,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
     inline def TAG_TYPE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("Other", 500)
+        .set_group("Other", 500).set_title_column(COLS::TITLE)
         .set_columns({
             //
             coldef(COLS::MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
