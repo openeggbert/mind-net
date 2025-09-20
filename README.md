@@ -119,35 +119,11 @@ openssl rand -base64 32
 ## BACKLOG
 
 ### Critical
-- [ ] Reorder columns of tables, if needed
-- [ ] FEATURE User authentication
-  * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
-  * refresh token /refresh-token is valid 7 days (can be configured)
-  * when the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
-    without requiring re-authentication.
-- [ ] Slip Box component
-- [ ] Super Memo component
 - [ ] New table idea: string title, string content, bool important, bool public
-- [ ] BUG Update of boolean values in SQLite is not working.
-- [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
-- [ ] FEATURE User authorization via Validators
-- [ ] FEATURE Log logging in, registration, logout, password changes
-- [ ] TASK Check operator== implementations for all models
-- [ ] FEATURE New entity Flag
-- [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
-- [ ] /logout endpoint
 - [ ] Use SM-18, new entity review_session
-```
-CROW_ROUTE(app, "/logout")([](const crow::request& req){
-auto session = req.get_session();
-session.clear(); // logout
-return "Logged out";
-});
-  ```
 - [ ] New table log
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
 - [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
-- [ ] FEATURE Support for export to static HTML files
 - [ ] New entity Session
   ```aiignore
    CREATE TABLE session (
@@ -157,6 +133,30 @@ return "Logged out";
     expires_at DATETIME NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
   ```
+- [ ] FEATURE New entity Flag
+- [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
+- [ ] Reorder columns of tables, if needed
+- [ ] FEATURE User authentication
+  * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
+  * refresh token /refresh-token is valid 7 days (can be configured)
+  * when the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
+    without requiring re-authentication.
+- [ ] Slip Box component
+- [ ] Super Memo component
+- [ ] BUG Update of boolean values in SQLite is not working.
+- [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
+- [ ] FEATURE User authorization via Validators
+- [ ] FEATURE Log logging in, registration, logout, password changes
+- [ ] TASK Check operator== implementations for all models
+- [ ] /logout endpoint
+```
+CROW_ROUTE(app, "/logout")([](const crow::request& req){
+auto session = req.get_session();
+session.clear(); // logout
+return "Logged out";
+});
+  ```
+- [ ] FEATURE Support for export to static HTML files
 
 ### Extending
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')

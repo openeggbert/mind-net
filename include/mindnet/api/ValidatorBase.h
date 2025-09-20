@@ -17,16 +17,22 @@
 #include "mindnet/Helper.h"
 
 #define create_method_prototypes_for_ValidatorBase(M)\
-mindnet::OperationResult validate_create(const RequestContext&, const M& entity) const ;\
-mindnet::OperationResult validate_read(const RequestContext&, const M& entity) const;\
-mindnet::OperationResult validate_update(const RequestContext&, const M& old_entity, const M& new_entity) const;\
-mindnet::OperationResult validate_delete(const RequestContext&, const M& entity) const;\
-mindnet::OperationResult validate_list(const RequestContext&, const string_map&) const;\
+mindnet::OperationResult validate_create_integrity(const RequestContext&, const M& entity) const ;\
+mindnet::OperationResult validate_read_integrity(const RequestContext&, const M& entity) const;\
+mindnet::OperationResult validate_update_integrity(const RequestContext&, const M& old_entity, const M& new_entity) const;\
+mindnet::OperationResult validate_delete_integrity(const RequestContext&, const M& entity) const;\
+mindnet::OperationResult validate_list_integrity(const RequestContext&, const string_map&) const;\
+\
+mindnet::OperationResult validate_create_authorization(const RequestContext&, const M& entity) const ;\
+mindnet::OperationResult validate_read_authorization(const RequestContext&, const M& entity) const;\
+mindnet::OperationResult validate_update_authorization(const RequestContext&, const M& old_entity, const M& new_entity) const;\
+mindnet::OperationResult validate_delete_authorization(const RequestContext&, const M& entity) const;\
+mindnet::OperationResult validate_list_authorization(const RequestContext&, const string_map&) const;\
 [[nodiscard]] string get_model_name() const override;
 
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);
 #define assert_role(ROLE) \
-return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE ,403, "User does not have permission for this action.")
+return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE, 403, "User does not have permission for this action.")
 
 #define assert_admin() assert_role(Admin)
 #define assert_editor() assert_role(Editor)
@@ -50,6 +56,13 @@ namespace mindnet::http
 
 namespace mindnet::api
 {
+    inline bool is_authorization_enabled(RequestContext context)
+    {
+        return
+        context.role != plugins::core::enums::UserRole::Admin &&
+            g_configuration.access_mode != AccessMode::EveryoneCanDoEverything;
+    }
+
     typedef std::function<IValidator*(const std::string&)> GetValidatorFunc;
 
     template <typename Derived, typename Model>
@@ -69,10 +82,19 @@ namespace mindnet::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
-                    { d.validate_create(ctx, m) } -> std::convertible_to<OperationResult>;
+                    { d.validate_create_authorization(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_create returning OperationResult"
+                "Derived must implement validate_create_authorization returning OperationResult"
             );
+
+            static_assert(
+                requires(const Derived& d, RequestContext const& ctx, const Model& m)
+                {
+                    { d.validate_create_integrity(ctx, m) } -> std::convertible_to<OperationResult>;
+                },
+                "Derived must implement validate_create_integrity returning OperationResult"
+            );
+
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
@@ -87,7 +109,13 @@ namespace mindnet::api
                 empty())
                 return {400, error};
             ////
-            if (auto res = derived().validate_create(context, entity); !res.ok())
+
+            if (is_authorization_enabled(context))
+            {
+                if (auto res = derived().validate_create_authorization(context, entity); !res.ok())
+                    return res;
+            }
+            if (auto res = derived().validate_create_integrity(context, entity); !res.ok())
                 return res;
 
             return ok_result;
@@ -98,9 +126,16 @@ namespace mindnet::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
-                    { d.validate_read(ctx, m) } -> std::convertible_to<OperationResult>;
+                    { d.validate_read_authorization(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_read returning OperationResult"
+                "Derived must implement validate_read_authorization returning OperationResult"
+            );
+            static_assert(
+                requires(const Derived& d, RequestContext const& ctx, const Model& m)
+                {
+                    { d.validate_read_integrity(ctx, m) } -> std::convertible_to<OperationResult>;
+                },
+                "Derived must implement validate_read_integrity returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -116,7 +151,12 @@ namespace mindnet::api
             Model entity;
             entity.from_values(values);
             ////
-            if (auto res = derived().validate_read(context, entity); !res.ok())
+            if (is_authorization_enabled(context))
+            {
+                if (auto res = derived().validate_read_authorization(context, entity); !res.ok())
+                    return res;
+            }
+            if (auto res = derived().validate_read_integrity(context, entity); !res.ok())
                 return res;
 
             return ok_result;
@@ -127,9 +167,16 @@ namespace mindnet::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& old_m, const Model& new_m)
                 {
-                    { d.validate_update(ctx, old_m, new_m) } -> std::convertible_to<OperationResult>;
+                    { d.validate_update_authorization(ctx, old_m, new_m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_update returning OperationResult"
+                "Derived must implement validate_update_authorization returning OperationResult"
+            );
+            static_assert(
+                requires(const Derived& d, RequestContext const& ctx, const Model& old_m, const Model& new_m)
+                {
+                    { d.validate_update_integrity(ctx, old_m, new_m) } -> std::convertible_to<OperationResult>;
+                },
+                "Derived must implement validate_update_integrity returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -156,7 +203,14 @@ namespace mindnet::api
                 empty())
                 return {400, error};
             ////
-            if (auto res = derived().validate_update(
+
+            if (is_authorization_enabled(context))
+            {
+                if (auto res = derived().validate_update_authorization(
+                    context, new_entity, old_entity); !res.ok())
+                    return res;
+            }
+            if (auto res = derived().validate_update_integrity(
                 context, new_entity, old_entity); !res.ok())
                 return res;
 
@@ -168,9 +222,16 @@ namespace mindnet::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
-                    { d.validate_delete(ctx, m) } -> std::convertible_to<OperationResult>;
+                    { d.validate_delete_authorization(ctx, m) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_delete returning OperationResult"
+                "Derived must implement validate_delete_authorization returning OperationResult"
+            );
+            static_assert(
+                requires(const Derived& d, RequestContext const& ctx, const Model& m)
+                {
+                    { d.validate_delete_integrity(ctx, m) } -> std::convertible_to<OperationResult>;
+                },
+                "Derived must implement validate_delete_integrity returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
@@ -183,7 +244,12 @@ namespace mindnet::api
             Model entity;
             entity.from_values(values);
             ////
-            if (auto res = derived().validate_delete(context, entity); !res.ok())
+            if (is_authorization_enabled(context))
+            {
+                if (auto res = derived().validate_delete_authorization(context, entity); !res.ok())
+                    return res;
+            }
+            if (auto res = derived().validate_delete_integrity(context, entity); !res.ok())
                 return res;
 
             return ok_result;
@@ -194,16 +260,29 @@ namespace mindnet::api
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const string_map& fm)
                 {
-                    { d.validate_list(ctx, fm) } -> std::convertible_to<OperationResult>;
+                    { d.validate_list_authorization(ctx, fm) } -> std::convertible_to<OperationResult>;
                 },
-                "Derived must implement validate_list returning OperationResult"
+                "Derived must implement validate_list_authorization returning OperationResult"
+            );
+            static_assert(
+                requires(const Derived& d, RequestContext const& ctx, const string_map& fm)
+                {
+                    { d.validate_list_integrity(ctx, fm) } -> std::convertible_to<OperationResult>;
+                },
+                "Derived must implement validate_list_integrity returning OperationResult"
             );
 
             auto [logged_user, logged_user_result] = find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
-            if (auto res = derived().validate_list(context, filter); !res.ok())
+
+            if (is_authorization_enabled(context))
+            {
+                if (auto res = derived().validate_list_authorization(context, filter); !res.ok())
+                    return res;
+            }
+            if (auto res = derived().validate_list_integrity(context, filter); !res.ok())
                 return res;
 
             return ok_result;

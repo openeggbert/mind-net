@@ -17,12 +17,11 @@ namespace mindnet::plugins::slipbox::validators
     using validators::SourceValidator;
     using mindnet::OperationResult;
 
-    OperationResult SourceValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult SourceValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        bool everyone_can_do_anything = g_configuration.access_mode == AccessMode::EveryoneCanDoEverything;
-        return_if(!everyone_can_do_anything && ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not create sources.")
+        assert_editor()
 
-        if (!everyone_can_do_anything && !has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a source for this map."};
         }
@@ -30,7 +29,12 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult SourceValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult SourceValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SourceValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
         auto map = find_model(map, entity.map_id)
         if (!map.second.empty()) return {400, map.second};
@@ -42,14 +46,17 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult SourceValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
-                                                      const Model& new_entity) const
+    OperationResult SourceValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        bool everyone_can_do_everything = g_configuration.access_mode == AccessMode::EveryoneCanDoEverything;
+        return ok_result;
+    }
 
-        return_if(!everyone_can_do_everything && ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not update sources.")
+    OperationResult SourceValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                   const Model& new_entity) const
+    {
+        assert_editor()
 
-        if (everyone_can_do_everything && !has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to update a source for this map."};
         }
@@ -57,19 +64,31 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult SourceValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult SourceValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
+                                                               const Model& new_entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not delete sources.")
+        return ok_result;
+    }
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+    OperationResult SourceValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        assert_editor()
+
+        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return {403, "You do not have permission to delete this source."};
         }
-        return ok_result;
 
+        return ok_result;
     }
 
-    OperationResult SourceValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult SourceValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SourceValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                 const string_map& filter) const
     {
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));
@@ -81,6 +100,11 @@ namespace mindnet::plugins::slipbox::validators
                     "You do not have permission to list sources for map with ID " + std::to_string(map_id) + ".")
             };
 
+        return ok_result;
+    }
+
+    OperationResult SourceValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    {
         return ok_result;
     }
 
