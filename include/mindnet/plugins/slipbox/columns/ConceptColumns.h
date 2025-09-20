@@ -38,10 +38,12 @@ namespace mindnet::plugins::slipbox::columns
 
         static constexpr const char* MODEL_NAME = "concept";
 
+        static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* TITLE = "title";
         static constexpr const char* DISAMBIGUATION = "disambiguation";
-        static constexpr const char* NOTE_ID = "note_id";
-        static constexpr const char* MAP_ID = "map_id";
+
+
     };
 }
 #endif // CONCEPTCOLUMNS_H

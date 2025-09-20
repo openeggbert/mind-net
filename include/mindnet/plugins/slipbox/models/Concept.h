@@ -44,18 +44,21 @@ namespace mindnet::plugins::slipbox::models
         .set_title_column(COLS::TITLE)
         .set_columns({
             //
+            coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY),
             coldef(COLS::TITLE, MANDATORY),
             coldef(COLS::DISAMBIGUATION),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY),
-            coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY)
+
         });
 
     struct Model : mindnet::model::BaseModel
     {
+        int map_id{};
+        int note_id{};
         string title;
         string disambiguation;
-        int note_id{};
-        int map_id{};
+
+
 
         create_model_h_methods(Model, MODEL)
 

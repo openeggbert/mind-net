@@ -12,10 +12,11 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
+        result.push_back(cast64(map_id));
+        result.push_back(cast64(note_id));
         result.push_back(title);
         result.push_back(disambiguation);
-        result.push_back(cast64(note_id));
-        result.push_back(cast64(map_id));
+
         return result;
     }
 
@@ -29,10 +30,11 @@ namespace mindnet::plugins::slipbox::models
         created_at = number();
         updated_at = number();
         //
+        map_id = number();
+        note_id = number();
         title = text();
         disambiguation = text();
-        note_id = number();
-        map_id = number();
+
     }
 
     string Concept::validate()
