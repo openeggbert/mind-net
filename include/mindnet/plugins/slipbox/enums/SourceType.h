@@ -29,26 +29,26 @@ namespace mindnet::plugins::slipbox::enums
 {
     enum class SourceType
     {
-        BOOK = 0,
-        ARTICLE = 1,
-        PAPER = 2,
-        WEBSITE = 3,
-        VIDEO = 4,
+        Book = 0,
+        Article = 1,
+        Paper = 2,
+        Website = 3,
+        Video = 4,
     };
 
     inline std::string source_type_to_string(const SourceType type)
     {
         switch (type)
         {
-        case SourceType::BOOK:
+        case SourceType::Book:
             return "Book";
-        case SourceType::ARTICLE:
+        case SourceType::Article:
             return "Article";
-        case SourceType::PAPER:
+        case SourceType::Paper:
             return "Paper";
-        case SourceType::WEBSITE:
+        case SourceType::Website:
             return "Website";
-        case SourceType::VIDEO:
+        case SourceType::Video:
             return "Video";
         default:
             return "Unknown";
