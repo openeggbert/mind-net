@@ -394,17 +394,17 @@ namespace mindnet
                 int index = static_cast<int>(i + 1 + (auto_increment ? -1 : 0));
                 if constexpr (std::is_same_v<T, std::string>)
                 {
-                    debug << "binding index " << i << " " << column_name << " with value: \"" << val << "\"" << commit;
+                    trace << "binding index " << i << " " << column_name << " with value: \"" << val << "\"" << commit;
                     query.bind(index, val);
                 }
                 else if constexpr (std::is_same_v<T, int64_t>)
                 {
                     if (val == 0 && column.is_foreign_key())
                     {
-                        debug << "binding index " << i << " " << column_name << " with value: NULL" << commit;
+                        trace << "binding index " << i << " " << column_name << " with value: NULL" << commit;
                         query.bind(index, nullptr);
                     } else {
-                    debug << "binding index " << i << " " << column_name << " with value: " << val << commit;
+                    trace << "binding index " << i << " " << column_name << " with value: " << val << commit;
                     query.bind(index, val);
                     }
                 }

@@ -38,7 +38,6 @@ export const setCurrentPage = (value) => { _state.currentPage = value; };
 export const setPageSize = (value) => {
     if(value < 5 ) value = 5;
     _state.pageSize = value;
-    alert("pageSize=" + value)
     localStorage.setItem("pageSize",value); // persist
 };
 export const setTotalPages = (value) => {

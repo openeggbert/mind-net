@@ -129,7 +129,6 @@ upx --best --lzma mind_net
 ## BACKLOG
 
 ### Critical
-- [ ] New table log
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
 - [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
 - [ ] New entity Session
@@ -180,6 +179,9 @@ return "Logged out";
 - [ ] new entity File
 - [ ] Frontend : sort and order is missing
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
+- [ ] Implementing adding reason for changes (history.reason)
+- [ ] Add Logging level to configuration
+- [ ] Frontend should not show actions, for which user is not authorized
 
 ### Experimental
 - [ ] Chat component - Slack-like
@@ -242,3 +244,4 @@ return "Logged out";
 - [x] New table source: type:book/web, title, author, year, page_number, url, map_id
 - [x] FEATURE User authorization via Validators
 - [x] New table idea: string title, string content, bool important, bool public
+- [x] New table api_log

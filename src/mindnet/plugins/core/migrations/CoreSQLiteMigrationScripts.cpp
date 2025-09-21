@@ -72,7 +72,6 @@ CREATE TABLE history (
 	updated_at DATETIME,
     --
     user_id INTEGER,
-    ip_address TEXT,
 	table_name TEXT NOT NULL,
 	record_id INTEGER NOT NULL,
 	operation INTEGER NOT NULL,
@@ -82,5 +81,29 @@ CREATE TABLE history (
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
 )");
+
+    	add_migration("V5__create_log.sql", R"(
+CREATE TABLE api_log (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+    --
+    --who
+    user_id INTEGER,
+    ip_address TEXT,
+    --what
+    endpoint TEXT NOT NULL,
+    method INTEGER NOT NULL,
+	entity_name TEXT NOT NULL,
+	entity_id INTEGER,
+    parameters TEXT,
+    request_body TEXT,
+    status_code INTEGER NOT NULL,
+    error TEXT,
+
+	FOREIGN KEY(user_id) REFERENCES user(id)
+);
+)");
+
     }
 }

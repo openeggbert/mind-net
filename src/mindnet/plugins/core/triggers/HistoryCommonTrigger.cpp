@@ -65,7 +65,6 @@ namespace mindnet::plugins::core::triggers
         models::History history;
 
         history.user_id = user_id;
-        history.ip_address = "";
         history.table_name = def.get_model_name();
         history.record_id = id;
         history.operation = operation;
@@ -76,7 +75,7 @@ namespace mindnet::plugins::core::triggers
         {
             history.data_json = "{}";
         }
-        history.reason = "reason 1";
+        history.reason = "";
         auto f = history.to_values();
         int64_t now = static_cast<int64_t>(Utils::currentUnixTimestamp());
         f[1] = now;

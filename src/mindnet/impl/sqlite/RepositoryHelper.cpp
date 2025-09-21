@@ -31,14 +31,15 @@ namespace mindnet::impl::sqlite
     using std::vector;
     using sqlite::SQLITE_FILE_NAME;
 
-    void set_foreign_key_pragma(SQLite::Database& db)
+    void set_pragmas(SQLite::Database& db, bool temp_store = false)
     {
         db.exec("PRAGMA foreign_keys = ON;");
-    }
-
-    void set_temp_store_pragma(SQLite::Database& db)
-    {
-        db.exec("PRAGMA temp_store = MEMORY;");
+        db.exec("PRAGMA journal_mode = WAL;");
+        db.exec("PRAGMA busy_timeout = 5000;");
+        if (temp_store)
+        {
+            db.exec("PRAGMA temp_store = MEMORY;");
+        }
     }
 
     int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
@@ -50,7 +51,7 @@ namespace mindnet::impl::sqlite
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
-        set_foreign_key_pragma(db);
+        set_pragmas(db);
 
         SQLite::Statement* query_ptr = nullptr;
 
@@ -91,8 +92,7 @@ namespace mindnet::impl::sqlite
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
-        set_foreign_key_pragma(db);
-        set_temp_store_pragma(db);
+        set_pragmas(db, true);
 
         SQLite::Statement* query_ptr = nullptr;
 
@@ -160,8 +160,7 @@ namespace mindnet::impl::sqlite
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
-        set_foreign_key_pragma(db);
-        set_temp_store_pragma(db);
+        set_pragmas(db, true);
 
         SQLite::Statement* query_ptr = nullptr;
 
@@ -208,8 +207,7 @@ namespace mindnet::impl::sqlite
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
-        set_foreign_key_pragma(db);
-        set_temp_store_pragma(db);
+        set_pragmas(db, true);
         SQLite::Statement* query_ptr = nullptr;
 
         try
@@ -311,7 +309,7 @@ namespace mindnet::impl::sqlite
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
         );
-        set_foreign_key_pragma(db);
+        set_pragmas(db);
 
         SQLite::Statement* query_ptr = nullptr;
 

@@ -6,6 +6,7 @@
 #include "mindnet/plugins/core/validators/TeamMemberValidator.h"
 #include "mindnet/plugins/core/validators/TeamValidator.h"
 #include "mindnet/plugins/core/validators/UserValidator.h"
+#include "mindnet/plugins/core/validators/ApiLogValidator.h"
 
 namespace mindnet::plugins::core
 {
@@ -22,6 +23,7 @@ namespace mindnet::plugins::core
         REGISTER_MODEL(team, Team, TEAM)
         REGISTER_MODEL(team_member, TeamMember, TEAM_MEMBER)
         REGISTER_MODEL(history, History, HISTORY)
+        REGISTER_MODEL(api_log, ApiLog, API_LOG)
         plugin->register_trigger(std::make_shared<triggers::HistoryCommonTrigger>());
 
         plugin->close_for_changes();

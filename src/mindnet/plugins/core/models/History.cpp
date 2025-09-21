@@ -13,7 +13,6 @@ namespace mindnet::plugins::core::models
         result.emplace_back(cast64(created_at));
         result.emplace_back(cast64(updated_at));
         result.emplace_back(cast64(user_id));
-        result.emplace_back(ip_address);
         result.emplace_back(table_name);
         result.emplace_back(cast64(record_id));
         result.emplace_back(cast64(operation));
@@ -32,7 +31,6 @@ namespace mindnet::plugins::core::models
         created_at = number();
         updated_at = number();
         user_id = number();
-        ip_address = text();
         table_name = text();
         record_id = number();
         operation = static_cast<enums::Crudl>(number());

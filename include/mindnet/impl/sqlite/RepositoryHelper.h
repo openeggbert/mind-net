@@ -33,7 +33,7 @@ namespace mindnet::impl::sqlite
     using std::vector;
     using sqlite::SQLITE_FILE_NAME;
 
-    void set_foreign_key_pragma(SQLite::Database& db);
+    void set_pragmas(SQLite::Database& db);
 
     int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);
 

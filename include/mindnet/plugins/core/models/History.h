@@ -42,7 +42,6 @@ namespace mindnet::plugins::core::models
         .set_columns({
             //
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User ID who made the change"),
-            coldef(COLS::IP_ADDRESS, READONLY).set_description("IP address of the user"),
             coldef(COLS::TABLE_NAME, MANDATORY | READONLY).set_description("Name of the table where change was made"),
             coldef(COLS::RECORD_ID, MANDATORY | READONLY).set_description("ID of the record that was changed"),
             coldef(COLS::OPERATION, MANDATORY | READONLY).set_enum_definition(
@@ -55,7 +54,6 @@ namespace mindnet::plugins::core::models
     struct Model : mindnet::model::BaseModel
     {
         int user_id{};
-        string ip_address;
         string table_name;
         int record_id{};
         enums::Crudl operation{};
@@ -70,7 +68,6 @@ namespace mindnet::plugins::core::models
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
-                ip_address == other.ip_address &&
                 table_name == other.table_name &&
                 record_id == other.record_id &&
                 operation == other.operation &&
