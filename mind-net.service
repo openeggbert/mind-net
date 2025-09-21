@@ -1,0 +1,23 @@
+[Unit]
+Description=Mind Net (C++ REST backend)
+After=network.target
+
+[Service]
+Type=simple
+User={USER}
+Group={USER}
+WorkingDirectory={WORKING DIRECTORY}
+#
+ExecStart={PATH}/mind_net start --port 9000 --frontend-port 443 --host {HOST} -s {PATH TO frontend}
+Restart=on-failure
+#Restart=always
+RestartSec=5s
+#
+Environment=USER={USER} HOME={HOME}
+#
+StandardOutput=append:/var/log/mindnet.log
+StandardError=append:/var/log/mindnet.err
+
+
+[Install]
+WantedBy=multi-user.target

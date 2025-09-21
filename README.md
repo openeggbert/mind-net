@@ -102,6 +102,16 @@ openssl rand -base64 32
 ./mind_net start --port 8888 -s /home/johndoe/Desktop/mindnet/frontend
 ```
 
+### How to build release
+
+```aiignore
+cd build/
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE ..
+cmake --build . --config Release -j$(nproc)
+strip --strip-all mind_net
+upx --best --lzma mind_net
+```
+
 # Project TODO / Roadmap
 
 ## Legend
@@ -145,7 +155,6 @@ openssl rand -base64 32
 - [ ] Super Memo component
 - [ ] BUG Update of boolean values in SQLite is not working.
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
-- [ ] FEATURE User authorization via Validators
 - [ ] FEATURE Log logging in, registration, logout, password changes
 - [ ] TASK Check operator== implementations for all models
 - [ ] /logout endpoint
@@ -174,6 +183,7 @@ return "Logged out";
 - [ ] Chat component - Slack-like
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] FEATURE Implement complex Filtering in REST API
+- [ ] Add support for Docker
 
 ### Implement Complex Filtering in REST API
 
@@ -228,3 +238,4 @@ return "Logged out";
 - [x] IMPROVEMENT Paging - add First and Last buttons
 - [x] New table concept : title, disambiguation, note_id
 - [x] New table source: type:book/web, title, author, year, page_number, url, map_id
+- [x] FEATURE User authorization via Validators
