@@ -54,7 +54,7 @@ namespace mindnet::plugins::slipbox::models
         using columns::MapColumns;
 
         validator_chain_vector list{
-            [this] { return testt_between(name, 5, 80, MapColumns::NAME); },
+            [this] { return testt_between(name, 1, 80, MapColumns::NAME); },
             [this] { return testt_between(description, 0, 80, MapColumns::DESCRIPTION); },
             [this] { return testt_between(category, 0, 40, MapColumns::CATEGORY); },
             [this] { return test_ne(owner_id, 0, MapColumns::OWNER_ID); },

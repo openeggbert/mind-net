@@ -128,7 +128,8 @@ namespace mindnet
 
     bool is_reader_authorized_to(
         const AccessMode mode,
-        const Crudl action
+        const Crudl action,
+        bool reader_can_write
     )
     {
         bool is_read_action = is_read(action);
@@ -136,11 +137,11 @@ namespace mindnet
         {
         case AccessMode::AdminsReadOnly: return false;
         case AccessMode::AdminsReadWrite: return false;
-        case AccessMode::AuthenticatedReadOnly: return is_read_action;
-        case AccessMode::AuthenticatedReadWrite: return is_read_action;
+        case AccessMode::AuthenticatedReadOnly: return is_read_action || reader_can_write;
+        case AccessMode::AuthenticatedReadWrite: return is_read_action || reader_can_write;
         case AccessMode::AuthenticatedFullAccess: return true;
-        case AccessMode::PublicReadOnlyAuthenticatedReadWrite: return is_read_action;
-        case AccessMode::PublicReadOnlyAuthenticatedReadOnly: return is_read_action;
+        case AccessMode::PublicReadOnlyAuthenticatedReadWrite: return is_read_action || reader_can_write;
+        case AccessMode::PublicReadOnlyAuthenticatedReadOnly: return is_read_action || reader_can_write;
         case AccessMode::PublicFullAccess: return true;
         default: throw std::runtime_error(std::string("Unknown access mode") + access_mode_to_string(mode));
         }
@@ -168,7 +169,8 @@ namespace mindnet
     bool is_authorized_to(
         const UserRole role,
         const AccessMode mode,
-        const Crudl action
+        const Crudl action,
+        const bool reader_can_write
     )
     {
         if (mode == AccessMode::MaintenanceMode) return false;
@@ -184,7 +186,7 @@ namespace mindnet
         case UserRole::Admin: return is_admin_authorized_to(mode, action);
         case UserRole::Reviewer: return is_reviewer_authorized_to(mode, action);
         case UserRole::Editor: return is_editor_authorized_to(mode, action);
-        case UserRole::Reader: return is_reader_authorized_to(mode, action);
+        case UserRole::Reader: return is_reader_authorized_to(mode, action, reader_can_write);
         case UserRole::Guest: return is_guest_authorized_to(mode, action);
         default: throw std::runtime_error(
                 std::string("Unknown role ") + plugins::core::enums::user_role_to_string(role));

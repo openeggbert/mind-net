@@ -20,8 +20,40 @@ namespace mindnet::plugins::chat::validators
 {
     using validators::DiscussionValidator;
     using mindnet::OperationResult;
+    OperationResult DiscussionValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult DiscussionValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult DiscussionValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult DiscussionValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult DiscussionValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult DiscussionValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult DiscussionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a discussion.")
@@ -38,7 +70,7 @@ namespace mindnet::plugins::chat::validators
         return ok_result;
     }
 
-    OperationResult DiscussionValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult DiscussionValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
 
@@ -52,7 +84,7 @@ namespace mindnet::plugins::chat::validators
         return ok_result;
     }
 
-    OperationResult DiscussionValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult DiscussionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                               const Model& new_entity) const
     {
         return_if(old_entity.created_by != ctx.token.user_id,
@@ -65,12 +97,12 @@ namespace mindnet::plugins::chat::validators
         return ok_result;
     }
 
-    OperationResult DiscussionValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult DiscussionValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {403, "Deleting discussions is forbidden. Set is_archived to true."};
     }
 
-    OperationResult DiscussionValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult DiscussionValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(team_id)
 

@@ -17,8 +17,40 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::TagTypeValidator;
     using mindnet::OperationResult;
+    OperationResult TagTypeValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult TagTypeValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult TagTypeValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TagTypeValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TagTypeValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TagTypeValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult TagTypeValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a property.")
@@ -31,7 +63,7 @@ namespace mindnet::plugins::slipbox::validators
 
     }
 
-    OperationResult TagTypeValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult TagTypeValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto map = find_model(map, entity.map_id)
         if (map.second.empty()) return {400, map.second};
@@ -43,13 +75,13 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult TagTypeValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
         return {405, "Update of tag_type is forbidden."};
     }
 
-    OperationResult TagTypeValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult TagTypeValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
@@ -58,7 +90,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to delete this tag_type."};
     }
 
-    OperationResult TagTypeValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult TagTypeValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));

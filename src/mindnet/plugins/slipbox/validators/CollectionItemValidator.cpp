@@ -17,18 +17,50 @@ namespace mindnet::plugins::slipbox::validators
     using validators::CollectionItemValidator;
     using mindnet::OperationResult;
 
-    OperationResult CollectionItemValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+
+    OperationResult CollectionItemValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CollectionItemValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CollectionItemValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CollectionItemValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CollectionItemValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+    OperationResult CollectionItemValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult CollectionItemValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
     {
         assert_editor()
@@ -37,13 +69,13 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_list(const RequestContext& ctx,
+    OperationResult CollectionItemValidator::validate_list_integrity(const RequestContext& ctx,
                                                                 const string_map& filter) const
     {
         return ok_result;

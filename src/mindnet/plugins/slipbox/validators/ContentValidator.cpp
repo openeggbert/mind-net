@@ -16,8 +16,40 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::ContentValidator;
     using mindnet::OperationResult;
+    OperationResult ContentValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult ContentValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult ContentValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ContentValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ContentValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ContentValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult ContentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not create content.")
         return_if(entity.version != 1,
@@ -26,7 +58,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult ContentValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult ContentValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto note_id = find_note_for_content(ctx, entity.get_id());
         if (!note_id.second.empty()) return {400, note_id.second};
@@ -41,7 +73,7 @@ namespace mindnet::plugins::slipbox::validators
         return note_validator->can_read(ctx.db, ctx.token, note_id.first);
     }
 
-    OperationResult ContentValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult ContentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
         auto result = find_note_for_content(ctx, old_entity.get_id());
@@ -56,7 +88,7 @@ namespace mindnet::plugins::slipbox::validators
         return note_validator->can_update(ctx.db, ctx.token, ef);
     }
 
-    OperationResult ContentValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult ContentValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto result = find_note_for_content(ctx, entity.get_id());
         if (!result.second.empty()) return {400, result.second};
@@ -67,7 +99,7 @@ namespace mindnet::plugins::slipbox::validators
         return note_validator->can_delete(ctx.db, ctx.token, result.first);
     }
 
-    OperationResult ContentValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult ContentValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         return {405, "Method not allowed"};
     }

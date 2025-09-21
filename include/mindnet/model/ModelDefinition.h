@@ -48,6 +48,7 @@ namespace mindnet::model
         bool virtual_table = false;
         std::vector<CustomAction> custom_actions{};
         std::string title_column;
+        bool reader_can_write{false};
 
     public:
         /**
@@ -102,6 +103,11 @@ namespace mindnet::model
         {
             return title_column;
         }
+        const bool is_reader_can_write() const
+        {
+            return reader_can_write;
+        }
+
         //Setters
         ModelDefinition& set_group(const string& group_, const int group_order_index_ = 0)
         {
@@ -194,6 +200,12 @@ namespace mindnet::model
         ModelDefinition& set_title_column(std::string title_column_)
         {
             title_column = title_column_;
+            return *this;
+        }
+
+        ModelDefinition& allow_reader_write()
+        {
+            reader_can_write = true;
             return *this;
         }
 

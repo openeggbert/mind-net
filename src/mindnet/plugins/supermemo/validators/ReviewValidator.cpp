@@ -17,29 +17,61 @@ namespace mindnet::plugins::supermemo::validators
 {
     using validators::ReviewValidator;
     using mindnet::OperationResult;
+    OperationResult ReviewValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult ReviewValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult ReviewValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ReviewValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ReviewValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ReviewValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult ReviewValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult ReviewValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult ReviewValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult ReviewValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult ReviewValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                           const Model& new_entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult ReviewValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult ReviewValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult ReviewValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult ReviewValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         return {405, "Unsupported operation."};
     }

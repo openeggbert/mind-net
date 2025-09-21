@@ -17,29 +17,61 @@ namespace mindnet::plugins::supermemo::validators
 {
     using validators::SM2StateValidator;
     using mindnet::OperationResult;
+    OperationResult SM2StateValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult SM2StateValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult SM2StateValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SM2StateValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SM2StateValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SM2StateValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult SM2StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult SM2StateValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult SM2StateValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult SM2StateValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult SM2StateValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                             const Model& new_entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult SM2StateValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult SM2StateValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return {405, "Unsupported operation."};
     }
 
-    OperationResult SM2StateValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult SM2StateValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         return {405, "Unsupported operation."};
     }

@@ -16,8 +16,40 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::ConceptValidator;
     using mindnet::OperationResult;
+    OperationResult ConceptValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult ConceptValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult ConceptValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ConceptValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ConceptValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult ConceptValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult ConceptValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not create concepts.")
 
@@ -43,7 +75,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult ConceptValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult ConceptValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto map = find_model(map, entity.map_id)
         if (!map.second.empty()) return {400, map.second};
@@ -55,7 +87,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult ConceptValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult ConceptValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                       const Model& new_entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not update concepts.")
@@ -82,7 +114,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult ConceptValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult ConceptValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not delete concepts.")
 
@@ -94,7 +126,7 @@ namespace mindnet::plugins::slipbox::validators
 
     }
 
-    OperationResult ConceptValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult ConceptValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));

@@ -17,8 +17,40 @@ namespace mindnet::plugins::mail::validators
 {
     using validators::MessageValidator;
     using mindnet::OperationResult;
+    OperationResult MessageValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult MessageValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult MessageValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult MessageValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult MessageValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult MessageValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult MessageValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.owner_id != ctx.token.user_id,
                   403, "You can only create messages for your own user.");
@@ -27,7 +59,7 @@ namespace mindnet::plugins::mail::validators
         return ok_result;
     }
 
-    OperationResult MessageValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult MessageValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.owner_id != ctx.token.user_id,
                   403, "You can only read messages for your own user.");
@@ -35,7 +67,7 @@ namespace mindnet::plugins::mail::validators
         return ok_result;
     }
 
-    OperationResult MessageValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult MessageValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
         return_if(ctx.token.user_id != new_entity.owner_id,
@@ -59,7 +91,7 @@ namespace mindnet::plugins::mail::validators
         return ok_result;
     }
 
-    OperationResult MessageValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult MessageValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.token.user_id != entity.owner_id,
                   403, "You can only delete your own message.");
@@ -70,7 +102,7 @@ namespace mindnet::plugins::mail::validators
         return ok_result;
     }
 
-    OperationResult MessageValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult MessageValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(owner_id)
 

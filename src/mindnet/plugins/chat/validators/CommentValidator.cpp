@@ -20,8 +20,40 @@ namespace mindnet::plugins::chat::validators
 {
     using validators::CommentValidator;
     using mindnet::OperationResult;
+    OperationResult CommentValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult CommentValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult CommentValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CommentValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CommentValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult CommentValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult CommentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto discussion = find_model(discussion, entity.discussion_id);
         check_found(discussion);
@@ -33,7 +65,7 @@ namespace mindnet::plugins::chat::validators
         return ok_result;
     }
 
-    OperationResult CommentValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult CommentValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto comment = find_comment(ctx, entity.get_id());
         return_if(!comment.second.empty(), 400, "Comment does not exist.")
@@ -48,7 +80,7 @@ namespace mindnet::plugins::chat::validators
         return ok_result;
     }
 
-    OperationResult CommentValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult CommentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
         return_if(old_entity.user_id != ctx.token.user_id && ctx.role != plugins::core::enums::UserRole::Admin,
@@ -57,12 +89,12 @@ namespace mindnet::plugins::chat::validators
         return ok_result;
     }
 
-    OperationResult CommentValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult CommentValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return OperationResult(403, "Deleting comments is forbidden. Set is_deleted to true.");
     }
 
-    OperationResult CommentValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult CommentValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(discussion_id)
 

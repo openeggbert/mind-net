@@ -17,8 +17,40 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::QuestionValidator;
     using mindnet::OperationResult;
+    OperationResult QuestionValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult QuestionValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult QuestionValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
@@ -30,7 +62,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to create a question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult QuestionValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
@@ -42,7 +74,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to delete this question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult QuestionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                             const Model& new_entity) const
     {
         auto note = find_model(note, old_entity.note_id);
@@ -55,7 +87,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to update this question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult QuestionValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto note = find_model(note, entity.note_id);
         if (note.second.empty()) return {400, note.second};
@@ -67,7 +99,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to update this question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult QuestionValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(note_id)
         auto note_id = std::stoi(filter.at("note_id"));

@@ -91,7 +91,8 @@ namespace mindnet
 
     bool is_reader_authorized_to(
         AccessMode mode,
-        Crudl action
+        Crudl action,
+        bool reader_can_write = false
     );
 
     bool is_guest_authorized_to(
@@ -111,7 +112,8 @@ namespace mindnet
     bool is_authorized_to(
         UserRole role,
         AccessMode mode,
-        Crudl action
+        Crudl action,
+        bool reader_can_write
     );
 
 }

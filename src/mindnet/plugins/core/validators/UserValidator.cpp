@@ -18,8 +18,40 @@ namespace mindnet::plugins::core::validators
 {
     using validators::UserValidator;
     using mindnet::OperationResult;
+    OperationResult UserValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult UserValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult UserValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult UserValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult UserValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult UserValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(g_configuration.registration_mode == RegistrationMode::AdminAddsUsers && ctx.token.ko(),
                   401, "You must be logged in to create a user")
@@ -45,12 +77,12 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult UserValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult UserValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult UserValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult UserValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                         const Model& new_entity) const
     {
         bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
@@ -74,12 +106,12 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult UserValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult UserValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return OperationResult(403, "You are not allowed to delete this user");
     }
 
-    OperationResult UserValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult UserValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         return ok_result;
     }

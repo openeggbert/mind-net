@@ -16,25 +16,15 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::MapValidator;
     using mindnet::OperationResult;
-
-    OperationResult MapValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult MapValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(has_map_name(ctx, entity.name),
-                  409, "name already exists")
-
         return_if(entity.owner_id != ctx.token.user_id,
-                  400, "Only owner can create maps")
-
-        if (entity.team_id != 0)
-        {
-            auto team = find_model(team, entity.team_id)
-            if (!team.second.empty()) return {400, "Team does not exist."};
-        }
+          400, "Only owner can create maps")
 
         return ok_result;
     }
 
-    OperationResult MapValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult MapValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
         if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
         if (entity.owner_id == ctx.token.user_id) return ok_result;
@@ -51,12 +41,13 @@ namespace mindnet::plugins::slipbox::validators
         }
 
         return {403, "You can not read this map."};
+
     }
 
-    OperationResult MapValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
-                                                       const Model& new_entity) const
+    OperationResult MapValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
     {
-        using plugins::core::enums::can_write;
+        using core::enums::can_write;
 
         bool owner_can_write = old_entity.owner_id == ctx.token.user_id && can_write(old_entity.owner_rights);
         bool team_can_write = false;
@@ -78,7 +69,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult MapValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult MapValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
         using plugins::core::enums::can_delete;
 
@@ -102,7 +93,8 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult MapValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult MapValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
     {
         http::QueryParams params;
         params.page_size = 100;
@@ -128,6 +120,50 @@ namespace mindnet::plugins::slipbox::validators
             }
             params.page_number++;
         }
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult MapValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return_if(has_map_name(ctx, entity.name),
+                  409, "name already exists")
+
+        if (entity.team_id != 0)
+        {
+            auto team = find_model(team, entity.team_id)
+            if (!team.second.empty()) return {400, "Team does not exist."};
+        }
+
+        return ok_result;
+    }
+
+    OperationResult MapValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult MapValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
+                                                       const Model& new_entity) const
+    {
+
+        return ok_result;
+    }
+
+    OperationResult MapValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+
+
+        return ok_result;
+    }
+
+    OperationResult MapValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    {
         return ok_result;
     }
 

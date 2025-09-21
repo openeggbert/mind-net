@@ -16,8 +16,40 @@ namespace mindnet::plugins::core::validators
 {
     using validators::TeamValidator;
     using mindnet::OperationResult;
+    OperationResult TeamValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult TeamValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TeamValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TeamValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TeamValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult TeamValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a team.");
@@ -30,12 +62,12 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult TeamValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TeamValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult TeamValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                         const Model& new_entity) const
     {
         return_if(ctx.role != plugins::core::enums::UserRole::Admin && ctx.token.user_id != new_entity.leader_id,
@@ -49,7 +81,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult TeamValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role != plugins::core::enums::UserRole::Admin,
                   403, "Only admins can delete a team. Contact admin");
@@ -57,7 +89,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult TeamValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult TeamValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         return ok_result;
     }

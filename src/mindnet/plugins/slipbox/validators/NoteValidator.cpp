@@ -16,8 +16,40 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::NoteValidator;
     using mindnet::OperationResult;
+    OperationResult NoteValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult NoteValidator::validate_create(const RequestContext& ctx, const Model& entity) const
+    OperationResult NoteValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Editor,
                   403, "User does not have permission to create a note.")
@@ -29,7 +61,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to create a note for this map."};
     }
 
-    OperationResult NoteValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult NoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto map = find_model(map, entity.map_id)
         if (!map.second.empty()) return {400, map.second};
@@ -41,7 +73,7 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to read this note."};
     }
 
-    OperationResult NoteValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult NoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                         const Model& new_entity) const
     {
         if (!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
@@ -53,7 +85,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult NoteValidator::validate_delete(const RequestContext& ctx, const Model& entity) const
+    OperationResult NoteValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
@@ -64,7 +96,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult NoteValidator::validate_list(const RequestContext& ctx, const string_map& filter) const
+    OperationResult NoteValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
         http::QueryParams params;
         params.page_size = 100;

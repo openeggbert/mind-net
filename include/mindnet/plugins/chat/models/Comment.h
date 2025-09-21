@@ -39,7 +39,7 @@ namespace mindnet::plugins::chat::models
     inline def COMMENT_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("Chat", 300)
+        .set_group("Chat", 300).allow_reader_write()
         .set_columns({
             //
             coldef(COLS::DISCUSSION_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(

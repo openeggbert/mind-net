@@ -16,8 +16,40 @@ namespace mindnet::plugins::suggestion::validators
 {
     using validators::SuggestionReviewValidator;
     using mindnet::OperationResult;
+    OperationResult SuggestionReviewValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
 
-    OperationResult SuggestionReviewValidator::validate_create(const RequestContext& ctx,
+    OperationResult SuggestionReviewValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SuggestionReviewValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SuggestionReviewValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult SuggestionReviewValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
+    {
+        return ok_result;
+    }
+
+
+
+
+
+
+
+    OperationResult SuggestionReviewValidator::validate_create_integrity(const RequestContext& ctx,
                                                                     const Model& entity) const
     {
         return_if(ctx.role < plugins::core::enums::UserRole::Reviewer,
@@ -26,7 +58,7 @@ namespace mindnet::plugins::suggestion::validators
         return ok_result;
     }
 
-    OperationResult SuggestionReviewValidator::validate_read(const RequestContext& ctx, const Model& entity) const
+    OperationResult SuggestionReviewValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto suggestion = find_suggestion(ctx, entity.suggestion_id);
         check_found(suggestion);
@@ -38,7 +70,7 @@ namespace mindnet::plugins::suggestion::validators
         return ok_result;
     }
 
-    OperationResult SuggestionReviewValidator::validate_update(const RequestContext& ctx, const Model& old_entity,
+    OperationResult SuggestionReviewValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                     const Model& new_entity) const
     {
         return_if(ctx.token.user_id != old_entity.reviewer_id,
@@ -49,13 +81,13 @@ namespace mindnet::plugins::suggestion::validators
         return ok_result;
     }
 
-    OperationResult SuggestionReviewValidator::validate_delete(const RequestContext& ctx,
+    OperationResult SuggestionReviewValidator::validate_delete_integrity(const RequestContext& ctx,
                                                                     const Model& entity) const
     {
         return {405, "Deleting suggestions is forbidden. "};
     }
 
-    OperationResult SuggestionReviewValidator::validate_list(const RequestContext& ctx,
+    OperationResult SuggestionReviewValidator::validate_list_integrity(const RequestContext& ctx,
                                                                   const string_map& filter) const
     {
         if (ctx.role >= plugins::core::enums::UserRole::Reviewer) return ok_result;

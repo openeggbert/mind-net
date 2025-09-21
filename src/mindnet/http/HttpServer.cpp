@@ -380,6 +380,12 @@ namespace mindnet::http
             {
                 res["title_column"] = model_definition->get_title_column();
             }
+
+            if (fields_set_empty || fields_set.contains("reader_can_write"))
+            {
+                res["reader_can_write"] = model_definition->is_reader_can_write();
+            }
+
             //
             if (fields_set_empty || fields_set.contains("columns"))
             {

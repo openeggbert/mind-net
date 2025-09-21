@@ -39,7 +39,7 @@ environment=Development
 database_type=SQLite
 
 #Access
-access_mode=EveryoneCanDoEverything
+access_mode=PublicFullAccess
 registration_mode=Free
 default_user_role=Reader
 
@@ -56,7 +56,8 @@ namespace mindnet
         if (!file)
         {
             std::cerr << "Failed to open file: " << filename << "\n";
-            return properties;
+            exit(1);
+            //return properties;
         }
 
         std::string line;

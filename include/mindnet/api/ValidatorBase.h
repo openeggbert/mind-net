@@ -124,7 +124,8 @@ namespace mindnet::api
 
             if (is_authorization_enabled(context))
             {
-                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                auto def = db->get_model_definition(get_model_name());
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
                 if (!authorized_to) return {403, "You are not authorized to access resource."};
                 if (auto res = derived().validate_create_authorization(context, entity); !res.ok())
                     return res;
@@ -168,7 +169,8 @@ namespace mindnet::api
             ////
             if (is_authorization_enabled(context))
             {
-                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                auto def = db->get_model_definition(get_model_name());
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
                 if (!authorized_to) return {403, "You are not authorized to access resource."};
 
                 if (auto res = derived().validate_read_authorization(context, entity); !res.ok())
@@ -225,7 +227,8 @@ namespace mindnet::api
 
             if (is_authorization_enabled(context))
             {
-                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                auto def = db->get_model_definition(get_model_name());
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
                 if (!authorized_to) return {403, "You are not authorized to access resource."};
 
                 if (auto res = derived().validate_update_authorization(
@@ -269,7 +272,8 @@ namespace mindnet::api
             ////
             if (is_authorization_enabled(context))
             {
-                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                auto def = db->get_model_definition(get_model_name());
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
                 if (!authorized_to) return {403, "You are not authorized to access resource."};
 
                 if (auto res = derived().validate_delete_authorization(context, entity); !res.ok())
@@ -306,7 +310,8 @@ namespace mindnet::api
 
             if (is_authorization_enabled(context))
             {
-                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                auto def = db->get_model_definition(get_model_name());
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
                 if (!authorized_to) return {403, "You are not authorized to access resource."};
 
                 if (auto res = derived().validate_list_authorization(context, filter); !res.ok())
