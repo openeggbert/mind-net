@@ -3,6 +3,9 @@
 We welcome contributions of all kinds: code, documentation, tests, or feature ideas.  
 Please follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/) and existing project style.
 
+For a **detailed technical description of how Mind-Net works internally**, see  
+👉 [DEVELOPERS.md](./DEVELOPERS.md)
+
 ## How to contribute
 
 1. Fork the repo and create a feature branch (`feature/my-feature`).
