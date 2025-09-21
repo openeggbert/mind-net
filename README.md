@@ -131,7 +131,7 @@ mind-net/
 
 ## 🤝 Contributing
 
-[Contribution](./CONTRIBUTING.md)
+[Contributing](./CONTRIBUTING.md)
 
 ## 📜 License
 
