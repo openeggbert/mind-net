@@ -3,55 +3,116 @@
 //
 #ifndef ACCESSMODE_H
 #define ACCESSMODE_H
-
+#include "plugins/core/enums/UserRole.h"
+#include "mindnet/plugins/core/enums/Crudl.h"
+#include <algorithm>
+#include <vector>
 
 namespace mindnet
 {
+    using plugins::core::enums::Crudl;
+    using plugins::core::enums::UserRole;
+
     enum class AccessMode
     {
-        AuthenticatedOnly = 0, // All requests require JWT
-        UnauthenticatedCanRead = 1, // GET is public, others require JWT
-        EveryoneCanDoEverything = 2,
-        // No authentication at all. New user everybody is created and used for this purpose
-        MaintenanceMode = 10 // API is disabled, only admins can access
+        MaintenanceMode = 0,                   // API disabled: no access for any user
+        AdminsReadOnly = 1,                    // Only Admins can read; all other users denied
+        AdminsReadWrite = 2,                   // Only Admins can read/write; all other users denied
+        AuthenticatedReadOnly = 3,             // JWT required; authenticated users can only read
+        AuthenticatedReadWrite = 4,            // JWT required; authenticated users can read/write according to roles
+        AuthenticatedFullAccess = 5,           // JWT required; all authenticated users have full access (roles ignored)
+        PublicReadOnlyAuthenticatedReadOnly = 6,   // Guests can read; authenticated users restricted to read-only
+        PublicReadOnlyAuthenticatedReadWrite = 7,  // Guests can read; authenticated users can read/write according to roles
+        PublicFullAccess = 8                   // Fully open API: guests and authenticated users have unrestricted access
     };
 
-    inline std::string access_mode_to_string(AccessMode access_mode)
+    bool is_access_mode_in(AccessMode mode, const std::vector<AccessMode>& modes);
+
+    std::string access_mode_to_string(const AccessMode& access_mode);
+
+    std::string access_mode_to_string(int access_mode);
+
+    AccessMode string_to_access_mode(const std::string& mode_str);
+
+    mindnet::model::EnumDefinition access_mode_to_enum_definition();
+
+    /*
+ Access Control Matrix (AccessMode × Role × CRUDL)
+
+ CRUDL shorthand:
+   R = Read / List
+   C = Create
+   U = Update
+   D = Delete
+
+ ┌─────────────────────────────────────────────┬──────────────┬────────────┬────────────┬────────────┬─────────┐
+ │ AccessMode                                  │ Admin        │ Reviewer   │ Editor     │ Reader     │ Guest   │
+ ├─────────────────────────────────────────────┼──────────────┼────────────┼────────────┼────────────┼─────────┤
+ │ MaintenanceMode                             │ ❌           │ ❌         │ ❌         │ ❌         │ ❌      │
+ │ AdminsReadOnly                              │ R            │ ❌         │ ❌         │ ❌         │ ❌      │
+ │ AdminsReadWrite                             │ R C U D      │ ❌         │ ❌         │ ❌         │ ❌      │
+ │ AuthenticatedReadOnly                       │ R C U D (*)  │ R          │ R          │ R          │ ❌      │
+ │ AuthenticatedReadWrite                      │ R C U D (*)  │ R C U D    │ R C U D    │ R          │ ❌      │
+ │ AuthenticatedFullAccess                     │ R C U D      │ R C U D    │ R C U D    │ R C U D    │ ❌      │
+ │ PublicReadOnlyAuthenticatedReadOnly         │ R C U D (*)  │ R          │ R          │ R          │ R       │
+ │ PublicReadOnlyAuthenticatedReadWrite        │ R C U D (*)  │ R C U D    │ R C U D    │ R          │ R       │
+ │ PublicFullAccess                            │ R C U D      │ R C U D    │ R C U D    │ R C U D    │ R C U D │
+ └─────────────────────────────────────────────┴──────────────┴────────────┴────────────┴────────────┴─────────┘
+
+ Notes:
+ - Admin: In AuthenticatedReadOnly / AuthenticatedReadWrite modes, Admin always has full rights.
+          (*) This means Admin ignores the "ReadOnly" restriction. Is this intended?
+          If Admin should respect ReadOnly, logic should check `is_read_action`.
+ - Reader: In AuthenticatedReadWrite and PublicReadOnlyAuthenticatedReadWrite, Reader only has R.
+           This is consistent: Reader never modifies data.
+ - Guest: Can only read in Public modes, never write, except in PublicFullAccess where Guest has full access.
+ - Reviewer and Editor: Their rights are currently identical.
+                        In ReadOnly modes: only R.
+                        In ReadWrite modes: full R C U D.
+                        If a distinction is desired, additional logic must be added.
+*/
+
+    inline bool is_read(const Crudl action) { return action == Crudl::Read || action == Crudl::List; }
+
+    bool is_admin_authorized_to(
+        const AccessMode mode,
+        const Crudl action
+    );
+
+    bool is_reviewer_authorized_to(
+        const AccessMode mode,
+        const Crudl action
+    );
+
+    bool is_editor_authorized_to(
+        AccessMode mode,
+        Crudl action
+    );
+
+    bool is_reader_authorized_to(
+        AccessMode mode,
+        Crudl action
+    );
+
+    bool is_guest_authorized_to(
+        AccessMode mode,
+        Crudl action
+    );
+
+    inline bool is_authenticated_mode(const AccessMode mode)
     {
-        switch (access_mode)
-        {
-        case AccessMode::AuthenticatedOnly:
-            return "AuthenticatedOnly";
-        case AccessMode::UnauthenticatedCanRead:
-            return "UnauthenticatedCanRead";
-        case AccessMode::EveryoneCanDoEverything:
-            return "EveryoneCanDoEverything";
-        case AccessMode::MaintenanceMode:
-            return "MaintenanceMode";
-        default:
-            return "Unknown";
-        }
+        return mode == AccessMode::AdminsReadOnly ||
+            mode == AccessMode::AdminsReadWrite ||
+            mode == AccessMode::AuthenticatedReadOnly ||
+            mode == AccessMode::AuthenticatedReadWrite ||
+            mode == AccessMode::AuthenticatedFullAccess;
     }
 
-    inline std::string access_mode_to_string(int access_mode)
-    {
-        return access_mode_to_string(static_cast<AccessMode>(access_mode));
-    }
+    bool is_authorized_to(
+        UserRole role,
+        AccessMode mode,
+        Crudl action
+    );
 
-    inline AccessMode string_to_access_mode(const std::string& mode_str)
-    {
-        if (mode_str == "AuthenticatedOnly") return AccessMode::AuthenticatedOnly;
-        if (mode_str == "UnauthenticatedCanRead") return AccessMode::UnauthenticatedCanRead;
-        if (mode_str == "EveryoneCanDoEverything") return AccessMode::EveryoneCanDoEverything;
-        if (mode_str == "MaintenanceMode") return AccessMode::MaintenanceMode;
-        throw std::runtime_error("Invalid access mode: " + mode_str);
-    }
-
-    inline model::EnumDefinition access_mode_to_enum_definition()
-    {
-        return model::EnumDefinition{
-            access_mode_to_string, 4, 0, 1, 2, 10
-        };
-    }
 }
 #endif // ACCESSMODE_H

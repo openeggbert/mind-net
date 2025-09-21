@@ -97,7 +97,7 @@ namespace mindnet
         mutable std::string host{};
         DatabaseType database_type{DatabaseType::Unknown};
         //access
-        AccessMode access_mode{AccessMode::EveryoneCanDoEverything};
+        AccessMode access_mode{AccessMode::PublicFullAccess};
         RegistrationMode registration_mode{RegistrationMode::Free};
         plugins::core::enums::UserRole default_user_role{plugins::core::enums::UserRole::Reader};
         //secrets

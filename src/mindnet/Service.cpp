@@ -155,7 +155,6 @@ namespace mindnet
         debug << "Calling read for " << def.get_model_name() << commit;
         auto validation_result = can_read(def.get_model_name(), token, id);
 
-
         trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def, token.user_id, id);
         if (validation_result.ko())
         {
@@ -253,11 +252,6 @@ namespace mindnet
                                         entity_fields& ef)
     {
         if (!VALIDATION_ENABLED) return ok_result;
-        //Authentication
-        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko() && model_definition.get_model_name() != "user")
-            return {
-                401, "Only logged in users can create."
-            };
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -274,11 +268,6 @@ namespace mindnet
     OperationResult Service::can_read(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
         if (!VALIDATION_ENABLED) return ok_result;
-        //Authentication
-        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly)
-            return {
-                401, "Only logged in users can read."
-            };
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -295,8 +284,6 @@ namespace mindnet
                                         entity_fields& ef)
     {
         if (!VALIDATION_ENABLED) return ok_result;
-        //Authentication
-        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko()) return {401, "Only logged in users can update."};
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -312,8 +299,6 @@ namespace mindnet
     OperationResult Service::can_delete(const ModelDefinition& model_definition, http::LoginToken& token, int id)
     {
         if (!VALIDATION_ENABLED) return ok_result;
-        //Authentication
-        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko()) return {401, "Only logged in users can delete."};
 
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
@@ -330,11 +315,7 @@ namespace mindnet
                                       string_map& filter)
     {
         if (!VALIDATION_ENABLED) return ok_result;
-        //Authentication
-        if (g_configuration.access_mode != AccessMode::EveryoneCanDoEverything && token.ko() && g_configuration.access_mode == AccessMode::AuthenticatedOnly)
-            return {
-                401, "Only logged in users can list."
-            };
+
         api::IValidator* v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {

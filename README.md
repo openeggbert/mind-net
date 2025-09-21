@@ -159,6 +159,7 @@ return "Logged out";
 - [ ] FEATURE Support for export to static HTML files
 
 ### Extending
+- [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
 - [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
 - [ ] Improve documentation

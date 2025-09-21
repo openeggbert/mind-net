@@ -56,12 +56,23 @@ namespace mindnet::http
 
 namespace mindnet::api
 {
-    inline bool is_authorization_enabled(RequestContext context)
+    inline bool is_authorization_enabled(const RequestContext& ctx)
     {
-        return
-        context.role != plugins::core::enums::UserRole::Admin &&
-            g_configuration.access_mode != AccessMode::EveryoneCanDoEverything;
+        using namespace mindnet;
+
+        switch (g_configuration.access_mode)
+        {
+        case AccessMode::MaintenanceMode:
+            return true;
+        case AccessMode::PublicFullAccess:
+            return false;
+        case AccessMode::AuthenticatedFullAccess:
+            return ctx.role == UserRole::Guest;
+        default:
+            return true;
+        }
     }
+
 
     typedef std::function<IValidator*(const std::string&)> GetValidatorFunc;
 
@@ -79,6 +90,7 @@ namespace mindnet::api
 
         OperationResult can_create(DbPtr& db, http::LoginToken& token, entity_fields& ef) const
         {
+            auto action = Crudl::Create;
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
@@ -112,6 +124,8 @@ namespace mindnet::api
 
             if (is_authorization_enabled(context))
             {
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                if (!authorized_to) return {403, "You are not authorized to access resource."};
                 if (auto res = derived().validate_create_authorization(context, entity); !res.ok())
                     return res;
             }
@@ -123,6 +137,7 @@ namespace mindnet::api
 
         OperationResult can_read(DbPtr& db, http::LoginToken& token, int id) const
         {
+            auto action = Crudl::Read;
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
@@ -153,6 +168,9 @@ namespace mindnet::api
             ////
             if (is_authorization_enabled(context))
             {
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                if (!authorized_to) return {403, "You are not authorized to access resource."};
+
                 if (auto res = derived().validate_read_authorization(context, entity); !res.ok())
                     return res;
             }
@@ -164,6 +182,7 @@ namespace mindnet::api
 
         OperationResult can_update(DbPtr& db, http::LoginToken& token, entity_fields& ef) const
         {
+            auto action = Crudl::Update;
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& old_m, const Model& new_m)
                 {
@@ -206,6 +225,9 @@ namespace mindnet::api
 
             if (is_authorization_enabled(context))
             {
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                if (!authorized_to) return {403, "You are not authorized to access resource."};
+
                 if (auto res = derived().validate_update_authorization(
                     context, new_entity, old_entity); !res.ok())
                     return res;
@@ -219,6 +241,7 @@ namespace mindnet::api
 
         OperationResult can_delete(DbPtr& db, http::LoginToken& token, int id) const
         {
+            auto action = Crudl::Delete;
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const Model& m)
                 {
@@ -246,6 +269,9 @@ namespace mindnet::api
             ////
             if (is_authorization_enabled(context))
             {
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                if (!authorized_to) return {403, "You are not authorized to access resource."};
+
                 if (auto res = derived().validate_delete_authorization(context, entity); !res.ok())
                     return res;
             }
@@ -257,6 +283,7 @@ namespace mindnet::api
 
         OperationResult can_list(DbPtr& db, http::LoginToken& token, string_map& filter) const
         {
+            auto action = Crudl::List;
             static_assert(
                 requires(const Derived& d, RequestContext const& ctx, const string_map& fm)
                 {
@@ -279,6 +306,9 @@ namespace mindnet::api
 
             if (is_authorization_enabled(context))
             {
+                auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action);
+                if (!authorized_to) return {403, "You are not authorized to access resource."};
+
                 if (auto res = derived().validate_list_authorization(context, filter); !res.ok())
                     return res;
             }
