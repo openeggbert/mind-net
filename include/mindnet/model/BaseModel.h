@@ -56,6 +56,10 @@ auto number = [&values, &i]\
 {\
     return std::get<std::int64_t>(values[i++]);\
 };\
+auto boolean = [&number]\
+{\
+return number() != 0;\
+};\
 \
 auto text = [&values, &i]\
 {\

@@ -129,8 +129,6 @@ upx --best --lzma mind_net
 ## BACKLOG
 
 ### Critical
-- [ ] New table idea: string title, string content, bool important, bool public
-- [ ] Use SM-18, new entity review_session
 - [ ] New table log
 - [ ] New entity WantedNote : title, first_seen_in_note_id, first_seen_at
 - [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
@@ -145,6 +143,10 @@ upx --best --lzma mind_net
   ```
 - [ ] FEATURE New entity Flag
 - [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
+- [ ] Use SM-18, new entity review_session
+- [ ] Bool SQLite columns should start with is_
+- [ ] Add source_id to table note
+- [ ] Fix validators and move authorization into the correct methods
 - [ ] Reorder columns of tables, if needed
 - [ ] FEATURE User authentication
   * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
@@ -239,3 +241,4 @@ return "Logged out";
 - [x] New table concept : title, disambiguation, note_id
 - [x] New table source: type:book/web, title, author, year, page_number, url, map_id
 - [x] FEATURE User authorization via Validators
+- [x] New table idea: string title, string content, bool important, bool public

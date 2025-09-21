@@ -14,6 +14,7 @@
 #include "mindnet/plugins/slipbox/validators/TagTypeValidator.h"
 #include "mindnet/plugins/slipbox/validators/ConceptValidator.h"
 #include "mindnet/plugins/slipbox/validators/SourceValidator.h"
+#include "mindnet/plugins/slipbox/validators/IdeaValidator.h"
 #include "../../../../include/mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.h"
 
 namespace mindnet::plugins::slipbox
@@ -45,6 +46,7 @@ namespace mindnet::plugins::slipbox
 
         REGISTER_MODEL(concept, Concept, CONCEPT)
         REGISTER_MODEL(source, Source, SOURCE)
+        REGISTER_MODEL(idea, Idea, IDEA)
 
         plugin->close_for_changes();
         return plugin;

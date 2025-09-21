@@ -36,6 +36,8 @@ return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE, 403, "User
 
 #define assert_admin() assert_role(Admin)
 #define assert_editor() assert_role(Editor)
+#define assert_reader() assert_role(Reader)
+#define assert_guest() assert_role(Guest)
 
 #define mandatory_filter(field)\
 if (filter.find( STRINGIFY(field) ) == filter.end()) return {403, std::string("You can't filter without ") + STRINGIFY(field) + "."};
