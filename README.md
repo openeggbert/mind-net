@@ -131,7 +131,7 @@ mind-net/
 
 ## 🤝 Contributing
 
-[Contributing](./CONTRIBUTING.md)
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines and [DEVELOPERS.md](./DEVELOPERS.md) for internal architecture.
 
 ## 📜 License
 
