@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace mindnet
+namespace mindnet::util
 {
     using std::string;
     typedef std::expected<void, string> test_result;

@@ -43,6 +43,6 @@ namespace mindnet::plugins::suggestion::models
         validator_chain_vector list{
             [this] { return test_ne(reviewer_id, 0, SuggestionReviewColumns::REVIEWER_ID); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

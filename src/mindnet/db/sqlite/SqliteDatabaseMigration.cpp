@@ -24,7 +24,7 @@
 #include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
 #include <SQLiteCpp/SQLiteCpp.h>
 
-#include "mindnet/Utils.h"
+#include "../../../../include/mindnet/util/Utils.h"
 #include "mindnet/db/sqlite/MigrationColumns.h"
 #include <openssl/sha.h>
 #include <iomanip>

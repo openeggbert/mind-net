@@ -49,6 +49,6 @@ namespace mindnet::plugins::core::models
             [this] { return test_ne(cast64(operation), 0, HistoryColumns::OPERATION); },
             [this] { return test_true(operation == enums::Crudl::List ? true : !data_json.empty(), "data_json must not be empty");},
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

@@ -1,6 +1,6 @@
-#include "../../../include/mindnet/core/ConsolePrinter.h"
-#include <stdexcept>
-#include "../../../include/mindnet/Utils.h"
+#include "mindnet/core/Logger.h"
+
+#include "mindnet/core/ConsolePrinter.h"
 #include "mindnet/core/Configuration.h"
 
 namespace mindnet::core

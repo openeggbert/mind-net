@@ -56,6 +56,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_at_least(due_at, 0, IdeaColumns::DUE_AT); },
 
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

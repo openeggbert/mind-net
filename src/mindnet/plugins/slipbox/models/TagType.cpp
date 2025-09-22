@@ -38,6 +38,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_ne(map_id, 0, TagTypeColumns::MAP_ID); },
             [this] { return testt_between(title, 1, 64, TagTypeColumns::TITLE); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

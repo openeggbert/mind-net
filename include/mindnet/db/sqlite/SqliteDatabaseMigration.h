@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "mindnet/Utils.h"
+#include "../../util/Utils.h"
 #include "mindnet/api/MigrationScripts.h"
 
 namespace mindnet::db::sqlite

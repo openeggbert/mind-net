@@ -7,7 +7,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "mindnet/Utils.h"
+#include "../../../include/mindnet/util/Utils.h"
 #include <memory>
 
 #include "../../../include/mindnet/core/Global.h"
@@ -219,7 +219,7 @@ bool commands_function_start(
 
     info << "Starting backend on port " << port << commit;
     info << "Starting frontend on port " << frontend_port << commit;
-    mindnet::core::start_time = mindnet::Utils::currentUnixTimestamp();
+    mindnet::core::start_time = mindnet::util::Utils::currentUnixTimestamp();
     g_configuration.host = host;
     g_configuration.port = port;
     g_configuration.frontend_port = frontend_port;
@@ -284,7 +284,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 
 int main(int argc, char** argv)
 {
-    mindnet::core::start_time = mindnet::Utils::currentUnixTimestamp();
+    mindnet::core::start_time = mindnet::util::Utils::currentUnixTimestamp();
 
     auto loggers = {
         &fatal, &err, &warn, &info, &debug, &trace, &experiment
@@ -292,7 +292,7 @@ int main(int argc, char** argv)
 
     for (auto* logger : loggers)
     {
-        logger->set_timestamp_function(&mindnet::Utils::print_current_timestamp);
+        logger->set_timestamp_function(&mindnet::util::Utils::print_current_timestamp);
     }
 
     print_logo();

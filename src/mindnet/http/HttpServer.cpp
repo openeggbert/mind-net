@@ -608,11 +608,11 @@ namespace mindnet::http
 
             nlohmann::ordered_json result;
 
-            auto now = Utils::currentUnixTimestamp();
+            auto now = util::Utils::currentUnixTimestamp();
             result["status"] = g_configuration.access_mode == core::AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
             result["uptime"] = print_duration(core::start_time, now);
-            result["timestamp"] = Utils::unixToFormattedString(now);
-            result["started_at"] = Utils::unixToFormattedString(core::start_time);
+            result["timestamp"] = util::Utils::unixToFormattedString(now);
+            result["started_at"] = util::Utils::unixToFormattedString(core::start_time);
 
             return crow::response(200, result.dump(2));
 

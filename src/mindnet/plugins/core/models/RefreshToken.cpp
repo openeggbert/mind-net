@@ -50,6 +50,7 @@ namespace mindnet::plugins::core::models
     string RefreshToken::validate()
     {
         using columns::RefreshTokenColumns;
+        using_test_utils()
 
         validator_chain_vector list{
             [this] { return test_ne(user_id, 0, RefreshTokenColumns::USER_ID); },
@@ -57,6 +58,6 @@ namespace mindnet::plugins::core::models
             [this] { return test_ne(issued_at, 0, RefreshTokenColumns::ISSUED_AT); }
         };
 
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

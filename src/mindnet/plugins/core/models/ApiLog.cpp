@@ -60,6 +60,6 @@ namespace mindnet::plugins::core::models
             [this] { return test_true(status_code > 0, "Status code must be positive"); },
             [this] { return testt_at_most(error, 256, ApiLogColumns::ERROR); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

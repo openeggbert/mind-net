@@ -62,6 +62,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_between(cast64(team_rights), 0, 7, MapColumns::TEAM_RIGHTS); },
             [this] { return test_between(cast64(other_rights), 0, 7, MapColumns::OTHER_RIGHTS); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

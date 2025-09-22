@@ -3,10 +3,14 @@
 //
 
 #include "../../../include/mindnet/core/Service.h"
+
+#include "mindnet/core/Global.h"
 //
 
 namespace mindnet::core
 {
+    using_loggers()
+
     static constexpr bool VALIDATION_ENABLED = true;
     static constexpr bool TRIGGERS_ENABLED = true;
 

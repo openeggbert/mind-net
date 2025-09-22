@@ -67,6 +67,6 @@ namespace mindnet::plugins::mail::models
                                   "sender_id and recipient_id must be either owner_id or recipient_id");
             },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

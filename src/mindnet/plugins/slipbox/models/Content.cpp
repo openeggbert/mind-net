@@ -39,6 +39,6 @@ namespace mindnet::plugins::slipbox::models
 
         validator_chain_vector list{
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

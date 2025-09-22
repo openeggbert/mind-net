@@ -61,6 +61,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return testt_between(url, 0, 256, SourceColumns::URL); },
 
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

@@ -51,6 +51,6 @@ namespace mindnet::plugins::supermemo::models
         validator_chain_vector list{
             [this] { return std::unexpected("Validation for SM2State was not yet implemented."); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

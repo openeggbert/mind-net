@@ -40,6 +40,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_ne(collection_id, 0, CollectionItemColumns::COLLECTION_ID); },
             [this] { return test_ne(note_id, 0, CollectionItemColumns::NOTE_ID); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

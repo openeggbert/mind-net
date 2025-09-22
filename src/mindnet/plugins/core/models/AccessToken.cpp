@@ -60,6 +60,8 @@ namespace mindnet::plugins::core::models
     {
         using columns::AccessTokenColumns;
 
+        using_test_utils()
+
         validator_chain_vector list{
             [this] { return test_ne(user_id, 0,AccessTokenColumns::USER_ID); },
             [this] { return testt_not_empty(token_hash, AccessTokenColumns::TOKEN_HASH); },
@@ -70,7 +72,7 @@ namespace mindnet::plugins::core::models
                 {
                     return testt_not_empty(name, AccessTokenColumns::NAME);
                 }
-                return test_result{};
+                return util::test_result{};
             },
             [this]
             {
@@ -78,7 +80,7 @@ namespace mindnet::plugins::core::models
                 {
                     return testt_at_most(name, 64, AccessTokenColumns::NAME);
                 }
-                return test_result{};
+                return util::test_result{};
             },
             [this]
             {
@@ -86,10 +88,10 @@ namespace mindnet::plugins::core::models
                 {
                     return testt_at_most(description, 256, AccessTokenColumns::DESCRIPTION);
                 }
-                return test_result{};
+                return util::test_result{};
             }
         };
 
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

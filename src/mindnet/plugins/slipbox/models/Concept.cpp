@@ -46,6 +46,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return testt_between(disambiguation, 1, 64, ConceptColumns::DISAMBIGUATION); },
             [this] { return test_ne(map_id, 0, ConceptColumns::MAP_ID); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

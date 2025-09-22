@@ -45,6 +45,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return testt_between(description, 128, 64, CollectionColumns::DESCRIPTION); },
             [this] { return test_ne(created_by, 0, CollectionColumns::CREATED_BY); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

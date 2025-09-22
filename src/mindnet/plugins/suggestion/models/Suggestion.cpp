@@ -48,6 +48,6 @@ namespace mindnet::plugins::suggestion::models
             [this] { return test_ne(from_user_id, 0, SuggestionColumns::FROM_USER_ID); },
             [this] { return testt_not_empty(table_name, SuggestionColumns::TABLE_NAME); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

@@ -7,13 +7,12 @@
 #include <string>
 #include <vector>
 
-#include "core/Global.h"
-#include "core/Helper.h"
-#include "http/QueryParams.h"
-#include "model/BaseModel.h"
+#include "../core/Helper.h"
+#include "../http/QueryParams.h"
+#include "../model/BaseModel.h"
 #include "SQLiteCpp/Statement.h"
 
-namespace mindnet
+namespace mindnet::util
 {
     /**
  * @brief Result structure for SuperMemo 2 (SM-2) algorithm calculations

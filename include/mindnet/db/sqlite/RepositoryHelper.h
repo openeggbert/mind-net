@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "SqliteFileName.h"
-#include "mindnet/Utils.h"
+#include "../../util/Utils.h"
 #include "mindnet/http/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 

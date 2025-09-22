@@ -5,7 +5,8 @@
 #include "mindnet/http/ModelEndpointGenerator.h"
 #include "crow.h"
 #include "../../../include/mindnet/core/Configuration.h"
-#include "mindnet/Utils.h"
+#include "../../../include/mindnet/util/Utils.h"
+#include "mindnet/core/Global.h"
 #include "mindnet/http/RestHelper.h"
 #include "mindnet/db/sqlite/RepositoryHelper.h"
 #include "mindnet/plugins/core/models/ApiLog.h"
@@ -49,7 +50,7 @@ namespace mindnet::http
          entity_id,
          error);
             auto log = log_object.to_values();
-            int64_t now = static_cast<int64_t>(Utils::currentUnixTimestamp());
+            int64_t now = static_cast<int64_t>(util::Utils::currentUnixTimestamp());
             log[1] = now;
             log[2] = now;
 

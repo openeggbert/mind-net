@@ -69,6 +69,6 @@ namespace mindnet::plugins::core::models
             }
         };
 
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

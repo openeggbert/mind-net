@@ -2,21 +2,20 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#include "mindnet/Utils.h"
+#include "mindnet/util/Utils.h"
 
 #include <cstdlib>
 #include <ctime>
 #include <string>
 #include <fstream>
-#include <random>
 #include <stdexcept>
 #include <regex>
 
-#include "../../include/mindnet/core/Global.h"
+#include "mindnet/core/Global.h"
 #include "mindnet/http/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 
-namespace mindnet
+namespace mindnet::util
 {
     using namespace mindnet::core;
 

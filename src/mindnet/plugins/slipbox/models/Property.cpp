@@ -44,6 +44,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return testt_between(key, 1, 64, PropertyColumns::KEY); },
             [this] { return testt_between(key, 1, 256, PropertyColumns::VALUE); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

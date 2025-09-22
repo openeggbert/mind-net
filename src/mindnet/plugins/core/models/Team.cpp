@@ -44,6 +44,6 @@ namespace mindnet::plugins::core::models
             [this] { return test_ne(created_by, 0, TeamColumns::CREATED_BY); },
             [this] { return test_ne(leader_id, 0, TeamColumns::LEADER_ID); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

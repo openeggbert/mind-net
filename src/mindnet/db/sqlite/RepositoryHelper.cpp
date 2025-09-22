@@ -21,7 +21,8 @@
 #include "mindnet/plugins/slipbox/models/Content.h"
 #include <vector>
 
-#include "mindnet/Utils.h"
+#include "../../../../include/mindnet/util/Utils.h"
+#include "mindnet/core/Global.h"
 #include "mindnet/http/QueryParams.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
@@ -30,7 +31,8 @@ namespace mindnet::db::sqlite
 {
     using std::vector;
     using sqlite::SQLITE_FILE_NAME;
-
+    using util::Utils;
+    
     using_loggers()
 
     void set_pragmas(SQLite::Database& db, bool temp_store = false)

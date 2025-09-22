@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "mindnet/Utils.h"
+#include "../../include/mindnet/util/Utils.h"
 #include <vector>
 #include <string>
 #include <stdexcept>

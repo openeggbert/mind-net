@@ -46,6 +46,6 @@ namespace mindnet::plugins::chat::models
             [this] { return testt_not_empty(content, CommentColumns::CONTENT); },
             [this] { return test_at_most(content.size(), 1000, CommentColumns::CONTENT); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

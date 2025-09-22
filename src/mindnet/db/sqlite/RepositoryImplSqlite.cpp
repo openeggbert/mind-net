@@ -26,6 +26,7 @@
 #include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 #include "mindnet/api/IRepository.h"
+#include "mindnet/core/Global.h"
 #include "mindnet/db/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
 
@@ -85,10 +86,10 @@ namespace mindnet::db::sqlite
         //id
         result.emplace_back(update ? static_cast<int64_t>(body["id"]) : 0);
         //created at
-        if (create) { result.emplace_back(static_cast<int64_t>(Utils::currentUnixTimestamp())); }
+        if (create) { result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp())); }
         else { result.emplace_back(static_cast<int64_t>(0)); }
         //updated at
-        result.emplace_back(static_cast<int64_t>(Utils::currentUnixTimestamp()));
+        result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp()));
 
 
         for (auto& col : model_definition.get_columns())

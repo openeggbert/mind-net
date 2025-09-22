@@ -64,7 +64,7 @@ namespace mindnet::plugins::core::models
             [this] { return testt_at_most(profile_text, 256, UserColumns::PROFILE_TEXT); },
             [this]
             {
-                if (email.empty()) return test_result{};
+                if (email.empty()) return util::test_result{};
                 return test_true(
                     std::regex_match(email, email_pattern),
                     "Invalid email format");
@@ -82,6 +82,6 @@ namespace mindnet::plugins::core::models
             }
         };
 
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

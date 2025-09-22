@@ -48,6 +48,6 @@ namespace mindnet::plugins::core::models
             [this] { return test_ne(user_id, 0, TeamMemberColumns::USER_ID); },
             [this] { return test_ne(joined_at, 0, TeamMemberColumns::JOINED_AT); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

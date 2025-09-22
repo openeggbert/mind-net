@@ -38,6 +38,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_ne(from_note_id, 0, LinkColumns::FROM_NOTE_ID); },
             [this] { return testt_not_empty(to_url, LinkColumns::TO_URL); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

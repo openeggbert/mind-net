@@ -60,6 +60,6 @@ namespace mindnet::plugins::chat::models
             },
             [this] { return test_ne(created_by, 0, DiscussionColumns::CREATED_BY); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

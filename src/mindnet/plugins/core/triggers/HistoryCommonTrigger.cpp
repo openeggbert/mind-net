@@ -78,7 +78,7 @@ namespace mindnet::plugins::core::triggers
         }
         history.reason = "";
         auto f = history.to_values();
-        int64_t now = static_cast<int64_t>(Utils::currentUnixTimestamp());
+        int64_t now = static_cast<int64_t>(util::Utils::currentUnixTimestamp());
         f[1] = now;
         f[2] = now;
 

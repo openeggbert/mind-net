@@ -40,6 +40,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_ne(from_note_id, 0, WantedNoteColumns::FROM_NOTE_ID); },
             [this] { return testt_between(to_note_title, 1, 256, WantedNoteColumns::TO_NOTE_TITLE); },
         };
-        return ValidatorChain::run(list);
+        return util::ValidatorChain::run(list);
     }
 }

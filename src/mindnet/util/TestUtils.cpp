@@ -1,11 +1,11 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#include "mindnet/TestUtils.h"
+#include "mindnet/util/TestUtils.h"
 
 #include <algorithm>
 
-namespace mindnet
+namespace mindnet::util
 {
     test_result test_ok()
     {

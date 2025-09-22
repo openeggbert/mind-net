@@ -30,7 +30,7 @@
 
 #include "crow/json.h"
 #include "../plugins/core/enums/Crudl.h"
-#include "mindnet/TestUtils.h"
+#include "../util/TestUtils.h"
 
 #define create_model_h_methods(Model, MODEL)\
 [[nodiscard]] const def& get_definition() const override\
@@ -66,8 +66,29 @@ auto text = [&values, &i]\
     return std::get<std::string>(values[i++]);\
 };
 
+#define using_test_utils()\
+using util::ValidatorChain;
+using mindnet::util::validator_chain_vector;\
+using mindnet::util::test_ok;\
+using mindnet::util::test_ko;\
+using mindnet::util::test_true;\
+using mindnet::util::test_false;\
+using mindnet::util::test_eq;\
+using mindnet::util::test_ne;\
+using mindnet::util::test_not_null;\
+using mindnet::util::test_at_least;\
+using mindnet::util::test_at_most;\
+using mindnet::util::test_between;\
+using mindnet::util::testt_at_least;\
+using mindnet::util::testt_at_most;\
+using mindnet::util::testt_between;\
+using mindnet::util::testt_not_empty;\
+using mindnet::util::testt_is_alpha_or_digit;\
+
 namespace mindnet::model
 {
+
+
     [[nodiscard]] inline JSON model_to_json(
         entity_fields fields,
         const ModelDefinition& definition)
