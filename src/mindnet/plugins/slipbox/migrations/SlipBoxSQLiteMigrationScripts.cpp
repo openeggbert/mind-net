@@ -70,10 +70,12 @@ CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
+    --
 	map_id INTEGER NOT NULL,
     parent_note_id INTEGER,
     content_id INTEGER UNIQUE,
     source_id INTEGER,
+    --
     title TEXT NOT NULL,
     sibling_order INTEGER NOT NULL,
     importance INTEGER DEFAULT 0,

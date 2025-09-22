@@ -181,6 +181,8 @@ Tables usually include:
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
+	
 	{foreign keys}
+	
 	{other attributes}
 ```

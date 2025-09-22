@@ -33,16 +33,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] New table access_token : name, description, expiration_date, bool allow_all_operations, vector<Crudl> global_allowed_operations, vector<std::pair<string, Crudl>> allowed_operations
-- [ ] New entity Session
-  ```aiignore
-   CREATE TABLE session (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    token TEXT NOT NULL UNIQUE,
-    expires_at DATETIME NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-  ```
 - [ ] FEATURE New entity Flag
 - [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
 - [ ] Use SM-18, new entity review_session
@@ -50,6 +40,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Bool SQLite columns should start with is_
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Reorder columns of tables, if needed
+- [ ] Unix time columns should have SQLite type DATETIME
 - [ ] FEATURE User authentication
     * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
     * refresh token /refresh-token is valid 7 days (can be configured)
@@ -151,3 +142,7 @@ return "Logged out";
 - [x] New table api_log
 - [x] New entity wanted_note : note_title, ...
 - [x] Add source_id to table note
+- [x] New table access_token : name, description, expiration_date, string allowed_operations
+- [x] New table refresh_token
+- [x] New table login_session
+
