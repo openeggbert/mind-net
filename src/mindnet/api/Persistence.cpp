@@ -7,11 +7,11 @@
 #include "../../../include/mindnet/core/Global.h"
 #include "mindnet/http/LoginToken.h"
 
-#include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
+#include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 namespace mindnet::api
 {
-    using namespace mindnet::impl::sqlite;
+    using namespace mindnet::db::sqlite;
     using_loggers()
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)

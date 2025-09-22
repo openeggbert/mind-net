@@ -7,7 +7,7 @@
 #include "../../../include/mindnet/core/Configuration.h"
 #include "mindnet/Utils.h"
 #include "mindnet/http/RestHelper.h"
-#include "mindnet/impl/sqlite/RepositoryHelper.h"
+#include "mindnet/db/sqlite/RepositoryHelper.h"
 #include "mindnet/plugins/core/models/ApiLog.h"
 
 #define check_maintenance_mode()\

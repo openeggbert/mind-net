@@ -19,7 +19,7 @@
 #include "mindnet/IService.h"
 #include "../../../include/mindnet/core/Service.h"
 #include "mindnet/api/PluginRegistry.h"
-#include "mindnet/impl/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/plugins/chat/ChatPluginFactory.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
 #include "mindnet/plugins/mail/MailPluginFactory.h"
@@ -50,8 +50,9 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
         auto migration_scripts = plugin->get_migration_scripts();
         if (migration_scripts == nullptr) {continue;}
-        bool migration_result = mindnet::impl::
-            sqlite::SqliteDatabaseMigration::getInstance()->migrate(plugin_name, migration_scripts);
+        bool migration_result =
+            mindnet::db::sqlite::SqliteDatabaseMigration::
+            getInstance()->migrate(plugin_name, migration_scripts);
         if (migration_result)
         {
             trace << "Migrating schema for plugin " << plugin_name << ": OK. Success." << commit;

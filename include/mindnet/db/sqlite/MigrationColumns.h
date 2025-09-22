@@ -20,16 +20,25 @@
 
 /**
  *
- * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SQLITEFILENAME_H
-#define SQLITEFILENAME_H
+#ifndef MIGRATIONCOLUMNS_H
+#define MIGRATIONCOLUMNS_H
 
-#include <string>
-
-namespace mindnet::impl::sqlite
+namespace mindnet::db::sqlite
 {
-    inline std::string SQLITE_FILE_NAME = "./mindnet.sqlite3";
-}
+    struct MigrationColumns
+    {
+        MigrationColumns() = delete;
 
-#endif // SQLITEFILENAME_H
+        MigrationColumns(const MigrationColumns&) = delete;
+
+        MigrationColumns& operator=(const MigrationColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "migration";
+
+        static constexpr const char* PLUGIN_NAME = "plugin_name";
+        static constexpr const char* LAST_MIGRATION_NUMBER = "last_migration_number";
+    };
+}
+#endif // MIGRATIONCOLUMNS_H

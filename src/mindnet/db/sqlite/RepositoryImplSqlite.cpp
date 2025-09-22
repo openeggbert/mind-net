@@ -23,13 +23,13 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
+#include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 #include "mindnet/api/IRepository.h"
-#include "mindnet/impl/sqlite/RepositoryHelper.h"
+#include "mindnet/db/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
 
-namespace mindnet::impl::sqlite
+namespace mindnet::db::sqlite
 {
     using_loggers()
 
@@ -43,28 +43,28 @@ namespace mindnet::impl::sqlite
 
     int RepositoryImplSqlite::create(const entity_fields& fields, string& error)
     {
-        try { return impl::sqlite::create_model(fields, get_model_definition(), error); }
+        try { return create_model(fields, get_model_definition(), error); }
         catch (std::exception& e) { return -1; }
     }
 
     entity_fields RepositoryImplSqlite::read(const int id, string& error)
     {
-        return impl::sqlite::read_model(get_model_definition(), id, error);
+        return read_model(get_model_definition(), id, error);
     }
 
     bool RepositoryImplSqlite::update(int id, entity_fields& fields, string& error)
     {
-        return impl::sqlite::update_model(id, get_model_definition(), fields, error);
+        return update_model(id, get_model_definition(), fields, error);
     }
 
     bool RepositoryImplSqlite::remove(int id, string& error)
     {
-        return impl::sqlite::delete_model(get_model_definition(), id, error);
+        return delete_model(get_model_definition(), id, error);
     }
 
     std::vector<entity_fields> RepositoryImplSqlite::list(http::QueryParams& query_params, string& error)
     {
-        return impl::sqlite::list_models(get_model_definition(), query_params, error);
+        return list_models(get_model_definition(), query_params, error);
     }
 
     model::ModelDefinition& RepositoryImplSqlite::get_model_definition()

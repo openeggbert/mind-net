@@ -23,10 +23,10 @@
 
 #include "mindnet/Utils.h"
 #include "mindnet/http/QueryParams.h"
-#include "mindnet/impl/sqlite/SqliteFileName.h"
+#include "mindnet/db/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
-namespace mindnet::impl::sqlite
+namespace mindnet::db::sqlite
 {
     using std::vector;
     using sqlite::SQLITE_FILE_NAME;

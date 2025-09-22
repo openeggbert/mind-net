@@ -20,25 +20,34 @@
 
 /**
  *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MIGRATIONCOLUMNS_H
-#define MIGRATIONCOLUMNS_H
+#ifndef REPOSITORYIMPLSQLITE_H
+#define REPOSITORYIMPLSQLITE_H
 
-namespace mindnet::impl::sqlite
+#include <vector>
+
+#include "mindnet/api/IRepository.h"
+
+namespace mindnet::db::sqlite
 {
-    struct MigrationColumns
+    using std::vector;
+
+    class RepositoryImplSqlite : public api::IRepository
     {
-        MigrationColumns() = delete;
+    public:
+        RepositoryImplSqlite(
+            model::ModelDefinition& model_definition
+        );
+        ~RepositoryImplSqlite() override;
 
-        MigrationColumns(const MigrationColumns&) = delete;
-
-        MigrationColumns& operator=(const MigrationColumns&) = delete;
-
-        static constexpr const char* MODEL_NAME = "migration";
-
-        static constexpr const char* PLUGIN_NAME = "plugin_name";
-        static constexpr const char* LAST_MIGRATION_NUMBER = "last_migration_number";
+        int create(const entity_fields& fields, string& error) override;
+        entity_fields read(int id, string& error) override;
+        bool update(int id, entity_fields& fields, string& error) override;
+        bool remove(int id, string& error) override;
+        std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;
+        [[nodiscard]] model::ModelDefinition& get_model_definition() override;
+        entity_fields request_to_entity_fields(crow::json::rvalue& body, plugins::core::enums::Crudl crudl) override;
     };
 }
-#endif // MIGRATIONCOLUMNS_H
+#endif // REPOSITORYIMPLSQLITE_H

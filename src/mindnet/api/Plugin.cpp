@@ -4,7 +4,7 @@
 
 #include "mindnet/api/Plugin.h"
 
-#include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
+#include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 namespace mindnet::api
 {
@@ -71,7 +71,7 @@ namespace mindnet::api
             return;
         }
 
-        std::shared_ptr<IRepository> repository = std::make_shared<impl::sqlite::RepositoryImplSqlite>(
+        std::shared_ptr<IRepository> repository = std::make_shared<db::sqlite::RepositoryImplSqlite>(
             model_definition);
 
         auto registration = std::make_shared<ModelRegistration>(

@@ -28,7 +28,7 @@
 #include "mindnet/http/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 
-namespace mindnet::impl::sqlite
+namespace mindnet::db::sqlite
 {
     using std::vector;
     using sqlite::SQLITE_FILE_NAME;
