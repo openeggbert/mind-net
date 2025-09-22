@@ -43,7 +43,7 @@ namespace mindnet::plugins::slipbox::models
     inline def SOURCE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
-        .set_group("Other", 500)
+        .set_group("Slip Box", 100)
         .set_title_column(COLS::TITLE)
         .set_columns({
             //

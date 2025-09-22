@@ -31,24 +31,28 @@ namespace mindnet::plugins::slipbox
 
         REGISTER_MIGRATIONS(SlipBox, SQLite)
 
-        REGISTER_MODEL(collection, Collection, COLLECTION)
-        REGISTER_MODEL(collection_item, CollectionItem, COLLECTION_ITEM)
-        REGISTER_MODEL(content, Content, CONTENT)
-        REGISTER_MODEL(link, Link, LINK)
+
+
+
         REGISTER_MODEL(map, Map, MAP)
         REGISTER_MODEL(note, Note, NOTE)
+        REGISTER_MODEL(content, Content, CONTENT)
+        REGISTER_MODEL(source, Source, SOURCE)
         REGISTER_MODEL(tag, Tag, TAG)
         REGISTER_MODEL(property, Property, PROPERTY)
 
         REGISTER_MODEL(reference, Reference, REFERENCE)
+        REGISTER_MODEL(link, Link, LINK)
+        REGISTER_MODEL(wanted_note, WantedNote, WANTED_NOTE)
 
         REGISTER_MODEL(question, Question, QUESTION)
         REGISTER_MODEL(tag_type, TagType, TAG_TYPE)
 
+        REGISTER_MODEL(collection, Collection, COLLECTION)
+        REGISTER_MODEL(collection_item, CollectionItem, COLLECTION_ITEM)
         REGISTER_MODEL(concept, Concept, CONCEPT)
-        REGISTER_MODEL(source, Source, SOURCE)
         REGISTER_MODEL(idea, Idea, IDEA)
-        REGISTER_MODEL(wanted_note, WantedNote, WANTED_NOTE)
+
 
         plugin->close_for_changes();
         return plugin;

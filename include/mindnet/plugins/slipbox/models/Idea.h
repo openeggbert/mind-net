@@ -36,6 +36,7 @@ namespace mindnet::plugins::slipbox::models
         .set_all_rest_operations()
         .set_title_column(COLS::TITLE)
         .allow_reader_write()
+        .set_group("Slip Box", 100)
         .set_columns({
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_foreign_key("user")
                                                           .set_description("User who created this idea"),

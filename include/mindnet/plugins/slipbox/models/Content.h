@@ -44,6 +44,7 @@ namespace mindnet::plugins::slipbox::models
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Other", 500)
+        .set_group("Slip Box", 100)
         .set_columns({
             //
             coldef(COLS::VALUE, TEXTAREA | MANDATORY).set_description("Content value/body"),

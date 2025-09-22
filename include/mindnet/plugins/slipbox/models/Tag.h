@@ -38,6 +38,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline def TAG_DEFINITION =
         def(COLS::MODEL_NAME)
+        .set_group("Slip Box", 100)
         .set_all_rest_operations().set_title_column(COLS::TAG_TYPE_ID)
         .set_columns({
             coldef(COLS::NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY),

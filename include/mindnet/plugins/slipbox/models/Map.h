@@ -40,6 +40,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline def MAP_DEFINITION =
         def(COLS::MODEL_NAME)
+        .set_group("Slip Box", 100)
         .set_all_rest_operations().set_title_column(COLS::NAME)
         .set_columns({
             //

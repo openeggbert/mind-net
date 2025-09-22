@@ -39,7 +39,7 @@ namespace mindnet::plugins::slipbox::models
     inline def WANTED_NOTE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
-        .set_group("Other", 500)
+        .set_group("Slip Box", 100)
         .set_title_column(COLS::TO_NOTE_TITLE)
         .set_columns({
             coldef(COLS::FROM_NOTE_ID, MANDATORY | FOREIGN_KEY)

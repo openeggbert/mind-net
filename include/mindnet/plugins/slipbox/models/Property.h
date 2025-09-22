@@ -39,6 +39,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline def PROPERTY_DEFINITION =
         def(COLS::MODEL_NAME)
+        .set_group("Slip Box", 100)
         .set_rest_operations("rl").set_title_column(COLS::KEY)
         .set_columns({
             //
