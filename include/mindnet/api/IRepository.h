@@ -25,7 +25,7 @@
 #include <string>
 
 #include "crow/json.h"
-#include "mindnet/Helper.h"
+#include "../core/Helper.h"
 #include "../plugins/core/enums/Crudl.h"
 #include "../model/ModelDefinition.h"
 #include "mindnet/http/QueryParams.h"

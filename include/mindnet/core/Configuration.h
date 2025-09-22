@@ -13,7 +13,7 @@
 #include "Environment.h"
 #include "../RegistrationMode.h"
 #include "../plugins/core/enums/UserRole.h"
-#include "mindnet/Helper.h"
+#include "Helper.h"
 
 /*
 #Example:

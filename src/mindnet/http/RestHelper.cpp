@@ -9,7 +9,7 @@
 #include <nlohmann/json.hpp>
 
 #include "mindnet/Global.h"
-#include "mindnet/Helper.h"
+#include "../../../include/mindnet/core/Helper.h"
 #include "mindnet/model/ModelDefinition.h"
 
 namespace mindnet::http

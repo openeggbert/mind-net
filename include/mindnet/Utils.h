@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "Global.h"
-#include "Helper.h"
+#include "core/Helper.h"
 #include "http/QueryParams.h"
 #include "model/BaseModel.h"
 #include "SQLiteCpp/Statement.h"

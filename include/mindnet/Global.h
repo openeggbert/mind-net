@@ -5,7 +5,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include "Helper.h"
+#include "core/Helper.h"
 #include "Logger.h"
 
 namespace mindnet
