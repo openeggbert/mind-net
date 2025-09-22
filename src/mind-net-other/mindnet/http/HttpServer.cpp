@@ -6,11 +6,11 @@
 #include <fstream>
 #include <filesystem>
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "jwt-cpp/jwt.h"
-#include "mindnet/core/Configuration.h"
+#include "mindnet/essential/Configuration.h"
 #include "mindnet/api/Service.h"
-#include "mindnet/core/Version.h"
+#include "mindnet/essential/Version.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/User.h"

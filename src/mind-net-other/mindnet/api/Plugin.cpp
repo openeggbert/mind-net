@@ -4,7 +4,7 @@
 
 #include "mindnet/api/Plugin.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 namespace mindnet::api

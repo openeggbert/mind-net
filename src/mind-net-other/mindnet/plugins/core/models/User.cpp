@@ -6,7 +6,7 @@
 
 #include <regex>
 
-#include "mindnet/core/Configuration.h"
+#include "mindnet/essential/Configuration.h"
 
 namespace mindnet::plugins::core::models
 {

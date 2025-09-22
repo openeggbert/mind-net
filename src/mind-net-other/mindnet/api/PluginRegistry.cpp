@@ -5,7 +5,7 @@
 #include "mindnet/api/PluginRegistry.h"
 #include <string>
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/api/Plugin.h"
 
 namespace mindnet::api

@@ -24,7 +24,7 @@
 
 #include "../../../model/BaseModel.h"
 #include "../columns/ContentColumns.h"
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "../enums/ContentFormat.h"
 
 // ***** MACROS : START *****

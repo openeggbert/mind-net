@@ -8,7 +8,7 @@
 #include <crow.h>
 #include <nlohmann/json.hpp>
 
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "../model/ModelDefinition.h"
 
 namespace mindnet::http

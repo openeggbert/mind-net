@@ -1,7 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "mindnet/core/ConsolePrinter.h"
+#include "mindnet/essential/ConsolePrinter.h"
 #include <stdexcept>
 
 #include "LogLevel.h"

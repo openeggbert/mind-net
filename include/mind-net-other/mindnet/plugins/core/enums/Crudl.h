@@ -23,7 +23,7 @@
 #include <string>
 
 #include "../../../model/EnumDefinition.h"
-#include "mindnet/core/Crudl.h"
+#include "mindnet/essential/Crudl.h"
 
 namespace mindnet::plugins::core::enums
 {

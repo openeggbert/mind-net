@@ -26,7 +26,7 @@
 #include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 #include "mindnet/api/IRepository.h"
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/db/sqlite/RepositoryHelper.h"
 #include "SQLiteCpp/Database.h"
 

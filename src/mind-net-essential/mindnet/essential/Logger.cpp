@@ -1,7 +1,7 @@
-#include "mindnet/core/Logger.h"
+#include "mindnet/essential/Logger.h"
 
-#include "mindnet/core/ConsolePrinter.h"
-#include "mindnet/core/Configuration.h"
+#include "mindnet/essential/ConsolePrinter.h"
+#include "mindnet/essential/Configuration.h"
 
 namespace mindnet::core
 {

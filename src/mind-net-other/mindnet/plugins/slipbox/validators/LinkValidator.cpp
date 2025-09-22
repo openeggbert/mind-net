@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/LinkValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/slipbox/models/Link.h"
 #include "mindnet/api/Persistence.h"

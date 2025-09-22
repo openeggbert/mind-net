@@ -23,7 +23,7 @@
 #include <string>
 
 #include "../../../model/EnumDefinition.h"
-#include "mindnet/core/UserRole.h"
+#include "mindnet/essential/UserRole.h"
 
 namespace mindnet::plugins::core::enums
 {

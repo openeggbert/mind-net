@@ -4,9 +4,9 @@
 
 #include "mindnet/http/ModelEndpointGenerator.h"
 #include "crow.h"
-#include "mindnet/core/Configuration.h"
+#include "mindnet/essential/Configuration.h"
 #include "mindnet/util/Utils.h"
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/http/RestHelper.h"
 #include "mindnet/db/sqlite/RepositoryHelper.h"
 #include "mindnet/plugins/core/models/ApiLog.h"

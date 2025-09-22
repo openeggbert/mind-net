@@ -4,7 +4,7 @@
 #ifndef ORDER_H
 #define ORDER_H
 #include <stdexcept>
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 
 namespace mindnet::http
 {

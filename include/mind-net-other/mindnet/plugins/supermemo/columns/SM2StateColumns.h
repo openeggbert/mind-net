@@ -26,7 +26,7 @@
 #define SM2STATECOLUMNS_H
 
 #include "../../../model/BaseColumns.h"
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "../../../model/ColumnType.h"
 
 namespace mindnet::plugins::supermemo::columns

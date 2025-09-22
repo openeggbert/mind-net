@@ -2,14 +2,14 @@
 // Created by robertvokac on 9/8/25.
 //
 
-#include "mindnet/core/LogLevel.h"
+#include "mindnet/essential/LogLevel.h"
 
-#include "mindnet/core/Environment.h"
+#include "mindnet/essential/Environment.h"
 
 #include <stdexcept>
 #include <string>
 
-#include "mindnet/core/ConsoleColor.h"
+#include "mindnet/essential/ConsoleColor.h"
 
 namespace mindnet::core
 {

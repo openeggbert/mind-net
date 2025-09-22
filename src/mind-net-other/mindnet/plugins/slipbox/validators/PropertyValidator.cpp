@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/PropertyValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Property.h"
 #include "mindnet/api/Persistence.h"
 

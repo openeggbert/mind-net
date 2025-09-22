@@ -2,7 +2,7 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 
 namespace mindnet::core
 {

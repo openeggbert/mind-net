@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "../http/QueryParams.h"
 #include "../model/BaseModel.h"
 #include "SQLiteCpp/Statement.h"

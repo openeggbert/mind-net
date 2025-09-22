@@ -29,7 +29,7 @@
 #include <openssl/sha.h>
 #include <iomanip>
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/api/MigrationScripts.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
 

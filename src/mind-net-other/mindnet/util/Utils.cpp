@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <regex>
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/http/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 

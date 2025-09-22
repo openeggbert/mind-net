@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "../../../api/ValidatorBase.h"
 
 namespace mindnet::plugins::suggestion::validators

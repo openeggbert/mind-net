@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/8/25.
 //
 
-#include "mindnet/core/ConsolePrinter.h"
+#include "mindnet/essential/ConsolePrinter.h"
 
 namespace mindnet::core
 {

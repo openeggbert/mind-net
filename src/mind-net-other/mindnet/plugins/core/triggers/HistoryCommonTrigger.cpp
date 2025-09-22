@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/plugins/core/models/History.h"
 #include "mindnet/plugins/slipbox/models/Note.h"

@@ -22,7 +22,7 @@
 #include <vector>
 
 #include "mindnet/util/Utils.h"
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/http/QueryParams.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"

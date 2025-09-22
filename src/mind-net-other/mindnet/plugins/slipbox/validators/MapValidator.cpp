@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/MapValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Map.h"
 #include "mindnet/api/Persistence.h"
 

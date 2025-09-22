@@ -11,7 +11,7 @@
 #include "ModelRegistration.h"
 #include "Trigger.h"
 #include "jwt-cpp/jwt.h"
-#include "mindnet/core/DatabaseType.h"
+#include "mindnet/essential/DatabaseType.h"
 #include "mindnet/db/sqlite/RepositoryHelper.h"
 
 namespace mindnet::api

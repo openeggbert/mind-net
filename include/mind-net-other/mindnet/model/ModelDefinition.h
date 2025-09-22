@@ -25,7 +25,7 @@
 #include "ostream"
 #include <string>
 
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
 #include "BaseColumns.h"
 #include "CustomAction.h"

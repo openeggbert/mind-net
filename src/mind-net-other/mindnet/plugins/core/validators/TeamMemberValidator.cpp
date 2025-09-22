@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/core/validators/TeamMemberValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/models/TeamMember.h"
 #include "mindnet/api/Persistence.h"
 #include "mindnet/api/PersistenceMethods.h"

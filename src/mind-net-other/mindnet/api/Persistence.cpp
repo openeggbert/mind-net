@@ -4,7 +4,7 @@
 
 #include "mindnet/api/Persistence.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/http/LoginToken.h"
 
 #include "mindnet/db/sqlite/RepositoryImplSqlite.h"

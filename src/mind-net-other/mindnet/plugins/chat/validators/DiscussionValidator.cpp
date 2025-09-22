@@ -7,7 +7,7 @@
 
 #include "mindnet/plugins/core/validators/UserValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/chat/models/Discussion.h"
 #include "mindnet/api/Persistence.h"
 #include "mindnet/api/PersistenceMethods.h"

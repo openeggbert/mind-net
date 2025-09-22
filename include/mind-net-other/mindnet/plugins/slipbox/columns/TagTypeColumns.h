@@ -26,7 +26,7 @@
 #define TAGTYPECOLUMNS_H
 
 #include "../../../model/BaseColumns.h"
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 #include "../../../model/ColumnType.h"
 
 namespace mindnet::plugins::slipbox::columns

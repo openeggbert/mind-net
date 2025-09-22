@@ -27,7 +27,7 @@
 #include <utility>
 
 #include "mindnet/plugins/core/enums/Crudl.h"
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 
 namespace mindnet::model
 {

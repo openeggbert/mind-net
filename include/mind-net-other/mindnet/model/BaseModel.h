@@ -26,7 +26,7 @@
 
 #include "ColumnType.h"
 #include "ModelDefinition.h"
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 
 #include "crow/json.h"
 #include "mindnet/plugins/core/enums/Crudl.h"

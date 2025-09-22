@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "OperationResult.h"
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 
 namespace mindnet::http
 {

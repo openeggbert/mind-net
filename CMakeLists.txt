@@ -32,7 +32,7 @@ include_directories(${ASIO_DIR}/asio/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jwt-cpp/include)
 
 # ===== Project modules =====
-add_subdirectory(src/mind-net-core)
+add_subdirectory(src/mind-net-essential)
 add_subdirectory(src/mind-net-other)
 add_subdirectory(src/mind-net-app)
 

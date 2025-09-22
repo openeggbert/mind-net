@@ -5,8 +5,8 @@
 #include "mindnet/plugins/core/validators/UserValidator.h"
 
 #include <regex>
-#include "mindnet/core/Configuration.h"
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Configuration.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/api/Persistence.h"
 

@@ -14,7 +14,7 @@
 #include "mindnet/api/RequestContext.h"
 #include "../model/BaseModel.h"
 
-#include "mindnet/core/Helper.h"
+#include "mindnet/essential/Helper.h"
 
 #define create_method_prototypes_for_ValidatorBase(M)\
 mindnet::api::OperationResult validate_create_integrity(const RequestContext&, const M& entity) const ;\

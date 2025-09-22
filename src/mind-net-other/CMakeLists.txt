@@ -14,7 +14,7 @@ target_include_directories(mind_net_other
         PUBLIC
         ${CMAKE_SOURCE_DIR}/include/mind-net-other
         PRIVATE
-        ${CMAKE_SOURCE_DIR}/include/mind-net-core
+        ${CMAKE_SOURCE_DIR}/include/mind-net-essential
 )
 
 
@@ -25,7 +25,7 @@ target_link_libraries(mind_net_other
         OpenSSL::Crypto
         pthread
         dl
-        mind_net_core
+        mind_net_essential
 )
 
 target_precompile_headers(mind_net_other PRIVATE

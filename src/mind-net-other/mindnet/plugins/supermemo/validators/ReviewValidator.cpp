@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/supermemo/validators/ReviewValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/supermemo/models/Review.h"
 #include "mindnet/api/Persistence.h"

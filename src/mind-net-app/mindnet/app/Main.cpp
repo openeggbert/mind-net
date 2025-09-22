@@ -10,9 +10,9 @@
 #include "mindnet/util/Utils.h"
 #include <memory>
 
-#include "mindnet/core/Configuration.h"
-#include "mindnet/core/Global.h"
-#include "mindnet/core/ExitStatus.h"
+#include "mindnet/essential/Configuration.h"
+#include "mindnet/essential/Global.h"
+#include "mindnet/essential/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/api/Persistence.h"
 #include "mindnet/http/ModelEndpointGenerator.h"

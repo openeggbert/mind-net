@@ -4,7 +4,7 @@
 
 #include "mindnet/api/Service.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 //
 
 namespace mindnet::api

@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/suggestion/validators/SuggestionValidator.h"
 
-#include "mindnet/core/Global.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/plugins/suggestion/models/Suggestion.h"
 #include "mindnet/api/Persistence.h"
 
