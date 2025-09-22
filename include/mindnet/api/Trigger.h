@@ -18,8 +18,8 @@ namespace mindnet {
     {
         struct LoginToken;
     }
-
-    class Service; }
+namespace core{
+    class Service;} }
 
 namespace mindnet::api
 {
@@ -27,7 +27,7 @@ namespace mindnet::api
     {
     public:
     public:
-        using Service = mindnet::Service;
+        using Service = mindnet::core::Service;
 
         using CreateFn = std::pair<int, OperationResult>(Service::*)(const model::ModelDefinition&, http::LoginToken&, entity_fields&, int);
         using ReadFn   = std::pair<entity_fields, OperationResult>(Service::*)(const model::ModelDefinition&, http::LoginToken&, int, int);

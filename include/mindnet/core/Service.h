@@ -4,11 +4,11 @@
 
 #ifndef MIND_NET_SERVICE_H
 #define MIND_NET_SERVICE_H
-#include "IService.h"
-#include "api/PluginRegistry.h"
-#include "api/TriggerRegistry.h"
+#include "../IService.h"
+#include "../api/PluginRegistry.h"
+#include "../api/TriggerRegistry.h"
 
-namespace mindnet
+namespace mindnet::core
 {
     using validator = api::IValidator*;
     using mindnet::OperationResult;

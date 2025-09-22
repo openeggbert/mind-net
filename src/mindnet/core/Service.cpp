@@ -2,10 +2,10 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#include "mindnet/Service.h"
+#include "../../../include/mindnet/core/Service.h"
 //
 
-namespace mindnet
+namespace mindnet::core
 {
     static constexpr bool VALIDATION_ENABLED = true;
     static constexpr bool TRIGGERS_ENABLED = true;
