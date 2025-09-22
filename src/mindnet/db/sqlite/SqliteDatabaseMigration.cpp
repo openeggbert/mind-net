@@ -201,7 +201,7 @@ CREATE TABLE "migration" (
                     return false;
                 }
 
-                info << "Table " << MigrationColumns::MODEL_NAME << " initialized for plugin " << plugin_name << std::endl;
+                info << "Table " << MigrationColumns::MODEL_NAME << " initialized for plugin " << plugin_name << commit;
             }
             if (!validate_table_existence(db)) return false;
 

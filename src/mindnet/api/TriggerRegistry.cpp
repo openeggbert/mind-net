@@ -29,7 +29,7 @@ namespace mindnet::api
         const entity_fields& fields,
         const http::QueryParams& query_params)
     {
-        std::cout << registry_.size() << std::endl;
+
         std::vector<std::string> v{def.get_model_name(), "*"};
         for (auto& s : v)
         {
