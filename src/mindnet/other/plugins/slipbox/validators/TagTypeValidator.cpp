@@ -52,7 +52,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TagTypeValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::Editor,
+        return_if(ctx.role < mindnet::core::UserRole::Editor,
                   403, "User does not have permission to create a property.")
 
         if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))

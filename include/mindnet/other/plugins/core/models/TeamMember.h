@@ -58,7 +58,7 @@ namespace mindnet::plugins::core::models
     {
         int team_id{};
         int user_id{};
-        enums::UserRole role{};
+        mindnet::core::UserRole role{};
         enums::UserStatus status{};
         unixtime joined_at{};
         unixtime left_at{};

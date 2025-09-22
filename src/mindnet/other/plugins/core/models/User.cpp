@@ -41,7 +41,7 @@ namespace mindnet::plugins::core::models
         username = text();
         password_hash = text();
         display_name = text();
-        role = static_cast<enums::UserRole>(number());
+        role = static_cast<mindnet::core::UserRole>(number());
         profile_text = text();
         last_login = number();
         email = text();

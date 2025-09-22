@@ -16,7 +16,7 @@ namespace mindnet::api
         if (token.user_id == 0)
         {
             plugins::core::models::User u;
-            u.role = plugins::core::enums::UserRole::Guest;
+            u.role = core::UserRole::Guest;
             u.status = plugins::core::enums::UserStatus::Active;
             return {u, ok_result};
         }
@@ -94,7 +94,7 @@ namespace mindnet::api
     bool has_right_for_map(
         const RequestContext& ctx, const int map_id, const plugins::core::enums::SingleRight single_right)
     {
-        if (ctx.role == plugins::core::enums::UserRole::Admin) { return true; }
+        if (ctx.role == core::UserRole::Admin) { return true; }
 
         auto map = find_model(map, map_id)
         if (!map.second.empty()) return false;

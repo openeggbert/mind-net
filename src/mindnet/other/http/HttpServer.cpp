@@ -515,7 +515,7 @@ namespace mindnet::http
             //
             result["access_mode"] = access_mode_to_string(g_configuration.access_mode);
             result["registration_mode"] = registration_mode_to_string(g_configuration.registration_mode);
-            result["default_user_role"] = plugins::core::enums::user_role_to_string(g_configuration.default_user_role);
+            result["default_user_role"] = user_role_to_string(g_configuration.default_user_role);
 
             return crow::response(200, result.dump(2));
 
@@ -740,7 +740,7 @@ namespace mindnet::http
             user.username = username;
             user.password_hash = hashed;
             user.display_name = display_name;
-            user.role = plugins::core::enums::UserRole::Reader;
+            user.role = mindnet::core::UserRole::Reader;
             user.profile_text = profile_text;
             user.last_login = 0;
             user.email = email;

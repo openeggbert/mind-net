@@ -61,7 +61,7 @@ namespace mindnet::plugins::core::models
         string username;
         string password_hash;
         string display_name;
-        enums::UserRole role{};
+        mindnet::core::UserRole role{};
         string profile_text;
         unixtime last_login{};
         string email;

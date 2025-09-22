@@ -3,15 +3,16 @@
 //
 #ifndef ACCESSMODE_H
 #define ACCESSMODE_H
-#include "mindnet/other/plugins/core/enums/UserRole.h"
 #include "mindnet/other/plugins/core/enums/Crudl.h"
 #include <algorithm>
 #include <vector>
 
+#include "UserRole.h"
+
 namespace mindnet::core
 {
     using plugins::core::enums::Crudl;
-    using plugins::core::enums::UserRole;
+    using core::UserRole;
 
     enum class AccessMode
     {

@@ -7,7 +7,7 @@
 namespace mindnet::core
 {
     using plugins::core::enums::Crudl;
-    using plugins::core::enums::UserRole;
+    using core::UserRole;
 
     bool is_access_mode_in(const AccessMode mode, const std::vector<AccessMode>& modes)
     {
@@ -189,7 +189,7 @@ namespace mindnet::core
         case UserRole::Reader: return is_reader_authorized_to(mode, action, reader_can_write);
         case UserRole::Guest: return is_guest_authorized_to(mode, action);
         default: throw std::runtime_error(
-                std::string("Unknown role ") + plugins::core::enums::user_role_to_string(role));
+                std::string("Unknown role ") + user_role_to_string(role));
         }
     }
 }

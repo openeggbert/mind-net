@@ -51,7 +51,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::Editor, 403, "You can not create content.")
+        return_if(ctx.role < mindnet::core::UserRole::Editor, 403, "You can not create content.")
         return_if(entity.version != 1,
                   404, "version must be 1 during message creation.");
 

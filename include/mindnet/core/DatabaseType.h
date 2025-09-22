@@ -4,7 +4,6 @@
 
 #ifndef MIND_NET_DATABASETYPE_H
 #define MIND_NET_DATABASETYPE_H
-#include "../other/model/EnumDefinition.h"
 
 namespace mindnet::core {
 enum class DatabaseType
@@ -50,11 +49,11 @@ inline DatabaseType string_to_database_type(const std::string& type_str)
     throw std::runtime_error("Invalid database type: " + type_str);
 }
 
-inline mindnet::model::EnumDefinition database_type_to_enum_definition()
-{
-    return mindnet::model::EnumDefinition{
-        database_type_to_string, 5, 0, 1, 2, 3, 4
-    };
-}
+// inline mindnet::model::EnumDefinition database_type_to_enum_definition()
+// {
+//     return mindnet::model::EnumDefinition{
+//         database_type_to_string, 5, 0, 1, 2, 3, 4
+//     };
+// }
 }
 #endif //MIND_NET_DATABASETYPE_H

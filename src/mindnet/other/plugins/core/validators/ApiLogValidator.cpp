@@ -25,7 +25,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult ApiLogValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
+        if (ctx.role == mindnet::core::UserRole::Admin) return ok_result;
 
         // Users can read only their own logs
         return_if(entity.user_id != ctx.token.user_id,
@@ -49,7 +49,7 @@ namespace mindnet::plugins::core::validators
     OperationResult ApiLogValidator::validate_list_authorization(const RequestContext& ctx,
                                                                  const string_map& filter) const
     {
-        if (ctx.role == plugins::core::enums::UserRole::Admin) return ok_result;
+        if (ctx.role == mindnet::core::UserRole::Admin) return ok_result;
 
         // normal users may only list their own logs
         mandatory_filter(user_id)

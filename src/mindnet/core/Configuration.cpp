@@ -77,7 +77,7 @@ namespace mindnet::core
         //
         save_enum(access_mode)
         save_enum(registration_mode)
-        if_map_has(default_user_role) default_user_role = plugins::core::enums::string_to_user_role(
+        if_map_has(default_user_role) default_user_role = string_to_user_role(
             map.at("default_user_role"));
         //
         save_text(jwt_secret)

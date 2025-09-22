@@ -51,7 +51,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < plugins::core::enums::UserRole::Editor,
+        return_if(ctx.role < mindnet::core::UserRole::Editor,
                   403, "User does not have permission to create a team.");
 
         return_if(entity.created_by != ctx.token.user_id,
@@ -70,12 +70,12 @@ namespace mindnet::plugins::core::validators
     OperationResult TeamValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                         const Model& new_entity) const
     {
-        return_if(ctx.role != plugins::core::enums::UserRole::Admin && ctx.token.user_id != new_entity.leader_id,
+        return_if(ctx.role != mindnet::core::UserRole::Admin && ctx.token.user_id != new_entity.leader_id,
                   403, "Only team leader can update the team.")
         return_if(old_entity.created_by != new_entity.created_by,
                   400, "created_by cannot be changed")
 
-        return_if(old_entity.leader_id != new_entity.leader_id && ctx.role != plugins::core::enums::UserRole::Admin,
+        return_if(old_entity.leader_id != new_entity.leader_id && ctx.role != mindnet::core::UserRole::Admin,
                   400, "leader_id cannot be changed by yourself. Contact admin.")
 
         return ok_result;
@@ -83,7 +83,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role != plugins::core::enums::UserRole::Admin,
+        return_if(ctx.role != mindnet::core::UserRole::Admin,
                   403, "Only admins can delete a team. Contact admin");
 
         return ok_result;

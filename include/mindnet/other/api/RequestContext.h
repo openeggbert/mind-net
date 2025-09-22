@@ -15,7 +15,7 @@ namespace mindnet::api
     {
         DbPtr& db;
         http::LoginToken& token;
-        plugins::core::enums::UserRole role{};
+        core::UserRole role{};
         plugins::core::enums::UserStatus status{};
     };
 }

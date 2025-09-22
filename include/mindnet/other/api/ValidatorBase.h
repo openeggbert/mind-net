@@ -32,7 +32,7 @@ mindnet::api::OperationResult validate_list_authorization(const RequestContext&,
 
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);
 #define assert_role(ROLE) \
-return_if (ctx.role < mindnet::plugins::core::enums::UserRole:: ROLE, 403, "User does not have permission for this action.")
+return_if (ctx.role < mindnet::core::UserRole:: ROLE, 403, "User does not have permission for this action.")
 
 #define assert_admin() assert_role(Admin)
 #define assert_editor() assert_role(Editor)
