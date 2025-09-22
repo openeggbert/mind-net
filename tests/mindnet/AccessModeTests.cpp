@@ -22,7 +22,7 @@ struct
     // Dummy login token
     static http::LoginToken dummy_token{"user", 1, "", 0};
 
-
+    using mindnet::core::UserRole;
 // Helper RequestContext constructor
 api::RequestContext make_ctx(UserRole role)
 {
@@ -41,6 +41,7 @@ class AuthorizationEnabledTest : public ::testing::Test
 
 using mindnet::core::AccessMode;
 using api::is_authorization_enabled;
+using mindnet::core::UserRole;
 
 TEST_F(AuthorizationEnabledTest, MaintenanceMode_AllRoles)
 {

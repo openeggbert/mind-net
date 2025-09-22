@@ -20,4 +20,11 @@ target_link_libraries(mind_net_other
         OpenSSL::Crypto
         pthread
         dl
+        mind_net_core
+)
+
+target_precompile_headers(mind_net_other PRIVATE
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_json.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_sqlite.h"
 )

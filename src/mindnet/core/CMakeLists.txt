@@ -11,8 +11,12 @@ target_include_directories(mind_net_core PUBLIC
         ${CMAKE_SOURCE_DIR}/include
 )
 
-
 target_link_libraries(mind_net_core PUBLIC
         SQLiteCpp # todo : move to db/sqlite
         sqlite3 # todo : move to db/sqlite
 )
+target_precompile_headers(mind_net_core PRIVATE
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_sqlite.h"
+)
+

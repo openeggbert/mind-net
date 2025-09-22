@@ -24,19 +24,19 @@ add_subdirectory(thirdparty/SQLiteCpp)
 add_subdirectory(thirdparty/nlohmann_json)
 add_subdirectory(thirdparty/googletest)
 
-# Add Crow and Asio includes globally
+# Crow/Asio include dirs
 set(CROW_DIR thirdparty/crow)
 set(ASIO_DIR thirdparty/asio)
 include_directories(${CROW_DIR}/include)
 include_directories(${ASIO_DIR}/asio/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jwt-cpp/include)
 
-# Our modules
+# ===== Project modules =====
 add_subdirectory(src/mindnet/core)
 add_subdirectory(src/mindnet/other)
 add_subdirectory(src/mindnet/app)
 
-# Tests
+# ===== Tests =====
 if (ENABLE_TESTS)
         enable_testing()
         add_subdirectory(tests)
