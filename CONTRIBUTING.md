@@ -46,6 +46,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE New entity Flag
 - [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
 - [ ] Use SM-18, new entity review_session
+- [ ] Add hash sums for sql migrations - new column in table migration
 - [ ] Bool SQLite columns should start with is_
 - [ ] Add source_id to table note
 - [ ] Fix validators and move authorization into the correct methods
@@ -61,6 +62,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [ ] FEATURE Log logging in, registration, logout, password changes
 - [ ] TASK Check operator== implementations for all models
+- [ ] Validators - reorder methods in cpp files
 - [ ] /logout endpoint
 ```
 CROW_ROUTE(app, "/logout")([](const crow::request& req){

@@ -292,5 +292,24 @@ CREATE TABLE idea(
 
 CREATE INDEX idx_idea_title ON idea(title);
 )");
+
+
+    	add_migration("V16__create_wanted_note.sql", R"(
+CREATE TABLE wanted_note(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME ,
+    updated_at DATETIME ,
+    --
+	from_note_id INTEGER NOT NULL,
+	to_note_title TEXT NOT NULL,
+
+    UNIQUE (from_note_id, to_note_title),
+
+	FOREIGN KEY (from_note_id) REFERENCES note(id)
+);
+
+CREATE INDEX idx_wanted_note_from_note_id ON wanted_note(from_note_id);
+
+)");
     }
 }
