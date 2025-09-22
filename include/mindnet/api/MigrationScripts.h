@@ -11,7 +11,7 @@
 #include "ModelRegistration.h"
 #include "Trigger.h"
 #include "jwt-cpp/jwt.h"
-#include "mindnet/DatabaseType.h"
+#include "../core/DatabaseType.h"
 #include "mindnet/db/sqlite/RepositoryHelper.h"
 
 namespace mindnet::api
@@ -29,7 +29,7 @@ namespace mindnet::api
     class MigrationScripts
     {
     public:
-        explicit MigrationScripts(const DatabaseType database_type_ ) : database_type(database_type_){};
+        explicit MigrationScripts(const core::DatabaseType database_type_ ) : database_type(database_type_){};
         virtual ~MigrationScripts() = default;
 
         size_t get_count()
@@ -58,7 +58,7 @@ namespace mindnet::api
             return migrations[migration_number-1].file_name;
         }
 
-        [[nodiscard]] const DatabaseType& get_database_type() const { return database_type; }
+        [[nodiscard]] const core::DatabaseType& get_database_type() const { return database_type; }
 
     protected:
         virtual void define_migrations() = 0;
@@ -108,7 +108,7 @@ namespace mindnet::api
         }
 
         bool defined = false;
-        DatabaseType database_type = DatabaseType::Unknown;
+        core::DatabaseType database_type = core::DatabaseType::Unknown;
 
     };
 

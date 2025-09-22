@@ -6,7 +6,7 @@
 
 namespace mindnet::plugins::core::migrations
 {
-    CoreSQLiteMigrationScripts::CoreSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
+    CoreSQLiteMigrationScripts::CoreSQLiteMigrationScripts() : MigrationScripts(mindnet::core::DatabaseType::SQLite)
     {
     }
 

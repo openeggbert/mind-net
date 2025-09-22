@@ -72,7 +72,7 @@ namespace mindnet::core
         save_number(port)
         save_number(frontend_port)
         save_text(host)
-        using mindnet::string_to_database_type;
+        using mindnet::core::string_to_database_type;
         save_enum(database_type)
         //
         save_enum(access_mode)

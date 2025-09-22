@@ -37,11 +37,11 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
 {
     trace << "Migrating schema, if needed" << commit;
 
-    mindnet::DatabaseType database_type = g_configuration.database_type;
-    if (database_type != mindnet::DatabaseType::SQLite)
+    mindnet::core::DatabaseType database_type = g_configuration.database_type;
+    if (database_type != mindnet::core::DatabaseType::SQLite)
     {
         err << "SQLite database is only supported, but you configured " <<
-            mindnet::database_type_to_string(database_type) << commit;
+            mindnet::core::database_type_to_string(database_type) << commit;
         exit(ExitStatus::MIGRATION_FAILED);
     }
     for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())

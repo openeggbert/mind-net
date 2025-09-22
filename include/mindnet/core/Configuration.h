@@ -9,7 +9,7 @@
 #include <map>
 
 #include "AccessMode.h"
-#include "../DatabaseType.h"
+#include "DatabaseType.h"
 #include "Environment.h"
 #include "RegistrationMode.h"
 #include "../plugins/core/enums/UserRole.h"

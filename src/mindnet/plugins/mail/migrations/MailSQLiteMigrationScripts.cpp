@@ -6,7 +6,7 @@
 
 namespace mindnet::plugins::mail::migrations
 {
-    MailSQLiteMigrationScripts::MailSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
+    MailSQLiteMigrationScripts::MailSQLiteMigrationScripts() : MigrationScripts(mindnet::core::DatabaseType::SQLite)
     {
     }
 

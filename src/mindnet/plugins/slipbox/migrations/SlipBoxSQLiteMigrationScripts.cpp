@@ -6,7 +6,7 @@
 
 namespace mindnet::plugins::slipbox::migrations
 {
-    SlipBoxSQLiteMigrationScripts::SlipBoxSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
+    SlipBoxSQLiteMigrationScripts::SlipBoxSQLiteMigrationScripts() : MigrationScripts(mindnet::core::DatabaseType::SQLite)
     {
     }
 

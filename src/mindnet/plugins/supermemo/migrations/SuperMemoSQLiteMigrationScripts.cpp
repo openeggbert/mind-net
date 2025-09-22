@@ -6,7 +6,7 @@
 
 namespace mindnet::plugins::supermemo::migrations
 {
-    SuperMemoSQLiteMigrationScripts::SuperMemoSQLiteMigrationScripts() : MigrationScripts(DatabaseType::SQLite)
+    SuperMemoSQLiteMigrationScripts::SuperMemoSQLiteMigrationScripts() : MigrationScripts(mindnet::core::DatabaseType::SQLite)
     {
     }
 
