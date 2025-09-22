@@ -4,9 +4,10 @@
 
 #ifndef HELPER_H
 #define HELPER_H
+#include <map>
 #include <string>
-
-#include "nlohmann/json_fwd.hpp"
+#include <variant>
+#include <vector>
 
 #define cast64 static_cast<int64_t>
 #define castint static_cast<int>
@@ -20,10 +21,10 @@ typedef unsigned long long ull;
 typedef ull unixtime;
 typedef unsigned short ushort;
 using std::string;
-typedef nlohmann::json JSON;
+
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;
-using std::endl;
+
 typedef std::map<std::string, std::string> string_map;
 
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";

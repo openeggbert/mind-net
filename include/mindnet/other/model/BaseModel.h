@@ -88,6 +88,7 @@ using mindnet::util::testt_is_alpha_or_digit;\
 namespace mindnet::model
 {
 
+    typedef nlohmann::json JSON;
 
     [[nodiscard]] inline JSON model_to_json(
         entity_fields fields,

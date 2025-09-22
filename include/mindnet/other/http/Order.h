@@ -3,6 +3,7 @@
 //
 #ifndef ORDER_H
 #define ORDER_H
+#include <stdexcept>
 #include "../../core/Helper.h"
 
 namespace mindnet::http
