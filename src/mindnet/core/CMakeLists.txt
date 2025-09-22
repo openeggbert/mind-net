@@ -15,5 +15,4 @@ target_include_directories(mind_net_core PUBLIC
 target_link_libraries(mind_net_core PUBLIC
         SQLiteCpp # todo : move to db/sqlite
         sqlite3 # todo : move to db/sqlite
-        nlohmann_json::nlohmann_json
 )

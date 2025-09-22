@@ -76,8 +76,9 @@ cmake -B . -S ..
 # Build
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE ..
 cmake --build . --config Release -j$(nproc)
-strip --strip-all mind_net
-upx --best --lzma mind_net
+cd src/mindnet/app
+strip --strip-all mind_net_app
+upx --best --lzma mind_net_app
 
 #Generate JWT Secret
 openssl rand -base64 32

@@ -2,19 +2,19 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#include "mindnet/core/Service.h"
+#include "mindnet/other/api/Service.h"
 
 #include "mindnet/core/Global.h"
 //
 
-namespace mindnet::core
+namespace mindnet::api
 {
     using_loggers()
 
     static constexpr bool VALIDATION_ENABLED = true;
     static constexpr bool TRIGGERS_ENABLED = true;
 
-    using validator = api::IValidator*;
+    using validator = IValidator*;
     using mindnet::api::OperationResult;
     using model::ModelDefinition;
     using plugins::core::enums::Crudl;

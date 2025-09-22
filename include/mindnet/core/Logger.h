@@ -5,7 +5,6 @@
 #include <stdexcept>
 
 #include "LogLevel.h"
-#include "../other/util/Utils.h"
 
 namespace mindnet::core
 {

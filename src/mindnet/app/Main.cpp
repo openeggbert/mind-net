@@ -18,7 +18,7 @@
 #include "mindnet/other/http/ModelEndpointGenerator.h"
 
 #include "mindnet/other/api/IService.h"
-#include "mindnet/core/Service.h"
+#include "../../../include/mindnet/other/api/Service.h"
 #include "mindnet/other/api/PluginRegistry.h"
 #include "mindnet/other/db/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/other/plugins/chat/ChatPluginFactory.h"
@@ -308,6 +308,6 @@ int main(int argc, char** argv)
     std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
         mindnet::api::Persistence>(plugin_registry_ptr);
 
-    std::shared_ptr<mindnet::api::IService> service = std::make_shared<mindnet::core::Service>(db, plugin_registry_ptr);
+    std::shared_ptr<mindnet::api::IService> service = std::make_shared<mindnet::api::Service>(db, plugin_registry_ptr);
     return run_command(arguments, service);
 }

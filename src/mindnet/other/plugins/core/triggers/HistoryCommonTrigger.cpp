@@ -8,6 +8,7 @@
 #include "mindnet/other/http/LoginToken.h"
 #include "mindnet/other/plugins/core/models/History.h"
 #include "mindnet/other/plugins/slipbox/models/Note.h"
+#include "mindnet/other/util/Utils.h"
 
 namespace mindnet::plugins::core::triggers
 {

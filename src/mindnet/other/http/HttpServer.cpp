@@ -9,7 +9,7 @@
 #include "mindnet/core/Global.h"
 #include "jwt-cpp/jwt.h"
 #include "mindnet/core/Configuration.h"
-#include "mindnet/core/Service.h"
+#include "../../../../include/mindnet/other/api/Service.h"
 #include "mindnet/core/Version.h"
 #include "mindnet/other/http/LoginToken.h"
 #include "mindnet/other/http/UserCredentials.h"
