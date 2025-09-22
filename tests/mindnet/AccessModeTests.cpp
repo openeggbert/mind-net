@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "../../include/mindnet/core/AccessMode.h"
-#include "mindnet/other/api/RequestContext.h"
-#include "mindnet/other/api/ValidatorBase.h"
+#include "mindnet/core/AccessMode.h"
+#include "mindnet/api/RequestContext.h"
+#include "mindnet/api/ValidatorBase.h"
 
 using namespace mindnet;
 using namespace mindnet::plugins::core::enums;
@@ -71,7 +71,7 @@ TEST_F(AuthorizationEnabledTest, AuthenticatedFullAccess_AdminVsGuest)
 class AuthorizedToTest : public ::testing::Test
 {
 };
-
+using core::Crudl;
 TEST_F(AuthorizedToTest, AdminsReadOnly_Admin)
 {
     EXPECT_TRUE(is_authorized_to(UserRole::Admin, AccessMode::AdminsReadOnly, Crudl::Read, false));
