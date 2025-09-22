@@ -15,7 +15,7 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::HistoryValidator;
-    using mindnet::OperationResult;
+    using mindnet::OperationResult;using mindnet::core::g_configuration;
     OperationResult HistoryValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

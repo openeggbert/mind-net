@@ -6,7 +6,7 @@
 
 #include <regex>
 
-#include "mindnet/Configuration.h"
+#include "../../../../../include/mindnet/core/Configuration.h"
 
 namespace mindnet::plugins::core::models
 {
@@ -72,10 +72,10 @@ namespace mindnet::plugins::core::models
             [this]
             {
                 return test_true(
-                    g_configuration.registration_mode == RegistrationMode::RequiresAdminApproval
+                    mindnet::core::g_configuration.registration_mode == RegistrationMode::RequiresAdminApproval
                         ? status == enums::UserStatus::Pending
                         : status == enums::UserStatus::Active,
-                        g_configuration.registration_mode == RegistrationMode::RequiresAdminApproval
+                    mindnet::core::g_configuration.registration_mode == RegistrationMode::RequiresAdminApproval
                         ? "status must be PENDING"
                         : "status must be ACTIVE"
                 );

@@ -48,7 +48,7 @@ namespace mindnet::plugins::slipbox::validators
 
 
     using validators::ReferenceValidator;
-    using mindnet::OperationResult;
+    using mindnet::OperationResult;using mindnet::core::g_configuration;
 
     OperationResult ReferenceValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {

@@ -15,7 +15,7 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::MapValidator;
-    using mindnet::OperationResult;
+    using mindnet::OperationResult;using mindnet::core::g_configuration;
     OperationResult MapValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.owner_id != ctx.token.user_id,

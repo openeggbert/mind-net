@@ -4,7 +4,7 @@
 
 #include "mindnet/http/ModelEndpointGenerator.h"
 #include "crow.h"
-#include "mindnet/Configuration.h"
+#include "../../../include/mindnet/core/Configuration.h"
 #include "mindnet/Utils.h"
 #include "mindnet/http/RestHelper.h"
 #include "mindnet/impl/sqlite/RepositoryHelper.h"
@@ -13,6 +13,7 @@
 #define check_maintenance_mode()\
 if (g_configuration.access_mode == AccessMode::MaintenanceMode)\
 return crow::response(503, "Maintenance Mode. Service Unavailable.");
+using mindnet::core::g_configuration;
 
 namespace mindnet::http
 {

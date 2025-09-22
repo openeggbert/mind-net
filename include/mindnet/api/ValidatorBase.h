@@ -58,6 +58,8 @@ namespace mindnet::http
 
 namespace mindnet::api
 {
+    using core::g_configuration;
+
     inline bool is_authorization_enabled(const RequestContext& ctx)
     {
         using namespace mindnet;

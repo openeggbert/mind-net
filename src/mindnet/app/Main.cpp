@@ -29,12 +29,13 @@
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
 using mindnet::commit;
+using mindnet::core::g_configuration;
 
 void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_ptr)
 {
     mindnet::trace << "Migrating schema, if needed" << commit;
 
-    mindnet::DatabaseType database_type = mindnet::g_configuration.database_type;
+    mindnet::DatabaseType database_type = g_configuration.database_type;
     if (database_type != mindnet::DatabaseType::SQLite)
     {
         mindnet::err << "SQLite database is only supported, but you configured " <<
@@ -216,9 +217,9 @@ bool commands_function_start(
     mindnet::info << "Starting backend on port " << port << commit;
     mindnet::info << "Starting frontend on port " << frontend_port << commit;
     mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
-    mindnet::g_configuration.host = host;
-    mindnet::g_configuration.port = port;
-    mindnet::g_configuration.frontend_port = frontend_port;
+    g_configuration.host = host;
+    g_configuration.port = port;
+    g_configuration.frontend_port = frontend_port;
     server.run(host, port, frontend_port);
     return false;
 }

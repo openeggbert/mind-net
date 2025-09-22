@@ -6,9 +6,7 @@
 #define GLOBAL_H
 
 #include "Helper.h"
-#include "ConsolePrinter.h"
 #include "Logger.h"
-#include "Utils.h"
 
 namespace mindnet
 {

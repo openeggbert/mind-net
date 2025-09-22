@@ -19,7 +19,7 @@
 namespace mindnet::plugins::chat::validators
 {
     using validators::DiscussionValidator;
-    using mindnet::OperationResult;
+    using mindnet::OperationResult;using mindnet::core::g_configuration;
     OperationResult DiscussionValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

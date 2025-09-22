@@ -31,7 +31,7 @@ namespace mindnet::api
 
         bool has_plugin_name(const std::string& plugin_name) const;
         [[nodiscard]] std::vector<std::string> get_plugin_names() const;
-        [[nodiscard]] std::vector<std::string> get_plugin_names_sorted_by_dependencies() const;
+        std::vector<std::string> get_plugin_names_sorted_by_dependencies() const;
         [[nodiscard]] PluginPtr get_plugin(const std::string& plugin_name) const;
         void register_plugin(const PluginPtr& plugin);
         [[nodiscard]] int get_plugin_count() const;

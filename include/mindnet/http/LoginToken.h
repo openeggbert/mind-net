@@ -6,7 +6,7 @@
 
 #include "crow/http_request.h"
 #include "jwt-cpp/jwt.h"
-#include "mindnet/Configuration.h"
+#include "../core/Configuration.h"
 
 namespace mindnet::http
 {
@@ -46,7 +46,7 @@ namespace mindnet::http
             {
                 auto decoded = jwt::decode(token);
                 auto verifier = jwt::verify()
-                                .allow_algorithm(jwt::algorithm::hs256{g_configuration.jwt_secret})
+                                .allow_algorithm(jwt::algorithm::hs256{core::g_configuration.jwt_secret})
                                 .with_issuer("crow-app");
 
                 verifier.verify(decoded);

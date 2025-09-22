@@ -8,8 +8,9 @@
 
 #include "mindnet/Global.h"
 #include "jwt-cpp/jwt.h"
-#include "mindnet/Configuration.h"
+#include "../../../include/mindnet/core/Configuration.h"
 #include "../../../include/mindnet/core/Service.h"
+#include "mindnet/core/Version.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/User.h"
@@ -19,6 +20,7 @@ return crow::response(503, "Maintenance Mode. Service Unavailable.");
 
 namespace mindnet::http
 {
+    using mindnet::core::g_configuration;
     namespace Labels
     {
         static const std::string DAY = " day ";

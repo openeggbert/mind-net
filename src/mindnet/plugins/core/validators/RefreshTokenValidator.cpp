@@ -5,7 +5,7 @@
 #include "mindnet/plugins/core/validators/RefreshTokenValidator.h"
 
 #include <regex>
-#include "mindnet/Configuration.h"
+#include "../../../../../include/mindnet/core/Configuration.h"
 #include "mindnet/Global.h"
 #include "mindnet/plugins/core/models/RefreshToken.h"
 #include "mindnet/api/Persistence.h"
@@ -17,7 +17,7 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::RefreshTokenValidator;
-    using mindnet::OperationResult;
+    using mindnet::OperationResult;using mindnet::core::g_configuration;
 
     OperationResult RefreshTokenValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const
