@@ -27,6 +27,35 @@ namespace mindnet::core
     {
     }
 
+    ConsolePrinter& ConsolePrinter::operator<<(ConsolePrinter& (*manip)(ConsolePrinter&))
+    {
+        return manip(*this);
+    }
+
+    ConsolePrinter& ConsolePrinter::operator<<(std::ostream& (*manip)(std::ostream&))
+    {
+        if (!enabled) return *this;
+        if (manip == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
+        {
+            // 1. Flush current buffer
+            flush(false);
+
+            // 2. Print warning in red on a new line
+            ConsoleColor old_color = color;
+            color = ConsoleColor::RED;
+            std::cout << "\nConsolePrinter: !!!endl used instead of commit: " + last_buffer_str;
+            color = old_color;
+
+            // 3. Standard endl
+            manip(std::cout); // prints '\n' and flush
+        }
+        else
+        {
+            manip(std::cout); // other manipulator
+        }
+        return *this;
+    }
+
     void ConsolePrinter::set_timestamp_function(print_timestamp_function fn)
     {
         print_timestamp_function_pointer = fn;
@@ -34,6 +63,7 @@ namespace mindnet::core
 
     void ConsolePrinter::flush(bool new_line)
     {
+        if (!enabled) return;
         std::cout << (color != ConsoleColor::UNKNOWN ? "\033[" + std::to_string(static_cast<int>(color)) + "m" : "");
         if (print_timestamp_function_pointer) std::cout << print_timestamp_function_pointer() << " ";
         std::cout << prefix << buffer.str() << suffix;

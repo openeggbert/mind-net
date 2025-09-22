@@ -67,8 +67,6 @@ namespace mindnet::core
         EXPERIMENT = 100, ///< Used for experimental features and test-related logging.
     };
 
-    inline LogLevel max_log_level = EXPERIMENT;
-
     std::string log_level_to_string(const LogLevel& log_level);
 
     ConsoleColor log_level_to_console_color(const LogLevel& log_level);

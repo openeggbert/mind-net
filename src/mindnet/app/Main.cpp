@@ -285,6 +285,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 int main(int argc, char** argv)
 {
     mindnet::core::start_time = mindnet::Utils::currentUnixTimestamp();
+
     auto loggers = {
         &fatal, &err, &warn, &info, &debug, &trace, &experiment
     };
@@ -293,8 +294,6 @@ int main(int argc, char** argv)
     {
         logger->set_timestamp_function(&mindnet::Utils::print_current_timestamp);
     }
-
-    mindnet::core::max_log_level = g_configuration.max_log_level;
 
     print_logo();
     std::vector<std::string> arguments;

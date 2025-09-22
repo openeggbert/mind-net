@@ -8,7 +8,7 @@
 
 namespace mindnet::core
 {
-    typedef std::string (*print_timestamp_function)();
+    using print_timestamp_function = std::string (*)();
 
     class ConsolePrinter; // fwd decl
 
@@ -41,33 +41,9 @@ namespace mindnet::core
             return *this;
         }
 
-        ConsolePrinter& operator<<(ConsolePrinter& (*manip)(ConsolePrinter&))
-        {
-            return manip(*this);
-        }
+        ConsolePrinter& operator<<(ConsolePrinter& (*manip)(ConsolePrinter&));
 
-        ConsolePrinter& operator<<(std::ostream& (*manip)(std::ostream&))
-        {
-            if (manip == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
-            {
-                // 1. Flush current buffer
-                flush(false);
-
-                // 2. Print warning in red on a new line
-                ConsoleColor old_color = color;
-                color = ConsoleColor::RED;
-                std::cout << "\nConsolePrinter: !!!endl used instead of commit: " + last_buffer_str;
-                color = old_color;
-
-                // 3. Standard endl
-                manip(std::cout); // prints '\n' and flush
-            }
-            else
-            {
-                manip(std::cout); // other manipulator
-            }
-            return *this;
-        }
+        ConsolePrinter& operator<<(std::ostream& (*manip)(std::ostream&));
 
         void set_timestamp_function(print_timestamp_function fn);
 
