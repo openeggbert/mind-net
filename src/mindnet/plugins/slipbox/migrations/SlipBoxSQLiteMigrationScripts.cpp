@@ -70,22 +70,29 @@ CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
 	map_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
     parent_note_id INTEGER,
     content_id INTEGER UNIQUE,
+    source_id INTEGER,
+    title TEXT NOT NULL,
     sibling_order INTEGER NOT NULL,
     importance INTEGER DEFAULT 0,
     difficulty INTEGER DEFAULT 0,
 
-    FOREIGN KEY (map_id) REFERENCES map(id) ,
-	FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE SET NULL,
-    FOREIGN KEY (parent_note_id) REFERENCES note(id)
+    FOREIGN KEY (map_id) REFERENCES map(id),
+    FOREIGN KEY (parent_note_id) REFERENCES note(id),
+    FOREIGN KEY (content_id) REFERENCES content(id),
+    FOREIGN KEY (source_id) REFERENCES source(id)
 );
 
-CREATE INDEX idx_note_content_id ON note(content_id);
+--Indexes
 CREATE INDEX idx_note_map_id ON note(map_id);
+CREATE INDEX idx_note_parent_note_id ON note(parent_note_id);
+CREATE INDEX idx_note_content_id ON note(content_id);
+CREATE INDEX idx_note_source_id ON note(source_id);
+
+CREATE INDEX idx_note_parent_sibling ON note(parent_note_id, sibling_order);
+
 )");
         add_migration("V5__create_property.sql", R"(
 CREATE TABLE property(

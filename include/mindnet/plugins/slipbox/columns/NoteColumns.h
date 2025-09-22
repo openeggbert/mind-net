@@ -39,9 +39,10 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* MODEL_NAME = "note";
 
         static constexpr const char* MAP_ID = "map_id";
-        static constexpr const char* TITLE = "title";
         static constexpr const char* PARENT_NOTE_ID = "parent_note_id";
         static constexpr const char* CONTENT_ID = "content_id";
+        static constexpr const char* SOURCE_ID = "source_id";
+        static constexpr const char* TITLE = "title";
         static constexpr const char* SIBLING_ORDER = "sibling_order";
         static constexpr const char* IMPORTANCE = "importance";
         static constexpr const char* DIFFICULTY = "difficulty";

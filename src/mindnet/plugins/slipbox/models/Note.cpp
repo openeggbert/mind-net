@@ -13,9 +13,10 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
         result.push_back(map_id);
-        result.push_back(title);
         result.push_back(parent_note_id);
         result.push_back(content_id);
+        result.push_back(source_id);
+        result.push_back(title);
         result.push_back(sibling_order);
         result.push_back(cast64(importance));
         result.push_back(cast64(difficulty));
@@ -33,9 +34,10 @@ namespace mindnet::plugins::slipbox::models
         created_at = number();
         updated_at = number();
         map_id = number();
-        title = text();
         parent_note_id = number();
         content_id = number();
+        source_id = number();
+        title = text();
         sibling_order = number();
         importance = static_cast<enums::Importance>(number());
         difficulty = static_cast<enums::Difficulty>(number());

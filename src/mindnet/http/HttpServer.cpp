@@ -532,7 +532,49 @@ namespace mindnet::http
                 static const int SECONDS_PER_HOUR = 60 * 60;
                 static const int SECONDS_PER_MINUTE = 60;
 
+#ifdef test_health_endpoint
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                enum time_type
+                {
+                    seconds_ = 0,
+                    minutes_ = 1,
+                    hours_ = 2,
+                    days_ = 3,
+                    weeks_ = 4,
+                    months_ = 5,
+                    years_ = 6
+                };
+
+                std::uniform_int_distribution<> distrib0(0, 7);
+                time_type random_time_type = static_cast<time_type>(distrib0(gen));
+                int max = 0;
+                switch (random_time_type)
+                {
+                case seconds_: max = 1 * 10;
+                    break;
+                case minutes_: max = 60 * 10;
+                    break;
+                case hours_: max = 3600 * 10;
+                    break;
+                case days_: max = 86400 * 10;
+                    break;
+                case weeks_: max = 86400 * 7 * 10;
+                    break;
+                case months_: max = 86400 * 30 * 10;
+                    break;
+                case years_: max = 86400 * 365 * 10;
+                    break;
+                    default: max = 1000000;
+                }
+                std::uniform_int_distribution<> distrib(0, max);
+
+
+                ll elapsed_seconds = end_time - start_time + distrib(gen);
+#else
+
                 ll elapsed_seconds = end_time - start_time;
+#endif
                 short days = 0;
                 short hours = 0;
                 short minutes = 0;

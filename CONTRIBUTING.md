@@ -48,7 +48,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Use SM-18, new entity review_session
 - [ ] Add hash sums for sql migrations - new column in table migration
 - [ ] Bool SQLite columns should start with is_
-- [ ] Add source_id to table note
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Reorder columns of tables, if needed
 - [ ] FEATURE User authentication
@@ -151,3 +150,4 @@ return "Logged out";
 - [x] New table idea: string title, string content, bool important, bool public
 - [x] New table api_log
 - [x] New entity wanted_note : note_title, ...
+- [x] Add source_id to table note

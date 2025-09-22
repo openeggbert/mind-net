@@ -170,3 +170,17 @@ Tables usually include:
 5. Open PR → base branch: `develop`.
 
 ---
+
+## Development Guidelines
+
+### SQL tables
+
+ * Name of BOOL columns starts with "_is"
+
+```aiignore
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+	{foreign keys}
+	{other attributes}
+```
