@@ -11,7 +11,7 @@
 #include <memory>
 
 #include "../../../include/mindnet/core/Global.h"
-#include "mindnet/ExitStatus.h"
+#include "../../../include/mindnet/core/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/api/Persistence.h"
 #include "mindnet/http/ModelEndpointGenerator.h"
@@ -30,7 +30,7 @@
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
 using mindnet::core::commit;
 using mindnet::core::g_configuration;
-
+using mindnet::core::ExitStatus;
 using_loggers()
 
 void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_ptr)
@@ -42,7 +42,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
     {
         err << "SQLite database is only supported, but you configured " <<
             mindnet::database_type_to_string(database_type) << commit;
-        exit(mindnet::ExitStatus::MIGRATION_FAILED);
+        exit(ExitStatus::MIGRATION_FAILED);
     }
     for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
     {
@@ -60,7 +60,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         }
         migration_scripts.reset();
         err << "Migrating schema for plugin " << plugin_name << ": KO. Failed." << commit;
-        exit(mindnet::ExitStatus::MIGRATION_FAILED);
+        exit(ExitStatus::MIGRATION_FAILED);
     }
 
 }
@@ -101,7 +101,7 @@ void load_args(int argc, char** argv, std::vector<std::string>& arguments)
     {
         arguments.push_back(argv[i]);
     }
-    if (!check_args(arguments)) exit(mindnet::ExitStatus::NO_ARGUMENT_PROVIDED);
+    if (!check_args(arguments)) exit(ExitStatus::NO_ARGUMENT_PROVIDED);
 }
 
 bool commands_function_start(

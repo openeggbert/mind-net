@@ -4,7 +4,7 @@
 #ifndef EXITSTATUS_H
 #define EXITSTATUS_H
 
-namespace mindnet
+namespace mindnet::core
 {
     enum ExitStatus
     {
