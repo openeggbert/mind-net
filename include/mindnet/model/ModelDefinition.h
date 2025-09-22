@@ -28,6 +28,8 @@
 #include "mindnet/Helper.h"
 #include "../plugins/core/enums/Crudl.h"
 #include "BaseColumns.h"
+#include "CustomAction.h"
+#include "ModelTypeDefs.h"
 
 namespace mindnet::model
 {
