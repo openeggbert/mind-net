@@ -2,9 +2,9 @@
 // Created by robertvokac on 9/8/25.
 //
 
-#include "mindnet/AccessMode.h"
+#include "../../../include/mindnet/core/AccessMode.h"
 
-namespace mindnet
+namespace mindnet::core
 {
     using plugins::core::enums::Crudl;
     using plugins::core::enums::UserRole;

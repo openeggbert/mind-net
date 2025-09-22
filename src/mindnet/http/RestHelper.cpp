@@ -8,12 +8,14 @@
 #include <crow.h>
 #include <nlohmann/json.hpp>
 
-#include "mindnet/Global.h"
+#include "../../../include/mindnet/core/Global.h"
 #include "../../../include/mindnet/core/Helper.h"
 #include "mindnet/model/ModelDefinition.h"
 
 namespace mindnet::http
 {
+    using_loggers()
+
     crow::json::wvalue RestHelper::model_to_wvalue(const entity_fields& values,
                                                    const model::ModelDefinition& def,
                                                    const std::set<std::string>& fields_vector_filter)

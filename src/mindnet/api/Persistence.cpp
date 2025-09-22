@@ -4,7 +4,7 @@
 
 #include "mindnet/api/Persistence.h"
 
-#include "mindnet/Global.h"
+#include "../../../include/mindnet/core/Global.h"
 #include "mindnet/http/LoginToken.h"
 
 #include "mindnet/impl/sqlite/RepositoryImplSqlite.h"
@@ -12,6 +12,7 @@
 namespace mindnet::api
 {
     using namespace mindnet::impl::sqlite;
+    using_loggers()
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {

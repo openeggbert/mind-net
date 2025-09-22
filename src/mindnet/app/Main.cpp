@@ -10,7 +10,7 @@
 #include "mindnet/Utils.h"
 #include <memory>
 
-#include "mindnet/Global.h"
+#include "../../../include/mindnet/core/Global.h"
 #include "mindnet/ExitStatus.h"
 #include "mindnet/http/HttpServer.h"
 #include "mindnet/api/Persistence.h"
@@ -28,23 +28,25 @@
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
-using mindnet::commit;
+using mindnet::core::commit;
 using mindnet::core::g_configuration;
+
+using_loggers()
 
 void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_ptr)
 {
-    mindnet::trace << "Migrating schema, if needed" << commit;
+    trace << "Migrating schema, if needed" << commit;
 
     mindnet::DatabaseType database_type = g_configuration.database_type;
     if (database_type != mindnet::DatabaseType::SQLite)
     {
-        mindnet::err << "SQLite database is only supported, but you configured " <<
+        err << "SQLite database is only supported, but you configured " <<
             mindnet::database_type_to_string(database_type) << commit;
         exit(mindnet::ExitStatus::MIGRATION_FAILED);
     }
     for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
     {
-        mindnet::debug << "Migrating schema for plugin " << plugin_name << commit;
+        debug << "Migrating schema for plugin " << plugin_name << commit;
         auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
         auto migration_scripts = plugin->get_migration_scripts();
         if (migration_scripts == nullptr) {continue;}
@@ -52,12 +54,12 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
             sqlite::SqliteDatabaseMigration::getInstance()->migrate(plugin_name, migration_scripts);
         if (migration_result)
         {
-            mindnet::trace << "Migrating schema for plugin " << plugin_name << ": OK. Success." << commit;
+            trace << "Migrating schema for plugin " << plugin_name << ": OK. Success." << commit;
             migration_scripts.reset();
             continue;
         }
         migration_scripts.reset();
-        mindnet::err << "Migrating schema for plugin " << plugin_name << ": KO. Failed." << commit;
+        err << "Migrating schema for plugin " << plugin_name << ": KO. Failed." << commit;
         exit(mindnet::ExitStatus::MIGRATION_FAILED);
     }
 
@@ -65,7 +67,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
 
 void print_logo()
 {
-    mindnet::info << "Starting Mind Net..." << std::endl;
+    info << "Starting Mind Net..." << std::endl;
 
     std::cout << R"(
   __  __ _           _   _   _      _
@@ -87,7 +89,7 @@ bool check_args(std::vector<string>& arguments)
 {
     if (arguments.empty())
     {
-        mindnet::fatal << static_cast<const char*>("No arguments provided. Exiting.") << commit;
+        fatal << static_cast<const char*>("No arguments provided. Exiting.") << commit;
         return false;
     }
     return true;
@@ -120,7 +122,7 @@ bool commands_function_start(
     {
         if (i + 1 >= arguments.size())
         {
-            mindnet::fatal << "No value provided for option " << option << ". Exiting." << commit;
+            fatal << "No value provided for option " << option << ". Exiting." << commit;
             exit_status = 1;
             throw std::runtime_error(std::string("Missing argument for ") + option);
         }
@@ -134,7 +136,7 @@ bool commands_function_start(
             int p = std::stoi(value);
             if (p < 1 || p > 65535)
             {
-                mindnet::fatal << what << " must be between 1 and 65535" << commit;
+                fatal << what << " must be between 1 and 65535" << commit;
                 exit_status = 1;
                 throw std::runtime_error("invalid port range");
             }
@@ -142,7 +144,7 @@ bool commands_function_start(
         }
         catch (...)
         {
-            mindnet::fatal << "Invalid " << what << " provided: " << value << commit;
+            fatal << "Invalid " << what << " provided: " << value << commit;
             exit_status = 1;
             throw;
         }
@@ -153,7 +155,7 @@ bool commands_function_start(
         const auto& argument = arguments[i];
         if (argument[0] != '-')
         {
-            mindnet::fatal << "Option must start with \"-\": " << argument << commit;
+            fatal << "Option must start with \"-\": " << argument << commit;
             exit_status = 1;
             return true;
         }
@@ -179,7 +181,7 @@ bool commands_function_start(
         }
         else
         {
-            mindnet::fatal << "Unknown option for start command: " << argument << commit;
+            fatal << "Unknown option for start command: " << argument << commit;
             exit_status = 1;
             return true;
         }
@@ -187,7 +189,7 @@ bool commands_function_start(
 
     if (!std::filesystem::exists(static_directory) || !std::filesystem::is_directory(static_directory))
     {
-        mindnet::fatal << "Static directory does not exist: " << static_directory << commit;
+        fatal << "Static directory does not exist: " << static_directory << commit;
         exit_status = 1;
         return true;
     }
@@ -205,18 +207,18 @@ bool commands_function_start(
         }
     }
 
-    if (custom_port) { mindnet::debug << "Custom port was provided: " << port << commit; }
-    else { mindnet::debug << "Using default port: " << port << commit; }
+    if (custom_port) { debug << "Custom port was provided: " << port << commit; }
+    else { debug << "Using default port: " << port << commit; }
 
-    if (custom_frontend_port) { mindnet::debug << "Custom frontend port was provided: " << frontend_port << commit; }
-    else { mindnet::debug << "Using default frontend port: " << frontend_port << commit; }
+    if (custom_frontend_port) { debug << "Custom frontend port was provided: " << frontend_port << commit; }
+    else { debug << "Using default frontend port: " << frontend_port << commit; }
 
-    if (custom_host) { mindnet::debug << "Custom host was provided: " << host << commit; }
-    else { mindnet::debug << "Using default host: " << host << commit; }
+    if (custom_host) { debug << "Custom host was provided: " << host << commit; }
+    else { debug << "Using default host: " << host << commit; }
 
-    mindnet::info << "Starting backend on port " << port << commit;
-    mindnet::info << "Starting frontend on port " << frontend_port << commit;
-    mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
+    info << "Starting backend on port " << port << commit;
+    info << "Starting frontend on port " << frontend_port << commit;
+    mindnet::core::start_time = mindnet::Utils::currentUnixTimestamp();
     g_configuration.host = host;
     g_configuration.port = port;
     g_configuration.frontend_port = frontend_port;
@@ -229,7 +231,7 @@ bool commands_function_help(
     std::shared_ptr<mindnet::IService>& service_ptr,
     int& exit_status)
 {
-    mindnet::warn << "Help is not yet implemented." << commit;
+    warn << "Help is not yet implemented." << commit;
     return false;
 }
 
@@ -238,7 +240,7 @@ bool commands_function_unknown(
     std::shared_ptr<mindnet::IService>& service_ptr,
     int& exit_status)
 {
-    mindnet::err << "Unknown command: " << arguments[0] << commit;
+    err << "Unknown command: " << arguments[0] << commit;
     return false;
 }
 
@@ -281,16 +283,17 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 
 int main(int argc, char** argv)
 {
-    mindnet::start_time = mindnet::Utils::currentUnixTimestamp();
+    mindnet::core::start_time = mindnet::Utils::currentUnixTimestamp();
     auto loggers = {
-        &mindnet::fatal, &mindnet::err, &mindnet::warn,
-        &mindnet::info, &mindnet::debug, &mindnet::trace, &mindnet::experiment
+        &fatal, &err, &warn, &info, &debug, &trace, &experiment
     };
 
     for (auto* logger : loggers)
     {
         logger->set_timestamp_function(&mindnet::Utils::print_current_timestamp);
     }
+
+    mindnet::core::max_log_level = g_configuration.max_log_level;
 
     print_logo();
     std::vector<std::string> arguments;

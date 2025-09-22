@@ -5,7 +5,7 @@
 
 #include "mindnet/plugins/chat/validators/CommentValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/chat/models/Comment.h"
 #include "mindnet/plugins/chat/models/Discussion.h"
 #include "mindnet/api/PersistenceMethods.h"

@@ -2,9 +2,9 @@
 // Created by robertvokac on 8/8/25.
 //
 
-#include "mindnet/ConsolePrinter.h"
+#include "mindnet/core/ConsolePrinter.h"
 
-namespace mindnet
+namespace mindnet::core
 {
     ConsolePrinter& commit(ConsolePrinter& printer)
     {

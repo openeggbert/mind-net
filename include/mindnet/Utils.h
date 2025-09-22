@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "Global.h"
+#include "core/Global.h"
 #include "core/Helper.h"
 #include "http/QueryParams.h"
 #include "model/BaseModel.h"

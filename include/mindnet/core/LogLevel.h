@@ -1,15 +1,15 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+//
+// Created by robertvokac on 9/8/25.
+//
+#ifndef LOGLEVEL_H
+#define LOGLEVEL_H
 
-#include "ConsolePrinter.h"
-#include <stdexcept>
-#include "Utils.h"
+#include <string>
 
-namespace mindnet
+#include "ConsoleColor.h"
+
+namespace mindnet::core
 {
-    typedef ConsolePrinter logger;
-    using std::endl;
-
     /**
      * @enum LogLevel
      * @brief Represents the severity of a log message.
@@ -69,52 +69,10 @@ namespace mindnet
 
     inline LogLevel max_log_level = EXPERIMENT;
 
-    inline std::string log_level_to_string(const LogLevel& log_level)
-    {
-        switch (log_level)
-        {
-        case FATAL: return "FATAL";
-        case ERROR: return "ERROR";
-        case WARN: return "WARN";
-        case INFO: return "INFO";
-        case DEBUG: return "DEBUG";
-        case TRACE: return "TRACE";
-        case EXPERIMENT: return "EXPERIMENT";
-        default: throw std::runtime_error("Unknown log level: " + std::to_string(log_level));
-        }
-    }
+    std::string log_level_to_string(const LogLevel& log_level);
 
-    inline ConsoleColor log_level_to_console_color(const LogLevel& log_level)
-    {
-        switch (log_level)
-        {
-        case FATAL:
-        case ERROR: return ConsoleColor::RED;
-        case WARN: return ConsoleColor::YELLOW;
-        case INFO: return ConsoleColor::GREEN;
-        case DEBUG: return ConsoleColor::BLUE;
-        case TRACE: return ConsoleColor::PURPLE;
-        case EXPERIMENT: return ConsoleColor::CYAN;
-        default: throw std::runtime_error("Unknown log level: " + std::to_string(log_level));
-        }
-    }
+    ConsoleColor log_level_to_console_color(const LogLevel& log_level);
 
-    class Logger : public ConsolePrinter
-    {
-    private:
-        LogLevel level;
-
-    public:
-        Logger(LogLevel log_level)
-            : ConsolePrinter(
-                  "[" + log_level_to_string(log_level) + "] ",
-                  "",
-                  log_level <= max_log_level,
-                  log_level_to_console_color(log_level)
-              ),
-              level(log_level)
-        {
-        }
-    };
+    LogLevel string_to_log_level(const std::string& log_level);
 }
-#endif // LOGGER_H
+#endif // LOGLEVEL_H

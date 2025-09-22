@@ -31,6 +31,8 @@ namespace mindnet::impl::sqlite
     using std::vector;
     using sqlite::SQLITE_FILE_NAME;
 
+    using_loggers()
+
     void set_pragmas(SQLite::Database& db, bool temp_store = false)
     {
         db.exec("PRAGMA foreign_keys = ON;");

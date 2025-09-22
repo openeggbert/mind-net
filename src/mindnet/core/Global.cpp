@@ -2,9 +2,9 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#include "mindnet/Global.h"
+#include "mindnet/core/Global.h"
 
-namespace mindnet
+namespace mindnet::core
 {
     ll start_time = 0l;
 

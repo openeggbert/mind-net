@@ -29,13 +29,14 @@
 #include <openssl/sha.h>
 #include <iomanip>
 
-#include "mindnet/Global.h"
+#include "../../../../include/mindnet/core/Global.h"
 #include "mindnet/api/MigrationScripts.h"
 #include "mindnet/impl/sqlite/SqliteFileName.h"
 
 namespace mindnet::impl::sqlite
 {
     using sqlite::MigrationColumns;
+    using_loggers()
 
     SqliteDatabaseMigration::SqliteDatabaseMigration()
     {
@@ -72,7 +73,7 @@ namespace mindnet::impl::sqlite
 
         bool executeSQL(SQLite::Database& db, std::string& sql, int number) const
         {
-            log << "executeSQL()";
+            info << "executeSQL()" << commit;
             SQLite::Statement query(db, sql);
             try
             {

@@ -8,12 +8,13 @@
 #include <fstream>
 #include <map>
 
-#include "../AccessMode.h"
+#include "AccessMode.h"
 #include "../DatabaseType.h"
 #include "Environment.h"
-#include "../RegistrationMode.h"
+#include "RegistrationMode.h"
 #include "../plugins/core/enums/UserRole.h"
 #include "Helper.h"
+#include "LogLevel.h"
 
 /*
 #Example:
@@ -57,6 +58,8 @@ namespace mindnet::core
         UserRole default_user_role{UserRole::Reader};
         //secrets
         std::string jwt_secret{};
+        //other
+        LogLevel max_log_level{ERROR};
 
         Configuration(const string_map& map);
     };

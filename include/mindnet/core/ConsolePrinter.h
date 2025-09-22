@@ -3,28 +3,16 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <utility>
 
-namespace mindnet
+#include "ConsoleColor.h"
+
+namespace mindnet::core
 {
     typedef std::string (*print_timestamp_function)();
 
     class ConsolePrinter; // fwd decl
 
     ConsolePrinter& commit(ConsolePrinter& printer);
-
-    enum class ConsoleColor
-    {
-        UNKNOWN = -1,
-        BLACK = 30,
-        RED = 31,
-        GREEN = 32,
-        YELLOW = 33,
-        BLUE = 34,
-        PURPLE = 35,
-        CYAN = 36,
-        WHITE = 37
-    };
 
     class ConsolePrinter
     {

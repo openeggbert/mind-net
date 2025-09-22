@@ -31,6 +31,8 @@
 
 namespace mindnet::impl::sqlite
 {
+    using_loggers()
+
     RepositoryImplSqlite::RepositoryImplSqlite(
         model::ModelDefinition& model_definition_
     ) : IRepository(model_definition_)

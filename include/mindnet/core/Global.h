@@ -5,10 +5,20 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include "core/Helper.h"
+#include "Helper.h"
 #include "Logger.h"
 
-namespace mindnet
+#define using_loggers()\
+using mindnet::core::fatal;\
+using mindnet::core::err;\
+using mindnet::core::warn;\
+using mindnet::core::info;\
+using mindnet::core::debug;\
+using mindnet::core::trace;\
+using mindnet::core::experiment;\
+using mindnet::core::commit;
+
+namespace mindnet::core
 {
     extern ll start_time;
     extern Logger fatal;

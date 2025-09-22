@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/core/validators/HistoryValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/core/models/History.h"
 #include "mindnet/api/Persistence.h"
 

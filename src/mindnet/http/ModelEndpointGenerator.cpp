@@ -11,12 +11,14 @@
 #include "mindnet/plugins/core/models/ApiLog.h"
 
 #define check_maintenance_mode()\
-if (g_configuration.access_mode == AccessMode::MaintenanceMode)\
+if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)\
 return crow::response(503, "Maintenance Mode. Service Unavailable.");
 using mindnet::core::g_configuration;
 
 namespace mindnet::http
 {
+    using_loggers()
+
     using http::RestHelper;
     using plugins::core::enums::Crudl;
 

@@ -5,11 +5,13 @@
 #include "mindnet/api/PluginRegistry.h"
 #include <string>
 
-#include "mindnet/Global.h"
+#include "../../../include/mindnet/core/Global.h"
 #include "mindnet/api/Plugin.h"
 
 namespace mindnet::api
 {
+    using_loggers()
+
     bool PluginRegistry::has_plugin_name(const std::string& plugin_name) const
     {
         return plugins.count(plugin_name);

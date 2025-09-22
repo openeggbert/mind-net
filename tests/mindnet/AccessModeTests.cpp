@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "mindnet/AccessMode.h"
+#include "../../include/mindnet/core/AccessMode.h"
 #include "mindnet/api/RequestContext.h"
 #include "mindnet/api/ValidatorBase.h"
 

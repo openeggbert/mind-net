@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/MapValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/slipbox/models/Map.h"
 #include "mindnet/api/Persistence.h"
 
@@ -15,7 +15,10 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::MapValidator;
-    using mindnet::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::OperationResult;
+    using mindnet::core::g_configuration;
+    using_loggers()
+
     OperationResult MapValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.owner_id != ctx.token.user_id,

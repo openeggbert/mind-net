@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/TagTypeValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/slipbox/models/TagType.h"
 #include "mindnet/api/Persistence.h"

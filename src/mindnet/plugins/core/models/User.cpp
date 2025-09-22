@@ -72,10 +72,10 @@ namespace mindnet::plugins::core::models
             [this]
             {
                 return test_true(
-                    mindnet::core::g_configuration.registration_mode == RegistrationMode::RequiresAdminApproval
+                    mindnet::core::g_configuration.registration_mode == mindnet::core::RegistrationMode::RequiresAdminApproval
                         ? status == enums::UserStatus::Pending
                         : status == enums::UserStatus::Active,
-                    mindnet::core::g_configuration.registration_mode == RegistrationMode::RequiresAdminApproval
+                    mindnet::core::g_configuration.registration_mode == mindnet::core::RegistrationMode::RequiresAdminApproval
                         ? "status must be PENDING"
                         : "status must be ACTIVE"
                 );

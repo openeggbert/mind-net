@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/NoteValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/slipbox/models/Note.h"
 #include "mindnet/api/Persistence.h"
 

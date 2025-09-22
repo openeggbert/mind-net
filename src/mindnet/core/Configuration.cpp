@@ -82,6 +82,7 @@ namespace mindnet::core
         //
         save_text(jwt_secret)
         //
+        if (map_contains(map, "max_log_level")) max_log_level = string_to_log_level(map.at( "max_log_level"));
     }
 
 }

@@ -4,13 +4,14 @@
 
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/plugins/core/models/History.h"
 #include "mindnet/plugins/slipbox/models/Note.h"
 
 namespace mindnet::plugins::core::triggers
 {
+    using_loggers()
     HistoryCommonTrigger::HistoryCommonTrigger()
         : Trigger(
             "HistoryCommonTrigger",

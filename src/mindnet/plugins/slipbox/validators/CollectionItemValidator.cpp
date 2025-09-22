@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/slipbox/validators/CollectionItemValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/slipbox/models/CollectionItem.h"
 #include "mindnet/api/Persistence.h"
 

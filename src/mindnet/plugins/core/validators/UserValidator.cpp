@@ -6,7 +6,7 @@
 
 #include <regex>
 #include "../../../../../include/mindnet/core/Configuration.h"
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/api/Persistence.h"
 
@@ -53,11 +53,11 @@ namespace mindnet::plugins::core::validators
 
     OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(g_configuration.registration_mode == RegistrationMode::AdminAddsUsers && ctx.token.ko(),
+        return_if(g_configuration.registration_mode == mindnet::core::RegistrationMode::AdminAddsUsers && ctx.token.ko(),
                   401, "You must be logged in to create a user")
 
         return_if(
-            g_configuration.registration_mode == RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::
+            g_configuration.registration_mode == mindnet::core::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != plugins::core::enums::UserRole::
             Admin,
             403, "You must be admin to create a user.")
 

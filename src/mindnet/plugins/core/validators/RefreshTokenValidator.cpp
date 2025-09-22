@@ -6,7 +6,7 @@
 
 #include <regex>
 #include "../../../../../include/mindnet/core/Configuration.h"
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/core/models/RefreshToken.h"
 #include "mindnet/api/Persistence.h"
 

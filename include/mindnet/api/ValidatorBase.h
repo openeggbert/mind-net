@@ -59,6 +59,8 @@ namespace mindnet::http
 namespace mindnet::api
 {
     using core::g_configuration;
+    using core::AccessMode;
+    using core::Crudl;
 
     inline bool is_authorization_enabled(const RequestContext& ctx)
     {
@@ -71,7 +73,7 @@ namespace mindnet::api
         case AccessMode::PublicFullAccess:
             return false;
         case AccessMode::AuthenticatedFullAccess:
-            return ctx.role == UserRole::Guest;
+            return ctx.role == core::UserRole::Guest;
         default:
             return true;
         }

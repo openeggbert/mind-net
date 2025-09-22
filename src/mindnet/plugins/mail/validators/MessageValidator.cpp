@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/mail/validators/MessageValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/mail/models/Message.h"
 #include "mindnet/api/Persistence.h"

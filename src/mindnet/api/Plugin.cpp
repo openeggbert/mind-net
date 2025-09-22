@@ -8,6 +8,8 @@
 
 namespace mindnet::api
 {
+    using_loggers()
+
     Plugin::Plugin(const std::string& name_, const std::string& description_,
                    std::vector<string> apps_,
                    const std::vector<std::string>& plugins_which_this_plugin_depends_on_)

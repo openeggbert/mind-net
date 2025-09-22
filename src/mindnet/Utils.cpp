@@ -12,12 +12,14 @@
 #include <stdexcept>
 #include <regex>
 
-#include "mindnet/Global.h"
+#include "../../include/mindnet/core/Global.h"
 #include "mindnet/http/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet
 {
+    using namespace mindnet::core;
+
     SM2Result Utils::calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef)
     {
         SM2Result updated{};

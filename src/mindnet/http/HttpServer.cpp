@@ -6,7 +6,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include "mindnet/Global.h"
+#include "../../../include/mindnet/core/Global.h"
 #include "jwt-cpp/jwt.h"
 #include "../../../include/mindnet/core/Configuration.h"
 #include "../../../include/mindnet/core/Service.h"
@@ -15,7 +15,7 @@
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/User.h"
 #define check_maintenance_mode()\
-if (g_configuration.access_mode == AccessMode::MaintenanceMode)\
+if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)\
 return crow::response(503, "Maintenance Mode. Service Unavailable.");
 
 namespace mindnet::http
@@ -98,7 +98,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/web/<string>")
         ([this](const crow::request& req, crow::response& res, const std::string& file_name)
         {
-            if (g_configuration.access_mode == AccessMode::MaintenanceMode)
+            if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)
             {
                 res.code = 503;
                 res.write("Maintenance Mode. Service Unavailable.");
@@ -239,7 +239,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/web")
         ([](const crow::request&, crow::response& res)
         {
-            if (g_configuration.access_mode == AccessMode::MaintenanceMode)
+            if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)
             {
                 res.code = 503;
                 res.write("Maintenance Mode. Service Unavailable.");
@@ -609,10 +609,10 @@ namespace mindnet::http
             nlohmann::ordered_json result;
 
             auto now = Utils::currentUnixTimestamp();
-            result["status"] = g_configuration.access_mode == AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
-            result["uptime"] = print_duration(start_time, now);
+            result["status"] = g_configuration.access_mode == core::AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
+            result["uptime"] = print_duration(core::start_time, now);
             result["timestamp"] = Utils::unixToFormattedString(now);
-            result["started_at"] = Utils::unixToFormattedString(start_time);
+            result["started_at"] = Utils::unixToFormattedString(core::start_time);
 
             return crow::response(200, result.dump(2));
 
@@ -710,7 +710,7 @@ namespace mindnet::http
         {
             check_maintenance_mode()
             
-            if (g_configuration.registration_mode == RegistrationMode::AdminAddsUsers)
+            if (g_configuration.registration_mode == core::RegistrationMode::AdminAddsUsers)
             {
                 return crow::response{405, "Endpoint /register is disabled. Only admin can add new users."};
             }

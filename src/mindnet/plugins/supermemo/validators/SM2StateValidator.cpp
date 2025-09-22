@@ -4,7 +4,7 @@
 
 #include "mindnet/plugins/supermemo/validators/SM2StateValidator.h"
 
-#include "mindnet/Global.h"
+#include "../../../../../include/mindnet/core/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/supermemo/models/SM2State.h"
 #include "mindnet/api/Persistence.h"
