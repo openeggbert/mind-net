@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/8/25.
 //
 
-#include "../../../include/mindnet/core/AccessMode.h"
+#include "mindnet/core/AccessMode.h"
 
 namespace mindnet::core
 {

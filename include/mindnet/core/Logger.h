@@ -1,11 +1,11 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "../core/ConsolePrinter.h"
+#include "mindnet/core/ConsolePrinter.h"
 #include <stdexcept>
 
 #include "LogLevel.h"
-#include "../util/Utils.h"
+#include "../other/util/Utils.h"
 
 namespace mindnet::core
 {

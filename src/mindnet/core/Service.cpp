@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#include "../../../include/mindnet/core/Service.h"
+#include "mindnet/core/Service.h"
 
 #include "mindnet/core/Global.h"
 //

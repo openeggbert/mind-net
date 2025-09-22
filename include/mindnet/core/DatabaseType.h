@@ -4,7 +4,7 @@
 
 #ifndef MIND_NET_DATABASETYPE_H
 #define MIND_NET_DATABASETYPE_H
-#include "../model/EnumDefinition.h"
+#include "../other/model/EnumDefinition.h"
 
 namespace mindnet::core {
 enum class DatabaseType

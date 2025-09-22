@@ -1,13 +1,15 @@
 #include <gtest/gtest.h>
 #include "../../include/mindnet/core/AccessMode.h"
-#include "mindnet/api/RequestContext.h"
-#include "mindnet/api/ValidatorBase.h"
+#include "mindnet/other/api/RequestContext.h"
+#include "mindnet/other/api/ValidatorBase.h"
 
 using namespace mindnet;
 using namespace mindnet::plugins::core::enums;
 
-namespace mindnet
+namespace mindnet::api
 {
+
+
 // Mock configuration
 struct
 {
@@ -37,26 +39,29 @@ class AuthorizationEnabledTest : public ::testing::Test
 {
 };
 
+using mindnet::core::AccessMode;
+using api::is_authorization_enabled;
+
 TEST_F(AuthorizationEnabledTest, MaintenanceMode_AllRoles)
 {
-    mindnet::test_configuration.access_mode = AccessMode::MaintenanceMode;
-    EXPECT_TRUE(is_authorization_enabled(mindnet::make_ctx(UserRole::Admin)));
-    EXPECT_TRUE(is_authorization_enabled(mindnet::make_ctx(UserRole::Guest)));
+    mindnet::api::test_configuration.access_mode = AccessMode::MaintenanceMode;
+    EXPECT_TRUE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Admin)));
+    EXPECT_TRUE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Guest)));
 }
 
 TEST_F(AuthorizationEnabledTest, PublicFullAccess_AllRoles)
 {
-    mindnet::test_configuration.access_mode = AccessMode::PublicFullAccess;
-    EXPECT_FALSE(is_authorization_enabled(mindnet::make_ctx(UserRole::Admin)));
-    EXPECT_FALSE(is_authorization_enabled(mindnet::make_ctx(UserRole::Guest)));
+    mindnet::api::test_configuration.access_mode = AccessMode::PublicFullAccess;
+    EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Admin)));
+    EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Guest)));
 }
 
 TEST_F(AuthorizationEnabledTest, AuthenticatedFullAccess_AdminVsGuest)
 {
-    mindnet::test_configuration.access_mode = AccessMode::AuthenticatedFullAccess;
-    EXPECT_FALSE(is_authorization_enabled(mindnet::make_ctx(UserRole::Admin)));
-    EXPECT_FALSE(is_authorization_enabled(mindnet::make_ctx(UserRole::Reader)));
-    EXPECT_TRUE(is_authorization_enabled(mindnet::make_ctx(UserRole::Guest)));
+    mindnet::api::test_configuration.access_mode = AccessMode::AuthenticatedFullAccess;
+    EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Admin)));
+    EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Reader)));
+    EXPECT_TRUE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Guest)));
 }
 
 //

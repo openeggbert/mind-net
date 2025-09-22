@@ -3,8 +3,8 @@
 //
 #ifndef ACCESSMODE_H
 #define ACCESSMODE_H
-#include "../plugins/core/enums/UserRole.h"
-#include "mindnet/plugins/core/enums/Crudl.h"
+#include "mindnet/other/plugins/core/enums/UserRole.h"
+#include "mindnet/other/plugins/core/enums/Crudl.h"
 #include <algorithm>
 #include <vector>
 

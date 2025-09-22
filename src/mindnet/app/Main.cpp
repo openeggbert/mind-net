@@ -7,25 +7,26 @@
 #include <iostream>
 #include <filesystem>
 
-#include "../../../include/mindnet/util/Utils.h"
+#include "mindnet/other/util/Utils.h"
 #include <memory>
 
-#include "../../../include/mindnet/core/Global.h"
-#include "../../../include/mindnet/core/ExitStatus.h"
-#include "mindnet/http/HttpServer.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/http/ModelEndpointGenerator.h"
+#include "mindnet/core/Configuration.h"
+#include "mindnet/core/Global.h"
+#include "mindnet/core/ExitStatus.h"
+#include "mindnet/other/http/HttpServer.h"
+#include "mindnet/other/api/Persistence.h"
+#include "mindnet/other/http/ModelEndpointGenerator.h"
 
-#include "../../../include/mindnet/api/IService.h"
-#include "../../../include/mindnet/core/Service.h"
-#include "mindnet/api/PluginRegistry.h"
-#include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
-#include "mindnet/plugins/chat/ChatPluginFactory.h"
-#include "mindnet/plugins/core/CorePluginFactory.h"
-#include "mindnet/plugins/mail/MailPluginFactory.h"
-#include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
-#include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
-#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
+#include "mindnet/other/api/IService.h"
+#include "mindnet/core/Service.h"
+#include "mindnet/other/api/PluginRegistry.h"
+#include "mindnet/other/db/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/other/plugins/chat/ChatPluginFactory.h"
+#include "mindnet/other/plugins/core/CorePluginFactory.h"
+#include "mindnet/other/plugins/mail/MailPluginFactory.h"
+#include "mindnet/other/plugins/suggestion/SuggestionPluginFactory.h"
+#include "mindnet/other/plugins/supermemo/SuperMemoPluginFactory.h"
+#include "mindnet/other/plugins/slipbox/SlipBoxPluginFactory.h"
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
 using mindnet::core::commit;

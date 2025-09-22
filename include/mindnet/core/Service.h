@@ -4,9 +4,9 @@
 
 #ifndef MIND_NET_SERVICE_H
 #define MIND_NET_SERVICE_H
-#include "../api/IService.h"
-#include "../api/PluginRegistry.h"
-#include "../api/TriggerRegistry.h"
+#include "../other/api/IService.h"
+#include "../other/api/PluginRegistry.h"
+#include "../other/api/TriggerRegistry.h"
 
 namespace mindnet::core
 {

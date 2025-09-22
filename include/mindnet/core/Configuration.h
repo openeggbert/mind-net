@@ -12,7 +12,7 @@
 #include "DatabaseType.h"
 #include "Environment.h"
 #include "RegistrationMode.h"
-#include "../plugins/core/enums/UserRole.h"
+#include "../other/plugins/core/enums/UserRole.h"
 #include "Helper.h"
 #include "LogLevel.h"
 
