@@ -32,7 +32,7 @@ add_subdirectory(thirdparty/nlohmann_json)
 file(GLOB_RECURSE ALL_SOURCES "src/*.cpp")
 
 # Separate main.cpp from core sources
-set(MAIN_SOURCE "src/mindnet/Main.cpp")
+set(MAIN_SOURCE "src/mindnet/app/Main.cpp")
 list(REMOVE_ITEM ALL_SOURCES ${MAIN_SOURCE})
 
 # Add Crow dependency

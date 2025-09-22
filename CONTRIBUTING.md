@@ -15,8 +15,6 @@ For a **detailed technical description of how Mind-Net works internally**, see
 
 Please report bugs or request features in [GitHub Issues](https://github.com/openeggbert/mind-net/issues).
 
-
-
 ## Project TODO / Roadmap
 
 - **BUG** – Issues, crashes, or bugs to fix
