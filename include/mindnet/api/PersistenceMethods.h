@@ -7,7 +7,7 @@
 #include <utility>
 
 #include "IPersistence.h"
-#include "../OperationResult.h"
+#include "OperationResult.h"
 #include "RequestContext.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/http/LoginToken.h"
@@ -48,7 +48,7 @@ std::pair< mindnet::plugins:: plugin ::models::Model, string> find_##model(const
 
 namespace mindnet::api
 {
-    std::pair<plugins::core::models::User, mindnet::OperationResult> find_logged_user(
+    std::pair<plugins::core::models::User, mindnet::api::OperationResult> find_logged_user(
         DbPtr& db, http::LoginToken token);
 
     bool has_user_name(const RequestContext& ctx, string user_name);

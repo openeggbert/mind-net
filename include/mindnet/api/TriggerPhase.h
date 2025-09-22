@@ -7,9 +7,9 @@
 #include <stdexcept>
 #include <string>
 
-#include "model/EnumDefinition.h"
+#include "../model/EnumDefinition.h"
 
-namespace mindnet
+namespace mindnet::api
 {
     enum class TriggerPhase
     {

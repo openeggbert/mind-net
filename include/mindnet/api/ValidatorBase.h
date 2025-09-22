@@ -9,7 +9,7 @@
 #include <type_traits>
 
 #include "IValidator.h"
-#include "../OperationResult.h"
+#include "OperationResult.h"
 #include "PersistenceMethods.h"
 #include "../api/RequestContext.h"
 #include "../model/BaseModel.h"
@@ -17,17 +17,17 @@
 #include "../core/Helper.h"
 
 #define create_method_prototypes_for_ValidatorBase(M)\
-mindnet::OperationResult validate_create_integrity(const RequestContext&, const M& entity) const ;\
-mindnet::OperationResult validate_read_integrity(const RequestContext&, const M& entity) const;\
-mindnet::OperationResult validate_update_integrity(const RequestContext&, const M& old_entity, const M& new_entity) const;\
-mindnet::OperationResult validate_delete_integrity(const RequestContext&, const M& entity) const;\
-mindnet::OperationResult validate_list_integrity(const RequestContext&, const string_map&) const;\
+mindnet::api::OperationResult validate_create_integrity(const RequestContext&, const M& entity) const ;\
+mindnet::api::OperationResult validate_read_integrity(const RequestContext&, const M& entity) const;\
+mindnet::api::OperationResult validate_update_integrity(const RequestContext&, const M& old_entity, const M& new_entity) const;\
+mindnet::api::OperationResult validate_delete_integrity(const RequestContext&, const M& entity) const;\
+mindnet::api::OperationResult validate_list_integrity(const RequestContext&, const string_map&) const;\
 \
-mindnet::OperationResult validate_create_authorization(const RequestContext&, const M& entity) const ;\
-mindnet::OperationResult validate_read_authorization(const RequestContext&, const M& entity) const;\
-mindnet::OperationResult validate_update_authorization(const RequestContext&, const M& old_entity, const M& new_entity) const;\
-mindnet::OperationResult validate_delete_authorization(const RequestContext&, const M& entity) const;\
-mindnet::OperationResult validate_list_authorization(const RequestContext&, const string_map&) const;\
+mindnet::api::OperationResult validate_create_authorization(const RequestContext&, const M& entity) const ;\
+mindnet::api::OperationResult validate_read_authorization(const RequestContext&, const M& entity) const;\
+mindnet::api::OperationResult validate_update_authorization(const RequestContext&, const M& old_entity, const M& new_entity) const;\
+mindnet::api::OperationResult validate_delete_authorization(const RequestContext&, const M& entity) const;\
+mindnet::api::OperationResult validate_list_authorization(const RequestContext&, const string_map&) const;\
 [[nodiscard]] string get_model_name() const override;
 
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);

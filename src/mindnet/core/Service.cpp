@@ -15,9 +15,11 @@ namespace mindnet::core
     static constexpr bool TRIGGERS_ENABLED = true;
 
     using validator = api::IValidator*;
-    using mindnet::OperationResult;
+    using mindnet::api::OperationResult;
     using model::ModelDefinition;
     using plugins::core::enums::Crudl;
+    using api::TriggerPhase;
+    using api::empty_result;
 
     Service::Service(
         const api::DbPtr& db_,

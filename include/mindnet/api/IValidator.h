@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-#include "../OperationResult.h"
+#include "OperationResult.h"
 #include "../core/Helper.h"
 
 namespace mindnet::http

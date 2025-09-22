@@ -17,7 +17,7 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::UserValidator;
-    using mindnet::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
     OperationResult UserValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

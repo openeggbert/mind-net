@@ -7,8 +7,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "mindnet/OperationResult.h"
-#include "mindnet/TriggerPhase.h"
+#include "mindnet/api/OperationResult.h"
+#include "TriggerPhase.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
 #include "mindnet/http/QueryParams.h"
 #include "mindnet/model/ModelDefinition.h"

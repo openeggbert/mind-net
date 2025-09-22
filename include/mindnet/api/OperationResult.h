@@ -10,7 +10,7 @@
 #include <utility>
 #include <string>
 
-namespace mindnet
+namespace mindnet::api
 {
     struct OperationResult
     {

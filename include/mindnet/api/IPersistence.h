@@ -5,7 +5,7 @@
 #define IPERSISTENCE_H
 
 #include "IRepository.h"
-#include "../OperationResult.h"
+#include "OperationResult.h"
 #include "crow/json.h"
 #include "mindnet/http/LoginToken.h"
 

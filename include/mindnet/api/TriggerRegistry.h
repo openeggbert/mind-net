@@ -9,8 +9,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "mindnet/OperationResult.h"
-#include "mindnet/TriggerPhase.h"
+#include "mindnet/api/OperationResult.h"
+#include "TriggerPhase.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
 #include <vector>
 #include "mindnet/http/QueryParams.h"

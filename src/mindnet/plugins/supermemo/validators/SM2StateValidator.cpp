@@ -16,7 +16,7 @@
 namespace mindnet::plugins::supermemo::validators
 {
     using validators::SM2StateValidator;
-    using mindnet::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
     OperationResult SM2StateValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

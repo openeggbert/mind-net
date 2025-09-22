@@ -11,7 +11,7 @@
 namespace mindnet::core
 {
     using validator = api::IValidator*;
-    using mindnet::OperationResult;
+    using mindnet::api::OperationResult;
     using model::ModelDefinition;
 
     class Service : public api::IService

@@ -16,7 +16,8 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::LinkValidator;
-    using mindnet::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::core::g_configuration;
     OperationResult LinkValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

@@ -14,7 +14,7 @@
 namespace mindnet::api
 {
     using validator = api::IValidator*;
-    using mindnet::OperationResult;
+    using mindnet::api::OperationResult;
     using model::ModelDefinition;
     using api::DbPtr;
 

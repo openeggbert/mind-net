@@ -10,7 +10,7 @@
 
 namespace mindnet::api
 {
-    std::pair<plugins::core::models::User, mindnet::OperationResult> find_logged_user(
+    std::pair<plugins::core::models::User, mindnet::api::OperationResult> find_logged_user(
         DbPtr& db, http::LoginToken token)
     {
         if (token.user_id == 0)

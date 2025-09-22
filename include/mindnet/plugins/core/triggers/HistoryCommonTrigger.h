@@ -16,8 +16,8 @@ namespace mindnet::plugins::core::triggers
         void run(
             plugins::core::enums::Crudl operation,
             int stack_depth,
-            OperationResult& validation_result,
-            OperationResult& action_result,
+            api::OperationResult& validation_result,
+            api::OperationResult& action_result,
             const model::ModelDefinition def,
             int user_id,
             int id,

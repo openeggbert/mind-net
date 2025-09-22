@@ -15,7 +15,7 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::MapValidator;
-    using mindnet::OperationResult;
+    using mindnet::api::OperationResult;
     using mindnet::core::g_configuration;
     using_loggers()
 

@@ -18,7 +18,7 @@ namespace mindnet::plugins::core::triggers
             "Logs operations and saves them to the history table.",
             1000,
             {},
-            TriggerPhase::After,
+            api::TriggerPhase::After,
             "*"
         )
     {
@@ -27,8 +27,8 @@ namespace mindnet::plugins::core::triggers
     void HistoryCommonTrigger::run(
         plugins::core::enums::Crudl operation,
         int stack_depth,
-        OperationResult& validation_result,
-        OperationResult& action_result,
+        api::OperationResult& validation_result,
+        api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
         int user_id,
         int id,
