@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
-#include "../../include/mindnet/util/Utils.h"
+#include "mindnet/other/util/Utils.h"
 #include <vector>
 #include <string>
 #include <stdexcept>
 
 using namespace std;
 
-namespace mindnet
+namespace mindnet::util
 {
     TEST(UtilsTest, LetterToDecimal_Valid)
     {
