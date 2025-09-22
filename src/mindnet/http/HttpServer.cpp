@@ -33,7 +33,7 @@ namespace mindnet::http
         static const std::string SECONDS = " seconds";
     }
 
-    HttpServer::HttpServer(ServicePtr& service_ptr,
+    HttpServer::HttpServer(api::ServicePtr& service_ptr,
                            const std::string& directory_for_static_files_)
         : service_ptr_(service_ptr),
           directory_for_static_files(directory_for_static_files_)
@@ -252,7 +252,7 @@ namespace mindnet::http
         });
     }
 
-    void HttpServer::create_model_definition_endpoints(const ServicePtr& service_ptr)
+    void HttpServer::create_model_definition_endpoints(const api::ServicePtr& service_ptr)
     {        
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
         {
@@ -493,7 +493,7 @@ namespace mindnet::http
         });
     }
 
-    void HttpServer::create_info_endpoint(const ServicePtr& service_ptr)
+    void HttpServer::create_info_endpoint(const api::ServicePtr& service_ptr)
     {
         //READ
         CROW_ROUTE(crow_app, "/info").methods(crow::HTTPMethod::GET)
@@ -522,7 +522,7 @@ namespace mindnet::http
         });
 
     }
-    void HttpServer::create_health_endpoint(const ServicePtr& service_ptr)
+    void HttpServer::create_health_endpoint(const api::ServicePtr& service_ptr)
     {
         //READ
         CROW_ROUTE(crow_app, "/health").methods(crow::HTTPMethod::GET)
@@ -662,7 +662,7 @@ namespace mindnet::http
         return g_configuration.jwt_secret;
     }
 
-    void HttpServer::create_authentication_endpoints(const ServicePtr& service_ptr)
+    void HttpServer::create_authentication_endpoints(const api::ServicePtr& service_ptr)
     {
         CROW_ROUTE(crow_app, "/api/login").methods("POST"_method)([service_ptr](const crow::request& req)
         {

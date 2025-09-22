@@ -5,13 +5,13 @@
 #ifndef MIND_NET_ISERVICE_H
 #define MIND_NET_ISERVICE_H
 #include "crow/json.h"
-#include "http/QueryParams.h"
-#include "model/ModelDefinition.h"
-#include "api/IValidator.h"
-#include "api/IPersistence.h"
-#include "api/PluginRegistry.h"
+#include "../http/QueryParams.h"
+#include "../model/ModelDefinition.h"
+#include "IValidator.h"
+#include "IPersistence.h"
+#include "PluginRegistry.h"
 
-namespace mindnet
+namespace mindnet::api
 {
     using validator = api::IValidator*;
     using mindnet::OperationResult;
@@ -61,7 +61,7 @@ namespace mindnet
                                          string_map& filter) = 0;
     };
 
-    typedef std::shared_ptr<mindnet::IService> ServicePtr;
+    typedef std::shared_ptr<mindnet::api::IService> ServicePtr;
 }
 
 #endif //MIND_NET_ISERVICE_H

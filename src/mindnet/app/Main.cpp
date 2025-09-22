@@ -16,7 +16,7 @@
 #include "mindnet/api/Persistence.h"
 #include "mindnet/http/ModelEndpointGenerator.h"
 
-#include "mindnet/IService.h"
+#include "../../../include/mindnet/api/IService.h"
 #include "../../../include/mindnet/core/Service.h"
 #include "mindnet/api/PluginRegistry.h"
 #include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
@@ -107,7 +107,7 @@ void load_args(int argc, char** argv, std::vector<std::string>& arguments)
 
 bool commands_function_start(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::IService>& service_ptr,
+    std::shared_ptr<mindnet::api::IService>& service_ptr,
     int& exit_status)
 {
     bool custom_host = false;
@@ -229,7 +229,7 @@ bool commands_function_start(
 
 bool commands_function_help(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::IService>& service_ptr,
+    std::shared_ptr<mindnet::api::IService>& service_ptr,
     int& exit_status)
 {
     warn << "Help is not yet implemented." << commit;
@@ -238,7 +238,7 @@ bool commands_function_help(
 
 bool commands_function_unknown(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::IService>& service_ptr,
+    std::shared_ptr<mindnet::api::IService>& service_ptr,
     int& exit_status)
 {
     err << "Unknown command: " << arguments[0] << commit;
@@ -247,13 +247,13 @@ bool commands_function_unknown(
 
 bool run_command(
     std::vector<std::string>& arguments,
-    std::shared_ptr<mindnet::IService>& service_ptr)
+    std::shared_ptr<mindnet::api::IService>& service_ptr)
 {
     int exit_status = 0;
     auto arg0 = arguments[0];
     typedef bool (*commands_function)(
         std::vector<std::string>&,
-        std::shared_ptr<mindnet::IService>& service_ptr,
+        std::shared_ptr<mindnet::api::IService>& service_ptr,
         int&
     );
 
@@ -307,6 +307,6 @@ int main(int argc, char** argv)
     std::shared_ptr<mindnet::api::IPersistence> db = std::make_shared<
         mindnet::api::Persistence>(plugin_registry_ptr);
 
-    std::shared_ptr<mindnet::IService> service = std::make_shared<mindnet::core::Service>(db, plugin_registry_ptr);
+    std::shared_ptr<mindnet::api::IService> service = std::make_shared<mindnet::core::Service>(db, plugin_registry_ptr);
     return run_command(arguments, service);
 }

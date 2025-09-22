@@ -4,7 +4,7 @@
 
 #ifndef MIND_NET_SERVICE_H
 #define MIND_NET_SERVICE_H
-#include "../IService.h"
+#include "../api/IService.h"
 #include "../api/PluginRegistry.h"
 #include "../api/TriggerRegistry.h"
 
@@ -14,16 +14,16 @@ namespace mindnet::core
     using mindnet::OperationResult;
     using model::ModelDefinition;
 
-    class Service : public IService
+    class Service : public api::IService
     {
     private:
         std::map<std::string, api::IValidator*> validators;
-        DbPtr db_ptr;
+        api::DbPtr db_ptr;
         api::PluginRegistryPtr plugin_registry_ptr;
         api::TriggerRegistryPtr trigger_registry_ptr;
 
     public:
-        Service(const DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
+        Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
         ~Service() override;
 
         bool has_model(const std::string& model_name) override;

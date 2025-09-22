@@ -6,7 +6,7 @@
 
 #include "crow.h"
 #include "HttpUtils.h"
-#include "mindnet/IService.h"
+#include "../api/IService.h"
 
 namespace mindnet::http
 {
@@ -19,7 +19,7 @@ namespace mindnet::http
     class HttpServer
     {
     public:
-        HttpServer(ServicePtr& service_ptr,
+        HttpServer(api::ServicePtr& service_ptr,
                    const std::string& directory_for_static_files = std::string("static"));
         void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
 
@@ -33,15 +33,15 @@ namespace mindnet::http
 
     private:
         crow::SimpleApp crow_app;
-        ServicePtr service_ptr_;
+        api::ServicePtr service_ptr_;
         std::unordered_map<std::string, CachedFile> file_cache;
         std::string directory_for_static_files;
         //
         void create_web_endpoints();
-        void create_model_definition_endpoints(const ServicePtr& service_ptr);
-        void create_info_endpoint(const ServicePtr& service_ptr);
-        void create_health_endpoint(const ServicePtr& service_ptr);
-        void create_authentication_endpoints(const ServicePtr& service_ptr);
+        void create_model_definition_endpoints(const api::ServicePtr& service_ptr);
+        void create_info_endpoint(const api::ServicePtr& service_ptr);
+        void create_health_endpoint(const api::ServicePtr& service_ptr);
+        void create_authentication_endpoints(const api::ServicePtr& service_ptr);
     };
 }
 

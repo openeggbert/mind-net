@@ -20,7 +20,7 @@ namespace mindnet::core
     using plugins::core::enums::Crudl;
 
     Service::Service(
-        const DbPtr& db_,
+        const api::DbPtr& db_,
         const api::PluginRegistryPtr& plugin_registry_ptr_
     ) :
         IService(db_),

@@ -25,8 +25,8 @@ namespace mindnet::http
 
     void ModelEndpointGenerator::create_model_endpoint(
         crow::SimpleApp& app,
-        ServicePtr& service_ptr,
-        ModelDefinition& def)
+        api::ServicePtr& service_ptr,
+        model::ModelDefinition& def)
     {
         auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
         {
@@ -41,7 +41,7 @@ namespace mindnet::http
                 }
             }
         };
-        auto log_request = [] (const ServicePtr& service_ptr, const crow::request& req, http::LoginToken& login_token, int status_code, int entity_id = 0, const std::string& error = "")
+        auto log_request = [] (const api::ServicePtr& service_ptr, const crow::request& req, http::LoginToken& login_token, int status_code, int entity_id = 0, const std::string& error = "")
         {
             auto log_object = plugins::core::models::api_log_from_crow_request(
          req,

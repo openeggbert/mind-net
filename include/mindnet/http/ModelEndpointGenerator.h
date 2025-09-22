@@ -5,14 +5,14 @@
 #define MAPCONTROLLER_H
 
 #include "crow.h"
-#include "mindnet/IService.h"
+#include "../api/IService.h"
 
 namespace mindnet::http
 {
     class ModelEndpointGenerator
     {
     public:
-        void create_model_endpoint(crow::SimpleApp& app, ServicePtr& service_ptr,
+        void create_model_endpoint(crow::SimpleApp& app, api::ServicePtr& service_ptr,
                                    model::ModelDefinition& def);
     };
 }
