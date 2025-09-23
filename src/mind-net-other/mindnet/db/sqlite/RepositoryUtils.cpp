@@ -23,8 +23,9 @@
 
 #include "mindnet/util/Utils.h"
 #include "mindnet/essential/Global.h"
-#include "../../../../../include/mind-net-other/mindnet/orm/QueryParams.h"
+#include "mindnet/orm/QueryParams.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
+#include "mindnet/orm/OrmUtils.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet::db::sqlite
@@ -34,6 +35,84 @@ namespace mindnet::db::sqlite
     using util::Utils;
 
     using_loggers()
+
+        void sqlite_exec(SQLite::Statement& query)
+    {
+        try
+        {
+            query.exec();
+        }
+        catch (SQLite::Exception& e)
+        {
+            err << "Exception during SQLite statement execution: " << e.what() << commit;
+            throw std::runtime_error(e.what());
+        }
+    }
+
+
+    template <class>
+    inline constexpr bool always_false = false;
+
+    void fill_sqlite_query(
+        SQLite::Statement& query,
+        const entity_fields& values,
+        const model::ModelDefinition& model_definition,
+        bool auto_increment = false)
+    {
+        std::size_t values_size = values.size();
+        if (auto_increment) { values_size--; }
+        if (values_size > static_cast<size_t>(query.getBindParameterCount()))
+        {
+            err << "Expected: " << query.getBindParameterCount() << " values, got: " << values_size << std::endl;
+            err << "values().size " << values_size << " > query.getBindParameterCount() " << static_cast<size_t>(query.
+                getBindParameterCount()) << std::endl;
+            throw std::out_of_range("More values provided than query parameters");
+        }
+        if (values_size < static_cast<size_t>(query.getBindParameterCount()))
+        {
+            err << "Expected: " << query.getBindParameterCount() << " values, got: " << values_size << std::endl;
+            err << "values().size " << values_size << " < query.getBindParameterCount() " << static_cast<size_t>(query.
+                getBindParameterCount()) << std::endl;
+            throw std::out_of_range("Less values provided than query parameters");
+        }
+
+        auto& columns = model_definition.get_columns();
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            if (auto_increment && i == 0)
+            {
+                continue;
+            }
+            auto& column = columns[i];
+            auto& column_name = column.get_column_name();
+            std::visit([&](auto&& val) -> void
+            {
+                using T = std::decay_t<decltype(val)>;
+
+                int index = static_cast<int>(i + 1 + (auto_increment ? -1 : 0));
+                if constexpr (std::is_same_v<T, std::string>)
+                {
+                    trace << "binding index " << i << " " << column_name << " with value: \"" << val << "\"" << commit;
+                    query.bind(index, val);
+                }
+                else if constexpr (std::is_same_v<T, int64_t>)
+                {
+                    if (val == 0 && column.is_foreign_key())
+                    {
+                        trace << "binding index " << i << " " << column_name << " with value: NULL" << commit;
+                        query.bind(index, nullptr);
+                    } else {
+                    trace << "binding index " << i << " " << column_name << " with value: " << val << commit;
+                    query.bind(index, val);
+                    }
+                }
+                else
+                {
+                    static_assert(always_false<T>, "Unsupported type in SqlValue");
+                }
+            }, values[i]);
+        }
+    }
 
     void set_pragmas(SQLite::Database& db, bool temp_store = false)
     {
@@ -48,7 +127,7 @@ namespace mindnet::db::sqlite
 
     int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
     {
-        std::string sql = Utils::generate_insert_sql(definition);
+        std::string sql = orm::OrmUtils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -70,12 +149,12 @@ namespace mindnet::db::sqlite
             return -1;
         }
 
-        Utils::fill_sqlite_query(*query_ptr, fields, definition, true
+        fill_sqlite_query(*query_ptr, fields, definition, true
         );
 
         try
         {
-            Utils::sqlite_exec(*query_ptr);
+            sqlite_exec(*query_ptr);
         }
         catch (std::exception& e)
         {
@@ -89,7 +168,7 @@ namespace mindnet::db::sqlite
 
     entity_fields read_model(model::ModelDefinition& def, const int id, string& error)
     {
-        std::string sql = Utils::generate_select_one_sql(def.get_model_name());
+        std::string sql = orm::OrmUtils::generate_select_one_sql(def.get_model_name());
         debug << "Going to execute select one SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -157,7 +236,7 @@ namespace mindnet::db::sqlite
 
     bool update_model(int id, model::ModelDefinition& def, entity_fields& fields_, string& error)
     {
-        std::string sql = Utils::generate_update_sql(def);
+        std::string sql = orm::OrmUtils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -185,10 +264,10 @@ namespace mindnet::db::sqlite
 
         fields_copy.push_back(id);
 
-        Utils::fill_sqlite_query(*query_ptr, fields_copy, def);
+        fill_sqlite_query(*query_ptr, fields_copy, def);
         try
         {
-            Utils::sqlite_exec(*query_ptr);
+            sqlite_exec(*query_ptr);
             debug << "Update successful" << std::endl;
             delete query_ptr;
             return true;
@@ -204,7 +283,7 @@ namespace mindnet::db::sqlite
 
     bool delete_model(model::ModelDefinition& def, const int id, string& error)
     {
-        string sql = Utils::generate_delete_sql(def);
+        string sql = orm::OrmUtils::generate_delete_sql(def);
         debug << "Going to execute delete SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -227,10 +306,10 @@ namespace mindnet::db::sqlite
 
         entity_fields fields;
         fields.push_back(id);
-        Utils::fill_sqlite_query(*query_ptr, fields, def);
+        fill_sqlite_query(*query_ptr, fields, def);
         try
         {
-            Utils::sqlite_exec(*query_ptr);
+            sqlite_exec(*query_ptr);
             auto number_of_deleted_rows = db.getChanges();
             if (number_of_deleted_rows != 1)
             {
@@ -304,8 +383,8 @@ namespace mindnet::db::sqlite
     )
     {
         trace << "list_models()" << commit;
-        std::string sql = Utils::generate_select_all_sql(def.get_model_name(), query_params);
-        std::string sql_count = Utils::generate_select_count_sql(def.get_model_name(), query_params);
+        std::string sql = orm::OrmUtils::generate_select_all_sql(def.get_model_name(), query_params);
+        std::string sql_count = orm::OrmUtils::generate_select_count_sql(def.get_model_name(), query_params);
 
         debug << "Going to execute select all SQL: " << sql << commit;
 

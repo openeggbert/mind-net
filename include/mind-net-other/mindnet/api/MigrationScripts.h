@@ -12,7 +12,7 @@
 #include "Trigger.h"
 #include "jwt-cpp/jwt.h"
 #include "mindnet/essential/DatabaseType.h"
-#include "mindnet/db/sqlite/RepositoryHelper.h"
+#include "mindnet/db/sqlite/RepositoryUtils.h"
 
 namespace mindnet::api
 {

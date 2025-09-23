@@ -14,6 +14,7 @@
 #include "mindnet/http/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/User.h"
+#include "mindnet/util/Utils.h"
 #define check_maintenance_mode()\
 if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)\
 return crow::response(503, "Maintenance Mode. Service Unavailable.");

@@ -27,7 +27,8 @@
 
 #include "mindnet/api/IRepository.h"
 #include "mindnet/essential/Global.h"
-#include "mindnet/db/sqlite/RepositoryHelper.h"
+#include "mindnet/db/sqlite/RepositoryUtils.h"
+#include "mindnet/util/Utils.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet::db::sqlite

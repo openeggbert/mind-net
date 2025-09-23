@@ -2,6 +2,7 @@ file(GLOB_RECURSE OTHER_SOURCES
         mindnet/api/*.cpp
         mindnet/db/**/*.cpp
         mindnet/http/*.cpp
+        mindnet/orm/*.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/mindnet/model/*.cpp
         mindnet/plugins/**/*.cpp
         mindnet/util/*.cpp

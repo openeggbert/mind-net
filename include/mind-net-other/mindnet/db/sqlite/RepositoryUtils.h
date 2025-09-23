@@ -17,24 +17,11 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPOSITORYHELPER_H
-#define REPOSITORYHELPER_H
-
-#include <iostream>
-#include <vector>
-
-#include "SqliteFileName.h"
-#include "../../util/Utils.h"
-#include "../../orm/QueryParams.h"
-#include "SQLiteCpp/Database.h"
+#ifndef REPOSITORYUTILS_H
+#define REPOSITORYUTILS_H
 
 namespace mindnet::db::sqlite
 {
-    using std::vector;
-    using sqlite::SQLITE_FILE_NAME;
-
-    void set_pragmas(SQLite::Database& db);
-
     int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);
 
     entity_fields read_model(model::ModelDefinition& def, int id, string& error);
@@ -50,4 +37,4 @@ namespace mindnet::db::sqlite
     );
 }
 
-#endif // REPOSITORYHELPER_H
+#endif // REPOSITORYUTILS_H
