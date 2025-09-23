@@ -11,6 +11,7 @@
 #include "mindnet/plugins/chat/models/Discussion.h"
 #include "mindnet/api/Persistence.h"
 #include "mindnet/api/PersistenceMethods.h"
+#include "mindnet/plugins/chat/ChatPersistenceMethods.h"
 
 #define Model Discussion
 #define MODEL DISCUSSION
@@ -58,7 +59,7 @@ namespace mindnet::plugins::chat::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "User does not have permission to create a discussion.")
 
-        string is_member_of_team_result = is_member_of_team(ctx, entity.team_id);
+        string is_member_of_team_result = core::is_member_of_team(ctx, entity.team_id);
         return_if(!is_member_of_team_result.empty(),
                   403, "You can only create discussions for teams, you are member of. " + is_member_of_team_result);
 
@@ -74,10 +75,10 @@ namespace mindnet::plugins::chat::validators
     {
         if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
 
-        auto discussion = find_model(model, entity.get_id())
+        auto discussion = find_discussion (ctx, entity.get_id());
         check_found(discussion)
 
-        string is_member_of_team_result = is_member_of_team(ctx, discussion.first.team_id);
+        string is_member_of_team_result = core::is_member_of_team(ctx, discussion.first.team_id);
         return_if(!is_member_of_team_result.empty(),
                   403, "You can only create discussions for teams, you are member of. " + is_member_of_team_result);
 
@@ -90,7 +91,7 @@ namespace mindnet::plugins::chat::validators
         return_if(old_entity.created_by != ctx.token.user_id,
                   403, "You can only update your own discussion.")
 
-        string is_member_of_team_result = is_member_of_team(ctx, old_entity.team_id);
+        string is_member_of_team_result = core::is_member_of_team(ctx, old_entity.team_id);
         return_if(!is_member_of_team_result.empty() && ctx.role != mindnet::essential::UserRole::Admin,
                   403, "You can only update discussions, you created." + is_member_of_team_result);
 
@@ -106,7 +107,7 @@ namespace mindnet::plugins::chat::validators
     {
         mandatory_filter(team_id)
 
-        string is_member_of_team_result = is_member_of_team(ctx, std::stoi(filter.at("team_id")));
+        string is_member_of_team_result = core::is_member_of_team(ctx, std::stoi(filter.at("team_id")));
         return_if(!is_member_of_team_result.empty(),
                   403, "You can only list discussions for teams, you are member of. " + is_member_of_team_result);
 

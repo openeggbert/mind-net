@@ -8,6 +8,7 @@
 
 #include "mindnet/essential/Helper.h"
 #include "mindnet/api/ValidatorBase.h"
+#include "mindnet/plugins/suggestion/models/SuggestionReview.h"
 
 namespace mindnet::plugins::suggestion::validators
 {

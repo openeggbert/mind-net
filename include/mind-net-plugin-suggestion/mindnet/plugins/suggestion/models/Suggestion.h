@@ -29,6 +29,7 @@
 #define COLS columns::SuggestionColumns
 #include "../columns/SuggestionColumns.h"
 #include "../enums/SuggestionStatus.h"
+#include "mindnet/plugins/core/enums/Crudl.h"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::suggestion::models

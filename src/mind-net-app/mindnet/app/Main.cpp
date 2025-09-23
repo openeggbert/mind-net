@@ -24,10 +24,11 @@
 #include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
-// #include "mindnet/plugins/chat/ChatPluginFactory.h"
-// #include "mindnet/plugins/mail/MailPluginFactory.h"
-// #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
-// #include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
+#include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
+#include "mindnet/plugins/chat/ChatPluginFactory.h"
+#include "mindnet/plugins/mail/MailPluginFactory.h"
+#include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
+
 
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(sqlite_repository_factory));
@@ -282,10 +283,10 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 
     REGISTER_PLUGIN(core, Core)
     REGISTER_PLUGIN(slipbox, SlipBox)
-    // REGISTER_PLUGIN(supermemo, SuperMemo)
-    // REGISTER_PLUGIN(mail, Mail)
-    // REGISTER_PLUGIN(chat, Chat)
-    // REGISTER_PLUGIN(suggestion, Suggestion)
+    REGISTER_PLUGIN(supermemo, SuperMemo)
+    REGISTER_PLUGIN(mail, Mail)
+    REGISTER_PLUGIN(chat, Chat)
+    REGISTER_PLUGIN(suggestion, Suggestion)
 }
 
 int main(int argc, char** argv)

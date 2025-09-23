@@ -8,6 +8,7 @@
 
 #include "mindnet/essential/Helper.h"
 #include "mindnet/api/ValidatorBase.h"
+#include "mindnet/plugins/mail/models/Message.h"
 
 namespace mindnet::plugins::mail::validators
 {

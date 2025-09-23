@@ -8,6 +8,7 @@
 
 #include "mindnet/essential/Helper.h"
 #include "mindnet/api/ValidatorBase.h"
+#include "mindnet/plugins/chat/models/Comment.h"
 
 namespace mindnet::plugins::chat::validators
 {

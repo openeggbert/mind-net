@@ -68,14 +68,10 @@ namespace mindnet::plugins::slipbox
         return false;
     }
 
-    // gen_find_cpp(chat, Comment, comment, COMMENT)
     gen_find_cpp(core, User, user, USER)
     // gen_find_cpp(mail, Message, message, MESSAGE)
     gen_find_cpp(core, Team, team, TEAM)
     gen_find_cpp(core, TeamMember, team_member, TEAM_MEMBER)
-    // gen_find_cpp(chat, Discussion, discussion, DISCUSSION)
-    // gen_find_cpp(suggestion, Suggestion, suggestion, SUGGESTION)
-    // gen_find_cpp(suggestion, SuggestionReview, suggestion_review, SUGGESTION_REVIEW)
     // gen_find_cpp(core, History, history, HISTORY)
      gen_find_cpp(slipbox, Map, map, MAP)
      gen_find_cpp(slipbox, Content, content, CONTENT)

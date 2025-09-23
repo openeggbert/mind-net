@@ -6,7 +6,8 @@
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/suggestion/models/SuggestionReview.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
+#include "mindnet/plugins/suggestion/SuggestionPersistenceMethods.h"
 
 #define Model SuggestionReview
 #define MODEL SUGGESTION_REVIEW
@@ -60,7 +61,7 @@ namespace mindnet::plugins::suggestion::validators
 
     OperationResult SuggestionReviewValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto suggestion = find_suggestion(ctx, entity.suggestion_id);
+        auto suggestion = slipbox::find_suggestion(ctx, entity.suggestion_id);
         check_found(suggestion);
 
         return_if(

@@ -8,6 +8,7 @@
 
 #include "mindnet/essential/Helper.h"
 #include "mindnet/api/ValidatorBase.h"
+#include "mindnet/plugins/supermemo/models/SM2State.h"
 
 namespace mindnet::plugins::supermemo::validators
 {
