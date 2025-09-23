@@ -1,6 +1,7 @@
 file(GLOB_RECURSE API_SOURCES
         mindnet/api/*.cpp
         mindnet/plugins/core/**/*.cpp
+        mindnet/plugins/core/*.cpp
 )
 
 add_library(mind_net_api STATIC ${API_SOURCES})

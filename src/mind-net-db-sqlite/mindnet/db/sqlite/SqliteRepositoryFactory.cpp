@@ -28,6 +28,8 @@
 
 namespace mindnet::db::sqlite
 {
+    SqliteRepositoryFactory::SqliteRepositoryFactory() = default;
+
     std::shared_ptr<api::IRepository> SqliteRepositoryFactory::create(const model::ModelDefinition& model_definition)
     {
         return std::make_shared<db::sqlite::RepositoryImplSqlite>(model_definition);
