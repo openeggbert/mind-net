@@ -8,6 +8,7 @@
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/slipbox/models/Question.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Question
 #define MODEL QUESTION
@@ -52,10 +53,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto note = find_model(note, entity.note_id);
+        auto note = slipbox::find_note (ctx, entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
+        if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -64,10 +65,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult QuestionValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto note = find_model(note, entity.note_id);
+        auto note = slipbox::find_note (ctx, entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -77,10 +78,10 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult QuestionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                             const Model& new_entity) const
     {
-        auto note = find_model(note, old_entity.note_id);
+        auto note = slipbox::find_note (ctx, old_entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
+        if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -89,10 +90,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult QuestionValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto note = find_model(note, entity.note_id);
+        auto note = slipbox::find_note (ctx, entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
-        if (has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Delete))
+        if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -104,10 +105,10 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(note_id)
         auto note_id = std::stoi(filter.at("note_id"));
 
-        auto note = find_model(tag_type, note_id);
+        auto note = slipbox::find_tag_type (ctx, note_id);;
         if (note.second.empty()) return {400, note.second};
 
-        if (!has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

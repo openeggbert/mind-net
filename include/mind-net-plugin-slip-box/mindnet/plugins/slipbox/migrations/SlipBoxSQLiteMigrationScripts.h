@@ -5,7 +5,7 @@
 #define SLIPBOXSQLITEMIGRATIONSCRIPTS_H
 
 
-#include "../../../../../mind-net-api/mindnet/api/MigrationScripts.h"
+#include "mindnet/api/MigrationScripts.h"
 
 namespace mindnet::plugins::slipbox::migrations
 {

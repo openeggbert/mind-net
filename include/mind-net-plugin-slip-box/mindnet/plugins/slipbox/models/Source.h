@@ -24,7 +24,7 @@
 #include <string>
 #include <utility>
 
-#include "../../../../../mind-net-model/mindnet/model/BaseModel.h"
+#include "mindnet/model/BaseModel.h"
 #include "../enums/SourceType.h"
 
 // ***** MACROS : START *****

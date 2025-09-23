@@ -1,6 +1,9 @@
 
 
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
+
+#include "mindnet/api/Plugin.h"
+#include "mindnet/api/PluginFactory.h"
 #include "mindnet/plugins/slipbox/validators/CollectionValidator.h"
 #include "mindnet/plugins/slipbox/validators/CollectionItemValidator.h"
 #include "mindnet/plugins/slipbox/validators/ContentValidator.h"
@@ -21,7 +24,7 @@
 namespace mindnet::plugins::slipbox
 {
     const string SLIP_BOX_PLUGIN_NAME = "slip_box";
-    api::PluginPtr SlipBoxPluginFactory::create() const
+    api::PluginPtr SlipBoxPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
             SLIP_BOX_PLUGIN_NAME,

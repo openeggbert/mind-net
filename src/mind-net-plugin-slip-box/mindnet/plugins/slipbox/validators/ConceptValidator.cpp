@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Concept.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Concept
 #define MODEL CONCEPT
@@ -53,14 +54,14 @@ namespace mindnet::plugins::slipbox::validators
     {
         return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not create concepts.")
 
-        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a concept for this map."};
         }
 
         if (entity.note_id != 0)
         {
-            auto note = find_model(note, entity.note_id)
+            auto note = slipbox::find_note (ctx, entity.note_id);
             if (!note.second.empty()) return {400, note.second};
             if (note.first.map_id != entity.map_id)
             {
@@ -77,10 +78,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ConceptValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = find_model(map, entity.map_id)
+        auto map = slipbox::find_map (ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
-        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this concept."};
         }
@@ -92,14 +93,14 @@ namespace mindnet::plugins::slipbox::validators
     {
         return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not update concepts.")
 
-        if (!has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!slipbox::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to update a concept for this map."};
         }
 
         if (new_entity.note_id != 0)
         {
-            auto note = find_model(note, new_entity.note_id)
+            auto note = slipbox::find_note (ctx, new_entity.note_id);
             if (!note.second.empty()) return {400, note.second};
             if (note.first.map_id != new_entity.map_id)
             {
@@ -118,7 +119,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not delete concepts.")
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return {403, "You do not have permission to delete this concept."};
         }
@@ -131,7 +132,7 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));
 
-        if (!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

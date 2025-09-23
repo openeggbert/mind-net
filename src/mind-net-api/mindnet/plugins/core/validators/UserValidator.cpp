@@ -65,13 +65,13 @@ namespace mindnet::plugins::core::validators
                   400, "role" " must be equal to " + user_role_to_string(g_configuration.
                       default_user_role))
 
-        return_if(CorePersistenceMethods::has_user_name(ctx, entity.username),
+        return_if(core::has_user_name(ctx, entity.username),
                   409, "username already exists")
 
         return_if(entity.password_hash == "*",
                   400, "password_hash cannot be placeholder during user creation");
 
-        return_if(CorePersistenceMethods::has_user_email(ctx, entity.email),
+        return_if(core::has_user_email(ctx, entity.email),
                   409, "email already exists");
 
         return ok_result;

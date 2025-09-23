@@ -12,7 +12,7 @@ namespace mindnet::plugins::supermemo
     class SuperMemoPluginFactory : public api::PluginFactory
     {
     public:
-        [[nodiscard]] api::PluginPtr create() const override;
+        [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;
     };
 }
 

@@ -4,7 +4,7 @@
 
 #ifndef MIND_NET_CORESQLITEMIGRATIONSCRIPTS_H
 #define MIND_NET_CORESQLITEMIGRATIONSCRIPTS_H
-#include "../../../../../mind-net-api/mindnet/api/MigrationScripts.h"
+#include "mindnet/api/MigrationScripts.h"
 
 namespace mindnet::plugins::core::migrations
 {

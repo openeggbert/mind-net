@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "mindnet/essential/Helper.h"
-#include "../../../../../mind-net-api/mindnet/api/ValidatorBase.h"
+#include "mindnet/api/ValidatorBase.h"
 #include "mindnet/plugins/slipbox/models/Idea.h"
 
 namespace mindnet::plugins::slipbox::validators

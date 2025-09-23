@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/WantedNote.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model WantedNote
 #define MODEL WANTED_NOTE
@@ -26,10 +27,10 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult WantedNoteValidator::validate_read_authorization(const RequestContext& ctx,
                                                                   const Model& entity) const
     {
-        auto note = find_model(note, entity.from_note_id);
+        auto note = slipbox::find_note (ctx, entity.from_note_id);;
         if (!note.second.empty()) return {400, note.second};
 
-        if (!has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this wanted note."};
         }
@@ -54,10 +55,10 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(from_note_id)
         auto note_id = std::stoi(filter.at("from_note_id"));
 
-        auto note = find_model(note, note_id);
+        auto note = slipbox::find_note (ctx, note_id);;
         if (!note.second.empty()) return {400, note.second};
 
-        if (!has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to list wanted notes for this note."};
         }

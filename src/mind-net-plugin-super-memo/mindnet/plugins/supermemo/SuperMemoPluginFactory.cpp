@@ -9,7 +9,7 @@
 namespace mindnet::plugins::supermemo
 {
     const string TEST_PLUGIN_NAME = "super_memo";
-    api::PluginPtr SuperMemoPluginFactory::create() const
+    api::PluginPtr SuperMemoPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
             TEST_PLUGIN_NAME,

@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "../../../../../mind-net-model/mindnet/model/BaseModel.h"
+#include "mindnet/model/BaseModel.h"
 #include "../columns/ContentColumns.h"
 #include "mindnet/essential/Helper.h"
 #include "../enums/ContentFormat.h"

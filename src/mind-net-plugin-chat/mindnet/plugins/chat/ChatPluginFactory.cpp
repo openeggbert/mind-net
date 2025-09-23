@@ -7,7 +7,7 @@
 namespace mindnet::plugins::chat
 {
     const string CHAT_PLUGIN_NAME = "chat";
-    api::PluginPtr ChatPluginFactory::create() const
+    api::PluginPtr ChatPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
             CHAT_PLUGIN_NAME,

@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Note.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Note
 #define MODEL NOTE
@@ -54,7 +55,7 @@ namespace mindnet::plugins::slipbox::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "User does not have permission to create a note.")
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -63,10 +64,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult NoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = find_model(map, entity.map_id)
+        auto map = slipbox::find_map (ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -76,7 +77,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult NoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                         const Model& new_entity) const
     {
-        if (!has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!slipbox::has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
             return {403, "You do not have permission to update this note."};
 
         return_if(old_entity.content_id != 0 && new_entity.content_id == 0,
@@ -87,7 +88,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult NoteValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }

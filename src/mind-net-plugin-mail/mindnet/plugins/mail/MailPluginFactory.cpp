@@ -7,7 +7,7 @@
 namespace mindnet::plugins::mail
 {
     const string MAIL_PLUGIN_NAME = "mail";
-    api::PluginPtr MailPluginFactory::create() const
+    api::PluginPtr MailPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
             MAIL_PLUGIN_NAME,

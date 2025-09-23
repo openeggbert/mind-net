@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Source.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Source
 #define MODEL SOURCE
@@ -21,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         assert_editor()
 
-        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a source for this map."};
         }
@@ -36,10 +37,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult SourceValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = find_model(map, entity.map_id)
+        auto map = slipbox::find_map (ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
-        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this source."};
         }
@@ -56,7 +57,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         assert_editor()
 
-        if (!has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!slipbox::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to update a source for this map."};
         }
@@ -74,7 +75,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         assert_editor()
 
-        if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return {403, "You do not have permission to delete this source."};
         }
@@ -93,7 +94,7 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(map_id)
         auto map_id = std::stoi(filter.at("map_id"));
 
-        if (!has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

@@ -56,7 +56,7 @@ namespace mindnet::api
     using essential::g_configuration;
     using essential::AccessMode;
     using essential::Crudl;
-    using mindnet::plugins::core::CorePersistenceMethods::find_logged_user;
+    using mindnet::plugins::core::find_logged_user;
 
     inline bool is_authorization_enabled(const RequestContext& ctx)
     {
@@ -109,7 +109,7 @@ namespace mindnet::api
             );
 
 
-            auto [logged_user, logged_user_result] = find_logged_user(db, token);
+            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
@@ -155,7 +155,7 @@ namespace mindnet::api
                 "Derived must implement validate_read_integrity returning OperationResult"
             );
 
-            auto [logged_user, logged_user_result] = find_logged_user(db, token);
+            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
@@ -201,7 +201,7 @@ namespace mindnet::api
                 "Derived must implement validate_update_integrity returning OperationResult"
             );
 
-            auto [logged_user, logged_user_result] = find_logged_user(db, token);
+            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
@@ -261,7 +261,7 @@ namespace mindnet::api
                 "Derived must implement validate_delete_integrity returning OperationResult"
             );
 
-            auto [logged_user, logged_user_result] = find_logged_user(db, token);
+            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
@@ -304,7 +304,7 @@ namespace mindnet::api
                 "Derived must implement validate_list_integrity returning OperationResult"
             );
 
-            auto [logged_user, logged_user_result] = find_logged_user(db, token);
+            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////

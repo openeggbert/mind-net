@@ -11,7 +11,7 @@ namespace mindnet::plugins::suggestion
     class SuggestionPluginFactory : public api::PluginFactory
     {
     public:
-        [[nodiscard]] api::PluginPtr create() const override;
+        [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;
     };
 }
 

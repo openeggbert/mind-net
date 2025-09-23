@@ -50,7 +50,7 @@ namespace mindnet::plugins::core::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "User does not have permission to create a team member.");
 
-        auto team = CorePersistenceMethods::find_team (ctx, entity.team_id);;
+        auto team = core::find_team (ctx, entity.team_id);;
         return_if(!team.second.empty(), 400, "Team does not exist.")
 
         if (ctx.token.user_id == team.first.leader_id || ctx.role == mindnet::essential::UserRole::Admin)
@@ -76,10 +76,10 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamMemberValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto team_member = CorePersistenceMethods::find_team_member (ctx, entity.get_id());
+        auto team_member = core::find_team_member (ctx, entity.get_id());
         return_if(!team_member.second.empty(), 400, team_member.second);
 
-        auto team = CorePersistenceMethods::find_team (ctx, team_member.first.team_id);
+        auto team = core::find_team (ctx, team_member.first.team_id);
         return_if(!team.second.empty(), 400, team.second);
 
         return_if(ctx.role == mindnet::essential::UserRole::Admin, 0, "")
@@ -89,7 +89,7 @@ namespace mindnet::plugins::core::validators
             mindnet::essential::UserStatus::Active,
             0, "")
 
-        auto is_member = CorePersistenceMethods::is_member_of_team(ctx, team.first.get_id());
+        auto is_member = core::is_member_of_team(ctx, team.first.get_id());
         return_if(!is_member.empty(),
                   403, "You can only read your own team members.")
 
@@ -99,7 +99,7 @@ namespace mindnet::plugins::core::validators
     OperationResult TeamMemberValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                               const Model& new_entity) const
     {
-        auto team = CorePersistenceMethods::find_team (ctx, old_entity.team_id);
+        auto team = core::find_team (ctx, old_entity.team_id);
         return_if(team.second.empty(), 400, team.second)
 
         return_if(ctx.role != mindnet::essential::UserRole::Admin && ctx.token.user_id != team.first.leader_id,
@@ -110,7 +110,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamMemberValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto team_member = CorePersistenceMethods::find_team_member (ctx, entity.user_id);
+        auto team_member = core::find_team_member (ctx, entity.user_id);
         return_if(team_member.second.empty(), 400, team_member.second)
 
         return OperationResult(403, "Deleting team members is forbidden. Set status to DELETED.");
@@ -122,7 +122,7 @@ namespace mindnet::plugins::core::validators
 
         mandatory_filter(team_id)
 
-        auto is_member = CorePersistenceMethods::is_member_of_team(ctx, std::stoi(filter.at("team_id")));
+        auto is_member = core::is_member_of_team(ctx, std::stoi(filter.at("team_id")));
         return_if(!is_member.empty(),
                   403, "Only team members can list team members.")
 

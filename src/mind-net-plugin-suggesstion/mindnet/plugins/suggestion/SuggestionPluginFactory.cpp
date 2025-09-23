@@ -6,7 +6,7 @@
 namespace mindnet::plugins::suggestion
 {
     const string SUGGESTION_PLUGIN_NAME = "suggestion";
-    api::PluginPtr SuggestionPluginFactory::create() const
+    api::PluginPtr SuggestionPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
             SUGGESTION_PLUGIN_NAME,

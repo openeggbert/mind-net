@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Content.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Content
 #define MODEL CONTENT
@@ -60,9 +61,9 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto note_id = find_note_for_content(ctx, entity.get_id());
+        auto note_id = slipbox::find_note_for_content(ctx, entity.get_id());
         if (!note_id.second.empty()) return {400, note_id.second};
-        auto note = find_model(note, note_id.first);
+        auto note = slipbox::find_note (ctx, note_id.first);;
         if (note.second.empty()) return {400, note.second};
 
         auto note_validator = get_validator("note");
@@ -76,9 +77,9 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult ContentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
-        auto result = find_note_for_content(ctx, old_entity.get_id());
+        auto result = slipbox::find_note_for_content(ctx, old_entity.get_id());
         if (!result.second.empty()) return {400, result.second};
-        auto one = find_model(note, old_entity.get_id());
+        auto one = slipbox::find_note (ctx, old_entity.get_id());;
 
         auto ef = one.first.to_values();
 
@@ -90,7 +91,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto result = find_note_for_content(ctx, entity.get_id());
+        auto result = slipbox::find_note_for_content(ctx, entity.get_id());
         if (!result.second.empty()) return {400, result.second};
 
         auto note_validator = get_validator("note");

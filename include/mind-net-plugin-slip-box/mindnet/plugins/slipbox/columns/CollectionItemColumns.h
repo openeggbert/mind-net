@@ -25,7 +25,7 @@
 #ifndef COLLECTIONITEMCOLUMNS_H
 #define COLLECTIONITEMCOLUMNS_H
 
-#include "../../../../../mind-net-model/mindnet/model/BaseColumns.h"
+#include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::slipbox::columns
 {

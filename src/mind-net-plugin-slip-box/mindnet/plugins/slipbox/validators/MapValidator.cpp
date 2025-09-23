@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Map.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Map
 #define MODEL MAP
@@ -33,9 +34,9 @@ namespace mindnet::plugins::slipbox::validators
         if (entity.owner_id == ctx.token.user_id) return ok_result;
         if (entity.team_id != 0 && plugins::core::enums::can_read(entity.team_rights))
         {
-            auto team = find_model(team, entity.team_id);
+            auto team = core::find_team (ctx, entity.team_id);;
             check_found(team);
-            string is_member_of_team_result = is_member_of_team(ctx, team.first.get_id());
+            string is_member_of_team_result = core::is_member_of_team(ctx, team.first.get_id());
             if (is_member_of_team_result.empty()) return ok_result;
         }
         if (plugins::core::enums::can_read(entity.other_rights))
@@ -57,9 +58,9 @@ namespace mindnet::plugins::slipbox::validators
 
         if (old_entity.team_id != 0 && can_write(old_entity.team_rights))
         {
-            auto team = find_model(team, old_entity.team_id);
+            auto team = core::find_team (ctx, old_entity.team_id);;
             check_found(team);
-            string is_member_of_team_result = is_member_of_team(ctx, team.first.get_id());
+            string is_member_of_team_result = core::is_member_of_team(ctx, team.first.get_id());
             team_can_write = is_member_of_team_result.empty();
         }
         bool other_can_write = can_write(old_entity.other_rights);
@@ -81,9 +82,9 @@ namespace mindnet::plugins::slipbox::validators
 
         if (entity.team_id != 0 && can_delete(entity.team_rights))
         {
-            auto team = find_model(team, entity.team_id);
+            auto team = core::find_team (ctx, entity.team_id);;
             check_found(team);
-            string is_member_of_team_result = is_member_of_team(ctx, team.first.get_id());
+            string is_member_of_team_result = core::is_member_of_team(ctx, team.first.get_id());
             team_can_delete = is_member_of_team_result.empty();
         }
         bool other_can_delete = can_delete(entity.other_rights);
@@ -134,12 +135,12 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult MapValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(has_map_name(ctx, entity.name),
+        return_if(slipbox::has_map_name(ctx, entity.name),
                   409, "name already exists")
 
         if (entity.team_id != 0)
         {
-            auto team = find_model(team, entity.team_id)
+            auto team = core::find_team (ctx, entity.team_id);
             if (!team.second.empty()) return {400, "Team does not exist."};
         }
 

@@ -23,7 +23,7 @@
 
 #include <string>
 
-#include "../../../../../mind-net-model/mindnet/model/EnumDefinition.h"
+#include "mindnet/model/EnumDefinition.h"
 
 namespace mindnet::plugins::slipbox::enums
 {

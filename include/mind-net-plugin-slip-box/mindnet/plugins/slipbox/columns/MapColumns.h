@@ -25,9 +25,9 @@
 #ifndef MAPCOLUMNS_H
 #define MAPCOLUMNS_H
 
-#include "../../../../../mind-net-model/mindnet/model/BaseColumns.h"
+#include "mindnet/model/BaseColumns.h"
 #include "mindnet/essential/Helper.h"
-#include "../../../../../mind-net-model/mindnet/model/ColumnType.h"
+#include "mindnet/model/ColumnType.h"
 
 namespace mindnet::plugins::slipbox::columns
 {

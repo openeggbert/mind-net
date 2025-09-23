@@ -23,11 +23,12 @@
 #include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
+#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 // #include "mindnet/plugins/chat/ChatPluginFactory.h"
 // #include "mindnet/plugins/mail/MailPluginFactory.h"
 // #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
 // #include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
-// #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
+
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(sqlite_repository_factory));
 using mindnet::essential::commit;
@@ -280,7 +281,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
     std::shared_ptr<mindnet::api::RepositoryFactory> sqlite_repository_factory = std::make_shared<mindnet::db::sqlite::SqliteRepositoryFactory>();
 
     REGISTER_PLUGIN(core, Core)
-    // REGISTER_PLUGIN(slipbox, SlipBox)
+    REGISTER_PLUGIN(slipbox, SlipBox)
     // REGISTER_PLUGIN(supermemo, SuperMemo)
     // REGISTER_PLUGIN(mail, Mail)
     // REGISTER_PLUGIN(chat, Chat)

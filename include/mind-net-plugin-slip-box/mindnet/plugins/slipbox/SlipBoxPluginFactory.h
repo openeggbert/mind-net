@@ -12,7 +12,7 @@ namespace mindnet::plugins::slipbox
     class SlipBoxPluginFactory : public api::PluginFactory
     {
     public:
-        [[nodiscard]] api::PluginPtr create() const override;
+        [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;
     };
 }
 

@@ -8,6 +8,7 @@
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/slipbox/models/Tag.h"
 #include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Tag
 #define MODEL TAG_H
@@ -52,10 +53,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TagValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto tag_type = find_model(tag_type, entity.tag_type_id);
+        auto tag_type = slipbox::find_tag_type (ctx, entity.tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Write))
+        if (slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -64,13 +65,13 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TagValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto tag_type = find_model(tag_type, entity.tag_type_id);
+        auto tag_type = slipbox::find_tag_type (ctx, entity.tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        auto map = find_model(map, tag_type.first.map_id)
+        auto map = slipbox::find_map (ctx, tag_type.first.map_id);
         if (map.second.empty()) return {400, map.second};
 
-        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -85,10 +86,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TagValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto tag_type = find_model(tag_type, entity.tag_type_id);
+        auto tag_type = slipbox::find_tag_type (ctx, entity.tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Delete))
+        if (slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -100,10 +101,10 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(tag_type_id)
         auto tag_type_id = std::stoi(filter.at("tag_type_id"));
 
-        auto tag_type = find_model(tag_type, tag_type_id);
+        auto tag_type = slipbox::find_tag_type (ctx, tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (!has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (!slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(
