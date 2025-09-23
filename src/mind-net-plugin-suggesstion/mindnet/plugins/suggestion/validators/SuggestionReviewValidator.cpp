@@ -15,7 +15,7 @@
 namespace mindnet::plugins::suggestion::validators
 {
     using validators::SuggestionReviewValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult SuggestionReviewValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -52,7 +52,7 @@ namespace mindnet::plugins::suggestion::validators
     OperationResult SuggestionReviewValidator::validate_create_integrity(const RequestContext& ctx,
                                                                     const Model& entity) const
     {
-        return_if(ctx.role < mindnet::core::UserRole::Reviewer,
+        return_if(ctx.role < mindnet::essential::UserRole::Reviewer,
                   403, "You can not create suggestion reviews.");
 
         return ok_result;
@@ -64,7 +64,7 @@ namespace mindnet::plugins::suggestion::validators
         check_found(suggestion);
 
         return_if(
-            ctx.role < mindnet::core::UserRole::Reviewer && suggestion.first.from_user_id != ctx.token.user_id,
+            ctx.role < mindnet::essential::UserRole::Reviewer && suggestion.first.from_user_id != ctx.token.user_id,
             403, "You can not read this suggestion.");
 
         return ok_result;
@@ -90,7 +90,7 @@ namespace mindnet::plugins::suggestion::validators
     OperationResult SuggestionReviewValidator::validate_list_integrity(const RequestContext& ctx,
                                                                   const string_map& filter) const
     {
-        if (ctx.role >= mindnet::core::UserRole::Reviewer) return ok_result;
+        if (ctx.role >= mindnet::essential::UserRole::Reviewer) return ok_result;
         return {403, "You can not list suggestion reviews."};
 
         return ok_result;

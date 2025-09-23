@@ -6,7 +6,7 @@
 
 namespace mindnet::plugins::chat::migrations
 {
-    ChatSQLiteMigrationScripts::ChatSQLiteMigrationScripts() : MigrationScripts(mindnet::core::DatabaseType::SQLite)
+    ChatSQLiteMigrationScripts::ChatSQLiteMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::SQLite)
     {
     }
 

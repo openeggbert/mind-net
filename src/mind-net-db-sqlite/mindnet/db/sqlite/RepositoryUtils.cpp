@@ -18,7 +18,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "mindnet/plugins/slipbox/models/Content.h"
 #include <vector>
 
 #include "mindnet/util/Utils.h"
@@ -27,6 +26,7 @@
 #include "mindnet/db/sqlite/SqliteFileName.h"
 #include "mindnet/orm/OrmUtils.h"
 #include "SQLiteCpp/Database.h"
+#include "mindnet/model/ModelDefinition.h"
 
 namespace mindnet::db::sqlite
 {

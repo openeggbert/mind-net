@@ -37,7 +37,7 @@ namespace mindnet::db::sqlite
     {
     public:
         RepositoryImplSqlite(
-            model::ModelDefinition& model_definition
+            const model::ModelDefinition& model_definition
         );
         ~RepositoryImplSqlite() override;
 

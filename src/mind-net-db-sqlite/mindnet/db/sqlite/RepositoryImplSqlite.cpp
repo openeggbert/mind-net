@@ -46,7 +46,7 @@ namespace mindnet::db::sqlite
     using_loggers()
 
     RepositoryImplSqlite::RepositoryImplSqlite(
-        model::ModelDefinition& model_definition_
+        const model::ModelDefinition& model_definition_
     ) : api::IRepository(model_definition_)
     {
     }

@@ -38,7 +38,7 @@ namespace mindnet::api
     public:
         virtual ~IRepository() = default;
         IRepository(
-            model::ModelDefinition& model_definition
+            const model::ModelDefinition& model_definition
         );
         virtual int create(const entity_fields& fields, string& error) = 0;
         virtual entity_fields read(int id, string& error) = 0;

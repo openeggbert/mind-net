@@ -32,8 +32,8 @@ namespace mindnet::plugins::core::models
         updated_at = number();
         team_id = number();
         user_id = number();
-        role = static_cast<mindnet::core::UserRole>(number());
-        status = static_cast<enums::UserStatus>(number());
+        role = static_cast<mindnet::essential::UserRole>(number());
+        status = static_cast<essential::UserStatus>(number());
         joined_at = number();
         left_at = number();
     };

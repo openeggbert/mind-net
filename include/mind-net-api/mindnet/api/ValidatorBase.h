@@ -31,7 +31,7 @@ mindnet::api::OperationResult validate_list_authorization(const RequestContext&,
 
 #define return_if(condition, status, message) if (condition) return OperationResult(status, message);
 #define assert_role(ROLE) \
-return_if (ctx.role < mindnet::core::UserRole:: ROLE, 403, "User does not have permission for this action.")
+return_if (ctx.role < mindnet::essential::UserRole:: ROLE, 403, "User does not have permission for this action.")
 
 #define assert_admin() assert_role(Admin)
 #define assert_editor() assert_role(Editor)
@@ -57,8 +57,8 @@ namespace mindnet::http
 
 namespace mindnet::api
 {
-    using core::g_configuration;
-    using core::AccessMode;
+    using essential::g_configuration;
+    using essential::AccessMode;
     using essential::Crudl;
 
     inline bool is_authorization_enabled(const RequestContext& ctx)
@@ -72,7 +72,7 @@ namespace mindnet::api
         case AccessMode::PublicFullAccess:
             return false;
         case AccessMode::AuthenticatedFullAccess:
-            return ctx.role == core::UserRole::Guest;
+            return ctx.role == essential::UserRole::Guest;
         default:
             return true;
         }

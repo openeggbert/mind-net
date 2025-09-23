@@ -16,7 +16,7 @@
 namespace mindnet::plugins::supermemo::validators
 {
     using validators::ReviewValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult ReviewValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

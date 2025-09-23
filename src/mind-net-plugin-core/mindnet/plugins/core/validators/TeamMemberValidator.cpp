@@ -7,7 +7,6 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/models/TeamMember.h"
 #include "mindnet/api/Persistence.h"
-#include "mindnet/api/PersistenceMethods.h"
 
 #define Model TeamMember
 #define MODEL TEAM_MEMBER
@@ -16,7 +15,7 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::TeamMemberValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult TeamMemberValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -52,18 +51,18 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::core::UserRole::Editor,
+        return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "User does not have permission to create a team member.");
 
         auto team = find_model(team, entity.team_id);
         return_if(!team.second.empty(), 400, "Team does not exist.")
 
-        if (ctx.token.user_id == team.first.leader_id || ctx.role == mindnet::core::UserRole::Admin)
+        if (ctx.token.user_id == team.first.leader_id || ctx.role == mindnet::essential::UserRole::Admin)
         {
         }
         else if (ctx.token.user_id == entity.user_id)
         {
-            return_if(entity.role != mindnet::core::UserRole::Reader,
+            return_if(entity.role != mindnet::essential::UserRole::Reader,
                       403, "Initial user role in team must be READER.")
 
             return_if(entity.status != plugins::core::enums::UserStatus::Pending,
@@ -87,7 +86,7 @@ namespace mindnet::plugins::core::validators
         auto team = find_model(team, team_member.first.team_id)
         return_if(!team.second.empty(), 400, team.second);
 
-        return_if(ctx.role == mindnet::core::UserRole::Admin, 0, "")
+        return_if(ctx.role == mindnet::essential::UserRole::Admin, 0, "")
         return_if(ctx.token.user_id == team.first.leader_id, 0, "")
         return_if(
             ctx.token.user_id == team_member.first.user_id && team_member.first.status == plugins::core::enums::
@@ -107,7 +106,7 @@ namespace mindnet::plugins::core::validators
         auto team = find_model(team, old_entity.team_id)
         return_if(team.second.empty(), 400, team.second)
 
-        return_if(ctx.role != mindnet::core::UserRole::Admin && ctx.token.user_id != team.first.leader_id,
+        return_if(ctx.role != mindnet::essential::UserRole::Admin && ctx.token.user_id != team.first.leader_id,
                   403, "Only team leader can update the team.")
 
         return ok_result;
@@ -123,7 +122,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamMemberValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
-        if (ctx.role == mindnet::core::UserRole::Admin) return ok_result;
+        if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
 
         mandatory_filter(team_id)
 

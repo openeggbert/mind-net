@@ -8,13 +8,12 @@
 #include "mindnet/util/Utils.h"
 #include "mindnet/essential/Global.h"
 #include "mindnet/http/RestHelper.h"
-#include "mindnet/db/sqlite/RepositoryUtils.h"
 #include "mindnet/plugins/core/models/ApiLog.h"
 
 #define check_maintenance_mode()\
 if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)\
 return crow::response(503, "Maintenance Mode. Service Unavailable.");
-using mindnet::core::g_configuration;
+using mindnet::essential::g_configuration;
 
 namespace mindnet::http
 {

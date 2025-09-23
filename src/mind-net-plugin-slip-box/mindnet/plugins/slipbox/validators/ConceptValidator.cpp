@@ -15,7 +15,7 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::ConceptValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult ConceptValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -51,7 +51,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ConceptValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::core::UserRole::Editor, 403, "You can not create concepts.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not create concepts.")
 
         if (!has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -90,7 +90,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult ConceptValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                       const Model& new_entity) const
     {
-        return_if(ctx.role < mindnet::core::UserRole::Editor, 403, "You can not update concepts.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not update concepts.")
 
         if (!has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -116,7 +116,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ConceptValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::core::UserRole::Editor, 403, "You can not delete concepts.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not delete concepts.")
 
         if (has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {

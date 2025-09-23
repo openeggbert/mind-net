@@ -17,7 +17,7 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::AccessTokenValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
 
     OperationResult AccessTokenValidator::validate_create_authorization(const RequestContext& ctx,
                                                                         const Model& entity) const

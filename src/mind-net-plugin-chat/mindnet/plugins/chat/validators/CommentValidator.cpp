@@ -19,7 +19,7 @@
 namespace mindnet::plugins::chat::validators
 {
     using validators::CommentValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult CommentValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -70,7 +70,7 @@ namespace mindnet::plugins::chat::validators
         auto comment = find_comment(ctx, entity.get_id());
         return_if(!comment.second.empty(), 400, "Comment does not exist.")
 
-        if (ctx.role == mindnet::core::UserRole::Admin) return ok_result;
+        if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
 
         auto discussion = find_discussion(ctx, comment.first.discussion_id);
         return_if(!discussion.second.empty(), 400, "Discussion does not exist.")
@@ -83,7 +83,7 @@ namespace mindnet::plugins::chat::validators
     OperationResult CommentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
-        return_if(old_entity.user_id != ctx.token.user_id && ctx.role != mindnet::core::UserRole::Admin,
+        return_if(old_entity.user_id != ctx.token.user_id && ctx.role != mindnet::essential::UserRole::Admin,
                   403, "You can only update your own comment.")
 
         return ok_result;

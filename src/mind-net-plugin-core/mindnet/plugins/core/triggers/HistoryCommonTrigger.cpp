@@ -5,10 +5,9 @@
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 
 #include "mindnet/essential/Global.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/LoginToken.h"
+#include "mindnet/api/LoginToken.h"
 #include "mindnet/plugins/core/models/History.h"
-#include "mindnet/plugins/slipbox/models/Note.h"
-#include "../../../../../../include/mind-net-util/mindnet/util/Utils.h"
+#include "mindnet/util/Utils.h"
 
 namespace mindnet::plugins::core::triggers
 {

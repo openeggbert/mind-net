@@ -53,8 +53,9 @@ namespace mindnet::api
 
     bool has_user_name(const RequestContext& ctx, string user_name);
     bool has_user_email(const RequestContext& ctx, string user_mail);
-    bool has_map_name(const RequestContext& ctx, string map_name);
     string is_member_of_team(const RequestContext& ctx, int team_id);
+
+    bool has_map_name(const RequestContext& ctx, string map_name);
     std::pair<int, string> find_note_for_content(const RequestContext& ctx, int content_id);
     bool has_right_for_map(const RequestContext& ctx, const int map_id,
                            const plugins::core::enums::SingleRight single_right);

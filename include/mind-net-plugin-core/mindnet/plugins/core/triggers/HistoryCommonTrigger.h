@@ -3,7 +3,7 @@
 //
 #ifndef HISTORYCOMMONTRIGGER_H
 #define HISTORYCOMMONTRIGGER_H
-#include "../../../../../mind-net-api/mindnet/api/Trigger.h"
+#include "mindnet/api/Trigger.h"
 
 namespace mindnet::plugins::core::triggers
 {

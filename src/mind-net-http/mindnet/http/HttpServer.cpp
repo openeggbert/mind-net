@@ -21,7 +21,7 @@ return crow::response(503, "Maintenance Mode. Service Unavailable.");
 
 namespace mindnet::http
 {
-    using mindnet::core::g_configuration;
+    using mindnet::essential::g_configuration;
     namespace Labels
     {
         static const std::string DAY = " day ";
@@ -741,7 +741,7 @@ namespace mindnet::http
             user.username = username;
             user.password_hash = hashed;
             user.display_name = display_name;
-            user.role = mindnet::core::UserRole::Reader;
+            user.role = mindnet::essential::UserRole::Reader;
             user.profile_text = profile_text;
             user.last_login = 0;
             user.email = email;

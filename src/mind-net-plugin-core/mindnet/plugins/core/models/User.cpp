@@ -41,11 +41,11 @@ namespace mindnet::plugins::core::models
         username = text();
         password_hash = text();
         display_name = text();
-        role = static_cast<mindnet::core::UserRole>(number());
+        role = static_cast<mindnet::essential::UserRole>(number());
         profile_text = text();
         last_login = number();
         email = text();
-        status = static_cast<enums::UserStatus>(number());
+        status = static_cast<essential::UserStatus>(number());
     };
 
     static const std::regex email_pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
@@ -72,10 +72,10 @@ namespace mindnet::plugins::core::models
             [this]
             {
                 return test_true(
-                    mindnet::core::g_configuration.registration_mode == mindnet::core::RegistrationMode::RequiresAdminApproval
-                        ? status == enums::UserStatus::Pending
-                        : status == enums::UserStatus::Active,
-                    mindnet::core::g_configuration.registration_mode == mindnet::core::RegistrationMode::RequiresAdminApproval
+                    mindnet::essential::g_configuration.registration_mode == mindnet::essential::RegistrationMode::RequiresAdminApproval
+                        ? status == essential::UserStatus::Pending
+                        : status == essential::UserStatus::Active,
+                    mindnet::essential::g_configuration.registration_mode == mindnet::essential::RegistrationMode::RequiresAdminApproval
                         ? "status must be PENDING"
                         : "status must be ACTIVE"
                 );

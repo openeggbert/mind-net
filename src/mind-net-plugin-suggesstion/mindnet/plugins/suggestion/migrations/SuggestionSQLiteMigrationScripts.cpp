@@ -6,7 +6,7 @@
 
 namespace mindnet::plugins::suggestion::migrations
 {
-    SuggestionSQLiteMigrationScripts::SuggestionSQLiteMigrationScripts() : MigrationScripts(mindnet::core::DatabaseType::SQLite)
+    SuggestionSQLiteMigrationScripts::SuggestionSQLiteMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::SQLite)
     {
     }
 

@@ -15,7 +15,7 @@
 namespace mindnet::plugins::suggestion::validators
 {
     using validators::SuggestionValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult SuggestionValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -67,7 +67,7 @@ namespace mindnet::plugins::suggestion::validators
 
     OperationResult SuggestionValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(entity.from_user_id != ctx.token.user_id && ctx.role < mindnet::core::UserRole::Reviewer,
+        return_if(entity.from_user_id != ctx.token.user_id && ctx.role < mindnet::essential::UserRole::Reviewer,
                   403, "You can not read this suggestion.");
 
         return ok_result;
@@ -91,7 +91,7 @@ namespace mindnet::plugins::suggestion::validators
 
     OperationResult SuggestionValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
-        if (ctx.role >= mindnet::core::UserRole::Reviewer)
+        if (ctx.role >= mindnet::essential::UserRole::Reviewer)
         {
             return ok_result;
         }

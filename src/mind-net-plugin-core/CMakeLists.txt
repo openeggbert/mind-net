@@ -10,12 +10,18 @@ target_include_directories(mind_net_plugin_core
         ${CMAKE_SOURCE_DIR}/include/mind-net-plugin-core
         PRIVATE
         ${CMAKE_SOURCE_DIR}/include/mind-net-essential
+        ${CMAKE_SOURCE_DIR}/include/mind-net-util
+        ${CMAKE_SOURCE_DIR}/include/mind-net-model
+        ${CMAKE_SOURCE_DIR}/include/mind-net-api
 )
 
 
 target_link_libraries(mind_net_plugin_core
         PUBLIC
         mind_net_essential
+        mind_net_util
+        mind_net_model
+        mind_net_api
 )
 
 target_precompile_headers(mind_net_plugin_core PRIVATE

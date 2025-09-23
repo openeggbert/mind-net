@@ -7,7 +7,7 @@
 namespace mindnet::api
 {
     IRepository::IRepository(
-        model::ModelDefinition& model_definition_
+        const model::ModelDefinition& model_definition_
     ) :
         model_definition(model_definition_)
     {

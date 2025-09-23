@@ -22,12 +22,12 @@
 
 #include "mindnet/api/IRepository.h"
 #include "mindnet/api/RepositoryFactory.h"
+#include "mindnet/db/sqlite/RepositoryImplSqlite.h"
 
 namespace mindnet::db::sqlite
 {
     std::shared_ptr<api::IRepository> create(const model::ModelDefinition& model_definition)
     {
-        return std::make_shared<db::sqlite::RepositoryImplSqlite>(
-                    model_definition);
+        return std::make_shared<db::sqlite::RepositoryImplSqlite>(model_definition);
     }
 }

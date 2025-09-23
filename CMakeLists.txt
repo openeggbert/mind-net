@@ -36,15 +36,12 @@ add_subdirectory(src/mind-net-essential)
 add_subdirectory(src/mind-net-util)
 add_subdirectory(src/mind-net-model)
 add_subdirectory(src/mind-net-orm)
-
-
 add_subdirectory(src/mind-net-api)
 add_subdirectory(src/mind-net-db-sqlite)
+add_subdirectory(src/mind-net-plugin-core)
 add_subdirectory(src/mind-net-http)
 
 
-
-add_subdirectory(src/mind-net-plugin-core)
 add_subdirectory(src/mind-net-plugin-slip-box)
 add_subdirectory(src/mind-net-plugin-super-memo)
 add_subdirectory(src/mind-net-plugin-mail)

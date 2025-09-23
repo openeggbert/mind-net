@@ -17,7 +17,7 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::UserValidator;
-    using mindnet::api::OperationResult;using mindnet::core::g_configuration;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult UserValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -57,11 +57,11 @@ namespace mindnet::plugins::core::validators
                   401, "You must be logged in to create a user")
 
         return_if(
-            g_configuration.registration_mode == mindnet::core::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != mindnet::core::UserRole::
+            g_configuration.registration_mode == mindnet::core::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != mindnet::essential::UserRole::
             Admin,
             403, "You must be admin to create a user.")
 
-        return_if(ctx.role != mindnet::core::UserRole::Admin && entity.role != g_configuration.default_user_role,
+        return_if(ctx.role != mindnet::essential::UserRole::Admin && entity.role != g_configuration.default_user_role,
                   400, "role" " must be equal to " + user_role_to_string(g_configuration.
                       default_user_role))
 
@@ -87,7 +87,7 @@ namespace mindnet::plugins::core::validators
     {
         bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
 
-        return_if(ctx.role != mindnet::core::UserRole::Admin && !logged_user_updates_himself,
+        return_if(ctx.role != mindnet::essential::UserRole::Admin && !logged_user_updates_himself,
                   403, "You can only update your own user.")
 
         return_if(new_entity.password_hash != "*",
@@ -97,10 +97,10 @@ namespace mindnet::plugins::core::validators
         return_if(role_different && logged_user_updates_himself,
                   400, "role cannot be changed");
 
-        return_if(role_different && ctx.role != mindnet::core::UserRole::Admin,
+        return_if(role_different && ctx.role != mindnet::essential::UserRole::Admin,
                   400, "role cannot be changed");
 
-        return_if(old_entity.status != new_entity.status && ctx.role != mindnet::core::UserRole::Admin,
+        return_if(old_entity.status != new_entity.status && ctx.role != mindnet::essential::UserRole::Admin,
                   400, "status cannot be changed by yourself")
 
         return ok_result;

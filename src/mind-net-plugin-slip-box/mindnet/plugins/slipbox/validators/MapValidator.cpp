@@ -16,7 +16,7 @@ namespace mindnet::plugins::slipbox::validators
 {
     using validators::MapValidator;
     using mindnet::api::OperationResult;
-    using mindnet::core::g_configuration;
+    using mindnet::essential::g_configuration;
     using_loggers()
 
     OperationResult MapValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
@@ -29,7 +29,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult MapValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        if (ctx.role == mindnet::core::UserRole::Admin) return ok_result;
+        if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
         if (entity.owner_id == ctx.token.user_id) return ok_result;
         if (entity.team_id != 0 && plugins::core::enums::can_read(entity.team_rights))
         {

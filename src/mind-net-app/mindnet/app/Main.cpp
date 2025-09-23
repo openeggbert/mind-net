@@ -30,7 +30,7 @@
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
 using mindnet::core::commit;
-using mindnet::core::g_configuration;
+using mindnet::essential::g_configuration;
 using mindnet::core::ExitStatus;
 using_loggers()
 
@@ -38,8 +38,8 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
 {
     trace << "Migrating schema, if needed" << commit;
 
-    mindnet::core::DatabaseType database_type = g_configuration.database_type;
-    if (database_type != mindnet::core::DatabaseType::SQLite)
+    mindnet::essential::DatabaseType database_type = g_configuration.database_type;
+    if (database_type != mindnet::essential::DatabaseType::SQLite)
     {
         err << "SQLite database is only supported, but you configured " <<
             mindnet::core::database_type_to_string(database_type) << commit;

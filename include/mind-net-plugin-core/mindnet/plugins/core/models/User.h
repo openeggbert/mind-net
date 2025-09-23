@@ -61,11 +61,11 @@ namespace mindnet::plugins::core::models
         string username;
         string password_hash;
         string display_name;
-        mindnet::core::UserRole role{};
+        mindnet::essential::UserRole role{};
         string profile_text;
         unixtime last_login{};
         string email;
-        enums::UserStatus status{};
+        essential::UserStatus status{};
 
         create_model_h_methods(Model, MODEL)
 
