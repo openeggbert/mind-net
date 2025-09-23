@@ -674,7 +674,7 @@ namespace mindnet::http
                 return crow::response(400, credentials.error);
             }
             string error;
-            QueryParams query_params;
+            orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, credentials.username);
             LoginToken login_token{req};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
@@ -726,7 +726,7 @@ namespace mindnet::http
 
             //
             string error;
-            QueryParams query_params;
+            orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
             query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
             LoginToken login_token{req};

@@ -99,7 +99,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult MapValidator::validate_list_authorization(const RequestContext& ctx,
                                                                 const string_map& filter) const
     {
-        http::QueryParams params;
+        orm::QueryParams params;
         params.page_size = 100;
         for (auto& [key, value] : filter)
         {

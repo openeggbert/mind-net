@@ -13,14 +13,14 @@
 #include "TriggerPhase.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
 #include <vector>
-#include "mindnet/http/QueryParams.h"
+#include "mindnet/orm/QueryParams.h"
 #include "mindnet/model/ModelDefinition.h"
 #include "mindnet/api/Trigger.h"
 
 namespace mindnet::api
 {
     constexpr entity_fields empty_entity_fields;
-    const http::QueryParams empty_query_params;
+    const orm::QueryParams empty_query_params;
     class TriggerRegistry
     {
     public:
@@ -40,7 +40,7 @@ namespace mindnet::api
             int user_id,
             int id,
             const entity_fields& fields = empty_entity_fields,
-            const http::QueryParams& query_params = empty_query_params);
+            const orm::QueryParams& query_params = empty_query_params);
 
     private:
         using CrudLMap = std::unordered_map<mindnet::core::Crudl, std::vector<TriggerPtr>>;

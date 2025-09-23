@@ -5,7 +5,7 @@
 #ifndef MIND_NET_ISERVICE_H
 #define MIND_NET_ISERVICE_H
 #include "crow/json.h"
-#include "../http/QueryParams.h"
+#include "../orm/QueryParams.h"
 #include "../model/ModelDefinition.h"
 #include "IValidator.h"
 #include "IPersistence.h"
@@ -37,7 +37,7 @@ namespace mindnet::api
                                        entity_fields& fields, int stack_depth = 0) = 0;
         virtual OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id, int stack_depth = 0) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
-            ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params, int stack_depth = 0) = 0;
+            ModelDefinition& def, http::LoginToken& token, orm::QueryParams& query_params, int stack_depth = 0) = 0;
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //

@@ -288,12 +288,12 @@ namespace mindnet::http
             string order = req.url_params.get("order") ? req.url_params.get("order") : "";
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
-            http::QueryParams query_params;
+            orm::QueryParams query_params;
             query_params.page_number = page_number;
             query_params.page_size = page_size;
             query_params.total_items = 0;
             query_params.sort = sort;
-            query_params.order = order.empty() ? http::Order::Asc : http::string_to_order(order);
+            query_params.order = order.empty() ? orm::Order::Asc : orm::string_to_order(order);
 
 
             split_string_by_commas(fields, query_params.fields);

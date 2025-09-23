@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "mindnet/essential/Helper.h"
-#include "../http/QueryParams.h"
+#include "../orm/QueryParams.h"
 #include "../model/BaseModel.h"
 #include "SQLiteCpp/Statement.h"
 
@@ -71,9 +71,9 @@ namespace mindnet::util
         static std::vector<std::string> split_with_quotes(const std::string& input);
 
         static string generate_select_one_sql(const std::string& table_name);
-        static string generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params,
+        static string generate_select_all_sql(const std::string& table_name, const orm::QueryParams& query_params,
                                               bool count = false);
-        static string generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params);
+        static string generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params);
 
         static string generate_insert_sql(const model::ModelDefinition& definition);
         static string generate_update_sql(const model::ModelDefinition& definition);

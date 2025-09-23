@@ -27,7 +27,7 @@ namespace mindnet::api
         int user_id,
         int id,
         const entity_fields& fields,
-        const http::QueryParams& query_params)
+        const orm::QueryParams& query_params)
     {
 
         std::vector<std::string> v{def.get_model_name(), "*"};

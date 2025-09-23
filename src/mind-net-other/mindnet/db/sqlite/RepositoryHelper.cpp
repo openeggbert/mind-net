@@ -23,7 +23,7 @@
 
 #include "mindnet/util/Utils.h"
 #include "mindnet/essential/Global.h"
-#include "mindnet/http/QueryParams.h"
+#include "../../../../../include/mind-net-other/mindnet/orm/QueryParams.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
 #include "SQLiteCpp/Database.h"
 
@@ -254,7 +254,7 @@ namespace mindnet::db::sqlite
 
     void bind_query_filters(
         model::ModelDefinition& def,
-        http::QueryParams& query_params,
+        orm::QueryParams& query_params,
         SQLite::Statement& query,
         int& bind_index)
     {
@@ -299,7 +299,7 @@ namespace mindnet::db::sqlite
 
     std::vector<entity_fields> list_models(
         model::ModelDefinition& def,
-        http::QueryParams& query_params,
+        orm::QueryParams& query_params,
         string& error
     )
     {

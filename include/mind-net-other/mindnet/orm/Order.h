@@ -6,7 +6,7 @@
 #include <stdexcept>
 #include "mindnet/essential/Helper.h"
 
-namespace mindnet::http
+namespace mindnet::orm
 {
     enum class Order
     {

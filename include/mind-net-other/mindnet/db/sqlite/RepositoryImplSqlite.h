@@ -45,7 +45,7 @@ namespace mindnet::db::sqlite
         entity_fields read(int id, string& error) override;
         bool update(int id, entity_fields& fields, string& error) override;
         bool remove(int id, string& error) override;
-        std::vector<entity_fields> list(http::QueryParams& query_params, string& error) override;
+        std::vector<entity_fields> list(orm::QueryParams& query_params, string& error) override;
         [[nodiscard]] model::ModelDefinition& get_model_definition() override;
         entity_fields request_to_entity_fields(crow::json::rvalue& body, mindnet::core::Crudl crudl) override;
     };

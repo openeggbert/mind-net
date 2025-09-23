@@ -5,7 +5,7 @@
 #include "mindnet/api/PersistenceMethods.h"
 
 #include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/http/QueryParams.h"
+#include "../../../../include/mind-net-other/mindnet/orm/QueryParams.h"
 #include "mindnet/api/ValidatorBase.h"
 
 namespace mindnet::api
@@ -33,7 +33,7 @@ namespace mindnet::api
     bool has_user_name(const RequestContext& ctx, string user_name)
     {
         string error;
-        http::QueryParams query_params;
+        orm::QueryParams query_params;
         query_params.filters.emplace("name", user_name);
 
         return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
@@ -42,7 +42,7 @@ namespace mindnet::api
     bool has_user_email(const RequestContext& ctx, string user_email)
     {
         string error;
-        http::QueryParams query_params;
+        orm::QueryParams query_params;
         query_params.filters.emplace("email", user_email);
         return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
@@ -50,7 +50,7 @@ namespace mindnet::api
     bool has_map_name(const RequestContext& ctx, string map_name)
     {
         string error;
-        http::QueryParams query_params;
+        orm::QueryParams query_params;
         query_params.filters.emplace("name", map_name);
 
         return !ctx.db->list(plugins::slipbox::models::MAP_DEFINITION, ctx.token, query_params).first.empty();
@@ -63,7 +63,7 @@ namespace mindnet::api
         plugins::core::models::Team team;
         team.from_values(team_result.first);
 
-        http::QueryParams query_params;
+        orm::QueryParams query_params;
         query_params.filters.emplace("team_id", std::to_string(team.get_id()));
         query_params.filters.emplace("user_id", std::to_string(ctx.token.user_id));
         query_params.filters.emplace("status", std::to_string(cast64(plugins::core::enums::UserStatus::Active)));
@@ -79,7 +79,7 @@ namespace mindnet::api
 
     std::pair<int, string> find_note_for_content(const RequestContext& ctx, int content_id)
     {
-        http::QueryParams query_params;
+        orm::QueryParams query_params;
         query_params.filters.emplace("content_id", std::to_string(content_id));
         auto notes = ctx.db->list(plugins::slipbox::models::NOTE_DEFINITION, ctx.token, query_params);
         if (notes.second.ko()) return {-1, notes.second.error};

@@ -12,7 +12,7 @@
 #include <regex>
 
 #include "mindnet/essential/Global.h"
-#include "mindnet/http/QueryParams.h"
+#include "../../../../include/mind-net-other/mindnet/orm/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet::util
@@ -315,7 +315,7 @@ namespace mindnet::util
      * @param count A boolean flag. If true, modifies the query to ignore sorting and pagination, suitable for row count queries. Default is false.
      * @return The constructed SQL query as a string.
      */
-    string Utils::generate_select_all_sql(const std::string& table_name, const http::QueryParams& query_params,
+    string Utils::generate_select_all_sql(const std::string& table_name, const orm::QueryParams& query_params,
                                           bool count)
     {
         auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
@@ -348,7 +348,7 @@ namespace mindnet::util
         return sql;
     }
 
-    string Utils::generate_select_count_sql(const std::string& table_name, const http::QueryParams& query_params)
+    string Utils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params)
     {
         return generate_select_all_sql(table_name, query_params, true);
     }

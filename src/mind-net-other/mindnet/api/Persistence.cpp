@@ -102,7 +102,7 @@ namespace mindnet::api
     std::pair<std::vector<entity_fields>, OperationResult> Persistence::list(
         ModelDefinition& def,
         http::LoginToken& token,
-        http::QueryParams& query_params)
+        orm::QueryParams& query_params)
     {
         string error;
         auto l = get_repository(def.get_model_name())->list(query_params, error);

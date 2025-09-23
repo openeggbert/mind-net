@@ -10,7 +10,7 @@
 #include "mindnet/api/OperationResult.h"
 #include "TriggerPhase.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
-#include "mindnet/http/QueryParams.h"
+#include "../orm/QueryParams.h"
 #include "mindnet/model/ModelDefinition.h"
 
 namespace mindnet {
@@ -33,7 +33,7 @@ namespace mindnet::api
         using ReadFn   = std::pair<entity_fields, OperationResult>(Service::*)(const model::ModelDefinition&, http::LoginToken&, int, int);
         using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, http::LoginToken&, int, entity_fields&, int);
         using DeleteFn = OperationResult(Service::*)(model::ModelDefinition&, http::LoginToken&, int, int);
-        using ListFn   = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(model::ModelDefinition&, http::LoginToken&, http::QueryParams&, int);
+        using ListFn   = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(model::ModelDefinition&, http::LoginToken&, orm::QueryParams&, int);
 
 
           Trigger(
@@ -83,7 +83,7 @@ namespace mindnet::api
             return (service_ptr->*delete_fn)(def, token, id, depth);
         }
 
-        std::pair<std::vector<entity_fields>, OperationResult> run_list(model::ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params, int depth)
+        std::pair<std::vector<entity_fields>, OperationResult> run_list(model::ModelDefinition& def, http::LoginToken& token, orm::QueryParams& query_params, int depth)
         {
             return (service_ptr->*list_fn)(def, token, query_params, depth);
         }
@@ -97,7 +97,7 @@ namespace mindnet::api
             int user_id,
             int id,
             entity_fields fields,
-            http::QueryParams query_params
+            orm::QueryParams query_params
         ) = 0;
         //
         inline const std::string& get_name() const { return name; }

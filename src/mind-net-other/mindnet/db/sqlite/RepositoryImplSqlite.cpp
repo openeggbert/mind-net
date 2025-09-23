@@ -63,7 +63,7 @@ namespace mindnet::db::sqlite
         return delete_model(get_model_definition(), id, error);
     }
 
-    std::vector<entity_fields> RepositoryImplSqlite::list(http::QueryParams& query_params, string& error)
+    std::vector<entity_fields> RepositoryImplSqlite::list(orm::QueryParams& query_params, string& error)
     {
         return list_models(get_model_definition(), query_params, error);
     }

@@ -217,7 +217,7 @@ namespace mindnet::api
     };
 
     std::pair<std::vector<entity_fields>, OperationResult> Service::list(
-        ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params, int stack_depth)
+        ModelDefinition& def, http::LoginToken& token, orm::QueryParams& query_params, int stack_depth)
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {{}, {500, "Max trigger depth exceeded"}};
         auto action = Crudl::List;

@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::triggers
             int user_id,
             int id,
             const entity_fields fields,
-            const http::QueryParams query_params
+            const orm::QueryParams query_params
         );
 
     };

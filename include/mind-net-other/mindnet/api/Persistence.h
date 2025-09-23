@@ -41,7 +41,7 @@ namespace mindnet::api
                                entity_fields& fields) override;
         OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id) override;
         std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, http::LoginToken& token,
-                                                                    http::QueryParams& query_params) override;
+                                                                    orm::QueryParams& query_params) override;
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 

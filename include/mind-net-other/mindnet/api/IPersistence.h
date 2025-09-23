@@ -31,7 +31,7 @@ namespace mindnet::api
                                        entity_fields& fields) = 0;
         virtual OperationResult remove(ModelDefinition& def, http::LoginToken& token, int id) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
-            ModelDefinition& def, http::LoginToken& token, http::QueryParams& query_params) = 0;
+            ModelDefinition& def, http::LoginToken& token, orm::QueryParams& query_params) = 0;
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //

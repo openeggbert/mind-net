@@ -25,7 +25,7 @@
 
 #include "SqliteFileName.h"
 #include "../../util/Utils.h"
-#include "mindnet/http/QueryParams.h"
+#include "../../orm/QueryParams.h"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet::db::sqlite
@@ -45,7 +45,7 @@ namespace mindnet::db::sqlite
 
     std::vector<entity_fields> list_models(
         model::ModelDefinition& def,
-        mindnet::http::QueryParams& query_params,
+        mindnet::orm::QueryParams& query_params,
         string& error
     );
 }

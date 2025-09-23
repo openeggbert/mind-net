@@ -28,7 +28,7 @@
 #include "mindnet/essential/Helper.h"
 #include "mindnet/plugins/core/enums/Crudl.h"
 #include "../model/ModelDefinition.h"
-#include "mindnet/http/QueryParams.h"
+#include "../orm/QueryParams.h"
 
 namespace mindnet::api
 {
@@ -45,7 +45,7 @@ namespace mindnet::api
         virtual entity_fields read(int id, string& error) = 0;
         virtual bool update(int id, entity_fields& fields, string& error) = 0;
         virtual bool remove(int id, string& error) = 0;
-        virtual std::vector<entity_fields> list(http::QueryParams& query_params, string& error) = 0;
+        virtual std::vector<entity_fields> list(orm::QueryParams& query_params, string& error) = 0;
         [[nodiscard]] virtual mindnet::model::ModelDefinition& get_model_definition() = 0;
         virtual entity_fields request_to_entity_fields(crow::json::rvalue& body,
                                                        mindnet::core::Crudl crudl) =

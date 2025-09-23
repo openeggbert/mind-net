@@ -7,7 +7,7 @@
 
 #include "Order.h"
 
-namespace mindnet::http
+namespace mindnet::orm
 {
     struct QueryParams
     {
@@ -18,7 +18,7 @@ namespace mindnet::http
 
         // sorting
         std::optional<std::string> sort; // e.g. "created_at"
-        std::optional<mindnet::http::Order> order; // "asc" or "desc"
+        std::optional<mindnet::orm::Order> order; // "asc" or "desc"
 
         // filters: key = field, value = filter value
         string_map filters;

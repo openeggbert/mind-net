@@ -98,7 +98,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult NoteValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
-        http::QueryParams params;
+        orm::QueryParams params;
         params.page_size = 100;
         for (auto& [key, value] : filter)
         {
