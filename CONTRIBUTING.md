@@ -31,6 +31,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
+- [ ] New CMake target orm
 - [ ] FEATURE New entity Flag
 - [ ] FEATURE New entity Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
 - [ ] Use SM-18, new entity review_session

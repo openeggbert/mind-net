@@ -7,7 +7,7 @@ target_include_directories(Tests PRIVATE
 )
 
 target_link_libraries(Tests PRIVATE
-        mind_net_core
+        mind_net_essential
         mind_net_other
         gtest_main
 )
