@@ -53,11 +53,11 @@ namespace mindnet::plugins::core::validators
 
     OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(g_configuration.registration_mode == mindnet::core::RegistrationMode::AdminAddsUsers && ctx.token.ko(),
+        return_if(g_configuration.registration_mode == mindnet::essential::RegistrationMode::AdminAddsUsers && ctx.token.ko(),
                   401, "You must be logged in to create a user")
 
         return_if(
-            g_configuration.registration_mode == mindnet::core::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != mindnet::essential::UserRole::
+            g_configuration.registration_mode == mindnet::essential::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != mindnet::essential::UserRole::
             Admin,
             403, "You must be admin to create a user.")
 
@@ -65,13 +65,13 @@ namespace mindnet::plugins::core::validators
                   400, "role" " must be equal to " + user_role_to_string(g_configuration.
                       default_user_role))
 
-        return_if(has_user_name(ctx, entity.username),
+        return_if(CorePersistenceMethods::has_user_name(ctx, entity.username),
                   409, "username already exists")
 
         return_if(entity.password_hash == "*",
                   400, "password_hash cannot be placeholder during user creation");
 
-        return_if(has_user_email(ctx, entity.email),
+        return_if(CorePersistenceMethods::has_user_email(ctx, entity.email),
                   409, "email already exists");
 
         return ok_result;

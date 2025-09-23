@@ -20,8 +20,6 @@
 #ifndef IREPOSITORY_H
 #define IREPOSITORY_H
 
-#include <nlohmann/json.hpp>
-
 #include <string>
 
 #include "crow/json.h"

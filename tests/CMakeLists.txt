@@ -8,7 +8,12 @@ target_include_directories(Tests PRIVATE
 
 target_link_libraries(Tests PRIVATE
         mind_net_essential
-        mind_net_other
+        mind_net_util
+        mind_net_model
+        mind_net_orm
+        mind_net_api
+        mind_net_http
+        mind_net_db_sqlite
         gtest_main
 )
 

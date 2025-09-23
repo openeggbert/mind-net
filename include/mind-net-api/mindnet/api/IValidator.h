@@ -7,15 +7,12 @@
 #include <functional>
 #include <memory>
 
+#include "LoginToken.h"
 #include "OperationResult.h"
 #include "mindnet/essential/Helper.h"
 
-namespace mindnet::http
-{
-    struct LoginToken;
-}
 namespace mindnet::api {
-    struct LoginToken;
+
     class IPersistence; }
 
 namespace mindnet::api

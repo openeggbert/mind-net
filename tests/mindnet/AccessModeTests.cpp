@@ -1,10 +1,9 @@
 #include <gtest/gtest.h>
 #include "mindnet/essential/AccessMode.h"
-#include "../../include/mind-net-api/mindnet/api/RequestContext.h"
-#include "../../include/mind-net-api/mindnet/api/ValidatorBase.h"
+#include "mindnet/api/RequestContext.h"
+#include "mindnet/api/ValidatorBase.h"
 
 using namespace mindnet;
-using namespace mindnet::plugins::core::enums;
 
 namespace mindnet::api
 {
@@ -28,7 +27,7 @@ api::RequestContext make_ctx(UserRole role)
 {
     std::string user = "user";
     std::string error;
-    return api::RequestContext{dummy_db, dummy_token, role, UserStatus::Active};
+    return api::RequestContext{dummy_db, dummy_token, role, essential::UserStatus::Active};
 }
 } // namespace mindnet
 
@@ -39,7 +38,7 @@ class AuthorizationEnabledTest : public ::testing::Test
 {
 };
 
-using mindnet::core::AccessMode;
+using mindnet::essential::AccessMode;
 using api::is_authorization_enabled;
 using mindnet::essential::UserRole;
 

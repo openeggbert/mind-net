@@ -24,13 +24,11 @@ namespace mindnet {
         struct ModelDefinition;
     }
 
-    namespace http
+    namespace api
     {
         struct LoginToken;
-    }
-namespace api{
-    struct LoginToken;
-    class Service;} }
+        class Service;
+    } }
 
 namespace mindnet::api
 {

@@ -18,6 +18,8 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+#include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
+
 #include <memory>
 
 #include "mindnet/api/IRepository.h"
@@ -26,7 +28,7 @@
 
 namespace mindnet::db::sqlite
 {
-    std::shared_ptr<api::IRepository> create(const model::ModelDefinition& model_definition)
+    std::shared_ptr<api::IRepository> SqliteRepositoryFactory::create(const model::ModelDefinition& model_definition)
     {
         return std::make_shared<db::sqlite::RepositoryImplSqlite>(model_definition);
     }

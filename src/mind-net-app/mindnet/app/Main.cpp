@@ -21,17 +21,18 @@
 #include "mindnet/api/Service.h"
 #include "mindnet/api/PluginRegistry.h"
 #include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
-#include "mindnet/plugins/chat/ChatPluginFactory.h"
+#include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
-#include "mindnet/plugins/mail/MailPluginFactory.h"
-#include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
-#include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
-#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
+// #include "mindnet/plugins/chat/ChatPluginFactory.h"
+// #include "mindnet/plugins/mail/MailPluginFactory.h"
+// #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
+// #include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
+// #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 
-#define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create());
-using mindnet::core::commit;
+#define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(sqlite_repository_factory));
+using mindnet::essential::commit;
 using mindnet::essential::g_configuration;
-using mindnet::core::ExitStatus;
+using mindnet::essential::ExitStatus;
 using_loggers()
 
 void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_ptr)
@@ -42,7 +43,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
     if (database_type != mindnet::essential::DatabaseType::SQLite)
     {
         err << "SQLite database is only supported, but you configured " <<
-            mindnet::core::database_type_to_string(database_type) << commit;
+            mindnet::essential::database_type_to_string(database_type) << commit;
         exit(ExitStatus::MIGRATION_FAILED);
     }
     for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
@@ -220,7 +221,7 @@ bool commands_function_start(
 
     info << "Starting backend on port " << port << commit;
     info << "Starting frontend on port " << frontend_port << commit;
-    mindnet::core::start_time = mindnet::util::Utils::currentUnixTimestamp();
+    mindnet::essential::start_time = mindnet::util::Utils::currentUnixTimestamp();
     g_configuration.host = host;
     g_configuration.port = port;
     g_configuration.frontend_port = frontend_port;
@@ -275,17 +276,20 @@ bool run_command(
 
 void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugin_registry)
 {
+
+    std::shared_ptr<mindnet::api::RepositoryFactory> sqlite_repository_factory = std::make_shared<mindnet::db::sqlite::SqliteRepositoryFactory>();
+
     REGISTER_PLUGIN(core, Core)
-    REGISTER_PLUGIN(slipbox, SlipBox)
-    REGISTER_PLUGIN(supermemo, SuperMemo)
-    REGISTER_PLUGIN(mail, Mail)
-    REGISTER_PLUGIN(chat, Chat)
-    REGISTER_PLUGIN(suggestion, Suggestion)
+    // REGISTER_PLUGIN(slipbox, SlipBox)
+    // REGISTER_PLUGIN(supermemo, SuperMemo)
+    // REGISTER_PLUGIN(mail, Mail)
+    // REGISTER_PLUGIN(chat, Chat)
+    // REGISTER_PLUGIN(suggestion, Suggestion)
 }
 
 int main(int argc, char** argv)
 {
-    mindnet::core::start_time = mindnet::util::Utils::currentUnixTimestamp();
+    mindnet::essential::start_time = mindnet::util::Utils::currentUnixTimestamp();
 
     auto loggers = {
         &fatal, &err, &warn, &info, &debug, &trace, &experiment

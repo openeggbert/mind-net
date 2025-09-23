@@ -11,6 +11,7 @@
 #include "IValidator.h"
 #include "OperationResult.h"
 #include "RequestContext.h"
+#include "../plugins/core/CorePersistenceMethods.h"
 #include "mindnet/model/BaseModel.h"
 
 #include "mindnet/essential/Helper.h"
@@ -50,16 +51,12 @@ namespace mindnet::api
     class IValidator;
 }
 
-namespace mindnet::http
-{
-    class LoginToken;
-}
-
 namespace mindnet::api
 {
     using essential::g_configuration;
     using essential::AccessMode;
     using essential::Crudl;
+    using mindnet::plugins::core::CorePersistenceMethods::find_logged_user;
 
     inline bool is_authorization_enabled(const RequestContext& ctx)
     {

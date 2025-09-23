@@ -11,7 +11,9 @@ namespace mindnet::plugins::core
     class CorePluginFactory : public api::PluginFactory
     {
     public:
-        [[nodiscard]] api::PluginPtr create() const override;
+        CorePluginFactory() = default;
+        ~CorePluginFactory() override = default;
+        [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;
     };
 }
 

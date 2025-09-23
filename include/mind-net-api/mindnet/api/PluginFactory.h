@@ -7,7 +7,8 @@
 #define REGISTER_MODEL(model, Model, MODEL)\
 plugin->register_model(\
         models::MODEL##_DEFINITION,\
-        std::make_shared<validators::Model##Validator>());
+        std::make_shared<validators::Model##Validator>(),\
+        repository_factory);
 
 #define REGISTER_MIGRATIONS(Plugin, DatabaseType) plugin->register_migrations(std::make_shared<migrations:: Plugin##DatabaseType##MigrationScripts>());
 
@@ -20,7 +21,7 @@ namespace mindnet::api
     public:
         virtual ~PluginFactory() = default;
 
-        [[nodiscard]] virtual PluginPtr create() const = 0;
+        [[nodiscard]] virtual PluginPtr create(std::shared_ptr<RepositoryFactory>& repository_factory) const = 0;
     };
 }
 #endif // PLUGINFACTORY_H

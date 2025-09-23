@@ -18,6 +18,9 @@ target_include_directories(mind_net_http
 target_link_libraries(mind_net_http
         PUBLIC
         nlohmann_json::nlohmann_json
+        OpenSSL::Crypto
+        pthread
+        dl
         mind_net_essential
         mind_net_util
         mind_net_model

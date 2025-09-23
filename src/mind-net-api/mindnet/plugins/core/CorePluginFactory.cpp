@@ -14,7 +14,8 @@
 namespace mindnet::plugins::core
 {
     const string CORE_PLUGIN_NAME = "core";
-    api::PluginPtr CorePluginFactory::create() const
+
+    api::PluginPtr CorePluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
             CORE_PLUGIN_NAME,

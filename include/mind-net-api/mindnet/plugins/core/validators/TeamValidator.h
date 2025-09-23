@@ -8,6 +8,7 @@
 
 #include "mindnet/essential/Helper.h"
 #include "../../../../../mind-net-api/mindnet/api/ValidatorBase.h"
+#include "mindnet/plugins/core/models/Team.h"
 
 namespace mindnet::plugins::core::validators
 {

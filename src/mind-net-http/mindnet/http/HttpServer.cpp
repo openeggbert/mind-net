@@ -11,12 +11,12 @@
 #include "mindnet/essential/Configuration.h"
 #include "mindnet/api/Service.h"
 #include "mindnet/essential/Version.h"
-#include "../../../../include/mind-net-api/mindnet/api/LoginToken.h"
+#include "mindnet/api/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/util/Utils.h"
 #define check_maintenance_mode()\
-if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)\
+if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)\
 return crow::response(503, "Maintenance Mode. Service Unavailable.");
 
 namespace mindnet::http
@@ -99,7 +99,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/web/<string>")
         ([this](const crow::request& req, crow::response& res, const std::string& file_name)
         {
-            if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)
+            if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)
             {
                 res.code = 503;
                 res.write("Maintenance Mode. Service Unavailable.");
@@ -240,7 +240,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/web")
         ([](const crow::request&, crow::response& res)
         {
-            if (g_configuration.access_mode == core::AccessMode::MaintenanceMode)
+            if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)
             {
                 res.code = 503;
                 res.write("Maintenance Mode. Service Unavailable.");
@@ -610,10 +610,10 @@ namespace mindnet::http
             nlohmann::ordered_json result;
 
             auto now = util::Utils::currentUnixTimestamp();
-            result["status"] = g_configuration.access_mode == core::AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
-            result["uptime"] = print_duration(core::start_time, now);
+            result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
+            result["uptime"] = print_duration(essential::start_time, now);
             result["timestamp"] = util::Utils::unixToFormattedString(now);
-            result["started_at"] = util::Utils::unixToFormattedString(core::start_time);
+            result["started_at"] = util::Utils::unixToFormattedString(essential::start_time);
 
             return crow::response(200, result.dump(2));
 
@@ -677,7 +677,7 @@ namespace mindnet::http
             string error;
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, credentials.username);
-            LoginToken login_token{req};
+            api::LoginToken login_token{req};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (users.first.empty()) { return crow::response(401, "User does not exist."); }
             plugins::core::models::User user;
@@ -711,7 +711,7 @@ namespace mindnet::http
         {
             check_maintenance_mode()
             
-            if (g_configuration.registration_mode == core::RegistrationMode::AdminAddsUsers)
+            if (g_configuration.registration_mode == essential::RegistrationMode::AdminAddsUsers)
             {
                 return crow::response{405, "Endpoint /register is disabled. Only admin can add new users."};
             }
@@ -730,7 +730,7 @@ namespace mindnet::http
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
             query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
-            LoginToken login_token{req};
+            api::LoginToken login_token{req};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
@@ -745,7 +745,7 @@ namespace mindnet::http
             user.profile_text = profile_text;
             user.last_login = 0;
             user.email = email;
-            user.status = plugins::core::enums::UserStatus::Pending;
+            user.status = essential::UserStatus::Pending;
 
             error.clear();
             auto fields_ = user.to_values();
@@ -761,8 +761,8 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/protected")([](const crow::request& req)
         {
             check_maintenance_mode()
-            
-            LoginToken login_token{req};
+
+            api::LoginToken login_token{req};
             return crow::response(login_token.status, login_token.msg);
         });
     }
