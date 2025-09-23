@@ -4,7 +4,7 @@
 
 #include "mindnet/essential/Global.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     ll start_time = 0l;
 

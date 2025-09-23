@@ -11,7 +11,7 @@
 
 #include "mindnet/essential/ConsoleColor.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     std::string log_level_to_string(const LogLevel& log_level)
     {

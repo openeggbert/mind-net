@@ -9,10 +9,10 @@
 #include "Crudl.h"
 #include "UserRole.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
-    using core::Crudl;
-    using core::UserRole;
+    using essential::Crudl;
+    using essential::UserRole;
 
     enum class AccessMode
     {

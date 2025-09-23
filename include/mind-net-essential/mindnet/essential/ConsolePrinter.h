@@ -6,7 +6,7 @@
 
 #include "ConsoleColor.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     using print_timestamp_function = std::string (*)();
 

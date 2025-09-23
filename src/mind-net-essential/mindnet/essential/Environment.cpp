@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace mindnet::core
+namespace mindnet::essential
 {
      std::string environment_to_string(const Environment& environment)
     {

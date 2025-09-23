@@ -6,7 +6,7 @@
 
 #include "LogLevel.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     typedef ConsolePrinter logger;
 

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "mindnet/util/Utils.h"
+#include "../../../../include/mind-net-util/mindnet/util/Utils.h"
 #include <memory>
 
 #include "mindnet/essential/Configuration.h"
@@ -277,10 +277,10 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 {
     REGISTER_PLUGIN(core, Core)
     REGISTER_PLUGIN(slipbox, SlipBox)
-    // REGISTER_PLUGIN(supermemo, SuperMemo)
-    // REGISTER_PLUGIN(mail, Mail)
-    // REGISTER_PLUGIN(chat, Chat)
-    // REGISTER_PLUGIN(suggestion, Suggestion)
+    REGISTER_PLUGIN(supermemo, SuperMemo)
+    REGISTER_PLUGIN(mail, Mail)
+    REGISTER_PLUGIN(chat, Chat)
+    REGISTER_PLUGIN(suggestion, Suggestion)
 }
 
 int main(int argc, char** argv)

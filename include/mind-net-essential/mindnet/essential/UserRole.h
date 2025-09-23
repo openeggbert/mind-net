@@ -23,7 +23,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     /**
      * @enum UserRole

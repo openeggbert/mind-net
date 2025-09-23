@@ -33,8 +33,26 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jwt-cpp/include)
 
 # ===== Project modules =====
 add_subdirectory(src/mind-net-essential)
-add_subdirectory(src/mind-net-other)
+add_subdirectory(src/mind-net-util)
+add_subdirectory(src/mind-net-model)
+add_subdirectory(src/mind-net-orm)
+
+
+add_subdirectory(src/mind-net-api)
+add_subdirectory(src/mind-net-db-sqlite)
+add_subdirectory(src/mind-net-http)
+
+
+
+add_subdirectory(src/mind-net-plugin-core)
+add_subdirectory(src/mind-net-plugin-slip-box)
+add_subdirectory(src/mind-net-plugin-super-memo)
+add_subdirectory(src/mind-net-plugin-mail)
+add_subdirectory(src/mind-net-plugin-chat)
+add_subdirectory(src/mind-net-plugin-suggesstion)
+
 add_subdirectory(src/mind-net-app)
+
 
 # ===== Tests =====
 if (ENABLE_TESTS)

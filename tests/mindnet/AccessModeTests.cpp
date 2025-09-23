@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "mindnet/essential/AccessMode.h"
-#include "mindnet/api/RequestContext.h"
-#include "mindnet/api/ValidatorBase.h"
+#include "../../include/mind-net-api/mindnet/api/RequestContext.h"
+#include "../../include/mind-net-api/mindnet/api/ValidatorBase.h"
 
 using namespace mindnet;
 using namespace mindnet::plugins::core::enums;
@@ -20,7 +20,7 @@ struct
     static std::shared_ptr<api::IPersistence> dummy_db;
 
     // Dummy login token
-    static http::LoginToken dummy_token{"user", 1, "", 0};
+    static api::LoginToken dummy_token{"user", 1, "", 0};
 
     using mindnet::core::UserRole;
 // Helper RequestContext constructor
@@ -71,7 +71,7 @@ TEST_F(AuthorizationEnabledTest, AuthenticatedFullAccess_AdminVsGuest)
 class AuthorizedToTest : public ::testing::Test
 {
 };
-using core::Crudl;
+using essential::Crudl;
 TEST_F(AuthorizedToTest, AdminsReadOnly_Admin)
 {
     EXPECT_TRUE(is_authorized_to(UserRole::Admin, AccessMode::AdminsReadOnly, Crudl::Read, false));

@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     enum class Environment
     {

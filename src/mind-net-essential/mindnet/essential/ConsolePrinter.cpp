@@ -4,7 +4,7 @@
 
 #include "mindnet/essential/ConsolePrinter.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     ConsolePrinter& commit(ConsolePrinter& printer)
     {

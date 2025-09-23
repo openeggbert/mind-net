@@ -5,7 +5,7 @@
 #ifndef MIND_NET_DATABASETYPE_H
 #define MIND_NET_DATABASETYPE_H
 
-namespace mindnet::core {
+namespace mindnet::essential {
 enum class DatabaseType
 {
     Unknown = 0,

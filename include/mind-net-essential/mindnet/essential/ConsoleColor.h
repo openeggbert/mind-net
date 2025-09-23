@@ -4,10 +4,9 @@
 #ifndef CONSOLECOLOR_H
 #define CONSOLECOLOR_H
 
-
 #include <string>
 
-namespace mindnet::core
+namespace mindnet::essential
 {
 
     enum class ConsoleColor

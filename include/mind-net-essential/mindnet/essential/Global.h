@@ -9,16 +9,16 @@
 #include "Logger.h"
 
 #define using_loggers()\
-using mindnet::core::fatal;\
-using mindnet::core::err;\
-using mindnet::core::warn;\
-using mindnet::core::info;\
-using mindnet::core::debug;\
-using mindnet::core::trace;\
-using mindnet::core::experiment;\
-using mindnet::core::commit;
+using mindnet::essential::fatal;\
+using mindnet::essential::err;\
+using mindnet::essential::warn;\
+using mindnet::essential::info;\
+using mindnet::essential::debug;\
+using mindnet::essential::trace;\
+using mindnet::essential::experiment;\
+using mindnet::essential::commit;
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     extern ll start_time;
     extern Logger fatal;

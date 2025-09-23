@@ -8,7 +8,7 @@
 
 #include "ConsoleColor.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     /**
      * @enum LogLevel

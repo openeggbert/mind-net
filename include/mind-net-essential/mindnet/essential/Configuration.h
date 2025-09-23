@@ -37,7 +37,7 @@ default_user_role=Reader
 jwt_secret=***
 */
 
-namespace mindnet::core
+namespace mindnet::essential
 {
     string_map load_mind_net_properties(const std::string& filename);
 

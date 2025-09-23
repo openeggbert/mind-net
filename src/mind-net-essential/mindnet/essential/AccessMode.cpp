@@ -4,10 +4,10 @@
 
 #include "mindnet/essential/AccessMode.h"
 
-namespace mindnet::core
+namespace mindnet::essential
 {
-    using core::Crudl;
-    using core::UserRole;
+    using essential::Crudl;
+    using essential::UserRole;
 
     bool is_access_mode_in(const AccessMode mode, const std::vector<AccessMode>& modes)
     {
