@@ -10,9 +10,6 @@
 #include "mindnet/http/RestHelper.h"
 #include "mindnet/plugins/core/models/ApiLog.h"
 
-#define check_maintenance_mode()\
-if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)\
-return crow::response(503, "Maintenance Mode. Service Unavailable.");
 using mindnet::essential::g_configuration;
 
 namespace mindnet::http

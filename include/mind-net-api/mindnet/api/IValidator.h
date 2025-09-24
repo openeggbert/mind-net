@@ -18,7 +18,7 @@ namespace mindnet::api {
 namespace mindnet::api
 {
     class IValidator;
-    typedef std::function<IValidator*(const std::string&)> GetValidatorFunc;
+    typedef std::function<std::shared_ptr<IValidator>(const std::string&)> GetValidatorFunc;
 
     using string = std::string;
 
@@ -44,7 +44,7 @@ namespace mindnet::api
         virtual void set_validator_func(GetValidatorFunc func) = 0;
         [[nodiscard]] virtual GetValidatorFunc get_validator_func() const = 0;
 
-        [[nodiscard]] IValidator* get_validator(const string& model_name) const
+        [[nodiscard]] std::shared_ptr<IValidator> get_validator(const string& model_name) const
         {
             auto func = get_validator_func();
             if (!func) return nullptr;

@@ -17,7 +17,7 @@ namespace mindnet::api
     class Service : public api::IService
     {
     private:
-        std::map<std::string, api::IValidator*> validators;
+        std::map<std::string, std::shared_ptr<IValidator>> validators;
         api::DbPtr db_ptr;
         api::PluginRegistryPtr plugin_registry_ptr;
         api::TriggerRegistryPtr trigger_registry_ptr;
@@ -48,7 +48,7 @@ namespace mindnet::api
         const api::PluginRegistryPtr get_plugin_registry() const override;
 
     private:
-        api::IValidator* get_validator(const std::string& name);
+        std::shared_ptr<IValidator> get_validator(const std::string& name);
         OperationResult can_create(const ModelDefinition& model_definition, api::LoginToken& token,
                                    entity_fields& ef) override;
         OperationResult can_read(const ModelDefinition& model_definition, api::LoginToken& token, int id) override;

@@ -39,8 +39,7 @@ namespace mindnet::api
                     auto model_definition = model_registration->model_definition;
                     const auto& model_name = model_definition.get_model_name();
 
-                    api::IValidator* validator = model_registration->validator.get();
-                    validators[model_name] = validator;
+                    validators[model_name] = model_registration->validator;
                 }
             }
             if (TRIGGERS_ENABLED) {
@@ -112,10 +111,6 @@ namespace mindnet::api
 
     Service::~Service()
     {
-        for (auto& e : validators)
-        {
-            delete e.second;
-        }
     };
 
     bool Service::has_model(const std::string& model_name)
@@ -252,7 +247,7 @@ namespace mindnet::api
         return db_ptr->request_to_entity_fields(body, crudl, def);
     };
 
-    api::IValidator* Service::get_validator(const std::string& name)
+    std::shared_ptr<IValidator> Service::get_validator(const std::string& name)
     {
         return validators.count(name) ? validators[name] : nullptr;
     }
@@ -262,7 +257,7 @@ namespace mindnet::api
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
-        api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        std::shared_ptr<IValidator> v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_create(db_ptr, token, ef);
@@ -278,7 +273,7 @@ namespace mindnet::api
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
-        api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        std::shared_ptr<IValidator> v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_read(db_ptr, token, id);
@@ -294,7 +289,7 @@ namespace mindnet::api
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
-        api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        std::shared_ptr<IValidator> v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_update(db_ptr, token, ef);
@@ -309,7 +304,7 @@ namespace mindnet::api
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
-        api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        std::shared_ptr<IValidator> v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_delete(db_ptr, token, id);
@@ -325,7 +320,7 @@ namespace mindnet::api
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
-        api::IValidator* v2 = get_validator(model_definition.get_model_name());
+        std::shared_ptr<IValidator> v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
             return v2->can_list(db_ptr, token, filter);

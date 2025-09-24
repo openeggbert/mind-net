@@ -75,7 +75,7 @@ namespace mindnet::api
         }
     }
 
-    typedef std::function<IValidator*(const std::string&)> GetValidatorFunc;
+    typedef std::function<std::shared_ptr<IValidator>(const std::string&)> GetValidatorFunc;
 
     template <typename Derived, typename Model>
     class ValidatorBase : public api::IValidator

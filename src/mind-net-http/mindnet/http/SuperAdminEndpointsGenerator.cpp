@@ -285,8 +285,8 @@ window.addEventListener("load", () => {{
         return params;
     }
 
-#define assert_super_admin_()
-#define assert_super_admin()\
+#define assert_super_admin()
+#define assert_super_admin_()\
     auto result = load_current_user(req, service_ptr);\
     if (auto resp = std::get_if<crow::response>(&result))\
     {\
