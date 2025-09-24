@@ -75,7 +75,7 @@ namespace mindnet::plugins::core::validators
         return_if(old_entity.created_by != new_entity.created_by,
                   400, "created_by cannot be changed")
 
-        return_if(old_entity.leader_id != new_entity.leader_id && ctx.role != mindnet::essential::UserRole::Admin,
+        return_if(old_entity.leader_id != new_entity.leader_id && ctx.role < mindnet::essential::UserRole::Admin,
                   400, "leader_id cannot be changed by yourself. Contact admin.")
 
         return ok_result;
@@ -83,7 +83,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult TeamValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role != mindnet::essential::UserRole::Admin,
+        return_if(ctx.role < mindnet::essential::UserRole::Admin,
                   403, "Only admins can delete a team. Contact admin");
 
         return ok_result;

@@ -174,6 +174,7 @@ namespace mindnet::essential
         if (mode == AccessMode::MaintenanceMode) return false;
         if (mode == AccessMode::PublicFullAccess) return true;
         if (role == UserRole::System) return true;
+        if (role == UserRole::SuperAdmin) return true;
 
         bool authenticated = role > UserRole::Guest;
 

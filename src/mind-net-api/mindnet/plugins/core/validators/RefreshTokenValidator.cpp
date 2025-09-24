@@ -87,3 +87,4 @@ namespace mindnet::plugins::core::validators
 
 #undef Model
 #undef MODEL
+#undef model

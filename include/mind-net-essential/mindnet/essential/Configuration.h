@@ -62,9 +62,10 @@ namespace mindnet::essential
         std::set<string> allowed_plugins;
 
         Configuration(const string_map& map);
+        bool save_mind_net_properties();
     };
 
-    inline const Configuration g_configuration(load_mind_net_properties("./mindnet.properties"));
+    inline Configuration g_configuration(load_mind_net_properties("./mindnet.properties"));
 }
 
 #endif //MIND_NET_CONFIGURATION_H

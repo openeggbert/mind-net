@@ -13,6 +13,7 @@
 #include "mindnet/essential/Version.h"
 #include "mindnet/api/LoginToken.h"
 #include "mindnet/http/UserCredentials.h"
+#include "mindnet/plugins/core/CorePersistenceMethods.h"
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/util/Utils.h"
 #define check_maintenance_mode()\
@@ -35,16 +36,35 @@ namespace mindnet::http
     }
 
     HttpServer::HttpServer(api::ServicePtr& service_ptr,
-                           const std::string& directory_for_static_files_)
+                           std::string  directory_for_static_files_)
         : service_ptr_(service_ptr),
-          directory_for_static_files(directory_for_static_files_)
+          directory_for_static_files(std::move(directory_for_static_files_))
     {
         create_web_endpoints();
 
         create_model_definition_endpoints(service_ptr);
         create_authentication_endpoints(service_ptr);
+        create_superadmin_endpoints(service_ptr);
         create_info_endpoint(service_ptr);
         create_health_endpoint(service_ptr);
+    }
+
+    void HttpServer::request_shutdown()
+    {
+        std::thread([this] {
+            std::this_thread::sleep_for(std::chrono::seconds{5L});
+            crow_app.stop();
+            std::exit(0); // clean exit, systemd won't restart unless Restart=always
+        }).detach();
+    }
+
+    void HttpServer::request_restart()
+    {
+        std::thread([this] {
+            std::this_thread::sleep_for(std::chrono::seconds{5L});
+            crow_app.stop();
+            std::_Exit(42); // restart, systemd will handle
+        }).detach();
     }
 
     void HttpServer::run(const string& host, int port, int frontend_port)
@@ -88,10 +108,10 @@ namespace mindnet::http
         crow_app.port(port).multithreaded().run();
     }
 
-    crow::SimpleApp& HttpServer::get_crow_app()
-    {
-        return crow_app;
-    }
+    // crow::SimpleApp& HttpServer::get_crow_app()
+    // {
+    //     return crow_app;
+    // }
 
 
     void HttpServer::create_web_endpoints()
@@ -664,6 +684,78 @@ namespace mindnet::http
     string get_jwt_secret()
     {
         return g_configuration.jwt_secret;
+    }
+
+    inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user) {
+        if (user.role < essential::UserRole::SuperAdmin) {
+            return crow::response(403, "Forbidden: only SuperAdmin can perform this action");
+        }
+        return std::nullopt;
+    }
+
+    using UserOrResponse = std::variant<plugins::core::models::User, crow::response>;
+
+    inline UserOrResponse
+    load_current_user(const crow::request& req, const api::ServicePtr& service_ptr)
+    {
+        api::LoginToken login_token{req};
+        if (login_token.user_id == 0)
+        {
+            return crow::response(401, "Unauthorized users cannot access this resource");
+        }
+        auto user_values = service_ptr->read(
+            plugins::core::models::USER_DEFINITION,
+            login_token,
+            login_token.user_id
+        );
+
+        if (user_values.second.ko())
+        {
+            return crow::response(500, "Loading user role failed. " + user_values.second.error);
+        }
+
+        plugins::core::models::User user;
+        user.from_values(user_values.first);
+        return user;
+    }
+
+    void HttpServer::create_superadmin_endpoints(const api::ServicePtr& service_ptr)
+    {
+        CROW_ROUTE(crow_app, "/api/v1/superadmin/shutdown").methods("POST"_method)
+        ([this, &service_ptr](const crow::request& req)
+        {
+            auto result = load_current_user(req, service_ptr);
+            if (auto resp = std::get_if<crow::response>(&result))
+            {
+                return std::move(*resp);
+            }
+            auto& user = std::get<plugins::core::models::User>(result);
+
+            if (auto forbidden = require_superadmin(user)) {
+               return std::move(*forbidden);
+           }
+
+            request_shutdown();
+            return crow::response(200, "Shutdown scheduled");;
+        });
+
+        CROW_ROUTE(crow_app, "/api/v1/superadmin/restart").methods("POST"_method)
+        ([this, &service_ptr](const crow::request& req)
+        {
+            auto result = load_current_user(req, service_ptr);
+            if (auto resp = std::get_if<crow::response>(&result))
+            {
+                return std::move(*resp);
+            }
+            auto& user = std::get<plugins::core::models::User>(result);
+
+            if (auto forbidden = require_superadmin(user)) {
+                return std::move(*forbidden);
+            }
+
+            request_restart();
+            return crow::response(200, "Restart scheduled");;
+        });
     }
 
     void HttpServer::create_authentication_endpoints(const api::ServicePtr& service_ptr)

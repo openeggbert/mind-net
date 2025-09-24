@@ -156,6 +156,10 @@ namespace mindnet::api
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {api::empty_entity_fields, {500, "Max trigger depth exceeded"}};
 
+        if (id == 0)
+        {
+            return {{}, {400, "You cannot read using id=0"}};
+        }
         auto action = Crudl::Read;
         debug << "Calling read for " << def.get_model_name() << commit;
         auto validation_result = can_read(def.get_model_name(), token, id);

@@ -231,7 +231,7 @@ namespace mindnet::db::sqlite
         delete query_ptr;
 
         error = def.get_model_name() + " not found";
-        throw std::runtime_error(def.get_model_name() + " not found");
+        return {};
     }
 
     bool update_model(int id, model::ModelDefinition& def, entity_fields& fields_, string& error)

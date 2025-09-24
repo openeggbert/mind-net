@@ -57,7 +57,7 @@ namespace mindnet::plugins::core::validators
                   401, "You must be logged in to create a user")
 
         return_if(
-            g_configuration.registration_mode == mindnet::essential::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role != mindnet::essential::UserRole::
+            g_configuration.registration_mode == mindnet::essential::RegistrationMode::AdminAddsUsers && ctx.token.ok() && ctx.role < mindnet::essential::UserRole::
             Admin,
             403, "You must be admin to create a user.")
 

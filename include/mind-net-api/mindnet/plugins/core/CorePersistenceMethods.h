@@ -26,7 +26,7 @@
 // #include "mindnet/plugins/supermemo/models/SM2State.h"
 
 
-namespace mindnet::plugins::core
+namespace mindnet::plugins::core::models
 {
     struct User;
 }

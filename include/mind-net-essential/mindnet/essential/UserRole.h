@@ -38,6 +38,7 @@ namespace mindnet::essential
      * - EDITOR: Can modify without approval of someone else.
      * - REVIEWER: The same as editor, but additionally can approve suggested changes by readers.
      * - ADMIN: Can do anything.
+     * - SUPER_ADMIN: Has all ADMIN privileges plus system-level controls including server management (restart/shutdown) and runtime configuration modifications through the web interface.
      * - SYSTEM: Can do anything and even more than ADMIN.
      * During the first application launch, Mind Net creates two users with usernames: admin and editor, both the users have the empty passwords.
      */
@@ -48,7 +49,8 @@ namespace mindnet::essential
         Editor = 2,
         Reviewer = 3,
         Admin = 4,
-        System = 5
+        SuperAdmin = 5,
+        System = 100
     };
 
     inline std::string user_role_to_string(const UserRole role)
@@ -65,6 +67,8 @@ namespace mindnet::essential
             return "Reviewer";
         case UserRole::Admin:
             return "Admin";
+        case UserRole::SuperAdmin:
+            return "SuperAdmin";
         case UserRole::System:
             return "System";
         default:
@@ -84,6 +88,7 @@ namespace mindnet::essential
         if (role_str == "Editor") return UserRole::Editor;
         if (role_str == "Reviewer") return UserRole::Reviewer;
         if (role_str == "Admin") return UserRole::Admin;
+        if (role_str == "SuperAdmin") return UserRole::SuperAdmin;
         if (role_str == "System") return UserRole::System;
         throw std::runtime_error("Invalid user role: " + role_str);
     }

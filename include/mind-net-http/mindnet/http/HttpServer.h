@@ -20,7 +20,9 @@ namespace mindnet::http
     {
     public:
         HttpServer(api::ServicePtr& service_ptr,
-                   const std::string& directory_for_static_files = std::string("static"));
+                   std::string  directory_for_static_files = std::string("static"));
+        void request_shutdown();
+        void request_restart();
         void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
 
         template <typename T>
@@ -29,7 +31,7 @@ namespace mindnet::http
             controller->create_model_endpoint(crow_app, service_ptr_, definition);
         }
 
-        crow::SimpleApp& get_crow_app();
+        // crow::SimpleApp& get_crow_app();
 
     private:
         crow::SimpleApp crow_app;
@@ -41,6 +43,7 @@ namespace mindnet::http
         void create_model_definition_endpoints(const api::ServicePtr& service_ptr);
         void create_info_endpoint(const api::ServicePtr& service_ptr);
         void create_health_endpoint(const api::ServicePtr& service_ptr);
+        void create_superadmin_endpoints(const api::ServicePtr& service_ptr);
         void create_authentication_endpoints(const api::ServicePtr& service_ptr);
     };
 }
