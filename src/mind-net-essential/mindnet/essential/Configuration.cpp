@@ -7,10 +7,10 @@
 #include <filesystem>
 #include <iostream>
 #include <sstream>
-#include <fmt/core.h>
-#include <fmt/format.h>
 
 #include "mindnet/essential/Global.h"
+
+
 
 #define if_map_has(key) if (map_contains(map, #key))
 #define save_enum(key) if_map_has(key) key = string_to_##key(map.at( #key));
@@ -116,6 +116,11 @@ namespace mindnet::essential
         save_text(host)
         using mindnet::essential::string_to_database_type;
         save_enum(database_type)
+        if (database_type == DatabaseType::Unknown)
+        {
+            fatal << "You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application." << commit;
+            throw std::runtime_error("You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application.");
+        }
         //
         save_enum(access_mode)
         save_enum(registration_mode)
@@ -134,6 +139,10 @@ namespace mindnet::essential
     }
 
     constexpr auto mind_net_properties_template = FMT_STRING(R"(
+#Configuration for Mind Net
+
+#Warning: This configuration is loaded only when Mind Net starts.
+
 #Identification
 name={name}
 description={description}
@@ -181,7 +190,7 @@ allowed_plugins={allowed_plugins}
             }
 
             string old_name = "mindnet.properties";
-            auto new_name = backup_dir + "/" + old_name + std::to_string(static_cast<long long>(std::time(nullptr)));
+            auto new_name = backup_dir + "/" + old_name + "." + std::to_string(static_cast<long long>(std::time(nullptr)));
             try
             {
                 fs::rename(old_name, new_name);
@@ -209,7 +218,7 @@ allowed_plugins={allowed_plugins}
                         // Convert to full days
                         auto days = std::chrono::duration_cast<std::chrono::days>(age).count();
 
-                        debug << entry.path().filename().string() << " is " << days << " days old" << commit;
+                        trace << entry.path().filename().string() << " is " << days << " days old" << commit;
 
                         if (days > 365) {
                             info << "Deleting " << entry.path() <<
@@ -263,5 +272,110 @@ allowed_plugins={allowed_plugins}
         // file.close(); // not necessary, closes automatically when ofstream is destroyed
 
         return true;
+    }
+
+    fmt::dynamic_format_arg_store<fmt::format_context> Configuration::to_fmt_store()
+    {
+        using std::string;
+
+        fmt::dynamic_format_arg_store<fmt::format_context> store;
+        auto push_entry = [&store](const string& key, const auto& value)
+        {
+            // trace << key << commit;
+            store.push_back(fmt::arg(std::move(key).c_str(), value));
+        };
+
+#define push_enum(enum_name)\
+    push_entry(STRINGIFY(enum_name), enum_name##_options);
+
+        ////
+        auto generate_options = [](auto values, auto to_string, auto current, const std::string& prefix) {
+            std::string html;
+            for (auto v : values) {
+                std::string name = to_string(v);
+                std::string selected = (v == current) ? " selected" : "";
+                html += fmt::format("<option value=\"{}\"{}>{}</option>\n",
+                                    name, selected, name);
+            }
+            return html;
+        };
+
+auto env_to_str = [](Environment e) {return environment_to_string(e);};
+
+        std::string environment_options = generate_options(
+            environment_to_values(),
+            env_to_str,
+            g_configuration.environment,
+            "environment"
+        );
+
+        auto db_to_str = [](DatabaseType e) {return database_type_to_string(e);};
+
+        std::string database_type_options = generate_options(
+            essential::database_type_to_values(),
+            db_to_str,
+            g_configuration.database_type,
+            "database_type"
+        );
+
+        auto acc_to_str = [](AccessMode e) {return access_mode_to_string(e);};
+
+        std::string access_mode_options = generate_options(
+            essential::access_mode_to_values(),
+            acc_to_str,
+            g_configuration.access_mode,
+            "access_mode"
+        );
+
+        auto reg_to_str = [](RegistrationMode e) {return registration_mode_to_string(e);};
+
+        std::string registration_mode_options = generate_options(
+            essential::registration_mode_to_values(),
+            reg_to_str,
+            g_configuration.registration_mode,
+            "registration_mode"
+        );
+
+        auto role_to_str = [](UserRole e) {return user_role_to_string(e);};
+
+        std::string default_user_role_options = generate_options(
+            essential::user_role_to_values(),
+            role_to_str,
+            g_configuration.default_user_role,
+            "default_user_role"
+        );
+
+        auto log_to_str = [](LogLevel e) {return log_level_to_string(e);};
+
+        std::string max_log_level_options = generate_options(
+            essential::log_level_to_values(),
+            log_to_str,
+            g_configuration.max_log_level,
+            "max_log_level"
+        );
+
+        ////
+        push_entry("name", g_configuration.name);
+        push_entry("description", g_configuration.description);
+        push_enum(environment)
+        //
+        push_entry("host", g_configuration.host);
+        push_entry("port", g_configuration.port);
+        push_entry("frontend_port", g_configuration.frontend_port);
+        push_enum(database_type)
+        //
+        push_enum(access_mode)
+        push_enum(registration_mode)
+        push_enum(default_user_role)
+        // Add secret configuration
+        push_entry("jwt_secret", g_configuration.jwt_secret);
+        //
+
+        push_enum(max_log_level)
+        push_entry("allowed_plugins", fmt::join(g_configuration.allowed_plugins, ","));
+
+#undef push_enum
+
+        return store;
     }
 }

@@ -5,6 +5,7 @@
 #define ENVIRONMENT_H
 
 #include <string>
+#include <vector>
 
 namespace mindnet::essential
 {
@@ -14,6 +15,16 @@ namespace mindnet::essential
         Staging = 1,
         Development = 2
     };
+
+    inline std::vector<Environment> environment_to_values()
+    {
+        static std::vector values = {
+            Environment::Production,
+            Environment::Staging,
+            Environment::Development
+        };
+        return values;
+    }
 
     std::string environment_to_string(const Environment& environment);
 

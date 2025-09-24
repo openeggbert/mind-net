@@ -9,6 +9,7 @@
 namespace mindnet::essential
 {
     using print_timestamp_function = std::string (*)();
+    typedef std::function<bool()> bool_predicate;
 
     class ConsolePrinter; // fwd decl
 
@@ -23,13 +24,13 @@ namespace mindnet::essential
 
     public:
         ConsoleColor color = ConsoleColor::UNKNOWN;
-        bool enabled = true;
+        bool_predicate enabled_predicate = [] {return true;};
         print_timestamp_function print_timestamp_function_pointer = nullptr;
 
         ConsolePrinter(
             std::string before = "",
             std::string after = "",
-            bool enabled_ = true,
+            bool_predicate enabled_ = [] {return true;},
             ConsoleColor color_ = ConsoleColor::UNKNOWN,
             print_timestamp_function print_timestamp_function_pointer_ = nullptr
         );
@@ -37,7 +38,7 @@ namespace mindnet::essential
         template <typename T>
         ConsolePrinter& operator<<(const T& value)
         {
-            if (enabled) buffer << value;
+            if (enabled_predicate()) buffer << value;
             return *this;
         }
 

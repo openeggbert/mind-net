@@ -15,13 +15,13 @@ namespace mindnet::essential
     ConsolePrinter::ConsolePrinter(
         std::string before,
         std::string after,
-        bool enabled_,
+        bool_predicate enabled_predicate_,
         ConsoleColor color_,
         print_timestamp_function print_timestamp_function_pointer_
     )
         : prefix(std::move(before)),
           suffix(std::move(after)),
-          enabled(enabled_),
+          enabled_predicate(enabled_predicate_),
           color(color_),
           print_timestamp_function_pointer(print_timestamp_function_pointer_)
     {
@@ -34,7 +34,7 @@ namespace mindnet::essential
 
     ConsolePrinter& ConsolePrinter::operator<<(std::ostream& (*manip)(std::ostream&))
     {
-        if (!enabled) return *this;
+        if (!enabled_predicate()) return *this;
         if (manip == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
         {
             // 1. Flush current buffer
@@ -63,7 +63,7 @@ namespace mindnet::essential
 
     void ConsolePrinter::flush(bool new_line)
     {
-        if (!enabled) return;
+        if (!enabled_predicate()) return;
         std::cout << (color != ConsoleColor::UNKNOWN ? "\033[" + std::to_string(static_cast<int>(color)) + "m" : "");
         if (print_timestamp_function_pointer) std::cout << print_timestamp_function_pointer() << " ";
         std::cout << prefix << buffer.str() << suffix;
@@ -77,6 +77,6 @@ namespace mindnet::essential
 
     ConsolePrinter::~ConsolePrinter()
     {
-        if (enabled && !buffer.str().empty()) flush(true);
+        if (enabled_predicate() && !buffer.str().empty()) flush(true);
     }
 }

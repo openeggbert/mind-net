@@ -27,6 +27,22 @@ namespace mindnet::essential
         PublicFullAccess = 8                   // Fully open API: guests and authenticated users have unrestricted access
     };
 
+    inline std::vector<AccessMode> access_mode_to_values()
+    {
+        static std::vector<AccessMode> values = {
+            AccessMode::MaintenanceMode,
+            AccessMode::AdminsReadOnly,
+            AccessMode::AdminsReadWrite,
+            AccessMode::AuthenticatedReadOnly,
+            AccessMode::AuthenticatedReadWrite,
+            AccessMode::AuthenticatedFullAccess,
+            AccessMode::PublicReadOnlyAuthenticatedReadOnly,
+            AccessMode::PublicReadOnlyAuthenticatedReadWrite,
+            AccessMode::PublicFullAccess
+        };
+        return values;
+    }
+
     bool is_access_mode_in(AccessMode mode, const std::vector<AccessMode>& modes);
 
     std::string access_mode_to_string(const AccessMode& access_mode);

@@ -15,6 +15,7 @@ enum class DatabaseType
     MySQL = 4,
 };
 
+    
 inline std::string database_type_to_string(DatabaseType database_type)
 {
     switch (database_type)
@@ -47,6 +48,18 @@ inline DatabaseType string_to_database_type(const std::string& type_str)
     if (type_str == "MariaDB") return DatabaseType::MariaDB;
     if (type_str == "MySQL") return DatabaseType::MySQL;
     throw std::runtime_error("Invalid database type: " + type_str);
+}
+
+inline std::vector<DatabaseType> database_type_to_values()
+{
+    static std::vector values = {
+        DatabaseType::Unknown,
+        DatabaseType::SQLite,
+        DatabaseType::PostgreSQL,
+        DatabaseType::MariaDB,
+        DatabaseType::MySQL
+    };
+    return values;
 }
 
 // inline mindnet::model::EnumDefinition database_type_to_enum_definition()

@@ -23,6 +23,7 @@ return crow::response(503, "Maintenance Mode. Service Unavailable.");
 namespace mindnet::http
 {
     using mindnet::essential::g_configuration;
+
     namespace Labels
     {
         static const std::string DAY = " day ";
@@ -36,7 +37,7 @@ namespace mindnet::http
     }
 
     HttpServer::HttpServer(api::ServicePtr& service_ptr,
-                           std::string  directory_for_static_files_)
+                           std::string directory_for_static_files_)
         : service_ptr_(service_ptr),
           directory_for_static_files(std::move(directory_for_static_files_))
     {
@@ -51,7 +52,8 @@ namespace mindnet::http
 
     void HttpServer::request_shutdown()
     {
-        std::thread([this] {
+        std::thread([this]
+        {
             std::this_thread::sleep_for(std::chrono::seconds{5L});
             crow_app.stop();
             std::exit(0); // clean exit, systemd won't restart unless Restart=always
@@ -60,7 +62,8 @@ namespace mindnet::http
 
     void HttpServer::request_restart()
     {
-        std::thread([this] {
+        std::thread([this]
+        {
             std::this_thread::sleep_for(std::chrono::seconds{5L});
             crow_app.stop();
             std::_Exit(42); // restart, systemd will handle
@@ -72,7 +75,7 @@ namespace mindnet::http
         namespace fs = std::filesystem;
 
 
-//#define generate_js_files_to_js_txt
+        //#define generate_js_files_to_js_txt
 #ifdef generate_js_files_to_js_txt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
@@ -125,7 +128,7 @@ namespace mindnet::http
                 res.write("Maintenance Mode. Service Unavailable.");
                 res.end();
                 return;
-            }                
+            }
 
             if (file_name.find("..") != std::string::npos)
             {
@@ -170,7 +173,7 @@ namespace mindnet::http
             if (common_allowed_files.find(file_name) == common_allowed_files.end()
                 &&
                 plugin_allowed_files.find(file_name) == plugin_allowed_files.end()
-                )
+            )
             {
                 res.code = 403;
                 res.write("Access denied");
@@ -283,7 +286,7 @@ namespace mindnet::http
                 res.end();
                 return;
             }
-            
+
             res.redirect("/web/index.html");
             res.end();
         });
@@ -401,7 +404,8 @@ namespace mindnet::http
                 res["virtual_table"] = model_definition->is_virtual_table();
             }
 
-            if (fields_set_empty || fields_set.contains("title_column") && !model_definition->get_title_column().empty())
+            if (fields_set_empty || fields_set.contains("title_column") && !model_definition->get_title_column().
+                empty())
             {
                 res["title_column"] = model_definition->get_title_column();
             }
@@ -440,11 +444,11 @@ namespace mindnet::http
 
         //CREATE
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::POST)
-            ([]
-            {
-                check_maintenance_mode()
-                return crow::response(405, "Method not allowed for model_definition.");
-            });
+        ([]
+        {
+            check_maintenance_mode()
+            return crow::response(405, "Method not allowed for model_definition.");
+        });
 
 
         //READ
@@ -452,12 +456,12 @@ namespace mindnet::http
         ([service_ptr, model_definition_to_json](const crow::request& req, string model_name)
         {
             check_maintenance_mode()
-            
+
             if (!service_ptr->has_model(model_name))
             {
                 return crow::response(404, "Model definition not found: " + model_name);
             }
-            string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
+            const string& fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::set<string> fields_set;
             util::Utils::split_string_by_commas(fields, fields_set);
@@ -473,27 +477,27 @@ namespace mindnet::http
 
         // UPDATE
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::PUT)
-            ([]
-            {
-                check_maintenance_mode()
-                return crow::response(405, "Method not allowed for model_definition.");;
-            });
+        ([]
+        {
+            check_maintenance_mode()
+            return crow::response(405, "Method not allowed for model_definition.");;
+        });
 
         // DELETE
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::DELETE)
-            ([]
-            {
-                check_maintenance_mode()
+        ([]
+        {
+            check_maintenance_mode()
 
-                return crow::response(405, "Method not allowed for model_definition.");;
-            });
+            return crow::response(405, "Method not allowed for model_definition.");;
+        });
 
         // LIST
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::GET)
         ([service_ptr, model_definition_to_json](const crow::request& req)
         {
             check_maintenance_mode()
-            
+
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::set<string> fields_set;
@@ -523,7 +527,7 @@ namespace mindnet::http
         ([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
-            
+
             nlohmann::ordered_json result;
 
             result["name"] = g_configuration.name;
@@ -541,10 +545,9 @@ namespace mindnet::http
             result["default_user_role"] = user_role_to_string(g_configuration.default_user_role);
 
             return crow::response(200, result.dump(2));
-
         });
-
     }
+
     void HttpServer::create_health_endpoint(const api::ServicePtr& service_ptr)
     {
         //READ
@@ -557,7 +560,7 @@ namespace mindnet::http
                 static const int SECONDS_PER_HOUR = 60 * 60;
                 static const int SECONDS_PER_MINUTE = 60;
 
-//#define test_health_endpoint
+                //#define test_health_endpoint
 #ifdef test_health_endpoint
                 std::random_device rd;
                 std::mt19937 gen(rd());
@@ -591,7 +594,7 @@ namespace mindnet::http
                     break;
                 case years_: max = 86400 * 365 * 10;
                     break;
-                    default: max = 1000000;
+                default: max = 1000000;
                 }
                 std::uniform_int_distribution<> distrib(0, max);
 
@@ -619,7 +622,7 @@ namespace mindnet::http
                 }
                 if (hours > 0)
                 {
-                    oss<< hours << (hours == 1 ? Labels::HOUR : Labels::HOURS);
+                    oss << hours << (hours == 1 ? Labels::HOUR : Labels::HOURS);
                 }
                 if (minutes > 0)
                 {
@@ -633,16 +636,17 @@ namespace mindnet::http
             nlohmann::ordered_json result;
 
             auto now = util::Utils::currentUnixTimestamp();
-            result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode ? "MAINTENANCE" : "UP";
+            result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode
+                                   ? "MAINTENANCE"
+                                   : "UP";
             result["uptime"] = print_duration(essential::start_time, now);
             result["timestamp"] = util::Utils::unixToFormattedString(now);
             result["started_at"] = util::Utils::unixToFormattedString(essential::start_time);
 
             return crow::response(200, result.dump(2));
-
         });
-
     }
+
     inline std::string hash_password(const std::string& pass)
     {
         unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -686,8 +690,212 @@ namespace mindnet::http
         return g_configuration.jwt_secret;
     }
 
-    inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user) {
-        if (user.role < essential::UserRole::SuperAdmin) {
+    constexpr auto configure_get_template = FMT_STRING(R"(
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mind Net Configuration</title>
+  <link rel="icon" type="image/png" href="../../../web/favicon.png">
+  <style>
+    body {{
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }}
+    h1 {{ text-align: center; }}
+    label {{ display: block; margin-top: 1rem; font-weight: bold; }}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+select, textarea {{
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }}
+    button {{
+      margin-top: 2rem;
+      padding: 0.7rem 1.5rem;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }}
+    button:hover {{ background: #45a049; }}
+
+input[type="checkbox"] {{
+  width: auto;
+  transform: scale(1.5);
+  margin-right: 0.5rem;
+}}
+
+
+label.checkbox {{
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-top: 1rem;
+}}
+
+label.checkbox input[type="checkbox"] {{
+  transform: scale(1.5);
+  margin-right: 1rem;
+}}
+
+
+
+.restart_needed{{
+color:orange;
+}}
+.restart_needed:before{{
+content: " (Takes effect after restart.) ";
+}}
+
+.toast {{
+  font-size:150%;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #9F9;
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+}}
+.toast.show {{
+  opacity: 1;
+  transform: translateY(0);
+}}
+
+  </style>
+</head>
+<body>
+  <h1><a href="configure">MindNet Configuration</a></h1>
+  <form method="post" id="configForm">
+    <!-- Identification -->
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name" value="{name}">
+
+    <label for="description">Description</label>
+    <textarea id="description" name="description">{description}</textarea>
+
+    <label for="environment">Environment</label>
+    <select id="environment" name="environment">
+      {environment}
+    </select>
+
+    <label for="host">Host<span class="restart_needed"></span></label>
+    <input type="text" id="host" name="host" value="{host}">
+
+    <label for="port">Port<span class="restart_needed"></span></label>
+    <input type="number" id="port" name="port" min="1" max="65535" value="{port}">
+
+    <label for="frontend_port">Frontend Port<span class="restart_needed"></span></label>
+    <input type="number" id="frontend_port" name="frontend_port" min="1" max="65535" value="{frontend_port}">
+
+    <label for="database_type">Database Type<span class="restart_needed"></span></label>
+    <select id="database_type" name="database_type">
+      {database_type}
+    </select>
+
+    <!-- Access -->
+    <label for="access_mode">Access Mode</label>
+    <select id="access_mode" name="access_mode">
+      {access_mode}
+    </select>
+
+    <label for="registration_mode">Registration Mode</label>
+    <select id="registration_mode" name="registration_mode">
+      {registration_mode}
+    </select>
+
+    <label for="default_user_role">Default User Role</label>
+    <select id="default_user_role" name="default_user_role">
+      {default_user_role}
+    </select>
+
+    <!-- Secrets -->
+    <label for="jwt_secret">JWT Secret</label>
+    <input type="password" id="jwt_secret" name="jwt_secret" value="{jwt_secret}">
+
+    <!-- Other -->
+    <label for="max_log_level">Max Log Level</label>
+    <select id="max_log_level" name="max_log_level">
+      {max_log_level}
+    </select>
+
+    <label for="allowed_plugins">Allowed Plugins (comma separated)<span class="restart_needed"></span></label>
+    <input type="text" id="allowed_plugins" name="allowed_plugins" value="{allowed_plugins}">
+
+    <label class="checkbox">
+    <input type="checkbox" id="schedule_restart" name="schedule_restart">
+    Schedule restart
+    </label>
+
+
+    <button type="submit">Save Configuration</button>
+  </form>
+<script>
+function showToast(message, timeout = 10000) {{
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // small delay because of animation
+  requestAnimationFrame(() => toast.classList.add("show"));
+
+  setTimeout(() => {{
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300); // wait for animation
+  }}, timeout);
+}}
+
+window.addEventListener("load", () => {{
+  requestAnimationFrame(() => {{
+    requestAnimationFrame(() => {{
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("message")) {{
+        showToast(params.get("message"));
+      }}
+    }});
+  }});
+}});
+
+  document.getElementById("configForm").addEventListener("submit", function(event) {{
+    const scheduleRestart = document.getElementById("schedule_restart");
+    if (scheduleRestart.checked) {{
+      const confirmed = confirm("Restart is scheduled. Do you really want to save?");
+      if (!confirmed) {{
+        event.preventDefault(); // prevents form submission
+      }}
+    }}
+  }});
+
+</script>
+
+</body>
+</html>
+)");
+
+
+    inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user)
+    {
+        if (user.role < essential::UserRole::SuperAdmin)
+        {
             return crow::response(403, "Forbidden: only SuperAdmin can perform this action");
         }
         return std::nullopt;
@@ -719,21 +927,62 @@ namespace mindnet::http
         return user;
     }
 
+    std::string url_decode(const std::string& in) {
+        std::string out;
+        out.reserve(in.size());
+
+        for (size_t i = 0; i < in.size(); ++i) {
+            if (in[i] == '%') {
+                if (i + 2 < in.size()) {
+                    std::string hex = in.substr(i + 1, 2);
+                    char ch = static_cast<char>(std::stoi(hex, nullptr, 16));
+                    out.push_back(ch);
+                    i += 2;
+                }
+            } else if (in[i] == '+') {
+                out.push_back(' ');
+            } else {
+                out.push_back(in[i]);
+            }
+        }
+        return out;
+    }
+
+    std::unordered_map<std::string, std::string> parse_urlencoded(const std::string& body) {
+        std::unordered_map<std::string, std::string> params;
+        std::istringstream ss(body);
+        std::string token;
+        while (std::getline(ss, token, '&')) {
+            auto pos = token.find('=');
+            if (pos != std::string::npos) {
+                auto key = token.substr(0, pos);
+                auto val = token.substr(pos + 1);
+                params[key] = url_decode(val);
+            }
+        }
+        return params;
+    }
+
+#define assert_super_admin()
+#define assert_super_admin_()\
+    auto result = load_current_user(req, service_ptr);\
+    if (auto resp = std::get_if<crow::response>(&result))\
+    {\
+        return std::move(*resp);\
+    }\
+    auto& user = std::get<plugins::core::models::User>(result);\
+\
+    if (auto forbidden = require_superadmin(user))\
+    {\
+        return std::move(*forbidden);\
+    }
+
     void HttpServer::create_superadmin_endpoints(const api::ServicePtr& service_ptr)
     {
         CROW_ROUTE(crow_app, "/api/v1/superadmin/shutdown").methods("POST"_method)
         ([this, &service_ptr](const crow::request& req)
         {
-            auto result = load_current_user(req, service_ptr);
-            if (auto resp = std::get_if<crow::response>(&result))
-            {
-                return std::move(*resp);
-            }
-            auto& user = std::get<plugins::core::models::User>(result);
-
-            if (auto forbidden = require_superadmin(user)) {
-               return std::move(*forbidden);
-           }
+            assert_super_admin()
 
             request_shutdown();
             return crow::response(200, "Shutdown scheduled");;
@@ -742,20 +991,46 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/v1/superadmin/restart").methods("POST"_method)
         ([this, &service_ptr](const crow::request& req)
         {
-            auto result = load_current_user(req, service_ptr);
-            if (auto resp = std::get_if<crow::response>(&result))
-            {
-                return std::move(*resp);
-            }
-            auto& user = std::get<plugins::core::models::User>(result);
-
-            if (auto forbidden = require_superadmin(user)) {
-                return std::move(*forbidden);
-            }
+            assert_super_admin()
 
             request_restart();
             return crow::response(200, "Restart scheduled");;
         });
+
+        CROW_ROUTE(crow_app, "/api/v1/superadmin/configure").methods("GET"_method)
+        ([this, &service_ptr](const crow::request& req)
+        {
+            assert_super_admin()
+
+            //request_restart();
+            return crow::response(200, fmt::vformat(configure_get_template, g_configuration.to_fmt_store()));
+        });
+
+        CROW_ROUTE(crow_app, "/api/v1/superadmin/configure").methods("POST"_method)
+([this, &service_ptr](const crow::request& req)
+{
+    assert_super_admin()
+
+    string_map new_configuration;
+    auto params = parse_urlencoded(req.body);
+
+    for (const auto& key : params | std::views::keys)
+    {
+        const auto& value = params[key];
+        new_configuration.insert({key, value});
+    }
+
+    g_configuration = essential::Configuration(new_configuration);
+    g_configuration.save_mind_net_properties();
+
+    if (params.contains("schedule_restart")) {
+        request_restart();
+    }
+    crow::response res;
+    res.code = 303;
+    res.set_header("Location", "/api/v1/superadmin/configure?message=Changes%20were%20saved");
+    return res;
+});
     }
 
     void HttpServer::create_authentication_endpoints(const api::ServicePtr& service_ptr)
@@ -763,7 +1038,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/v1/auth/login").methods("POST"_method)([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
-            
+
             UserCredentials credentials = req;
             if (!credentials.error.empty())
             {
@@ -805,7 +1080,7 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([=](const crow::request& req)
         {
             check_maintenance_mode()
-            
+
             if (g_configuration.registration_mode == essential::RegistrationMode::AdminAddsUsers)
             {
                 return crow::response{405, "Endpoint /register is disabled. Only admin can add new users."};
@@ -827,7 +1102,10 @@ namespace mindnet::http
             query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
             api::LoginToken login_token{req};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
-            if (users.second.ko()) { return crow::response(500, "Checking, if user already exists, failed. " + users.second.error); }
+            if (users.second.ko())
+            {
+                return crow::response(500, "Checking, if user already exists, failed. " + users.second.error);
+            }
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
 
@@ -843,7 +1121,8 @@ namespace mindnet::http
             user.status = essential::UserStatus::Active;
 
             auto fields_ = user.to_values();
-            auto create_result = service_ptr.get()->create(plugins::core::models::USER_DEFINITION, login_token, fields_);
+            auto create_result = service_ptr.get()->
+                                             create(plugins::core::models::USER_DEFINITION, login_token, fields_);
             if (create_result.second.ko())
             {
                 return crow::response{400, "Registration failed. " + create_result.second.error};

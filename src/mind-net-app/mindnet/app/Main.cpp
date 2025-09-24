@@ -22,6 +22,7 @@
 #include "mindnet/api/PluginRegistry.h"
 #include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
 #include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
+#include "mindnet/http/CrowLoggerAdapter.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 #include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
@@ -227,6 +228,10 @@ bool commands_function_start(
     g_configuration.host = host;
     g_configuration.port = port;
     g_configuration.frontend_port = frontend_port;
+    g_configuration.save_mind_net_properties();
+
+    static mindnet::http::CrowLoggerAdapter adapter;
+    crow::logger::setHandler(&adapter);
     server.run(host, port, frontend_port);
     return false;
 }
@@ -319,6 +324,6 @@ int main(int argc, char** argv)
         mindnet::api::Persistence>(plugin_registry_ptr);
 
     std::shared_ptr<mindnet::api::IService> service = std::make_shared<mindnet::api::Service>(db, plugin_registry_ptr);
-    g_configuration.save_mind_net_properties();
+
     return run_command(arguments, service);
 }

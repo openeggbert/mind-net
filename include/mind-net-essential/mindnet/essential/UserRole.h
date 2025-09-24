@@ -22,6 +22,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace mindnet::essential
 {
@@ -74,6 +75,20 @@ namespace mindnet::essential
         default:
             return "Unknown";
         }
+    }
+
+    inline std::vector<UserRole> user_role_to_values()
+    {
+        static std::vector<UserRole> values = {
+            UserRole::Guest,
+            UserRole::Reader,
+            UserRole::Editor,
+            UserRole::Reviewer,
+            UserRole::Admin,
+            UserRole::SuperAdmin,
+            UserRole::System
+        };
+        return values;
     }
 
     inline std::string user_role_to_string(int role)

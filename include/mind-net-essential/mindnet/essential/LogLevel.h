@@ -72,5 +72,19 @@ namespace mindnet::essential
     ConsoleColor log_level_to_console_color(const LogLevel& log_level);
 
     LogLevel string_to_log_level(const std::string& log_level);
+
+    inline std::vector<LogLevel> log_level_to_values()
+    {
+        static std::vector<LogLevel> values = {
+            LogLevel::FATAL,
+            LogLevel::ERROR,
+            LogLevel::WARN,
+            LogLevel::INFO,
+            LogLevel::DEBUG,
+            LogLevel::TRACE,
+            LogLevel::EXPERIMENT
+        };
+        return values;
+    }
 }
 #endif // LOGLEVEL_H

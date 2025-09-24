@@ -7,6 +7,9 @@
 
 #include <fstream>
 #include <map>
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/args.h>
 
 #include "AccessMode.h"
 #include "DatabaseType.h"
@@ -63,6 +66,7 @@ namespace mindnet::essential
 
         Configuration(const string_map& map);
         bool save_mind_net_properties();
+        fmt::dynamic_format_arg_store<fmt::format_context> to_fmt_store();
     };
 
     inline Configuration g_configuration(load_mind_net_properties("./mindnet.properties"));

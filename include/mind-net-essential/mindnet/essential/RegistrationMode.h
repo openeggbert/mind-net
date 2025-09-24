@@ -22,6 +22,16 @@ namespace mindnet::essential
         return registration_mode_to_string(static_cast<RegistrationMode>(registration_mode));
     }
 
+    inline std::vector<RegistrationMode> registration_mode_to_values()
+    {
+        static std::vector<RegistrationMode> values = {
+            RegistrationMode::Free,
+            RegistrationMode::RequiresAdminApproval,
+            RegistrationMode::AdminAddsUsers
+        };
+        return values;
+    }
+
     RegistrationMode string_to_registration_mode(const std::string& mode_str);
 
     //model::EnumDefinition registration_mode_to_enum_definition();
