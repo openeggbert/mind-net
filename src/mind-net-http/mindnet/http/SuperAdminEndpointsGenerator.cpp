@@ -285,8 +285,8 @@ window.addEventListener("load", () => {{
         return params;
     }
 
-#define assert_super_admin()
-#define assert_super_admin_()\
+#define assert_super_admin_()
+#define assert_super_admin()\
     auto result = load_current_user(req, service_ptr);\
     if (auto resp = std::get_if<crow::response>(&result))\
     {\
@@ -330,7 +330,7 @@ window.addEventListener("load", () => {{
             assert_super_admin()
 
             //request_restart();
-            return crow::response(200, fmt::vformat(configure_get_template, g_configuration.to_fmt_store()));
+            return crow::response(200, fmt::vformat(configure_get_template, mindnet::essential::g_configuration.to_fmt_store()));
         });
 
         CROW_ROUTE(crow_app, "/api/v1/superadmin/configure").methods("POST"_method)

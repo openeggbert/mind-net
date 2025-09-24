@@ -28,8 +28,25 @@ window.editEntity = (entity, data) => {
 
 window.deleteEntity = async (entity, id) => {
     if (!confirm("Do you really want to delete this record?")) return;
-    await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
-    // After deletion always go back to list
-    setSelectedActionId(null);
-    selectAction("list", null);
-}
+
+    try {
+        const response = await fetch(`${API_BASE}/${entity}/${id}`, { method: "DELETE" });
+
+        if (!response.ok) {
+            let message = "";
+            try {
+                message = await response.text();
+            } catch (e) {
+                message = response.statusText;
+            }
+            alert(`Error deleting record: ${message}`);
+            return;
+        }
+
+        setSelectedActionId(null);
+        selectAction("list", null);
+    } catch (err) {
+        alert(`Network error: ${err}`);
+    }
+};
+

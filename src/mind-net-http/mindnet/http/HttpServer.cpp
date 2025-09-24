@@ -6,7 +6,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include "../../../../include/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.h"
+#include "mindnet/http/SuperAdminEndpointsGenerator.h"
 #include "mindnet/essential/Global.h"
 #include "jwt-cpp/jwt.h"
 #include "mindnet/essential/Configuration.h"
@@ -15,9 +15,11 @@
 #include "mindnet/api/LoginToken.h"
 #include "mindnet/http/ModelDefinitionEndpointsGenerator.h"
 #include "mindnet/http/UserCredentials.h"
+#include "mindnet/http/WebEndpointsGenerator.h"
 #include "mindnet/plugins/core/CorePersistenceMethods.h"
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/util/Utils.h"
+#include "mindnet/http/WebEndpointsGenerator.h"
 
 
 namespace mindnet::http
@@ -41,7 +43,7 @@ namespace mindnet::http
         : service_ptr_(service_ptr),
           directory_for_static_files(std::move(directory_for_static_files_))
     {
-        create_web_endpoints();
+        create_web_endpoints(service_ptr);
 
         create_model_definition_endpoints(service_ptr);
         create_authentication_endpoints(service_ptr);
@@ -117,179 +119,11 @@ namespace mindnet::http
     // }
 
 
-    void HttpServer::create_web_endpoints()
+    void HttpServer::create_web_endpoints(const api::ServicePtr& service_ptr)
     {
-        CROW_ROUTE(crow_app, "/web/<string>")
-        ([this](const crow::request& req, crow::response& res, const std::string& file_name)
-        {
-            if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)
-            {
-                res.code = 503;
-                res.write("Maintenance Mode. Service Unavailable.");
-                res.end();
-                return;
-            }
+        web_endpoints_generator_ = std::make_shared<WebEndpointsGenerator>(directory_for_static_files);
+        web_endpoints_generator_->create_web_endpoints(service_ptr, crow_app);
 
-            if (file_name.find("..") != std::string::npos)
-            {
-                res.code = 403;
-                res.write("Path traversal attempt blocked");
-                res.end();
-                return;
-            }
-
-            static const std::unordered_set<std::string> common_allowed_files = {
-                "index.html",
-                "styles.css",
-                "scripts.js",
-                "conf.js",
-                "favicon.png",
-                "api.js",
-                "schemas.js",
-                "state.js",
-                "dom.js",
-                "crud.js",
-                "explore.js",
-                "navigation.js",
-                "actions.js",
-                "init.js",
-            };
-            static std::unordered_set<std::string> plugin_allowed_files;
-
-
-            auto& plugin_registry = service_ptr_->get_plugin_registry();
-            for (const auto& plugin_name : plugin_registry->get_plugin_names())
-            {
-                const auto& plugin = plugin_registry->get_plugin(plugin_name);
-                for (auto& app_name : plugin->get_apps())
-                {
-                    string path_prefix = app_name += plugin_name + "/";
-                    plugin_allowed_files.insert(path_prefix + ".html");
-                    plugin_allowed_files.insert(path_prefix + ".css");
-                    plugin_allowed_files.insert(path_prefix + ".js");
-                }
-            }
-
-            if (common_allowed_files.find(file_name) == common_allowed_files.end()
-                &&
-                plugin_allowed_files.find(file_name) == plugin_allowed_files.end()
-            )
-            {
-                res.code = 403;
-                res.write("Access denied");
-                res.end();
-                return;
-            }
-
-            namespace fs = std::filesystem;
-            {
-                fs::path base_path = fs::canonical(directory_for_static_files);
-                fs::path requested_path = fs::weakly_canonical(base_path / file_name);
-
-
-                if (requested_path.string().find(base_path.string()) != 0)
-                {
-                    res.code = 403;
-                    res.write("Access denied");
-                    res.end();
-                    return;
-                }
-            }
-            std::string full_path = directory_for_static_files + "/" + file_name;
-            fs::path file_path(full_path);
-
-            if (!fs::exists(file_path))
-            {
-                res.code = 404;
-                res.write("File not found");
-                res.end();
-                return;
-            }
-
-            auto last_mod = fs::last_write_time(file_path);
-            auto it = file_cache.find(file_name);
-
-            if (it != file_cache.end() && it->second.last_modified == last_mod)
-            {
-                // Serve from cache
-                if (file_name.ends_with(".css"))
-                {
-                    res.set_header("Content-Type", "text/css");
-                }
-                else if (file_name.ends_with(".js"))
-                {
-                    res.set_header("Content-Type", "application/javascript");
-                }
-                else if (file_name.ends_with(".png"))
-                {
-                    res.set_header("Content-Type", "image/png");
-                }
-
-                else
-                {
-                    res.set_header("Content-Type", "text/html");
-                }
-
-                res.write(it->second.content);
-                res.end();
-                return;
-            }
-
-            // Read from disk and update cache
-            std::ifstream file(full_path, std::ios::binary);
-            if (!file.is_open())
-            {
-                res.code = 500;
-                res.write("Failed to open file");
-                res.end();
-                return;
-            }
-
-            std::ostringstream content;
-            content << file.rdbuf();
-            std::string file_content = content.str();
-
-            file_cache[file_name] = CachedFile{file_content, last_mod};
-
-            if (file_name.ends_with(".css"))
-            {
-                res.set_header("Content-Type", "text/css");
-            }
-            else if (file_name.ends_with(".js"))
-            {
-                res.set_header("Content-Type", "application/javascript");
-            }
-            else
-            {
-                res.set_header("Content-Type", "text/html");
-            }
-
-            res.write(file_content);
-            res.end();
-        });
-
-
-        CROW_ROUTE(crow_app, "/")
-        ([](const crow::request&, crow::response& res)
-        {
-            res.redirect("/web");
-            res.end();
-        });
-
-        CROW_ROUTE(crow_app, "/web")
-        ([](const crow::request&, crow::response& res)
-        {
-            if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)
-            {
-                res.code = 503;
-                res.write("Maintenance Mode. Service Unavailable.");
-                res.end();
-                return;
-            }
-
-            res.redirect("/web/index.html");
-            res.end();
-        });
     }
 
     void HttpServer::create_model_definition_endpoints(const api::ServicePtr& service_ptr)

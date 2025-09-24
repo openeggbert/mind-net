@@ -10,11 +10,7 @@
 
 namespace mindnet::http
 {
-    struct CachedFile
-    {
-        std::string content;
-        std::filesystem::file_time_type last_modified;
-    };
+    class WebEndpointsGenerator;
 
     class HttpServer
     {
@@ -36,10 +32,13 @@ namespace mindnet::http
     private:
         crow::SimpleApp crow_app;
         api::ServicePtr service_ptr_;
-        std::unordered_map<std::string, CachedFile> file_cache;
         std::string directory_for_static_files;
+        std::shared_ptr<WebEndpointsGenerator> web_endpoints_generator_ = nullptr;
+
+
+
         //
-        void create_web_endpoints();
+        void create_web_endpoints(const api::ServicePtr& service_ptr);
         void create_model_definition_endpoints(const api::ServicePtr& service_ptr);
         void create_info_endpoint(const api::ServicePtr& service_ptr);
         void create_health_endpoint(const api::ServicePtr& service_ptr);
