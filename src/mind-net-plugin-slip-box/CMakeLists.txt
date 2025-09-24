@@ -26,3 +26,6 @@ target_link_libraries(mind_net_plugin_slip_box
 target_precompile_headers(mind_net_plugin_slip_box PRIVATE
         "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
 )
+
+# Enable Unity build for all targets (faster builds)
+set(CMAKE_UNITY_BUILD ON)

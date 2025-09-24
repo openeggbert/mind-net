@@ -20,3 +20,6 @@ target_link_libraries(mind_net_util
 target_precompile_headers(mind_net_util PRIVATE
         "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
 )
+
+# Enable Unity build for all targets (faster builds)
+set(CMAKE_UNITY_BUILD ON)

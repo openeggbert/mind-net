@@ -38,52 +38,56 @@ These are the instructions for Debian 13.
  * Other operating systems may have different instructions
 
 ```bash
+# ------------------------------
 # Install dependencies
-apt install build-essential libboost-all-dev cmake g++ libcurl4-openssl-dev
+# ------------------------------
+apt install -y build-essential libboost-all-dev cmake g++ libcurl4-openssl-dev
+apt install -y ccache ninja-build
+apt install -y git
 
-# Install git
-apt install git
-
+# ------------------------------
 # Clone the repository
+# ------------------------------
 git clone https://github.com/openeggbert/mind-net.git/
+cd mind-net
 
 # Init git submodules
 git submodule update --init --recursive
 
-# Go to the repository
-cd mind-net
-
-# Enable FTS5 feature of SQLite : edit third_party/sqlite/CMakeLists.txt
-# Add target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5) 
-#to: 
-
-$<INSTALL_INTERFACE:include/>)
-target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5)
-if (SQLITE_ENABLE_COLUMN_METADATA)
+# Enable FTS5 feature of SQLite
+# edit: third_party/sqlite/CMakeLists.txt
+# find the line:
+#   $<INSTALL_INTERFACE:include/>)
+# and right after it insert:
+#   target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5)
 
 # Switch to the develop branch
 git checkout develop
 
-# Create build directory
-mkdir build
+# Build with Ninja
+# ------------------------------
+cmake -S . -B build -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE \
+  -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+  
+cmake --build build --config Release
 
-# Go to build directory
-cd build
-
-# Run cmake
-cmake -B . -S ..
-
-# Build
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE ..
-cmake --build . --config Release -j$(nproc)
-cd src/mindnet/app
+# ------------------------------
+# Optimize binary
+# ------------------------------
+cd build/src/mind-net-app
 strip --strip-all mind_net_app
 upx --best --lzma mind_net_app
 
-#Generate JWT Secret
+# ------------------------------
+# Generate JWT Secret
+# ------------------------------
 openssl rand -base64 32
 
-#Configure values in mindnet.properties
+# ------------------------------
+# Configure values in mindnet.properties
+# ------------------------------
 ```
 
 ### 3. Run the server

@@ -4,6 +4,7 @@
 
 #include "mindnet/essential/Configuration.h"
 
+#include <filesystem>
 #include <iostream>
 
 #define if_map_has(key) if (map_contains(map, #key))
@@ -17,12 +18,12 @@ namespace mindnet::essential
     {
         string_map properties;
         std::ifstream file(filename);
-        if (!file)
-        {
-            std::cerr << "Failed to open file: " << filename << "\n";
+        if (!file) {
+            std::cerr << "Failed to open file: " << filename
+                      << "\nCurrent working dir: " << std::filesystem::current_path() << "\n";
             exit(1);
-            //return properties;
         }
+
 
         std::string line;
         while (std::getline(file, line))

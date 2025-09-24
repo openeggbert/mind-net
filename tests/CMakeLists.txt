@@ -2,6 +2,8 @@ file(GLOB_RECURSE TEST_SOURCES "*.cpp")
 
 add_executable(Tests ${TEST_SOURCES})
 
+configure_file( ${CMAKE_SOURCE_DIR}/configuration/mindnet.properties ${CMAKE_CURRENT_BINARY_DIR}/mindnet.properties COPYONLY )
+
 target_include_directories(Tests PRIVATE
         ${CMAKE_SOURCE_DIR}/include
 )

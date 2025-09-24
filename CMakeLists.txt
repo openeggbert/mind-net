@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(mind_net LANGUAGES CXX)
 
+# ccache (if installed)
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+        message(STATUS "Using ccache: ${CCACHE_PROGRAM}")
+        set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+        set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+endif()
+
 # Default build type
 if (NOT CMAKE_BUILD_TYPE)
         set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
@@ -13,6 +21,10 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -Wl,--gc-s
 # C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Enable Unity build for all targets (faster builds)
+set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 
 # Options
 option(ENABLE_TESTS "Enable unit tests" ON)
@@ -48,8 +60,18 @@ add_subdirectory(src/mind-net-plugin-suggestion)
 add_subdirectory(src/mind-net-app)
 
 
+
+
 # ===== Tests =====
 if (ENABLE_TESTS)
         enable_testing()
         add_subdirectory(tests)
 endif ()
+
+configure_file(
+        ${CMAKE_SOURCE_DIR}/configuration/mindnet.properties
+        ${CMAKE_BINARY_DIR}/mindnet.properties
+        COPYONLY
+)
+
+

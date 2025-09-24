@@ -31,4 +31,8 @@ target_precompile_headers(mind_net_http PRIVATE
         "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
         "${CMAKE_SOURCE_DIR}/include/pch/pch_json.h"
         "${CMAKE_SOURCE_DIR}/include/pch/pch_crow.h"
+        <asio.hpp>
 )
+
+# Enable Unity build for all targets (faster builds)
+set(CMAKE_UNITY_BUILD ON)
