@@ -51,6 +51,9 @@ apt install -y git
 git clone https://github.com/openeggbert/mind-net.git/
 cd mind-net
 
+# Switch to the develop branch
+git checkout develop
+
 # Init git submodules
 git submodule update --init --recursive
 
@@ -60,9 +63,6 @@ git submodule update --init --recursive
 #   $<INSTALL_INTERFACE:include/>)
 # and right after it insert:
 #   target_compile_definitions(sqlite3 PUBLIC SQLITE_ENABLE_FTS5)
-
-# Switch to the develop branch
-git checkout develop
 
 # Build with Ninja
 # ------------------------------

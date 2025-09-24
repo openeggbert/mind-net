@@ -16,6 +16,7 @@ namespace mindnet::essential
 
     public:
         Logger(LogLevel log_level);
+        bool is_enabled();
     };
 }
 #endif // LOGGER_H

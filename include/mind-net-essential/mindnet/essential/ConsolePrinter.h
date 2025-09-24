@@ -9,7 +9,6 @@
 namespace mindnet::essential
 {
     using print_timestamp_function = std::string (*)();
-    typedef std::function<bool()> bool_predicate;
 
     class ConsolePrinter; // fwd decl
 
@@ -24,23 +23,26 @@ namespace mindnet::essential
 
     public:
         ConsoleColor color = ConsoleColor::UNKNOWN;
-        bool_predicate enabled_predicate = [] {return true;};
         print_timestamp_function print_timestamp_function_pointer = nullptr;
 
         ConsolePrinter(
             std::string before = "",
             std::string after = "",
-            bool_predicate enabled_ = [] {return true;},
             ConsoleColor color_ = ConsoleColor::UNKNOWN,
             print_timestamp_function print_timestamp_function_pointer_ = nullptr
         );
 
+        virtual bool is_enabled()
+        {
+            return true;
+        }
+        bool is_disabled() {
+            return !is_enabled();
+        }
         template <typename T>
         ConsolePrinter& operator<<(const T& value)
         {
-            if (!enabled_predicate) std::cerr <<"Handler enabled_predicate not set : ConsolePrinter& operator<<(const T& value)" << std::flush;
-
-            if (enabled_predicate()) buffer << value;
+            if (is_enabled()) buffer << value;
             return *this;
         }
 

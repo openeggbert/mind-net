@@ -8,10 +8,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "mindnet/essential/Global.h"
-
-
-
 #define if_map_has(key) if (map_contains(map, #key))
 #define save_enum(key) if_map_has(key) key = string_to_##key(map.at( #key));
 #define save_text(key) if_map_has(key) key = map.at( #key);
@@ -25,8 +21,8 @@ namespace mindnet::essential
         std::ifstream file(filename);
         if (!file)
         {
-            fatal << "Failed to open file: " << filename
-                << "\nCurrent working dir: " << std::filesystem::current_path() << commit;
+            std::cerr << "[FATAL] Failed to open file: " << filename
+                << "\nCurrent working dir: " << std::filesystem::current_path() << std::endl;
             exit(1);
         }
 
@@ -118,7 +114,7 @@ namespace mindnet::essential
         save_enum(database_type)
         if (database_type == DatabaseType::Unknown)
         {
-            fatal << "You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application." << commit;
+            std::cerr << "[FATAL] You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application." << std::endl;
             throw std::runtime_error("You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application.");
         }
         //
@@ -180,11 +176,11 @@ allowed_plugins={allowed_plugins}
                 try
                 {
                     fs::create_directory(backup_dir);
-                    info << "Directory created: " << backup_dir << commit;
+                    std::cout << "[INFO] " << "Directory created: " << backup_dir << std::endl;
                 }
                 catch (const fs::filesystem_error& e)
                 {
-                    fatal << "Error during creating directory: " << backup_dir << " " << e.what() << commit;
+                    std::cerr << "[FATAL] Error during creating directory: " << backup_dir << " " << e.what() << std::endl;
                     return false;;
                 }
             }
@@ -194,12 +190,12 @@ allowed_plugins={allowed_plugins}
             try
             {
                 fs::rename(old_name, new_name);
-                info << "File " << old_name << " renamed successfully to " << new_name << commit;
+                std::cout << "[INFO] File " << old_name << " renamed successfully to " << new_name << std::endl;
             }
             catch (const fs::filesystem_error& e)
             {
-                fatal << "Renaming file failed: old_name=" << old_name <<
-                ", new_name=" << new_name << ", reason=" << e.what() << commit;
+                std::cerr << "[FATAL] Renaming file failed: old_name=" << old_name <<
+                ", new_name=" << new_name << ", reason=" << e.what() << std::endl;
                 return false;
             }
             {
@@ -218,11 +214,11 @@ allowed_plugins={allowed_plugins}
                         // Convert to full days
                         auto days = std::chrono::duration_cast<std::chrono::days>(age).count();
 
-                        trace << entry.path().filename().string() << " is " << days << " days old" << commit;
+                        std::cout << "[TRACE] " << entry.path().filename().string() << " is " << days << " days old" << std::endl;
 
                         if (days > 365) {
-                            info << "Deleting " << entry.path() <<
-                                ", which is old " << days << " days " << commit;
+                            std::cout << "[INFO] Deleting " << entry.path() <<
+                                ", which is old " << days << " days " << std::endl;
 
                             //todo remove macro
                             #define enable_backup_cleanup
@@ -230,8 +226,8 @@ allowed_plugins={allowed_plugins}
                             std::error_code ec;
                             fs::remove(entry.path(), ec);
                             if (ec) {
-                                warn << "Failed to delete " << entry.path()
-                                          << ": " << ec.message() << commit;
+                                std::cout << "[WARN] Failed to delete " << entry.path()
+                                          << ": " << ec.message() << std::endl;
                             }
                             #endif
                         }
