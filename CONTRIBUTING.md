@@ -81,6 +81,7 @@ return "Logged out";
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] FEATURE Implement complex Filtering in REST API
 - [ ] Add support for Docker
+- [ ] Rewrite enums using EnumUtils.h
 
 ### Implement Complex Filtering in REST API
 

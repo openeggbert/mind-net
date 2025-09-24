@@ -5,6 +5,10 @@
 #ifndef MINI_WIKI_HTTPUTILS_H
 #define MINI_WIKI_HTTPUTILS_H
 
+#define check_maintenance_mode()\
+if (g_configuration.access_mode == essential::AccessMode::MaintenanceMode)\
+return crow::response(503, "Maintenance Mode. Service Unavailable.");
+
 #include "crow.h"
 #include <string>
 

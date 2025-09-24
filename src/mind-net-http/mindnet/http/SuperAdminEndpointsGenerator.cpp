@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "SuperAdminEndpointsGenerator.h"
+#include "../../../../include/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.h"
 
 #include "mindnet/api/IService.h"
 #include "mindnet/essential/Configuration.h"
@@ -285,8 +285,8 @@ window.addEventListener("load", () => {{
         return params;
     }
 
-#define assert_super_admin()
-#define assert_super_admin_()\
+#define assert_super_admin_()
+#define assert_super_admin()\
     auto result = load_current_user(req, service_ptr);\
     if (auto resp = std::get_if<crow::response>(&result))\
     {\
