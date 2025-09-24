@@ -10,7 +10,6 @@
 
 namespace mindnet::http
 {
-    typedef std::function<void()> procedure_ptr;
 
     class AuthEndpointsGenerator
     {

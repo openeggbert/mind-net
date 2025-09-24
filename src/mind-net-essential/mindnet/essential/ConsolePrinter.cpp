@@ -21,10 +21,14 @@ namespace mindnet::essential
     )
         : prefix(std::move(before)),
           suffix(std::move(after)),
-          enabled_predicate(enabled_predicate_),
+          enabled_predicate(enabled_predicate_ ? enabled_predicate_ : [] { return true; }),
           color(color_),
           print_timestamp_function_pointer(print_timestamp_function_pointer_)
     {
+        if (!enabled_predicate)
+        {
+            throw std::runtime_error("You set empty enabled_predicate");
+        }
     }
 
     ConsolePrinter& ConsolePrinter::operator<<(ConsolePrinter& (*manip)(ConsolePrinter&))
@@ -34,7 +38,8 @@ namespace mindnet::essential
 
     ConsolePrinter& ConsolePrinter::operator<<(std::ostream& (*manip)(std::ostream&))
     {
-        if (!enabled_predicate()) return *this;
+        if (!enabled_predicate) std::cerr <<"Handler enabled_predicate not set : ConsolePrinter& ConsolePrinter::operator<<(std::ostream& (*manip)(std::ostream&))" << std::flush;
+        if (enabled_predicate && !enabled_predicate()) return *this;
         if (manip == static_cast<std::ostream& (*)(std::ostream&)>(std::endl))
         {
             // 1. Flush current buffer
@@ -63,6 +68,7 @@ namespace mindnet::essential
 
     void ConsolePrinter::flush(bool new_line)
     {
+        if (!enabled_predicate) std::cerr <<"Handler enabled_predicate not set : flush(bool new_line)" << std::flush;
         if (!enabled_predicate()) return;
         std::cout << (color != ConsoleColor::UNKNOWN ? "\033[" + std::to_string(static_cast<int>(color)) + "m" : "");
         if (print_timestamp_function_pointer) std::cout << print_timestamp_function_pointer() << " ";
@@ -77,6 +83,8 @@ namespace mindnet::essential
 
     ConsolePrinter::~ConsolePrinter()
     {
+        if (!enabled_predicate) std::cerr <<"Handler enabled_predicate not set:ConsolePrinter::~ConsolePrinter()" << std::flush;
+
         if (enabled_predicate() && !buffer.str().empty()) flush(true);
     }
 }

@@ -38,6 +38,8 @@ namespace mindnet::essential
         template <typename T>
         ConsolePrinter& operator<<(const T& value)
         {
+            if (!enabled_predicate) std::cerr <<"Handler enabled_predicate not set : ConsolePrinter& operator<<(const T& value)" << std::flush;
+
             if (enabled_predicate()) buffer << value;
             return *this;
         }
