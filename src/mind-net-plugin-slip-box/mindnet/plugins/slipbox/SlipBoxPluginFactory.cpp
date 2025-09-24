@@ -34,9 +34,6 @@ namespace mindnet::plugins::slipbox
 
         REGISTER_MIGRATIONS(SlipBox, SQLite)
 
-
-
-
         REGISTER_MODEL(map, Map, MAP)
         REGISTER_MODEL(note, Note, NOTE)
         REGISTER_MODEL(content, Content, CONTENT)

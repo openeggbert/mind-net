@@ -199,21 +199,32 @@ namespace mindnet::db::sqlite
             int i = 0;
             for (const auto& column : def.get_columns())
             {
-                switch (column.get_column_type())
+                auto primitive_column_type = model::column_type_to_primitive_column_type(column.get_column_type());
+                switch (primitive_column_type)
                 {
-                case mindnet::model::ColumnType::TextArea:
-                case mindnet::model::ColumnType::Text:
+                case model::PrimitiveColumnType::Text:
                     {
-                        string text = (*query_ptr).getColumn(i).getString();
-                        result.push_back(text);
+                        // if (column.is_hidden())
+                        // {
+                        //     result.push_back("*");
+                        // } else
+                        // {
+                            string text = (*query_ptr).getColumn(i).getString();
+                            result.push_back(text);
+                        // }
                     }
                     break;
-                case mindnet::model::ColumnType::Bool:
-                case mindnet::model::ColumnType::DateTime:
-                case mindnet::model::ColumnType::Integer:
+                case model::PrimitiveColumnType::Number:
                     {
-                        int number = (*query_ptr).getColumn(i);
-                        result.push_back(number);
+                        // if (column.is_hidden())
+                        // {
+                        //     result.push_back(cast64(0));
+                        // }
+                        // else
+                        // {
+                            int number = (*query_ptr).getColumn(i);
+                            result.push_back(number);
+                        // }
                     }
                     break;
                 default:

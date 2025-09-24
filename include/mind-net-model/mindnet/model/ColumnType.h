@@ -49,7 +49,7 @@ namespace mindnet::model
         return column_type_to_string(static_cast<ColumnType>(column_type));
     }
 
-    inline PrimitiveColumnType find_primitive_column_type(const ColumnType& column_type)
+    inline PrimitiveColumnType column_type_to_primitive_column_type(const ColumnType& column_type)
     {
         switch (column_type)
         {

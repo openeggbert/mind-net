@@ -821,13 +821,13 @@ namespace mindnet::http
             std::string email = body["email"].s();
 
             //
-            string error;
+
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
             query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
             api::LoginToken login_token{req};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
-            if (!error.empty()) { return crow::response(500, "Checking, if user already exists, failed. " + error); }
+            if (users.second.ko()) { return crow::response(500, "Checking, if user already exists, failed. " + users.second.error); }
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
 
@@ -840,14 +840,13 @@ namespace mindnet::http
             user.profile_text = profile_text;
             user.last_login = 0;
             user.email = email;
-            user.status = essential::UserStatus::Pending;
+            user.status = essential::UserStatus::Active;
 
-            error.clear();
             auto fields_ = user.to_values();
-            service_ptr.get()->create(plugins::core::models::USER_DEFINITION, login_token, fields_);
-            if (!error.empty())
+            auto create_result = service_ptr.get()->create(plugins::core::models::USER_DEFINITION, login_token, fields_);
+            if (create_result.second.ko())
             {
-                return crow::response{400, "Registration failed. " + error};
+                return crow::response{400, "Registration failed. " + create_result.second.error};
             }
 
             return crow::response{201, "Registration successful"};

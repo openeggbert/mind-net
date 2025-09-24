@@ -117,7 +117,7 @@ namespace mindnet::db::sqlite
             auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
             crow::json::type crow_json_type = rvalue.t();
 
-            auto primitive_column_type = find_primitive_column_type(col.get_column_type());
+            auto primitive_column_type = column_type_to_primitive_column_type(col.get_column_type());
 
             debug <<"rvalue="<<rvalue<<commit;
             if (mandatory && !has_value)
