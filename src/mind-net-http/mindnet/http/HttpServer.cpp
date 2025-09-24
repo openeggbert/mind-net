@@ -51,9 +51,9 @@ namespace mindnet::http
     {
         namespace fs = std::filesystem;
 
-        ////
-//#define jstxt
-#ifdef jstxt
+
+//#define generate_js_files_to_js_txt
+#ifdef generate_js_files_to_js_txt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
@@ -115,7 +115,7 @@ namespace mindnet::http
                 return;
             }
 
-            static const std::unordered_set<std::string> allowed_files = {
+            static const std::unordered_set<std::string> common_allowed_files = {
                 "index.html",
                 "styles.css",
                 "scripts.js",
@@ -130,11 +130,27 @@ namespace mindnet::http
                 "navigation.js",
                 "actions.js",
                 "init.js",
-
-
             };
+            static std::unordered_set<std::string> plugin_allowed_files;
 
-            if (allowed_files.find(file_name) == allowed_files.end())
+
+            auto& plugin_registry = service_ptr_->get_plugin_registry();
+            for (const auto& plugin_name : plugin_registry->get_plugin_names())
+            {
+                const auto& plugin = plugin_registry->get_plugin(plugin_name);
+                for (auto& app_name : plugin->get_apps())
+                {
+                    string path_prefix = app_name += plugin_name + "/";
+                    plugin_allowed_files.insert(path_prefix + ".html");
+                    plugin_allowed_files.insert(path_prefix + ".css");
+                    plugin_allowed_files.insert(path_prefix + ".js");
+                }
+            }
+
+            if (common_allowed_files.find(file_name) == common_allowed_files.end()
+                &&
+                plugin_allowed_files.find(file_name) == plugin_allowed_files.end()
+                )
             {
                 res.code = 403;
                 res.write("Access denied");

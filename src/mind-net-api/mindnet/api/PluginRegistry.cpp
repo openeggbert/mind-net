@@ -11,6 +11,7 @@
 namespace mindnet::api
 {
     using_loggers()
+    static std::unordered_set<std::string> unique_names_for_apps;
 
     bool PluginRegistry::has_plugin_name(const std::string& plugin_name) const
     {
@@ -84,6 +85,14 @@ namespace mindnet::api
         {
             warn << "Plugin " << plugin->get_name() << " already registered" << commit;
             return;
+        }
+        for (auto& app : plugin->get_apps())
+        {
+            if (unique_names_for_apps.contains(app))
+            {
+                throw std::runtime_error("App with name " + app + " was already registered.");
+            }
+            unique_names_for_apps.insert(app);
         }
         plugins[plugin->get_name()] = plugin;
     };
