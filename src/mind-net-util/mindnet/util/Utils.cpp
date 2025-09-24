@@ -216,5 +216,19 @@ namespace mindnet::util
 
         return result;
     }
+    std::set<string> Utils::split_string_by_commas (const string& string_, std::set<std::string>& result)
+    {
+        if (!string_.empty())
+        {
+            std::stringstream ss(string_);
+            std::string field_entry;
+
+            while (std::getline(ss, field_entry, ','))
+            {
+                result.insert(field_entry);
+            }
+        }
+        return result;
+    }
 
 }

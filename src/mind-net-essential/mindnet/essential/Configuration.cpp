@@ -7,6 +7,8 @@
 #include <filesystem>
 #include <iostream>
 
+#include "../../../../include/mind-net-util/mindnet/util/Utils.h"
+
 #define if_map_has(key) if (map_contains(map, #key))
 #define save_enum(key) if_map_has(key) key = string_to_##key(map.at( #key));
 #define save_text(key) if_map_has(key) key = map.at( #key);
@@ -84,6 +86,11 @@ namespace mindnet::essential
         save_text(jwt_secret)
         //
         if (map_contains(map, "max_log_level")) max_log_level = string_to_log_level(map.at( "max_log_level"));
+        if (map_contains(map, "allowed_plugins"))
+        {
+            auto& allowed_plugins_string = map.at( "allowed_plugins");
+            util::Utils::split_string_by_commas(allowed_plugins_string, allowed_plugins);
+        }
     }
 
 }

@@ -270,21 +270,7 @@ namespace mindnet::http
     }
 
     void HttpServer::create_model_definition_endpoints(const api::ServicePtr& service_ptr)
-    {        
-        auto split_string_by_commas = [](const string& string_, std::set<std::string>& result)
-        {
-            if (!string_.empty())
-            {
-                std::stringstream ss(string_);
-                std::string field_entry;
-
-                while (std::getline(ss, field_entry, ','))
-                {
-                    result.insert(field_entry);
-                }
-            }
-        };
-
+    {
         auto column_definition_to_json = [](mindnet::model::ColumnDefinition& column_definition)
         {
             crow::json::wvalue result;
@@ -443,7 +429,7 @@ namespace mindnet::http
 
         //READ
         CROW_ROUTE(crow_app, "/api/v1/model_definition/<string>").methods(crow::HTTPMethod::GET)
-        ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req, string model_name)
+        ([service_ptr, model_definition_to_json](const crow::request& req, string model_name)
         {
             check_maintenance_mode()
             
@@ -454,7 +440,7 @@ namespace mindnet::http
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::set<string> fields_set;
-            split_string_by_commas(fields, fields_set);
+            util::Utils::split_string_by_commas(fields, fields_set);
             auto json = model_definition_to_json(model_name, fields_set);
 
             if (json.t() == crow::json::type::Null)
@@ -484,14 +470,14 @@ namespace mindnet::http
 
         // LIST
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::GET)
-        ([service_ptr, model_definition_to_json, split_string_by_commas](const crow::request& req)
+        ([service_ptr, model_definition_to_json](const crow::request& req)
         {
             check_maintenance_mode()
             
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::set<string> fields_set;
-            split_string_by_commas(fields, fields_set);
+            util::Utils::split_string_by_commas(fields, fields_set);
             crow::json::wvalue result;
 
             crow::json::wvalue::list model_definitions_as_json;
@@ -551,6 +537,7 @@ namespace mindnet::http
                 static const int SECONDS_PER_HOUR = 60 * 60;
                 static const int SECONDS_PER_MINUTE = 60;
 
+//#define test_health_endpoint
 #ifdef test_health_endpoint
                 std::random_device rd;
                 std::mt19937 gen(rd());
@@ -681,7 +668,7 @@ namespace mindnet::http
 
     void HttpServer::create_authentication_endpoints(const api::ServicePtr& service_ptr)
     {
-        CROW_ROUTE(crow_app, "/api/login").methods("POST"_method)([service_ptr](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/auth/login").methods("POST"_method)([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
             
@@ -723,7 +710,7 @@ namespace mindnet::http
             }
         });
 
-        CROW_ROUTE(crow_app, "/api/register").methods("POST"_method)([=](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([=](const crow::request& req)
         {
             check_maintenance_mode()
             
@@ -774,7 +761,7 @@ namespace mindnet::http
             return crow::response{201, "Registration successful"};
         });
 
-        CROW_ROUTE(crow_app, "/api/protected")([](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/protected")([](const crow::request& req)
         {
             check_maintenance_mode()
 

@@ -72,7 +72,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
 
 void print_logo()
 {
-    info << "Starting Mind Net..." << std::endl;
+    info << "Starting Mind Net..." << commit;
 
     std::cout << R"(
   __  __ _           _   _   _      _
@@ -287,6 +287,10 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
     REGISTER_PLUGIN(mail, Mail)
     REGISTER_PLUGIN(chat, Chat)
     REGISTER_PLUGIN(suggestion, Suggestion)
+    if (plugin_registry->get_plugin_count() == 0)
+    {
+        throw std::runtime_error("No plugins registered");
+    }
 }
 
 int main(int argc, char** argv)

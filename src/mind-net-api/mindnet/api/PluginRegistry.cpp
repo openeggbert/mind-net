@@ -75,6 +75,17 @@ namespace mindnet::api
 
     void PluginRegistry::register_plugin(const PluginPtr& plugin)
     {
+        if (plugins.empty() && plugin->get_name() != "core")
+        {
+            throw std::runtime_error(
+                "Plugin 'core' must be registered first, but found plugin '" + plugin->get_name() + "' instead"
+            );
+        }
+        if (plugin->get_name() != "core" && !essential::g_configuration.allowed_plugins.contains(plugin->get_name()))
+        {
+            warn << "Plugin " << plugin->get_name() << " is not allowed. This plugin won't be registered." << commit;
+            return;
+        }
         if (!plugin->is_closed_for_changes())
         {
             err << "Plugin " << plugin->get_name() << " is not closed for changes and cannot be registered" << commit;

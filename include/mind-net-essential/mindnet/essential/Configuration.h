@@ -59,6 +59,7 @@ namespace mindnet::essential
         std::string jwt_secret{};
         //other
         LogLevel max_log_level{ERROR};
+        std::set<string> allowed_plugins;
 
         Configuration(const string_map& map);
     };

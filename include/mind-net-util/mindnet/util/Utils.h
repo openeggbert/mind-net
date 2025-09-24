@@ -64,7 +64,8 @@ namespace mindnet::util
         static std::string decimalToBase26(int number);
 
         static std::vector<std::string> split_with_quotes(const std::string& input);
-
+        static std::set<string> split_string_by_commas(const string& string_,
+                                                          std::set<std::string>& result);
     };
 
     enum EscapeColor
