@@ -382,6 +382,83 @@ namespace mindnet::http
             return crow::response{201, "Registration successful"};
         });
 
+        CROW_ROUTE(crow_app, "/api/v1/auth/change_password").methods("POST"_method)(
+    [service_ptr](const crow::request& req)
+    {
+        check_maintenance_mode()
+
+        api::AccessTokenContext ctx{req, service_ptr};
+        if (ctx.status != 200)
+        {
+            return crow::response{ctx.status, ctx.msg};
+        }
+
+        auto body = crow::json::load(req.body);
+        if (!body || !body.has("old_password") || !body.has("new_password"))
+        {
+            return crow::response{400, "Missing old_password or new_password"};
+        }
+
+        std::string old_password = body["old_password"].s();
+        std::string new_password = body["new_password"].s();
+
+        // 1. Load user
+        auto user_id = ctx.user_id; // získaný z access tokenu
+        auto user_res = service_ptr->read(plugins::core::models::USER_DEFINITION, ctx, user_id);
+        if (user_res.second.ko())
+        {
+            return crow::response{500, "Failed to load user: " + user_res.second.error};
+        }
+        if (user_res.first.empty())
+        {
+            return crow::response{404, "User not found"};
+        }
+
+        plugins::core::models::User user;
+        user.from_values(user_res.first);
+
+        // 2. Verify old password
+        std::string old_hash = util::Utils::hash_sha_256(old_password);
+        if (user.password_hash != old_hash)
+        {
+            return crow::response{401, "Old password is incorrect"};
+        }
+
+        // 3. Save new password
+        std::string new_hash = util::Utils::hash_sha_256(new_password);
+        user.password_hash = new_hash;
+        auto v = user.to_values();
+        auto update_res = service_ptr->update(
+            plugins::core::models::USER_DEFINITION,
+            ctx,
+            user.get_id(),
+            v
+        );
+
+        if (update_res.ko())
+        {
+            return crow::response{500, "Failed to update password: " + update_res.error};
+        }
+
+        // 4. (Optional) Revoke all sessions/tokens for this user
+        orm::QueryParams refresh_query;
+        refresh_query.add_filter(plugins::core::columns::RefreshTokenColumns::USER_ID, std::to_string(user.get_id()));
+        auto refresh_tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh_query);
+        auto now = util::Utils::currentUnixTimestamp();
+        for (auto& r : refresh_tokens.first)
+        {
+            plugins::core::models::RefreshToken t;
+            t.from_values(r);
+            t.is_revoked = true;
+            t.revoked_at = now;
+            auto tv = t.to_values();
+            service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, t.get_id(), tv);
+        }
+
+        return crow::response{200, "Password changed successfully"};
+    });
+
+
         CROW_ROUTE(crow_app, "/api/v1/protected")([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
