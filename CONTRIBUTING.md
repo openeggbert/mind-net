@@ -39,11 +39,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Reorder columns of tables, if needed
 - [ ] Unix time columns should have SQLite type DATETIME
-- [ ] FEATURE User authentication
-    * via access token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
-    * refresh token /refresh-token is valid 7 days (can be configured)
-    * when the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
-      without requiring re-authentication.
 - [ ] Slip Box component
 - [ ] Super Memo component
 - [ ] BUG Update of boolean values in SQLite is not working.
@@ -144,4 +139,4 @@ return "Logged out";
 - [x] New table access_token : name, description, expiration_date, string allowed_operations
 - [x] New table refresh_token
 - [x] New table login_session
-
+- [x] FEATURE User authentication
