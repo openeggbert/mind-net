@@ -56,6 +56,8 @@ namespace mindnet::http
                 "navigation.js",
                 "actions.js",
                 "init.js",
+                "auth.js",
+                "auth-ui.js"
             };
             static std::unordered_set<std::string> plugin_allowed_files;
 

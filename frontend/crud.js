@@ -533,7 +533,7 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
             if (val >= 1 && val <= getTotalPages()) {
                 changePage(val);
             } else {
-                alert(`Please enter a number between 1 and ${getTotalPages()}`);
+                showError(`Please enter a number between 1 and ${getTotalPages()}`);
             }
         };
     }

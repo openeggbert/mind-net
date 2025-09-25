@@ -30,9 +30,6 @@ export function initializeFromURL() {
     }
 }
 
-
-initializeFromURL();
-
 const mobileMenuButton = document.getElementById("mobileMenuButton");
 if (mobileMenuButton) {
     mobileMenuButton.onclick = () => {

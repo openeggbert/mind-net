@@ -56,7 +56,7 @@ namespace mindnet::plugins::core::models
 
         validator_chain_vector list{
             [this] { return testt_not_empty(username, UserColumns::USERNAME); },
-            [this] { return testt_between(username, 5, 64, UserColumns::USERNAME); },
+            [this] { return testt_between(username, 3, 64, UserColumns::USERNAME); },
             [this] { return testt_is_alpha_or_digit(username, UserColumns::USERNAME); },
             [this] { return test_true(!isdigit(username[0]), "username must not start with a digit"); },
             [this] { return test_eq(password_hash.size(), 64, UserColumns::PASSWORD_HASH); },

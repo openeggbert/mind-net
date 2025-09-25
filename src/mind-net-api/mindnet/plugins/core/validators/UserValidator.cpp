@@ -71,8 +71,10 @@ namespace mindnet::plugins::core::validators
         return_if(entity.password_hash == "*",
                   400, "password_hash cannot be placeholder during user creation");
 
+        if (!entity.email.empty()) {
         return_if(core::has_user_email(ctx, entity.email),
                   409, "email already exists");
+        }
 
         return ok_result;
     }

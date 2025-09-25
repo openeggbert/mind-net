@@ -9,6 +9,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/http/RestHelper.h"
 #include "mindnet/plugins/core/models/ApiLog.h"
+#include "mindnet/http/HttpUtils.h"
 
 using mindnet::essential::g_configuration;
 

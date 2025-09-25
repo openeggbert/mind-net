@@ -39,8 +39,14 @@ namespace mindnet::api
 
             api::AccessTokenContext system_token{0, "system", 200};
             auto tokens = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, system_token, q);
+            if (tokens.second.ko())
+            {
+                status = 500;
+                msg = "Listing tokens failed.";
+                return;
+            }
             if (tokens.first.empty()) {
-                status = 403;
+                status = 401;
                 msg = "Access token invalid or revoked";
                 return;
             }
@@ -51,13 +57,13 @@ namespace mindnet::api
 
             if (access_token.is_revoked)
             {
-                status = 403;
+                status = 401;
                 msg = "Access token revoked";
                 return;
             }
             if (util::Utils::currentUnixTimestamp() >= access_token.expires_at)
             {
-                status = 403;
+                status = 401;
                 msg = "Access token expired";
                 return;
             }
@@ -66,7 +72,13 @@ namespace mindnet::api
                 access_token.last_used_at = util::Utils::currentUnixTimestamp();
                 access_token.ip_address = req.remote_ip_address;
                 access_token.user_agent = req.get_header_value("User-Agent");
+
                 auto v = access_token.to_values();
+
+                // v.erase(v.begin(),
+                //              v.begin() + std::min<size_t>(2, v.size()));
+                // v.push_back(access_token.get_id());
+
                 auto updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION,*this, access_token.get_id(), v);
                 if (updated.ko())
                 {

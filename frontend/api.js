@@ -30,9 +30,53 @@ export async function loadModelDefinition() {
     return data;
 }
 
+const ACCESS_TOKEN_KEY = "access_token";
+const REFRESH_TOKEN_KEY = "refresh_token";
+
+export function getAccessToken() {
+    return localStorage.getItem(ACCESS_TOKEN_KEY);
+}
+
+export function setAccessToken(token) {
+    if (token) localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    else localStorage.removeItem(ACCESS_TOKEN_KEY);
+}
+
+export function getRefreshToken() {
+    return localStorage.getItem(REFRESH_TOKEN_KEY);
+}
+
+export function setRefreshToken(token) {
+    if (token) localStorage.setItem(REFRESH_TOKEN_KEY, token);
+    else localStorage.removeItem(REFRESH_TOKEN_KEY);
+}
+
+// Overload apiFetch to always send Authorization header
 export async function apiFetch(url, options = {}) {
+    const headers = options.headers || {};
+
+    const skipAuth = url.includes("/auth/login") ||
+        url.includes("/auth/register") ||
+        url.includes("/auth/refresh_token");
+
+    if (!skipAuth) {
+        const token = getAccessToken();
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    options.headers = headers;
+
     try {
         const res = await fetch(url, options);
+
+        if (res.status === 401 && !skipAuth && getRefreshToken()) {
+            const refreshed = await refreshToken();
+            if (refreshed) {
+                headers["Authorization"] = `Bearer ${getAccessToken()}`;
+                return apiFetch(url, options); // retry
+            }
+        }
+
         if (!res.ok) {
             const text = await res.text();
             showError(`Error ${res.status}: ${text || res.statusText}`);

@@ -55,22 +55,31 @@ namespace mindnet::http
         {
             check_maintenance_mode()
 
-            UserCredentials credentials = req;
-            if (!credentials.error.empty())
+            auto body = crow::json::load(req.body);
+            if (!body || !body.has("username") || !body.has("password"))
             {
-                return crow::response(400, credentials.error);
+                return crow::response(400, "Missing username or password");
             }
-            string error;
+
+            std::string username = body["username"].s();
+            std::string password = body["password"].s();
+
+
             orm::QueryParams query_params;
-            query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, credentials.username);
-            api::AccessTokenContext login_token{req, service_ptr};
-            auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
+            query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
+
+            api::AccessTokenContext system_token{0, "User not logged in", 403};
+            auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, system_token, query_params);
+            if (users.second.ko())
+            {
+                return crow::response(500, "Loading list of users failed. " + users.second.error);
+            }
             if (users.first.empty()) { return crow::response(401, "User does not exist."); }
             plugins::core::models::User user;
             user.from_values(users.first[0]);
 
             string expected_password_hash = user.password_hash;
-            string returned_password_hash = util::Utils::hash_sha_256(credentials.password);
+            string returned_password_hash = util::Utils::hash_sha_256(password);
             bool verified = expected_password_hash == returned_password_hash;
             if (!verified)
             {
@@ -82,7 +91,7 @@ namespace mindnet::http
             // -------------------------------
             auto now = util::Utils::currentUnixTimestamp();
 
-            auto access_exp = now + 15 * 60; // 15 minutes
+            auto access_exp = now + 415 * 60; // 15 minutes
             auto refresh_exp = now + 30 * 24 * 3600; // 30 days
 
             std::string raw_access = generate_secret_key(32);
@@ -111,7 +120,7 @@ namespace mindnet::http
 
                 auto result = service_ptr->create(
                     plugins::core::models::ACCESS_TOKEN_DEFINITION,
-                    login_token,
+                    system_token,
                     access_token_values);
                 if (result.second.ko())
                 {
@@ -135,7 +144,7 @@ namespace mindnet::http
 
                 auto result = service_ptr->create(
                     plugins::core::models::REFRESH_TOKEN_DEFINITION,
-                    login_token,
+                    system_token,
                     refresh_token_values);
                 if (result.second.ko())
                 {
@@ -163,7 +172,7 @@ namespace mindnet::http
 
                 auto result = service_ptr->create(
                     plugins::core::models::LOGIN_SESSION_DEFINITION,
-                    login_token,
+                    system_token,
                     login_session_values);
                 if (result.second.ko())
                 {
@@ -342,6 +351,8 @@ namespace mindnet::http
 
             std::string username = body["username"].s();
             std::string password = body["password"].s();
+            if (username == password)
+                return crow::response{400, "Password must be different from username."};
             std::string display_name = body["display_name"].s();
             std::string profile_text = body["profile_text"].s();
             std::string email = body["email"].s();
@@ -402,8 +413,11 @@ namespace mindnet::http
         std::string old_password = body["old_password"].s();
         std::string new_password = body["new_password"].s();
 
+        if (old_password == new_password)
+            return crow::response{400, "Password must be different from username."};
+
         // 1. Load user
-        auto user_id = ctx.user_id; // získaný z access tokenu
+        auto user_id = ctx.user_id;
         auto user_res = service_ptr->read(plugins::core::models::USER_DEFINITION, ctx, user_id);
         if (user_res.second.ko())
         {
@@ -416,6 +430,9 @@ namespace mindnet::http
 
         plugins::core::models::User user;
         user.from_values(user_res.first);
+
+        if (user.username == new_password)
+            return crow::response{400, "Password must be different from username."};
 
         // 2. Verify old password
         std::string old_hash = util::Utils::hash_sha_256(old_password);

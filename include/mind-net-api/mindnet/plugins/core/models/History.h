@@ -42,7 +42,7 @@ namespace mindnet::plugins::core::models
         .set_group("Core", 500).allow_reader_write()
         .set_columns({
             //
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User ID who made the change"),
+            coldef(COLS::USER_ID, FOREIGN_KEY | READONLY).set_description("User ID who made the change"),
             coldef(COLS::TABLE_NAME, MANDATORY | READONLY).set_description("Name of the table where change was made"),
             coldef(COLS::RECORD_ID, MANDATORY | READONLY).set_description("ID of the record that was changed"),
             coldef(COLS::OPERATION, MANDATORY | READONLY).set_enum_definition(

@@ -43,12 +43,12 @@ namespace mindnet::plugins::core::models
         user_id = number();
         token_hash = text();
         token_purpose = static_cast<enums::TokenPurpose>(number());
-        is_created_by_user = static_cast<bool>(number());
+        is_created_by_user = boolean();
         name = text();
         description = text();
         issued_at = number();
         expires_at = number();
-        is_revoked = static_cast<bool>(number());
+        is_revoked = boolean();
         revoked_at = number();
         last_used_at = number();
         ip_address = text();

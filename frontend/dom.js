@@ -11,12 +11,6 @@ export function getQueryParams() {
     const others = Object.fromEntries(params.entries());
     return {entity, action, others};
 }
-
-
-
-export function showError(msg) {
-    alert(msg);
-}
 export function formatDateTime(value) {
     if (!value || value === 0) return "";
     const d = new Date(Number(value) * 1000); // Unix timestamp in seconds
@@ -46,3 +40,79 @@ export function isColumnHidden(entity, column) {
     return hiddenCols[entity]?.includes(column);
 }
 
+// --- Toast CSS injection ---
+(function injectToastStyles() {
+    if (document.getElementById("toast-styles")) return; // ať se nevloží 2x
+    const style = document.createElement("style");
+    style.id = "toast-styles";
+    style.textContent = `
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* space between toasts */
+  z-index: 1000;
+}
+
+.toast {
+  font-size: 1.1rem;
+  background: #9F9;
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.error   { background: #F99; }
+.toast.info    { background: #9CF; }
+.toast.success { background: #9F9; }
+
+`;
+    document.head.appendChild(style);
+})();
+
+
+// create toast container only once
+function getToastContainer() {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toast-container";
+        document.body.appendChild(container);
+    }
+    return container;
+}
+
+export function showToast(message, timeout = 3000, type = "info") {
+    const container = getToastContainer();
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add("show"));
+
+    setTimeout(() => {
+        toast.classList.remove("show");
+        setTimeout(() => toast.remove(), 300);
+    }, timeout);
+}
+
+export function showError(msg) {
+    showToast(msg, 5000, "error");
+}
+export function showInfo(msg) {
+    showToast(msg, 5000, "info");
+}
+export function showSuccess(msg) {
+    showToast(msg, 5000, "success");
+}

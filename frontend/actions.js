@@ -7,6 +7,7 @@ import {selectAction} from "./navigation.js";
 import {setSelectedEntity} from "./state.js";
 import {setSelectedActionId} from "./state.js";
 import {getEntitySchemas} from "./state.js";
+import {showError} from "./dom.js";
 
 window.selectAction = selectAction;
 
@@ -39,14 +40,14 @@ window.deleteEntity = async (entity, id) => {
             } catch (e) {
                 message = response.statusText;
             }
-            alert(`Error deleting record: ${message}`);
+            showError(`Error deleting record: ${message}`);
             return;
         }
 
         setSelectedActionId(null);
         selectAction("list", null);
     } catch (err) {
-        alert(`Network error: ${err}`);
+        showError(`Network error: ${err}`);
     }
 };
 
