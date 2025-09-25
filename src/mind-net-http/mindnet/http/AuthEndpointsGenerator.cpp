@@ -257,6 +257,76 @@ namespace mindnet::http
             return crow::response{200, "Logout successful"};
         });
 
+        CROW_ROUTE(crow_app, "/api/v1/auth/refresh_token").methods("POST"_method)(
+            [service_ptr](const crow::request& req)
+            {
+                check_maintenance_mode()
+
+                auto body = crow::json::load(req.body);
+                if (!body || !body.has("refresh_token"))
+                {
+                    return crow::response{400, "Missing refresh_token"};
+                }
+
+                std::string raw_refresh = body["refresh_token"].s();
+                std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
+
+                auto now = util::Utils::currentUnixTimestamp();
+                api::AccessTokenContext ctx{req, service_ptr};
+
+                // 1. Find refresh token
+                orm::QueryParams query;
+                query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
+                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, query);
+                if (result.first.empty())
+                {
+                    return crow::response{401, "Invalid refresh_token"};
+                }
+
+                plugins::core::models::RefreshToken refresh;
+                refresh.from_values(result.first[0]);
+
+                // 2. Validation
+                if (refresh.is_revoked || refresh.expires_at < now)
+                {
+                    return crow::response{401, "Refresh token expired or revoked"};
+                }
+
+                // 3. Generate new access token
+                auto access_exp = now + 15 * 60; // 15 minutes
+                std::string raw_access = generate_secret_key(32);
+                std::string access_hash = util::Utils::hash_sha_256(raw_access);
+
+                plugins::core::models::AccessToken access_token;
+                access_token.user_id = refresh.user_id;
+                access_token.token_hash = access_hash;
+                access_token.token_purpose = plugins::core::enums::TokenPurpose::Session;
+                access_token.issued_at = now;
+                access_token.expires_at = access_exp;
+                access_token.allowed_operations = "*";
+
+                auto values = access_token.to_values();
+                values[1] = now; // created_at
+                values[2] = now; // updated_at
+
+                auto create_res = service_ptr->create(
+                    plugins::core::models::ACCESS_TOKEN_DEFINITION,
+                    ctx,
+                    values
+                );
+
+                if (create_res.second.ko())
+                {
+                    return crow::response{500, "Failed to create new access token: " + create_res.second.error};
+                }
+
+                // 4. Return to client
+                crow::json::wvalue response;
+                response["access_token"] = raw_access;
+                response["expires_in"] = 900; // 15 minutes
+                return crow::response{200, response};
+            });
+
 
         CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([=](const crow::request& req)
         {
