@@ -187,6 +187,77 @@ namespace mindnet::http
 
         });
 
+        CROW_ROUTE(crow_app, "/api/v1/auth/logout").methods("POST"_method)([service_ptr](const crow::request& req)
+        {
+            check_maintenance_mode()
+
+            auto body = crow::json::load(req.body);
+            if (!body || !body.has("refresh_token"))
+            {
+                return crow::response{400, "Missing refresh_token"};
+            }
+
+            std::string raw_refresh = body["refresh_token"].s();
+            std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
+
+            auto now = util::Utils::currentUnixTimestamp();
+            api::AccessTokenContext ctx{req, service_ptr};
+
+            // 1. Find refresh token
+            orm::QueryParams query;
+            query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
+            auto tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, query);
+            if (tokens.second.ko())
+            {
+                return crow::response{500, "Listing tokens failed: "  + tokens.second.error};
+            }
+            if (tokens.first.empty())
+            {
+                return crow::response{401, "Invalid refresh_token"};
+            }
+
+            plugins::core::models::RefreshToken refresh;
+            refresh.from_values(tokens.first[0]);
+
+            // 2. Mark refresh token as revoked
+            refresh.is_revoked = true;
+            refresh.revoked_at = now;
+            auto v = refresh.to_values();
+            service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh.get_id(),v);
+
+            // 3. Mark login session as terminated
+            orm::QueryParams session_query;
+            session_query.add_filter(plugins::core::columns::LoginSessionColumns::REFRESH_TOKEN_ID,
+                                     std::to_string(refresh.get_id()));
+            auto sessions = service_ptr->list(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx, session_query);
+            for (auto& s : sessions.first)
+            {
+                plugins::core::models::LoginSession session;
+                session.from_values(s);
+                session.expires_at = now; // or session.is_revoked = 1, if you have the flag
+                auto session_values = session.to_values();
+                service_ptr->update(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx, session.get_id(),session_values);
+            }
+
+            // 4. (optional) Mark access tokens as revoked
+            orm::QueryParams access_query;
+            access_query.add_filter(plugins::core::columns::AccessTokenColumns::USER_ID,
+                                    std::to_string(refresh.user_id));
+            auto accesses = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access_query);
+            for (auto& a : accesses.first)
+            {
+                plugins::core::models::AccessToken access;
+                access.from_values(a);
+                access.is_revoked = true;
+                access.revoked_at = now;
+                auto access_token_values = access.to_values();
+                service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access.get_id(),access_token_values);
+            }
+
+            return crow::response{200, "Logout successful"};
+        });
+
+
         CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([=](const crow::request& req)
         {
             check_maintenance_mode()
