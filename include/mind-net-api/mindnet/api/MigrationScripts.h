@@ -10,7 +10,6 @@
 #include "IValidator.h"
 #include "ModelRegistration.h"
 #include "Trigger.h"
-#include "jwt-cpp/jwt.h"
 #include "mindnet/essential/DatabaseType.h"
 
 namespace mindnet::api

@@ -7,7 +7,6 @@
 #include <filesystem>
 
 #include "mindnet/http/SuperAdminEndpointsGenerator.h"
-#include "jwt-cpp/jwt.h"
 #include "mindnet/essential/Configuration.h"
 #include "mindnet/api/Service.h"
 #include "mindnet/http/AuthEndpointsGenerator.h"

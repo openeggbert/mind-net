@@ -9,7 +9,6 @@
 #include "MigrationScripts.h"
 #include "ModelRegistration.h"
 #include "Trigger.h"
-#include "jwt-cpp/jwt.h"
 
 namespace mindnet::model
 {

@@ -35,9 +35,6 @@ database_type=SQLite
 access_mode=PublicFullAccess
 registration_mode=Free
 default_user_role=Reader
-
-#Secrets
-jwt_secret=***
 */
 
 namespace mindnet::essential
@@ -58,8 +55,6 @@ namespace mindnet::essential
         AccessMode access_mode{AccessMode::PublicFullAccess};
         RegistrationMode registration_mode{RegistrationMode::Free};
         UserRole default_user_role{UserRole::Reader};
-        //secrets
-        std::string jwt_secret{};
         //other
         LogLevel max_log_level{ERROR};
         std::set<string> allowed_plugins;

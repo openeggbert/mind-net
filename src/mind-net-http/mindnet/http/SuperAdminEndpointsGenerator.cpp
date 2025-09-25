@@ -149,10 +149,6 @@ content: " (takes effect after restart) ";
       {default_user_role}
     </select>
 
-    <!-- Secrets -->
-    <label for="jwt_secret">JWT Secret</label>
-    <input type="password" id="jwt_secret" name="jwt_secret" value="{jwt_secret}">
-
     <!-- Other -->
     <label for="max_log_level">Max Log Level</label>
     <select id="max_log_level" name="max_log_level">

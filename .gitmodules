@@ -13,6 +13,3 @@
 [submodule "thirdparty/asio"]
 	path = thirdparty/asio
 	url = https://github.com/chriskohlhoff/asio
-[submodule "thirdparty/jwt-cpp"]
-	path = thirdparty/jwt-cpp
-	url = https://github.com/Thalhammer/jwt-cpp.git

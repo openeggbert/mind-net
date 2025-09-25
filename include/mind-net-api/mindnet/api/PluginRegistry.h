@@ -9,7 +9,6 @@
 
 #include "Plugin.h"
 #include "IValidator.h"
-#include "jwt-cpp/jwt.h"
 
 namespace mindnet::api
 {

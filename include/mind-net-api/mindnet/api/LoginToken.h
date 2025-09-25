@@ -5,21 +5,18 @@
 #define LOGINTOKEN_H
 
 #include "crow/http_request.h"
-#include "jwt-cpp/jwt.h"
 #include "mindnet/essential/Configuration.h"
 
 namespace mindnet::api
 {
     struct LoginToken
     {
-        std::string username;
         int user_id{};
         std::string msg;
         int status{};
 
         LoginToken(const std::string& username, int user_id, const std::string& msg, int status)
-            : username(username),
-              user_id(user_id),
+            : user_id(user_id),
               msg(msg),
               status(status)
         {
@@ -51,10 +48,9 @@ namespace mindnet::api
 
                 verifier.verify(decoded);
 
-                username = decoded.get_payload_claim("username").as_string();
                 user_id = stoi(decoded.get_payload_claim("user_id").as_string());
                 status = 200;
-                msg = "Welcome, " + username;
+                msg = "Welcome";
                 return;
             }
             catch (const std::exception& e)
