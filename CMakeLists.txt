@@ -46,7 +46,6 @@ set(CROW_DIR thirdparty/crow)
 set(ASIO_DIR thirdparty/asio)
 include_directories(${CROW_DIR}/include)
 include_directories(${ASIO_DIR}/asio/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jwt-cpp/include)
 
 # ===== Project modules =====
 add_subdirectory(src/mind-net-essential)

@@ -81,11 +81,6 @@ strip --strip-all mind_net_app
 upx --best --lzma mind_net_app
 
 # ------------------------------
-# Generate JWT Secret
-# ------------------------------
-openssl rand -base64 32
-
-# ------------------------------
 # Configure values in mindnet.properties
 # ------------------------------
 ```

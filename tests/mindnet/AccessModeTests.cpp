@@ -19,7 +19,7 @@ struct
     static std::shared_ptr<api::IPersistence> dummy_db;
 
     // Dummy login token
-    static api::AccessTokenContext dummy_token{"user", 1, "", 0};
+    static api::AccessTokenContext dummy_token{1, "", 0};
 
     using mindnet::essential::UserRole;
 // Helper RequestContext constructor

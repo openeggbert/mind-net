@@ -40,7 +40,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Reorder columns of tables, if needed
 - [ ] Unix time columns should have SQLite type DATETIME
 - [ ] FEATURE User authentication
-    * via JWT token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
+    * via access token /login, which is valid 1 hour (can be configured) ... https://github.com/njligames/crow-jwt-auth
     * refresh token /refresh-token is valid 7 days (can be configured)
     * when the access token expires, the client (e.g. frontend) sends the refresh token and obtains a new access token —
       without requiring re-authentication.
