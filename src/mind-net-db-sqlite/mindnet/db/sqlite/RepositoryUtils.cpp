@@ -57,6 +57,7 @@ namespace mindnet::db::sqlite
         SQLite::Statement& query,
         const entity_fields& values,
         const model::ModelDefinition& model_definition,
+        const essential::Crudl crudl,
         bool auto_increment = false)
     {
         std::size_t values_size = values.size();
@@ -83,8 +84,16 @@ namespace mindnet::db::sqlite
             {
                 continue;
             }
-            auto& column = columns[i];
-            auto& column_name = column.get_column_name();
+            string column_name;
+            bool is_foreign_key = false;
+            bool create = crudl == essential::Crudl::Create;
+            if (create)
+            {
+                auto& column = columns[i];
+                column_name = create ? column.get_column_name() : "";
+                is_foreign_key = column.is_foreign_key();
+            }
+
             std::visit([&](auto&& val) -> void
             {
                 using T = std::decay_t<decltype(val)>;
@@ -97,7 +106,7 @@ namespace mindnet::db::sqlite
                 }
                 else if constexpr (std::is_same_v<T, int64_t>)
                 {
-                    if (val == 0 && column.is_foreign_key())
+                    if (val == 0 && is_foreign_key)
                     {
                         trace << "binding index " << i << " " << column_name << " with value: NULL" << commit;
                         query.bind(index, nullptr);
@@ -149,7 +158,7 @@ namespace mindnet::db::sqlite
             return -1;
         }
 
-        fill_sqlite_query(*query_ptr, fields, definition, true
+        fill_sqlite_query(*query_ptr, fields, definition, essential::Crudl::Create, true
         );
 
         try
@@ -275,7 +284,7 @@ namespace mindnet::db::sqlite
 
         fields_copy.push_back(id);
 
-        fill_sqlite_query(*query_ptr, fields_copy, def);
+        fill_sqlite_query(*query_ptr, fields_copy, def, essential::Crudl::Update);
         try
         {
             sqlite_exec(*query_ptr);
@@ -317,7 +326,7 @@ namespace mindnet::db::sqlite
 
         entity_fields fields;
         fields.push_back(id);
-        fill_sqlite_query(*query_ptr, fields, def);
+        fill_sqlite_query(*query_ptr, fields, def, essential::Crudl::Delete);
         try
         {
             sqlite_exec(*query_ptr);

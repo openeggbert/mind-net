@@ -21,7 +21,7 @@
 #ifndef REFRESHTOKENCOLUMNS_H
 #define REFRESHTOKENCOLUMNS_H
 
-#include "../../../../../mind-net-model/mindnet/model/BaseColumns.h"
+#include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::core::columns
 {

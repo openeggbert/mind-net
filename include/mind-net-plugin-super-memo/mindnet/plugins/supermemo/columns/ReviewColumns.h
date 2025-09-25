@@ -25,7 +25,7 @@
 #ifndef REVIEWCOLUMNS_H
 #define REVIEWCOLUMNS_H
 
-#include "../../../../../mind-net-model/mindnet/model/BaseColumns.h"
+#include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::supermemo::columns
 {

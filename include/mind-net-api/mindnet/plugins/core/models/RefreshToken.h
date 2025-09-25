@@ -18,7 +18,7 @@
 #define REFRESH_TOKEN_H
 
 #include <string>
-#include "../../../../../mind-net-model/mindnet/model/BaseModel.h"
+#include "mindnet/model/BaseModel.h"
 
 // ***** MACROS : START *****
 #define Model RefreshToken
@@ -43,7 +43,7 @@ namespace mindnet::plugins::core::models
             coldef(COLS::TOKEN_HASH, MANDATORY | UNIQUE),
             coldef(COLS::ISSUED_AT, MANDATORY | DATETIME),
             coldef(COLS::EXPIRES_AT, DATETIME),
-            coldef(COLS::IS_REVOKED, MANDATORY),
+            coldef(COLS::IS_REVOKED, MANDATORY | BOOL),
             coldef(COLS::REVOKED_AT, DATETIME),
             coldef(COLS::REPLACED_BY_ID).set_foreign_key("refresh_token"),
             coldef(COLS::ROTATED_FROM_ID).set_foreign_key("refresh_token"),

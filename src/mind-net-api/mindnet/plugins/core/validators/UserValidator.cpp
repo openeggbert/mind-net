@@ -91,9 +91,11 @@ namespace mindnet::plugins::core::validators
 
         return_if(ctx.role != mindnet::essential::UserRole::Admin && !logged_user_updates_himself,
                   403, "You can only update your own user.")
-
-        return_if(new_entity.password_hash != "*",
-                  400, "password cannot be changed here, use /changepw endpoint instead");
+        if (!ctx.token.system)
+        {
+            return_if(new_entity.password_hash != "*",
+                      400, "password cannot be changed here, use /change-password endpoint instead");
+        }
 
         bool role_different = new_entity.role != old_entity.role;
         return_if(role_different && logged_user_updates_himself,

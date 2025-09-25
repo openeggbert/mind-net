@@ -21,7 +21,7 @@
 #define REVIEW_H
 
 #include <string>
-#include "../../../../../mind-net-model/mindnet/model/BaseModel.h"
+#include "mindnet/model/BaseModel.h"
 
 // ***** MACROS : START *****
 #define Model Review

@@ -445,12 +445,14 @@ namespace mindnet::http
         std::string new_hash = util::Utils::hash_sha_256(new_password);
         user.password_hash = new_hash;
         auto v = user.to_values();
+        ctx.system = true;
         auto update_res = service_ptr->update(
             plugins::core::models::USER_DEFINITION,
             ctx,
             user.get_id(),
             v
         );
+        ctx.system = false;
 
         if (update_res.ko())
         {
