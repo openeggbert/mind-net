@@ -131,7 +131,7 @@ namespace mindnet::http
             );
     }
 
-    void HttpServer::create_authentication_endpoints(const api::ServicePtr& service_ptr)
+    void HttpServer::create_authentication_endpoints(api::ServicePtr& service_ptr)
     {
         AuthEndpointsGenerator gen;
         gen.create_auth_endpoints(

@@ -5,7 +5,7 @@
 #include "mindnet/api/Persistence.h"
 
 #include "mindnet/essential/Global.h"
-#include "mindnet/api/LoginToken.h"
+#include "mindnet/api/AccessTokenContext.h"
 
 
 namespace mindnet::api
@@ -50,7 +50,7 @@ namespace mindnet::api
 
     std::pair<int, OperationResult> Persistence::create(
         const ModelDefinition& def,
-        api::LoginToken& token,
+        api::AccessTokenContext& token,
         entity_fields& fields)
     {
         string error;
@@ -59,7 +59,7 @@ namespace mindnet::api
     }
 
     std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,
-                                                                api::LoginToken& token, const int id)
+                                                                api::AccessTokenContext& token, const int id)
     {
         string error;
         entity_fields ef = get_repository(def.get_model_name())->read(id, error);
@@ -71,7 +71,7 @@ namespace mindnet::api
     }
 
     OperationResult Persistence::update(
-        const model::ModelDefinition& def, api::LoginToken& token,
+        const model::ModelDefinition& def, api::AccessTokenContext& token,
         int id, entity_fields& fields
     )
     {
@@ -81,7 +81,7 @@ namespace mindnet::api
         return {500, error};
     }
 
-    OperationResult Persistence::remove(model::ModelDefinition& def, api::LoginToken& token, int id)
+    OperationResult Persistence::remove(model::ModelDefinition& def, api::AccessTokenContext& token, int id)
     {
         string_map empty_map;
 
@@ -93,7 +93,7 @@ namespace mindnet::api
 
     std::pair<std::vector<entity_fields>, OperationResult> Persistence::list(
         ModelDefinition& def,
-        api::LoginToken& token,
+        api::AccessTokenContext& token,
         orm::QueryParams& query_params)
     {
         string error;

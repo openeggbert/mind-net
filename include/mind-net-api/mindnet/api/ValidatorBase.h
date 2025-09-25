@@ -89,7 +89,7 @@ namespace mindnet::api
     public:
         virtual ~ValidatorBase() = default;
 
-        OperationResult can_create(DbPtr& db, api::LoginToken& token, entity_fields& ef) const
+        OperationResult can_create(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const
         {
             auto action = Crudl::Create;
             static_assert(
@@ -137,7 +137,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_read(DbPtr& db, api::LoginToken& token, int id) const
+        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, int id) const
         {
             auto action = Crudl::Read;
             static_assert(
@@ -183,7 +183,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_update(DbPtr& db, api::LoginToken& token, entity_fields& ef) const
+        OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const
         {
             auto action = Crudl::Update;
             static_assert(
@@ -243,7 +243,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_delete(DbPtr& db, api::LoginToken& token, int id) const
+        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, int id) const
         {
             auto action = Crudl::Delete;
             static_assert(
@@ -286,7 +286,7 @@ namespace mindnet::api
             return ok_result;
         };
 
-        OperationResult can_list(DbPtr& db, api::LoginToken& token, string_map& filter) const
+        OperationResult can_list(DbPtr& db, api::AccessTokenContext& token, string_map& filter) const
         {
             auto action = Crudl::List;
             static_assert(

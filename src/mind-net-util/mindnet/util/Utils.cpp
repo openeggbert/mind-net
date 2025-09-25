@@ -11,6 +11,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <regex>
+#include <openssl/sha.h>
 
 #include "mindnet/essential/Global.h"
 
@@ -230,5 +231,19 @@ namespace mindnet::util
         }
         return result;
     }
+
+
+    std::string Utils::hash_sha_256(const std::string& text)
+    {
+        unsigned char hash[SHA256_DIGEST_LENGTH];
+        SHA256(reinterpret_cast<const unsigned char*>(text.c_str()), text.size(), hash);
+
+        std::ostringstream os;
+        for (unsigned char i : hash)
+            os << std::hex << std::setw(2) << std::setfill('0') << (int)i;
+
+        return os.str();
+    }
+
 
 }

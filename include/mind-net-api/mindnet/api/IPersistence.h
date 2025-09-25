@@ -7,7 +7,7 @@
 #include "IRepository.h"
 #include "OperationResult.h"
 #include "crow/json.h"
-#include "LoginToken.h"
+#include "AccessTokenContext.h"
 #include "mindnet/model/ModelDefinition.h"
 
 namespace mindnet::api
@@ -24,15 +24,15 @@ namespace mindnet::api
 
         virtual std::vector<std::string>& list_model_names() = 0;
         //
-        virtual std::pair<int, OperationResult> create(const ModelDefinition& def, LoginToken& token,
+        virtual std::pair<int, OperationResult> create(const ModelDefinition& def, AccessTokenContext& token,
                                                        entity_fields& fields) = 0;
-        virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, LoginToken& token,
+        virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, AccessTokenContext& token,
                                                                int id) = 0;
-        virtual OperationResult update(const ModelDefinition& def, LoginToken& token, int id,
+        virtual OperationResult update(const ModelDefinition& def, AccessTokenContext& token, int id,
                                        entity_fields& fields) = 0;
-        virtual OperationResult remove(ModelDefinition& def, LoginToken& token, int id) = 0;
+        virtual OperationResult remove(ModelDefinition& def, AccessTokenContext& token, int id) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
-            ModelDefinition& def, LoginToken& token, orm::QueryParams& query_params) = 0;
+            ModelDefinition& def, AccessTokenContext& token, orm::QueryParams& query_params) = 0;
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //

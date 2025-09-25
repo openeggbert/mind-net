@@ -9,7 +9,7 @@
 #include "mindnet/api/PersistenceMethods.h"
 #include "mindnet/api/RequestContext.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/api/LoginToken.h"
+#include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/plugins/suggestion/models/Suggestion.h"
 #include "mindnet/plugins/suggestion/models/SuggestionReview.h"
 

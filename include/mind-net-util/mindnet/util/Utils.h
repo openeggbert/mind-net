@@ -66,6 +66,7 @@ namespace mindnet::util
         static std::vector<std::string> split_with_quotes(const std::string& input);
         static std::set<string> split_string_by_commas(const string& string_,
                                                           std::set<std::string>& result);
+        static std::string hash_sha_256(const std::string& text);
     };
 
     enum EscapeColor

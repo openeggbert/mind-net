@@ -7,14 +7,14 @@
 #include "IPersistence.h"
 #include "IRepository.h"
 #include "mindnet/essential/UserStatus.h"
-#include "LoginToken.h"
+#include "AccessTokenContext.h"
 
 namespace mindnet::api
 {
     struct RequestContext
     {
         DbPtr& db;
-        api::LoginToken& token;
+        api::AccessTokenContext& token;
         essential::UserRole role{};
         essential::UserStatus status{};
     };

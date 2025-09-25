@@ -224,7 +224,7 @@ window.addEventListener("load", () => {{
     inline UserOrResponse
     load_current_user(const crow::request& req, const api::ServicePtr& service_ptr)
     {
-        api::LoginToken login_token{req};
+        api::AccessTokenContext login_token{req, service_ptr};
         if (login_token.user_id == 0)
         {
             return crow::response(401, "Unauthorized users cannot access this resource");

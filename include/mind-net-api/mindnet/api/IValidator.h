@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 
-#include "LoginToken.h"
+#include "AccessTokenContext.h"
 #include "OperationResult.h"
 #include "mindnet/essential/Helper.h"
 
@@ -29,15 +29,15 @@ namespace mindnet::api
 
         typedef std::shared_ptr<IPersistence> DbPtr;
 
-        virtual OperationResult can_create(DbPtr& db, api::LoginToken& token, entity_fields& ef) const = 0;
+        virtual OperationResult can_create(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const = 0;
 
-        virtual OperationResult can_read(DbPtr& db, api::LoginToken& token, int id) const = 0;
+        virtual OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, int id) const = 0;
 
-        virtual OperationResult can_update(DbPtr& db, api::LoginToken& token, entity_fields& ef) const = 0;
+        virtual OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const = 0;
 
-        virtual OperationResult can_delete(DbPtr& db, api::LoginToken& token, int id) const = 0;
+        virtual OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, int id) const = 0;
 
-        virtual OperationResult can_list(DbPtr& db, api::LoginToken& token, string_map& filter) const = 0;
+        virtual OperationResult can_list(DbPtr& db, api::AccessTokenContext& token, string_map& filter) const = 0;
 
         [[nodiscard]] virtual string get_model_name() const = 0;
 

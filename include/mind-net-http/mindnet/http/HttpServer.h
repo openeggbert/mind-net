@@ -46,7 +46,7 @@ namespace mindnet::http
         void create_info_endpoint(const api::ServicePtr& service_ptr);
         void create_health_endpoint(const api::ServicePtr& service_ptr);
         void create_superadmin_endpoints(const api::ServicePtr& service_ptr);
-        void create_authentication_endpoints(const api::ServicePtr& service_ptr);
+        void create_authentication_endpoints(api::ServicePtr& service_ptr);
     };
 }
 

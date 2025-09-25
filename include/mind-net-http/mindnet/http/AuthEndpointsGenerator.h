@@ -15,7 +15,7 @@ namespace mindnet::http
     {
     public:
         void create_auth_endpoints(
-            const api::ServicePtr& service_ptr,
+            api::ServicePtr& service_ptr,
             crow::SimpleApp& crow_app
             );
     };

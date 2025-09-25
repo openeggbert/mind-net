@@ -12,7 +12,7 @@
 #include "mindnet/api/OperationResult.h"
 #include "mindnet/api/RequestContext.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/api/LoginToken.h"
+#include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/api/PersistenceMethods.h"
 #include "mindnet/plugins/core/models/User.h"
 // #include "mindnet/plugins/mail/models/Message.h"

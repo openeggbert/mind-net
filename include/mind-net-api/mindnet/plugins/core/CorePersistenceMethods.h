@@ -11,7 +11,7 @@
 #include "mindnet/api/OperationResult.h"
 #include "mindnet/api/RequestContext.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/api/LoginToken.h"
+#include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/api/PersistenceMethods.h"
 #include "mindnet/plugins/core/models/User.h"
 // #include "mindnet/plugins/mail/models/Message.h"
@@ -34,7 +34,7 @@ namespace mindnet::plugins::core::models
 namespace mindnet::plugins::core
 {
     std::pair<plugins::core::models::User, mindnet::api::OperationResult> find_logged_user(
-        api::DbPtr& db, api::LoginToken token);
+        api::DbPtr& db, api::AccessTokenContext token);
 
     bool has_user_name(const api::RequestContext& ctx, string user_name);
     bool has_user_email(const api::RequestContext& ctx, string user_mail);

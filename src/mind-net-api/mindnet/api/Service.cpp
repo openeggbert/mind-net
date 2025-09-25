@@ -125,7 +125,7 @@ namespace mindnet::api
 
     static constexpr int MAX_TRIGGER_DEPTH = 32;
 
-    std::pair<int, OperationResult> Service::create(const ModelDefinition& def, api::LoginToken& token,
+    std::pair<int, OperationResult> Service::create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                     entity_fields& fields, int stack_depth)
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {-1, {500, "Max trigger depth exceeded"}};
@@ -146,7 +146,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, api::LoginToken& token,
+    std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, api::AccessTokenContext& token,
                                                             int id, int stack_depth)
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {api::empty_entity_fields, {500, "Max trigger depth exceeded"}};
@@ -173,7 +173,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    OperationResult Service::update(const ModelDefinition& def, api::LoginToken& token, int id,
+    OperationResult Service::update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
                                     entity_fields& fields, int stack_depth)
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
@@ -193,7 +193,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    OperationResult Service::remove(ModelDefinition& def, api::LoginToken& token, int id, int stack_depth)
+    OperationResult Service::remove(ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth)
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
         auto action = Crudl::Delete;
@@ -215,7 +215,7 @@ namespace mindnet::api
     };
 
     std::pair<std::vector<entity_fields>, OperationResult> Service::list(
-        ModelDefinition& def, api::LoginToken& token, orm::QueryParams& query_params, int stack_depth)
+        ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params, int stack_depth)
     {
         if(stack_depth > MAX_TRIGGER_DEPTH) return {{}, {500, "Max trigger depth exceeded"}};
         auto action = Crudl::List;
@@ -252,7 +252,7 @@ namespace mindnet::api
         return validators.count(name) ? validators[name] : nullptr;
     }
 
-    OperationResult Service::can_create(const ModelDefinition& model_definition, api::LoginToken& token,
+    OperationResult Service::can_create(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                         entity_fields& ef)
     {
         if (!VALIDATION_ENABLED) return ok_result;
@@ -269,7 +269,7 @@ namespace mindnet::api
         };
     };
 
-    OperationResult Service::can_read(const ModelDefinition& model_definition, api::LoginToken& token, int id)
+    OperationResult Service::can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token, int id)
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
@@ -284,7 +284,7 @@ namespace mindnet::api
         };
     }
 
-    OperationResult Service::can_update(const ModelDefinition& model_definition, api::LoginToken& token,
+    OperationResult Service::can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                         entity_fields& ef)
     {
         if (!VALIDATION_ENABLED) return ok_result;
@@ -300,7 +300,7 @@ namespace mindnet::api
         };
     }
 
-    OperationResult Service::can_delete(const ModelDefinition& model_definition, api::LoginToken& token, int id)
+    OperationResult Service::can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token, int id)
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
@@ -315,7 +315,7 @@ namespace mindnet::api
         };
     }
 
-    OperationResult Service::can_list(const ModelDefinition& model_definition, api::LoginToken& token,
+    OperationResult Service::can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                       string_map& filter)
     {
         if (!VALIDATION_ENABLED) return ok_result;

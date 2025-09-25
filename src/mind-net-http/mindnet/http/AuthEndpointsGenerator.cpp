@@ -22,18 +22,6 @@ namespace mindnet::http
 {
     using mindnet::essential::g_configuration;
 
-    inline std::string hash_sha_256(const std::string& text)
-    {
-        unsigned char hash[SHA256_DIGEST_LENGTH];
-        SHA256(reinterpret_cast<const unsigned char*>(text.c_str()), text.size(), hash);
-
-        std::ostringstream os;
-        for (unsigned char i : hash)
-            os << std::hex << std::setw(2) << std::setfill('0') << (int)i;
-
-        return os.str();
-    }
-
 
     //openssl rand -base64 32
 
@@ -59,7 +47,7 @@ namespace mindnet::http
     }
 
     void AuthEndpointsGenerator::create_auth_endpoints(
-        const api::ServicePtr& service_ptr,
+        api::ServicePtr& service_ptr,
         crow::SimpleApp& crow_app
     )
     {
@@ -75,14 +63,14 @@ namespace mindnet::http
             string error;
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, credentials.username);
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (users.first.empty()) { return crow::response(401, "User does not exist."); }
             plugins::core::models::User user;
             user.from_values(users.first[0]);
 
             string expected_password_hash = user.password_hash;
-            string returned_password_hash = hash_sha_256(credentials.password);
+            string returned_password_hash = util::Utils::hash_sha_256(credentials.password);
             bool verified = expected_password_hash == returned_password_hash;
             if (!verified)
             {
@@ -100,8 +88,8 @@ namespace mindnet::http
             std::string raw_access = generate_secret_key(32);
             std::string raw_refresh = generate_secret_key(64);
 
-            std::string access_hash = hash_sha_256(raw_access); // or SHA256
-            std::string refresh_hash = hash_sha_256(raw_refresh); // or SHA256
+            std::string access_hash = util::Utils::hash_sha_256(raw_access); // or SHA256
+            std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh); // or SHA256
 
 
             // -------------------------------
@@ -222,7 +210,7 @@ namespace mindnet::http
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
             query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (users.second.ko())
             {
@@ -231,7 +219,7 @@ namespace mindnet::http
             if (!users.first.empty()) { return crow::response(409, "User already exists."); }
             //
 
-            std::string hashed = hash_sha_256(password);
+            std::string hashed = util::Utils::hash_sha_256(password);
             plugins::core::models::User user;
             user.username = username;
             user.password_hash = hashed;
@@ -253,11 +241,11 @@ namespace mindnet::http
             return crow::response{201, "Registration successful"};
         });
 
-        CROW_ROUTE(crow_app, "/api/v1/protected")([](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/protected")([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
 
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
             return crow::response(login_token.status, login_token.msg);
         });
     }

@@ -5,7 +5,7 @@
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 
 #include "mindnet/essential/Global.h"
-#include "mindnet/api/LoginToken.h"
+#include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/plugins/core/models/History.h"
 #include "mindnet/util/Utils.h"
 
@@ -61,7 +61,7 @@ namespace mindnet::plugins::core::triggers
         experiment << "id " << id << commit;
         experiment << "fields.size() " << fields.size() << commit;
         experiment << "query_params.fields.size() " << query_params.fields.size() << commit;
-        api::LoginToken token {"", user_id, "", 200};
+        api::AccessTokenContext token {user_id, "", 200};
 
         models::History history;
 

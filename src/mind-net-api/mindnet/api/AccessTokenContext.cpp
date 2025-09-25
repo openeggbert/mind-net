@@ -1,0 +1,85 @@
+//
+// Created by robertvokac on 9/5/25.
+//
+
+#include "mindnet/api/AccessTokenContext.h"
+
+#include "crow/http_request.h"
+#include "mindnet/api/IService.h"
+
+#include "mindnet/orm/QueryParams.h"
+#include "mindnet/plugins/core/columns/AccessTokenColumns.h"
+#include "mindnet/plugins/core/models/AccessToken.h"
+#include "mindnet/util/Utils.h"
+
+namespace mindnet::api
+{
+
+        AccessTokenContext::AccessTokenContext(int user_id, const std::string& msg, int status)
+            : user_id(user_id),
+              msg(msg),
+              status(status)
+        {
+        }
+
+        AccessTokenContext::AccessTokenContext(const crow::request& req, ServicePtr service_ptr)
+        {
+            auto auth = req.get_header_value("Authorization");
+            if (auth.empty() || auth.rfind("Bearer ", 0) != 0)
+            {
+                status = 401;
+                msg = "Invalid or missing Authorization header";
+                return;
+            }
+            std::string raw_token = auth.substr(7);
+            std::string token_hash = util::Utils::hash_sha_256(raw_token);
+
+            orm::QueryParams q;
+            q.add_filter(plugins::core::columns::AccessTokenColumns::TOKEN_HASH, token_hash);
+
+            api::AccessTokenContext system_token{0, "system", 200};
+            auto tokens = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, system_token, q);
+            if (tokens.first.empty()) {
+                status = 403;
+                msg = "Access token invalid or revoked";
+                return;
+            }
+
+            auto token_row = tokens.first[0];
+            plugins::core::models::AccessToken access_token;
+            access_token.from_values(token_row);
+
+            if (access_token.is_revoked)
+            {
+                status = 403;
+                msg = "Access token revoked";
+                return;
+            }
+            if (util::Utils::currentUnixTimestamp() >= access_token.expires_at)
+            {
+                status = 403;
+                msg = "Access token expired";
+                return;
+            }
+
+            {
+                access_token.last_used_at = util::Utils::currentUnixTimestamp();
+                access_token.ip_address = req.remote_ip_address;
+                access_token.user_agent = req.get_header_value("User-Agent");
+                auto v = access_token.to_values();
+                auto updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION,*this, access_token.get_id(), v);
+                if (updated.ko())
+                {
+                    status = 500;
+                    msg = "Access token update failed: " + updated.error;
+                    return;
+                }
+
+            }
+            user_id = access_token.user_id;
+            status = 200;
+            msg = "Welcome";
+        }
+
+}
+

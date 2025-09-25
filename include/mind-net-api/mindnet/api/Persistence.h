@@ -8,7 +8,7 @@
 #include "IRepository.h"
 #include "PluginRegistry.h"
 #include "crow/json.h"
-#include "LoginToken.h"
+#include "AccessTokenContext.h"
 #include "mindnet/model/ModelDefinition.h"
 #include "OperationResult.h"
 
@@ -33,14 +33,14 @@ namespace mindnet::api
 
         std::vector<std::string>& list_model_names() override;
 
-        std::pair<int, OperationResult> create(const ModelDefinition& def, api::LoginToken& token,
+        std::pair<int, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                entity_fields& fields) override;
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, api::LoginToken& token, int id) override;
-        OperationResult update(const ModelDefinition& def, api::LoginToken& token, int id,
+        read(const ModelDefinition& def, api::AccessTokenContext& token, int id) override;
+        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
                                entity_fields& fields) override;
-        OperationResult remove(ModelDefinition& def, api::LoginToken& token, int id) override;
-        std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, api::LoginToken& token,
+        OperationResult remove(ModelDefinition& def, api::AccessTokenContext& token, int id) override;
+        std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params) override;
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;

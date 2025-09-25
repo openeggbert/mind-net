@@ -37,7 +37,7 @@ namespace mindnet::http
                 }
             }
         };
-        auto log_request = [] (const api::ServicePtr& service_ptr, const crow::request& req, api::LoginToken& login_token, int status_code, int entity_id = 0, const std::string& error = "")
+        auto log_request = [] (const api::ServicePtr& service_ptr, const crow::request& req, api::AccessTokenContext& login_token, int status_code, int entity_id = 0, const std::string& error = "")
         {
             auto log_object = plugins::core::models::api_log_from_crow_request(
          req,
@@ -71,7 +71,7 @@ namespace mindnet::http
             check_maintenance_mode()
 
             trace << "Create lambda function called" << commit;
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
             if (!def.get_allowed_rest_operations().contains(Crudl::Create)){
                 log_request(service_ptr, req, login_token, 405, 0, "Method not allowed for model " + def.get_model_name() + ".");
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
@@ -121,7 +121,7 @@ namespace mindnet::http
 
             trace << "Read lambda function called" << commit;
 
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
 
             if (!def.get_allowed_rest_operations().contains(Crudl::Read))
             {
@@ -169,7 +169,7 @@ namespace mindnet::http
             check_maintenance_mode()
 
             trace << "Update lambda function called" << commit;
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
 
             if (!def.get_allowed_rest_operations().contains(Crudl::Update))
             {
@@ -229,7 +229,7 @@ namespace mindnet::http
             check_maintenance_mode()
 
             trace << "Delete lambda function called" << commit;
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
             if (!def.get_allowed_rest_operations().contains(Crudl::Delete))
             {
                 log_request(service_ptr, req, login_token, 405, id, "Method not allowed for model " + def.get_model_name() + ".");
@@ -256,7 +256,7 @@ namespace mindnet::http
             check_maintenance_mode()
 
             trace << "List lambda function called" << commit;
-            api::LoginToken login_token{req};
+            api::AccessTokenContext login_token{req, service_ptr};
 
             if (!def.get_allowed_rest_operations().contains(Crudl::List))
             {
