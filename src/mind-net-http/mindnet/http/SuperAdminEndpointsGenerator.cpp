@@ -110,7 +110,7 @@ content: " (takes effect after restart) ";
   <h1><a href="configure">Mind Net Configuration</a></h1>
   <i><a href="../web">Mind Net</a></i>
 
-  <form action="/api/v1/superadmin/configure" method="post" id="configForm">
+  <form id="configForm">
     <!-- Identification -->
     <label for="name">Name</label>
     <input type="text" id="name" name="name" value="{name}">
@@ -171,18 +171,17 @@ content: " (takes effect after restart) ";
     <button type="submit">Save Configuration</button>
   </form>
 <script>
-function showToast(message, timeout = 10000) {{
+console.log("Script parsed OK");
+
+function showToast(message, timeout = 5000) {{
   const toast = document.createElement("div");
   toast.className = "toast";
   toast.textContent = message;
   document.body.appendChild(toast);
-
-  // small delay because of animation
   requestAnimationFrame(() => toast.classList.add("show"));
-
   setTimeout(() => {{
     toast.classList.remove("show");
-    setTimeout(() => toast.remove(), 300); // wait for animation
+    setTimeout(() => toast.remove(), 300);
   }}, timeout);
 }}
 
@@ -197,17 +196,50 @@ window.addEventListener("load", () => {{
   }});
 }});
 
-  document.getElementById("configForm").addEventListener("submit", function(event) {{
+
+
+
+console.log("JS loaded");
+
+const form = document.getElementById("configForm");
+if (!form) {{
+  console.error("Form #configForm not found!");
+}} else {{
+  console.log("submit handler attached");
+
+  form.addEventListener("submit", async e => {{
+    e.preventDefault();
+    console.log("submit intercepted");
+
+    const formData = new FormData(form);
+
     const scheduleRestart = document.getElementById("schedule_restart");
     if (scheduleRestart.checked) {{
       const confirmed = confirm("Restart is scheduled. Do you really want to save?");
-      if (!confirmed) {{
-        event.preventDefault(); // prevents form submission
-      }}
+      if (!confirmed) return;
     }}
+
+    const res = await fetch("/api/v1/superadmin/configure", {{
+      method: "POST",
+      headers: {{
+        "Authorization": `Bearer ${{localStorage.getItem("access_token")}}`
+      }},
+      body: new URLSearchParams(formData)
+    }});
+
+    if (!res.ok) {{
+      const t = await res.text();
+      alert("Failed: " + t);
+      return;
+    }}
+
+    window.location.href = "/api/v1/superadmin/configure?message=Changes%20were%20saved";
   }});
+}}
 
 </script>
+
+
 
 </body>
 </html>
@@ -409,7 +441,98 @@ window.addEventListener("load", () => {{
         CROW_ROUTE(crow_app, "/api/v1/superadmin/configure").methods("GET"_method)
         ([this, &service_ptr, &log_request](const crow::request& req)
         {
-            assert_super_admin()
+            auto params = req.url_params; // crow::query_string
+
+            if (params.get("message") == nullptr) {
+                assert_super_admin()
+            } else
+            {
+                string msg = params.get("message");
+                return crow::response(200, R"(
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mind Net Configuration</title>
+  <link rel="icon" type="image/png" href="../../../web/favicon.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 2rem auto;
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 { text-align: center; }
+
+.toast {
+  font-size:150%;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #9F9;
+  color: #333;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+  </style>
+</head>
+<body>
+  <h1><a href="configure">Mind Net Configuration</a></h1>
+  <a style="padding:5px; border:2px solid grey; background:#ddd;text-align:center;" href="/web">Go to Main Menu</a>
+
+
+<script>
+
+
+function showToast(message, timeout = 5000) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add("show"));
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, timeout);
+}
+
+window.addEventListener("load", () => {
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("message")) {
+        showToast(params.get("message"));
+      }
+    });
+  });
+});
+
+
+showToast(")"
++ msg +
+R"(           ");
+</script>
+
+
+
+</body>
+</html>)"
+
+);
+            }
 
             api::AccessTokenContext login_token{req, service_ptr};
             log_request(service_ptr, req, login_token, 200, "Configure GET");
@@ -432,21 +555,21 @@ window.addEventListener("load", () => {{
                 new_configuration.insert({key, value});
             }
 
-            auto read_configuration = []()
-            {
-                std::string text;
-                std::string line;
-                std::ifstream mindnet_properties_file("mindnet.properties");
-
-                while (getline(mindnet_properties_file, line))
-                {
-                    text += line;
-                    text += '\n';
-                }
-
-                mindnet_properties_file.close();
-                return text;
-            };
+            // auto read_configuration = []()
+            // {
+            //     std::string text;
+            //     std::string line;
+            //     std::ifstream mindnet_properties_file("mindnet.properties");
+            //
+            //     while (getline(mindnet_properties_file, line))
+            //     {
+            //         text += line;
+            //         text += '\n';
+            //     }
+            //
+            //     mindnet_properties_file.close();
+            //     return text;
+            // };
 
             auto old_string_map = essential::load_mind_net_properties("mindnet.properties");
 

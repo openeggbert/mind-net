@@ -96,7 +96,9 @@ export function renderChangePasswordForm() {
 }
 
 export async function renderConfigureForm() {
-    document.body.innerHTML = await configure_get();
+    document.open();
+    document.write(await configure_get());
+    document.close();
 }
 
 export function renderAuthStatus() {
