@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] New table audit_log : logging registration, logout, password changes
 - [ ] New table alert - notification for user
 - [ ] FEATURE New table Flag
 - [ ] FEATURE New table Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
@@ -140,7 +139,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [x] FEATURE User authentication
 - [x] /logout endpoint
 - [x] Add Logging level to configuration
-
+- [x] New table auth_log : logging registration, logout, password changes
 
 
 

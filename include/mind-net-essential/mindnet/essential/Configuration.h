@@ -18,25 +18,6 @@
 #include "Helper.h"
 #include "LogLevel.h"
 
-/*
-#Example:
-
-#Identification
-name=Robert Vokac
-description=Zettelkasten system for Robert Vokac
-environment=Development
-#
-#host=
-#port=
-#frontend_port=
-database_type=SQLite
-
-#Access
-access_mode=PublicFullAccess
-registration_mode=Free
-default_user_role=Reader
-*/
-
 namespace mindnet::essential
 {
     string_map load_mind_net_properties(const std::string& filename);

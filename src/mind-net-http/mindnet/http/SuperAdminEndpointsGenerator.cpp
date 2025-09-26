@@ -2,15 +2,17 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "../../../../include/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.h"
+#include "mindnet/http/SuperAdminEndpointsGenerator.h"
 
 #include "mindnet/api/IService.h"
 #include "mindnet/essential/Configuration.h"
+#include "mindnet/plugins/core/models/SuperAdminLog.h"
 #include "mindnet/plugins/core/models/User.h"
+#include "mindnet/essential/Global.h"
+#include "mindnet/util/Utils.h"
 
 namespace mindnet::http
 {
-
     constexpr auto configure_get_template = FMT_STRING(R"(
 <!DOCTYPE html>
 <html lang="en">
@@ -245,34 +247,45 @@ window.addEventListener("load", () => {{
         return user;
     }
 
-    std::string url_decode(const std::string& in) {
+    std::string url_decode(const std::string& in)
+    {
         std::string out;
         out.reserve(in.size());
 
-        for (size_t i = 0; i < in.size(); ++i) {
-            if (in[i] == '%') {
-                if (i + 2 < in.size()) {
+        for (size_t i = 0; i < in.size(); ++i)
+        {
+            if (in[i] == '%')
+            {
+                if (i + 2 < in.size())
+                {
                     std::string hex = in.substr(i + 1, 2);
                     char ch = static_cast<char>(std::stoi(hex, nullptr, 16));
                     out.push_back(ch);
                     i += 2;
                 }
-            } else if (in[i] == '+') {
+            }
+            else if (in[i] == '+')
+            {
                 out.push_back(' ');
-            } else {
+            }
+            else
+            {
                 out.push_back(in[i]);
             }
         }
         return out;
     }
 
-    std::unordered_map<std::string, std::string> parse_urlencoded(const std::string& body) {
+    std::unordered_map<std::string, std::string> parse_urlencoded(const std::string& body)
+    {
         std::unordered_map<std::string, std::string> params;
         std::istringstream ss(body);
         std::string token;
-        while (std::getline(ss, token, '&')) {
+        while (std::getline(ss, token, '&'))
+        {
             auto pos = token.find('=');
-            if (pos != std::string::npos) {
+            if (pos != std::string::npos)
+            {
                 auto key = token.substr(0, pos);
                 auto val = token.substr(pos + 1);
                 params[key] = url_decode(val);
@@ -281,17 +294,19 @@ window.addEventListener("load", () => {{
         return params;
     }
 
-#define assert_super_admin_()
 #define assert_super_admin()\
     auto result = load_current_user(req, service_ptr);\
     if (auto resp = std::get_if<crow::response>(&result))\
     {\
+        api::AccessTokenContext system_token{0, "system", resp->code};\
+        log_request(service_ptr, req, system_token, resp->code, "Method not allowed for unauthenticated users.");\
         return std::move(*resp);\
     }\
     auto& user = std::get<plugins::core::models::User>(result);\
-\
     if (auto forbidden = require_superadmin(user))\
     {\
+        api::AccessTokenContext system_token{0, "system", forbidden->code};\
+        log_request(service_ptr, req, system_token, forbidden->code, forbidden->body);\
         return std::move(*forbidden);\
     }
 
@@ -300,59 +315,145 @@ window.addEventListener("load", () => {{
         crow::SimpleApp& crow_app,
         procedure_ptr request_restart,
         procedure_ptr request_shutdown
-        )
+    )
     {
+        auto log_request = [](
+            const api::ServicePtr& service_ptr,
+            const crow::request& req,
+            api::AccessTokenContext& login_token,
+            int status_code,
+            const std::string& action,
+            const std::string& error = "",
+            const std::string& diff = ""
+        )
+        {
+            auto log_object = plugins::core::models::super_admin_log_from_crow_request(
+                req,
+                login_token.user_id,
+                status_code,
+                action,
+                error,
+                diff);
+            auto log = log_object.to_values();
+            int64_t now = static_cast<int64_t>(mindnet::util::Utils::currentUnixTimestamp());
+            log[1] = now;
+            log[2] = now;
+
+            if (service_ptr == nullptr)
+            {
+                essential::warn <<
+                    "Saving record to the table super_admin_log failed for this reason: service_ptr == nullptr " <<
+                    log_object.to_json() << essential::commit;
+                return;
+            }
+
+            auto result = service_ptr->create(
+                plugins::core::models::SUPER_ADMIN_LOG_DEFINITION,
+                login_token,
+                log);
+            if (result.second.ko())
+            {
+                essential::warn << "Saving record to the table super_admin_log failed for this reason: " << result.second.error <<
+                    log_object.to_json() << essential::commit;
+            }
+        };
+
         CROW_ROUTE(crow_app, "/api/v1/superadmin/shutdown").methods("POST"_method)
-        ([this, &service_ptr, &request_shutdown](const crow::request& req)
+        ([this, &service_ptr, request_shutdown, &log_request](const crow::request& req)
         {
             assert_super_admin()
+
+            api::AccessTokenContext login_token{req, service_ptr};
+            log_request(service_ptr, req, login_token, 200, "Shutdown scheduled");
 
             request_shutdown();
             return crow::response(200, "Shutdown scheduled");;
         });
 
         CROW_ROUTE(crow_app, "/api/v1/superadmin/restart").methods("POST"_method)
-        ([this, &service_ptr, &request_restart](const crow::request& req)
+        ([this, &service_ptr, request_restart, &log_request](const crow::request& req)
         {
             assert_super_admin()
+
+            api::AccessTokenContext login_token{req, service_ptr};
+            log_request(service_ptr, req, login_token, 200, "Restart scheduled");
 
             request_restart();
             return crow::response(200, "Restart scheduled");;
         });
 
         CROW_ROUTE(crow_app, "/api/v1/superadmin/configure").methods("GET"_method)
-        ([this, &service_ptr](const crow::request& req)
+        ([this, &service_ptr, &log_request](const crow::request& req)
         {
             assert_super_admin()
 
-            //request_restart();
-            return crow::response(200, fmt::vformat(configure_get_template, mindnet::essential::g_configuration.to_fmt_store()));
+            api::AccessTokenContext login_token{req, service_ptr};
+            log_request(service_ptr, req, login_token, 200, "Configure GET");
+
+            return crow::response(200, fmt::vformat(configure_get_template,
+                                                    mindnet::essential::g_configuration.to_fmt_store()));
         });
 
         CROW_ROUTE(crow_app, "/api/v1/superadmin/configure").methods("POST"_method)
-([this, &service_ptr, &request_restart](const crow::request& req)
-{
-    assert_super_admin()
+        ([this, &service_ptr, request_restart, &log_request](const crow::request& req)
+        {
+            assert_super_admin()
 
-    string_map new_configuration;
-    auto params = parse_urlencoded(req.body);
+            string_map new_configuration;
+            auto params = parse_urlencoded(req.body);
 
-    for (const auto& key : params | std::views::keys)
-    {
-        const auto& value = params[key];
-        new_configuration.insert({key, value});
-    }
+            for (const auto& key : params | std::views::keys)
+            {
+                const auto& value = params[key];
+                new_configuration.insert({key, value});
+            }
 
-    essential::g_configuration = essential::Configuration(new_configuration);
-    essential::g_configuration.save_mind_net_properties();
+            auto read_configuration = []()
+            {
+                std::string text;
+                std::string line;
+                std::ifstream mindnet_properties_file("mindnet.properties");
 
-    if (params.contains("schedule_restart")) {
-        request_restart();
-    }
-    crow::response res;
-    res.code = 303;
-    res.set_header("Location", "/api/v1/superadmin/configure?message=Changes%20were%20saved");
-    return res;
-});
+                while (getline(mindnet_properties_file, line))
+                {
+                    text += line;
+                    text += '\n';
+                }
+
+                mindnet_properties_file.close();
+                return text;
+            };
+
+            auto old_string_map = essential::load_mind_net_properties("mindnet.properties");
+
+
+            // std::string old_value = read_configuration();
+            essential::g_configuration = essential::Configuration(new_configuration);
+            essential::g_configuration.save_mind_net_properties();
+            // std::string new_value = read_configuration();
+            auto new_string_map = essential::load_mind_net_properties("mindnet.properties");
+
+            api::AccessTokenContext login_token{req, service_ptr};
+            auto diff_maps_ = mindnet::util::Utils::diff_maps(old_string_map, new_string_map);
+            auto diff_ = mindnet::util::Utils::diff_maps_to_string(diff_maps_);
+            log_request(
+                service_ptr,
+                req,
+                login_token,
+                303,
+                "Configure POST",
+                "",
+                diff_
+                );
+
+            if (params.contains("schedule_restart"))
+            {
+                request_restart();
+            }
+            crow::response res;
+            res.code = 303;
+            res.set_header("Location", "/api/v1/superadmin/configure?message=Changes%20were%20saved");
+            return res;
+        });
     }
 }

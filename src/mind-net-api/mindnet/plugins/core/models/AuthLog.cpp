@@ -2,11 +2,11 @@
 // Created by robertvokac on 9/21/25.
 //
 
-#include "mindnet/plugins/core/models/ApiLog.h"
+#include "mindnet/plugins/core/models/AuthLog.h"
 
 namespace mindnet::plugins::core::models
 {
-    entity_fields ApiLog::to_values() const
+    entity_fields AuthLog::to_values() const
     {
         entity_fields result;
         result.emplace_back(id);
@@ -14,18 +14,21 @@ namespace mindnet::plugins::core::models
         result.emplace_back(cast64(updated_at));
         result.emplace_back(cast64(user_id));
         result.emplace_back(ip_address);
+        result.emplace_back(user_agent);
         result.emplace_back(endpoint);
         result.emplace_back(cast64(method)); // enum HttpMethod stored as number
+        result.emplace_back(action);
         result.emplace_back(entity_name);
         result.emplace_back(cast64(entity_id));
         result.emplace_back(parameters);
         result.emplace_back(request_body);
         result.emplace_back(cast64(status_code));
         result.emplace_back(error);
+        result.emplace_back(success);
         return result;
     }
 
-    void ApiLog::from_values(const entity_fields& values)
+    void AuthLog::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -34,40 +37,42 @@ namespace mindnet::plugins::core::models
         auto text = [&values, &i] { return std::get<std::string>(values[i++]); };
 
         set_id(number());
-        created_at   = number();
-        updated_at   = number();
-        user_id      = number();
-        ip_address   = text();
-        endpoint     = text();
-        method       = static_cast<enums::HttpMethod>(number());
-        entity_name  = text();
-        entity_id    = number();
-        parameters   = text();
+        created_at = number();
+        updated_at = number();
+        user_id = number();
+        ip_address = text();
+        user_agent = text();
+        endpoint = text();
+        method = static_cast<enums::HttpMethod>(number());
+        action = text();
+        entity_name = text();
+        entity_id = number();
+        parameters = text();
         request_body = text();
-        status_code  = number();
-        error         = text();
+        status_code = number();
+        error = text();
+        success = boolean();
     }
 
-    string ApiLog::validate()
+    string AuthLog::validate()
     {
-        using columns::ApiLogColumns;
+        using columns::AuthLogColumns;
 
         validator_chain_vector list{
-            [this] { return test_at_least(user_id, 0, ApiLogColumns::USER_ID); },
-            [this] { return testt_not_empty(endpoint, ApiLogColumns::ENDPOINT); },
-            [this] { return test_ne(cast64(method), 0, ApiLogColumns::METHOD); },
-            [this] { return testt_not_empty(entity_name, ApiLogColumns::ENTITY_NAME); },
+            [this] { return test_at_least(user_id, 0, AuthLogColumns::USER_ID); },
+            [this] { return testt_not_empty(endpoint, AuthLogColumns::ENDPOINT); },
+            [this] { return test_ne(cast64(method), 0, AuthLogColumns::METHOD); },
             [this] { return test_true(status_code > 0, "Status code must be positive"); },
-            [this] { return testt_at_most(error, 256, ApiLogColumns::ERROR); },
+            [this] { return testt_at_most(error, 256, AuthLogColumns::ERROR); },
         };
         return util::ValidatorChain::run(list);
     }
 
-    static std::string serializeParamsForApi(const crow::query_string& qs)
+    static std::string serializeParamsForAuth(const crow::query_string& qs)
     {
         std::ostringstream oss;
         bool first = true;
-        for (auto& key: qs.keys())
+        for (auto& key : qs.keys())
         {
             auto value = qs.get(key);
             if (!first) oss << "&";
@@ -77,12 +82,14 @@ namespace mindnet::plugins::core::models
         return oss.str();
     }
 
-    const ApiLog api_log_from_crow_request(const crow::request& req, int user_id, int status_code, int entity_id, std::string error)
+    const AuthLog auth_log_from_crow_request(const crow::request& req, int user_id, int status_code,
+                                             int entity_id, std::string error)
     {
-        ApiLog log;
+        AuthLog log;
 
         log.user_id = user_id;
         log.ip_address = req.remote_ip_address;
+        log.user_agent = req.get_header_value("User-Agent");
         log.endpoint = req.url; // optionally just path without query
 
         // method mapping
@@ -130,12 +137,12 @@ namespace mindnet::plugins::core::models
             }
         }
 
-        log.parameters = serializeParamsForApi(req.url_params);
+        log.parameters = serializeParamsForAuth(req.url_params);
         log.request_body = req.body;
         log.status_code = status_code;
         log.error = error;
+        log.success = (status_code >= 200 && status_code < 300);
 
         return log;
     }
-
 }

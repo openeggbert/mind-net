@@ -149,7 +149,7 @@ namespace mindnet::http
             nlohmann::ordered_json result;
 
             auto now = util::Utils::currentUnixTimestamp();
-            result["status"] = essential::g_configuration.access_mode == essential::AccessMode::MaintenanceMode
+            result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode || service_ptr->is_shutdown_scheduled() || service_ptr->is_restart_scheduled()
                                    ? "MAINTENANCE"
                                    : "UP";
             result["uptime"] = print_duration(essential::start_time, now);

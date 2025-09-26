@@ -1,0 +1,109 @@
+//
+// Created by robertvokac on 9/21/25.
+//
+
+#include "mindnet/plugins/core/validators/AuthLogValidator.h"
+
+#include "mindnet/essential/Global.h"
+#include "mindnet/plugins/core/models/AuthLog.h"
+#include "mindnet/api/Persistence.h"
+
+#define Model AuthLog
+#define MODEL AUTH_LOG
+#define model auth_log
+
+namespace mindnet::plugins::core::validators
+{
+    using validators::AuthLogValidator;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
+
+    // ===== Authorization =====
+    OperationResult AuthLogValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                    const Model& entity) const
+    {
+        // Only system/internal processes should create auth logs
+        return ok_result;
+    }
+
+    OperationResult AuthLogValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    {
+        if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
+
+        // Users can read only their own auth logs
+        return_if(entity.user_id != ctx.token.user_id,
+                  403, "You can only read your own auth logs.");
+
+        return ok_result;
+    }
+
+    OperationResult AuthLogValidator::validate_update_authorization(const RequestContext& ctx,
+                                                                    const Model& old_entity,
+                                                                    const Model& new_entity) const
+    {
+        return {405, "Auth log entries cannot be updated."};
+    }
+
+    OperationResult AuthLogValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                    const Model& entity) const
+    {
+        return {405, "Auth log entries cannot be deleted."};
+    }
+
+    OperationResult AuthLogValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                  const string_map& filter) const
+    {
+        if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
+
+        // normal users may only list their own logs
+        mandatory_filter(user_id)
+
+        return_if(filter.at("user_id") != std::to_string(ctx.token.user_id),
+                  403, "You can only list your own auth logs.");
+
+        return ok_result;
+    }
+
+    // ===== Integrity =====
+    OperationResult AuthLogValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        // Validate required fields
+        return_if(entity.endpoint.empty(), 400, "Endpoint is required");
+        return_if(entity.status_code == 0, 400, "Status code is required");
+
+        return ok_result;
+    }
+
+    OperationResult AuthLogValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        // Authorization already checked user_id vs ctx.token.user_id
+        return ok_result;
+    }
+
+    OperationResult AuthLogValidator::validate_update_integrity(const RequestContext& ctx,
+                                                                const Model& old_entity,
+                                                                const Model& new_entity) const
+    {
+        return {405, "Auth log entries cannot be updated."};
+    }
+
+    OperationResult AuthLogValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return {405, "Auth log entries cannot be deleted."};
+    }
+
+    OperationResult AuthLogValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    {
+        // Authorization already enforces user_id filter
+        return ok_result;
+    }
+
+    string AuthLogValidator::get_model_name() const
+    {
+        return STRINGIFY(model);
+    }
+}
+
+#undef Model
+#undef MODEL
+#undef model

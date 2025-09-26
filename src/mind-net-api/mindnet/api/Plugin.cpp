@@ -61,6 +61,7 @@ namespace mindnet::api
         is_closed_for_changes_ = true;
     }
 
+    std::set<string> registered_models;
     void Plugin::register_model(
         model::ModelDefinition& model_definition,
         const std::shared_ptr<IValidator>& validator,
@@ -73,6 +74,13 @@ namespace mindnet::api
             return;
         }
 
+        auto& model_name = model_definition.get_model_name();
+        if (registered_models.contains(model_name))
+        {
+            warn << "Model with name " << model_name << " is already registered" << commit;
+            return;
+        }
+        registered_models.insert(model_name);
         std::shared_ptr<IRepository> repository = repository_factory->create(model_definition);
 
         auto registration = std::make_shared<ModelRegistration>(

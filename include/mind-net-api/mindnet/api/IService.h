@@ -47,6 +47,11 @@ namespace mindnet::api
             ModelDefinition& def
         ) = 0;
         virtual const api::PluginRegistryPtr get_plugin_registry() const = 0;
+        bool is_restart_scheduled() const {return restart_scheduled;};
+        bool is_shutdown_scheduled() const {return shutdown_scheduled;};
+
+        void schedule_restart() {restart_scheduled = true;};
+        void schedule_shutdown() {shutdown_scheduled = true;};
 
     private:
         virtual OperationResult can_create(
@@ -59,6 +64,8 @@ namespace mindnet::api
         0;
         virtual OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                          string_map& filter) = 0;
+        bool restart_scheduled = false;
+        bool shutdown_scheduled = false;
     };
 
     typedef std::shared_ptr<mindnet::api::IService> ServicePtr;

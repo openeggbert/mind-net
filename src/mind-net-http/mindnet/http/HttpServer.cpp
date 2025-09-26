@@ -38,7 +38,8 @@ namespace mindnet::http
     {
         std::thread([this]
         {
-            std::this_thread::sleep_for(std::chrono::seconds{5L});
+            service_ptr_->schedule_shutdown();
+            std::this_thread::sleep_for(std::chrono::seconds{15L});
             crow_app.stop();
             std::exit(0); // clean exit, systemd won't restart unless Restart=always
         }).detach();
@@ -48,7 +49,8 @@ namespace mindnet::http
     {
         std::thread([this]
         {
-            std::this_thread::sleep_for(std::chrono::seconds{5L});
+            service_ptr_->schedule_restart();
+            std::this_thread::sleep_for(std::chrono::seconds{15L});
             crow_app.stop();
             std::_Exit(42); // restart, systemd will handle
         }).detach();

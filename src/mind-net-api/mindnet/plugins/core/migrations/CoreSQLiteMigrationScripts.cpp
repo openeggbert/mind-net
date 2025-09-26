@@ -200,7 +200,64 @@ CREATE INDEX idx_login_session_expires_at ON login_session(expires_at);
 
 )");
 
+    	add_migration("V9__create_auth_log.sql", R"(
+CREATE TABLE auth_log (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
 
+    user_id INTEGER,
+    ip_address TEXT,
+    user_agent TEXT,
+
+    --What was called
+    endpoint TEXT NOT NULL,
+    method INTEGER NOT NULL,
+	action TEXT,
+
+    --Context
+    entity_name TEXT,            -- for example: user, access_token, note
+    entity_id INTEGER,
+    parameters TEXT,
+    request_body TEXT,
+
+    --Result
+    status_code INTEGER NOT NULL,
+    error TEXT,
+    success BOOLEAN NOT NULL DEFAULT 0,
+
+	FOREIGN KEY(user_id) REFERENCES user(id)
+);
+)");
+
+    	add_migration("V10__create_super_admin_log.sql", R"(
+CREATE TABLE super_admin_log (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+
+    user_id INTEGER,
+    ip_address TEXT,
+    user_agent TEXT,
+
+    --What was called
+    endpoint TEXT NOT NULL,
+    method INTEGER NOT NULL,
+	action TEXT NOT NULL,
+
+    --Context
+    parameters TEXT,
+    request_body TEXT,
+    diff TEXT,
+
+    --Result
+    status_code INTEGER NOT NULL,
+    error TEXT,
+    success BOOLEAN NOT NULL DEFAULT 0,
+
+	FOREIGN KEY(user_id) REFERENCES user(id)
+);
+)");
 
 
 

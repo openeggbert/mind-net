@@ -209,7 +209,7 @@ allowed_plugins={allowed_plugins}
                         // Convert to full days
                         auto days = std::chrono::duration_cast<std::chrono::days>(age).count();
 
-                        std::cout << "[TRACE] " << entry.path().filename().string() << " is " << days << " days old" << std::endl;
+                        //std::cout << "[TRACE] " << entry.path().filename().string() << " is " << days << " days old" << std::endl;
 
                         if (days > 365) {
                             std::cout << "[INFO] Deleting " << entry.path() <<

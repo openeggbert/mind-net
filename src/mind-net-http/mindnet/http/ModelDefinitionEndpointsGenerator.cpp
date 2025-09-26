@@ -166,7 +166,7 @@ namespace mindnet::http
 
         //CREATE
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::POST)
-        ([]
+        ([service_ptr]
         {
             check_maintenance_mode()
             return crow::response(405, "Method not allowed for model_definition.");
@@ -199,7 +199,7 @@ namespace mindnet::http
 
         // UPDATE
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::PUT)
-        ([]
+        ([service_ptr]
         {
             check_maintenance_mode()
             return crow::response(405, "Method not allowed for model_definition.");;
@@ -207,7 +207,7 @@ namespace mindnet::http
 
         // DELETE
         CROW_ROUTE(crow_app, "/api/v1/model_definition").methods(crow::HTTPMethod::DELETE)
-        ([]
+        ([service_ptr]
         {
             check_maintenance_mode()
 

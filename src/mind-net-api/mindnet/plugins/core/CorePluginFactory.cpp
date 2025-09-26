@@ -10,6 +10,8 @@
 #include "mindnet/plugins/core/validators/AccessTokenValidator.h"
 #include "mindnet/plugins/core/validators/RefreshTokenValidator.h"
 #include "mindnet/plugins/core/validators/LoginSessionValidator.h"
+#include "mindnet/plugins/core/validators/AuthLogValidator.h"
+#include "mindnet/plugins/core/validators/SuperAdminLogValidator.h"
 
 namespace mindnet::plugins::core
 {
@@ -31,6 +33,8 @@ namespace mindnet::plugins::core
         REGISTER_MODEL(access_token, AccessToken, ACCESS_TOKEN)
         REGISTER_MODEL(refresh_token, RefreshToken, REFRESH_TOKEN)
         REGISTER_MODEL(login_session, LoginSession, LOGIN_SESSION)
+        REGISTER_MODEL(auth_log, AuthLog, AUTH_LOG)
+        REGISTER_MODEL(super_admin_log, SuperAdminLog, SUPER_ADMIN_LOG)
         plugin->register_trigger(std::make_shared<triggers::HistoryCommonTrigger>());
 
         plugin->close_for_changes();

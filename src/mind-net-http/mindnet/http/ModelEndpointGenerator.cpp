@@ -64,7 +64,7 @@ namespace mindnet::http
                 ;
             if (result.second.ko())
             {
-                warn << "Saving record to the table log failed for this reason: " << result.second.error << log_object.to_json() << commit;
+                warn << "Saving record to the table api_log failed for this reason: " << result.second.error << log_object.to_json() << commit;
             }
         };
         auto create_lambda_function = [&service_ptr, &def, log_request](const crow::request& req)

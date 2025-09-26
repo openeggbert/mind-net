@@ -6,8 +6,13 @@
 #define MINI_WIKI_HTTPUTILS_H
 
 #define check_maintenance_mode()\
-if (mindnet::essential::g_configuration.access_mode == essential::AccessMode::MaintenanceMode)\
-return crow::response(503, "Maintenance Mode. Service Unavailable.");
+if (\
+                essential::g_configuration.access_mode == essential::AccessMode::MaintenanceMode ||\
+                service_ptr->is_shutdown_scheduled() ||\
+                service_ptr->is_restart_scheduled()\
+                ) return\
+                crow::response(503, "Maintenance Mode. Service Unavailable.");\
+
 
 #include "crow.h"
 #include <string>
