@@ -67,7 +67,6 @@ namespace mindnet::http
         return safe;
     }
 
-
     void AuthEndpointsGenerator::create_auth_endpoints(
         api::ServicePtr& service_ptr,
         crow::SimpleApp& crow_app

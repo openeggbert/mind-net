@@ -107,8 +107,10 @@ content: " (takes effect after restart) ";
   </style>
 </head>
 <body>
-  <h1><a href="configure">MindNet Configuration</a></h1>
-  <form method="post" id="configForm">
+  <h1><a href="configure">Mind Net Configuration</a></h1>
+  <i><a href="../web">Mind Net</a></i>
+
+  <form action="/api/v1/superadmin/configure" method="post" id="configForm">
     <!-- Identification -->
     <label for="name">Name</label>
     <input type="text" id="name" name="name" value="{name}">

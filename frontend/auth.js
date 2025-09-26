@@ -98,3 +98,30 @@ export async function changePassword(old_password, new_password) {
 
     return true;
 }
+
+
+export async function configure_get() {
+    async function doRequest() {
+        return fetch(`${API_BASE}/superadmin/configure`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+            },
+        });
+    }
+
+    let res = await doRequest();
+
+    if (res.status === 401 && await refreshToken()) {
+        res = await doRequest();
+    }
+
+    if (!res.ok) {
+        const t = await res.text();
+        showError(`Configure GET failed: ${t}`);
+        return t;
+    }
+
+    return await res.text();
+}

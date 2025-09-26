@@ -1,4 +1,4 @@
-import {login, logout, changePassword, register} from "./auth.js";
+import {changePassword, configure_get, login, logout, register} from "./auth.js";
 import {getAccessToken, getRefreshToken} from "./api.js";
 import {contentArea, showError, showToast} from "./dom.js";
 
@@ -95,6 +95,10 @@ export function renderChangePasswordForm() {
     };
 }
 
+export async function renderConfigureForm() {
+    document.body.innerHTML = await configure_get();
+}
+
 export function renderAuthStatus() {
     const access = getAccessToken();
     const refresh = getRefreshToken();
@@ -104,6 +108,7 @@ export function renderAuthStatus() {
         <p>Refresh token: ${refresh ? "✅ stored" : "❌ none"}</p>
         <button id="logoutBtn">Logout</button>
         <button id="changePwdBtn">Change Password</button>
+        <button id="configureBtn">Configure</button>
     `;
 
     document.getElementById("logoutBtn").onclick = async () => {
@@ -119,5 +124,8 @@ export function renderAuthStatus() {
 
     document.getElementById("changePwdBtn").onclick = () => {
         renderChangePasswordForm();
+    };
+    document.getElementById("configureBtn").onclick = () => {
+        renderConfigureForm();
     };
 }
