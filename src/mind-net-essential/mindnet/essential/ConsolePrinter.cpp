@@ -44,7 +44,7 @@ namespace mindnet::essential
             // 2. Print warning in red on a new line
             ConsoleColor old_color = color;
             color = ConsoleColor::RED;
-            std::cout << "\nConsolePrinter: !!!endl used instead of commit: " + last_buffer_str;
+            std::cout << "\n[WARN] ConsolePrinter: !!!endl used instead of commit: " + last_buffer_str;
             color = old_color;
 
             // 3. Standard endl

@@ -46,7 +46,7 @@ namespace mindnet::plugins::core::models
             coldef(COLS::REFRESH_TOKEN_ID, FOREIGN_KEY),
             coldef(COLS::ISSUED_AT, MANDATORY | DATETIME),
             coldef(COLS::EXPIRES_AT, DATETIME),
-            coldef(COLS::IS_REVOKED, MANDATORY),
+            coldef(COLS::IS_REVOKED, MANDATORY | BOOL),
             coldef(COLS::REVOKED_AT, DATETIME),
             coldef(COLS::LAST_USED_AT, DATETIME),
             coldef(COLS::IP_ADDRESS),

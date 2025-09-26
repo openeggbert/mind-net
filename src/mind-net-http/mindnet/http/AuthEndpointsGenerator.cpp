@@ -9,9 +9,11 @@
 
 #include "mindnet/api/IService.h"
 #include "mindnet/essential/Configuration.h"
+#include "mindnet/essential/Global.h"
 #include "mindnet/http/HttpUtils.h"
 #include "mindnet/http/UserCredentials.h"
 #include "mindnet/plugins/core/models/AccessToken.h"
+#include "mindnet/plugins/core/models/AuthLog.h"
 #include "mindnet/plugins/core/models/LoginSession.h"
 #include "mindnet/plugins/core/models/RefreshToken.h"
 #include "mindnet/plugins/core/models/User.h"
@@ -46,35 +48,105 @@ namespace mindnet::http
         return key;
     }
 
+    crow::json::wvalue mask_sensitive(const crow::json::rvalue& body) {
+        crow::json::wvalue safe = body;
+
+        static const std::vector<std::string> sensitive_keys = {
+            "password", "old_password", "new_password",
+            "refresh_token", "access_token"
+        };
+
+        for (const auto& key : sensitive_keys) {
+            if (safe[key].t() != crow::json::type::Null) {
+                safe[key] = "***";
+            }
+        }
+
+        return safe;
+    }
+
     void AuthEndpointsGenerator::create_auth_endpoints(
         api::ServicePtr& service_ptr,
         crow::SimpleApp& crow_app
     )
     {
-        CROW_ROUTE(crow_app, "/api/v1/auth/login").methods("POST"_method)([service_ptr](const crow::request& req)
+            auto log_request = [](
+                const api::ServicePtr& service_ptr,
+                const crow::request& req,
+                api::AccessTokenContext& login_token,
+                int status_code,
+                const int& entity_id = 0,
+                const std::string& error = ""
+            )
+            {
+                auto body = crow::json::load(req.body);
+                std::string masked_request_body;
+                if (!body) {
+                    // request body is not a valid JSON
+                } else {
+                    auto safe = mask_sensitive(body);
+                    masked_request_body = safe.dump();
+                }
+
+                auto log_object = plugins::core::models::auth_log_from_crow_request(
+                    req,
+                    masked_request_body,
+                    login_token.user_id,
+                    status_code,
+                    entity_id,
+                    error);
+                auto log = log_object.to_values();
+                int64_t now = static_cast<int64_t>(mindnet::util::Utils::currentUnixTimestamp());
+                log[1] = now;
+                log[2] = now;
+
+                if (service_ptr == nullptr)
+                {
+                    essential::warn <<
+                        "Saving record to the table auth_log failed for this reason: service_ptr == nullptr " <<
+                        log_object.to_json() << essential::commit;
+                    return;
+                }
+
+                auto result = service_ptr->create(
+                    plugins::core::models::AUTH_LOG_DEFINITION,
+                    login_token,
+                    log);
+                if (result.second.ko())
+                {
+                    essential::warn << "Saving record to the table auth_log failed for this reason: " << result.second.error <<
+                        log_object.to_json() << essential::commit;
+                }
+            };
+
+        CROW_ROUTE(crow_app, "/api/v1/auth/login").methods("POST"_method)([service_ptr, &log_request](const crow::request& req)
         {
             check_maintenance_mode()
 
             auto body = crow::json::load(req.body);
+            api::AccessTokenContext system_token{0, "system", 403};\
             if (!body || !body.has("username") || !body.has("password"))
             {
+                log_request(service_ptr, req, system_token, 403, 0 , "Missing username or password");
                 return crow::response(400, "Missing username or password");
             }
 
             std::string username = body["username"].s();
             std::string password = body["password"].s();
 
-
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
 
-            api::AccessTokenContext system_token{0, "User not logged in", 403};
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, system_token, query_params);
             if (users.second.ko())
             {
+                log_request(service_ptr, req, system_token, 500, 0 , "Loading list of users failed. " + users.second.error);
                 return crow::response(500, "Loading list of users failed. " + users.second.error);
             }
-            if (users.first.empty()) { return crow::response(401, "User does not exist."); }
+            if (users.first.empty()) {
+                log_request(service_ptr, req, system_token, 401, 0, "User does not exist.");
+                return crow::response(401, "User does not exist.");
+            }
             plugins::core::models::User user;
             user.from_values(users.first[0]);
 
@@ -83,6 +155,7 @@ namespace mindnet::http
             bool verified = expected_password_hash == returned_password_hash;
             if (!verified)
             {
+                log_request(service_ptr, req, system_token, 401, 0 , "Username or password is not correct.");
                 return crow::response(401, "Username or password is not correct.");
             }
 
@@ -91,7 +164,7 @@ namespace mindnet::http
             // -------------------------------
             auto now = util::Utils::currentUnixTimestamp();
 
-            auto access_exp = now + 415 * 60; // 15 minutes
+            auto access_exp = now + 15 * 60; // 15 minutes
             auto refresh_exp = now + 30 * 24 * 3600; // 30 days
 
             std::string raw_access = generate_secret_key(32);
@@ -124,6 +197,7 @@ namespace mindnet::http
                     access_token_values);
                 if (result.second.ko())
                 {
+                    log_request(service_ptr, req, system_token, 401, 0 , "Saving access token to the table access_token failed for this reason: " + result.second.error);
                     return crow::response(401, "Saving access token to the table access_token failed for this reason: " + result.second.error );
                 }
                 access_id = result.first;
@@ -148,6 +222,7 @@ namespace mindnet::http
                     refresh_token_values);
                 if (result.second.ko())
                 {
+                    log_request(service_ptr, req, system_token, 401, 0 , "Saving refresh token to the table access_token failed for this reason: " + result.second.error);
                     return crow::response(
                         401, "Saving refresh token to the table refresh_token failed for this reason: " + result.second.
                         error);
@@ -176,11 +251,15 @@ namespace mindnet::http
                     login_session_values);
                 if (result.second.ko())
                 {
+                    log_request(service_ptr, req, system_token, 401, 0,
+                                "Saving refresh token to the table login_session failed for this reason: " + result.
+                                second.error);
+
                     return crow::response(
                         401, "Saving login session to the table login_session failed for this reason: " + result.second.
                         error);
                 }
-                
+
             }
 
             // -------------------------------
@@ -188,21 +267,25 @@ namespace mindnet::http
             // -------------------------------
             crow::json::wvalue response;
             response["access_token"] = raw_access;
-            response["expires_in"] = 900;           // 15 minut
+            response["expires_in"] = 900;           // 15 minutes
             response["refresh_token"] = raw_refresh;
-            response["refresh_expires_in"] = 2592000; // 30 dní
+            response["refresh_expires_in"] = 2592000; // 30 days
+
+            log_request(service_ptr, req, system_token, 200);
             return crow::response{200, response};
 
 
         });
 
-        CROW_ROUTE(crow_app, "/api/v1/auth/logout").methods("POST"_method)([service_ptr](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/auth/logout").methods("POST"_method)([service_ptr, &log_request](const crow::request& req)
         {
             check_maintenance_mode()
 
             auto body = crow::json::load(req.body);
+            api::AccessTokenContext ctx{req, service_ptr};
             if (!body || !body.has("refresh_token"))
             {
+                log_request(service_ptr, req, ctx, 400, 0, "Missing refresh_token");
                 return crow::response{400, "Missing refresh_token"};
             }
 
@@ -210,7 +293,6 @@ namespace mindnet::http
             std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
 
             auto now = util::Utils::currentUnixTimestamp();
-            api::AccessTokenContext ctx{req, service_ptr};
 
             // 1. Find refresh token
             orm::QueryParams query;
@@ -218,10 +300,12 @@ namespace mindnet::http
             auto tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, query);
             if (tokens.second.ko())
             {
+                log_request(service_ptr, req, ctx, 500, 0, "Listing tokens failed: " + tokens.second.error);
                 return crow::response{500, "Listing tokens failed: "  + tokens.second.error};
             }
             if (tokens.first.empty())
             {
+                log_request(service_ptr, req, ctx, 401, 0, "Invalid refresh_token");
                 return crow::response{401, "Invalid refresh_token"};
             }
 
@@ -232,48 +316,81 @@ namespace mindnet::http
             refresh.is_revoked = true;
             refresh.revoked_at = now;
             auto v = refresh.to_values();
-            service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh.get_id(),v);
+            auto refresh_updated = service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh.get_id(),v);
+            if (refresh_updated.ko())
+            {
+                log_request(service_ptr, req, ctx, 500, 0, "Update of refresh token failed: " + refresh_updated.error);
+                return crow::response{500, "Update of refresh token failed: " + refresh_updated.error};
+            }
 
             // 3. Mark login session as terminated
             orm::QueryParams session_query;
             session_query.add_filter(plugins::core::columns::LoginSessionColumns::REFRESH_TOKEN_ID,
                                      std::to_string(refresh.get_id()));
-            auto sessions = service_ptr->list(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx, session_query);
-            for (auto& s : sessions.first)
+            auto sessions_listed = service_ptr->list(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx,
+                                                     session_query);
+            if (sessions_listed.second.ko())
+            {
+                log_request(service_ptr, req, ctx, 500, 0,
+                            "Listing login sessions failed: " + sessions_listed.second.error);
+                return crow::response{500, "Listing login sessions failed: " + sessions_listed.second.error};
+            }
+            for (auto& s : sessions_listed.first)
             {
                 plugins::core::models::LoginSession session;
                 session.from_values(s);
                 session.expires_at = now; // or session.is_revoked = 1, if you have the flag
                 auto session_values = session.to_values();
-                service_ptr->update(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx, session.get_id(),session_values);
+                auto session_updated = service_ptr->update(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx, session.get_id(),session_values);
+
+                if (session_updated.ko())
+                {
+                    log_request(service_ptr, req, ctx, 500, 0, "Update of login session failed: " + session_updated.error);
+                    return crow::response{500, "Update of login session failed: " + session_updated.error};
+                }
             }
 
             // 4. (optional) Mark access tokens as revoked
             orm::QueryParams access_query;
             access_query.add_filter(plugins::core::columns::AccessTokenColumns::USER_ID,
                                     std::to_string(refresh.user_id));
-            auto accesses = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access_query);
-            for (auto& a : accesses.first)
+            auto accesses_listed = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access_query);
+            if (accesses_listed.second.ko())
+            {
+                log_request(service_ptr, req, ctx, 500, 0,
+                            "Listing access tokens failed: " + accesses_listed.second.error);
+                return crow::response{500, "Listing access tokens failed: " + sessions_listed.second.error};
+            }
+            for (auto& a : accesses_listed.first)
             {
                 plugins::core::models::AccessToken access;
                 access.from_values(a);
                 access.is_revoked = true;
                 access.revoked_at = now;
                 auto access_token_values = access.to_values();
-                service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access.get_id(),access_token_values);
+                auto access_updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access.get_id(),access_token_values);
+
+                if (access_updated.ko())
+                {
+                    log_request(service_ptr, req, ctx, 500, 0 ,"Update of access token failed: " + access_updated.error);
+                    return crow::response{500, "Update of access token failed: " + access_updated.error};
+                }
             }
 
+            log_request(service_ptr, req, ctx, 200, 0, "");
             return crow::response{200, "Logout successful"};
         });
 
         CROW_ROUTE(crow_app, "/api/v1/auth/refresh_token").methods("POST"_method)(
-            [service_ptr](const crow::request& req)
+            [service_ptr, &log_request](const crow::request& req)
             {
                 check_maintenance_mode()
 
                 auto body = crow::json::load(req.body);
+                api::AccessTokenContext ctx{req, service_ptr};
                 if (!body || !body.has("refresh_token"))
                 {
+                    log_request(service_ptr, req, ctx, 400, 0, "Missing refresh_token");
                     return crow::response{400, "Missing refresh_token"};
                 }
 
@@ -281,7 +398,6 @@ namespace mindnet::http
                 std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
 
                 auto now = util::Utils::currentUnixTimestamp();
-                api::AccessTokenContext ctx{req, service_ptr};
 
                 // 1. Find refresh token
                 orm::QueryParams query;
@@ -289,6 +405,7 @@ namespace mindnet::http
                 auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, query);
                 if (result.first.empty())
                 {
+                    log_request(service_ptr, req, ctx, 401, 0, "Invalid refresh_token");
                     return crow::response{401, "Invalid refresh_token"};
                 }
 
@@ -298,6 +415,7 @@ namespace mindnet::http
                 // 2. Validation
                 if (refresh.is_revoked || refresh.expires_at < now)
                 {
+                    log_request(service_ptr, req, ctx, 401, 0, "Refresh token expired or revoked");
                     return crow::response{401, "Refresh token expired or revoked"};
                 }
 
@@ -326,6 +444,7 @@ namespace mindnet::http
 
                 if (create_res.second.ko())
                 {
+                    log_request(service_ptr, req, ctx, 500, 0, "Failed to create new access token: " + create_res.second.error);
                     return crow::response{500, "Failed to create new access token: " + create_res.second.error};
                 }
 
@@ -333,26 +452,35 @@ namespace mindnet::http
                 crow::json::wvalue response;
                 response["access_token"] = raw_access;
                 response["expires_in"] = 900; // 15 minutes
+                log_request(service_ptr, req, ctx, 200, 0, "");
                 return crow::response{200, response};
             });
 
 
-        CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([=](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([service_ptr, &log_request](const crow::request& req)
         {
             check_maintenance_mode()
+            api::AccessTokenContext ctx{req, service_ptr};
 
             if (g_configuration.registration_mode == essential::RegistrationMode::AdminAddsUsers)
             {
+                log_request(service_ptr, req, ctx, 405, 0, "Endpoint /register is disabled. Only admin can add new users.");
                 return crow::response{405, "Endpoint /register is disabled. Only admin can add new users."};
             }
             auto body = crow::json::load(req.body);
             if (!body || !body.has("username") || !body.has("password"))
+            {
+                log_request(service_ptr, req, ctx, 400, 0, "Missing username or password");
                 return crow::response{400};
+            }
 
             std::string username = body["username"].s();
             std::string password = body["password"].s();
             if (username == password)
+            {
+                log_request(service_ptr, req, ctx, 400, 0, "Password must be different from username.");
                 return crow::response{400, "Password must be different from username."};
+            }
             std::string display_name = body["display_name"].s();
             std::string profile_text = body["profile_text"].s();
             std::string email = body["email"].s();
@@ -366,9 +494,13 @@ namespace mindnet::http
             auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
             if (users.second.ko())
             {
+                log_request(service_ptr, req, ctx, 500, 0, "Checking, if user already exists, failed. " + users.second.error);
                 return crow::response(500, "Checking, if user already exists, failed. " + users.second.error);
             }
-            if (!users.first.empty()) { return crow::response(409, "User already exists."); }
+            if (!users.first.empty()) {
+                log_request(service_ptr, req, ctx, 409, 0, "User already exists.");
+                return crow::response(409, "User already exists.");
+            }
             //
 
             std::string hashed = util::Utils::hash_sha_256(password);
@@ -387,26 +519,30 @@ namespace mindnet::http
                                              create(plugins::core::models::USER_DEFINITION, login_token, fields_);
             if (create_result.second.ko())
             {
+                log_request(service_ptr, req, ctx, 400, 0, "Registration failed. " + create_result.second.error);
                 return crow::response{400, "Registration failed. " + create_result.second.error};
             }
 
+            log_request(service_ptr, req, ctx, 201, create_result.first, "");
             return crow::response{201, "Registration successful"};
         });
 
         CROW_ROUTE(crow_app, "/api/v1/auth/change_password").methods("POST"_method)(
-    [service_ptr](const crow::request& req)
+    [service_ptr, &log_request](const crow::request& req)
     {
         check_maintenance_mode()
 
         api::AccessTokenContext ctx{req, service_ptr};
         if (ctx.status != 200)
         {
+            log_request(service_ptr, req, ctx, ctx.status, 0, ctx.msg);
             return crow::response{ctx.status, ctx.msg};
         }
 
         auto body = crow::json::load(req.body);
         if (!body || !body.has("old_password") || !body.has("new_password"))
         {
+            log_request(service_ptr, req, ctx, 400, 0, "Missing old_password or new_password");
             return crow::response{400, "Missing old_password or new_password"};
         }
 
@@ -414,17 +550,22 @@ namespace mindnet::http
         std::string new_password = body["new_password"].s();
 
         if (old_password == new_password)
+        {
+            log_request(service_ptr, req, ctx, 400, 0, "New password must be different from old password");
             return crow::response{400, "Password must be different from username."};
+        }
 
         // 1. Load user
         auto user_id = ctx.user_id;
         auto user_res = service_ptr->read(plugins::core::models::USER_DEFINITION, ctx, user_id);
         if (user_res.second.ko())
         {
+            log_request(service_ptr, req, ctx, 500, 0, "Failed to load user: " + user_res.second.error);
             return crow::response{500, "Failed to load user: " + user_res.second.error};
         }
         if (user_res.first.empty())
         {
+            log_request(service_ptr, req, ctx, 404, 0, "User not found");
             return crow::response{404, "User not found"};
         }
 
@@ -432,12 +573,16 @@ namespace mindnet::http
         user.from_values(user_res.first);
 
         if (user.username == new_password)
+        {
+            log_request(service_ptr, req, ctx, 400, 0, "Password must be different from username");
             return crow::response{400, "Password must be different from username."};
+        }
 
         // 2. Verify old password
         std::string old_hash = util::Utils::hash_sha_256(old_password);
         if (user.password_hash != old_hash)
         {
+            log_request(service_ptr, req, ctx, 401, 0, "Old password is incorrect");
             return crow::response{401, "Old password is incorrect"};
         }
 
@@ -456,6 +601,7 @@ namespace mindnet::http
 
         if (update_res.ko())
         {
+            log_request(service_ptr, req, ctx, 500, 0, "Failed to update password: " + update_res.error);
             return crow::response{500, "Failed to update password: " + update_res.error};
         }
 
@@ -474,15 +620,17 @@ namespace mindnet::http
             service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, t.get_id(), tv);
         }
 
+        log_request(service_ptr, req, ctx, 200, 0, "");
         return crow::response{200, "Password changed successfully"};
     });
 
 
-        CROW_ROUTE(crow_app, "/api/v1/protected")([service_ptr](const crow::request& req)
+        CROW_ROUTE(crow_app, "/api/v1/protected")([service_ptr, &log_request](const crow::request& req)
         {
             check_maintenance_mode()
 
             api::AccessTokenContext login_token{req, service_ptr};
+            log_request(service_ptr, req, login_token, login_token.status, 0, login_token.msg);
             return crow::response(login_token.status, login_token.msg);
         });
     }

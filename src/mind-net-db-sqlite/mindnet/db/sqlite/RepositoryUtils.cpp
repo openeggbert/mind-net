@@ -87,10 +87,31 @@ namespace mindnet::db::sqlite
             string column_name;
             bool is_foreign_key = false;
             bool create = crudl == essential::Crudl::Create;
-            if (create)
+            bool update = crudl == essential::Crudl::Update;
+
+            if (create || update)
             {
-                auto& column = columns[i];
-                column_name = create ? column.get_column_name() : "";
+                bool update_id = update && i == (values.size() - 1);
+                if (update_id)
+                {
+                    column_name = model::BaseColumns::ID;
+                } else {
+                    auto& column = columns[i + (update ? 2 : 0)];
+                    column_name = column.get_column_name();
+                    is_foreign_key = column.is_foreign_key();
+                }
+            }
+
+            if (column_name == "reason")
+            {
+                int a = 0;
+                int b = a +1;
+            }
+
+            if (update && i < (values.size() - 1))
+            {
+                auto& column = columns[i+2];
+                column_name = column.get_column_name();
                 is_foreign_key = column.is_foreign_key();
             }
 
@@ -288,7 +309,7 @@ namespace mindnet::db::sqlite
         try
         {
             sqlite_exec(*query_ptr);
-            debug << "Update successful" << std::endl;
+            debug << "Update successful" << commit;
             delete query_ptr;
             return true;
         }

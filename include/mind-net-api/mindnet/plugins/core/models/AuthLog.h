@@ -101,7 +101,7 @@ namespace mindnet::plugins::core::models
         }
     };
 
-    const AuthLog auth_log_from_crow_request(const crow::request& req, int user_id, int status_code,
+    const AuthLog auth_log_from_crow_request(const crow::request& req, const std::string& body, int user_id, int status_code,
                                                     int entity_id = 0, std::string error = "");
 }
 #undef Model

@@ -1,6 +1,6 @@
 import {login, logout, changePassword, register} from "./auth.js";
 import {getAccessToken, getRefreshToken} from "./api.js";
-import {contentArea, showToast} from "./dom.js";
+import {contentArea, showError, showToast} from "./dom.js";
 
 export function renderLoginForm() {
     contentArea.innerHTML = `
@@ -107,8 +107,13 @@ export function renderAuthStatus() {
     `;
 
     document.getElementById("logoutBtn").onclick = async () => {
-        await logout();
-        showToast("👋 Logged out", 3000, "info");
+        let result = await logout();
+        if(result) {
+            showToast("👋 Logged out", 3000, "info");
+        } else {
+            showError("Logged out failed");
+            return;
+        }
         renderLoginForm();
     };
 

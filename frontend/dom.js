@@ -108,7 +108,7 @@ export function showToast(message, timeout = 3000, type = "info") {
 }
 
 export function showError(msg) {
-    showToast(msg, 5000, "error");
+    showToast(msg, 10000, "error");
 }
 export function showInfo(msg) {
     showToast(msg, 5000, "info");

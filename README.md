@@ -71,7 +71,7 @@ cmake -S . -B build -G Ninja \
   -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=TRUE \
   -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
   
-cmake --build build --config Release
+time cmake --build build --config Release
 
 # ------------------------------
 # Optimize binary

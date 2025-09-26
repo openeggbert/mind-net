@@ -22,14 +22,20 @@ export async function logout() {
     const refresh_token = getRefreshToken();
     if (!refresh_token) return;
 
-    await fetch(`${API_BASE}/auth/logout`, {
+    const res = await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({refresh_token})
     });
 
+    if (!res.ok) {
+        const t = await res.text();
+        showError(`Logout failed: ${t || res.statusText}`);
+        return false;
+    }
     setAccessToken(null);
     setRefreshToken(null);
+    return true;
 }
 
 export async function register(data) {

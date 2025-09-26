@@ -82,8 +82,13 @@ namespace mindnet::plugins::core::models
         return oss.str();
     }
 
-    const AuthLog auth_log_from_crow_request(const crow::request& req, int user_id, int status_code,
-                                             int entity_id, std::string error)
+    const AuthLog auth_log_from_crow_request(
+        const crow::request& req,
+        const std::string& body,
+        int user_id,
+        int status_code,
+        int entity_id,
+        std::string error)
     {
         AuthLog log;
 
@@ -138,7 +143,7 @@ namespace mindnet::plugins::core::models
         }
 
         log.parameters = serializeParamsForAuth(req.url_params);
-        log.request_body = req.body;
+        log.request_body = body;
         log.status_code = status_code;
         log.error = error;
         log.success = (status_code >= 200 && status_code < 300);
