@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <mutex>
 
 #include "ConsoleColor.h"
 
@@ -20,6 +21,7 @@ namespace mindnet::essential
         std::string prefix;
         std::string suffix;
         std::string last_buffer_str;
+        mutable std::recursive_mutex mtx;
 
     public:
         ConsoleColor color = ConsoleColor::UNKNOWN;
@@ -39,15 +41,18 @@ namespace mindnet::essential
         bool is_disabled() {
             return !is_enabled();
         }
+
         template <typename T>
         ConsolePrinter& operator<<(const T& value)
         {
-            if (is_enabled()) buffer << value;
+            if (is_enabled()) {
+                std::lock_guard<std::recursive_mutex> lock(mtx);
+                buffer << value;
+            }
             return *this;
         }
 
         ConsolePrinter& operator<<(ConsolePrinter& (*manip)(ConsolePrinter&));
-
         ConsolePrinter& operator<<(std::ostream& (*manip)(std::ostream&));
 
         void set_timestamp_function(print_timestamp_function fn);

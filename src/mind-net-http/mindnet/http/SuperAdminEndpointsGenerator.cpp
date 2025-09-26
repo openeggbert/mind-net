@@ -10,6 +10,7 @@
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/essential/Global.h"
 #include "mindnet/util/Utils.h"
+#include <jemalloc/jemalloc.h>
 
 namespace mindnet::http
 {
@@ -365,6 +366,21 @@ if (!form) {{
     }
 
 
+    // void purge_all_arenas() {
+    //     unsigned narenas;
+    //     size_t sz = sizeof(narenas);
+    //     if (mallctl("arenas.narenas", &narenas, &sz, nullptr, 0) != 0) {
+    //         std::cerr << "cannot get number of arenas\n";
+    //         return;
+    //     }
+    //
+    //     for (unsigned i = 0; i < narenas; i++) {
+    //         std::string cmd = "arena." + std::to_string(i) + ".purge";
+    //         if (mallctl(cmd.c_str(), nullptr, nullptr, nullptr, 0) == 0) {
+    //             std::cout << "Purged arena " << i << std::endl;
+    //         }
+    //     }
+    // }
 
     void SuperAdminEndpointsGenerator::create_superadmin_endpoints(
         const api::ServicePtr& service_ptr,
@@ -373,6 +389,13 @@ if (!form) {{
         procedure_ptr request_shutdown
     )
     {
+        // CROW_ROUTE(crow_app, "/api/v1/superadmin/purge")
+        // ([]()
+        // {
+        //     purge_all_arenas();
+        //     return crow::response(200, "OK");
+        // });
+
         auto log_request = [](
             const api::ServicePtr& service_ptr,
             const crow::request& req,

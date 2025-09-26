@@ -41,7 +41,7 @@ These are the instructions for Debian 13.
 # ------------------------------
 # Install dependencies
 # ------------------------------
-apt install -y build-essential libboost-all-dev cmake g++ libcurl4-openssl-dev libfmt-dev
+apt install -y build-essential libboost-all-dev cmake g++ libcurl4-openssl-dev libfmt-dev libjemalloc-dev
 apt install -y ccache ninja-build
 apt install -y git
 

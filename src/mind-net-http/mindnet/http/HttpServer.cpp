@@ -32,6 +32,14 @@ namespace mindnet::http
         create_authentication_endpoints(service_ptr);
         create_superadmin_endpoints(service_ptr);
         create_info_health_endpoints(service_ptr);
+
+        //READ
+        CROW_ROUTE(crow_app, "/ok").methods(crow::HTTPMethod::GET)
+        ([service_ptr](const crow::request& req)
+        {
+            return crow::response(200, "ok");
+        });
+
     }
 
     void HttpServer::request_shutdown()
@@ -93,7 +101,7 @@ namespace mindnet::http
         conf_js << "export const HOST = \"" << host << "\";" << std::endl;
         conf_js << "export const PORT = " << frontend_port << ";" << std::endl;
         conf_js.close();
-
+        //crow_app.concurrency(1);
         crow_app.port(port).multithreaded().run();
     }
 
