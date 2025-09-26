@@ -7,7 +7,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "../../../../include/mind-net-util/mindnet/util/Utils.h"
+#include "mindnet/util/Utils.h"
 #include <memory>
 
 #include "mindnet/essential/Configuration.h"
@@ -29,8 +29,6 @@
 #include "mindnet/plugins/chat/ChatPluginFactory.h"
 #include "mindnet/plugins/mail/MailPluginFactory.h"
 #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
-
-
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(sqlite_repository_factory));
 using mindnet::essential::commit;
@@ -198,6 +196,9 @@ bool commands_function_start(
         fatal << "Static directory does not exist: " << static_directory << commit;
         exit_status = 1;
         return true;
+    } else
+    {
+        info << "Static directory exists: " << static_directory << commit;
     }
 
     mindnet::http::HttpServer server{service_ptr, static_directory};

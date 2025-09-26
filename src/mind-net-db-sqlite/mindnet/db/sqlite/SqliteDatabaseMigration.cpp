@@ -185,7 +185,7 @@ CREATE TABLE "migration" (
                 bool created = create_table(db);
                 if (created)
                 {
-                    info << "Table " << MigrationColumns::MODEL_NAME << " created." << std::endl;
+                    info << "Table " << MigrationColumns::MODEL_NAME << " created." << commit;
                 }
                 else
                 {

@@ -1,4 +1,6 @@
 [Unit]
+#Install also: apt update && apt install libasan8  libfmt10
+
 Description=Mind Net (C++ REST backend)
 After=network.target
 
@@ -8,7 +10,7 @@ User={USER}
 Group={USER}
 WorkingDirectory={WORKING DIRECTORY}
 #
-ExecStart={PATH}/mind_net start --port 9000 --frontend-port 443 --host {HOST} -s {PATH TO frontend}
+ExecStart={PATH}/mindnet start --port 9000 --frontend-port 443 --host {HOST} -s {PATH TO frontend}
 Restart=on-failure
 RestartSec=5s
 #
