@@ -294,21 +294,43 @@ window.addEventListener("load", () => {{
         return params;
     }
 
-#define assert_super_admin()\
-    auto result = load_current_user(req, service_ptr);\
-    if (auto resp = std::get_if<crow::response>(&result))\
-    {\
-        api::AccessTokenContext system_token{0, "system", resp->code};\
-        log_request(service_ptr, req, system_token, resp->code, "Method not allowed for unauthenticated users.");\
-        return std::move(*resp);\
-    }\
-    auto& user = std::get<plugins::core::models::User>(result);\
-    if (auto forbidden = require_superadmin(user))\
-    {\
-        api::AccessTokenContext system_token{0, "system", forbidden->code};\
-        log_request(service_ptr, req, system_token, forbidden->code, forbidden->body);\
-        return std::move(*forbidden);\
+#define assert_super_admin() \
+    plugins::core::models::User user; \
+    { \
+        api::AccessTokenContext ctx{req, service_ptr}; \
+        if (ctx.status != 200 || ctx.user_id == 0) { \
+            crow::response resp{401, "Unauthorized: invalid or missing token"}; \
+            api::AccessTokenContext system_token{0, "system", resp.code}; \
+            log_request(service_ptr, req, system_token, resp.code, "Unauthorized access", resp.body); \
+            return resp; \
+        } \
+        auto user_values = service_ptr->read( \
+            plugins::core::models::USER_DEFINITION, \
+            ctx, \
+            ctx.user_id \
+        ); \
+        if (user_values.second.ko()) { \
+            crow::response resp{500, "Failed to load user: " + user_values.second.error}; \
+            api::AccessTokenContext system_token{0, "system", resp.code}; \
+            log_request(service_ptr, req, system_token, resp.code, "User load failed", resp.body); \
+            return resp; \
+        } \
+        if (user_values.first.empty()) { \
+            crow::response resp{404, "User not found"}; \
+            api::AccessTokenContext system_token{0, "system", resp.code}; \
+            log_request(service_ptr, req, system_token, resp.code, "User not found", resp.body); \
+            return resp; \
+        } \
+        user.from_values(user_values.first); \
+        if (user.role < essential::UserRole::SuperAdmin) { \
+            crow::response resp{403, "Forbidden: only SuperAdmin can perform this action"}; \
+            api::AccessTokenContext system_token{0, "system", resp.code}; \
+            log_request(service_ptr, req, system_token, resp.code, "Forbidden access", resp.body); \
+            return resp; \
+        } \
     }
+
+
 
     void SuperAdminEndpointsGenerator::create_superadmin_endpoints(
         const api::ServicePtr& service_ptr,
