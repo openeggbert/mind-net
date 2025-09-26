@@ -46,7 +46,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE Log logging in, registration, logout, password changes
 - [ ] TASK Check operator== implementations for all models
 - [ ] Validators - reorder methods in cpp files
-- [ ] /logout endpoint
+
 ```
 CROW_ROUTE(app, "/logout")([](const crow::request& req){
 auto session = req.get_session();
@@ -140,3 +140,134 @@ return "Logged out";
 - [x] New table refresh_token
 - [x] New table login_session
 - [x] FEATURE User authentication
+- [x] /logout endpoint
+
+## TODO – Migrate to C++20/23 Modules
+
+### Why?
+
+C++ modules are the modern way to organize code, improve clarity, and dramatically speed up compilation. Since C++20 they are officially part of the language, and they are a big step forward compared to traditional header files.
+
+### 🧩 What are C++ Modules?
+
+A module is a unit of code that:
+
+* **Exports** selected types, functions, classes, etc.
+* **Isolates** non-exported parts from the rest of the application.
+* **Replaces** the traditional `#include` mechanism, reducing duplication and slow compile times.
+
+#### Two parts of a module:
+
+* **Interface module** – contains `export` declarations visible outside.
+* **Implementation module** – contains definitions that are not exported.
+
+**Example – Interface:**
+
+```cpp
+export module Math;
+
+export int add(int a, int b);
+```
+
+**Example – Implementation:**
+
+```cpp
+module Math;
+
+int add(int a, int b) {
+    return a + b;
+}
+```
+
+**Usage:**
+
+```cpp
+import Math;
+
+int main() {
+    int result = add(3, 4);
+}
+```
+
+---
+
+#### 🛠 Migration Plan
+
+1. **Identify logical components**
+   Example split:
+
+    * `Math` – math utilities
+    * `IO` – input/output
+    * `Graphics` – rendering
+    * `Utils` – helpers
+
+2. **Create interface modules**
+   Each logical unit gets its own `.ixx` file with `export module` + declarations.
+
+3. **Create implementation modules**
+   Store definitions (`module Name;`) separately, no `export`.
+
+4. **Replace `#include` with `import`**
+
+    * Use `import ModuleName;` instead of headers.
+    * For STL: prefer `import std;` or `import std.vector;` (if supported).
+
+5. **Adapt build system**
+   Update **CMake** (or Visual Studio/MSVC project) to handle module compilation:
+
+   ```cmake
+   add_library(Math MODULE src/Math/math.ixx src/Math/math_impl.cpp)
+   add_library(Utils MODULE src/Utils/utils.ixx src/Utils/utils_impl.cpp)
+
+   add_executable(MyApp src/main.cpp)
+   target_link_libraries(MyApp PRIVATE Math Utils)
+   ```
+
+   ⚠️ CMake support for modules is still evolving – may require flags like `/std:c++20 /experimental:module` (MSVC) or `-fmodules-ts` (Clang).
+
+---
+
+### ✅ Benefits
+
+* 🚀 **Faster compilation** – compiler processes binary module interface, not repetitive `#include`.
+* 🔒 **Better encapsulation** – non-exported code is hidden.
+* 🧼 **Cleaner dependencies** – fewer macros, less preprocessor noise.
+
+---
+
+### 📁 Suggested Project Structure
+
+```
+MyProject/
+├── CMakeLists.txt
+├── src/
+│   ├── main.cpp
+│   ├── Math/
+│   │   ├── math.ixx         // Interface module
+│   │   └── math_impl.cpp    // Implementation module
+│   ├── Utils/
+│   │   ├── utils.ixx
+│   │   └── utils_impl.cpp
+```
+
+* **`.ixx` files** = interface modules (`export module`, declarations).
+* **Implementation files** = module body (`module Name;`, no export).
+
+---
+
+### ⚠️ About `#include`
+
+* **Ideal case (pure modules):** no `#include` at all.
+* **In practice:**
+
+    * You still need `#include` for most 3rd-party libraries (Boost, SDL, OpenCV, etc.).
+    * Legacy code may need gradual migration.
+    * Templates/macros sometimes still rely on headers.
+
+👉 Strategy: **write new code in modules, refactor old code gradually.**
+
+---
+
+📌 **Next action item:**
+Pick one existing header file in the project and convert it into a C++20 module (`.ixx + .cpp`).
+
