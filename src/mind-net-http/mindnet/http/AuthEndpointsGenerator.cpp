@@ -49,21 +49,24 @@ namespace mindnet::http
     }
 
     crow::json::wvalue mask_sensitive(const crow::json::rvalue& body) {
-        crow::json::wvalue safe = body;
+        crow::json::wvalue safe;
 
-        static const std::vector<std::string> sensitive_keys = {
+        static const std::unordered_set<std::string> sensitive_keys = {
             "password", "old_password", "new_password",
             "refresh_token", "access_token"
         };
 
-        for (const auto& key : sensitive_keys) {
-            if (safe[key].t() != crow::json::type::Null) {
+        for (auto& key : body.keys()) {
+            if (sensitive_keys.count(key)) {
                 safe[key] = "***";
+            } else {
+                safe[key] = body[key]; // zkopíruj původní hodnotu
             }
         }
 
         return safe;
     }
+
 
     void AuthEndpointsGenerator::create_auth_endpoints(
         api::ServicePtr& service_ptr,
@@ -552,7 +555,7 @@ namespace mindnet::http
         if (old_password == new_password)
         {
             log_request(service_ptr, req, ctx, 400, 0, "New password must be different from old password");
-            return crow::response{400, "Password must be different from username."};
+            return crow::response{400, "New password must be different from old password"};
         }
 
         // 1. Load user
@@ -625,13 +628,13 @@ namespace mindnet::http
     });
 
 
-        CROW_ROUTE(crow_app, "/api/v1/protected")([service_ptr, &log_request](const crow::request& req)
-        {
-            check_maintenance_mode()
-
-            api::AccessTokenContext login_token{req, service_ptr};
-            log_request(service_ptr, req, login_token, login_token.status, 0, login_token.msg);
-            return crow::response(login_token.status, login_token.msg);
-        });
+        // CROW_ROUTE(crow_app, "/api/v1/auth/protected")([service_ptr, &log_request](const crow::request& req)
+        // {
+        //     check_maintenance_mode()
+        //
+        //     api::AccessTokenContext login_token{req, service_ptr};
+        //     log_request(service_ptr, req, login_token, login_token.status, 0, login_token.msg);
+        //     return crow::response(login_token.status, login_token.msg);
+        // });
     }
 }
