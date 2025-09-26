@@ -11,6 +11,14 @@
 #include "OperationResult.h"
 #include "mindnet/essential/Helper.h"
 
+// 🔐 Validator as a Security Gate
+// Validator does more than just check data — it acts as protection against unauthorized access:
+//
+// Authentication: Is the user logged in?
+// Authorization: Does the user have the right to read/modify the given entity?
+// Integrity: Does the operation preserve the system’s logic?
+// Consistency: Are key dependencies present (e.g., a parent note)?
+
 namespace mindnet::api {
 
     class IPersistence; }
