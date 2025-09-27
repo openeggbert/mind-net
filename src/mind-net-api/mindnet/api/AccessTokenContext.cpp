@@ -37,7 +37,7 @@ namespace mindnet::api
             orm::QueryParams q;
             q.add_filter(plugins::core::columns::AccessTokenColumns::TOKEN_HASH, token_hash);
 
-            api::AccessTokenContext system_token{0, "system", 200};
+            api::AccessTokenContext system_token{0, "system", 403};
             auto tokens = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, system_token, q);
             if (tokens.second.ko())
             {
@@ -79,7 +79,7 @@ namespace mindnet::api
                 //              v.begin() + std::min<size_t>(2, v.size()));
                 // v.push_back(access_token.get_id());
 
-                auto updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION,*this, access_token.get_id(), v);
+                auto updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION,system_token, access_token.get_id(), v);
                 if (updated.ko())
                 {
                     status = 500;

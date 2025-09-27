@@ -24,7 +24,10 @@ export async function logout() {
 
     const res = await fetch(`${API_BASE}/auth/logout`, {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+        },
         body: JSON.stringify({refresh_token})
     });
 

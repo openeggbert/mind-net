@@ -61,6 +61,7 @@ namespace mindnet::api
     inline bool is_authorization_enabled(const RequestContext& ctx)
     {
         using namespace mindnet;
+        if (ctx.token.user_id == 0 && ctx.token.msg == "system") {return false;}
 
         switch (g_configuration.access_mode)
         {

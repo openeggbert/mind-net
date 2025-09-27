@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Use crow_app.concurrency() and add new configuration entry
 - [ ] New table alert - notification for user
 - [ ] FEATURE New table Flag
 - [ ] FEATURE New table Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast

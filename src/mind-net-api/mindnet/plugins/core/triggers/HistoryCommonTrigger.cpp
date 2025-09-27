@@ -61,7 +61,7 @@ namespace mindnet::plugins::core::triggers
         experiment << "id " << id << commit;
         experiment << "fields.size() " << fields.size() << commit;
         experiment << "query_params.fields.size() " << query_params.fields.size() << commit;
-        api::AccessTokenContext token {user_id, "", 200};
+        api::AccessTokenContext token = user_id == 0 ? api::AccessTokenContext(user_id, "system", 403) : api::AccessTokenContext(user_id, "", 200);
 
         models::History history;
 

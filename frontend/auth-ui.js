@@ -38,6 +38,7 @@ export function renderRegisterForm() {
         <form id="registerForm">
             <label>Username <input type="text" id="reg_username" required></label><br>
             <label>Password <input type="password" id="reg_password" required></label><br>
+            <label>Repeat Password <input type="password" id="reg_password2" required></label><br>
             <label>Email <input type="email" id="reg_email"></label><br>
             <label>Display name <input type="text" id="reg_display_name"></label><br>
             <label>Profile text <input type="text" id="reg_profile_text"></label><br>
@@ -48,9 +49,18 @@ export function renderRegisterForm() {
 
     document.getElementById("registerForm").onsubmit = async e => {
         e.preventDefault();
+
+        const pass1 = document.getElementById("reg_password").value;
+        const pass2 = document.getElementById("reg_password2").value;
+
+        if (pass1 !== pass2) {
+            showToast("❌ Passwords do not match", 4000, "error");
+            return;
+        }
+
         const payload = {
             username: document.getElementById("reg_username").value,
-            password: document.getElementById("reg_password").value,
+            password: pass1,
             email: document.getElementById("reg_email").value,
             display_name: document.getElementById("reg_display_name").value,
             profile_text: document.getElementById("reg_profile_text").value
@@ -77,6 +87,7 @@ export function renderChangePasswordForm() {
         <form id="changePwdForm">
             <label>Old password <input type="password" id="old_password" required></label><br>
             <label>New password <input type="password" id="new_password" required></label><br>
+            <label>Repeat new password <input type="password" id="new_password2" required></label><br>
             <button type="submit">Change Password</button>
         </form>
     `;
@@ -85,6 +96,13 @@ export function renderChangePasswordForm() {
         e.preventDefault();
         const old_password = document.getElementById("old_password").value;
         const new_password = document.getElementById("new_password").value;
+        const new_password2 = document.getElementById("new_password2").value;
+
+        if (new_password !== new_password2) {
+            showToast("❌ New passwords do not match", 4000, "error");
+            return;
+        }
+
         const ok = await changePassword(old_password, new_password);
         if (ok) {
             showToast("✅ Password changed successfully", 3000, "success");
