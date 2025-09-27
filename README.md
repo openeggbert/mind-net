@@ -175,5 +175,3 @@ See [LICENSE](LICENSE) for details.
 
 ![Calling get list for node](screenshots/screen_calling_get_list_for_node.jpg "Calling get list for node")
 
-
-

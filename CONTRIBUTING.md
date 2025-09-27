@@ -31,10 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] New table alert - notification for user
-- [ ] FEATURE New table Flag
-- [ ] FEATURE New table Task (related to notes) + Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
-- [ ] New table pinned_note
 - [ ] note.alias_for_note_id
 - [ ] Use SM-18, new entity review_session
 - [ ] Add hash sums for sql migrations - new column in table migration
@@ -57,7 +53,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] IMPROVEMENT Add logging to files
 - [ ] FEATURE Create OpenAPI specification for the REST API
 - [ ] bool custom_action.expand
-- [ ] new entity File
+- [ ] new table file - use content addressable file system with path structure like files/ab/cdef1234... for storing
+  file content
 - [ ] Frontend : sort and order is missing
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 - [ ] Implement adding reason for changes (history.reason)
@@ -75,6 +72,47 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Add support for Docker
 - [ ] Rewrite enums using EnumUtils.h
 
+
+### Table File
+```aiignore
+-- V21__create_file.sql
+CREATE TABLE file (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    -- metadata
+    filename TEXT NOT NULL,
+    extension TEXT NOT NULL,
+    mime_type TEXT,
+    size INTEGER NOT NULL,
+    encrypted BOOLEAN DEFAULT 0,
+    compressed BOOLEAN DEFAULT 0,
+    compression_type INTEGER DEFAULT 0,
+
+    -- integrity check
+    checksum TEXT,                  -- hash value
+    checksum_type TEXT DEFAULT 'SHA256', -- SHA256, MD5, BLAKE3...
+
+    -- content
+    data BLOB,                      -- for small files (e.g. < 2 MB)
+    path TEXT,                      -- disk path for large files 
+
+    -- relationships (generic)
+    table_name TEXT NOT NULL,       -- e.g. 'note', 'task', 'idea', ...
+    record_id INTEGER NOT NULL,     -- ID in respective table
+
+    -- validation
+    CHECK ((data IS NOT NULL AND path IS NULL) OR (data IS NULL AND path IS NOT NULL))
+);
+
+-- Indexes for fast searching
+CREATE INDEX idx_file_table_record ON file(table_name, record_id);
+CREATE INDEX idx_file_checksum ON file(checksum);
+CREATE INDEX idx_file_filename ON file(filename);
+CREATE INDEX idx_file_mime_type ON file(mime_type);
+
+```
 ### Implement Complex Filtering in REST API
 
 #### Operators and JSON Format
@@ -140,7 +178,11 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [x] /logout endpoint
 - [x] Add Logging level to configuration
 - [x] New table auth_log : logging registration, logout, password changes
-
+- [ ] New table alert
+- [ ] New table flag
+- [ ] New table project
+- [ ] New table task - Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
+- [ ] New table pinned_note
 
 
 ## TODO – Migrate to C++20/23 Modules

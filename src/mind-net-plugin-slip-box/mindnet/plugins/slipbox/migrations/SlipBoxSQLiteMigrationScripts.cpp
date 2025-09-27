@@ -320,5 +320,193 @@ CREATE TABLE wanted_note(
 CREATE INDEX idx_wanted_note_from_note_id ON wanted_note(from_note_id);
 
 )");
+
+    	add_migration("V17__create_alert.sql", R"(
+CREATE TABLE alert (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+	-- when notification should trigger
+	trigger_at DATETIME NOT NULL,
+    last_triggered_at DATETIME,
+    trigger_count INTEGER,
+    snooze_until DATETIME,
+    expires_at DATETIME,
+
+	-- optionally how often to repeat (e.g. "DAILY", "WEEKLY", "NONE")
+	repeat_interval INTEGER DEFAULT 0,
+    repeat_count INTEGER DEFAULT 0,
+    repeat_until DATETIME DEFAULT 0,
+
+	user_id INTEGER NOT NULL,
+    -- reference to note (optional)
+	note_id INTEGER,
+    url TEXT,
+
+	-- optional notification title/content
+	title TEXT NOT NULL,
+	message TEXT,
+
+	-- alert status: ACTIVE, TRIGGERED, DISMISSED, SNOOZED, FAILED
+	status INTEGER NOT NULL DEFAULT 0,
+
+	-- metadata (e.g. category, priority, sound signal etc.)
+	important BOOLEAN DEFAULT 0,
+    channel INTEGER,
+
+	UNIQUE(user_id, title, trigger_at),
+	FOREIGN KEY (user_id) REFERENCES user(id),
+	FOREIGN KEY (note_id) REFERENCES note(id)
+);
+
+CREATE INDEX idx_alert_user_id ON alert(user_id);
+CREATE INDEX idx_alert_note_id ON alert(note_id);
+
+)");
+
+
+    	add_migration("V18__create_flag.sql", R"(
+CREATE TABLE flag(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME ,
+    updated_at DATETIME ,
+    --
+    map_id INTEGER NOT NULL,
+	title TEXT NOT NULL,
+
+    UNIQUE (map_id, title),
+
+	FOREIGN KEY (map_id) REFERENCES map(id)
+);
+
+CREATE INDEX idx_flag_map_id ON flag(map_id);
+
+)");
+    	add_migration("V19__create_project.sql", R"(
+CREATE TABLE project (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    -- reference
+	note_id INTEGER,		  -- which note the project is linked to
+
+	-- content
+    title TEXT NOT NULL,
+    description TEXT,
+    progress INTEGER CHECK(progress BETWEEN 0 AND 100),
+
+	-- project state
+    in_progress BOOLEAN DEFAULT 0,
+    important BOOLEAN DEFAULT 0,
+    due_date DATETIME,
+
+    -- metadata
+    created_by INTEGER,           -- user_id
+    owner_id INTEGER,           -- user_id
+    assigned_to INTEGER,          -- user_id
+    category TEXT,
+    is_public BOOLEAN DEFAULT 0,
+
+    UNIQUE(note_id, title),
+    FOREIGN KEY (note_id) REFERENCES note(id),
+    FOREIGN KEY (created_by) REFERENCES user(id),
+    FOREIGN KEY (owner_id) REFERENCES user(id),
+    FOREIGN KEY (assigned_to) REFERENCES user(id)
+);
+
+CREATE INDEX idx_project_note_id ON project(note_id);
+CREATE INDEX idx_project_due_date ON project(due_date);
+CREATE INDEX idx_project_in_progress ON project(in_progress);
+CREATE INDEX idx_project_created_by ON project(created_by);
+CREATE INDEX idx_project_owner_id ON project(owner_id);
+CREATE INDEX idx_project_assigned_to ON project(assigned_to);
+
+)");
+
+
+    	add_migration("V20__create_task.sql", R"(
+CREATE TABLE task (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    -- reference
+	note_id INTEGER,		  -- which note the task is linked to
+    project_id INTEGER,
+
+	-- content
+    title TEXT NOT NULL,
+    description TEXT,
+    progress INTEGER CHECK(progress BETWEEN 0 AND 100),
+
+	-- task state
+    status INTEGER DEFAULT 0,   -- OPEN, IN_PROGRESS, DONE, CANCELLED, BLOCKED
+    important BOOLEAN DEFAULT 0,
+    as_soon_as_possible BOOLEAN DEFAULT 0,
+    start_date DATETIME,
+    due_date DATETIME,            -- deadline
+    completed_at DATETIME,
+
+    -- metadata
+    created_by INTEGER,           -- user_id
+    owner_id INTEGER,           -- user_id
+    assigned_to INTEGER,          -- user_id
+    category TEXT,
+    context TEXT,
+	tags TEXT,					-- optional tags
+    is_public BOOLEAN DEFAULT 0,
+
+    parent_task_id INTEGER,
+    blocked_by_task_id INTEGER,
+    related_tasks TEXT,
+
+    UNIQUE(note_id, title),
+    FOREIGN KEY (note_id) REFERENCES note(id),
+    FOREIGN KEY (project_id) REFERENCES project(id),
+    FOREIGN KEY (created_by) REFERENCES user(id),
+    FOREIGN KEY (owner_id) REFERENCES user(id),
+    FOREIGN KEY (assigned_to) REFERENCES user(id),
+    FOREIGN KEY (parent_task_id) REFERENCES task(id),
+    FOREIGN KEY (blocked_by_task_id) REFERENCES task(id)
+);
+
+CREATE INDEX idx_task_note_id ON task(note_id);
+CREATE INDEX idx_task_project_id ON task(project_id);
+CREATE INDEX idx_task_due_date ON task(due_date);
+CREATE INDEX idx_task_status ON task(status);
+CREATE INDEX idx_task_status_due ON task(status, due_date);
+CREATE INDEX idx_task_created_by ON task(created_by);
+CREATE INDEX idx_task_owner_id ON task(owner_id);
+CREATE INDEX idx_task_assigned_to ON task(assigned_to);
+CREATE INDEX idx_task_parent ON task(parent_task_id);
+CREATE INDEX idx_task_blocked ON task(blocked_by_task_id);
+
+
+
+)");
+
+    	add_migration("V21__create_pinned_note.sql", R"(
+CREATE TABLE pinned_note(
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME ,
+    updated_at DATETIME ,
+    --
+    user_id INTEGER NOT NULL,
+    note_id INTEGER NOT NULL,
+	position INTEGER,			 -- optional: pinning order (1,2,3...)
+    is_public BOOLEAN DEFAULT 0,
+
+    UNIQUE(user_id, note_id),
+
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (note_id) REFERENCES note(id)
+);
+
+CREATE INDEX idx_pinned_note_user_id ON pinned_note(user_id);
+CREATE INDEX idx_pinned_note_note_id ON pinned_note(note_id);
+
+)");
     }
 }
