@@ -4,6 +4,7 @@
 
 #ifndef MIND_NET_DATABASETYPE_H
 #define MIND_NET_DATABASETYPE_H
+#include <string>
 
 namespace mindnet::essential {
 enum class DatabaseType
@@ -15,7 +16,14 @@ enum class DatabaseType
     MySQL = 4,
 };
 
-    
+inline bool is_database_type_supported(DatabaseType database_type)
+{
+    switch (database_type)
+    {
+        case DatabaseType::SQLite: return true;
+        default: return false;
+    }
+}
 inline std::string database_type_to_string(DatabaseType database_type)
 {
     switch (database_type)

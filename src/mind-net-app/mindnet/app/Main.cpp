@@ -30,7 +30,7 @@
 #include "mindnet/plugins/mail/MailPluginFactory.h"
 #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
 
-#define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(sqlite_repository_factory));
+#define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;
 using mindnet::essential::g_configuration;
 using mindnet::essential::ExitStatus;
@@ -40,11 +40,11 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
 {
     trace << "Migrating schema, if needed" << commit;
 
-    mindnet::essential::DatabaseType database_type = g_configuration.database_type;
-    if (database_type != mindnet::essential::DatabaseType::SQLite)
+    mindnet::essential::DatabaseType configured_database_type = g_configuration.database_type;
+    if (!is_database_type_supported(configured_database_type))
     {
-        err << "SQLite database is only supported, but you configured " <<
-            mindnet::essential::database_type_to_string(database_type) << commit;
+        err << "This Database Type is not yet supported: " <<
+            mindnet::essential::database_type_to_string(configured_database_type) << commit;
         exit(ExitStatus::MIGRATION_FAILED);
     }
     for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
@@ -54,7 +54,8 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         auto migration_scripts = plugin->get_migration_scripts();
         if (migration_scripts == nullptr || migration_scripts.get()->get_database_type() != g_configuration.database_type)
         {
-            throw std::runtime_error("Migration script not found for plugin " + plugin_name + "and database type " + mindnet::essential::database_type_to_string(g_configuration.database_type));
+            fatal << "Plugin " + plugin_name + " does not have migration scripts for configured database type: " + mindnet::essential::database_type_to_string(g_configuration.database_type);
+            exit(1);
         }
         bool migration_result =
             mindnet::db::sqlite::SqliteDatabaseMigration::
@@ -287,8 +288,17 @@ bool run_command(
 
 void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugin_registry)
 {
-
-    std::shared_ptr<mindnet::api::RepositoryFactory> sqlite_repository_factory = std::make_shared<mindnet::db::sqlite::SqliteRepositoryFactory>();
+    std::shared_ptr<mindnet::api::RepositoryFactory> repository_factory;
+    auto db_type = g_configuration.database_type;
+    switch (db_type)
+    {
+    case mindnet::essential::DatabaseType::SQLite: repository_factory = std::make_shared<
+            mindnet::db::sqlite::SqliteRepositoryFactory>();
+        break;
+    default: throw std::runtime_error(
+            "Cannot register plugins. Unsupported Database Type is configured " +
+            mindnet::essential::database_type_to_string(db_type));
+    }
 
     REGISTER_PLUGIN(core, Core)
     REGISTER_PLUGIN(slipbox, SlipBox)

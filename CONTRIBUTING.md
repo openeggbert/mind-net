@@ -31,9 +31,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] FEATURE Support for PostgresSQL storage
 - [ ] Use SM-18, new entity review_session
-- [ ] Add hash sums for sql migrations - new column in table migration
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Slip Box component
 - [ ] Super Memo component
@@ -43,6 +41,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE Support for export to static HTML files
 
 ### Extending
+- [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
 - [ ] TASK Duplication in read_model and list_models - Both functions have nearly identical logic for reading data — consider refactoring into a shared utility.
