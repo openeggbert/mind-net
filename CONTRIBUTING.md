@@ -31,12 +31,10 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
+- [ ] Reorder columns of tables, if needed
 - [ ] Use SM-18, new entity review_session
 - [ ] Add hash sums for sql migrations - new column in table migration
-- [ ] Bool SQLite columns should start with is_
 - [ ] Fix validators and move authorization into the correct methods
-- [ ] Reorder columns of tables, if needed
-- [ ] Unix time columns should have SQLite type DATETIME
 - [ ] Slip Box component
 - [ ] Super Memo component
 - [ ] BUG Update of boolean values in SQLite is not working.
@@ -182,7 +180,8 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] New table project
 - [x] New table task - Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
 - [x] New table pinned_note
-- [X] note.alias_for_note_id
+- [x] note.alias_for_note_id
+- [x] Unix time columns should have SQLite type DATETIME
 
 ## TODO – Migrate to C++20/23 Modules
 

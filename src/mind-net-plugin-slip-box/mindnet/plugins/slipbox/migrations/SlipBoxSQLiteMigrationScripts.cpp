@@ -293,7 +293,7 @@ CREATE TABLE idea(
     title TEXT NOT NULL,
 	content TEXT,
     category TEXT,
-    due_at INTEGER,
+    due_at DATETIME,
 	is_important BOOL,
 	is_public BOOL,
     is_pinned BOOL,
