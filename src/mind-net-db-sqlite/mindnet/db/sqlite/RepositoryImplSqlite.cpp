@@ -83,7 +83,28 @@ namespace mindnet::db::sqlite
     {
         return model_definition;
     }
-
+    //
+    // class NumberOrText
+    // {
+    //     int64_t number{};
+    //     std::string text;
+    //     crow::json::rvalue rvalue;
+    //
+    // public:
+    //     NumberOrText(
+    //         crow::json::rvalue rvalue_,
+    //         model::ColumnType column_type_
+    //         )
+    //     : rvalue(rvalue_)
+    //     {
+    //         crow::json::type crow_json_type = rvalue.t();
+    //     }
+    //
+    //     bool is_number(){return true;}
+    //     bool is_text(){return true;}
+    //     int64_t get_number(){return number;}
+    //     std::string get_text(){return text;}
+    // };
     entity_fields RepositoryImplSqlite::request_to_entity_fields(
         crow::json::rvalue& body, mindnet::essential::Crudl crudl)
     {
@@ -102,10 +123,8 @@ namespace mindnet::db::sqlite
         //updated at
         result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp()));
 
-
         for (auto& col : model_definition.get_columns())
         {
-
             auto column_name = col.get_column_name();
             if (
                 column_name == model::BaseColumns::ID ||
@@ -117,7 +136,9 @@ namespace mindnet::db::sqlite
             auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
             crow::json::type crow_json_type = rvalue.t();
 
-            auto primitive_column_type = column_type_to_primitive_column_type(col.get_column_type());
+            auto column_type = col.get_column_type();
+            auto primitive_column_type = column_type_to_primitive_column_type(column_type);
+
 
             debug <<"rvalue="<<rvalue<<commit;
             if (mandatory && !has_value)
@@ -140,6 +161,9 @@ namespace mindnet::db::sqlite
                     if (has_value && crow_json_type == crow::json::type::String && rvalue == "")
                     {
                         result.emplace_back(cast64(0));
+                    } else if (has_value && crow_json_type == crow::json::type::String)
+                    {
+                        throw std::runtime_error("Expected Number, but got Text: " + column_name);
                     }
                     else
                     {

@@ -178,11 +178,11 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] /logout endpoint
 - [x] Add Logging level to configuration
 - [x] New table auth_log : logging registration, logout, password changes
-- [ ] New table alert
-- [ ] New table flag
-- [ ] New table project
-- [ ] New table task - Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
-- [ ] New table pinned_note
+- [x] New table alert
+- [x] New table flag
+- [x] New table project
+- [x] New table task - Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
+- [x] New table pinned_note
 
 
 ## TODO – Migrate to C++20/23 Modules
