@@ -41,7 +41,7 @@ namespace mindnet::plugins::slipbox::models
         .set_all_rest_operations()
         .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
         .set_columns({
-            coldef(COLS::NOTE_ID, INTEGER).set_foreign_key("note").set_description("Note ID this project is linked to"),
+            coldef(COLS::NOTE_ID, INTEGER | FOREIGN_KEY).set_description("Note ID this project is linked to"),
             coldef(COLS::TITLE, MANDATORY).set_description("Project title"),
             coldef(COLS::DESCRIPTION).set_description("Project description"),
             coldef(COLS::PROGRESS, INTEGER).set_description("Project progress (0-100)"),
@@ -63,7 +63,7 @@ namespace mindnet::plugins::slipbox::models
         int progress{};
         bool in_progress{false};
         bool important{false};
-        string due_date;
+        unixtime due_date;
         int created_by{};
         int owner_id{};
         int assigned_to{};

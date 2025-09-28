@@ -48,17 +48,17 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult FlagValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        assert_editor()
-        // Validate that map_id exists
-        if (!entity.map_id)
-        {
-            return error_result("Map ID is required");
-        }
-        // Validate that title is not empty
-        if (entity.title.empty())
-        {
-            return error_result("Title cannot be empty");
-        }
+        // assert_editor()
+        // // Validate that map_id exists
+        // if (!entity.map_id)
+        // {
+        //     return error_result("Map ID is required");
+        // }
+        // // Validate that title is not empty
+        // if (entity.title.empty())
+        // {
+        //     return error_result("Title cannot be empty");
+        // }
         return ok_result;
     }
 
@@ -70,17 +70,17 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult FlagValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                              const Model& new_entity) const
     {
-        assert_editor()
-        // Validate that map_id exists
-        if (!new_entity.map_id)
-        {
-            return error_result("Map ID is required");
-        }
-        // Validate that title is not empty 
-        if (new_entity.title.empty())
-        {
-            return error_result("Title cannot be empty");
-        }
+        // assert_editor()
+        // // Validate that map_id exists
+        // if (!new_entity.map_id)
+        // {
+        //     return error_result("Map ID is required");
+        // }
+        // // Validate that title is not empty
+        // if (new_entity.title.empty())
+        // {
+        //     return error_result("Title cannot be empty");
+        // }
         return ok_result;
     }
 

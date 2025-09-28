@@ -28,6 +28,8 @@
 #define MODEL ALERT
 #define COLS columns::AlertColumns
 #include "../columns/AlertColumns.h"
+#include "mindnet/plugins/slipbox/enums/AlertRepeatInterval.h"
+#include "mindnet/plugins/slipbox/enums/AlertStatus.h"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -47,19 +49,19 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::SNOOZE_UNTIL, DATETIME).set_description("Snooze until this time"),
             coldef(COLS::EXPIRES_AT, DATETIME).set_description("Expiration time"),
 
-            coldef(COLS::REPEAT_INTERVAL, INTEGER).set_default_value(0).set_description(
+            coldef(COLS::REPEAT_INTERVAL).set_enum_definition(enums::alert_repeat_interval_to_enum_definition()).set_default_value(0).set_description(
                 "Repeat interval (e.g. DAILY, WEEKLY)"),
             coldef(COLS::REPEAT_COUNT, INTEGER).set_default_value(0).set_description("Number of times to repeat"),
             coldef(COLS::REPEAT_UNTIL, DATETIME).set_default_value(0).set_description("Repeat until this time"),
 
-            coldef(COLS::USER_ID, INTEGER | MANDATORY).set_foreign_key("user").set_description("User ID"),
-            coldef(COLS::NOTE_ID, INTEGER).set_foreign_key("note").set_description("Associated note ID"),
+            coldef(COLS::USER_ID, MANDATORY).set_foreign_key("user").set_description("User ID"),
+            coldef(COLS::NOTE_ID).set_foreign_key("note").set_description("Associated note ID"),
             coldef(COLS::URL, TEXT).set_description("Associated URL"),
 
             coldef(COLS::TITLE, TEXT | MANDATORY).set_description("Alert title"),
             coldef(COLS::MESSAGE, TEXT).set_description("Alert message"),
 
-            coldef(COLS::STATUS, INTEGER).set_default_value(0).set_description("Alert status (ACTIVE, TRIGGERED, etc)"),
+            coldef(COLS::STATUS).set_enum_definition(enums::alert_status_to_enum_definition()).set_default_value(0).set_description("Alert status (ACTIVE, TRIGGERED, etc)"),
 
             coldef(COLS::IMPORTANT, BOOL).set_default_value(0).set_description("Whether this alert is important"),
             coldef(COLS::CHANNEL, INTEGER).set_description("Notification channel")
@@ -67,15 +69,15 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int trigger_at;
-        string last_triggered_at;
+        unixtime trigger_at;
+        unixtime last_triggered_at;
         int trigger_count{};
-        string snooze_until;
-        string expires_at;
+        unixtime snooze_until;
+        unixtime expires_at;
 
-        int repeat_interval{};
+        enums::AlertRepeatInterval repeat_interval{};
         int repeat_count{};
-        string repeat_until;
+        unixtime repeat_until;
 
         int user_id{};
         int note_id{};
@@ -84,7 +86,7 @@ namespace mindnet::plugins::slipbox::models
         string title;
         string message;
 
-        int status{};
+        enums::AlertStatus status{};
 
         bool important{false};
         int channel{};

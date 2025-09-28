@@ -19,6 +19,11 @@
 #include "mindnet/plugins/slipbox/validators/SourceValidator.h"
 #include "mindnet/plugins/slipbox/validators/IdeaValidator.h"
 #include "mindnet/plugins/slipbox/validators/WantedNoteValidator.h"
+#include "mindnet/plugins/slipbox/validators/AlertValidator.h"
+#include "mindnet/plugins/slipbox/validators/FlagValidator.h"
+#include "mindnet/plugins/slipbox/validators/ProjectValidator.h"
+#include "mindnet/plugins/slipbox/validators/TaskValidator.h"
+#include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.h"
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.h"
 
 namespace mindnet::plugins::slipbox
@@ -52,6 +57,11 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(collection_item, CollectionItem, COLLECTION_ITEM)
         REGISTER_MODEL(concept, Concept, CONCEPT)
         REGISTER_MODEL(idea, Idea, IDEA)
+        REGISTER_MODEL(alert, Alert, ALERT)
+        REGISTER_MODEL(flag, Flag, FLAG)
+        REGISTER_MODEL(project, Project, PROJECT)
+        REGISTER_MODEL(task, Task, TASK)
+        REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
 
 
         plugin->close_for_changes();

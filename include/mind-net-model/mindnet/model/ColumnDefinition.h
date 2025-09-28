@@ -261,6 +261,7 @@ namespace mindnet::model
         ColumnDefinition& set_foreign_key(std::string value)
         {
             foreign_key = value;
+            column_type = mindnet::model::ColumnType::Integer;
             return *this;
         }
 

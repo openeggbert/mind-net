@@ -41,7 +41,7 @@ namespace mindnet::plugins::slipbox::models
         .set_all_rest_operations()
         .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
         .set_columns({
-            coldef(COLS::MAP_ID, MANDATORY | INTEGER | FOREIGN_KEY)
+            coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY)
             .set_description("Associated map ID"),
             coldef(COLS::TITLE, MANDATORY)
             .set_description("Flag title")

@@ -17,7 +17,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(title);
         result.push_back(description);
         result.push_back(progress);
-        result.push_back(status);
+        result.push_back(cast64(status));
         result.push_back(cast64(important));
         result.push_back(cast64(as_soon_as_possible));
         result.push_back(cast64(start_date));
@@ -50,9 +50,9 @@ namespace mindnet::plugins::slipbox::models
         title = text();
         description = text();
         progress = number();
-        status = number();
-        important = number();
-        as_soon_as_possible = number();
+        status = static_cast<TaskStatus>(number());
+        important = boolean();
+        as_soon_as_possible = boolean();
         start_date = number();
         due_date = number();
         completed_at = number();
@@ -62,7 +62,7 @@ namespace mindnet::plugins::slipbox::models
         category = text();
         context = text();
         tags = text();
-        is_public = number();
+        is_public = boolean();
         parent_task_id = number();
         blocked_by_task_id = number();
         related_tasks = text();
@@ -76,7 +76,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return testt_between(title, 1, 256, TaskColumns::TITLE); },
             [this] { return testt_between(description, 0, 4096, TaskColumns::DESCRIPTION); },
             [this] { return test_between(progress, 0, 100, TaskColumns::PROGRESS); },
-            [this] { return test_between(status, 0, 4, TaskColumns::STATUS); }, // Assuming 5 states (0-4)
             [this] { return test_ne(created_by, 0, TaskColumns::CREATED_BY); },
             [this] { return test_ne(owner_id, 0, TaskColumns::OWNER_ID); }
         };

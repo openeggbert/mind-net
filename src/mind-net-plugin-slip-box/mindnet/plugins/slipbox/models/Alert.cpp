@@ -17,7 +17,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(trigger_count);
         result.push_back(cast64(snooze_until));
         result.push_back(cast64(expires_at));
-        result.push_back(repeat_interval);
+        result.push_back(cast64(repeat_interval));
         result.push_back(repeat_count);
         result.push_back(cast64(repeat_until));
         result.push_back(user_id);
@@ -25,7 +25,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(url);
         result.push_back(title);
         result.push_back(message);
-        result.push_back(status);
+        result.push_back(cast64(status));
         result.push_back(cast64(important));
         result.push_back(channel);
         return result;
@@ -45,7 +45,7 @@ namespace mindnet::plugins::slipbox::models
         trigger_count = number();
         snooze_until = number();
         expires_at = number();
-        repeat_interval = number();
+        repeat_interval = static_cast<enums::AlertRepeatInterval>(number());
         repeat_count = number();
         repeat_until = number();
         user_id = number();
@@ -53,7 +53,7 @@ namespace mindnet::plugins::slipbox::models
         url = text();
         title = text();
         message = text();
-        status = number();
+        status = static_cast<enums::AlertStatus>(number());
         important = number();
         channel = number();
     }
@@ -66,7 +66,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_ne(user_id, 0, AlertColumns::USER_ID); },
             [this] { return test_ne(trigger_at, 0, AlertColumns::TRIGGER_AT); },
             [this] { return testt_between(title, 1, 255, AlertColumns::TITLE); },
-            [this] { return test_between(status, 0, 4, AlertColumns::STATUS); },
         };
         return util::ValidatorChain::run(list);
     }

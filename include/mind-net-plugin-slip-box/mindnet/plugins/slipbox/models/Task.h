@@ -28,6 +28,7 @@
 #define MODEL TASK
 #define COLS columns::TaskColumns
 #include "../columns/TaskColumns.h"
+#include "mindnet/plugins/slipbox/enums/TaskStatus.h"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -41,13 +42,13 @@ namespace mindnet::plugins::slipbox::models
         .set_all_rest_operations()
         .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
         .set_columns({
-            coldef(COLS::NOTE_ID, INTEGER).set_foreign_key("note").set_description("Note ID this task is linked to"),
-            coldef(COLS::PROJECT_ID, INTEGER).set_foreign_key("project").set_description(
+            coldef(COLS::NOTE_ID, INTEGER | FOREIGN_KEY).set_description("Note ID this task is linked to"),
+            coldef(COLS::PROJECT_ID, INTEGER | FOREIGN_KEY).set_description(
                 "Project ID this task belongs to"),
             coldef(COLS::TITLE, MANDATORY).set_description("Task title"),
             coldef(COLS::DESCRIPTION).set_description("Task description"),
             coldef(COLS::PROGRESS, INTEGER).set_description("Task progress (0-100)"),
-            coldef(COLS::STATUS, INTEGER).set_default_value(0).set_description("Task status"),
+            coldef(COLS::STATUS).set_enum_definition(task_status_to_enum_definition()).set_default_value(0).set_description("Task status"),
             coldef(COLS::IMPORTANT, BOOL).set_default_value(0).set_description("Task importance flag"),
             coldef(COLS::AS_SOON_AS_POSSIBLE, BOOL).set_default_value(0).set_description("As soon as possible"),
             coldef(COLS::START_DATE, DATETIME).set_description("Task start date"),
@@ -72,12 +73,12 @@ namespace mindnet::plugins::slipbox::models
         string title;
         string description;
         int progress{};
-        int status{};
+        TaskStatus status{};
         bool important{false};
-        bool as_soon_possible{false};
-        string start_date;
-        string due_date;
-        string completed_at;
+        bool as_soon_as_possible{false};
+        unixtime start_date;
+        unixtime due_date;
+        unixtime completed_at;
         int created_by{};
         int owner_id{};
         int assigned_to{};
@@ -103,7 +104,7 @@ namespace mindnet::plugins::slipbox::models
                 progress == other.progress &&
                 status == other.status &&
                 important == other.important &&
-                as_soon_possible == other.as_soon_possible &&
+                as_soon_as_possible == other.as_soon_as_possible &&
                 start_date == other.start_date &&
                 due_date == other.due_date &&
                 completed_at == other.completed_at &&
