@@ -75,6 +75,7 @@ CREATE TABLE note (
     parent_note_id INTEGER,
     content_id INTEGER UNIQUE,
     source_id INTEGER,
+    alias_for_note_id INTEGER,
     --
     title TEXT NOT NULL,
     sibling_order INTEGER NOT NULL,
@@ -84,7 +85,8 @@ CREATE TABLE note (
     FOREIGN KEY (map_id) REFERENCES map(id),
     FOREIGN KEY (parent_note_id) REFERENCES note(id),
     FOREIGN KEY (content_id) REFERENCES content(id),
-    FOREIGN KEY (source_id) REFERENCES source(id)
+    FOREIGN KEY (source_id) REFERENCES source(id),
+    FOREIGN KEY (alias_for_note_id) REFERENCES note(id)
 );
 
 --Indexes

@@ -50,6 +50,7 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::PARENT_NOTE_ID).set_foreign_key("note").set_description("Parent note, if any."),
             coldef(COLS::CONTENT_ID, FOREIGN_KEY | UNIQUE).set_description("Content associated with this note."),
             coldef(COLS::SOURCE_ID, FOREIGN_KEY).set_description("Source associated with this note."),
+            coldef(COLS::ALIAS_FOR_NOTE_ID).set_foreign_key("note").set_description("Source associated with this note."),
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the note."),
             coldef(COLS::SIBLING_ORDER, INTEGER | AUTO).set_description("Order among sibling notes."),
             coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
@@ -74,6 +75,7 @@ namespace mindnet::plugins::slipbox::models
         int parent_note_id{};
         int content_id{};
         int source_id{};
+        int alist_for_note_id{};
         string title;
         int sibling_order{};
         enums::Importance importance{enums::Importance::Undefined};
@@ -86,6 +88,7 @@ namespace mindnet::plugins::slipbox::models
             return id == other.id && map_id == other.map_id &&
                 sibling_order == other.sibling_order && title == other.title &&
                 content_id == other.content_id && source_id== other.source_id &&
+                    alist_for_note_id == other.alist_for_note_id &&
                     parent_note_id == other.parent_note_id &&
                 importance == other.importance && difficulty == other.difficulty &&
                 created_at == other.created_at && updated_at == other.updated_at;

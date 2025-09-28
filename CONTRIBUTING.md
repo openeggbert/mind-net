@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] note.alias_for_note_id
 - [ ] Use SM-18, new entity review_session
 - [ ] Add hash sums for sql migrations - new column in table migration
 - [ ] Bool SQLite columns should start with is_
@@ -183,7 +182,7 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] New table project
 - [x] New table task - Markdown content of notes will be parsed for tasks - like in Zim Desktop Wiki + sending e-mail messages, web browser notification, Android toast
 - [x] New table pinned_note
-
+- [X] note.alias_for_note_id
 
 ## TODO – Migrate to C++20/23 Modules
 
