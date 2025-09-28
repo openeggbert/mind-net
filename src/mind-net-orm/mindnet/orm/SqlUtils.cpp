@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/23/25.
 //
 
-#include "mindnet/orm/OrmUtils.h"
+#include "mindnet/orm/SqlUtils.h"
 
 #include "mindnet/model/ModelDefinition.h"
 #include "mindnet/orm/Order.h"
@@ -11,7 +11,7 @@
 namespace mindnet::orm
 {
 
-    string OrmUtils::generate_insert_sql(const model::ModelDefinition& definition)
+    string SqlUtils::generate_insert_sql(const model::ModelDefinition& definition)
     // const std::string& table_name, const std::vector<const char*>& columns,
     //                                    bool auto_increment)
     {
@@ -48,7 +48,7 @@ namespace mindnet::orm
         return sql;
     }
 
-    string OrmUtils::generate_update_sql(const model::ModelDefinition& definition)
+    string SqlUtils::generate_update_sql(const model::ModelDefinition& definition)
     {
         std::string sql = "UPDATE " + definition.get_model_name() + " SET ";
         for (int i = 0; i < definition.get_columns().size(); ++i)
@@ -74,12 +74,12 @@ namespace mindnet::orm
         return sql;
     }
 
-    string OrmUtils::generate_delete_sql(const model::ModelDefinition& definition)
+    string SqlUtils::generate_delete_sql(const model::ModelDefinition& definition)
     {
         return "DELETE FROM " + definition.get_model_name() + " WHERE id = ?";
     }
 
-    string OrmUtils::generate_select_one_sql(const std::string& table_name)
+    string SqlUtils::generate_select_one_sql(const std::string& table_name)
     {
         return "SELECT * FROM " + table_name + " WHERE id = ?";
     }
@@ -95,7 +95,7 @@ namespace mindnet::orm
      * @param count A boolean flag. If true, modifies the query to ignore sorting and pagination, suitable for row count queries. Default is false.
      * @return The constructed SQL query as a string.
      */
-    string OrmUtils::generate_select_all_sql(const std::string& table_name, const orm::QueryParams& query_params,
+    string SqlUtils::generate_select_all_sql(const std::string& table_name, const orm::QueryParams& query_params,
                                           bool count)
     {
         auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
@@ -128,7 +128,7 @@ namespace mindnet::orm
         return sql;
     }
 
-    string OrmUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params)
+    string SqlUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params)
     {
         return generate_select_all_sql(table_name, query_params, true);
     }

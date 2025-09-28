@@ -1,9 +1,9 @@
 //
 // Created by robertvokac on 9/23/25.
 //
+#ifndef SQLUTILS_H
+#define SQLUTILS_H
 
-#ifndef MIND_NET_ORMUTILS_H
-#define MIND_NET_ORMUTILS_H
 #include <string>
 
 namespace mindnet::model
@@ -16,7 +16,7 @@ namespace mindnet::orm
     struct QueryParams;
     using std::string;
 
-    class OrmUtils
+    class SqlUtils
     {
     public:
         static string generate_select_one_sql(const std::string& table_name);
@@ -29,4 +29,4 @@ namespace mindnet::orm
         static string generate_delete_sql(const model::ModelDefinition& definition);
     };
 }
-#endif //MIND_NET_ORMUTILS_H
+#endif // SQLUTILS_H

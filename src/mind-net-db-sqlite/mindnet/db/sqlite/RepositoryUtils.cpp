@@ -24,9 +24,9 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/orm/QueryParams.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
-#include "mindnet/orm/OrmUtils.h"
 #include "SQLiteCpp/Database.h"
 #include "mindnet/model/ModelDefinition.h"
+#include "mindnet/orm/SqlUtils.h"
 
 namespace mindnet::db::sqlite
 {
@@ -48,7 +48,6 @@ namespace mindnet::db::sqlite
             throw std::runtime_error(e.what());
         }
     }
-
 
     template <class>
     inline constexpr bool always_false = false;
@@ -102,12 +101,6 @@ namespace mindnet::db::sqlite
                 }
             }
 
-            if (column_name == "reason")
-            {
-                int a = 0;
-                int b = a +1;
-            }
-
             if (update && i < (values.size() - 1))
             {
                 auto& column = columns[i+2];
@@ -157,7 +150,7 @@ namespace mindnet::db::sqlite
 
     int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
     {
-        std::string sql = orm::OrmUtils::generate_insert_sql(definition);
+        std::string sql = orm::SqlUtils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -198,7 +191,7 @@ namespace mindnet::db::sqlite
 
     entity_fields read_model(model::ModelDefinition& def, const int id, string& error)
     {
-        std::string sql = orm::OrmUtils::generate_select_one_sql(def.get_model_name());
+        std::string sql = orm::SqlUtils::generate_select_one_sql(def.get_model_name());
         debug << "Going to execute select one SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -277,7 +270,7 @@ namespace mindnet::db::sqlite
 
     bool update_model(int id, model::ModelDefinition& def, entity_fields& fields_, string& error)
     {
-        std::string sql = orm::OrmUtils::generate_update_sql(def);
+        std::string sql = orm::SqlUtils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -324,7 +317,7 @@ namespace mindnet::db::sqlite
 
     bool delete_model(model::ModelDefinition& def, const int id, string& error)
     {
-        string sql = orm::OrmUtils::generate_delete_sql(def);
+        string sql = orm::SqlUtils::generate_delete_sql(def);
         debug << "Going to execute delete SQL: " << sql << commit;
 
         SQLite::Database db(
@@ -424,8 +417,8 @@ namespace mindnet::db::sqlite
     )
     {
         trace << "list_models()" << commit;
-        std::string sql = orm::OrmUtils::generate_select_all_sql(def.get_model_name(), query_params);
-        std::string sql_count = orm::OrmUtils::generate_select_count_sql(def.get_model_name(), query_params);
+        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params);
+        std::string sql_count = orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params);
 
         debug << "Going to execute select all SQL: " << sql << commit;
 
