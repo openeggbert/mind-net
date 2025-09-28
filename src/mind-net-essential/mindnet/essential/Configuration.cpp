@@ -123,7 +123,13 @@ namespace mindnet::essential
         if_map_has(default_user_role)
             default_user_role = string_to_user_role(
                 map.at("default_user_role"));
-        //
+        //database
+        save_text(db_host)
+        save_number(db_port)
+        save_text(db_name)
+        save_text(db_user)
+        save_text(db_password)
+        //other
         if (map_contains(map, "max_log_level")) max_log_level = string_to_log_level(map.at("max_log_level"));
         if (map_contains(map, "allowed_plugins"))
         {
@@ -152,6 +158,13 @@ database_type={database_type}
 access_mode={access_mode}
 registration_mode={registration_mode}
 default_user_role={default_user_role}
+
+#Database
+db_host={db_host}
+db_port={db_port}
+db_name={db_name}
+db_user={db_user}
+db_password={db_password}
 
 #Other
 max_log_level={max_log_level}
@@ -246,7 +259,13 @@ allowed_plugins={allowed_plugins}
             fmt::arg("access_mode", access_mode_to_string(access_mode)),
             fmt::arg("registration_mode", registration_mode_to_string(registration_mode)),
             fmt::arg("default_user_role", user_role_to_string(default_user_role)),
-            //
+            //database
+            fmt::arg("db_host", db_host),
+            fmt::arg("db_port", db_port),
+            fmt::arg("db_name", db_name),
+            fmt::arg("db_user", db_user),
+            fmt::arg("db_password", db_password),
+            //other
             fmt::arg("max_log_level", log_level_to_string(max_log_level)),
             fmt::arg("allowed_plugins", join_strings_by_commas(allowed_plugins))
         );
@@ -356,7 +375,13 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
         push_enum(access_mode)
         push_enum(registration_mode)
         push_enum(default_user_role)
-        //
+        //database
+        push_entry("db_host", db_host);
+        push_entry("db_port", db_port);
+        push_entry("db_name", db_name);
+        push_entry("db_user", db_user);
+        push_entry("db_password", db_password);
+        //other
 
         push_enum(max_log_level)
         push_entry("allowed_plugins", fmt::join(g_configuration.allowed_plugins, ","));

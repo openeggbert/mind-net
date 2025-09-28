@@ -99,6 +99,11 @@ namespace mindnet::api
 
     void Plugin::register_migrations(const MigrationScriptsPtr& migration_scripts)
     {
+        essential::DatabaseType current_database_type = essential::g_configuration.database_type;
+        if (migration_scripts.get()->get_database_type() != current_database_type)
+        {
+            return;
+        }
         migration_scripts_ = migration_scripts;
     }
 

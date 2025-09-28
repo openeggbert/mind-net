@@ -36,6 +36,12 @@ namespace mindnet::essential
         AccessMode access_mode{AccessMode::PublicFullAccess};
         RegistrationMode registration_mode{RegistrationMode::Free};
         UserRole default_user_role{UserRole::Reader};
+        //database
+        std::string db_host;
+        int db_port{};
+        std::string db_name;
+        std::string db_user;
+        std::string db_password;
         //other
         LogLevel max_log_level{ERROR};
         std::set<string> allowed_plugins;

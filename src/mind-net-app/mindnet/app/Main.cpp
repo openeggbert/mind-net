@@ -52,7 +52,10 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         debug << "Migrating schema for plugin " << plugin_name << commit;
         auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
         auto migration_scripts = plugin->get_migration_scripts();
-        if (migration_scripts == nullptr) {continue;}
+        if (migration_scripts == nullptr || migration_scripts.get()->get_database_type() != g_configuration.database_type)
+        {
+            throw std::runtime_error("Migration script not found for plugin " + plugin_name + "and database type " + mindnet::essential::database_type_to_string(g_configuration.database_type));
+        }
         bool migration_result =
             mindnet::db::sqlite::SqliteDatabaseMigration::
             getInstance()->migrate(plugin_name, migration_scripts);

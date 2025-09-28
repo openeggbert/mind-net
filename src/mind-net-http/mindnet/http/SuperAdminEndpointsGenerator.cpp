@@ -154,6 +154,22 @@ content: " (takes effect after restart) ";
       {default_user_role}
     </select>
 
+    <!-- Database -->
+    <label for="db_host">Database Host<span class="restart_needed"></span></label>
+    <input type="text" id="db_host" name="db_host" value="{db_host}">
+
+    <label for="db_port">Database Port<span class="restart_needed"></span></label>
+    <input type="number" id="db_port" name="db_port" min="1" max="65535" value="{db_port}">
+
+    <label for="db_name">Database Name<span class="restart_needed"></span></label>
+    <input type="text" id="db_name" name="db_name" value="{db_name}">
+
+    <label for="db_user">Database User<span class="restart_needed"></span></label>
+    <input type="text" id="db_user" name="db_user" value="{db_user}">
+
+    <label for="db_password">Database Password<span class="restart_needed"></span></label>
+    <input type="password" id="db_password" name="db_password" value="{db_password}">
+
     <!-- Other -->
     <label for="max_log_level">Max Log Level</label>
     <select id="max_log_level" name="max_log_level">

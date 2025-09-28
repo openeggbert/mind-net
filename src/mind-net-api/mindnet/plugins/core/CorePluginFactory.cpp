@@ -1,6 +1,7 @@
 #include "mindnet/plugins/core/CorePluginFactory.h"
 
 #include "mindnet/plugins/core/migrations/CoreSQLiteMigrationScripts.h"
+#include "mindnet/plugins/core/migrations/CorePostgreSQLMigrationScripts.h"
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
 #include "mindnet/plugins/core/validators/HistoryValidator.h"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.h"
@@ -24,6 +25,7 @@ namespace mindnet::plugins::core
             "core models"
         );
         REGISTER_MIGRATIONS(Core, SQLite)
+        REGISTER_MIGRATIONS(Core, PostgreSQL)
 
         REGISTER_MODEL(user, User, USER)
         REGISTER_MODEL(team, Team, TEAM)

@@ -31,6 +31,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
+- [ ] FEATURE Support for PostgresSQL storage
 - [ ] Use SM-18, new entity review_session
 - [ ] Add hash sums for sql migrations - new column in table migration
 - [ ] Fix validators and move authorization into the correct methods
@@ -63,7 +64,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Experimental
 - [ ] Chat component - Slack-like
 - [ ] Mail component - E-mail like
-- [ ] FEATURE Support for PostgresSQL storage
 - [ ] FEATURE Implement complex Filtering in REST API
 - [ ] Add support for Docker
 - [ ] Rewrite enums using EnumUtils.h
