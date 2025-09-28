@@ -15,8 +15,8 @@ namespace mindnet::plugins::chat::models
         result.push_back(team_id);
         result.push_back(title);
         result.push_back(created_by);
-        result.push_back(is_pinned);
-        result.push_back(is_archived);
+        result.push_back(pinned);
+        result.push_back(archived);
         return result;
     }
 
@@ -32,8 +32,8 @@ namespace mindnet::plugins::chat::models
         team_id = number();
         title = text();
         created_by = number();
-        is_pinned = number();
-        is_archived = number();
+        pinned = number();
+        archived = number();
     };
 
     string Discussion::validate()

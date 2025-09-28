@@ -44,9 +44,9 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::CONTENT, TEXTAREA).set_description("Idea content"),
             coldef(COLS::CATEGORY).set_description("Idea category"),
             coldef(COLS::DUE_AT, DATETIME).set_description("Due date"),
-            coldef(COLS::IS_IMPORTANT, BOOL).set_default_value(0).set_description("Whether this idea is important"),
+            coldef(COLS::IMPORTANT, BOOL).set_default_value(0).set_description("Whether this idea is important"),
             coldef(COLS::IS_PUBLIC, BOOL).set_default_value(0).set_description("Whether this idea is public"),
-            coldef(COLS::IS_PINNED, BOOL).set_default_value(0).set_description("Whether this idea is pinned")
+            coldef(COLS::PINNED, BOOL).set_default_value(0).set_description("Whether this idea is pinned")
         });
 
     struct Model : mindnet::model::BaseModel
@@ -56,9 +56,9 @@ namespace mindnet::plugins::slipbox::models
         string content;
         string category;
         unixtime due_at;
-        bool is_important{false};
+        bool important{false};
         bool is_public{false};
-        bool is_pinned{false};
+        bool pinned{false};
 
         create_model_h_methods(Model, MODEL)
 
@@ -72,9 +72,9 @@ namespace mindnet::plugins::slipbox::models
                 content == other.content &&
                 category == other.category &&
                 due_at == other.due_at &&
-                is_important == other.is_important &&
+                important == other.important &&
                 is_public == other.is_public &&
-                is_pinned == other.is_pinned;
+                pinned == other.pinned;
         }
     };
 }

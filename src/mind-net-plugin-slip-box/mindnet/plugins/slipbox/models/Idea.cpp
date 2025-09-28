@@ -18,9 +18,9 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(content);
         result.push_back(category);
         result.push_back(cast64(due_at));
-        result.push_back(is_important);
+        result.push_back(important);
         result.push_back(is_public);
-        result.push_back(is_pinned);
+        result.push_back(pinned);
         return result;
     }
 
@@ -39,9 +39,9 @@ namespace mindnet::plugins::slipbox::models
         content = text();
         category = text();
         due_at = number();
-        is_important = boolean();
+        important = boolean();
         is_public = boolean();
-        is_pinned = boolean();
+        pinned = boolean();
     }
 
     string Idea::validate()

@@ -47,25 +47,31 @@ namespace mindnet::plugins::core::models
             //
             coldef(COLS::USERNAME, MANDATORY | UNIQUE | READONLY),
             coldef(COLS::PASSWORD_HASH, MANDATORY | HIDDEN),
+            coldef(COLS::EMAIL, UNIQUE | READONLY),
+
             coldef(COLS::DISPLAY_NAME),
+            coldef(COLS::PROFILE_TEXT, TEXTAREA),
+
             coldef(COLS::ROLE, MANDATORY).set_enum_definition(enums::user_role_to_enum_definition()).
                                           set_default_value(0),
-            coldef(COLS::PROFILE_TEXT, TEXTAREA),
-            coldef(COLS::LAST_LOGIN, DATETIME),
-            coldef(COLS::EMAIL, UNIQUE | READONLY),
             coldef(COLS::STATUS, MANDATORY).set_enum_definition(enums::user_status_to_enum_definition()),
+
+            coldef(COLS::LAST_LOGIN, DATETIME),
         });
 
     struct Model : mindnet::model::BaseModel
     {
         string username;
         string password_hash;
-        string display_name;
-        mindnet::essential::UserRole role{};
-        string profile_text;
-        unixtime last_login{};
         string email;
+
+        string display_name;
+        string profile_text;
+
+        mindnet::essential::UserRole role{};
         essential::UserStatus status{};
+
+        unixtime last_login{};
 
         create_model_h_methods(Model, MODEL)
 

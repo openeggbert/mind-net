@@ -48,9 +48,9 @@ namespace mindnet::plugins::chat::models
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the discussion"),
             coldef(COLS::CREATED_BY, MANDATORY | READONLY).set_foreign_key("user").set_description(
                 "User ID who created the discussion"),
-            coldef(COLS::IS_PINNED, BOOL).set_default_value(0).set_description(
+            coldef(COLS::PINNED, BOOL).set_default_value(0).set_description(
                 "Whether this discussion is pinned to the top"),
-            coldef(COLS::IS_ARCHIVED, BOOL).set_default_value(0).set_description(
+            coldef(COLS::ARCHIVED, BOOL).set_default_value(0).set_description(
                 "Whether this discussion is archived or not"),
         })
         .add_custom_list_action("comment", "List comments", {"discussion_id", "{id}"})
@@ -61,8 +61,8 @@ namespace mindnet::plugins::chat::models
         int team_id{};
         string title;
         int created_by{};
-        bool is_pinned{};
-        bool is_archived{};
+        bool pinned{};
+        bool archived{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -74,8 +74,8 @@ namespace mindnet::plugins::chat::models
                 team_id == other.team_id &&
                 title == other.title &&
                 created_by == other.created_by &&
-                is_pinned == other.is_pinned &&
-                is_archived == other.is_archived;
+                pinned == other.pinned &&
+                archived == other.archived;
         }
     };
 }

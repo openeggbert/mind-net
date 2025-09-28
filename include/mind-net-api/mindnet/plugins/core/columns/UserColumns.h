@@ -38,14 +38,21 @@ namespace mindnet::plugins::core::columns
 
         static constexpr const char* MODEL_NAME = "user";
 
+        // Authentication fields
         static constexpr const char* USERNAME = "username";
         static constexpr const char* PASSWORD_HASH = "password_hash";
-        static constexpr const char* DISPLAY_NAME = "display_name";
-        static constexpr const char* ROLE = "role";
-        static constexpr const char* PROFILE_TEXT = "profile_text";
-        static constexpr const char* LAST_LOGIN = "last_login";
         static constexpr const char* EMAIL = "email";
+
+        // Profile fields
+        static constexpr const char* DISPLAY_NAME = "display_name";
+        static constexpr const char* PROFILE_TEXT = "profile_text";
+
+        // Access control fields
+        static constexpr const char* ROLE = "role";
         static constexpr const char* STATUS = "status";
+
+        // Tracking field
+        static constexpr const char* LAST_LOGIN = "last_login";
     };
 }
 #endif // USERCOLUMNS_H

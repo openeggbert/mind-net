@@ -175,14 +175,27 @@ Tables usually include:
 
 ### SQL tables
 
- * Name of BOOL columns starts with "_is"
+Questions:
+* Column Type?
+* NOT NULL?
+* UNIQUE?
+* DEFAULT {}?
+* CHECK?
 
 ```aiignore
+CREATE TABLE {table name} (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-	
-	{foreign keys}
-	
-	{other attributes}
+
+	{COLUMNS}
+
+    {CHECK}
+    
+    {UNIQUE}
+    
+    {FOREIGN KEYS}
+);
+
+CREATE INDEX idx_{table name}_{column name} ON {table name}({column name});
 ```

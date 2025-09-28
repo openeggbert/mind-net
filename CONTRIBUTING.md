@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Reorder columns of tables, if needed
 - [ ] Use SM-18, new entity review_session
 - [ ] Add hash sums for sql migrations - new column in table migration
 - [ ] Fix validators and move authorization into the correct methods
@@ -182,6 +181,7 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] New table pinned_note
 - [x] note.alias_for_note_id
 - [x] Unix time columns should have SQLite type DATETIME
+- [x] Reorder columns of tables, if needed
 
 ## TODO – Migrate to C++20/23 Modules
 

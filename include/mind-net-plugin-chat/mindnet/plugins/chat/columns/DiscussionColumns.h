@@ -39,8 +39,8 @@ namespace mindnet::plugins::chat::columns
         static constexpr const char* TEAM_ID = "team_id";
         static constexpr const char* TITLE = "title";
         static constexpr const char* CREATED_BY = "created_by";
-        static constexpr const char* IS_PINNED = "is_pinned";
-        static constexpr const char* IS_ARCHIVED = "is_archived";
+        static constexpr const char* PINNED = "pinned";
+        static constexpr const char* ARCHIVED = "archived";
     };
 }
 #endif // DISCUSSIONCOLUMNS_H

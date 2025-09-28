@@ -42,7 +42,7 @@ namespace mindnet::plugins::core::models
                              .set_title_column(COLS::NAME)
                              .set_columns({
                                  //
-                                 coldef(COLS::NAME, MANDATORY),
+                                 coldef(COLS::NAME, MANDATORY | UNIQUE),
                                  coldef(COLS::DESCRIPTION),
                                  coldef(COLS::CREATED_BY, READONLY | MANDATORY).set_foreign_key("user"),
                                  coldef(COLS::LEADER_ID, MANDATORY).set_foreign_key("user"),

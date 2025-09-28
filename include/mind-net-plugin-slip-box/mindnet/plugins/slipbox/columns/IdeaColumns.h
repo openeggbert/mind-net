@@ -50,9 +50,9 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* DUE_AT = "due_at";
 
         // Flag columns
-        static constexpr const char* IS_IMPORTANT = "is_important";
+        static constexpr const char* IMPORTANT = "important";
         static constexpr const char* IS_PUBLIC = "is_public";
-        static constexpr const char* IS_PINNED = "is_pinned";
+        static constexpr const char* PINNED = "pinned";
 
     };
 }

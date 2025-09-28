@@ -65,7 +65,7 @@ namespace mindnet::plugins::chat::validators
 
         return_if(entity.created_by != ctx.token.user_id,
                   400, "created_by must be set to the logged in user.")
-        return_if(entity.is_archived,
+        return_if(entity.archived,
                   400, "is_archived must be set to false during discussion creation.");
 
         return ok_result;

@@ -49,6 +49,12 @@ namespace mindnet::plugins::slipbox::models
             });
     // *** Definition of model ends ***
 
+// answers_json
+// [
+//   { "text": "std::vector", "is_correct": true },
+//   { "text": "std::map", "is_correct": false },
+//   { "text": "std::set", "is_correct": false }
+// ]
     struct Model : mindnet::model::BaseModel
     {
         int note_id{};

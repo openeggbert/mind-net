@@ -16,7 +16,7 @@ namespace mindnet::plugins::chat::models
         result.push_back(user_id);
         result.push_back(content);
         result.push_back(parent_comment_id);
-        result.push_back(cast64(is_deleted));
+        result.push_back(cast64(deleted));
         return result;
     }
 
@@ -33,7 +33,7 @@ namespace mindnet::plugins::chat::models
         user_id = number();
         content = text();
         parent_comment_id = number();
-        is_deleted = number();
+        deleted = number();
     };
 
     string Comment::validate()

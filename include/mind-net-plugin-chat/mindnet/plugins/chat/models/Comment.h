@@ -49,7 +49,7 @@ namespace mindnet::plugins::chat::models
             coldef(COLS::CONTENT, TEXTAREA | MANDATORY).set_description("The content of the comment"),
             coldef(COLS::PARENT_COMMENT_ID, READONLY | READONLY).set_foreign_key("comment").set_description(
                 "The ID of the parent comment if this is a reply"),
-            coldef(COLS::IS_DELETED, BOOL).set_default_value(0).
+            coldef(COLS::DELETED, BOOL).set_default_value(0).
                                            set_description("Whether this comment has been deleted"),
         })
         .add_custom_list_action("comment", "List subcomments", {"parent_comment_id", "{id}"})
@@ -61,7 +61,7 @@ namespace mindnet::plugins::chat::models
         int user_id{};
         string content;
         int parent_comment_id{};
-        bool is_deleted{false};
+        bool deleted{false};
 
         create_model_h_methods(Model, MODEL)
 
@@ -74,7 +74,7 @@ namespace mindnet::plugins::chat::models
                 user_id == other.user_id &&
                 content == other.content &&
                 parent_comment_id == other.parent_comment_id &&
-                is_deleted == other.is_deleted;
+                deleted == other.deleted;
         }
     };
 }

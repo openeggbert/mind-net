@@ -16,15 +16,19 @@ namespace mindnet::plugins::core::models
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
-        //
+
         result.push_back(username);
         result.push_back(password_hash);
-        result.push_back(display_name);
-        result.push_back(cast64(role));
-        result.push_back(profile_text);
-        result.push_back(cast64(last_login));
         result.push_back(email);
+
+        result.push_back(display_name);
+        result.push_back(profile_text);
+
+        result.push_back(cast64(role));
         result.push_back(cast64(status));
+
+        result.push_back(cast64(last_login));
+
         return result;
     }
 
@@ -37,15 +41,18 @@ namespace mindnet::plugins::core::models
         set_id(number());
         created_at = number();
         updated_at = number();
-        //
+
         username = text();
         password_hash = text();
-        display_name = text();
-        role = static_cast<mindnet::essential::UserRole>(number());
-        profile_text = text();
-        last_login = number();
         email = text();
+
+        display_name = text();
+        profile_text = text();
+
+        role = static_cast<mindnet::essential::UserRole>(number());
         status = static_cast<essential::UserStatus>(number());
+
+        last_login = number();
     };
 
     static const std::regex email_pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
@@ -72,10 +79,12 @@ namespace mindnet::plugins::core::models
             [this]
             {
                 return test_true(
-                    mindnet::essential::g_configuration.registration_mode == mindnet::essential::RegistrationMode::RequiresAdminApproval
+                    mindnet::essential::g_configuration.registration_mode ==
+                    mindnet::essential::RegistrationMode::RequiresAdminApproval
                         ? status == essential::UserStatus::Pending
                         : status == essential::UserStatus::Active,
-                    mindnet::essential::g_configuration.registration_mode == mindnet::essential::RegistrationMode::RequiresAdminApproval
+                    mindnet::essential::g_configuration.registration_mode ==
+                    mindnet::essential::RegistrationMode::RequiresAdminApproval
                         ? "status must be PENDING"
                         : "status must be ACTIVE"
                 );

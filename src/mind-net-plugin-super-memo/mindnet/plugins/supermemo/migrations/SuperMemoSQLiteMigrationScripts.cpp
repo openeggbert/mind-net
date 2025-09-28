@@ -22,7 +22,7 @@ CREATE TABLE review (
     user_id INTEGER NOT NULL,
     note_id INTEGER,
     question_id INTEGER check (note_id NOT NULL OR question_id NOT NULL),
-    review_date DATETIME ,
+    review_date DATETIME,
     grade INTEGER CHECK (grade BETWEEN 0 AND 5),
     response_data TEXT, -- for example. JSON: {"selected": [1, 3]}
     notes TEXT,

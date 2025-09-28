@@ -40,7 +40,7 @@ namespace mindnet::plugins::chat::columns
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* CONTENT = "content";
         static constexpr const char* PARENT_COMMENT_ID = "parent_comment_id";
-        static constexpr const char* IS_DELETED = "is_deleted";
+        static constexpr const char* DELETED = "deleted";
     };
 }
 #endif // COMMENTCOLUMNS_H

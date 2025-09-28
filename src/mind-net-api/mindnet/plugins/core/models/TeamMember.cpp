@@ -47,6 +47,7 @@ namespace mindnet::plugins::core::models
             [this] { return test_ne(team_id, 0, TeamMemberColumns::TEAM_ID); },
             [this] { return test_ne(user_id, 0, TeamMemberColumns::USER_ID); },
             [this] { return test_ne(joined_at, 0, TeamMemberColumns::JOINED_AT); },
+            [this] {return test_true(left_at == 0 || left_at > joined_at, "Left at must be 0 or greater than Joined at");},
         };
         return util::ValidatorChain::run(list);
     }

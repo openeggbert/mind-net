@@ -17,17 +17,16 @@ CREATE TABLE map (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
     category TEXT,
-    --
+
     owner_id INTEGER NOT NULL,
     team_id INTEGER,
     owner_rights INTEGER CHECK (owner_rights >= 0 and owner_rights <= 7),
     team_rights INTEGER CHECK (team_rights >= 0 and team_rights <= 7),
     other_rights INTEGER CHECK (other_rights >= 0 and other_rights <= 7),
-    --
 
 	FOREIGN KEY(owner_id) REFERENCES user(id),
     FOREIGN KEY(team_id) REFERENCES team(id)
@@ -38,7 +37,7 @@ CREATE TABLE content (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	value TEXT NOT NULL,
 	format INTEGER DEFAULT 0,
     version INTEGER DEFAULT 1
@@ -70,13 +69,13 @@ CREATE TABLE note (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	map_id INTEGER NOT NULL,
     parent_note_id INTEGER,
     content_id INTEGER UNIQUE,
     source_id INTEGER,
     alias_for_note_id INTEGER,
-    --
+
     title TEXT NOT NULL,
     sibling_order INTEGER NOT NULL,
     importance INTEGER DEFAULT 0,
@@ -89,12 +88,10 @@ CREATE TABLE note (
     FOREIGN KEY (alias_for_note_id) REFERENCES note(id)
 );
 
---Indexes
 CREATE INDEX idx_note_map_id ON note(map_id);
 CREATE INDEX idx_note_parent_note_id ON note(parent_note_id);
 CREATE INDEX idx_note_content_id ON note(content_id);
 CREATE INDEX idx_note_source_id ON note(source_id);
-
 CREATE INDEX idx_note_parent_sibling ON note(parent_note_id, sibling_order);
 
 )");
@@ -103,15 +100,16 @@ CREATE TABLE property(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
     map_id INTEGER NOT NULL,
 	note_id INTEGER NOT NULL,
 	key TEXT NOT NULL,
 	value TEXT,
 
-	FOREIGN KEY (map_id) REFERENCES map(id) ,
-    FOREIGN KEY (note_id) REFERENCES note(id) ,
-	UNIQUE (map_id, note_id, key)
+    UNIQUE (map_id, note_id, key),
+
+	FOREIGN KEY (map_id) REFERENCES map(id),
+    FOREIGN KEY (note_id) REFERENCES note(id)
 );
 
 CREATE INDEX idx_property_map_note_key ON property(map_id, note_id, key);
@@ -122,12 +120,13 @@ CREATE TABLE tag_type (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
     map_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 
-	FOREIGN KEY (map_id) REFERENCES map(id) ,
-    UNIQUE(map_id, title)
+    UNIQUE(map_id, title),
+
+	FOREIGN KEY (map_id) REFERENCES map(id)
 );
 )");
         add_migration("V7__create_tag.sql", R"(
@@ -135,11 +134,11 @@ CREATE TABLE tag (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	note_id INTEGER NOT NULL,
 	tag_type_id INTEGER NOT NULL,
 
-	UNIQUE (note_id, tag_type_id),
+    UNIQUE (note_id, tag_type_id),
 
 	FOREIGN KEY (note_id) REFERENCES note(id) ,
 	FOREIGN KEY (tag_type_id) REFERENCES tag_type(id)
@@ -153,7 +152,7 @@ CREATE TABLE collection (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	name TEXT NOT NULL,
 	description TEXT,
 	order_index INTEGER,
@@ -168,43 +167,38 @@ CREATE TABLE collection_item (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	collection_id INTEGER NOT NULL,
 	note_id INTEGER NOT NULL,
 	order_index INTEGER,
 
-	UNIQUE(collection_id, note_id),
+    UNIQUE(collection_id, note_id),
 
 	FOREIGN KEY(collection_id) REFERENCES collection(id),
 	FOREIGN KEY(note_id) REFERENCES note(id)
 );
 )");
         add_migration("V10__create_question.sql", R"(
-        		CREATE TABLE question (
-        	id INTEGER PRIMARY KEY AUTOINCREMENT,
-        	created_at DATETIME ,
-        	updated_at DATETIME ,
---
-        			note_id INTEGER,
-        			question_text TEXT NOT NULL,
-        			answers_json TEXT, -- answers as a json object
-                    FOREIGN KEY (note_id) REFERENCES note(id)
-        		);
+CREATE TABLE question (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
 
-            	--answers_json
-        		--[
-        		--  { "text": "std::vector", "is_correct": true },
-        		--  { "text": "std::map", "is_correct": false },
-        		--  { "text": "std::set", "is_correct": false }
-        		--]
+    note_id INTEGER,
+    question_text TEXT NOT NULL,
+    answers_json TEXT, -- answers as a json object
+
+    FOREIGN KEY (note_id) REFERENCES note(id)
+);
+
         )");
 
         add_migration("V11__create_reference.sql", R"(
 CREATE TABLE reference(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
 	from_note_id INTEGER NOT NULL,
 	to_note_id INTEGER NOT NULL,
     label TEXT,
@@ -212,7 +206,7 @@ CREATE TABLE reference(
 	CHECK (from_note_id <> to_note_id),
     UNIQUE (from_note_id, to_note_id),
 
-	FOREIGN KEY (from_note_id) REFERENCES note(id) ,
+	FOREIGN KEY (from_note_id) REFERENCES note(id),
 	FOREIGN KEY (to_note_id) REFERENCES note(id)
 );
 
@@ -222,9 +216,9 @@ CREATE INDEX idx_reference_from_to ON reference(from_note_id, to_note_id);
         add_migration("V12__create_link.sql", R"(
 CREATE TABLE link(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
 	from_note_id INTEGER NOT NULL,
 	to_url TEXT NOT NULL,
 
@@ -240,9 +234,9 @@ CREATE INDEX idx_link_from_note ON link(from_note_id);
         add_migration("V13__create_concept.sql", R"(
 CREATE TABLE concept(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
     map_id INTEGER NOT NULL,
     note_id INTEGER,
 	title TEXT NOT NULL,
@@ -261,9 +255,9 @@ CREATE INDEX idx_concept_title ON concept(title);
         add_migration("V14__create_source.sql", R"(
 CREATE TABLE source(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
     map_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 	author TEXT,
@@ -286,17 +280,17 @@ CREATE INDEX idx_source_title ON source(title);
         add_migration("V15__create_idea.sql", R"(
 CREATE TABLE idea(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
     user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
 	content TEXT,
     category TEXT,
     due_at DATETIME,
-	is_important BOOL,
+	important BOOL,
 	is_public BOOL,
-    is_pinned BOOL,
+    pinned BOOL,
 
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -308,9 +302,9 @@ CREATE INDEX idx_idea_title ON idea(title);
     	add_migration("V16__create_wanted_note.sql", R"(
 CREATE TABLE wanted_note(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
 	from_note_id INTEGER NOT NULL,
 	to_note_title TEXT NOT NULL,
 
@@ -358,6 +352,7 @@ CREATE TABLE alert (
     channel INTEGER,
 
 	UNIQUE(user_id, title, trigger_at),
+
 	FOREIGN KEY (user_id) REFERENCES user(id),
 	FOREIGN KEY (note_id) REFERENCES note(id)
 );
@@ -371,9 +366,9 @@ CREATE INDEX idx_alert_note_id ON alert(note_id);
     	add_migration("V18__create_flag.sql", R"(
 CREATE TABLE flag(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
     map_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 
@@ -465,6 +460,7 @@ CREATE TABLE task (
     related_tasks TEXT,
 
     UNIQUE(note_id, title),
+
     FOREIGN KEY (note_id) REFERENCES note(id),
     FOREIGN KEY (project_id) REFERENCES project(id),
     FOREIGN KEY (created_by) REFERENCES user(id),
@@ -492,9 +488,9 @@ CREATE INDEX idx_task_blocked ON task(blocked_by_task_id);
     	add_migration("V21__create_pinned_note.sql", R"(
 CREATE TABLE pinned_note(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-    created_at DATETIME ,
-    updated_at DATETIME ,
-    --
+    created_at DATETIME,
+    updated_at DATETIME,
+
     user_id INTEGER NOT NULL,
     note_id INTEGER NOT NULL,
 	position INTEGER,			 -- optional: pinning order (1,2,3...)

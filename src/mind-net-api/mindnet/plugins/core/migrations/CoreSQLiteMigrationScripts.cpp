@@ -17,16 +17,23 @@ CREATE TABLE user (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	username TEXT NOT NULL UNIQUE,
 	password_hash TEXT,
+    email TEXT,
+
 	display_name TEXT,
-	role INTEGER NOT NULL DEFAULT 0,
 	profile_text TEXT,
-    last_login DATETIME,
-    email TEXT UNIQUE,
-	status INTEGER NOT NULL
+
+    role INTEGER NOT NULL DEFAULT 0,
+	status INTEGER NOT NULL,
+
+    last_login DATETIME
 );
+
+CREATE INDEX idx_user_last_login ON user(last_login);
+CREATE INDEX idx_user_status ON user(status);
+CREATE INDEX idx_user_role ON user(role);
 )");
 
         add_migration("V2__create_team.sql", R"(
@@ -34,8 +41,8 @@ CREATE TABLE team (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
-	name TEXT NOT NULL,
+
+	name TEXT NOT NULL UNIQUE,
 	description TEXT,
 	created_by INTEGER NOT NULL,
 	leader_id INTEGER NOT NULL,
@@ -43,6 +50,10 @@ CREATE TABLE team (
 	FOREIGN KEY(created_by) REFERENCES user(id),
     FOREIGN KEY(leader_id) REFERENCES user(id)
 );
+
+CREATE INDEX idx_team_created_by ON team(created_by);
+CREATE INDEX idx_team_leader_id ON team(leader_id);
+
 )");
 
         add_migration("V3__create_team_member.sql", R"(
@@ -50,7 +61,7 @@ CREATE TABLE team_member (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
 	team_id INTEGER NOT NULL,
 	user_id INTEGER NOT NULL,
 	role INTEGER NOT NULL DEFAULT 0,
@@ -63,6 +74,13 @@ CREATE TABLE team_member (
 	FOREIGN KEY(team_id) REFERENCES team(id),
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
+
+CREATE INDEX idx_team_member_team_id ON team_member(team_id);
+CREATE INDEX idx_team_member_user_id ON team_member(user_id);
+CREATE INDEX idx_team_member_team_status ON team_member(team_id, status);
+CREATE INDEX idx_team_member_team_role ON team_member(team_id, role);
+CREATE INDEX idx_team_member_team_joined ON team_member(team_id, joined_at);
+
 )");
 
         add_migration("V4__create_history.sql", R"(
@@ -70,7 +88,7 @@ CREATE TABLE history (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
-    --
+
     user_id INTEGER,
 	table_name TEXT NOT NULL,
 	record_id INTEGER NOT NULL,
@@ -80,6 +98,11 @@ CREATE TABLE history (
 
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
+
+CREATE INDEX idx_history_table_record ON history(table_name, record_id);
+CREATE INDEX idx_history_user_id ON history(user_id);
+CREATE INDEX idx_history_created_at ON history(created_at);
+
 )");
 
     	add_migration("V5__create_api_log.sql", R"(
@@ -102,6 +125,12 @@ CREATE TABLE api_log (
 
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
+
+CREATE INDEX idx_api_log_created_at ON api_log(created_at);
+CREATE INDEX idx_api_log_user_id ON api_log(user_id);
+CREATE INDEX idx_api_log_endpoint ON api_log(endpoint);
+CREATE INDEX idx_api_log_entity ON api_log(entity_name, entity_id);
+
 )");
 
     	add_migration("V6__create_access_token.sql", R"(
@@ -135,6 +164,14 @@ CREATE TABLE access_token (
 
 CREATE UNIQUE INDEX idx_access_token_hash ON access_token(token_hash);
 CREATE INDEX idx_access_token_user_id ON access_token(user_id);
+CREATE INDEX idx_access_token_valid
+  ON access_token(user_id, is_revoked, expires_at);
+CREATE INDEX idx_access_token_expires_at
+  ON access_token(expires_at);
+CREATE INDEX idx_access_token_last_used
+  ON access_token(last_used_at);
+
+
 )");
 
     	add_migration("V7__create_refresh_token.sql", R"(
@@ -258,13 +295,6 @@ CREATE TABLE super_admin_log (
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
 )");
-
-
-
-
-
-
-
 
 
     }
