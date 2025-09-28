@@ -19,6 +19,8 @@ namespace mindnet::plugins::slipbox::validators
     using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult CollectionValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        assert_editor()
+
         return ok_result;
     }
 
@@ -30,6 +32,8 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult CollectionValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
     {
+        assert_editor()
+
         return ok_result;
     }
 
@@ -53,7 +57,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult CollectionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        assert_editor()
+
         return ok_result;
     }
 
@@ -65,7 +69,6 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult CollectionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                               const Model& new_entity) const
     {
-        assert_editor()
         return ok_result;
     }
 

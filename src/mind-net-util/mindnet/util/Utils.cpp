@@ -232,7 +232,6 @@ namespace mindnet::util
         return result;
     }
 
-
     std::string Utils::hash_sha_256(const std::string& text)
     {
         unsigned char hash[SHA256_DIGEST_LENGTH];
@@ -244,6 +243,5 @@ namespace mindnet::util
 
         return os.str();
     }
-
 
 }

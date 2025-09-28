@@ -42,7 +42,7 @@ namespace mindnet::plugins::slipbox::models
 
         validator_chain_vector list{
             [this] { return testt_between(name, 1, 64, CollectionColumns::NAME); },
-            [this] { return testt_between(description, 128, 64, CollectionColumns::DESCRIPTION); },
+            [this] { return testt_between(description, 0, 128, CollectionColumns::DESCRIPTION); },
             [this] { return test_ne(created_by, 0, CollectionColumns::CREATED_BY); },
         };
         return util::ValidatorChain::run(list);

@@ -46,12 +46,14 @@ namespace mindnet::api
 
         std::string get_migration_name(size_t migration_number)
         {
+            ensure_defined();
             ensury_migration_number_is_in_range(migration_number);
             return migrations[migration_number-1].name;
         }
 
         std::string get_migration_file_name(size_t migration_number)
         {
+            ensure_defined();
             ensury_migration_number_is_in_range(migration_number);
             return migrations[migration_number-1].file_name;
         }
@@ -70,7 +72,9 @@ namespace mindnet::api
             }
 
             const int migration_number = std::stoi(match[1]);
-            const std::string migration_name = match[2];
+            std::string migration_name = match[2];
+            std::ranges::replace(migration_name, '_', ' ');
+
             int last_migration_number = migrations.size();
             const int expected_next_migration_number = last_migration_number + 1;
             if (migration_number != expected_next_migration_number)

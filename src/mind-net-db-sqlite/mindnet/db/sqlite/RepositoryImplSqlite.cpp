@@ -161,9 +161,6 @@ namespace mindnet::db::sqlite
                     if (has_value && crow_json_type == crow::json::type::String && rvalue == "")
                     {
                         result.emplace_back(cast64(0));
-                    } else if (has_value && crow_json_type == crow::json::type::String)
-                    {
-                        throw std::runtime_error("Expected Number, but got Text: " + column_name);
                     }
                     else
                     {

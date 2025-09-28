@@ -25,17 +25,21 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #include "mindnet/util/Utils.h"
-#include "mindnet/db/sqlite/MigrationColumns.h"
+#include "mindnet/orm/MigrationColumns.h"
 #include <openssl/sha.h>
 #include <iomanip>
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/api/MigrationScripts.h"
 #include "mindnet/db/sqlite/SqliteFileName.h"
+#include "mindnet/orm/Migration.h"
+#include <algorithm>
+#include <chrono>
 
 namespace mindnet::db::sqlite
 {
-    using sqlite::MigrationColumns;
+    using std::string;
+    using orm::MigrationColumns;
     using_loggers()
 
     SqliteDatabaseMigration::SqliteDatabaseMigration()
@@ -68,10 +72,15 @@ namespace mindnet::db::sqlite
     private:
         const string plugin_name;
         api::MigrationScriptsPtr& migration_scripts_ptr;
+        std::map<int, string> sql_hashes{};
     public:
         explicit DBMigration(const string& plugin_name_, api::MigrationScriptsPtr& migration_scripts_ptr_) : plugin_name(plugin_name_), migration_scripts_ptr(migration_scripts_ptr_) {};
 
-        bool executeSQL(SQLite::Database& db, std::string& sql, int number) const
+        bool executeSQL(
+            SQLite::Database& db,
+            const string& sql,
+            int number
+            ) const
         {
             info << "executeSQL()" << commit;
             SQLite::Statement query(db, sql);
@@ -88,15 +97,20 @@ namespace mindnet::db::sqlite
             }
         }
 
-        bool create_table(SQLite::Database& db)
+        bool create_table_migration(SQLite::Database& db)
         {
-            trace << "create_table()" << commit;
-            std::string SQL_CREATE_TABLE_MIGRATION =
+            trace << "create_table_migration()" << commit;
+            string SQL_CREATE_TABLE_MIGRATION =
                 R"(
 CREATE TABLE "migration" (
                 "plugin_name" TEXT NOT NULL,
-                "last_migration_number" INTEGER NOT NULL,
-                PRIMARY KEY("plugin_name")
+                "version" INTEGER NOT NULL,
+                "description" TEXT NOT NULL,
+                "script" TEXT NOT NULL,
+                "hash" TEXT NOT NULL,
+                "installed_on" TEXT NOT NULL,
+                "execution_time" INTEGER NOT NULL,
+                PRIMARY KEY(plugin_name, version)
             );
 )";
             return executeSQL(db, SQL_CREATE_TABLE_MIGRATION, 0);
@@ -107,14 +121,15 @@ CREATE TABLE "migration" (
         {
             trace << "get_last_migration_number()" << commit;
             SQLite::Statement query(
-                db, std::string(
-                    std::string("SELECT ") +
-                    MigrationColumns::LAST_MIGRATION_NUMBER +
-                    std::string(" AS L FROM ") +
+                db, string(
+                    string("SELECT MAX(") +
+                    MigrationColumns::VERSION +
+                    string(") AS V FROM ") +
                     MigrationColumns::MODEL_NAME +
-                    " WHERE " + MigrationColumns::PLUGIN_NAME + "= '" + plugin_name + "'"
+                    " WHERE " + MigrationColumns::PLUGIN_NAME + "= ?"
                 )
             );
+            query.bind(1, plugin_name);
             try
             {
                 bool some_result = query.executeStep();
@@ -131,27 +146,70 @@ CREATE TABLE "migration" (
             }
         }
 
-        bool initialize_plugin_in_table_if_needed(SQLite::Database& db)
+        bool has_migration(SQLite::Database& db, int version)
         {
-            int last_migration_number = get_last_migration_number(db);
-            if (last_migration_number != -1)
-            {
-                //nothing to do
-                return true;
+            trace << "has_migration() " << "version=" << version << commit;
 
-            }
-            trace << "initialize_plugin_in_table_if_needed()" << commit;
-            std::string SQL_INSERT_INTO_TABLE_MIGRATION =
-                "INSERT INTO \"migration\" VALUES ('" + plugin_name + "', 0)";
+            auto sql  =
+                string("SELECT COUNT(*) AS C FROM ") +
+                MigrationColumns::MODEL_NAME +
+                " WHERE " + MigrationColumns::PLUGIN_NAME + "=? AND " +
+                MigrationColumns::VERSION + "=?";
             try
             {
-                return executeSQL(db, SQL_INSERT_INTO_TABLE_MIGRATION, 0);
+
+                SQLite::Statement query(
+                    db, sql);
+                query.bind(1, plugin_name);
+                query.bind(2, version);
+                query.executeStep();
+                //
+
+                int count = query.getColumn(0);
+
+                return count != 0;
             }
-            catch (std::exception& e)
+            catch (SQLite::Exception& e)
             {
-                err << "Exception happened during SQLite migration init_table(): " << e.what() << std::endl;
-                throw;
+                throw std::runtime_error("SQL Select for has_migration() and migration #" + std::string(std::to_string(version)) + " for plugin " + plugin_name  + " failed: " + e.what());
             }
+
+        }
+
+        orm::Migration find_migration(SQLite::Database& db, int version)
+        {
+            trace << "find_migration() " << "version=" << version << commit;
+
+            auto sql  =
+                string("SELECT * FROM ") +
+                MigrationColumns::MODEL_NAME +
+                " WHERE " + MigrationColumns::PLUGIN_NAME + "=? AND " +
+                MigrationColumns::VERSION + "=?";
+            try
+            {
+                orm::Migration migration;
+                SQLite::Statement query(
+                    db, sql);
+                query.bind(1, plugin_name);
+                query.bind(2, version);
+                query.executeStep();
+                //
+                int i = 0;
+                migration.plugin_name = query.getColumn(i++).getString();
+                migration.version = query.getColumn(i++);
+                migration.description = query.getColumn(i++).getString();
+                //
+                migration.script = query.getColumn(i++).getString();
+                migration.hash_sha256 = query.getColumn(i++).getString();
+                migration.installed_on = query.getColumn(i++).getString();
+                migration.execution_time = query.getColumn(i++);
+                return migration;
+            }
+            catch (SQLite::Exception& e)
+            {
+            throw std::runtime_error("SQL Select for migration #" + std::string(std::to_string(version)) + " for plugin " + plugin_name  + " failed: " + e.what());
+            }
+
         }
 
         bool validate_table_existence(SQLite::Database& db)
@@ -161,7 +219,7 @@ CREATE TABLE "migration" (
             try
             {
                 SQLite::Statement query(
-                    db, std::string("SELECT * FROM ") + MigrationColumns::MODEL_NAME);
+                    db, string("SELECT * FROM ") + MigrationColumns::MODEL_NAME);
                 query.executeStep();
                 doesTableExist = true;
             }
@@ -182,7 +240,7 @@ CREATE TABLE "migration" (
             trace << "validate()" << commit;
             if (!validate_table_existence(db))
             {
-                bool created = create_table(db);
+                bool created = create_table_migration(db);
                 if (created)
                 {
                     info << "Table " << MigrationColumns::MODEL_NAME << " created." << commit;
@@ -194,34 +252,95 @@ CREATE TABLE "migration" (
                 }
             }
 
-            {
-                if (!initialize_plugin_in_table_if_needed(db))
-                {
-                    err << "Table " << MigrationColumns::MODEL_NAME << " could not be initialized for plugin " << plugin_name << commit;
-                    return false;
-                }
-
-                info << "Table " << MigrationColumns::MODEL_NAME << " initialized for plugin " << plugin_name << commit;
-            }
             if (!validate_table_existence(db)) return false;
+
+            {
+                int max_version = get_last_migration_number(db);
+                for (int version = 1; version <= max_version; version++)
+                {
+                    bool has = has_migration(db, version);
+                    if (!has)
+                    {
+                        throw std::runtime_error(std::string("Migration sql script expected in database, but not found: plugin=" + plugin_name + ", version=" + std::to_string(version)));
+                    }
+                    try
+                    {
+                        orm::Migration migration = find_migration(db, version);
+                        sql_hashes[version] = migration.hash_sha256;
+
+                        string expected_description = migration_scripts_ptr->get_migration_name(version);
+                        string found_description = migration.description;
+                        if (expected_description != found_description)
+                        {
+                            err << "Migration description mismatch for plugin " << plugin_name
+                                << " version " << version << ": expected '"
+                                << expected_description << "' but found '"
+                                << found_description << "'" << commit;
+                            return false;
+                        }
+                        //
+                        string expected_script = migration_scripts_ptr->get_migration_file_name(version);
+                        string found_script = migration.script;
+                        if (expected_script != found_script)
+                        {
+                            err << "Migration script mismatch for plugin " << plugin_name
+                                << " version " << version << ": expected '"
+                                << expected_script << "' but found '"
+                                << found_script << "'" << commit;
+                            return false;
+                        }
+
+                        //
+                        auto& sql = migration_scripts_ptr->get_sql(version);
+                        string hash_for_previous_migration = version == 1 ? "" : sql_hashes[version - 1];
+                        string expected_hash = util::Utils::hash_sha_256(hash_for_previous_migration + util::Utils::hash_sha_256(sql));
+                        string found_hash = migration.hash_sha256;
+                        if (expected_hash != found_hash)
+                        {
+                            err << "Migration hash mismatch for plugin " << plugin_name
+                                << " version " << version << ": expected '"
+                                << expected_hash << "' but found '"
+                                << found_hash << "'" << commit;
+                            return false;
+                        }
+                    } catch (const SQLite::Exception& e)
+                    {
+                        err << e.what() << commit;
+                        return false;
+                    }
+
+                }
+            }
+
 
             return true;
         }
 
-        bool update_migration_number(SQLite::Database& db, int max_migration_number)
+        bool insert_migration(
+            SQLite::Database& db,
+            int migration_number,
+            string hash_sha256,
+            string installed_on,
+            int execution_time)
         {
-            trace << "updateMigration()" << commit;
+            const string& migration_name = migration_scripts_ptr->get_migration_name(migration_number);
+            const string& migration_file_name = migration_scripts_ptr->get_migration_file_name(migration_number);
+
+            trace << "insert_migration()" << commit;
             SQLite::Statement query(
                 db,
-                "UPDATE " +
-                std::string(MigrationColumns::MODEL_NAME) +
-                " SET " + MigrationColumns::LAST_MIGRATION_NUMBER +
-                " = ?" +
-                " WHERE " + MigrationColumns::PLUGIN_NAME +
-                " = '" + plugin_name + "'"
+                "INSERT INTO " +
+                string(MigrationColumns::MODEL_NAME) +
+                " VALUES(?,?,?,?,?,?,?) "
             );
             int i = 0;
-            query.bind(++i, max_migration_number);
+            query.bind(++i, plugin_name);
+            query.bind(++i, migration_number);
+            query.bind(++i, migration_name);
+            query.bind(++i, migration_file_name);
+            query.bind(++i, hash_sha256);
+            query.bind(++i, installed_on);
+            query.bind(++i, execution_time);
             try
             {
                 query.exec();
@@ -230,13 +349,13 @@ CREATE TABLE "migration" (
             catch (SQLite::Exception& e)
             {
                 err
-                    << "Exception happened during updating max_migrating_number to # "
-                    << max_migration_number << ": " << e.what() << commit;
+                    << "Exception happened during inserting migration "
+                    << migration_scripts_ptr << ": " << e.what() << commit;
                 return false;
             }
         }
 
-        std::string get_current_datetime()
+        string get_current_datetime()
         {
             trace << "getCurrentDateTime()" << commit;
             using namespace std::chrono;
@@ -248,10 +367,11 @@ CREATE TABLE "migration" (
             std::tm now_tm = *std::localtime(&now_c);
 
             std::ostringstream oss;
-            oss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S") << ':'
-                << std::setw(3) << std::setfill('0') << ms.count();
+            oss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S")
+                << '.' << std::setw(3) << std::setfill('0') << ms.count();
 
             return oss.str();
+
         }
 
         bool migrate()
@@ -278,7 +398,7 @@ CREATE TABLE "migration" (
                 }
                 trace << "Going to find out the max_migration_number" << commit;
                 int max_migration_number = get_last_migration_number(db);
-                trace << std::string(std::string("max_migration_number=") + std::to_string(max_migration_number)).c_str() <<
+                trace << string(string("max_migration_number=") + std::to_string(max_migration_number)).c_str() <<
                     commit;
                 if (max_migration_number == -1) return false;
 
@@ -296,16 +416,25 @@ CREATE TABLE "migration" (
                     debug << "Going to migrate migration "
                           << migration_scripts_ptr->get_migration_file_name(migration_number) << commit;
 
-                    std::string sql = migration_scripts_ptr->get_sql(migration_number);
+                    const string& sql = migration_scripts_ptr->get_sql(migration_number);
 
+                    auto start_of_sql_execution = std::chrono::high_resolution_clock::now();
                     bool migrated = executeSQL(db, sql, migration_number);
+                    auto end_of_sql_execution = std::chrono::high_resolution_clock::now();
+                    auto duration_of_sql_execution_in_microseconds = duration_cast<std::chrono::microseconds>(end_of_sql_execution - start_of_sql_execution).count();
+
+                    string hash_of_previous_migration = migration_number == 1 ? "" : sql_hashes[migration_number - 1];
+                    string hash = util::Utils::hash_sha_256(hash_of_previous_migration + util::Utils::hash_sha_256(sql));
+                    sql_hashes[migration_number] = hash;
+
+                    string installed_on = get_current_datetime();
                     if (migrated)
                     {
-                        bool updated = update_migration_number(db, migration_number);
-                        if (!updated)
+                        bool inserted = insert_migration(db, migration_number, hash, installed_on, duration_of_sql_execution_in_microseconds);
+                        if (!inserted)
                         {
                             err << "Migration " << migration_number
-                                << " failed, it could not be updated in the database." << commit;
+                                << " failed, it could not be inserted into the database." << commit;
                             return false;
                         }
                     }
@@ -330,8 +459,6 @@ CREATE TABLE "migration" (
 
     bool SqliteDatabaseMigration::migrate(const string& plugin_name, api::MigrationScriptsPtr& migration_scripts_ptr)
     {
-        using std::string;
-
         DBMigration dbMigration = DBMigration(plugin_name, migration_scripts_ptr);
         return dbMigration.migrate();
     }

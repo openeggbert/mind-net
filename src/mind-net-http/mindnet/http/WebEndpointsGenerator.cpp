@@ -68,7 +68,7 @@ namespace mindnet::http
                 const auto& plugin = plugin_registry->get_plugin(plugin_name);
                 for (auto& app_name : plugin->get_apps())
                 {
-                    string path_prefix = app_name += plugin_name + "/";
+                    string path_prefix = app_name += plugin_name + "/app_";
                     plugin_allowed_files.insert(path_prefix + ".html");
                     plugin_allowed_files.insert(path_prefix + ".css");
                     plugin_allowed_files.insert(path_prefix + ".js");

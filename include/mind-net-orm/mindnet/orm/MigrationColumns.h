@@ -25,7 +25,7 @@
 #ifndef MIGRATIONCOLUMNS_H
 #define MIGRATIONCOLUMNS_H
 
-namespace mindnet::db::sqlite
+namespace mindnet::orm
 {
     struct MigrationColumns
     {
@@ -38,7 +38,14 @@ namespace mindnet::db::sqlite
         static constexpr const char* MODEL_NAME = "migration";
 
         static constexpr const char* PLUGIN_NAME = "plugin_name";
-        static constexpr const char* LAST_MIGRATION_NUMBER = "last_migration_number";
+        static constexpr const char* VERSION = "version";
+        static constexpr const char* DESCRIPTION = "description";
+
+        static constexpr const char* SCRIPT = "script";
+        static constexpr const char* HASH_SHA256 = "hash_sha256";
+        static constexpr const char* INSTALLED_ON = "installed_on";
+
+        static constexpr const char* EXECUTION_TIME = "execution_time";
     };
 }
 #endif // MIGRATIONCOLUMNS_H
