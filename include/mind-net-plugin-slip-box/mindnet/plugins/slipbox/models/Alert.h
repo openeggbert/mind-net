@@ -28,6 +28,7 @@
 #define MODEL ALERT
 #define COLS columns::AlertColumns
 #include "../columns/AlertColumns.h"
+#include "mindnet/plugins/slipbox/enums/AlertChannel.h"
 #include "mindnet/plugins/slipbox/enums/AlertRepeatInterval.h"
 #include "mindnet/plugins/slipbox/enums/AlertStatus.h"
 // ***** MACROS : END *****
@@ -64,7 +65,7 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::STATUS).set_enum_definition(enums::alert_status_to_enum_definition()).set_default_value(0).set_description("Alert status (ACTIVE, TRIGGERED, etc)"),
 
             coldef(COLS::IMPORTANT, BOOL).set_default_value(0).set_description("Whether this alert is important"),
-            coldef(COLS::CHANNEL, INTEGER).set_description("Notification channel")
+            coldef(COLS::CHANNEL, INTEGER).set_description("Notification channel").set_enum_definition(enums::alert_channel_to_enum_definition())
         });
 
     struct Model : mindnet::model::BaseModel
@@ -89,7 +90,7 @@ namespace mindnet::plugins::slipbox::models
         enums::AlertStatus status{};
 
         bool important{false};
-        int channel{};
+        enums::AlertChannel channel{};
 
         create_model_h_methods(Model, MODEL)
 

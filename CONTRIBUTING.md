@@ -31,7 +31,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Slip Box component
+- [ ] Slip Box component - keyboard shortcuts, ...
 - [ ] Use SM-18, new entity review_session
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Super Memo component
@@ -40,6 +40,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE Support for export to static HTML files
 
 ### Extending
+- [ ] CronJobs
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZK Mockup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 250px;
+      grid-gap: 10px;
+    }
+
+    .nav {
+      grid-column: 1 / -1;
+      margin-bottom: 10px;
+    }
+
+    button {
+      background: #66b3ff;
+      border: 1px solid #555;
+      padding: 4px 8px;
+      margin: 2px;
+      cursor: pointer;
+    }
+
+    button.save { background: #0044cc; color: white; }
+    button.delete { background: #cc0000; color: white; }
+    button.cancel { background: #cccccc; }
+
+    .panel {
+      background: #f6e7a6;
+      border: 1px solid #555;
+      padding: 6px;
+    }
+
+    .parent .label,
+    .subnotes .label {
+      font-weight: bold;
+    }
+
+    .note textarea {
+      width: 100%;
+      height: 160px;
+      background: #fff6c2;
+      border: 1px solid #555;
+      font-family: monospace;
+      font-size: 14px;
+      resize: vertical;
+    }
+
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .note-actions {
+      margin-top: 5px;
+    }
+
+    .meta p {
+      margin: 4px 0;
+    }
+
+    .meta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .subnotes ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .subnotes li {
+      margin: 4px 0;
+    }
+
+    /* Parent nad Note */
+    .parent {
+      grid-column: 1 / -1;
+    }
+
+    .subnotes {
+      grid-column: 1 / -1;
+    }
+
+    /* Responsivita */
+    @media (max-width: 800px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .meta {
+        grid-column: 1;
+      }
+    }
+
+    /* Collapsible */
+    .collapsible-toggle {
+      display: inline-block;
+      font-size: 12px;
+      color: #555;
+      margin-left: 6px;
+      cursor: pointer;
+      background: #eee;
+      border: 1px solid #aaa;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .collapsible-content.collapsed {
+      display: none;
+    }
+
+    /* Desktop window (Collections modal) */
+    .modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 400px;
+      height: 300px;
+      background: #fff6c2;
+      border: 2px solid #333;
+      transform: translate(-50%, -50%);
+      box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 1000;
+      padding: 10px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #f6e7a6;
+      padding: 4px;
+      border-bottom: 1px solid #333;
+    }
+    .modal-header span {
+      font-weight: bold;
+    }
+    .modal-close {
+      background: #cc0000;
+      color: white;
+      border: none;
+      padding: 2px 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Navigation -->
+    <div class="nav">
+      <button>Previous</button>
+      <button>Next</button>
+      <button>Dark mode / Light mode</button>
+    </div>
+
+    <!-- Parent note -->
+    <div class="panel parent">
+      <span class="label">Parent:</span> 
+      <span class="id">#4688</span> 
+      <a href="#">Parent note</a>
+      <button>Edit</button>
+    </div>
+
+    <!-- Note -->
+    <div class="panel note">
+      <div class="note-header">
+        <span>Note #43453</span>
+        <div>
+          <button>Copy</button>
+          <button>Show</button>
+        </div>
+      </div>
+      <div>
+        <span class="collapsible-toggle" onclick="toggleSection('note-content')">Sbalitelné/Rozbalitelné</span>
+      </div>
+      <div id="note-content" class="collapsible-content">
+        <textarea readonly>
+---
+key1=value1
+key2=value2
+---
+# Title of note
+Tags: #Tag1 #Tag2 #Tag3
+Flags:
+
+First paragraph of text…
+## Related Notes
+[[Copy Constructor vs. Move Constructor]]
+        </textarea>
+      </div>
+      <div class="note-actions">
+        <button class="delete">Delete</button>
+        <button class="cancel">Cancel</button>
+        <button class="save">Save</button>
+      </div>
+    </div>
+
+    <!-- Metadata panel -->
+    <div class="panel meta">
+      <div>
+        <span class="collapsible-toggle" onclick="toggleSection('meta-content')">Sbalitelné/Rozbalitelné</span>
+      </div>
+      <div id="meta-content" class="collapsible-content">
+        <p><b>Order:</b> 3400</p>
+        <p><b>Importance:</b> High <button>Edit</button></p>
+        <p><b>Difficulty:</b> Expert <button>Edit</button></p>
+        <div class="meta-buttons">
+          <button>References</button>
+          <button>Links</button>
+          <button>Wanted notes</button>
+          <button>Backlinks</button>
+          <button>Siblings</button>
+          <button>Tags</button>
+          <button onclick="openModal()">Collections</button>
+          <button>Visited</button>
+          <button>History</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subnotes -->
+    <div class="panel subnotes">
+      <div>
+        <span class="label">Subnotes:</span>
+        <span class="collapsible-toggle" onclick="toggleSection('subnotes-content')">Sbalitelné/Rozbalitelné</span>
+        <button class="add">Add</button>
+      </div>
+      <div id="subnotes-content" class="collapsible-content">
+        <ul>
+          <li>#4689 <a href="#">Child 1</a> <button>Copy</button></li>
+          <li>#4690 <a href="#">Child 2</a> <button>Copy</button></li>
+          <li>#4691 <a href="#">Child 3</a> <button>Copy</button></li>
+          <li>#4692 <a href="#">Child 4</a> <button>Copy</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal (Collections window) -->
+  <div id="collections-modal" class="modal">
+    <div class="modal-header">
+      <span>Collections</span>
+      <button class="modal-close" onclick="closeModal()">X</button>
+    </div>
+    <p>Here could be your collections content...</p>
+  </div>
+
+  <script>
+    function toggleSection(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("collapsed");
+    }
+
+    function openModal() {
+      document.getElementById("collections-modal").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("collections-modal").style.display = "none";
+    }
+  </script>
+</body>
+</html>

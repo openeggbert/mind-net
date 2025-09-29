@@ -68,7 +68,7 @@ namespace mindnet::http
                 const auto& plugin = plugin_registry->get_plugin(plugin_name);
                 for (auto& app_name : plugin->get_apps())
                 {
-                    string path_prefix = app_name += plugin_name + "/app_";
+                    string path_prefix = "app_" + app_name;
                     plugin_allowed_files.insert(path_prefix + ".html");
                     plugin_allowed_files.insert(path_prefix + ".css");
                     plugin_allowed_files.insert(path_prefix + ".js");
@@ -85,6 +85,9 @@ namespace mindnet::http
                 res.end();
                 return;
             }
+
+            // for (auto& e : common_allowed_files)std::cout << "Allowed: " << e << std::endl;
+            // for (auto& e : plugin_allowed_files)std::cout << "Allowed: " << e << std::endl;
 
             namespace fs = std::filesystem;
             {
@@ -106,7 +109,7 @@ namespace mindnet::http
             if (!fs::exists(file_path))
             {
                 res.code = 404;
-                res.write("File not found");
+                res.write("File not found: " + file_path.string());
                 res.end();
                 return;
             }
