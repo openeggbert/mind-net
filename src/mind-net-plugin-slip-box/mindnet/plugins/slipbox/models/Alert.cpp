@@ -27,7 +27,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(message);
         result.push_back(cast64(status));
         result.push_back(cast64(important));
-        result.push_back(channel);
+        result.push_back(cast64(channel));
         return result;
     }
 
@@ -55,7 +55,7 @@ namespace mindnet::plugins::slipbox::models
         message = text();
         status = static_cast<enums::AlertStatus>(number());
         important = number();
-        channel = number();
+        channel = static_cast<enums::AlertChannel>(number());
     }
 
     string Alert::validate()
