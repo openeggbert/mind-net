@@ -27,25 +27,27 @@
 
 namespace mindnet::orm
 {
-    struct MigrationColumns
+    struct SchemaHistoryColumns
     {
-        MigrationColumns() = delete;
+        SchemaHistoryColumns() = delete;
 
-        MigrationColumns(const MigrationColumns&) = delete;
+        SchemaHistoryColumns(const SchemaHistoryColumns&) = delete;
 
-        MigrationColumns& operator=(const MigrationColumns&) = delete;
+        SchemaHistoryColumns& operator=(const SchemaHistoryColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "migration";
+        static constexpr const char* MODEL_NAME = "schema_history";
 
         static constexpr const char* PLUGIN_NAME = "plugin_name";
         static constexpr const char* VERSION = "version";
         static constexpr const char* DESCRIPTION = "description";
 
         static constexpr const char* SCRIPT = "script";
-        static constexpr const char* HASH_SHA256 = "hash_sha256";
+        static constexpr const char* HASH_SHA256 = "checksum";
+        static constexpr const char* CHAIN_HASH = "chain_hash";
         static constexpr const char* INSTALLED_ON = "installed_on";
 
         static constexpr const char* EXECUTION_TIME = "execution_time";
+        static constexpr const char* SUCCESS = "success";
     };
 }
 #endif // MIGRATIONCOLUMNS_H

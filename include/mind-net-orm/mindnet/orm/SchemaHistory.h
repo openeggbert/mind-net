@@ -10,7 +10,7 @@ namespace mindnet::orm
 {
     using std::string;
 
-    struct Migration
+    struct SchemaHistory
     {
 
         string plugin_name;
@@ -18,11 +18,13 @@ namespace mindnet::orm
         string description;
 
         string script;
-        string hash_sha256;
+        string checksum;
+        string chain_hash;
         string installed_on;
 
         // in microseconds
         int execution_time;
+        bool success;
     };
 }
 #endif //MIND_NET_MIGRATION_H
