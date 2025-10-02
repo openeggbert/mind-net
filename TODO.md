@@ -1,4 +1,5 @@
 # TODO
+
 ## TODO – Migrate to C++20/23 Modules
 
 ### Why?
@@ -128,96 +129,157 @@ MyProject/
 📌 **Next action item:**
 Pick one existing header file in the project and convert it into a C++20 module (`.ixx + .cpp`).
 
-Here’s a draft for your `todo.md` entry, written in English, that captures the approach we discussed:
+# TODO – Constraint Emulation with Triggers in SQLite
+
+SQLite’s native `ALTER TABLE` is limited. To add constraints later (e.g. `FOREIGN KEY`, `NOT NULL`, `UNIQUE`, `DEFAULT`), we can emulate them with triggers.
+Below are **trigger templates** you can reuse in migrations.
 
 ---
 
-## TODO – Implement SQLite Full Database Rebuild with Custom DSL
+## 1. Emulate **NOT NULL**
 
-### Goal
+```sql
+-- Prevent NULL on insert
+CREATE TRIGGER nn_{table}_{col}_insert
+BEFORE INSERT ON {table}
+FOR EACH ROW
+WHEN NEW.{col} IS NULL
+BEGIN
+  SELECT RAISE(ABORT, '{table}.{col} cannot be NULL');
+END;
 
-Implement support for advanced schema changes in SQLite that are not natively supported by `ALTER TABLE` (e.g. adding/removing **foreign keys**, **check constraints**, **NOT NULL**, **UNIQUE**, column type changes).
-These migrations will use a **SQL-like DSL** instead of raw SQL. The DSL commands will be interpreted and executed by C++ code. At the end, the system will perform a **full database rebuild** (dump & restore) to apply all changes safely.
-
----
-
-### Steps
-
-1. **Design SQL-like DSL commands**
-
-    * Example commands:
-
-      ```sql
-      ADD CHECK users age "age >= 0";
-      DROP FOREIGN KEY orders fk_customer;
-      ALTER COLUMN users email NOT NULL;
-      ADD UNIQUE users email;
-      DROP COLUMN users temp_field;
-      ```
-    * Keep syntax close to SQL so it is intuitive, but map each command internally to a C++ handler.
-
-2. **Command parsing**
-
-    * Implement a lightweight parser that detects whether a migration statement is:
-
-        * pure SQL (`CREATE TABLE`, `INSERT INTO`, etc.) → execute directly, OR
-        * DSL command (`ADD CHECK`, `DROP FOREIGN KEY`, etc.) → enqueue as `MigrationCommand` object.
-
-3. **Migration execution flow**
-
-    * Run all pure SQL migrations immediately.
-    * Collect all DSL commands.
-    * When the first DSL command is encountered, mark that a **rebuild is required**.
-    * Continue processing migrations and enqueue further DSL commands.
-    * At the end, perform a single **rebuild of the entire database**, applying all collected DSL changes.
-
-4. **Rebuild process**
-
-    1. Open old database in `READONLY`.
-    2. Create new database file (or in-memory for speed).
-    3. Extract schema from `sqlite_master`:
-
-       ```sql
-       SELECT type, name, sql 
-       FROM sqlite_master 
-       WHERE type IN ('table','index','trigger','view') 
-         AND name NOT LIKE 'sqlite_%';
-       ```
-    4. Modify `CREATE TABLE` statements according to DSL commands (add/remove constraints, columns, keys, etc.).
-    5. Execute new schema in new database.
-    6. Copy data:
-
-       ```sql
-       ATTACH 'old.db' AS old;
-       INSERT INTO new_table(col1, col2, ...) 
-       SELECT col1, col2, ... FROM old.old_table;
-       DETACH old;
-       ```
-    7. Recreate indexes, triggers, and views.
-    8. Enable foreign keys (`PRAGMA foreign_keys=ON;`).
-    9. Replace old DB file with rebuilt DB file.
-
-5. **Optimizations**
-
-    * **Batching DSL commands**: multiple rebuild-required commands in one migration should only trigger a single rebuild at the end.
-    * **In-memory rebuild**: use `:memory:` database as the rebuild target for smaller DBs, then back it up to disk → much faster.
-    * **Hybrid approach**: if a rebuild command appears far away from others, rebuild earlier; otherwise group consecutive ones.
+-- Prevent NULL on update
+CREATE TRIGGER nn_{table}_{col}_update
+BEFORE UPDATE OF {col} ON {table}
+FOR EACH ROW
+WHEN NEW.{col} IS NULL
+BEGIN
+  SELECT RAISE(ABORT, '{table}.{col} cannot be NULL');
+END;
+```
 
 ---
 
-### Benefits
+## 2. Emulate **UNIQUE**
 
-* Developer writes **simple SQL-like commands** instead of complex manual rebuild scripts.
-* System ensures the database is rebuilt consistently and safely.
-* Same DSL can be reused for PostgreSQL implementation, but mapped directly to native `ALTER TABLE` commands (no rebuild needed there).
+```sql
+-- Prevent duplicate values on insert
+CREATE TRIGGER uq_{table}_{col}_insert
+BEFORE INSERT ON {table}
+FOR EACH ROW
+WHEN NEW.{col} IS NOT NULL
+  AND EXISTS (SELECT 1 FROM {table} WHERE {col} = NEW.{col})
+BEGIN
+  SELECT RAISE(ABORT, 'duplicate value in {table}.{col}');
+END;
+
+-- Prevent duplicate values on update
+CREATE TRIGGER uq_{table}_{col}_update
+BEFORE UPDATE OF {col} ON {table}
+FOR EACH ROW
+WHEN NEW.{col} IS NOT NULL
+  AND EXISTS (
+    SELECT 1 FROM {table}
+    WHERE {col} = NEW.{col}
+      AND id != OLD.id
+  )
+BEGIN
+  SELECT RAISE(ABORT, 'duplicate value in {table}.{col}');
+END;
+```
 
 ---
 
-👉 Next Action:
+## 3. Emulate **FOREIGN KEY**
 
-* Define DSL grammar and implement parser → `MigrationCommand`.
-* Implement `DatabaseRebuilder` class that executes full dump & restore based on DSL commands.
-* Integrate into existing migration pipeline so that SQL and DSL can coexist.
+```sql
+-- Check parent existence on insert
+CREATE TRIGGER fk_{child}_{col}_insert
+BEFORE INSERT ON {child}
+FOR EACH ROW
+WHEN NEW.{col} IS NOT NULL
+  AND (SELECT {pcol} FROM {parent} WHERE {pcol} = NEW.{col}) IS NULL
+BEGIN
+  SELECT RAISE(ABORT, 'FK violation: {child}.{col} → {parent}.{pcol}');
+END;
+
+-- Check parent existence on update
+CREATE TRIGGER fk_{child}_{col}_update
+BEFORE UPDATE OF {col} ON {child}
+FOR EACH ROW
+WHEN NEW.{col} IS NOT NULL
+  AND (SELECT {pcol} FROM {parent} WHERE {pcol} = NEW.{col}) IS NULL
+BEGIN
+  SELECT RAISE(ABORT, 'FK violation: {child}.{col} → {parent}.{pcol}');
+END;
+
+-- Emulate ON DELETE CASCADE
+CREATE TRIGGER fk_{parent}_{pcol}_delete
+AFTER DELETE ON {parent}
+FOR EACH ROW
+BEGIN
+  DELETE FROM {child} WHERE {col} = OLD.{pcol};
+END;
+```
+
+*(replace DELETE with `UPDATE ... SET {col}=NULL` to emulate `ON DELETE SET NULL`)*
+
+---
+
+## 4. Emulate **DEFAULT**
+
+```sql
+-- AFTER INSERT (because SQLite does not allow changing NEW directly)
+CREATE TRIGGER def_{table}_{col}
+AFTER INSERT ON {table}
+FOR EACH ROW
+WHEN NEW.{col} IS NULL
+BEGIN
+  UPDATE {table}
+    SET {col} = {default_expr}
+    WHERE id = NEW.id;
+END;
+```
+
+Example:
+
+```sql
+-- Default current timestamp
+CREATE TRIGGER def_user_created_at
+AFTER INSERT ON user
+FOR EACH ROW
+WHEN NEW.created_at IS NULL
+BEGIN
+  UPDATE user
+    SET created_at = strftime('%Y-%m-%d %H:%M:%S', 'now')
+    WHERE id = NEW.id;
+END;
+```
+
+---
+
+## Notes
+
+* Replace placeholders: `{table}`, `{col}`, `{child}`, `{parent}`, `{pcol}`, `{default_expr}`.
+* For consistency, consider a **global switch** table:
+
+  ```sql
+  CREATE TABLE settings (id INTEGER PRIMARY KEY CHECK (id=1), enforce_constraints INTEGER NOT NULL DEFAULT 1);
+  INSERT INTO settings (id, enforce_constraints) VALUES (1, 1);
+  ```
+
+  Then wrap triggers with:
+
+  ```sql
+  WHEN (SELECT enforce_constraints FROM settings WHERE id=1) = 1 AND ...
+  ```
+
+  → Allows enabling/disabling all constraint triggers at once.
+
+---
+
+✅ This setup gives you a lightweight way to **simulate constraints in SQLite** and later replace them with native constraints if you move to PostgreSQL.
+
 
 # TODO – Database Abstraction and Multi-DB Support
 
