@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <title>Slip Box – App</title>
     <link rel="stylesheet" href="app_slip_box.css">
     <script type="module" src="app_slip_box.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body class="presentation">
 <header>
@@ -26,11 +26,12 @@
         <h2>
             <span class="label">
                 🧭 <span id="parent_label">Parent Note</span>
-            </span><button class="toggle" onclick="togglePanel(this, 'parent-content')">▶</button>
+            </span>
+            <button class="toggle" onclick="togglePanel(this, 'parent_content')">▼</button>
 
         </h2>
         <div id="parent-content">
-            <p><strong>ID:</strong> #<span id="parent_id">4688</span></p>
+            <p><strong>ID:</strong> <span id="parent_id">4688</span></p>
             <p><strong>Title:</strong> <a href="#" id="parent_title">Parent note</a></p>
             <div class="actions">
                 <button id="parent_button_copy">📋 Copy</button>
@@ -40,17 +41,23 @@
     </section>
 
     <div class="layout-row">
-        <section class="panel note-panel">
-            <h2>📝 Note #43453</h2>
-            <p>
-                <strong>Title:</strong> <a href="#" onclick="note_title_link()">Note title</a>
-                <button>🔤 Rename</button>
-            </p>
-            <p>
-                <button>✏️ Edit</button>
-                <button>📖 Read</button>
-            </p>
-            <textarea readonly>
+        <section class="panel current-panel">
+            <h2>
+                <span class="label">
+                    📝 <span id="current_label">Note</span><span id="current_id">43453</span></span>
+                <button class="toggle" onclick="togglePanel(this, 'current-content')">▼</button>
+            </h2>
+            <div id="current-content">
+                <p>
+                    <strong>Title:</strong> <a href="#" id="current_title">Note title</a>
+                    <button id="current_button_rename">🔤 Rename</button>
+                    <button id="current_button_copy">📋 Copy</button>
+                </p>
+                <p>
+                    <button id="current_button_edit">✏️ Edit</button>
+                    <button id="current_button_read">📖 Read</button>
+                </p>
+                <textarea id="current_textarea">
 ---
 key1=value1
 key2=value2
@@ -63,45 +70,62 @@ First paragraph of text…
 ## Related Notes
 [[Copy Constructor vs. Move Constructor]]
         </textarea>
-            <div class="actions">
-                <button class="delete">🗑️ Delete</button>
-                <button class="cancel">↩️ Cancel</button>
-                <button class="save">💾 Save</button>
+                <div class="actions">
+                    <button class="delete" id="current_button_delete">🗑️ Delete</button>
+                    <button class="cancel" id="current_button_cancel">↩️ Cancel</button>
+                    <button class="save" id="current_button_save">💾 Save</button>
+                </div>
             </div>
-
         </section>
 
         <section class="panel meta-panel">
-            <h2>📊 Metadata <button class="toggle" onclick="togglePanel(this, 'meta-content')">▶</button></h2>
+            <h2>📊 Metadata
+                <button class="toggle" onclick="togglePanel(this, 'meta-content')">▼</button>
+            </h2>
             <div id="meta-content">
                 <ul>
-                    <li><strong>Order:</strong> 3400</li>
-                    <li><strong>Importance:</strong> <span class="tag high">High</span> <button>✏️ Edit</button></li>
-                    <li><strong>Difficulty:</strong> <span class="tag expert">Expert</span> <button>✏️ Edit</button></li>
+                    <li>
+                        <strong>Order:</strong> <span id="meta_order">3400</span>
+                        <button id="current_button_edit_order">✏️ Edit</button>
+                    </li>
+                    <li><strong>Importance:</strong> <span class="tag high" id="meta_importance">High</span>
+                        <button id="current_button_edit_importance">✏️ Edit</button>
+                    </li>
+                    <li><strong>Difficulty:</strong> <span class="tag expert" id="meta_difficulty">Expert</span>
+                        <button id="current_button_edit_difficulty">✏️ Edit</button>
+                    </li>
 
                 </ul>
                 <div class="meta-buttons">
-                    <button>🔗 References</button>
-                    <button>🔍 Links</button>
-                    <button>📌 Wanted notes</button>
-                    <button>🔁 Backlinks</button>
-                    <button>👥 Siblings</button>
-                    <button>🏷️ Tags</button>
-                    <button onclick="openModal()">📁 Collections</button>
-                    <button>👣 Visited</button>
-                    <button>🕓 History</button>
+                    <button id="meta_button_references">🔗 References</button>
+                    <button id="meta_button_links">🔍 Links</button>
+                    <button id="meta_button_wanted">📌 Wanted notes</button>
+                    <button id="meta_button_backlinks">🔁 Backlinks</button>
+                    <button id="meta_button_siblings">👥 Siblings</button>
+                    <button id="meta_button_tags">🏷️ Tags</button>
+                    <button id="meta_button_collections" onclick="openModal()">📁 Collections</button>
+                    <button id="meta_button_visited">👣 Visited</button>
+                    <button id="meta_button_history">🕓 History</button>
                 </div>
             </div>
         </section>
     </div>
 
-    <section class="panel subnotes">
-        <h2>📚 Subnotes <button class="toggle" onclick="togglePanel(this, 'subnotes-content')">▶</button></h2>
-        <div id="subnotes-content">
+    <section class="panel children">
+        <h2>
+            <span class="label">
+                    📚 <span id="children_label">Subnotes</span>
+            </span>
+            <button class="toggle" onclick="togglePanel(this, 'children-content')">▼</button>
+        </h2>
+
+        <div id="children-content">
             <ul>
-                <li>#4689 <a href="#">Child 1</a> <button>📋 Copy</button></li>
+                <li><span class="children_child_id" id="children_child_4689_id">4689</span> <a href="#" id="children_child_4689_title">Child 1</a>
+                    <button id="children_child_4689_button_copy">📋 Copy</button>
+                </li>
             </ul>
-            <button class="add">➕ Add Subnote</button>
+            <button class="add" id="children_button_add">➕ Add</button>
         </div>
     </section>
 </main>
