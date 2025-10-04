@@ -26,7 +26,7 @@
         <h2>
             <span class="label">
                 🧭 <span id="parent_label">Parent Note</span>
-            </span><button class="toggle" onclick="togglePanel('parent-content')">▼</button>
+            </span><button class="toggle" onclick="togglePanel(this, 'parent-content')">▶</button>
 
         </h2>
         <div id="parent-content">
@@ -72,7 +72,7 @@ First paragraph of text…
         </section>
 
         <section class="panel meta-panel">
-            <h2>📊 Metadata <button class="toggle" onclick="togglePanel('meta-content')">▼</button></h2>
+            <h2>📊 Metadata <button class="toggle" onclick="togglePanel(this, 'meta-content')">▶</button></h2>
             <div id="meta-content">
                 <ul>
                     <li><strong>Order:</strong> 3400</li>
@@ -96,7 +96,7 @@ First paragraph of text…
     </div>
 
     <section class="panel subnotes">
-        <h2>📚 Subnotes <button class="toggle" onclick="togglePanel('subnotes-content')">▼</button></h2>
+        <h2>📚 Subnotes <button class="toggle" onclick="togglePanel(this, 'subnotes-content')">▶</button></h2>
         <div id="subnotes-content">
             <ul>
                 <li>#4689 <a href="#">Child 1</a> <button>📋 Copy</button></li>
@@ -115,44 +115,5 @@ First paragraph of text…
     <p>Here could be your collections content...</p>
 </div>
 
-<script>
-
-    function toggleFocusMode() {
-        document.body.classList.toggle('focus-mode');
-    }
-
-    function closeModal() {
-        document.getElementById('collections-modal').style.display = 'none';
-    }
-
-    function openModal() {
-        document.getElementById('collections-modal').style.display = 'block';
-    }
-
-    function showToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
-    }
-
-    // Připojení k akcím
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.actions button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const label = btn.textContent.trim();
-                if (label.includes('Copy')) showToast('Copied to clipboard');
-                if (label.includes('Save')) showToast('Note saved');
-                if (label.includes('Delete')) showToast('Note deleted');
-            });
-        });
-
-        document.querySelectorAll('.add').forEach(btn => {
-            btn.addEventListener('click', () => showToast('Subnote added'));
-        });
-    });
-
-</script>
 </body>
 </html>

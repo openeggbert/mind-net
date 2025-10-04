@@ -1,51 +1,27 @@
 import {API_BASE, apiFetch} from "./api.js";
 
-export function button_focus_onclick() {
-    document.body.classList.toggle('dark-theme');
-}
-
-export function togglePanel(id) {
+export function togglePanel(element, id) {
     const el = document.getElementById(id);
-    el.classList.toggle('collapsed');
+    const isCollapsed = el.classList.toggle('collapsed');
+
+    element.textContent = isCollapsed ? "▶" : "▼";
 }
+window.togglePanel = togglePanel;
 
-export function toggle_section(id, toggleId) {
-    const content = document.getElementById(id);
-    const toggle = document.getElementById(toggleId);
-
-    const isCollapsed = content.classList.toggle("collapsed");
-
-    toggle.textContent = isCollapsed ? "▶ Expand" : "▼ Collapse";
+export function button_focus_onclick() {
+    document.body.classList.toggle('focus-mode');
 }
-window.toggle_section = toggle_section;
+window.button_focus_onclick = button_focus_onclick;
 
-function openModal() {
-    document.getElementById("collections-modal").style.display = "block";
+export function closeModal() {
+    document.getElementById('collections-modal').style.display = 'none';
 }
+window.closeModal = closeModal;
 
-function closeModal() {
-    document.getElementById("collections-modal").style.display = "none";
+export function openModal() {
+    document.getElementById('collections-modal').style.display = 'block';
 }
-
-function button_previous() {
-
-}
-
-function button_next() {
-
-}
-
-function button_theme() {
-
-}
-
-function parent_note_title_link() {
-
-}
-
-function note_title_link() {
-
-}
+window.openModal = openModal;
 
 function hide_element(id) {
     document.getElementById(id).style.display="none";
@@ -58,18 +34,27 @@ const PANEL_NOTE__NOTE_ID = "panel_note__note_id";
 const PANEL_NOTE__NOTE_TITLE = "panel_note__note_title";
 const PANEL_SUBNOTES__LABEL = "panel_subnotes__label";
 
-function set_note_id(id) {
-    set_value("note_id", id)
-}
-function set_note_title(id) {
-    set_value("note_title", id)
-}
-
 let map_id = "";
 let note_id = "";
 let mode_list_maps = false;
 let mode_list_root_notes = false;
 let mode_list_notes = false;
+
+export function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 2000);
+}
+
+window.showToast = showToast;
 
 function init_state() {
     const params = new URLSearchParams(window.location.search);
@@ -103,9 +88,26 @@ async function list_entity(entity, page_number = 1, page_size = 20) {
 
 
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.actions button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const label = btn.textContent.trim();
+            if (label.includes('Copy')) showToast('Copied to clipboard');
+            if (label.includes('Save')) showToast('Note saved');
+            if (label.includes('Delete')) showToast('Note deleted');
+        });
+    });
+
+
+    document.querySelectorAll('.add').forEach(btn => {
+        btn.addEventListener('click', () => showToast('Subnote added'));
+    });
+});
+
 document.addEventListener("DOMContentLoaded", async function () {
-    init_state();
-    if (mode_list_maps) {
+    //init_state();
+    if (mode_list_maps && false) {
         document.getElementById("panel_parent").style.display = "none";
         document.getElementById("button_copy_note_id").style.display = "none";
 

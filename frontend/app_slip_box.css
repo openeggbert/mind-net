@@ -285,11 +285,15 @@ li {
     color: white;
     z-index: 9999;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-
     background: #444;
     font-size: 15px;
     padding: 10px 20px;
     border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.toast.show {
+    opacity: 1;
 }
 
 .tag {
