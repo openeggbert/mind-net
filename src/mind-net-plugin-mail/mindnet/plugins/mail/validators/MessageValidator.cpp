@@ -7,7 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/mail/models/Message.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Message
 #define MODEL MESSAGE

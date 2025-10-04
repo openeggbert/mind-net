@@ -6,7 +6,7 @@
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Idea.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Idea
 #define MODEL IDEA

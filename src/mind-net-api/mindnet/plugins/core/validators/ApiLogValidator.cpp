@@ -6,7 +6,7 @@
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/models/ApiLog.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model ApiLog
 #define MODEL API_LOG

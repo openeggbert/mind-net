@@ -7,7 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/slipbox/models/PinnedNote.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model PinnedNote
 #define MODEL PINNED_NOTE

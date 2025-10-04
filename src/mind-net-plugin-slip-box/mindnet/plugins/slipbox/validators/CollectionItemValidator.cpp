@@ -6,7 +6,7 @@
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/CollectionItem.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model CollectionItem
 #define MODEL COLLECTION_ITEM

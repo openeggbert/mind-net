@@ -6,7 +6,7 @@
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Source.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
 
 #define Model Source

@@ -7,7 +7,7 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/supermemo/models/SM2State.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model SM2State
 #define MODEL SM2_STATE

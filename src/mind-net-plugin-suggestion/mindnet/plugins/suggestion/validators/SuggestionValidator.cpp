@@ -6,7 +6,7 @@
 
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/suggestion/models/Suggestion.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model Suggestion
 #define MODEL SUGGESTION

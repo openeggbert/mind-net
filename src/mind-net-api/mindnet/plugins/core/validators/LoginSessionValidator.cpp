@@ -8,7 +8,7 @@
 #include "mindnet/essential/Configuration.h"
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/models/LoginSession.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model LoginSession
 #define MODEL LOGIN_SESSION

@@ -8,7 +8,7 @@
 #include "mindnet/essential/Configuration.h"
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/core/models/RefreshToken.h"
-#include "../../../../../../include/mind-net-api/mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.h"
 
 #define Model RefreshToken
 #define MODEL REFRESH_TOKEN
