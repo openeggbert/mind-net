@@ -7,7 +7,7 @@ import {getEntitySchemas} from "./state.js";
 export const API_BASE = `${HOST}:${PORT}/api/v1`;
 export const MODEL_DEFINITION_URL = `${API_BASE}/model_definition`;
 export const CACHE_KEY = "model_definition_cache";
-export const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+export const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours
 export const APPLICATIONS_URL = `${API_BASE}/app`;
 export const APPS_CACHE_KEY = "applications_cache";
 export const APPS_CACHE_TTL_MS = CACHE_TTL_MS

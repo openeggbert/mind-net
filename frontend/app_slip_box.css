@@ -195,20 +195,30 @@ li {
     text-decoration: underline;
 }
 
-.current_panel textarea {
+#current_content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+    max-height: 1200px;
+}
+
+#current_content textarea {
     width: 100%;
+    height: auto;
+    resize: vertical;
     box-sizing: border-box;
-    height: 300px;
     font-family: 'Georgia', serif;
     font-size: 18px;
     line-height: 1.8;
     border-radius: 6px;
     padding: 16px;
-    resize: vertical;
     color: #333;
     background: #fffdf2;
     border: 1px solid #ccc;
+    min-height: 400px;
 }
+
 
 .meta_panel {
     flex: 1;
@@ -218,7 +228,7 @@ li {
 }
 
 .collapsed {
-    display: none;
+    display: none !important;;
 }
 
 .focus-mode .panel:not(.current_panel) {

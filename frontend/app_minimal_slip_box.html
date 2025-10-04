@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Old Slip Box - App</title>
+    <link rel="stylesheet" href="app_minimal_slip_box.css">
+    <script type="module" src="app_slip_box.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div id="app" data-version="minimal"></div>
+<div class="container">
+    <!-- Navigation -->
+    <div class="nav">
+        <button onclick="window.location.href='index.html'">Mind Net</button>
+        <button id="button_previous">Previous</button>
+        <button id="button_next">Next</button>
+        <button id="button_theme">Theme</button>
+    </div>
+
+    <!-- Parent note -->
+    <div class="panel parent" id="panel_parent">
+
+
+        <div class="panel-header">
+        <span class="panel_title">
+          <span id="parent_label">Parent:</span>
+#<span id="parent_id">4688</span>
+      <span><a href="#" id="parent_title">Parent note</a></span>
+        <button id="parent_button_copy">Copy</button>
+        </span>
+
+
+            <div>
+                <button id="parent_button_edit">Edit</button>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <!-- Note -->
+    <div class="panel note" id="panel_note">
+        <div class="panel-header">
+        <span class="panel_title">
+          <span id="current_label">Note:</span>
+            #<span id="current_id">43453</span>
+          <span><a href="#" id="current_title" onclick="note_title_link()">Note title</a></span>
+          <button id="current_button_rename">Rename</button>
+          <button id="current_button_copy">Copy</button>
+        </span>
+            <div>
+                <button class="toggle_button" id="collapsible-toggle-note-content"
+                        onclick="togglePanel(this, 'note-content')">▼ Collapse
+                </button>
+                <button id="current_button_edit">Edit</button>
+                <button id="current_button_read">Read</button>
+            </div>
+        </div>
+        <div>
+        </div>
+        <div id="note-content" class="collapsible-content">
+        <textarea readonly>
+First paragraph of text…
+## Related Notes
+[[Copy Constructor vs. Move Constructor]]
+        </textarea>
+
+        <div class="note-actions">
+            <button class="delete">Delete</button>
+            <button class="cancel">Cancel</button>
+            <button class="save">Save</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Metadata panel -->
+    <div class="panel meta" id="panel_meta">
+
+        <div class="panel-header">
+        <span class="panel_title">
+          <span>Metadata:</span>
+
+        </span>
+            <div>
+                <button class="toggle_button" id="collapsible-toggle-meta"
+                        onclick="toggle_section('meta-content', 'collapsible-toggle-meta')">▼ Collapse
+                </button>
+
+            </div>
+        </div>
+        <div id="meta-content" class="collapsible-content">
+
+            <p><b>Order:</b> 3400</p>
+            <p><b>Importance:</b> High
+                <button>Edit</button>
+            </p>
+            <p><b>Difficulty:</b> Expert
+                <button>Edit</button>
+            </p>
+            <div class="meta-buttons">
+                <button>References</button>
+                <button>Links</button>
+                <button>Wanted notes</button>
+                <button>Backlinks</button>
+                <button>Siblings</button>
+                <button>Tags</button>
+                <button onclick="openModal()">Collections</button>
+                <button>Visited</button>
+                <button>History</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subnotes -->
+    <div class="panel subnotes" id="panel_subnotes">
+
+
+        <div class="panel-header">
+        <span class="panel_title">
+          <span id="panel_subnotes__label">Subnotes:</span>
+
+
+      <button class="add">Add</button>
+        </span>
+
+            <div>
+
+                <button class="toggle_button" id="collapsible-toggle-subnotes"
+                        onclick="toggle_section('subnotes-content', 'collapsible-toggle-subnotes')">▼ Collapse
+                </button>
+            </div>
+        </div>
+
+
+        <div>
+
+
+        </div>
+        <div id="subnotes-content" class="collapsible-content">
+            <ul id="panel_subnotes__children">
+
+                <li id="child_example">#4689 <a href="#">Child 1</a>
+                    <button>Copy</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Modal (Collections window) -->
+<div id="collections-modal" class="modal">
+    <div class="modal-header">
+        <span>Collections</span>
+        <button class="modal-close" onclick="closeModal()">X</button>
+    </div>
+    <p>Here could be your collections content...</p>
+</div>
+
+</body>
+</html>

@@ -4,7 +4,14 @@ export function togglePanel(element, id) {
     const el = document.getElementById(id);
     const isCollapsed = el.classList.toggle('collapsed');
 
-    element.textContent = isCollapsed ? "▶" : "▼";
+    let minimal = document.getElementById("app").dataset.version === "minimal";
+    if(minimal) {
+        element.textContent = isCollapsed ? "▶ Expand" : "▼ Collapse";
+    } else {
+        element.textContent = isCollapsed ? "▶" : "▼";
+    }
+
+
 
     if (id === "meta_content") {
         const metaPanel = document.getElementById("meta_panel");
@@ -118,6 +125,16 @@ async function list_entity(entity, page_number = 1, page_size = 20) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+
+    if(window.innerWidth <= 800) togglePanel(this, 'meta_content')
+
+    // const ta = document.querySelector("#current_textarea");
+    // ta.addEventListener("input", () => {
+    //     ta.style.height = "auto";
+    //     ta.style.height = ta.scrollHeight + "px";
+    // });
+
+
     document.querySelectorAll('.actions button').forEach(btn => {
         btn.addEventListener('click', () => {
             const label = btn.textContent.trim();

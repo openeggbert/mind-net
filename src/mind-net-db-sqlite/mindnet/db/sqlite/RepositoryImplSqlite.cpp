@@ -83,6 +83,7 @@ namespace mindnet::db::sqlite
     {
         return model_definition;
     }
+
     //
     // class NumberOrText
     // {
@@ -130,22 +131,43 @@ namespace mindnet::db::sqlite
                 column_name == model::BaseColumns::ID ||
                 column_name == model::BaseColumns::CREATED_AT ||
                 column_name == model::BaseColumns::UPDATED_AT
-                ) continue;
+            )
+                continue;
             bool mandatory = col.is_mandatory();
             bool has_value = body.has(col.get_column_name());
             auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
-            crow::json::type crow_json_type = rvalue.t();
+            crow::json::type crow_json_type = has_value ? rvalue.t() : crow::json::type::Null;
+            bool auto_value = col.is_auto();
 
             auto column_type = col.get_column_type();
             auto primitive_column_type = column_type_to_primitive_column_type(column_type);
 
 
-            debug <<"rvalue="<<rvalue<<commit;
+            if (!auto_value) debug << "rvalue=" << rvalue << commit;
             if (mandatory && !has_value)
             {
                 throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");
             }
 
+            if (auto_value)
+            {
+                switch (primitive_column_type)
+                {
+                case model::PrimitiveColumnType::Text:
+                    {
+                        result.emplace_back("");
+                    }
+                    break;
+                case model::PrimitiveColumnType::Number:
+                    {
+                        result.emplace_back(cast64(0));
+                    }
+                    break;
+                default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));
+                }
+
+                continue;
+            }
             switch (primitive_column_type)
             {
             case model::PrimitiveColumnType::Text:
@@ -175,7 +197,6 @@ namespace mindnet::db::sqlite
                 default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));
                 }
             }
-
         }
         return result;
     }

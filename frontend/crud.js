@@ -13,7 +13,7 @@ import {
     getQueryParams, isColumnHidden,
     parseDateTimeToUnix,
     setHiddenColumns,
-    showError
+    showError, showInfo
 } from "./dom.js";
 import {filterColumnsForForm, toLabel} from "./schemas.js";
 import {selectAction, changePage} from "./navigation.js";
@@ -105,16 +105,13 @@ export async function renderEntityForm(entity, data = {}) {
         const url = payload.id ? `${API_BASE}/${entity}/${payload.id}` : `${API_BASE}/${entity}`;
 
         try {
-            const res = await fetch(url, {
+            const res_json = await apiFetch(url, {
                 method,
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(payload)
             });
-            if (!res.ok) {
-                const t = await res.text();
-                showError(`Error ${res.status}: ${t || res.statusText}`);
-                return;
-            }
+            showInfo("Saved");
+
             selectAction("list");
         } catch (err) {
             showError(`Network error: ${err.message}`);
