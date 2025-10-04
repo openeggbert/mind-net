@@ -6,10 +6,10 @@ export function togglePanel(element, id) {
 
     element.textContent = isCollapsed ? "▶" : "▼";
 
-    if (id === "meta-content") {
-        const metaPanel = document.getElementById("meta-panel");
+    if (id === "meta_content") {
+        const metaPanel = document.getElementById("meta_panel");
         const metaLabel = document.getElementById("meta_label");
-        window.innerWidth > 800
+        if(window.innerWidth > 800)
         {
             if (isCollapsed) {
 

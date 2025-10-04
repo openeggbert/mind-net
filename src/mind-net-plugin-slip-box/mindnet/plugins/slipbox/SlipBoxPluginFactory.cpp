@@ -15,7 +15,7 @@
 #include "mindnet/plugins/slipbox/validators/ReferenceValidator.h"
 #include "mindnet/plugins/slipbox/validators/TagValidator.h"
 #include "mindnet/plugins/slipbox/validators/TagTypeValidator.h"
-#include "mindnet/plugins/slipbox/validators/ConceptValidator.h"
+#include "mindnet/plugins/slipbox/validators/TermValidator.h"
 #include "mindnet/plugins/slipbox/validators/SourceValidator.h"
 #include "mindnet/plugins/slipbox/validators/IdeaValidator.h"
 #include "mindnet/plugins/slipbox/validators/WantedNoteValidator.h"
@@ -55,7 +55,7 @@ namespace mindnet::plugins::slipbox
 
         REGISTER_MODEL(collection, Collection, COLLECTION)
         REGISTER_MODEL(collection_item, CollectionItem, COLLECTION_ITEM)
-        REGISTER_MODEL(concept, Concept, CONCEPT)
+        REGISTER_MODEL(term, Term, TERM)
         REGISTER_MODEL(idea, Idea, IDEA)
         REGISTER_MODEL(alert, Alert, ALERT)
         REGISTER_MODEL(flag, Flag, FLAG)

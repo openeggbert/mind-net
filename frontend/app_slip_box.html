@@ -30,7 +30,7 @@
             <button class="toggle" onclick="togglePanel(this, 'parent_content')">▼</button>
 
         </h2>
-        <div id="parent-content">
+        <div id="parent_content">
             <p><strong>ID:</strong> <span id="parent_id">4688</span></p>
             <p><strong>Title:</strong> <a href="#" id="parent_title">Parent note</a></p>
             <div class="actions">
@@ -40,14 +40,14 @@
         </div>
     </section>
 
-    <div class="layout-row">
-        <section class="panel current-panel">
+    <div class="layout_row">
+        <section class="panel current_panel">
             <h2>
                 <span class="label">
                     📝 <span id="current_label">Note</span><span id="current_id">43453</span></span>
-                <button class="toggle" onclick="togglePanel(this, 'current-content')">▼</button>
+                <button class="toggle" onclick="togglePanel(this, 'current_content')">▼</button>
             </h2>
-            <div id="current-content">
+            <div id="current_content">
                 <p>
                     <strong>Title:</strong> <a href="#" id="current_title">Note title</a>
                     <button id="current_button_rename">🔤 Rename</button>
@@ -78,14 +78,14 @@ First paragraph of text…
             </div>
         </section>
 
-        <section class="panel meta-panel" id="meta-panel">
+        <section class="panel meta_panel" id="meta_panel">
             <h2>
                 <span class="label">
                     <span id="meta_label">📊 Metadata</span>
             </span>
-                <button class="toggle" onclick="togglePanel(this, 'meta-content')">▼</button>
+                <button class="toggle" onclick="togglePanel(this, 'meta_content')">▼</button>
             </h2>
-            <div id="meta-content">
+            <div id="meta_content">
                 <ul>
                     <li>
                         <strong>Order:</strong> <span id="meta_order">3400</span>
@@ -99,7 +99,27 @@ First paragraph of text…
                     </li>
 
                 </ul>
-                <div class="meta-buttons">
+
+
+                <div class="meta_section">
+                    <h3>📚 Knowledge</h3>
+
+                </div>
+
+                <!-- Workflow section -->
+                <div class="meta_section">
+                    <h3>⚙️ Workflow</h3>
+
+                </div>
+
+                <!-- Navigation section -->
+                <div class="meta_section">
+                    <h3>🧭 Navigation</h3>
+
+                </div>
+
+
+                <div class="meta_buttons">
                     <button id="meta_button_references">🔗 References</button>
                     <button id="meta_button_links">🔍 Links</button>
                     <button id="meta_button_wanted">📌 Wanted notes</button>
@@ -109,6 +129,14 @@ First paragraph of text…
                     <button id="meta_button_tags">🏷️ Tags</button>
                     <button id="meta_button_collections" onclick="openModal()">📁 Collections</button>
                     <button id="meta_button_questions" onclick="openModal()">❓ Questions</button>
+                    <button id="meta_button_terms">📖 Terms</button>
+                    <button id="meta_button_sources">📄 Sources</button>
+                    <button id="meta_button_ideas">💡 Ideas</button>
+                    <button id="meta_button_alert">⚠️ Alerts</button>
+                    <button id="meta_button_flags">🚩 Flags</button>
+                    <button id="meta_button_projects">📂 Projects</button>
+                    <button id="meta_button_tasks">✅ Tasks</button>
+                    <button id="meta_button_pinned_notes">📍 Pinned notes</button>
                     <button id="meta_button_visited">👣 Visited</button>
                     <button id="meta_button_history">🕓 History</button>
                 </div>
@@ -121,10 +149,10 @@ First paragraph of text…
             <span class="label">
                     📚 <span id="children_label">Subnotes</span>
             </span>
-            <button class="toggle" onclick="togglePanel(this, 'children-content')">▼</button>
+            <button class="toggle" onclick="togglePanel(this, 'children_content')">▼</button>
         </h2>
 
-        <div id="children-content">
+        <div id="children_content">
             <ul>
                 <li><span class="children_child_id" id="children_child_4689_id">4689</span> <a href="#" id="children_child_4689_title">Child 1</a>
                     <button id="children_child_4689_button_copy">📋 Copy</button>

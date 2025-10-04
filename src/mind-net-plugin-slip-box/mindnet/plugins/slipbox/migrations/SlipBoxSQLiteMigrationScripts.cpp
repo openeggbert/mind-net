@@ -231,8 +231,8 @@ CREATE INDEX idx_link_from_note ON link(from_note_id);
 )");
 
 
-        add_migration("V13__create_concept.sql", R"(
-CREATE TABLE concept(
+        add_migration("V13__create_term.sql", R"(
+CREATE TABLE term(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
     updated_at DATETIME,
@@ -248,8 +248,8 @@ CREATE TABLE concept(
     FOREIGN KEY (map_id) REFERENCES map(id)
 );
 
-CREATE INDEX idx_concept_note ON concept(note_id);
-CREATE INDEX idx_concept_title ON concept(title);
+CREATE INDEX idx_term_note ON term(note_id);
+CREATE INDEX idx_term_title ON term(title);
 )");
 
         add_migration("V14__create_source.sql", R"(

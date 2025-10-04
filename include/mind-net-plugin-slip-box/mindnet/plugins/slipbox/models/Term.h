@@ -17,18 +17,19 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CONCEPT_H
-#define CONCEPT_H
+#ifndef TERM_H
+#define TERM_H
+
 
 #include <string>
 #include <utility>
 
 #include "mindnet/model/BaseModel.h"
 // ***** MACROS : START *****
-#define Model Concept
-#define MODEL CONCEPT
-#define COLS columns::ConceptColumns
-#include "../columns/ConceptColumns.h"
+#define Model Term
+#define MODEL TERM
+#define COLS columns::TermColumns
+#include "../columns/TermColumns.h"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -37,7 +38,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def CONCEPT_DEFINITION =
+    inline def TERM_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_group("Slip Box", 100)
@@ -62,7 +63,7 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Concept& other) const
+        bool operator==(const Term& other) const
         {
             return id == other.id && title == other.title && disambiguation == other.disambiguation &&
                 note_id == other.note_id && created_at == other.created_at && updated_at == other.updated_at &&
@@ -74,4 +75,4 @@ namespace mindnet::plugins::slipbox::models
 #undef MODEL
 #undef COLS
 
-#endif // CONCEPT_H
+#endif // TERM_H

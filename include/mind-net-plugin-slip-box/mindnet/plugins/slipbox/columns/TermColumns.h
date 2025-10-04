@@ -22,21 +22,22 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef CONCEPTCOLUMNS_H
-#define CONCEPTCOLUMNS_H
+#ifndef TERMCOLUMNS_H
+#define TERMCOLUMNS_H
+
 
 #include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::slipbox::columns
 {
-    struct ConceptColumns : model::BaseColumns
+    struct TermColumns : model::BaseColumns
     {
-        ConceptColumns() = delete;
+        TermColumns() = delete;
 
-        ConceptColumns(const ConceptColumns&) = delete;
-        ConceptColumns& operator=(const ConceptColumns&) = delete;
+        TermColumns(const TermColumns&) = delete;
+        TermColumns& operator=(const TermColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "concept";
+        static constexpr const char* MODEL_NAME = "term";
 
         static constexpr const char* MAP_ID = "map_id";
         static constexpr const char* NOTE_ID = "note_id";
@@ -46,4 +47,4 @@ namespace mindnet::plugins::slipbox::columns
 
     };
 }
-#endif // CONCEPTCOLUMNS_H
+#endif // TERMCOLUMNS_H

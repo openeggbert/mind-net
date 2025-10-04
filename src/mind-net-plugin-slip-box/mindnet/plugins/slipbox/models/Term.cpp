@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/slipbox/models/Concept.h"
+#include "mindnet/plugins/slipbox/models/Term.h"
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Concept::to_values() const
+    entity_fields Term::to_values() const
     {
         entity_fields result;
         result.push_back(id);
@@ -20,7 +20,7 @@ namespace mindnet::plugins::slipbox::models
         return result;
     }
 
-    void Concept::from_values(const entity_fields& values)
+    void Term::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -37,14 +37,14 @@ namespace mindnet::plugins::slipbox::models
 
     }
 
-    string Concept::validate()
+    string Term::validate()
     {
-        using columns::ConceptColumns;
+        using columns::TermColumns;
 
         validator_chain_vector list{
-            [this] { return testt_between(title, 1, 64, ConceptColumns::TITLE); },
-            [this] { return testt_between(disambiguation, 1, 64, ConceptColumns::DISAMBIGUATION); },
-            [this] { return test_ne(map_id, 0, ConceptColumns::MAP_ID); },
+            [this] { return testt_between(title, 1, 64, TermColumns::TITLE); },
+            [this] { return testt_between(disambiguation, 1, 64, TermColumns::DISAMBIGUATION); },
+            [this] { return test_ne(map_id, 0, TermColumns::MAP_ID); },
         };
         return util::ValidatorChain::run(list);
     }

@@ -135,14 +135,25 @@ section.panel {
     flex-wrap: wrap;
 }
 
-.meta-buttons {
+.meta_section {
+    margin-bottom: 1em;
+}
+
+.meta_section h3 {
+    margin: 0.5em 0;
+    font-size: 1em;
+    font-weight: bold;
+    color: #444;
+}
+
+.meta_buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     margin-top: 10px;
 }
 
-.meta-buttons button {
+.meta_buttons button {
     color: black;
 }
 
@@ -155,14 +166,14 @@ li {
     margin-bottom: 6px;
 }
 
-.layout-row {
+.layout_row {
     display: flex;
     flex-wrap: wrap;
     gap: 30px;
     margin-bottom: 20px;
 }
 
-.current-panel {
+.current_panel {
     flex: 2;
     font-size: 1.05em;
     border: 3px solid #1d6fa5;
@@ -170,21 +181,21 @@ li {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.current-panel h2 {
+.current_panel h2 {
     color: #1d3557;
 }
 
-.current-panel a {
+.current_panel a {
     color: #1d6fa5;
     text-decoration: none;
     font-weight: 500;
 }
 
-.current-panel a:hover {
+.current_panel a:hover {
     text-decoration: underline;
 }
 
-.current-panel textarea {
+.current_panel textarea {
     width: 100%;
     box-sizing: border-box;
     height: 300px;
@@ -199,7 +210,7 @@ li {
     border: 1px solid #ccc;
 }
 
-.meta-panel {
+.meta_panel {
     flex: 1;
     min-width: 240px;
     background: #f9f9f9;
@@ -210,13 +221,13 @@ li {
     display: none;
 }
 
-.focus-mode .panel:not(.current-panel) {
+.focus-mode .panel:not(.current_panel) {
     display: none;
 }
 
 .focus-mode .actions,
 .focus-mode .toggle,
-.focus-mode .meta-buttons {
+.focus-mode .meta_buttons {
     display: none;
 }
 
@@ -317,7 +328,7 @@ li {
     border: 1px solid #ddd;
 }
 
-.presentation .current-panel {
+.presentation .current_panel {
     background: #fefefe;
     border-color: #1d6fa5;
 }
@@ -327,12 +338,12 @@ li {
 }
 
 @media (max-width: 800px) {
-    .layout-row {
+    .layout_row {
         flex-direction: column;
     }
 
-    .current-panel,
-    .meta-panel {
+    .current_panel,
+    .meta_panel {
         flex: unset;
     }
 
