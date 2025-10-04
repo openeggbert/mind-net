@@ -223,7 +223,7 @@ namespace mindnet::http
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
 
             std::set<string> fields_set;
-            util::Utils::split_string_by_commas(fields, fields_set);
+            mindnet::util::Utils::split_string_by_commas(fields, fields_set);
             crow::json::wvalue result;
 
             crow::json::wvalue::list model_definitions_as_json;
@@ -240,5 +240,33 @@ namespace mindnet::http
             result["items"] = std::move(model_definitions_as_json);
             return crow::response(200, result);
         });
+
+
+
+
+        // LIST
+        CROW_ROUTE(crow_app, "/api/v1/app").methods(crow::HTTPMethod::GET)
+        ([service_ptr](const crow::request& req)
+        {
+            check_maintenance_mode()
+
+
+            crow::json::wvalue result;
+
+            crow::json::wvalue::list apps_as_json;
+            for (auto& plugin_name : service_ptr->get_plugin_registry()->get_plugin_names())
+            {
+                const auto& plugin = service_ptr->get_plugin_registry()->get_plugin(plugin_name);
+                for (const auto& app : plugin->get_apps())
+                {
+                    apps_as_json.push_back(app);
+                }
+
+            }
+            result["items"] = std::move(apps_as_json);
+            return crow::response(200, result);
+        });
+
+
     }
 }

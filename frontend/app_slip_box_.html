@@ -21,6 +21,7 @@
             grid-column: 1 / -1;
             margin-bottom: 10px;
         }
+
         button {
             background: #66b3ff;
             border: none;
@@ -31,34 +32,48 @@
             min-width: 100px;
         }
 
-        button.save   { background: #0044cc; color: white; }
-        button.delete { background: #cc0000; color: white; }
-        button.cancel { background: #cccccc; color: black; }
-        button.toggle_button { background: #bfa0e3; }
+        button.save {
+            background: #0044cc;
+            color: white;
+        }
+
+        button.delete {
+            background: #cc0000;
+            color: white;
+        }
+
+        button.cancel {
+            background: #cccccc;
+            color: black;
+        }
+
+        button.toggle_button {
+            background: #bfa0e3;
+        }
 
         button:hover {
             background: #80c6ff;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
         }
 
         button.save:hover {
             background: #3366ff;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4);
         }
 
         button.delete:hover {
             background: #ff3333;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.4);
         }
 
         button.cancel:hover {
             background: #e6e6e6;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
         }
 
         button.toggle_button:hover {
             background: #d4baf0;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
         }
 
 
@@ -73,13 +88,15 @@
           border-color: #83c7e6;
         }*/
 
-        .panel_title{
+        .panel_title {
             font-size: 120%;
-            display:block;
+            display: block;
         }
+
         .panel_title span:first-child {
             font-weight: bold;
         }
+
         .panel_title span {
             margin-right: 6px;
         }
@@ -114,6 +131,7 @@
             flex-wrap: wrap;
             gap: 4px;
         }
+
         .meta-buttons button {
             min-width: 120px;
         }
@@ -140,9 +158,11 @@
             .container {
                 grid-template-columns: 1fr;
             }
+
             .meta {
                 grid-column: 1;
             }
+
             body {
                 padding: 0px;
             }
@@ -162,11 +182,12 @@
             background: #fff6c2;
             border: 2px solid #333;
             transform: translate(-50%, -50%);
-            box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.5);
             display: none;
             z-index: 1000;
             padding: 10px;
         }
+
         .modal-header {
             display: flex;
             justify-content: space-between;
@@ -175,9 +196,11 @@
             padding: 4px;
             border-bottom: 1px solid #333;
         }
+
         .modal-header span {
             font-weight: bold;
         }
+
         .modal-close {
             background: #cc0000;
             color: white;
@@ -202,7 +225,7 @@
     <div class="panel parent" id="panel_parent">
 
 
-      <div class="panel-header">
+        <div class="panel-header">
         <span class="panel_title">
           <span>Parent:</span>
 #<span id="note_parent_id">4688</span>
@@ -211,15 +234,13 @@
         </span>
 
 
-        <div>
-          <button>Edit</button>
+            <div>
+                <button>Edit</button>
+            </div>
+
+
         </div>
-
-
-
-      </div>
     </div>
-
 
 
     <!-- Note -->
@@ -304,7 +325,7 @@ First paragraph of text…
     <div class="panel subnotes" id="panel_subnotes">
 
 
-      <div class="panel-header">
+        <div class="panel-header">
         <span class="panel_title">
           <span id="panel_subnotes__label">Subnotes:</span>
 
@@ -312,18 +333,16 @@ First paragraph of text…
       <button class="add">Add</button>
         </span>
 
-        <div>
+            <div>
 
-          <button class="toggle_button" id="collapsible-toggle-subnotes"
-                  onclick="toggle_section('subnotes-content', 'collapsible-toggle-subnotes')">▼ Collapse
-          </button>
+                <button class="toggle_button" id="collapsible-toggle-subnotes"
+                        onclick="toggle_section('subnotes-content', 'collapsible-toggle-subnotes')">▼ Collapse
+                </button>
+            </div>
         </div>
-      </div>
 
 
         <div>
-
-
 
 
         </div>

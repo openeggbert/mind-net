@@ -2,20 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slip Box – App</title>
     <link rel="stylesheet" href="app_slip_box.css">
     <script type="module" src="app_slip_box.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 <body class="presentation">
 <header>
-    <div style="font-size: 1.4em; font-weight: bold;">🧠 Slip Box</div>
-    <button onclick="button_previous()">← Previous</button>
-    <button onclick="button_next()">Next →</button>
-    <button onclick="toggleFocusMode()" class="focus">🧘 Focus Mode</button>
-    <button onclick="button_theme()">🌓 Toggle Theme</button>
+    <div>🧠 Slip Box</div>
+    <button id="button_previous" title="Previous sibling by order">← Previous</button>
+    <button id="button_next" title="Next sibling by order">Next →</button>
+    <button id="button_focus" class="focus" onclick="button_focus_onclick()">🧘 Focus Mode</button>
+    <button id="button_theme">🌓 Toggle Theme</button>
 </header>
 
 <main id="main">
@@ -24,13 +22,18 @@
     </div>
 
     <section class="panel parent">
-        <h2>🧭 Parent Note <button class="toggle" onclick="togglePanel('parent-content')">▼</button></h2>
+        <h2>
+            <span class="label">
+                🧭 <span id="parent_label">Parent Note</span>
+            </span><button class="toggle" onclick="togglePanel('parent-content')">▼</button>
+
+        </h2>
         <div id="parent-content">
-            <p><strong>ID:</strong> #4688</p>
-            <p><strong>Title:</strong> <a href="#" onclick="parent_note_title_link()">Parent note</a></p>
+            <p><strong>ID:</strong> #<span id="parent_id">4688</span></p>
+            <p><strong>Title:</strong> <a href="#" id="parent_title">Parent note</a></p>
             <div class="actions">
-                <button>📋 Copy</button>
-                <button>✏️ Edit</button>
+                <button id="parent_button_copy">📋 Copy</button>
+                <button id="parent_button_edit">✏️ Edit</button>
             </div>
         </div>
     </section>
@@ -38,7 +41,14 @@
     <div class="layout-row">
         <section class="panel note-panel">
             <h2>📝 Note #43453</h2>
-            <p><strong>Title:</strong> <a href="#" onclick="note_title_link()">Note title</a></p>
+            <p>
+                <strong>Title:</strong> <a href="#" onclick="note_title_link()">Note title</a>
+                <button>🔤 Rename</button>
+            </p>
+            <p>
+                <button>✏️ Edit</button>
+                <button>📖 Read</button>
+            </p>
             <textarea readonly>
 ---
 key1=value1
@@ -105,10 +115,6 @@ First paragraph of text…
 </div>
 
 <script>
-    function togglePanel(id) {
-        const el = document.getElementById(id);
-        el.classList.toggle('collapsed');
-    }
 
     function toggleFocusMode() {
         document.body.classList.toggle('focus-mode');
@@ -122,30 +128,6 @@ First paragraph of text…
         document.getElementById('collections-modal').style.display = 'block';
     }
 
-    function button_previous() {
-        // Navigace k předchozí poznámce
-        console.log("Previous note");
-    }
-
-    function button_next() {
-        // Navigace k další poznámce
-        console.log("Next note");
-    }
-
-    function button_theme() {
-        // Přepínání světlého/tmavého režimu (volitelně)
-        document.body.classList.toggle('dark-theme');
-    }
-
-    function parent_note_title_link() {
-        // Otevření nadřazené poznámky
-        console.log("Parent note clicked");
-    }
-
-    function note_title_link() {
-        // Otevření aktuální poznámky
-        console.log("Note title clicked");
-    }
     function showToast(message) {
         const toast = document.createElement('div');
         toast.className = 'toast';

@@ -1,5 +1,14 @@
 import {API_BASE, apiFetch} from "./api.js";
 
+export function button_focus_onclick() {
+    document.body.classList.toggle('dark-theme');
+}
+
+export function togglePanel(id) {
+    const el = document.getElementById(id);
+    el.classList.toggle('collapsed');
+}
+
 export function toggle_section(id, toggleId) {
     const content = document.getElementById(id);
     const toggle = document.getElementById(toggleId);
