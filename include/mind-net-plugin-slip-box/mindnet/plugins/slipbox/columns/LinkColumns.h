@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see 
+// along with this program. If not, see
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,9 +25,8 @@
 #ifndef LINKCOLUMNS_H
 #define LINKCOLUMNS_H
 
+
 #include "mindnet/model/BaseColumns.h"
-#include "mindnet/essential/Helper.h"
-#include "mindnet/model/ColumnType.h"
 
 namespace mindnet::plugins::slipbox::columns
 {
@@ -41,7 +40,8 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* MODEL_NAME = "link";
 
         static constexpr const char* FROM_NOTE_ID = "from_note_id";
-        static constexpr const char* TO_URL = "to_url";
+        static constexpr const char* TO_NOTE_ID = "to_note_id";
+        static constexpr const char* LABEL = "label";
     };
 }
 #endif // LINKCOLUMNS_H

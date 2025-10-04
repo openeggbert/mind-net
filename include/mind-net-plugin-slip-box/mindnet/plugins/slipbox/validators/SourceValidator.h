@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
         ~SourceValidator() = default; // explicitly make it destructible
         using Model = Source;
 
-        create_method_prototypes_for_ValidatorBase(Source)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // SOURCEVALIDATOR_H

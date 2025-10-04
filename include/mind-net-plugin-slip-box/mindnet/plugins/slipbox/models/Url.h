@@ -17,18 +17,17 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REFERENCE_H
-#define REFERENCE_H
+#ifndef URL_H
+#define URL_H
 
 #include <string>
-#include <utility>
-
 #include "mindnet/model/BaseModel.h"
+
 // ***** MACROS : START *****
-#define Model Reference
-#define MODEL REFERENCE
-#define COLS columns::ReferenceColumns
-#include "../columns/ReferenceColumns.h"
+#define Model Url
+#define MODEL URL
+#define COLS columns::UrlColumns
+#include "../columns/UrlColumns.h"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -37,34 +36,35 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def REFERENCE_DEFINITION =
+    inline def URL_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Slip Box", 100)
         .set_columns({
-            coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
-            coldef(COLS::TO_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
-            coldef(COLS::LABEL),
+            coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note").set_description(
+                "ID of the note this url is from"),
+            coldef(COLS::TO_URL, MANDATORY | READONLY).set_description("URL this url points to"),
         });
-    ;
 
     struct Model : mindnet::model::BaseModel
     {
-        int from_note_id;
-        int to_note_id;
-        string label;
+        int from_note_id{};
+        string to_url;
 
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
-            return id == other.id && from_note_id == other.from_note_id && to_note_id == other.to_note_id &&
-                label == other.label && created_at == other.created_at && updated_at == other.
-                updated_at;
+            return id == other.id &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                from_note_id == other.from_note_id &&
+                to_url == other.to_url;
         }
     };
 }
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // REFERENCE_H
+
+#endif // URL_H

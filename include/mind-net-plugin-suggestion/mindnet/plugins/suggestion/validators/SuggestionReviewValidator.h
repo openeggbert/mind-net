@@ -23,7 +23,7 @@ namespace mindnet::plugins::suggestion::validators
         ~SuggestionReviewValidator() = default; // explicitly make it destructible
         using Model = SuggestionReview;
 
-        create_method_prototypes_for_ValidatorBase(SuggestionReview)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // SUGGESTIONREVIEWVALIDATOR_H

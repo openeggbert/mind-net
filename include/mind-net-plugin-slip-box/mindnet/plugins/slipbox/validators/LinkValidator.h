@@ -4,6 +4,7 @@
 #ifndef LINKVALIDATOR_H
 #define LINKVALIDATOR_H
 
+
 #include <memory>
 
 #include "mindnet/essential/Helper.h"
@@ -22,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~LinkValidator() = default; // explicitly make it destructible
         using Model = Link;
 
-        create_method_prototypes_for_ValidatorBase(Link)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // LINKVALIDATOR_H

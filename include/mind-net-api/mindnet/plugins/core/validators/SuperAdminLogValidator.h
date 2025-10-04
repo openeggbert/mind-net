@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::validators
         ~SuperAdminLogValidator() = default; // explicitly make it destructible
         using Model = SuperAdminLog;
 
-        create_method_prototypes_for_ValidatorBase(SuperAdminLog)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // SUPERADMINLOGVALIDATOR_H

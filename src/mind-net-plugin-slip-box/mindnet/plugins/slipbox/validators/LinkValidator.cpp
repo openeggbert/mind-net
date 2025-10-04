@@ -15,41 +15,42 @@
 
 namespace mindnet::plugins::slipbox::validators
 {
-    using validators::LinkValidator;
     using mindnet::api::OperationResult;
-    using mindnet::essential::g_configuration;
     OperationResult LinkValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
+{
+    return ok_result;
+}
 
     OperationResult LinkValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
+{
+    return ok_result;
+}
 
     OperationResult LinkValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
-    {
-        return ok_result;
-    }
+{
+    return ok_result;
+}
 
     OperationResult LinkValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
+{
+    return ok_result;
+}
 
     OperationResult LinkValidator::validate_list_authorization(const RequestContext& ctx,
                                                                 const string_map& filter) const
-    {
-        return ok_result;
-    }
+{
+    return ok_result;
+}
 
 
 
 
 
 
+
+    using validators::LinkValidator;
+    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
 
     OperationResult LinkValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
@@ -63,7 +64,7 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult LinkValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                        const Model& new_entity) const
+                                                             const Model& new_entity) const
     {
         assert_editor()
         return ok_result;

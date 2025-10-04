@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~AlertValidator() = default; // explicitly make it destructible
         using Model = Alert;
 
-        create_method_prototypes_for_ValidatorBase(Alert)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // ALERTVALIDATOR_H

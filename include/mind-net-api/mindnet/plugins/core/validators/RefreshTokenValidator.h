@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::validators
         ~RefreshTokenValidator() = default; // explicitly make it destructible
         using Model = RefreshToken;
 
-        create_method_prototypes_for_ValidatorBase(RefreshToken)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // REFRESHTOKENVALIDATOR_H

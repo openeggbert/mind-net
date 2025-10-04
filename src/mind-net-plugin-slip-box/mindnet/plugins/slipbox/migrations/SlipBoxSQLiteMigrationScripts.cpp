@@ -193,8 +193,8 @@ CREATE TABLE question (
 
         )");
 
-        add_migration("V11__create_reference.sql", R"(
-CREATE TABLE reference(
+        add_migration("V11__create_link.sql", R"(
+CREATE TABLE link(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
     updated_at DATETIME,
@@ -210,11 +210,11 @@ CREATE TABLE reference(
 	FOREIGN KEY (to_note_id) REFERENCES note(id)
 );
 
-CREATE INDEX idx_reference_from_to ON reference(from_note_id, to_note_id);
+CREATE INDEX idx_link_from_to ON link(from_note_id, to_note_id);
 
 )");
-        add_migration("V12__create_link.sql", R"(
-CREATE TABLE link(
+        add_migration("V12__create_url.sql", R"(
+CREATE TABLE url(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
     updated_at DATETIME,
@@ -227,7 +227,7 @@ CREATE TABLE link(
 	FOREIGN KEY (from_note_id) REFERENCES note(id)
 );
 
-CREATE INDEX idx_link_from_note ON link(from_note_id);
+CREATE INDEX idx_url_from_note ON url(from_note_id);
 )");
 
 

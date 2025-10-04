@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::validators
         ~ApiLogValidator() = default; // explicitly make it destructible
         using Model = ApiLog;
 
-        create_method_prototypes_for_ValidatorBase(ApiLog)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // APILOGVALIDATOR_H

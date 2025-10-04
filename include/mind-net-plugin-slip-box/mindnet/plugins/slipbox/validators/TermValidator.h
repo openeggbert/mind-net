@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~TermValidator() = default; // explicitly make it destructible
         using Model = Term;
 
-        create_method_prototypes_for_ValidatorBase(Term)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // TERMVALIDATOR_H

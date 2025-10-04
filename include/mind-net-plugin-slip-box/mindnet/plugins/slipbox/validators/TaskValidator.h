@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~TaskValidator() = default; // explicitly make it destructible
         using Model = Task;
 
-        create_method_prototypes_for_ValidatorBase(Task)
+        create_method_prototypes_for_ValidatorBase(Model)
 
         // Additional validation methods could be added here if needed:
         // - Validate progress is between 0-100

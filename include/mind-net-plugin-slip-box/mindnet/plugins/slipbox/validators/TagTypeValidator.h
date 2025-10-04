@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
         ~TagTypeValidator() = default; // explicitly make it destructible
         using Model = TagType;
 
-        create_method_prototypes_for_ValidatorBase(TagType)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // TAGTYPEVALIDATOR_H

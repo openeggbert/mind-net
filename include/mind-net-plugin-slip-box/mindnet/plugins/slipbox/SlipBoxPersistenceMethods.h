@@ -34,8 +34,8 @@
 // #include "mindnet/plugins/supermemo/models/Review.h"
 // #include "mindnet/plugins/supermemo/models/SM2State.h"
 #include "mindnet/plugins/slipbox/models/Question.h"
-#include "mindnet/plugins/slipbox/models/Reference.h"
 #include "mindnet/plugins/slipbox/models/Link.h"
+#include "mindnet/plugins/slipbox/models/Url.h"
 
 namespace mindnet::plugins::slipbox::models
 {
@@ -61,7 +61,7 @@ namespace mindnet::plugins::slipbox
     gen_find_h(slipbox, Note, note)
     gen_find_h(slipbox, Property, property)
     gen_find_h(slipbox, Question, question)
-    gen_find_h(slipbox, Reference, reference)
+    gen_find_h(slipbox, Link, link)
     // gen_find_h(supermemo, Review, review)
     // gen_find_h(supermemo, SM2State, sm2state)
 

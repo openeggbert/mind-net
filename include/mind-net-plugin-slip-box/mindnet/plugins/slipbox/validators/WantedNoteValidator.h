@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~WantedNoteValidator() = default; // explicitly make it destructible
         using Model = WantedNote;
 
-        create_method_prototypes_for_ValidatorBase(WantedNote)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // WANTEDNOTEVALIDATOR_H

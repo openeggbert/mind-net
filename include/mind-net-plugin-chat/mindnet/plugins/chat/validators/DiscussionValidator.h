@@ -22,7 +22,7 @@ namespace mindnet::plugins::chat::validators
         ~DiscussionValidator() = default; // explicitly make it destructible
         using Model = Discussion;
 
-        create_method_prototypes_for_ValidatorBase(Discussion)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // DISCUSSIONVALIDATOR_H

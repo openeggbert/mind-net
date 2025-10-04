@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~ProjectValidator() = default; // explicitly make it destructible
         using Model = Project;
 
-        create_method_prototypes_for_ValidatorBase(Project)
+        create_method_prototypes_for_ValidatorBase(Model)
 
         // Additional validation methods could be added here if needed:
         // - Validate progress is between 0 and 100

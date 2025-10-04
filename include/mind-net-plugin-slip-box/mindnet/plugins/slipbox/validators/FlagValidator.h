@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~FlagValidator() = default; // explicitly make it destructible
         using Model = Flag;
 
-        create_method_prototypes_for_ValidatorBase(Flag)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // FLAGVALIDATOR_H

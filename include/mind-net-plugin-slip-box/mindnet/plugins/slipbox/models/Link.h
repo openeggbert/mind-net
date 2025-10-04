@@ -20,9 +20,11 @@
 #ifndef LINK_H
 #define LINK_H
 
-#include <string>
-#include "mindnet/model/BaseModel.h"
 
+#include <string>
+#include <utility>
+
+#include "mindnet/model/BaseModel.h"
 // ***** MACROS : START *****
 #define Model Link
 #define MODEL LINK
@@ -41,30 +43,29 @@ namespace mindnet::plugins::slipbox::models
         .set_all_rest_operations()
         .set_group("Slip Box", 100)
         .set_columns({
-            coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note").set_description(
-                "ID of the note this link is from"),
-            coldef(COLS::TO_URL, MANDATORY | READONLY).set_description("URL this link points to"),
+            coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
+            coldef(COLS::TO_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
+            coldef(COLS::LABEL),
         });
+    ;
 
     struct Model : mindnet::model::BaseModel
     {
-        int from_note_id{};
-        string to_url;
+        int from_note_id;
+        int to_note_id;
+        string label;
 
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                from_note_id == other.from_note_id &&
-                to_url == other.to_url;
+            return id == other.id && from_note_id == other.from_note_id && to_note_id == other.to_note_id &&
+                label == other.label && created_at == other.created_at && updated_at == other.
+                updated_at;
         }
     };
 }
 #undef Model
 #undef MODEL
 #undef COLS
-
 #endif // LINK_H

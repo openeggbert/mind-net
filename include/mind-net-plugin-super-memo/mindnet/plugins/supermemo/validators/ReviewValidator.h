@@ -22,7 +22,7 @@ namespace mindnet::plugins::supermemo::validators
         ~ReviewValidator() = default; // explicitly make it destructible
         using Model = Review;
 
-        create_method_prototypes_for_ValidatorBase(Review)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // REVIEWVALIDATOR_H

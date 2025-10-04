@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
         ~CollectionValidator() = default; // explicitly make it destructible
         using Model = Collection;
 
-        create_method_prototypes_for_ValidatorBase(Collection)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // COLLECTIONVALIDATOR_H

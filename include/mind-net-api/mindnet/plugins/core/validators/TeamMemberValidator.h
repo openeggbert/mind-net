@@ -23,7 +23,7 @@ namespace mindnet::plugins::core::validators
 
         using Model = TeamMember;
 
-        create_method_prototypes_for_ValidatorBase(TeamMember)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // TEAMMEMBERVALIDATOR_H

@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
         ~MapValidator() = default; // explicitly make it destructible
         using Model = Map;
 
-        create_method_prototypes_for_ValidatorBase(Map)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 

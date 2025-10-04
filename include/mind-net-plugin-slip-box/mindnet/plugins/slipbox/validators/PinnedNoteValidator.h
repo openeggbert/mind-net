@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~PinnedNoteValidator() = default; // explicitly make it destructible
         using Model = PinnedNote;
 
-        create_method_prototypes_for_ValidatorBase(PinnedNote)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // PINNEDNOTEVALIDATOR_H

@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::validators
         ~LoginSessionValidator() = default; // explicitly make it destructible
         using Model = LoginSession;
 
-        create_method_prototypes_for_ValidatorBase(LoginSession)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // LOGINSESSIONVALIDATOR_H

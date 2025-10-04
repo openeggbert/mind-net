@@ -22,25 +22,27 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef REFERENCECOLUMNS_H
-#define REFERENCECOLUMNS_H
+#ifndef URLCOLUMNS_H
+#define URLCOLUMNS_H
+
 
 #include "mindnet/model/BaseColumns.h"
+#include "mindnet/essential/Helper.h"
+#include "mindnet/model/ColumnType.h"
 
 namespace mindnet::plugins::slipbox::columns
 {
-    struct ReferenceColumns : model::BaseColumns
+    struct UrlColumns : model::BaseColumns
     {
-        ReferenceColumns() = delete;
+        UrlColumns() = delete;
 
-        ReferenceColumns(const ReferenceColumns&) = delete;
-        ReferenceColumns& operator=(const ReferenceColumns&) = delete;
+        UrlColumns(const UrlColumns&) = delete;
+        UrlColumns& operator=(const UrlColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "reference";
+        static constexpr const char* MODEL_NAME = "url";
 
         static constexpr const char* FROM_NOTE_ID = "from_note_id";
-        static constexpr const char* TO_NOTE_ID = "to_note_id";
-        static constexpr const char* LABEL = "label";
+        static constexpr const char* TO_URL = "to_url";
     };
 }
-#endif // REFERENCECOLUMNS_H
+#endif // URLCOLUMNS_H

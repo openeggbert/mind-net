@@ -7,12 +7,12 @@
 #include "mindnet/plugins/slipbox/validators/CollectionValidator.h"
 #include "mindnet/plugins/slipbox/validators/CollectionItemValidator.h"
 #include "mindnet/plugins/slipbox/validators/ContentValidator.h"
-#include "mindnet/plugins/slipbox/validators/LinkValidator.h"
+#include "mindnet/plugins/slipbox/validators/UrlValidator.h"
 #include "mindnet/plugins/slipbox/validators/MapValidator.h"
 #include "mindnet/plugins/slipbox/validators/NoteValidator.h"
 #include "mindnet/plugins/slipbox/validators/PropertyValidator.h"
 #include "mindnet/plugins/slipbox/validators/QuestionValidator.h"
-#include "mindnet/plugins/slipbox/validators/ReferenceValidator.h"
+#include "mindnet/plugins/slipbox/validators/LinkValidator.h"
 #include "mindnet/plugins/slipbox/validators/TagValidator.h"
 #include "mindnet/plugins/slipbox/validators/TagTypeValidator.h"
 #include "mindnet/plugins/slipbox/validators/TermValidator.h"
@@ -46,8 +46,8 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(tag, Tag, TAG)
         REGISTER_MODEL(property, Property, PROPERTY)
 
-        REGISTER_MODEL(reference, Reference, REFERENCE)
         REGISTER_MODEL(link, Link, LINK)
+        REGISTER_MODEL(url, Url, URL)
         REGISTER_MODEL(wanted_note, WantedNote, WANTED_NOTE)
 
         REGISTER_MODEL(question, Question, QUESTION)

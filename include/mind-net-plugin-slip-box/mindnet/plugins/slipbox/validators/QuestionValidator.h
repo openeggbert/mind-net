@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
         ~QuestionValidator() = default; // explicitly make it destructible
         using Model = Question;
 
-        create_method_prototypes_for_ValidatorBase(Question)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // QUESTIONVALIDATOR_H

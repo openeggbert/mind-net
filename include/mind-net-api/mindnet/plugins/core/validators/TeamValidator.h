@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::validators
         ~TeamValidator() = default; // explicitly make it destructible
         using Model = Team;
 
-        create_method_prototypes_for_ValidatorBase(Team)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // TEAMVALIDATOR_H

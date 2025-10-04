@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         ~IdeaValidator() = default; // explicitly make it destructible
         using Model = Idea;
 
-        create_method_prototypes_for_ValidatorBase(Idea)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // IDEAVALIDATOR_H

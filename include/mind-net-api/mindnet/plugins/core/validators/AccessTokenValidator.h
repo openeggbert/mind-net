@@ -22,7 +22,7 @@ namespace mindnet::plugins::core::validators
         ~AccessTokenValidator() = default; // explicitly make it destructible
         using Model = AccessToken;
 
-        create_method_prototypes_for_ValidatorBase(AccessToken)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // ACCESSTOKENVALIDATOR_H

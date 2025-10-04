@@ -22,7 +22,7 @@ namespace mindnet::plugins::mail::validators
         ~MessageValidator() = default; // explicitly make it destructible
         using Model = Message;
 
-        create_method_prototypes_for_ValidatorBase(Message)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // MESSAGEVALIDATOR_H

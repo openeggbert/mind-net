@@ -22,7 +22,7 @@ namespace mindnet::plugins::supermemo::validators
         ~SM2StateValidator() = default; // explicitly make it destructible
         using Model = SM2State;
 
-        create_method_prototypes_for_ValidatorBase(SM2State)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // SM2STATEVALIDATOR_H

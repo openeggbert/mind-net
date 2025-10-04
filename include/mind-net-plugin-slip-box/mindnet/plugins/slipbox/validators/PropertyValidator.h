@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
         ~PropertyValidator() = default; // explicitly make it destructible
         using Model = Property;
 
-        create_method_prototypes_for_ValidatorBase(Property)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 #endif // PROPERTYVALIDATOR_H

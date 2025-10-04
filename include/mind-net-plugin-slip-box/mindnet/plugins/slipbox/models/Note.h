@@ -64,8 +64,8 @@ namespace mindnet::plugins::slipbox::models
         .add_custom_create_action("tag", "Add tag", {"note_id", "{id}"})
         .add_custom_list_action("property", "List properties", {"note_id", "{id}"})
         .add_custom_create_action("property", "Add property", {"note_id", "{id}"})
-        .add_custom_list_action("reference", "List references", {"from_note_id", "{id}"})
-        .add_custom_create_action("reference", "Add reference", {"from_note_id", "{id}"})
+        .add_custom_list_action("url", "List urls", {"from_note_id", "{id}"})
+        .add_custom_create_action("url", "Add url", {"from_note_id", "{id}"})
         .add_custom_list_action("link", "List links", {"from_note_id", "{id}"})
         .add_custom_create_action("link", "Add link", {"from_note_id", "{id}"});
 

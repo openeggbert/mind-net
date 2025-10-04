@@ -23,7 +23,7 @@ namespace mindnet::plugins::core::validators
 
         using Model = User;
 
-        create_method_prototypes_for_ValidatorBase(User)
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }
 
