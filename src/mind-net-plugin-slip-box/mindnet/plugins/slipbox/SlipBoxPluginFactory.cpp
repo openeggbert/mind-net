@@ -36,7 +36,7 @@ namespace mindnet::plugins::slipbox
             "slip_box",
             std::vector<std::string>{
                 "slip_box",
-                "minimal_slip_box"
+                "simple_slip_box"
             }
         );
 

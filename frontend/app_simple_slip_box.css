@@ -300,6 +300,7 @@ button.toggle_button:hover {
 
 .note textarea {
     width: 100%;
+    min-height: 400px;
     height: 160px;
     background: #fff6c2;
     border: 1px solid #555;

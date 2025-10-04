@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Old Slip Box - App</title>
-    <link rel="stylesheet" href="app_minimal_slip_box.css">
+    <title>Slip Box - App (simple)</title>
+    <link rel="stylesheet" href="app_simple_slip_box.css">
     <script type="module" src="app_slip_box.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-<div id="app" data-version="minimal"></div>
+<div id="app" data-version="simple"></div>
 <div class="container">
     <!-- Navigation -->
     <div class="nav">
@@ -61,54 +61,81 @@
         <div>
         </div>
         <div id="note-content" class="collapsible-content">
-        <textarea readonly>
+        <textarea id="current_textarea">
 First paragraph of text…
 ## Related Notes
 [[Copy Constructor vs. Move Constructor]]
         </textarea>
 
         <div class="note-actions">
-            <button class="delete">Delete</button>
-            <button class="cancel">Cancel</button>
-            <button class="save">Save</button>
+            <button class="delete" id="current_button_delete">Delete</button>
+            <button class="cancel" id="current_button_cancel">Cancel</button>
+            <button class="save" id="current_button_save">Save</button>
         </div>
         </div>
     </div>
 
     <!-- Metadata panel -->
-    <div class="panel meta" id="panel_meta">
+    <div class="panel meta" id="meta_panel">
 
         <div class="panel-header">
         <span class="panel_title">
-          <span>Metadata:</span>
+          <span id="meta_label">Metadata:</span>
 
         </span>
             <div>
                 <button class="toggle_button" id="collapsible-toggle-meta"
-                        onclick="toggle_section('meta-content', 'collapsible-toggle-meta')">▼ Collapse
+                        onclick="togglePanel(this, 'meta_content')">▼ Collapse
                 </button>
 
             </div>
         </div>
-        <div id="meta-content" class="collapsible-content">
+        <div id="meta_content" class="collapsible-content">
 
-            <p><b>Order:</b> 3400</p>
-            <p><b>Importance:</b> High
-                <button>Edit</button>
+            <p>
+                <b>Order:</b> <span id="meta_order">3400</span>
+                <button id="current_button_edit_order">Edit</button>
             </p>
-            <p><b>Difficulty:</b> Expert
-                <button>Edit</button>
+
+            <p><b>Importance:</b> <span id="meta_importance">High</span>
+                <button id="current_button_edit_importance">Edit</button>
+            </p>
+            <p><b>Difficulty:</b> <span id="meta_difficulty">Expert</span>
+                <button id="current_button_edit_difficulty">Edit</button>
             </p>
             <div class="meta-buttons">
-                <button>References</button>
-                <button>Links</button>
-                <button>Wanted notes</button>
-                <button>Backlinks</button>
-                <button>Siblings</button>
-                <button>Tags</button>
-                <button onclick="openModal()">Collections</button>
-                <button>Visited</button>
-                <button>History</button>
+
+                <h3>Knowledge</h3>
+
+                <button id="meta_button_links">Links</button>
+                <button id="meta_button_urls">Urls</button>
+                <button id="meta_button_terms">Terms</button>
+                <button id="meta_button_sources">Sources</button>
+                <button id="meta_button_ideas">Ideas</button>
+                <button id="meta_button_questions" onclick="openModal()">Questions</button>
+
+
+                <h3>Relations</h3>
+                <button id="meta_button_backlinks">Backlinks</button>
+                <button id="meta_button_siblings">Siblings</button>
+                <button id="meta_button_wanted_notes">Wanted notes</button>
+                <button id="meta_button_properties">Properties</button>
+                <button id="meta_button_tags">Tags</button>
+                <button id="meta_button_collections" onclick="openModal()">Collections</button>
+
+                <h3>Workflow</h3>
+
+                <button id="meta_button_alert">Alerts</button>
+                <button id="meta_button_flags">Flags</button>
+                <button id="meta_button_projects">Projects</button>
+                <button id="meta_button_tasks">Tasks</button>
+                <button id="meta_button_pinned_notes">Pinned notes</button>
+
+
+                <h3>Navigation</h3>
+                <button id="meta_button_visited">Visited</button>
+                <button id="meta_button_history">History</button>
+
             </div>
         </div>
     </div>
@@ -119,16 +146,16 @@ First paragraph of text…
 
         <div class="panel-header">
         <span class="panel_title">
-          <span id="panel_subnotes__label">Subnotes:</span>
+          <span id="children_label">Subnotes:</span>
 
 
-      <button class="add">Add</button>
+      <button class="add" id="children_button_add">Add</button>
         </span>
 
             <div>
 
                 <button class="toggle_button" id="collapsible-toggle-subnotes"
-                        onclick="toggle_section('subnotes-content', 'collapsible-toggle-subnotes')">▼ Collapse
+                        onclick="togglePanel(this, 'subnotes-content')">▼ Collapse
                 </button>
             </div>
         </div>
@@ -141,8 +168,9 @@ First paragraph of text…
         <div id="subnotes-content" class="collapsible-content">
             <ul id="panel_subnotes__children">
 
-                <li id="child_example">#4689 <a href="#">Child 1</a>
-                    <button>Copy</button>
+                <li id="child_example">#<span class="children_child_id" id="children_child_4689_id">4689</span>
+                    <a href="#" id="children_child_4689_title">Child 1</a>
+                    <button id="children_child_4689_button_copy">Copy</button>
                 </li>
             </ul>
         </div>

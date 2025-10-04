@@ -2,18 +2,21 @@ import {API_BASE, apiFetch} from "./api.js";
 
 export function togglePanel(element, id) {
     const el = document.getElementById(id);
+    if(el === null) alert(id);
     const isCollapsed = el.classList.toggle('collapsed');
 
-    let minimal = document.getElementById("app").dataset.version === "minimal";
-    if(minimal) {
-        element.textContent = isCollapsed ? "▶ Expand" : "▼ Collapse";
-    } else {
-        element.textContent = isCollapsed ? "▶" : "▼";
+    let simple = document.getElementById("app").dataset.version === "simple";
+    if (element !== null) {
+        if (simple) {
+            element.textContent = isCollapsed ? "▶ Expand" : "▼ Collapse";
+        } else {
+            element.textContent = isCollapsed ? "▶" : "▼";
+        }
+
     }
 
 
-
-    if (id === "meta_content") {
+    if (id === "meta_content" && !simple) {
         const metaPanel = document.getElementById("meta_panel");
         const metaLabel = document.getElementById("meta_label");
         if(window.innerWidth > 800)
@@ -33,6 +36,7 @@ export function togglePanel(element, id) {
             }
         }
     }
+
 
 }
 
@@ -126,7 +130,14 @@ async function list_entity(entity, page_number = 1, page_size = 20) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    if(window.innerWidth <= 800) togglePanel(this, 'meta_content')
+    let el = null;
+    let simple = document.getElementById("app").dataset.version === "simple";
+
+    if(simple)
+    {
+        el = document.getElementById("collapsible-toggle-meta");
+    }
+    if(window.innerWidth <= 800) togglePanel(el, 'meta_content')
 
     // const ta = document.querySelector("#current_textarea");
     // ta.addEventListener("input", () => {
