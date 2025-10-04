@@ -61,8 +61,9 @@ function toTitleCase(str) {
                 ul.appendChild(li);
                 let a = document.createElement("a");
                 li.appendChild(a);
-                a.innerText = app;
+                a.innerText = toTitleCase(app);
                 a.href = "app_" + app + ".html";
+                li.style.marginBottom = "10px";
             })
         })();
     }

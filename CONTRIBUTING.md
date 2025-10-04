@@ -35,7 +35,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Use SM-18, new entity review_session
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Super Memo component
-- [ ] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [ ] TASK Check operator== implementations for all models
 - [ ] FEATURE Support for export to static HTML files
 
@@ -184,3 +183,6 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Reorder columns of tables, if needed
 - [x] Add hash sums for sql migrations - new column in table migration
 - [x] BUG Update of boolean values in SQLite is not working.
+- [x] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
+
+

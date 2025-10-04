@@ -95,26 +95,45 @@ namespace mindnet::orm
      * @param count A boolean flag. If true, modifies the query to ignore sorting and pagination, suitable for row count queries. Default is false.
      * @return The constructed SQL query as a string.
      */
-    string SqlUtils::generate_select_all_sql(const std::string& table_name, const orm::QueryParams& query_params,
-                                          bool count)
+    string SqlUtils::generate_select_all_sql(
+        const std::string& table_name,
+        const orm::QueryParams& query_params,
+        model::ModelDefinition& def,
+        bool count)
     {
         auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
         if (!query_params.filters.empty())
         {
             auto filter = query_params.filters;
             sql += " WHERE ";
-            int filter_count = filter.size();
-            int filter_index = 1;
-            for (auto& filter_item : filter)
+            for (auto it = filter.begin(); it != filter.end(); ++it)
             {
-                sql += filter_item.first + " = ?";
-                filter_index++;
-                if (filter_index < filter_count)
+                const auto& column_name = it->first;
+                const auto& value = it->second;
+                bool foreign_key = false;
+                for (auto& col: def.get_columns())
+                {
+                    if (std::string(col.get_column_name()) == column_name)
+                    {
+                        foreign_key = col.is_foreign_key();
+                        break;
+                    }
+                }
+                if (foreign_key && value == "0")
+                {
+                    sql += column_name + " IS NULL ";
+                } else
+                {
+                    sql += column_name + " = ?";
+                }
+
+                if (std::next(it) != filter.end())
                 {
                     sql += " AND ";
                 }
             }
         }
+
         if (!count && query_params.sort.has_value() && !query_params.sort.value().empty())
         {
             sql += " ORDER BY " + query_params.sort.value() + " ";
@@ -128,9 +147,9 @@ namespace mindnet::orm
         return sql;
     }
 
-    string SqlUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params)
+    string SqlUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params, model::ModelDefinition& def)
     {
-        return generate_select_all_sql(table_name, query_params, true);
+        return generate_select_all_sql(table_name, query_params, def, true);
     }
 
 }

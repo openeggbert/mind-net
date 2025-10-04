@@ -80,6 +80,7 @@ First paragraph of text…
                 <button class="toggle" id="collapsible-toggle-meta" onclick="togglePanel(this, 'meta_content')">▼</button>
             </h2>
             <div id="meta_content">
+                <div id="meta_start">
                 <ul>
                     <li>
                         <strong>Order:</strong> <span id="meta_order">3400</span>
@@ -93,6 +94,7 @@ First paragraph of text…
                     </li>
 
                 </ul>
+                    </div>
 
 
                 <div class="meta_section">
@@ -152,13 +154,15 @@ First paragraph of text…
         </h2>
 
         <div id="children_content">
+            <button class="add" id="children_button_add">➕ Add</button>
+            <button id="children_button_refresh" onclick="refresh_page()">🔄 Refresh page</button>
             <ul id="children_ul">
                 <li id="children_li_example"><span class="children_child_id" id="children_child_4689_id">4689</span>
                     <a href="#" id="children_child_4689_title">Child 1</a>
                     <button id="children_child_4689_button_copy">📋 Copy</button>
                 </li>
             </ul>
-            <button class="add" id="children_button_add">➕ Add</button>
+
         </div>
     </section>
 </main>

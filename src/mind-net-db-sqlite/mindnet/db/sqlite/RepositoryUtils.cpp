@@ -36,7 +36,7 @@ namespace mindnet::db::sqlite
 
     using_loggers()
 
-        void sqlite_exec(SQLite::Statement& query)
+    void sqlite_exec(SQLite::Statement& query)
     {
         try
         {
@@ -94,7 +94,9 @@ namespace mindnet::db::sqlite
                 if (update_id)
                 {
                     column_name = model::BaseColumns::ID;
-                } else {
+                }
+                else
+                {
                     auto& column = columns[i + (update ? 2 : 0)];
                     column_name = column.get_column_name();
                     is_foreign_key = column.is_foreign_key();
@@ -103,7 +105,7 @@ namespace mindnet::db::sqlite
 
             if (update && i < (values.size() - 1))
             {
-                auto& column = columns[i+2];
+                auto& column = columns[i + 2];
                 column_name = column.get_column_name();
                 is_foreign_key = column.is_foreign_key();
             }
@@ -124,9 +126,11 @@ namespace mindnet::db::sqlite
                     {
                         trace << "binding index " << i << " " << column_name << " with value: NULL" << commit;
                         query.bind(index, nullptr);
-                    } else {
-                    trace << "binding index " << i << " " << column_name << " with value: " << val << commit;
-                    query.bind(index, val);
+                    }
+                    else
+                    {
+                        trace << "binding index " << i << " " << column_name << " with value: " << val << commit;
+                        query.bind(index, val);
                     }
                 }
                 else
@@ -232,8 +236,8 @@ namespace mindnet::db::sqlite
                         //     result.push_back("*");
                         // } else
                         // {
-                            string text = (*query_ptr).getColumn(i).getString();
-                            result.push_back(text);
+                        string text = (*query_ptr).getColumn(i).getString();
+                        result.push_back(text);
                         // }
                     }
                     break;
@@ -245,8 +249,8 @@ namespace mindnet::db::sqlite
                         // }
                         // else
                         // {
-                            int number = (*query_ptr).getColumn(i);
-                            result.push_back(number);
+                        int number = (*query_ptr).getColumn(i);
+                        result.push_back(number);
                         // }
                     }
                     break;
@@ -294,7 +298,7 @@ namespace mindnet::db::sqlite
 
         entity_fields fields_copy = fields_;
         fields_copy.erase(fields_copy.begin(),
-                     fields_copy.begin() + std::min<size_t>(2, fields_copy.size()));
+                          fields_copy.begin() + std::min<size_t>(2, fields_copy.size()));
 
         fields_copy.push_back(id);
 
@@ -378,6 +382,7 @@ namespace mindnet::db::sqlite
                 auto key = filter.first;
                 auto value = filter.second;
                 mindnet::model::ColumnType column_type{mindnet::model::ColumnType::Text};
+                bool foreign_key = false;
                 bool column_type_found = false;
                 for (auto& column : def.get_columns())
                 {
@@ -385,6 +390,10 @@ namespace mindnet::db::sqlite
                     {
                         column_type = column.get_column_type();
                         column_type_found = true;
+                        if (column.is_foreign_key())
+                        {
+                            foreign_key = true;
+                        }
                         break;
                     }
                 }
@@ -393,16 +402,34 @@ namespace mindnet::db::sqlite
                     err << "Filter column " << key << " not found in model " << def.get_model_name() << std::endl;
                     throw std::runtime_error("Filter column not found: " + key);
                 }
+                if (foreign_key && model::column_type_to_primitive_column_type(column_type)==model::PrimitiveColumnType::Number && stoi(value) == 0)
+                {
+                    continue;
+                }
                 switch (column_type)
                 {
                 case mindnet::model::ColumnType::TextArea:
                 case mindnet::model::ColumnType::Text:
+                    debug << "Binding index " << bind_index << " with value " << value << commit;
                     query.bind(bind_index++, value);
+
                     break;
                 case mindnet::model::ColumnType::Bool:
                 case mindnet::model::ColumnType::DateTime:
                 case mindnet::model::ColumnType::Integer:
-                    query.bind(bind_index++, stoi(value));
+                    {
+                        int number = stoi(value);
+                        // if (foreign_key && number == 0)
+                        // {
+                        //     debug << "Binding index " << bind_index << " with value NULL" << commit;
+                        //     query.bind(bind_index++);
+                        // }
+                        // else
+                        // {
+                            debug << "Binding index " << bind_index << " with value " << value << commit;
+                            query.bind(bind_index++, number);
+                        // }
+                    }
                     break;
                 default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
                 }
@@ -417,8 +444,8 @@ namespace mindnet::db::sqlite
     )
     {
         trace << "list_models()" << commit;
-        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params);
-        std::string sql_count = orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params);
+        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params, def);
+        std::string sql_count = orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params, def);
 
         debug << "Going to execute select all SQL: " << sql << commit;
 

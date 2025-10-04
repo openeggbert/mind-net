@@ -67,11 +67,11 @@ First paragraph of text…
 [[Copy Constructor vs. Move Constructor]]
         </textarea>
 
-        <div class="note-actions">
-            <button class="delete" id="current_button_delete">Delete</button>
-            <button class="cancel" id="current_button_cancel">Cancel</button>
-            <button class="save" id="current_button_save">Save</button>
-        </div>
+            <div class="note-actions">
+                <button class="delete" id="current_button_delete">Delete</button>
+                <button class="cancel" id="current_button_cancel">Cancel</button>
+                <button class="save" id="current_button_save">Save</button>
+            </div>
         </div>
     </div>
 
@@ -92,17 +92,19 @@ First paragraph of text…
         </div>
         <div id="meta_content" class="collapsible-content">
 
-            <p>
-                <b>Order:</b> <span id="meta_order">3400</span>
-                <button id="current_button_edit_order">Edit</button>
-            </p>
+            <div id="meta_start">
+                <p>
+                    <b>Order:</b> <span id="meta_order">3400</span>
+                    <button id="current_button_edit_order">Edit</button>
+                </p>
 
-            <p><b>Importance:</b> <span id="meta_importance">High</span>
-                <button id="current_button_edit_importance">Edit</button>
-            </p>
-            <p><b>Difficulty:</b> <span id="meta_difficulty">Expert</span>
-                <button id="current_button_edit_difficulty">Edit</button>
-            </p>
+                <p><b>Importance:</b> <span id="meta_importance">High</span>
+                    <button id="current_button_edit_importance">Edit</button>
+                </p>
+                <p><b>Difficulty:</b> <span id="meta_difficulty">Expert</span>
+                    <button id="current_button_edit_difficulty">Edit</button>
+                </p>
+            </div>
             <div class="meta-buttons">
 
                 <h3>Knowledge</h3>
@@ -113,7 +115,6 @@ First paragraph of text…
                 <button id="meta_button_sources">Sources</button>
                 <button id="meta_button_ideas">Ideas</button>
                 <button id="meta_button_questions" onclick="showWindow()">Questions</button>
-
 
                 <h3>Relations</h3>
                 <button id="meta_button_backlinks">Backlinks</button>
@@ -150,6 +151,8 @@ First paragraph of text…
 
 
       <button class="add" id="children_button_add">Add</button>
+            <button id="children_button_refresh" onclick="refresh_page()">Refresh page</button>
+
         </span>
 
             <div>

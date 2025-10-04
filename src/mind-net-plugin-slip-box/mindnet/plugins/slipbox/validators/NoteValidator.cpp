@@ -16,9 +16,20 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::NoteValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
+
     OperationResult NoteValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        return_if(ctx.role < mindnet::essential::UserRole::Editor,
+                  403, "User does not have permission to create a note. Role: " + essential::user_role_to_string(ctx.
+                      role))
+
+        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        {
+            return {403, "You do not have permission to create a note for this map."};
+        }
+
         return ok_result;
     }
 
@@ -28,7 +39,7 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult NoteValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+                                                                 const Model& new_entity) const
     {
         return ok_result;
     }
@@ -39,32 +50,20 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult NoteValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                               const string_map& filter) const
     {
         return ok_result;
     }
 
 
-
-
-
-
-
     OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "User does not have permission to create a note." + essential::user_role_to_string(ctx.role))
-
-        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
-        {
-            return ok_result;
-        }
-        return {403, "You do not have permission to create a note for this map."};
+        return ok_result;
     }
 
     OperationResult NoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = slipbox::find_map (ctx, entity.map_id);
+        auto map = slipbox::find_map(ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
         if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
@@ -75,7 +74,7 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult NoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                        const Model& new_entity) const
+                                                             const Model& new_entity) const
     {
         if (!slipbox::has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
             return {403, "You do not have permission to update this note."};
@@ -115,11 +114,12 @@ namespace mindnet::plugins::slipbox::validators
                 Note note;
                 note.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, note.get_id());
-                if (check_result.ko()) return {
-                    400,
-                    std::string("You request list containing note with ID ") + std::to_string(note.get_id()) +
-                    ", but you cannot read this note. Modify your query."
-                };
+                if (check_result.ko())
+                    return {
+                        400,
+                        std::string("You request list containing note with ID ") + std::to_string(note.get_id()) +
+                        ", but you cannot read this note. Modify your query."
+                    };
             }
             params.page_number++;
         }
