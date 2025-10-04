@@ -1,65 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Slip Box - App</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slip Box – App</title>
     <link rel="stylesheet" href="app_slip_box.css">
     <script type="module" src="app_slip_box.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 </head>
-<body>
-<div class="container">
-    <!-- Navigation -->
-    <div class="nav">
-        <button onclick="button_previous()">Previous</button>
-        <button onclick="button_next()">Next</button>
-        <button onclick="button_theme()">Theme</button>
+<body class="presentation">
+<header>
+    <div style="font-size: 1.4em; font-weight: bold;">🧠 Slip Box</div>
+    <button onclick="button_previous()">← Previous</button>
+    <button onclick="button_next()">Next →</button>
+    <button onclick="toggleFocusMode()" class="focus">🧘 Focus Mode</button>
+    <button onclick="button_theme()">🌓 Toggle Theme</button>
+</header>
+
+<main id="main">
+    <div class="breadcrumb">
+        📂 <a href="#">Home</a> › <a href="#">C++</a> › <a href="#">Constructors</a> › <strong>Note #43453</strong>
     </div>
 
-    <!-- Parent note -->
-    <div class="panel parent" id="panel_parent">
-
-
-      <div class="panel-header">
-        <span class="panel_title">
-          <span>Parent:</span>
-#<span id="note_parent_id">4688</span>
-      <span><a href="#" id="note_parent_title" onclick="parent_note_title_link()">Parent note</a></span>
-        <button>Copy</button>
-        </span>
-
-
-        <div>
-          <button>Edit</button>
-        </div>
-
-
-
-      </div>
-    </div>
-
-
-
-    <!-- Note -->
-    <div class="panel note" id="panel_note">
-        <div class="panel-header">
-        <span class="panel_title">
-          <span id="panel_note__label">Note:</span>
-            #<span id="panel_note__note_id">43453</span>
-          <span><a href="#" id="panel_note__note_title" onclick="note_title_link()">Note title</a></span>
-          <button id="button_copy_note_id" onclick="execute_button_copy_note_id()">Copy</button>
-        </span>
-            <div>
-                <button class="toggle_button" id="collapsible-toggle-note-content"
-                        onclick="toggle_section('note-content', 'collapsible-toggle-note-content')">▼ Collapse
-                </button>
-                <button>Show</button>
+    <section class="panel parent">
+        <h2>🧭 Parent Note <button class="toggle" onclick="togglePanel('parent-content')">▼</button></h2>
+        <div id="parent-content">
+            <p><strong>ID:</strong> #4688</p>
+            <p><strong>Title:</strong> <a href="#" onclick="parent_note_title_link()">Parent note</a></p>
+            <div class="actions">
+                <button>📋 Copy</button>
+                <button>✏️ Edit</button>
             </div>
         </div>
-        <div>
-        </div>
-        <div id="note-content" class="collapsible-content">
-        <textarea readonly>
+    </section>
+
+    <div class="layout-row">
+        <section class="panel note-panel">
+            <h2>📝 Note #43453</h2>
+            <p><strong>Title:</strong> <a href="#" onclick="note_title_link()">Note title</a></p>
+            <textarea readonly>
 ---
 key1=value1
 key2=value2
@@ -72,98 +52,124 @@ First paragraph of text…
 ## Related Notes
 [[Copy Constructor vs. Move Constructor]]
         </textarea>
-        </div>
-        <div class="note-actions">
-            <button class="delete">Delete</button>
-            <button class="cancel">Cancel</button>
-            <button class="save">Save</button>
-        </div>
+            <div class="actions">
+                <button class="delete">🗑️ Delete</button>
+                <button class="cancel">↩️ Cancel</button>
+                <button class="save">💾 Save</button>
+            </div>
+
+        </section>
+
+        <section class="panel meta-panel">
+            <h2>📊 Metadata <button class="toggle" onclick="togglePanel('meta-content')">▼</button></h2>
+            <div id="meta-content">
+                <ul>
+                    <li><strong>Order:</strong> 3400</li>
+                    <li><strong>Importance:</strong> <span class="tag high">High</span> <button>✏️ Edit</button></li>
+                    <li><strong>Difficulty:</strong> <span class="tag expert">Expert</span> <button>✏️ Edit</button></li>
+
+                </ul>
+                <div class="meta-buttons">
+                    <button>🔗 References</button>
+                    <button>🔍 Links</button>
+                    <button>📌 Wanted notes</button>
+                    <button>🔁 Backlinks</button>
+                    <button>👥 Siblings</button>
+                    <button>🏷️ Tags</button>
+                    <button onclick="openModal()">📁 Collections</button>
+                    <button>👣 Visited</button>
+                    <button>🕓 History</button>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <!-- Metadata panel -->
-    <div class="panel meta" id="panel_meta">
-
-        <div class="panel-header">
-        <span class="panel_title">
-          <span>Metadata:</span>
-
-        </span>
-            <div>
-                <button class="toggle_button" id="collapsible-toggle-meta"
-                        onclick="toggle_section('meta-content', 'collapsible-toggle-meta')">▼ Collapse
-                </button>
-
-            </div>
-        </div>
-        <div id="meta-content" class="collapsible-content">
-
-            <p><b>Order:</b> 3400</p>
-            <p><b>Importance:</b> High
-                <button>Edit</button>
-            </p>
-            <p><b>Difficulty:</b> Expert
-                <button>Edit</button>
-            </p>
-            <div class="meta-buttons">
-                <button>References</button>
-                <button>Links</button>
-                <button>Wanted notes</button>
-                <button>Backlinks</button>
-                <button>Siblings</button>
-                <button>Tags</button>
-                <button onclick="openModal()">Collections</button>
-                <button>Visited</button>
-                <button>History</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Subnotes -->
-    <div class="panel subnotes" id="panel_subnotes">
-
-
-      <div class="panel-header">
-        <span class="panel_title">
-          <span id="panel_subnotes__label">Subnotes:</span>
-
-
-      <button class="add">Add</button>
-        </span>
-
-        <div>
-
-          <button class="toggle_button" id="collapsible-toggle-subnotes"
-                  onclick="toggle_section('subnotes-content', 'collapsible-toggle-subnotes')">▼ Collapse
-          </button>
-        </div>
-      </div>
-
-
-        <div>
-
-
-
-
-        </div>
-        <div id="subnotes-content" class="collapsible-content">
-            <ul id="panel_subnotes__children">
-
-                <li id="child_example">#4689 <a href="#">Child 1</a>
-                    <button>Copy</button>
-                </li>
+    <section class="panel subnotes">
+        <h2>📚 Subnotes <button class="toggle" onclick="togglePanel('subnotes-content')">▼</button></h2>
+        <div id="subnotes-content">
+            <ul>
+                <li>#4689 <a href="#">Child 1</a> <button>📋 Copy</button></li>
             </ul>
+            <button class="add">➕ Add Subnote</button>
         </div>
-    </div>
-</div>
+    </section>
+</main>
 
-<!-- Modal (Collections window) -->
 <div id="collections-modal" class="modal">
-    <div class="modal-header">
-        <span>Collections</span>
-        <button class="modal-close" onclick="closeModal()">X</button>
-    </div>
+    <header>
+        <div style="font-size: 1.2em; font-weight: bold;">🧠 Slip Box</div>
+        <h3>📁 Collections</h3>
+        <button onclick="closeModal()">✖</button>
+    </header>
     <p>Here could be your collections content...</p>
 </div>
 
+<script>
+    function togglePanel(id) {
+        const el = document.getElementById(id);
+        el.classList.toggle('collapsed');
+    }
+
+    function toggleFocusMode() {
+        document.body.classList.toggle('focus-mode');
+    }
+
+    function closeModal() {
+        document.getElementById('collections-modal').style.display = 'none';
+    }
+
+    function openModal() {
+        document.getElementById('collections-modal').style.display = 'block';
+    }
+
+    function button_previous() {
+        // Navigace k předchozí poznámce
+        console.log("Previous note");
+    }
+
+    function button_next() {
+        // Navigace k další poznámce
+        console.log("Next note");
+    }
+
+    function button_theme() {
+        // Přepínání světlého/tmavého režimu (volitelně)
+        document.body.classList.toggle('dark-theme');
+    }
+
+    function parent_note_title_link() {
+        // Otevření nadřazené poznámky
+        console.log("Parent note clicked");
+    }
+
+    function note_title_link() {
+        // Otevření aktuální poznámky
+        console.log("Note title clicked");
+    }
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+    }
+
+    // Připojení k akcím
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.actions button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const label = btn.textContent.trim();
+                if (label.includes('Copy')) showToast('Copied to clipboard');
+                if (label.includes('Save')) showToast('Note saved');
+                if (label.includes('Delete')) showToast('Note deleted');
+            });
+        });
+
+        document.querySelectorAll('.add').forEach(btn => {
+            btn.addEventListener('click', () => showToast('Subnote added'));
+        });
+    });
+
+</script>
 </body>
 </html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slip Box - App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f1e3;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            grid-gap: 20px;
+        }
+
+        .nav {
+            grid-column: 1 / -1;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #66b3ff;
+            border: none;
+            padding: 8px;
+            margin: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            min-width: 100px;
+        }
+
+        button.save   { background: #0044cc; color: white; }
+        button.delete { background: #cc0000; color: white; }
+        button.cancel { background: #cccccc; color: black; }
+        button.toggle_button { background: #bfa0e3; }
+
+        button:hover {
+            background: #80c6ff;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+        }
+
+        button.save:hover {
+            background: #3366ff;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        button.delete:hover {
+            background: #ff3333;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        button.cancel:hover {
+            background: #e6e6e6;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+        }
+
+        button.toggle_button:hover {
+            background: #d4baf0;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+        }
+
+
+        .panel {
+            background: #f8f8f8;
+            border: 2px solid #aaa;
+            padding: 6px;
+            transition: border-color 0.3s ease;
+        }
+
+        /*.panel:hover {
+          border-color: #83c7e6;
+        }*/
+
+        .panel_title{
+            font-size: 120%;
+            display:block;
+        }
+        .panel_title span:first-child {
+            font-weight: bold;
+        }
+        .panel_title span {
+            margin-right: 6px;
+        }
+
+        .note textarea {
+            width: 100%;
+            height: 160px;
+            background: #fff6c2;
+            border: 1px solid #555;
+            font-family: monospace;
+            font-size: 18px;
+            resize: vertical;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 5px;
+        }
+
+        .note-actions {
+            margin-top: 5px;
+        }
+
+        .meta p {
+            margin: 4px 0;
+        }
+
+        .meta-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .meta-buttons button {
+            min-width: 120px;
+        }
+
+        .subnotes ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .subnotes li {
+            margin: 4px 0;
+        }
+
+        /* Parent nad Note */
+        .parent {
+            grid-column: 1 / -1;
+        }
+
+        .subnotes {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 800px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .meta {
+                grid-column: 1;
+            }
+            body {
+                padding: 0px;
+            }
+        }
+
+        .collapsible-content.collapsed {
+            display: none;
+        }
+
+        /* Desktop window (Collections modal) */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 300px;
+            background: #fff6c2;
+            border: 2px solid #333;
+            transform: translate(-50%, -50%);
+            box-shadow: 4px 4px 12px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            padding: 10px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f6e7a6;
+            padding: 4px;
+            border-bottom: 1px solid #333;
+        }
+        .modal-header span {
+            font-weight: bold;
+        }
+        .modal-close {
+            background: #cc0000;
+            color: white;
+            border: none;
+            padding: 2px 6px;
+            cursor: pointer;
+        }
+    </style>
+    <script type="module" src="app_slip_box.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="nav">
+        <button onclick="button_previous()">Previous</button>
+        <button onclick="button_next()">Next</button>
+        <button onclick="button_theme()">Theme</button>
+    </div>
+
+    <!-- Parent note -->
+    <div class="panel parent" id="panel_parent">
+
+
+      <div class="panel-header">
+        <span class="panel_title">
+          <span>Parent:</span>
+#<span id="note_parent_id">4688</span>
+      <span><a href="#" id="note_parent_title" onclick="parent_note_title_link()">Parent note</a></span>
+        <button>Copy</button>
+        </span>
+
+
+        <div>
+          <button>Edit</button>
+        </div>
+
+
+
+      </div>
+    </div>
+
+
+
+    <!-- Note -->
+    <div class="panel note" id="panel_note">
+        <div class="panel-header">
+        <span class="panel_title">
+          <span id="panel_note__label">Note:</span>
+            #<span id="panel_note__note_id">43453</span>
+          <span><a href="#" id="panel_note__note_title" onclick="note_title_link()">Note title</a></span>
+          <button id="button_copy_note_id" onclick="execute_button_copy_note_id()">Copy</button>
+        </span>
+            <div>
+                <button class="toggle_button" id="collapsible-toggle-note-content"
+                        onclick="toggle_section('note-content', 'collapsible-toggle-note-content')">▼ Collapse
+                </button>
+                <button>Show</button>
+            </div>
+        </div>
+        <div>
+        </div>
+        <div id="note-content" class="collapsible-content">
+        <textarea readonly>
+---
+key1=value1
+key2=value2
+---
+# Title of note
+Tags: #Tag1 #Tag2 #Tag3
+Flags:
+
+First paragraph of text…
+## Related Notes
+[[Copy Constructor vs. Move Constructor]]
+        </textarea>
+        </div>
+        <div class="note-actions">
+            <button class="delete">Delete</button>
+            <button class="cancel">Cancel</button>
+            <button class="save">Save</button>
+        </div>
+    </div>
+
+    <!-- Metadata panel -->
+    <div class="panel meta" id="panel_meta">
+
+        <div class="panel-header">
+        <span class="panel_title">
+          <span>Metadata:</span>
+
+        </span>
+            <div>
+                <button class="toggle_button" id="collapsible-toggle-meta"
+                        onclick="toggle_section('meta-content', 'collapsible-toggle-meta')">▼ Collapse
+                </button>
+
+            </div>
+        </div>
+        <div id="meta-content" class="collapsible-content">
+
+            <p><b>Order:</b> 3400</p>
+            <p><b>Importance:</b> High
+                <button>Edit</button>
+            </p>
+            <p><b>Difficulty:</b> Expert
+                <button>Edit</button>
+            </p>
+            <div class="meta-buttons">
+                <button>References</button>
+                <button>Links</button>
+                <button>Wanted notes</button>
+                <button>Backlinks</button>
+                <button>Siblings</button>
+                <button>Tags</button>
+                <button onclick="openModal()">Collections</button>
+                <button>Visited</button>
+                <button>History</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subnotes -->
+    <div class="panel subnotes" id="panel_subnotes">
+
+
+      <div class="panel-header">
+        <span class="panel_title">
+          <span id="panel_subnotes__label">Subnotes:</span>
+
+
+      <button class="add">Add</button>
+        </span>
+
+        <div>
+
+          <button class="toggle_button" id="collapsible-toggle-subnotes"
+                  onclick="toggle_section('subnotes-content', 'collapsible-toggle-subnotes')">▼ Collapse
+          </button>
+        </div>
+      </div>
+
+
+        <div>
+
+
+
+
+        </div>
+        <div id="subnotes-content" class="collapsible-content">
+            <ul id="panel_subnotes__children">
+
+                <li id="child_example">#4689 <a href="#">Child 1</a>
+                    <button>Copy</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Modal (Collections window) -->
+<div id="collections-modal" class="modal">
+    <div class="modal-header">
+        <span>Collections</span>
+        <button class="modal-close" onclick="closeModal()">X</button>
+    </div>
+    <p>Here could be your collections content...</p>
+</div>
+
+</body>
+</html>

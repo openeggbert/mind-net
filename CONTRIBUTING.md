@@ -31,7 +31,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Slip Box component - keyboard shortcuts, ...
+- [ ] Slip Box component
 - [ ] Use SM-18, new entity review_session
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Super Memo component
@@ -59,6 +59,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Add support for missing column types (JSON, BLOB, etc.)
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
+- [ ] Add keyboard shortcuts for slip box and super memo components
 
 ### Experimental
 - [ ] Chat component - Slack-like
