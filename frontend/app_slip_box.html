@@ -78,8 +78,11 @@ First paragraph of text…
             </div>
         </section>
 
-        <section class="panel meta-panel">
-            <h2>📊 Metadata
+        <section class="panel meta-panel" id="meta-panel">
+            <h2>
+                <span class="label">
+                    <span id="meta_label">📊 Metadata</span>
+            </span>
                 <button class="toggle" onclick="togglePanel(this, 'meta-content')">▼</button>
             </h2>
             <div id="meta-content">
@@ -102,8 +105,10 @@ First paragraph of text…
                     <button id="meta_button_wanted">📌 Wanted notes</button>
                     <button id="meta_button_backlinks">🔁 Backlinks</button>
                     <button id="meta_button_siblings">👥 Siblings</button>
+                    <button id="meta_button_properties">📑 Properties</button>
                     <button id="meta_button_tags">🏷️ Tags</button>
                     <button id="meta_button_collections" onclick="openModal()">📁 Collections</button>
+                    <button id="meta_button_questions" onclick="openModal()">❓ Questions</button>
                     <button id="meta_button_visited">👣 Visited</button>
                     <button id="meta_button_history">🕓 History</button>
                 </div>

@@ -5,30 +5,58 @@ export function togglePanel(element, id) {
     const isCollapsed = el.classList.toggle('collapsed');
 
     element.textContent = isCollapsed ? "▶" : "▼";
+
+    if (id === "meta-content") {
+        const metaPanel = document.getElementById("meta-panel");
+        const metaLabel = document.getElementById("meta_label");
+        window.innerWidth > 800
+        {
+            if (isCollapsed) {
+
+                metaPanel.style.maxWidth = "50px";
+                metaPanel.style.minWidth = "50px";
+                metaPanel.style.overflow = "hidden";
+                metaLabel.style.display = "none";
+
+            } else {
+                metaPanel.style.removeProperty("max-width");
+                metaPanel.style.removeProperty("min-width");
+                metaPanel.style.removeProperty("overflow");
+                metaLabel.style.display = "inline";
+            }
+        }
+    }
+
 }
+
 window.togglePanel = togglePanel;
 
 export function button_focus_onclick() {
     document.body.classList.toggle('focus-mode');
 }
+
 window.button_focus_onclick = button_focus_onclick;
 
 export function closeModal() {
     document.getElementById('collections-modal').style.display = 'none';
 }
+
 window.closeModal = closeModal;
 
 export function openModal() {
     document.getElementById('collections-modal').style.display = 'block';
 }
+
 window.openModal = openModal;
 
 function hide_element(id) {
-    document.getElementById(id).style.display="none";
+    document.getElementById(id).style.display = "none";
 }
+
 function set_value(id, value) {
     document.getElementById(id).innerHTML = value;
 }
+
 const PANEL_NOTE__LABEL = "panel_note__label";
 const PANEL_NOTE__NOTE_ID = "panel_note__note_id";
 const PANEL_NOTE__NOTE_TITLE = "panel_note__note_title";
@@ -74,17 +102,17 @@ function init_state() {
 }
 
 async function list_entity(entity, page_number = 1, page_size = 20) {
-  const url = new URL(`${API_BASE}/${entity}`);
+    const url = new URL(`${API_BASE}/${entity}`);
 
     url.searchParams.set("page_number", page_number);
     url.searchParams.set("page_size", page_size);
 
-  const json = await apiFetch(url.toString());
-  const total_pages = json?.total_pages || 1;
+    const json = await apiFetch(url.toString());
+    const total_pages = json?.total_pages || 1;
 
-  const items = json?.items || [];
+    const items = json?.items || [];
 
-  return items;
+    return items;
 
 
 }
@@ -136,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             //http://localhost:8888/web/index.html?entity=map&action=create#
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
-            button_copy.innerText="Copy";
+            button_copy.innerText = "Copy";
 
         }
     }

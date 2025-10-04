@@ -21,10 +21,10 @@ target_link_libraries(mind_net_app PRIVATE
         mind_net_http
         mind_net_db_sqlite
         mind_net_plugin_slip_box
-        mind_net_plugin_super_memo
-        mind_net_plugin_chat
-        mind_net_plugin_mail
-        mind_net_plugin_suggestion
+#        mind_net_plugin_super_memo
+#        mind_net_plugin_chat
+#        mind_net_plugin_mail
+#        mind_net_plugin_suggestion
         nlohmann_json::nlohmann_json
 )
 
