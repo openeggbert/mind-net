@@ -24,7 +24,7 @@
         📂 <a href="#">Home</a> › <a href="#">C++</a> › <a href="#">Constructors</a> › <strong>Note #43453</strong>
     </div>
 
-    <section class="panel parent">
+    <section class="panel parent" id="parent">
         <h2>
             <span class="label">
                 🧭 <span id="parent_label">Parent Note</span>
@@ -43,7 +43,7 @@
     </section>
 
     <div class="layout_row">
-        <section class="panel current_panel">
+        <section class="panel current_panel" id="current">
             <h2>
                 <span class="label">
                     📝 <span id="current_label">Note</span><span id="current_id">43453</span></span>
@@ -51,7 +51,7 @@
             </h2>
             <div id="current_content">
                 <p>
-                    <strong>Title:</strong> <a href="#" id="current_title">Note title</a>
+                    <strong id="current_title_label">Title:</strong> <a href="#" id="current_title">Note title</a>
                     <button id="current_button_rename">🔤 Rename</button>
                     <button id="current_button_copy">📋 Copy</button>
                 </p>
@@ -72,12 +72,12 @@ First paragraph of text…
             </div>
         </section>
 
-        <section class="panel meta_panel" id="meta_panel">
+        <section class="panel meta" id="meta">
             <h2>
                 <span class="label">
                     <span id="meta_label">📊 Metadata</span>
             </span>
-                <button class="toggle" onclick="togglePanel(this, 'meta_content')">▼</button>
+                <button class="toggle" id="collapsible-toggle-meta" onclick="togglePanel(this, 'meta_content')">▼</button>
             </h2>
             <div id="meta_content">
                 <ul>
@@ -103,7 +103,7 @@ First paragraph of text…
                     <button id="meta_button_terms">📖 Terms</button>
                     <button id="meta_button_sources">📄 Sources</button>
                     <button id="meta_button_ideas">💡 Ideas</button>
-                    <button id="meta_button_questions" onclick="openModal()">❓ Questions</button>
+                    <button id="meta_button_questions" onclick="showWindow()">❓ Questions</button>
 
 
                 </div>
@@ -115,7 +115,7 @@ First paragraph of text…
                     <button id="meta_button_wanted_notes">📌 Wanted notes</button>
                     <button id="meta_button_properties">📑 Properties</button>
                     <button id="meta_button_tags">🏷️ Tags</button>
-                    <button id="meta_button_collections" onclick="openModal()">📁 Collections</button>
+                    <button id="meta_button_collections" onclick="showWindow()">📁 Collections</button>
 
                 </div>
 
@@ -148,12 +148,12 @@ First paragraph of text…
             <span class="label">
                     📚 <span id="children_label">Subnotes</span>
             </span>
-            <button class="toggle" onclick="togglePanel(this, 'children_content')">▼</button>
+            <button class="toggle" id="collapsible-toggle-children" onclick="togglePanel(this, 'children_content')">▼</button>
         </h2>
 
         <div id="children_content">
-            <ul>
-                <li><span class="children_child_id" id="children_child_4689_id">4689</span>
+            <ul id="children_ul">
+                <li id="children_li_example"><span class="children_child_id" id="children_child_4689_id">4689</span>
                     <a href="#" id="children_child_4689_title">Child 1</a>
                     <button id="children_child_4689_button_copy">📋 Copy</button>
                 </li>
@@ -163,13 +163,14 @@ First paragraph of text…
     </section>
 </main>
 
-<div id="collections-modal" class="modal">
-    <header>
-        <div style="font-size: 1.2em; font-weight: bold;">🧠 Slip Box</div>
-        <h3>📁 Collections</h3>
-        <button onclick="closeModal()">✖</button>
+<div id="window_container" class="window_container">
+    <header class="window_container-header">
+
+        <span id="window_container_title">Window title</span>
+        <button onclick="closeWindow()">✖</button>
     </header>
-    <p>Here could be your collections content...</p>
+    <div id="window_container_content"><p>Window content</p></div>
+
 </div>
 
 </body>

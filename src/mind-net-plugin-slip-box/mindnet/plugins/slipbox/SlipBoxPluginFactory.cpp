@@ -66,7 +66,6 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(task, Task, TASK)
         REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
 
-
         plugin->close_for_changes();
         return plugin;
     }

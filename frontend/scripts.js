@@ -1,7 +1,9 @@
 import {loadModelDefinition} from "./api.js";
 import {buildEntitySchemas, buildGlobals} from "./schemas.js";
-import {setEntitySchemas, setEntities, setEntityLabels, setActions,
-    getEntitySchemas, getEntities, getActions} from "./state.js";
+import {
+    setEntitySchemas, setEntities, setEntityLabels, setActions,
+    getEntitySchemas, getEntities, getActions, getSelectedEntity
+} from "./state.js";
 import {initializeFromURL} from "./init.js";
 import {renderLoginForm, renderAuthStatus} from "./auth-ui.js";
 import {getAccessToken, loadApplications} from "./api.js";
@@ -38,33 +40,32 @@ function toTitleCase(str) {
     initializeFromURL();
 
     // 🔑 auth UI
-    if (getAccessToken()) {
-        renderAuthStatus();
-    } else {
-        renderLoginForm();
+    if (!getSelectedEntity()) {
+        if (getAccessToken()) {
+            renderAuthStatus();
+        } else {
+            renderLoginForm();
+        }
+
+        let contentArea = document.getElementById("contentArea");
+        let apps_h3 = document.createElement("h3");
+        apps_h3.innerText = "Available apps"
+        contentArea.appendChild(apps_h3);
+        let ul = document.createElement("ul");
+        contentArea.appendChild(ul);
+
+        await (async () => {
+            const apps = await loadApplications();
+            apps.forEach(app => {
+                let li = document.createElement("li");
+                ul.appendChild(li);
+                let a = document.createElement("a");
+                li.appendChild(a);
+                a.innerText = app;
+                a.href = "app_" + app + ".html";
+            })
+        })();
     }
 
-    let contentArea = document.getElementById("contentArea");
-    let apps_h3 = document.createElement("h3");
-    apps_h3.innerText = "Available apps"
-    contentArea.appendChild(apps_h3);
-    let ul = document.createElement("ul");
-    contentArea.appendChild(ul);
-
-    (async () => {
-        const apps = await loadApplications();
-        console.log("Available apps:", apps); // ["slip_box", ...]
-        apps.forEach(app => {
-            console.log("Available app:", app); // ["slip_box", ...]
-            let li = document.createElement("li");
-            ul.appendChild(li);
-            let a = document.createElement("a");
-            li.appendChild(a);
-            let appName = toTitleCase(app)
-
-            a.innerText = appName;
-            a.href= "app_" + app + ".html";
-        })
-    })();
 
 })();

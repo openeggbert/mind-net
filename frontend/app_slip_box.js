@@ -17,7 +17,7 @@ export function togglePanel(element, id) {
 
 
     if (id === "meta_content" && !simple) {
-        const metaPanel = document.getElementById("meta_panel");
+        const metaPanel = document.getElementById("meta");
         const metaLabel = document.getElementById("meta_label");
         if(window.innerWidth > 800)
         {
@@ -48,36 +48,108 @@ export function button_focus_onclick() {
 
 window.button_focus_onclick = button_focus_onclick;
 
-export function closeModal() {
-    document.getElementById('collections-modal').style.display = 'none';
+export function closeWindow() {
+    document.getElementById('window_container').style.display = 'none';
 }
 
-window.closeModal = closeModal;
+window.closeWindow = closeWindow;
 
-export function openModal() {
-    document.getElementById('collections-modal').style.display = 'block';
+export function showWindow() {
+    document.getElementById('window_container').style.display = 'block';
+}
+window.showWindow = showWindow;
+
+export function clearWindow() {
+    document.getElementById('window_container_content').innerHTML = "";
+}
+window.clearWindow = clearWindow;
+
+export function setWindowTitle(windowTitle) {
+    document.getElementById('window_container_title').innerText = windowTitle;
 }
 
-window.openModal = openModal;
+export function getWindowContent() {
+    return document.getElementById('window_container_content');
+}
+export function setWindowContent(text) {
+    getWindowContent().innerText = text;
+}
+export function setWindowContentByUrl(url) {
+    clearWindow();
+    let iframe = document.createElement("iframe");
+    iframe.src = url;
+    iframe.style.display = "block";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+
+    getWindowContent().appendChild(iframe);
+    getWindowContent().style.height = "100%";
+}
+
+function makeDraggable(el) {
+    const header = el.querySelector('.window_container-header');
+    let offsetX = 0, offsetY = 0, dragging = false;
+
+    function startDrag(x, y) {
+        dragging = true;
+        offsetX = x - el.offsetLeft;
+        offsetY = y - el.offsetTop;
+        el.style.transform = "";
+        el.style.position = "absolute";
+    }
+
+    function doDrag(x, y) {
+        if (!dragging) return;
+        el.style.left = (x - offsetX) + "px";
+        el.style.top = (y - offsetY) + "px";
+    }
+
+    function stopDrag() {
+        dragging = false;
+    }
+
+    // mouse
+    header.addEventListener('mousedown', e => {
+        startDrag(e.clientX, e.clientY);
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', e => doDrag(e.clientX, e.clientY));
+    document.addEventListener('mouseup', stopDrag);
+
+    // touch
+    header.addEventListener('touchstart', e => {
+        const t = e.touches[0];
+        startDrag(t.clientX, t.clientY);
+        e.preventDefault();
+    }, {passive: false});
+    document.addEventListener('touchmove', e => {
+        const t = e.touches[0];
+        doDrag(t.clientX, t.clientY);
+    }, {passive: false});
+    document.addEventListener('touchend', stopDrag);
+}
+
+
 
 function hide_element(id) {
-    document.getElementById(id).style.display = "none";
+    let el = document.getElementById(id);
+    if(el === null) return;
+    el.style.display = "none";
 }
 
 function set_value(id, value) {
     document.getElementById(id).innerHTML = value;
 }
 
-const PANEL_NOTE__LABEL = "panel_note__label";
-const PANEL_NOTE__NOTE_ID = "panel_note__note_id";
-const PANEL_NOTE__NOTE_TITLE = "panel_note__note_title";
-const PANEL_SUBNOTES__LABEL = "panel_subnotes__label";
-
+function copy_to_clipboard(text) {
+    navigator.clipboard.writeText(text);
+    showToast("Copied to clipboard: " + text);
+}
 let map_id = "";
 let note_id = "";
-let mode_list_maps = false;
-let mode_list_root_notes = false;
-let mode_list_notes = false;
+let mode_maps = false;
+let mode_root = false;
+let mode_notes = false;
 
 export function showToast(message) {
     const toast = document.createElement('div');
@@ -95,19 +167,19 @@ export function showToast(message) {
 
 window.showToast = showToast;
 
-function init_state() {
+function init_from_http_parameters() {
     const params = new URLSearchParams(window.location.search);
     let has_map_id = params.has("map_id");
     let has_note_id = params.has("note_id");
     if (has_map_id) {
         map_id = params.get("map_id");
-        mode_list_root_notes = true;
+        mode_root = true;
     } else {
         if (has_note_id) {
             note_id = params.get("note_id");
-            mode_list_notes = true;
+            mode_notes = true;
         } else {
-            mode_list_maps = true;
+            mode_maps = true;
         }
     }
 }
@@ -124,27 +196,19 @@ async function list_entity(entity, page_number = 1, page_size = 20) {
     const items = json?.items || [];
 
     return items;
-
-
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+
+    let disable_rest = false;
+    //disable_rest = true;
 
     let el = null;
     let simple = document.getElementById("app").dataset.version === "simple";
 
-    if(simple)
-    {
-        el = document.getElementById("collapsible-toggle-meta");
-    }
-    if(window.innerWidth <= 800) togglePanel(el, 'meta_content')
+    el = document.getElementById("collapsible-toggle-meta");
 
-    // const ta = document.querySelector("#current_textarea");
-    // ta.addEventListener("input", () => {
-    //     ta.style.height = "auto";
-    //     ta.style.height = ta.scrollHeight + "px";
-    // });
-
+    if (window.innerWidth <= 800) togglePanel(el, 'meta_content')
 
     document.querySelectorAll('.actions button').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -157,24 +221,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     document.querySelectorAll('.add').forEach(btn => {
-        btn.addEventListener('click', () => showToast('Subnote added'));
+        btn.addEventListener('click', () => showToast('New child added'));
     });
-});
 
-document.addEventListener("DOMContentLoaded", async function () {
-    //init_state();
-    if (mode_list_maps && false) {
-        document.getElementById("panel_parent").style.display = "none";
-        document.getElementById("button_copy_note_id").style.display = "none";
+    const win = document.getElementById('window_container');
+    makeDraggable(win);
 
-        hide_element(PANEL_NOTE__NOTE_ID);
-        hide_element(PANEL_NOTE__NOTE_TITLE);
-        set_value(PANEL_NOTE__LABEL, "All maps");
-        set_value(PANEL_SUBNOTES__LABEL, "Maps:")
+    init_from_http_parameters();
 
-        //document.getElementById("child_example").remove();
+    if(disable_rest) {return;}
+    if (!mode_maps) {
+        throw "!mode_maps is not yet supported";
+    }
+    if (mode_maps) {
+        hide_element("button_previous");
+        hide_element("button_next");
+        hide_element("button_focus");
+        hide_element("parent");
+        hide_element("current");
+        hide_element("meta");
+        set_value("children_label", "All maps");
+        hide_element("collapsible-toggle-children");
 
-        let children = document.getElementById("panel_subnotes__children");
+        document.getElementById("children_button_add").onclick =
+            function () {
+                setWindowTitle("Maps");
+                setWindowContentByUrl("index.html?entity=map&action=create");
+                showWindow();
+            };
+        let children = document.getElementById("children_ul");
 
         let maps = await list_entity("map");
         for (const map of maps) {
@@ -185,15 +260,27 @@ document.addEventListener("DOMContentLoaded", async function () {
             let a = document.createElement("a")
             li.appendChild(a);
             a.innerText = map.name;
-            a.href = "index.html?entity=map&action=read&id=" + map.id;
-            a.target = "_blank";
+            a.href = "?map_id=" + map.id;
+            a.style.display="inline-block";
+            a.style.minWidth = "50px";
 
 
             //http://localhost:8888/web/index.html?entity=map&action=create#
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
             button_copy.innerText = "Copy";
+            button_copy.onclick =
+                function () {
+                    copy_to_clipboard(map.id);
+                };
+
 
         }
     }
+
+        document.getElementById("children_li_example").remove();
+
+
+
+
 });
