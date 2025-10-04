@@ -116,3 +116,6 @@ export function showInfo(msg) {
 export function showSuccess(msg) {
     showToast(msg, 5000, "success");
 }
+export function showWarn(msg) {
+    showToast(msg, 10000, "warn");
+}

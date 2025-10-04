@@ -1,8 +1,9 @@
 import {API_BASE, apiFetch} from "./api.js";
+import {showError, showInfo} from "./dom.js";
 
 export function togglePanel(element, id) {
     const el = document.getElementById(id);
-    if(el === null) alert(id);
+    if (el === null) alert(id);
     const isCollapsed = el.classList.toggle('collapsed');
 
     let simple = document.getElementById("app").dataset.version === "simple";
@@ -19,8 +20,7 @@ export function togglePanel(element, id) {
     if (id === "meta_content" && !simple) {
         const metaPanel = document.getElementById("meta");
         const metaLabel = document.getElementById("meta_label");
-        if(window.innerWidth > 800)
-        {
+        if (window.innerWidth > 800) {
             if (isCollapsed) {
 
                 metaPanel.style.maxWidth = "50px";
@@ -49,19 +49,37 @@ export function button_focus_onclick() {
 window.button_focus_onclick = button_focus_onclick;
 
 export function closeWindow() {
-    document.getElementById('window_container').style.display = 'none';
+    const win = document.getElementById('window_container');
+    win.style.display = 'none';
+
+    win.style.left = '';
+    win.style.top = '';
+    win.style.transform = 'translate(-50%, -50%)';
+    win.style.position = 'fixed';
 }
 
 window.closeWindow = closeWindow;
 
+
+
 export function showWindow() {
-    document.getElementById('window_container').style.display = 'block';
+    const win = document.getElementById('window_container');
+    win.style.display = 'block';
+
+    win.style.left = '50%';
+    win.style.top = '50%';
+    win.style.transform = 'translate(-50%, -50%)';
+    win.style.position = 'fixed';
 }
+
+
+
 window.showWindow = showWindow;
 
 export function clearWindow() {
     document.getElementById('window_container_content').innerHTML = "";
 }
+
 window.clearWindow = clearWindow;
 
 export function setWindowTitle(windowTitle) {
@@ -71,13 +89,16 @@ export function setWindowTitle(windowTitle) {
 export function getWindowContent() {
     return document.getElementById('window_container_content');
 }
+
 export function setWindowContent(text) {
     getWindowContent().innerText = text;
 }
+
 export function setWindowContentByUrl(url) {
     clearWindow();
     let iframe = document.createElement("iframe");
     iframe.src = url;
+    iframe.scroling = "no"
     iframe.style.display = "block";
     iframe.style.width = "100%";
     iframe.style.height = "100%";
@@ -86,22 +107,34 @@ export function setWindowContentByUrl(url) {
     getWindowContent().style.height = "100%";
 }
 
+export function showWindowFrom(title, url) {
+    setWindowTitle(title)
+    if (url === undefined) {
+        alert("url is required");
+        return;
+    }
+    setWindowContentByUrl(url)
+    showWindow();
+}
+
+
 function makeDraggable(el) {
     const header = el.querySelector('.window_container-header');
     let offsetX = 0, offsetY = 0, dragging = false;
 
     function startDrag(x, y) {
+        const rect = el.getBoundingClientRect(); // skutečná pozice na obrazovce
         dragging = true;
-        offsetX = x - el.offsetLeft;
-        offsetY = y - el.offsetTop;
-        el.style.transform = "";
-        el.style.position = "absolute";
+        offsetX = x - rect.left;
+        offsetY = y - rect.top;
+        el.style.transform = "none"; // vypneme jen pro jistotu
+        el.style.position = "fixed"; // fixní k viewportu
     }
 
     function doDrag(x, y) {
         if (!dragging) return;
         el.style.left = (x - offsetX) + "px";
-        el.style.top = (y - offsetY) + "px";
+        el.style.top  = (y - offsetY) + "px";
     }
 
     function stopDrag() {
@@ -130,11 +163,14 @@ function makeDraggable(el) {
 }
 
 
-
 function hide_element(id) {
     let el = document.getElementById(id);
-    if(el === null) return;
+    if (el === null) return;
     el.style.display = "none";
+}
+
+function get_element(id) {
+    return document.getElementById(id);
 }
 
 function set_value(id, value) {
@@ -143,8 +179,9 @@ function set_value(id, value) {
 
 function copy_to_clipboard(text) {
     navigator.clipboard.writeText(text);
-    showToast("Copied to clipboard: " + text);
+    showInfo("Copied to clipboard: " + text);
 }
+
 let map_id = "";
 let note_id = "";
 let mode_maps = false;
@@ -184,7 +221,7 @@ function init_from_http_parameters() {
     }
 }
 
-async function list_entity(entity, page_number = 1, page_size = 20) {
+async function list_entities(entity, page_number = 1, page_size = 20) {
     const url = new URL(`${API_BASE}/${entity}`);
 
     url.searchParams.set("page_number", page_number);
@@ -196,6 +233,11 @@ async function list_entity(entity, page_number = 1, page_size = 20) {
     const items = json?.items || [];
 
     return items;
+}
+async function list_entity(entity, id) {
+    const url = new URL(`${API_BASE}/${entity}/${id}`);
+
+    return await apiFetch(url.toString());
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -229,10 +271,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     init_from_http_parameters();
 
-    if(disable_rest) {return;}
-    if (!mode_maps) {
-        throw "!mode_maps is not yet supported";
+    if (disable_rest) {
+        return;
     }
+
     if (mode_maps) {
         hide_element("button_previous");
         hide_element("button_next");
@@ -243,15 +285,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         set_value("children_label", "All maps");
         hide_element("collapsible-toggle-children");
 
-        document.getElementById("children_button_add").onclick =
-            function () {
-                setWindowTitle("Maps");
-                setWindowContentByUrl("index.html?entity=map&action=create");
-                showWindow();
-            };
+        document.getElementById("children_button_add").onclick = function () {
+            setWindowTitle("Maps");
+            setWindowContentByUrl("index.html?entity=map&action=create");
+            showWindow();
+        };
         let children = document.getElementById("children_ul");
 
-        let maps = await list_entity("map");
+        let maps = await list_entities("map");
         for (const map of maps) {
 
             const li = document.createElement("li");
@@ -261,26 +302,94 @@ document.addEventListener('DOMContentLoaded', async () => {
             li.appendChild(a);
             a.innerText = map.name;
             a.href = "?map_id=" + map.id;
-            a.style.display="inline-block";
+            a.style.display = "inline-block";
             a.style.minWidth = "50px";
-
 
             //http://localhost:8888/web/index.html?entity=map&action=create#
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
             button_copy.innerText = "Copy";
-            button_copy.onclick =
-                function () {
-                    copy_to_clipboard(map.id);
-                };
+            button_copy.onclick = function () {
+                copy_to_clipboard(map.id);
+            };
 
 
         }
     }
 
-        document.getElementById("children_li_example").remove();
+    if (mode_root) {
+        set_value("parent_label", "All maps")
+        hide_element("parent_id_label")
+        hide_element("parent_id")
+        let parent_title = document.getElementById("parent_title");
+        parent_title.innerText = "All maps";
+        parent_title.href = "?";
+        get_element("parent_button_copy").onclick = function () {
+            copy_to_clipboard(parent_title.href);
+        }
+        get_element("parent_button_edit").onclick = function () {
+            showWindowFrom("List of maps", "index.html?entity=map&action=list")
+        }
+        set_value("current_label", "Map")
+        set_value("current_id", map_id)
+
+        get_element("current_title").onclick = function (){
+            showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
+        }
+
+        let map = await list_entity("map", map_id);
+        set_value("current_title", map.name);
+
+        let current_title = document.getElementById("current_title");
+        current_title.style.display = "inline-block";
+        current_title.style.minWidth = "50px";
+
+        get_element("current_button_rename").onclick = function () {
+            showError("Not yet implemented");
+        }
+
+        get_element("current_button_copy").onclick = function () {
+            copy_to_clipboard(map_id)
+        }
+
+        if (false) {
+            set_value("children_label", "All maps");
+            hide_element("collapsible-toggle-children");
+
+            document.getElementById("children_button_add").onclick = function () {
+                setWindowTitle("Maps");
+                setWindowContentByUrl("index.html?entity=map&action=create");
+                showWindow();
+            };
+            let children = document.getElementById("children_ul");
+
+            let maps = await list_entities("map");
+            for (const map of maps) {
+
+                const li = document.createElement("li");
+                children.appendChild(li);
+                li.innerText = "#" + map.id + " ";
+                let a = document.createElement("a")
+                li.appendChild(a);
+                a.innerText = map.name;
+                a.href = "?map_id=" + map.id;
+                a.style.display = "inline-block";
+                a.style.minWidth = "50px";
 
 
+                //http://localhost:8888/web/index.html?entity=map&action=create#
+                const button_copy = document.createElement("button");
+                li.appendChild(button_copy);
+                button_copy.innerText = "Copy";
+                button_copy.onclick = function () {
+                    copy_to_clipboard(map.id);
+                };
+
+            }
+        }
+    }
+
+    document.getElementById("children_li_example").remove();
 
 
 });
