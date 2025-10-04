@@ -86,7 +86,7 @@ main {
     max-width: 1000px;
     margin: auto;
     padding: 60px 30px;
-    gap: 40px;
+    gap: 20px;
 }
 
 .panel {
@@ -326,12 +326,10 @@ li {
     .note-panel,
     .meta-panel {
         flex: unset;
-
     }
 
     main {
         padding: 10px 0px;
-        gap: 20px;
     }
 
     .panel {

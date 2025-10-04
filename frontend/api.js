@@ -7,7 +7,10 @@ import {getEntitySchemas} from "./state.js";
 export const API_BASE = `${HOST}:${PORT}/api/v1`;
 export const MODEL_DEFINITION_URL = `${API_BASE}/model_definition`;
 export const CACHE_KEY = "model_definition_cache";
-export const CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours
+export const CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours
+export const APPLICATIONS_URL = `${API_BASE}/app`;
+export const APPS_CACHE_KEY = "applications_cache";
+export const APPS_CACHE_TTL_MS = CACHE_TTL_MS
 
 export async function loadModelDefinition() {
     const now = Date.now();
@@ -27,6 +30,33 @@ export async function loadModelDefinition() {
     const data = await resp.json();
 
     localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: now, data }));
+    return data;
+}
+
+export async function loadApplications() {
+    const now = Date.now();
+    const cached = localStorage.getItem(APPS_CACHE_KEY);
+
+    if (cached) {
+        try {
+            const { timestamp, data } = JSON.parse(cached);
+            if (now - timestamp < APPS_CACHE_TTL_MS) {
+                console.log("Using cached applications");
+                return data;
+            }
+        } catch (e) {
+            // if JSON parse fails, delete cache
+            localStorage.removeItem(APPS_CACHE_KEY);
+        }
+    }
+
+    console.log("Downloading applications from API...");
+    const resp = await fetch(APPLICATIONS_URL);
+    if (!resp.ok) throw new Error("Error loading applications");
+    const json = await resp.json();
+
+    const data = json.items || [];
+    localStorage.setItem(APPS_CACHE_KEY, JSON.stringify({ timestamp: now, data }));
     return data;
 }
 
