@@ -375,64 +375,64 @@ namespace mindnet::db::sqlite
         SQLite::Statement& query,
         int& bind_index)
     {
-        if (!query_params.filters.empty())
-        {
-            for (auto& filter : query_params.filters)
-            {
-                auto key = filter.first;
-                auto value = filter.second;
-                mindnet::model::ColumnType column_type{mindnet::model::ColumnType::Text};
-                bool foreign_key = false;
-                bool column_type_found = false;
-                for (auto& column : def.get_columns())
-                {
-                    if (column.get_column_name() == key)
-                    {
-                        column_type = column.get_column_type();
-                        column_type_found = true;
-                        if (column.is_foreign_key())
-                        {
-                            foreign_key = true;
-                        }
-                        break;
-                    }
-                }
-                if (!column_type_found)
-                {
-                    err << "Filter column " << key << " not found in model " << def.get_model_name() << std::endl;
-                    throw std::runtime_error("Filter column not found: " + key);
-                }
-                if (foreign_key && model::column_type_to_primitive_column_type(column_type)==model::PrimitiveColumnType::Number && value != "" && stoi(value) == 0)
-                {
-                    continue;
-                }
-                switch (column_type)
-                {
-                case mindnet::model::ColumnType::TextArea:
-                case mindnet::model::ColumnType::Text:
-                    debug << "Binding index " << bind_index << " with value " << value << commit;
-                    query.bind(bind_index++, value);
+        if (query_params.filters.empty()) return;
 
-                    break;
-                case mindnet::model::ColumnType::Bool:
-                case mindnet::model::ColumnType::DateTime:
-                case mindnet::model::ColumnType::Integer:
+        for (auto& filter : query_params.filters)
+        {
+            auto key = filter.first;
+            auto value = filter.second;
+            mindnet::model::ColumnType column_type{mindnet::model::ColumnType::Text};
+            bool foreign_key = false;
+            bool column_type_found = false;
+            for (auto& column : def.get_columns())
+            {
+                if (column.get_column_name() == key)
+                {
+                    column_type = column.get_column_type();
+                    column_type_found = true;
+                    if (column.is_foreign_key())
                     {
-                        int number = stoi(value);
-                        // if (foreign_key && number == 0)
-                        // {
-                        //     debug << "Binding index " << bind_index << " with value NULL" << commit;
-                        //     query.bind(bind_index++);
-                        // }
-                        // else
-                        // {
-                            debug << "Binding index " << bind_index << " with value " << value << commit;
-                            query.bind(bind_index++, number);
-                        // }
+                        foreign_key = true;
                     }
                     break;
-                default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
                 }
+            }
+            if (!column_type_found)
+            {
+                err << "Filter column " << key << " not found in model " << def.get_model_name() << std::endl;
+                throw std::runtime_error("Filter column not found: " + key);
+            }
+            if (foreign_key && model::column_type_to_primitive_column_type(column_type) ==
+                model::PrimitiveColumnType::Number && value != "" && stoi(value) == 0)
+            {
+                continue;
+            }
+            switch (column_type)
+            {
+            case mindnet::model::ColumnType::TextArea:
+            case mindnet::model::ColumnType::Text:
+                debug << "Binding index " << bind_index << " with value " << value << commit;
+                query.bind(bind_index++, value);
+
+                break;
+            case mindnet::model::ColumnType::Bool:
+            case mindnet::model::ColumnType::DateTime:
+            case mindnet::model::ColumnType::Integer:
+                {
+                    int number = stoi(value);
+                    // if (foreign_key && number == 0)
+                    // {
+                    //     debug << "Binding index " << bind_index << " with value NULL" << commit;
+                    //     query.bind(bind_index++);
+                    // }
+                    // else
+                    // {
+                    debug << "Binding index " << bind_index << " with value " << value << commit;
+                    query.bind(bind_index++, number);
+                    // }
+                }
+                break;
+            default: throw std::runtime_error("Unknown type " + column_type_to_string(column_type));
             }
         }
     }
@@ -530,29 +530,35 @@ namespace mindnet::db::sqlite
         }
 
         SQLite::Statement* query_count_ptr = nullptr;
-        try {
+        try
+        {
             query_count_ptr = new SQLite::Statement(db, sql_count);
             bind_index = 1;
             bind_query_filters(def, query_params, *query_count_ptr, bind_index);
 
-            while (query_count_ptr->executeStep()) {
+            while (query_count_ptr->executeStep())
+            {
                 query_params.total_items = static_cast<int>(query_count_ptr->getColumn(0));
                 break;
             }
-        } catch (SQLite::Exception& e) {
+        }
+        catch (SQLite::Exception& e)
+        {
             error = e.what();
             delete query_ptr;
             delete query_count_ptr;
             return results;
         }
 
-        if (query_count_ptr) {
+        if (query_count_ptr)
+        {
             query_count_ptr->reset();
             delete query_count_ptr;
             query_count_ptr = nullptr;
         }
 
-        if (query_ptr) {
+        if (query_ptr)
+        {
             query_ptr->reset();
             delete query_ptr;
             query_ptr = nullptr;
