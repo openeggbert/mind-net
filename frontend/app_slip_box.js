@@ -1,11 +1,62 @@
 import {API_BASE, apiFetch} from "./api.js";
 import {showError, showInfo} from "./dom.js";
 
+
+function set_flag(key, value) {
+    if(value) {
+        localStorage.setItem(key, "true")
+    } else {
+        localStorage.removeItem(key)
+    }
+}
+
+function get_flag(key) {
+    return localStorage.getItem(key) !== null
+}
+
+function set_parent_panel_collapsed(value) {
+    set_flag("slip_box.parent_panel_collapsed", value)
+}
+
+function get_parent_panel_collapsed() {
+    return get_flag("slip_box.parent_panel_collapsed")
+}
+function set_current_panel_collapsed(value) {
+    set_flag("slip_box.current_panel_collapsed", value)
+}
+
+function get_current_panel_collapsed() {
+    return get_flag("slip_box.current_panel_collapsed")
+}
+
+function set_meta_panel_collapsed(value) {
+    set_flag("slip_box.meta_panel_collapsed", value)
+}
+
+function get_meta_panel_collapsed() {
+    return get_flag("slip_box.meta_panel_collapsed")
+}
+
+function set_children_panel_collapsed(value) {
+    set_flag("slip_box.children_panel_collapsed", value)
+}
+
+function get_children_panel_collapsed() {
+    return get_flag("slip_box.children_panel_collapsed")
+}
+
 export function togglePanel(element, id) {
     const el = document.getElementById(id);
-    if (el === null) alert(id);
+    //if (el === null) alert(id);
     const isCollapsed = el.classList.toggle('collapsed');
-
+    // alert("element.id=" + element.id + " id=" + id + " isCollapsed=" + isCollapsed)
+    switch (id) {
+        case "children_content" : set_children_panel_collapsed(isCollapsed);break;
+        case "parent_content" : set_parent_panel_collapsed(isCollapsed);break;
+        case "current_content" : set_current_panel_collapsed(isCollapsed);break;
+        case "meta_content" : set_meta_panel_collapsed(isCollapsed);break;
+        default: console.warn("togglePanel() does not know id: " + id);
+    }
     let simple = document.getElementById("app").dataset.version === "simple";
     if (element !== null) {
         if (simple) {
@@ -322,12 +373,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     let disable_rest = false;
     //disable_rest = true;
 
-    let el = null;
     let simple = document.getElementById("app").dataset.version === "simple";
 
-    el = document.getElementById("collapsible-toggle-meta");
+    let toggle_parent = document.getElementById("collapsible-toggle-parent");
+    let toggle_current = document.getElementById("collapsible-toggle-current");
+    let toggle_meta = document.getElementById("collapsible-toggle-meta");
+    let toggle_children = document.getElementById("collapsible-toggle-children");
 
-    if (window.innerWidth <= 800) togglePanel(el, 'meta_content')
+    let meta_collapsed = false;
+    if (window.innerWidth <= 800) {
+        meta_collapsed = true;
+        togglePanel(toggle_meta, 'meta_content');
+    }
+
+    if(get_parent_panel_collapsed()) togglePanel(toggle_parent, 'parent_content')
+    if(get_current_panel_collapsed() && !meta_collapsed) togglePanel(toggle_current, 'current_content')
+    if(get_meta_panel_collapsed()) togglePanel(toggle_meta, 'meta_content')
+    if(get_children_panel_collapsed()) togglePanel(toggle_children, 'children_content')
+
+
 
     // document.querySelectorAll('.actions button').forEach(btn => {
     //     btn.addEventListener('click', () => {
@@ -524,12 +588,171 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     }
 
-    if(mode_notes) {
-        alert("mode_notes is not yet supported")
-        throw "mode_notes is not yet supported"
+    if (mode_notes) {
+
+
+        note = await read_entity("note", note_id);
+        let parent_note = note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id);
+        let has_parent = note.parent_note_id !== 0;
+
+        set_value("parent_label", has_parent? "Parent Note" : "Parent Map")
+        map = await read_entity("map", note.map_id);
+
+        set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
+
+        let parent_title = document.getElementById("parent_title");
+        parent_title.innerText = has_parent ? parent_note.title : map.name;
+        parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
+
+        get_element("parent_button_copy").onclick = function () {
+            copy_to_clipboard(has_parent ? note.parent_note_id : note.map_id);
+        }
+        get_element("parent_button_edit").onclick = async function () {
+            if (!has_parent && false) {
+                let confirmed = confirm("Are you sure you want to set a parent for this note? Now it has now parent.");
+                if (!confirmed) {
+                    return;
+                }
+            }
+            let new_parent_note_id = prompt("Enter new parent note ID");
+
+            if (new_parent_note_id !== undefined) {
+                note.parent_note_id = new_parent_note_id;
+
+                parent_note = note.parent_note_id === "0" ? null : await read_entity("note", note.parent_note_id);
+                has_parent = note.parent_note_id !== "0";
+
+                set_value("parent_label", has_parent ? "Parent Note" : "Parent Map")
+                set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
+
+                let parent_title = document.getElementById("parent_title");
+
+                let map_ = await read_entity("map", note.map_id);
+                parent_title.innerText = has_parent ? parent_note.title : map_.name;
+                parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
+
+            }
+        }
+        set_value("current_label", "Map")
+        set_value("current_id", map_id)
+
+        get_element("current_title").onclick = function () {
+            showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
+        }
+
+        map = await read_entity("map", map_id);
+        set_value("current_title", map.name);
+
+        let current_title = document.getElementById("current_title");
+        current_title.style.display = "inline-block";
+        current_title.style.minWidth = "50px";
+
+        get_element("current_button_rename").onclick = function () {
+            showError("Not yet implemented");
+        }
+
+        get_element("current_button_copy").onclick = function () {
+            copy_to_clipboard(map_id)
+        }
+
+        set_value("current_textarea", map.description);
+
+        get_element("current_button_delete").onclick = function () {
+            showError("Not yet implemented");
+        }
+        get_element("current_button_cancel").onclick = function () {
+            refresh_page()
+        }
+        //{"team_id":0,"owner_id":1,"category":"","other_rights":7,"team_rights":7,"description":"aaaa","name":"aa","created_at":1759583934,"owner_rights":7,"updated_at":1759601801,"id":1}
+
+        get_element("current_button_save").onclick = function () {
+            map.description = get_element("current_textarea").value;
+            put_entity("map", map_id, map)
+        }
+        hide_element("meta_start")
+
+        function assign_meta_list_function(models, Models, model) {
+            get_element("meta_button_" + models).onclick = function () {
+                showWindowFrom(Models, "index.html?entity=" + model + "&action=list");
+            }
+        }
+
+        assign_meta_list_function("links", "Links", "link")
+        assign_meta_list_function("urls", "Urls", "url")
+        assign_meta_list_function("terms", "Terms", "term")
+        assign_meta_list_function("sources", "Sources", "source")
+        assign_meta_list_function("ideas", "Ideas", "idea")
+        assign_meta_list_function("questions", "Questions", "question")
+
+        // assign_meta_list_function("backlinks", "Backlinks", "backlink")
+        // assign_meta_list_function("siblings", "Siblings", "sibling")
+        hide_element("meta_button_backlinks")
+        hide_element("meta_button_siblings")
+        assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
+        assign_meta_list_function("properties", "Properties", "property")
+        assign_meta_list_function("tags", "Tags", "tag")
+        assign_meta_list_function("collections", "Collections", "collection")
+//
+        assign_meta_list_function("alert", "Alerts", "alert")
+        assign_meta_list_function("flags", "Flags", "flag")
+        assign_meta_list_function("projects", "Projects", "project")
+        assign_meta_list_function("tasks", "Tasks", "task")
+        assign_meta_list_function("pinned_notes", "Pinned notes", "pinned_note")
+        //
+        assign_meta_list_function("visited", "Visited", "visited")
+        assign_meta_list_function("history", "History", "history")
+
+        set_value("children_label", "Root notes")
+
+        document.getElementById("children_button_add").onclick = async function () {
+            let title = prompt("Title of new note");
+
+            if (title !== undefined && title !== null) {
+
+                const new_note = JSON.parse("{\"importance\":0,\"sibling_order\":0,\"source_id\":0,\"title\":\"\",\"content_id\":0,\"parent_note_id\":0,\"difficulty\":0,\"map_id\":0,\"created_at\":0,\"alias_for_note_id\":0,\"updated_at\":0}")
+
+                new_note.title = title
+                new_note.map_id = map_id
+                await post_entity("note", new_note)
+            }
+        };
+
+
+        let children = document.getElementById("children_ul");
+
+        let notes = await list_all_entities(
+            "note",
+            "&sort=sibling_order&order=asc&fields=id,title&parent_note_id=0&map_id="+map_id
+        );
+        for (const e of notes) {
+
+            const li = document.createElement("li");
+            children.appendChild(li);
+            li.innerText = "#" + e.id + " ";
+            let a = document.createElement("a")
+            li.appendChild(a);
+            a.innerText = e.title;
+            a.href = "?note_id=" + e.id;
+            a.style.display = "inline-block";
+            a.style.minWidth = "20px";
+            a.style.marginRight = "10px";
+
+
+            //http://localhost:8888/web/index.html?entity=map&action=create#
+            const button_copy = document.createElement("button");
+            li.appendChild(button_copy);
+            button_copy.innerText = simple ? "Copy" :"📋 Copy";
+            button_copy.onclick = function () {
+                copy_to_clipboard(e.id);
+            };
+
+        }
+
     }
 
     document.getElementById("children_li_example").remove();
+    document.getElementById("loading_screen").style.display = "none";
+    document.getElementById("slip_box").style.display = "block";
 
 
 });

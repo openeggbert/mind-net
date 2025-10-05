@@ -355,6 +355,23 @@ li {
     content:"#";
 }
 
+#slip_box {
+    display: none;
+    display: block;
+}
+
+#loading_screen {
+    position: fixed;
+    inset: 0;
+    background: white;
+    display: flex;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    z-index: 9999;
+}
+
 @media (max-width: 800px) {
     .layout_row {
         flex-direction: column;
@@ -381,7 +398,5 @@ li {
             min-height: unset;
         }
     }
-
-
 
 }

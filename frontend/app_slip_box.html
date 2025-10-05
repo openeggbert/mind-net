@@ -10,6 +10,8 @@
 <body class="presentation">
 <div id="app" data-version="rich"></div>
 
+<div id="loading_screen">Loading…</div>
+<div id="slip_box">
 <header>
     <div>🧠 Slip Box</div>
     <button onclick="window.location.href='index.html'">🌐 Mind Net</button>
@@ -29,7 +31,7 @@
             <span class="label">
                 🧭 <span id="parent_label">Parent Note</span>
             </span>
-            <button class="toggle" onclick="togglePanel(this, 'parent_content')">▼</button>
+            <button class="toggle" onclick="togglePanel(this, 'parent_content')" id="collapsible-toggle-parent">▼</button>
 
         </h2>
         <div id="parent_content">
@@ -47,7 +49,7 @@
             <h2>
                 <span class="label">
                     📝 <span id="current_label">Note</span><span id="current_id">43453</span></span>
-                <button class="toggle" onclick="togglePanel(this, 'current_content')">▼</button>
+                <button class="toggle" onclick="togglePanel(this, 'current_content')" id="collapsible-toggle-current">▼</button>
             </h2>
             <div id="current_content">
                 <p>
@@ -174,6 +176,8 @@ First paragraph of text…
         <button onclick="closeWindow()">✖</button>
     </header>
     <div id="window_container_content"><p>Window content</p></div>
+
+</div>
 
 </div>
 
