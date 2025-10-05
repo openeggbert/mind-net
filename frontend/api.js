@@ -2,6 +2,7 @@ import { HOST } from "./conf.js";
 import { PORT } from "./conf.js";
 import {showError} from "./dom.js";
 import {getEntitySchemas} from "./state.js";
+import {refreshToken} from "./auth.js";
 
 
 export const API_BASE = `${HOST}:${PORT}/api/v1`;
@@ -99,7 +100,7 @@ export async function apiFetch(url, options = {}) {
     try {
         const res = await fetch(url, options);
 
-        if (res.status === 401 && !skipAuth && getRefreshToken()) {
+        if ((res.status === 401 || res.status === 403) && !skipAuth && getRefreshToken()) {
             const refreshed = await refreshToken();
             if (refreshed) {
                 headers["Authorization"] = `Bearer ${getAccessToken()}`;

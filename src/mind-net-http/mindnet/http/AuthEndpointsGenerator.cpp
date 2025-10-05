@@ -389,10 +389,11 @@ namespace mindnet::http
                 check_maintenance_mode()
 
                 auto body = crow::json::load(req.body);
-                api::AccessTokenContext ctx{req, service_ptr};
+                //api::AccessTokenContext ctx{req, service_ptr};
+                api::AccessTokenContext system_token{0, "system", 403};
                 if (!body || !body.has("refresh_token"))
                 {
-                    log_request(service_ptr, req, ctx, 400, 0, "Missing refresh_token");
+                    log_request(service_ptr, req, system_token, 400, 0, "Missing refresh_token");
                     return crow::response{400, "Missing refresh_token"};
                 }
 
@@ -404,10 +405,15 @@ namespace mindnet::http
                 // 1. Find refresh token
                 orm::QueryParams query;
                 query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
-                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, query);
+                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, system_token, query);
+                if (result.second.ko())
+                {
+                    log_request(service_ptr, req, system_token, result.second.status, 0, result.second.error);
+                    return crow::response{result.second.status, result.second.error};
+                }
                 if (result.first.empty())
                 {
-                    log_request(service_ptr, req, ctx, 401, 0, "Invalid refresh_token");
+                    log_request(service_ptr, req, system_token, 401, 0, "Invalid refresh_token");
                     return crow::response{401, "Invalid refresh_token"};
                 }
 
@@ -417,7 +423,7 @@ namespace mindnet::http
                 // 2. Validation
                 if (refresh.is_revoked || refresh.expires_at < now)
                 {
-                    log_request(service_ptr, req, ctx, 401, 0, "Refresh token expired or revoked");
+                    log_request(service_ptr, req, system_token, 401, 0, "Refresh token expired or revoked");
                     return crow::response{401, "Refresh token expired or revoked"};
                 }
 
@@ -440,13 +446,13 @@ namespace mindnet::http
 
                 auto create_res = service_ptr->create(
                     plugins::core::models::ACCESS_TOKEN_DEFINITION,
-                    ctx,
+                    system_token,
                     values
                 );
 
                 if (create_res.second.ko())
                 {
-                    log_request(service_ptr, req, ctx, 500, 0, "Failed to create new access token: " + create_res.second.error);
+                    log_request(service_ptr, req, system_token, 500, 0, "Failed to create new access token: " + create_res.second.error);
                     return crow::response{500, "Failed to create new access token: " + create_res.second.error};
                 }
 
@@ -454,7 +460,7 @@ namespace mindnet::http
                 crow::json::wvalue response;
                 response["access_token"] = raw_access;
                 response["expires_in"] = 900; // 15 minutes
-                log_request(service_ptr, req, ctx, 200, 0, "");
+                log_request(service_ptr, req, system_token, 200, 0, "");
                 return crow::response{200, response};
             });
 

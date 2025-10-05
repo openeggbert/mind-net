@@ -132,12 +132,14 @@ namespace mindnet::http
             entity_fields values;
 
             string error;
+            int error_http_status{0};
             try
             {
                 auto read_result = service_ptr->read(def, login_token, id);
                 if (read_result.second.ko())
                 {
                     error = read_result.second.error;
+                    error_http_status = read_result.second.status;
                 }
                 else
                 {
@@ -152,8 +154,8 @@ namespace mindnet::http
             }
             if (!error.empty())
             {
-                log_request(service_ptr, req, login_token, 404, id, "You cannot read the model. " + error);
-                return crow::response(404, "You cannot read the model. " + error);
+                log_request(service_ptr, req, login_token, error_http_status, id, "You cannot read the model. " + error);
+                return crow::response(error_http_status, "You cannot read the model. " + error);
             }
 
             string fields = req.url_params.get("fields") ? req.url_params.get("fields") : "";
@@ -318,10 +320,10 @@ namespace mindnet::http
             auto all_records = service_ptr->list(def, login_token, query_params);
             if (all_records.second.ko())
             {
-                log_request(service_ptr, req, login_token, 500, 0, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
+                log_request(service_ptr, req, login_token, all_records.second.status, 0, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
                     error);
                 return crow::response(
-                    500, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
+                    all_records.second.status, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
                     error);
             }
 

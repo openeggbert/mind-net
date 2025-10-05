@@ -229,7 +229,12 @@ async function list_entities(entity, additional_params = "", page_number = 1, pa
 
     let finalUrl = url.toString() + additional_params;
 
-    const json = await apiFetch(finalUrl);
+    const json = await apiFetch(finalUrl,
+        {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        }
+        );
     const total_pages = json?.total_pages || 1;
 
     const items = json?.items || [];
@@ -265,7 +270,13 @@ async function list_all_entities(entity, additional_params = "") {
 async function read_entity(entity, id) {
     const url = new URL(`${API_BASE}/${entity}/${id}`);
 
-    return await apiFetch(url.toString());
+    return await apiFetch(url.toString(),
+        {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        }
+
+        );
 }
 
 async function put_entity(model_name, id, json) {

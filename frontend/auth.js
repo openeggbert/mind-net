@@ -65,7 +65,8 @@ export async function refreshToken() {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({refresh_token})
     });
-    if (!res.ok) {
+    let res_status = res.status;
+    if (!res.ok && (res_status === 401 || res_status === 403)) {
         setAccessToken(null);
         setRefreshToken(null);
         return false;
