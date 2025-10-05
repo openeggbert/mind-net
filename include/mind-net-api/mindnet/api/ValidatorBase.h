@@ -314,7 +314,7 @@ namespace mindnet::api
             {
                 auto def = db->get_model_definition(get_model_name());
                 auto authorized_to = is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {403, "You are not authorized to access resource. " + def->get_model_name() + " LIST"};
+                if (!authorized_to) return {logged_user.role == essential::UserRole::Guest ? 401 : 403, "You are not authorized to access resource. " + def->get_model_name() + " LIST"};
 
                 if (auto res = derived().validate_list_authorization(context, filter); !res.ok())
                     return res;

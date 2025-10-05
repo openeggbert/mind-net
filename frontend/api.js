@@ -104,6 +104,23 @@ export function getRefreshTokenExpiresAt() {
     return localStorage.getItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
 }
 
+async function ensureFreshAccessToken() {
+    const exp = getAccessTokenExpiresAt();
+    if (!exp) return;
+
+    const nowSec = Math.floor(Date.now() / 1000);
+    const expSec = Math.floor(Number(exp));
+
+    // if expired or <= 60 s remaining, refresh
+    if (expSec <= nowSec + 60) {
+        const ok = await refreshToken();
+        if (!ok) {
+            console.warn("Failed to refresh access token automatically");
+        }
+    }
+}
+
+
 // Overload apiFetch to always send Authorization header
 export async function apiFetch(url, options = {}) {
     const headers = options.headers || {};
@@ -113,6 +130,8 @@ export async function apiFetch(url, options = {}) {
         url.includes("/auth/refresh_token");
 
     if (!skipAuth) {
+        await ensureFreshAccessToken();
+
         const token = getAccessToken();
         if (token) headers["Authorization"] = `Bearer ${token}`;
     }

@@ -57,9 +57,11 @@ namespace mindnet::http
                 return;
             }
 
+            api::AccessTokenContext system_token{0, "system", 0, true};
+            api::AccessTokenContext& token_to_be_used = login_token.ko() ? system_token : login_token;
             auto result = service_ptr->create(
                 plugins::core::models::API_LOG_DEFINITION,
-                login_token,
+                token_to_be_used,
                 log)
                 ;
             if (result.second.ko())
