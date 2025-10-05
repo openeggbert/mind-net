@@ -63,23 +63,45 @@ export async function loadApplications() {
 
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
+const ACCESS_TOKEN_EXPIRES_AT_KEY = "access_token_expires_at";
+const REFRESH_TOKEN_EXPIRES_AT_KEY = "refresh_token_expires_at";
 
 export function getAccessToken() {
     return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
-export function setAccessToken(token) {
-    if (token) localStorage.setItem(ACCESS_TOKEN_KEY, token);
-    else localStorage.removeItem(ACCESS_TOKEN_KEY);
+export function setAccessToken(token, expires_at = null) {
+    if (token) {
+        localStorage.setItem(ACCESS_TOKEN_KEY, token);
+        localStorage.setItem(ACCESS_TOKEN_EXPIRES_AT_KEY, expires_at);
+    }
+    else {
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.removeItem(ACCESS_TOKEN_EXPIRES_AT_KEY);
+    }
 }
 
 export function getRefreshToken() {
     return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
 
-export function setRefreshToken(token) {
-    if (token) localStorage.setItem(REFRESH_TOKEN_KEY, token);
-    else localStorage.removeItem(REFRESH_TOKEN_KEY);
+export function setRefreshToken(token, expires_at = null) {
+    if (token) {
+        localStorage.setItem(REFRESH_TOKEN_KEY, token);
+        localStorage.setItem(REFRESH_TOKEN_EXPIRES_AT_KEY, expires_at);
+    }
+    else {
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
+    }
+}
+
+export function getAccessTokenExpiresAt() {
+    return localStorage.getItem(ACCESS_TOKEN_EXPIRES_AT_KEY);
+}
+
+export function getRefreshTokenExpiresAt() {
+    return localStorage.getItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
 }
 
 // Overload apiFetch to always send Authorization header

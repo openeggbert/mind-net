@@ -1,6 +1,6 @@
 import {changePassword, configure_get, login, logout, register} from "./auth.js";
-import {getAccessToken, getRefreshToken} from "./api.js";
-import {contentArea, showError, showToast} from "./dom.js";
+import {getAccessToken, getAccessTokenExpiresAt, getRefreshToken, getRefreshTokenExpiresAt} from "./api.js";
+import {contentArea, formatDateTime, showError, showToast} from "./dom.js";
 
 export function renderLoginForm() {
     contentArea.innerHTML = `
@@ -122,10 +122,13 @@ export async function renderConfigureForm() {
 export function renderAuthStatus() {
     const access = getAccessToken();
     const refresh = getRefreshToken();
+    const accessExpiresAt = formatDateTime(getAccessTokenExpiresAt());
+    const refreshExpiresAt = formatDateTime(getRefreshTokenExpiresAt());
+    formatDateTime
     contentArea.innerHTML = `
         <h3>Auth Status</h3>
-        <p>Access token: ${access ? "✅ stored" : "❌ none"}</p>
-        <p>Refresh token: ${refresh ? "✅ stored" : "❌ none"}</p>
+        <p>Access token: ${access ? "✅ stored" : "❌ none"} <span style="color:grey;">Expires at: ${accessExpiresAt}</span></p>
+        <p>Refresh token: ${refresh ? "✅ stored" : "❌ none"} <span style="color:grey;">Expires at: ${refreshExpiresAt}</span></p>
         <button id="logoutBtn">Logout</button>
         <button id="changePwdBtn">Change Password</button>
         <button id="configureBtn">Configure</button>

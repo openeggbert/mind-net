@@ -326,6 +326,12 @@ int main(int argc, char** argv)
     }
 
     print_logo();
+    std::string conf_validation = g_configuration.validate();
+    if (!conf_validation.empty())
+    {
+        err << conf_validation << commit;
+        exit(1);
+    }
     std::vector<std::string> arguments;
     load_args(argc, argv, arguments);
 

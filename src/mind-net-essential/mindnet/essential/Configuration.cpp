@@ -136,6 +136,9 @@ namespace mindnet::essential
             auto& allowed_plugins_string = map.at("allowed_plugins");
             split_string_by_commas(allowed_plugins_string, allowed_plugins);
         }
+        save_number(access_token_expires_in)
+        save_number(refresh_token_expires_in)
+        save_number(refresh_token_rotation_threshold_in)
     }
 
     constexpr auto mind_net_properties_template = FMT_STRING(R"(
@@ -169,6 +172,9 @@ db_password={db_password}
 #Other
 max_log_level={max_log_level}
 allowed_plugins={allowed_plugins}
+access_token_expires_in={access_token_expires_in}
+refresh_token_expires_in={refresh_token_expires_in}
+refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
 
 )");
 
@@ -224,7 +230,7 @@ allowed_plugins={allowed_plugins}
 
                         //std::cout << "[TRACE] " << entry.path().filename().string() << " is " << days << " days old" << std::endl;
 
-                        if (days > 365) {
+                        if (days > 90) {
                             std::cout << "[INFO] Deleting " << entry.path() <<
                                 ", which is old " << days << " days " << std::endl;
 
@@ -267,7 +273,10 @@ allowed_plugins={allowed_plugins}
             fmt::arg("db_password", db_password),
             //other
             fmt::arg("max_log_level", log_level_to_string(max_log_level)),
-            fmt::arg("allowed_plugins", join_strings_by_commas(allowed_plugins))
+            fmt::arg("allowed_plugins", join_strings_by_commas(allowed_plugins)),
+            fmt::arg("access_token_expires_in", access_token_expires_in),
+            fmt::arg("refresh_token_expires_in", refresh_token_expires_in),
+            fmt::arg("refresh_token_rotation_threshold_in", refresh_token_rotation_threshold_in)
         );
 
         // save to file
@@ -385,9 +394,50 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
 
         push_enum(max_log_level)
         push_entry("allowed_plugins", fmt::join(g_configuration.allowed_plugins, ","));
+        push_entry("access_token_expires_in", access_token_expires_in);
+        push_entry("refresh_token_expires_in", refresh_token_expires_in);
+        push_entry("refresh_token_rotation_threshold_in", refresh_token_rotation_threshold_in);
 
 #undef push_enum
 
         return store;
     }
+
+    std::string Configuration::validate()
+    {
+        if (access_token_expires_in < ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE)
+            return "\"Access token expires in\" must be at least " + std::to_string(ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE) + " minutes";
+        if (access_token_expires_in > ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE)
+            return "\"Access token expires in\" must be at most " + std::to_string(ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE) + " minutes";
+
+        if (refresh_token_expires_in < REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE)
+            return "\"Refresh token expires in\" must be at least " + std::to_string(REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE) + " minutes";
+        if (refresh_token_expires_in > REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE)
+            return "\"Refresh token expires in\" must be at most " + std::to_string(REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE) + " minutes";
+
+        int refresh_token_min = access_token_expires_in * 2;
+        if (refresh_token_expires_in < refresh_token_min)
+            return "\"Refresh token expires in\" must be at least twice of \"Access token expires in\"";
+
+        if (refresh_token_rotation_threshold_in < REFRESH_TOKEN_ROTATION_THRESHOLD_MIN_VALUE)
+            return "\"Refresh token rotation threshold\" must be at least " + std::to_string(REFRESH_TOKEN_ROTATION_THRESHOLD_MIN_VALUE) + " minutes";
+        if (refresh_token_rotation_threshold_in > refresh_token_expires_in)
+            return "\"Refresh token rotation threshold\" must not exceed \"Refresh token expires in\"";
+
+        // rotation threshold must be between 20% and 50% of refresh token lifetime
+        int min_threshold = refresh_token_expires_in * 20 / 100;
+        int max_threshold = refresh_token_expires_in * 50 / 100;
+
+        if (refresh_token_rotation_threshold_in < min_threshold || refresh_token_rotation_threshold_in > max_threshold)
+        {
+            return "\"Refresh token rotation threshold\" must be between 20% (" +
+                   std::to_string(min_threshold) + " minutes) and 50% (" +
+                   std::to_string(max_threshold) + " minutes) of \"Refresh token expires in\" (" +
+                   std::to_string(refresh_token_expires_in) + " minutes)";
+        }
+
+
+        return "";
+    }
+
 }

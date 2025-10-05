@@ -13,8 +13,8 @@ export async function login(username, password) {
         return false;
     }
     const json = await res.json();
-    setAccessToken(json.access_token);
-    setRefreshToken(json.refresh_token);
+    setAccessToken(json.access_token, json.access_token_expires_at);
+    setRefreshToken(json.refresh_token, json.refresh_token_expires_at);
     return true;
 }
 
@@ -72,7 +72,7 @@ export async function refreshToken() {
         return false;
     }
     const json = await res.json();
-    setAccessToken(json.access_token);
+    setAccessToken(json.access_token, json.access_token_expires_at);
     return true;
 }
 

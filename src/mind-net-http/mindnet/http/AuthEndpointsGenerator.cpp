@@ -60,7 +60,7 @@ namespace mindnet::http
             if (sensitive_keys.count(key)) {
                 safe[key] = "***";
             } else {
-                safe[key] = body[key]; // zkopíruj původní hodnotu
+                safe[key] = body[key];
             }
         }
 
@@ -166,8 +166,8 @@ namespace mindnet::http
             // -------------------------------
             auto now = util::Utils::currentUnixTimestamp();
 
-            auto access_exp = now + 15 * 60; // 15 minutes
-            auto refresh_exp = now + 30 * 24 * 3600; // 30 days
+            auto access_exp = now + g_configuration.access_token_expires_in * 60;
+            auto refresh_exp = now + g_configuration.refresh_token_expires_in * 60;
 
             std::string raw_access = generate_secret_key(32);
             std::string raw_refresh = generate_secret_key(64);
@@ -269,9 +269,9 @@ namespace mindnet::http
             // -------------------------------
             crow::json::wvalue response;
             response["access_token"] = raw_access;
-            response["expires_in"] = 900;           // 15 minutes
+            response["access_token_expires_at"] = access_exp;
             response["refresh_token"] = raw_refresh;
-            response["refresh_expires_in"] = 2592000; // 30 days
+            response["refresh_token_expires_at"] = refresh_exp;
 
             log_request(service_ptr, req, system_token, 200);
             return crow::response{200, response};
@@ -284,10 +284,14 @@ namespace mindnet::http
             check_maintenance_mode()
 
             auto body = crow::json::load(req.body);
+
             api::AccessTokenContext ctx{req, service_ptr};
+            api::AccessTokenContext system_token{0, "system", 403};
+            api::AccessTokenContext& token_to_be_used = ctx.ok() ? ctx : system_token;
+
             if (!body || !body.has("refresh_token"))
             {
-                log_request(service_ptr, req, ctx, 400, 0, "Missing refresh_token");
+                log_request(service_ptr, req, token_to_be_used, 400, 0, "Missing refresh_token");
                 return crow::response{400, "Missing refresh_token"};
             }
 
@@ -299,15 +303,15 @@ namespace mindnet::http
             // 1. Find refresh token
             orm::QueryParams query;
             query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
-            auto tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, query);
+            auto tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, token_to_be_used, query);
             if (tokens.second.ko())
             {
-                log_request(service_ptr, req, ctx, 500, 0, "Listing tokens failed: " + tokens.second.error);
+                log_request(service_ptr, req, token_to_be_used, 500, 0, "Listing tokens failed: " + tokens.second.error);
                 return crow::response{500, "Listing tokens failed: "  + tokens.second.error};
             }
             if (tokens.first.empty())
             {
-                log_request(service_ptr, req, ctx, 401, 0, "Invalid refresh_token");
+                log_request(service_ptr, req, token_to_be_used, 401, 0, "Invalid refresh_token");
                 return crow::response{401, "Invalid refresh_token"};
             }
 
@@ -318,10 +322,10 @@ namespace mindnet::http
             refresh.is_revoked = true;
             refresh.revoked_at = now;
             auto v = refresh.to_values();
-            auto refresh_updated = service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh.get_id(),v);
+            auto refresh_updated = service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, token_to_be_used, refresh.get_id(),v);
             if (refresh_updated.ko())
             {
-                log_request(service_ptr, req, ctx, 500, 0, "Update of refresh token failed: " + refresh_updated.error);
+                log_request(service_ptr, req, token_to_be_used, 500, 0, "Update of refresh token failed: " + refresh_updated.error);
                 return crow::response{500, "Update of refresh token failed: " + refresh_updated.error};
             }
 
@@ -329,11 +333,11 @@ namespace mindnet::http
             orm::QueryParams session_query;
             session_query.add_filter(plugins::core::columns::LoginSessionColumns::REFRESH_TOKEN_ID,
                                      std::to_string(refresh.get_id()));
-            auto sessions_listed = service_ptr->list(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx,
+            auto sessions_listed = service_ptr->list(plugins::core::models::LOGIN_SESSION_DEFINITION, token_to_be_used,
                                                      session_query);
             if (sessions_listed.second.ko())
             {
-                log_request(service_ptr, req, ctx, 500, 0,
+                log_request(service_ptr, req, token_to_be_used, 500, 0,
                             "Listing login sessions failed: " + sessions_listed.second.error);
                 return crow::response{500, "Listing login sessions failed: " + sessions_listed.second.error};
             }
@@ -343,11 +347,11 @@ namespace mindnet::http
                 session.from_values(s);
                 session.expires_at = now; // or session.is_revoked = 1, if you have the flag
                 auto session_values = session.to_values();
-                auto session_updated = service_ptr->update(plugins::core::models::LOGIN_SESSION_DEFINITION, ctx, session.get_id(),session_values);
+                auto session_updated = service_ptr->update(plugins::core::models::LOGIN_SESSION_DEFINITION, token_to_be_used, session.get_id(),session_values);
 
                 if (session_updated.ko())
                 {
-                    log_request(service_ptr, req, ctx, 500, 0, "Update of login session failed: " + session_updated.error);
+                    log_request(service_ptr, req, token_to_be_used, 500, 0, "Update of login session failed: " + session_updated.error);
                     return crow::response{500, "Update of login session failed: " + session_updated.error};
                 }
             }
@@ -356,10 +360,10 @@ namespace mindnet::http
             orm::QueryParams access_query;
             access_query.add_filter(plugins::core::columns::AccessTokenColumns::USER_ID,
                                     std::to_string(refresh.user_id));
-            auto accesses_listed = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access_query);
+            auto accesses_listed = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION, token_to_be_used, access_query);
             if (accesses_listed.second.ko())
             {
-                log_request(service_ptr, req, ctx, 500, 0,
+                log_request(service_ptr, req, token_to_be_used, 500, 0,
                             "Listing access tokens failed: " + accesses_listed.second.error);
                 return crow::response{500, "Listing access tokens failed: " + sessions_listed.second.error};
             }
@@ -370,16 +374,16 @@ namespace mindnet::http
                 access.is_revoked = true;
                 access.revoked_at = now;
                 auto access_token_values = access.to_values();
-                auto access_updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION, ctx, access.get_id(),access_token_values);
+                auto access_updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION, token_to_be_used, access.get_id(),access_token_values);
 
                 if (access_updated.ko())
                 {
-                    log_request(service_ptr, req, ctx, 500, 0 ,"Update of access token failed: " + access_updated.error);
+                    log_request(service_ptr, req, token_to_be_used, 500, 0 ,"Update of access token failed: " + access_updated.error);
                     return crow::response{500, "Update of access token failed: " + access_updated.error};
                 }
             }
 
-            log_request(service_ptr, req, ctx, 200, 0, "");
+            log_request(service_ptr, req, token_to_be_used, 200, 0, "");
             return crow::response{200, "Logout successful"};
         });
 
@@ -452,16 +456,106 @@ namespace mindnet::http
 
                 if (create_res.second.ko())
                 {
-                    log_request(service_ptr, req, system_token, 500, 0, "Failed to create new access token: " + create_res.second.error);
+                    log_request(service_ptr, req, system_token, 500, 0,
+                                "Failed to create new access token: " + create_res.second.error);
                     return crow::response{500, "Failed to create new access token: " + create_res.second.error};
                 }
 
-                // 4. Return to client
+                // 4. Decide if we need refresh token rotation
+                int64_t seconds_left = refresh.expires_at - now;
+                int64_t rotation_threshold = g_configuration.refresh_token_rotation_threshold_in * 60;
+                bool need_rotation = seconds_left <= rotation_threshold;
+
                 crow::json::wvalue response;
                 response["access_token"] = raw_access;
-                response["expires_in"] = 900; // 15 minutes
+                response["access_token_expires_at"] = access_exp;
+
+                if (need_rotation)
+                {
+                    // revoke old refresh
+                    refresh.is_revoked = true;
+                    refresh.revoked_at = now;
+
+                    auto old_vals = refresh.to_values();
+                    old_vals[2] = now;
+                    auto upd = service_ptr->update(
+                        plugins::core::models::REFRESH_TOKEN_DEFINITION,
+                        system_token,
+                        refresh.get_id(),
+                        old_vals
+                    );
+                    if (upd.ko())
+                    {
+                        log_request(service_ptr, req, system_token, 500, 0,
+                                    "Failed to revoke old refresh token: " + upd.error);
+                        return crow::response{500, "Failed to revoke old refresh token: " + upd.error};
+                    }
+
+                    // create new refresh
+                    std::string raw_refresh = generate_secret_key(64);
+                    std::string refresh_hash_new = util::Utils::hash_sha_256(raw_refresh);
+
+                    plugins::core::models::RefreshToken new_refresh;
+                    new_refresh.user_id = refresh.user_id;
+                    new_refresh.token_hash = refresh_hash_new;
+                    new_refresh.issued_at = now;
+                    new_refresh.expires_at = now + 30 * 24 * 3600;
+                    new_refresh.rotated_from_id = refresh.get_id();
+                    new_refresh.last_used_at = now;
+                    new_refresh.ip_address = req.remote_ip_address;
+                    new_refresh.user_agent = req.get_header_value("User-Agent");
+
+                    auto new_vals = new_refresh.to_values();
+                    new_vals[1] = now;
+                    new_vals[2] = now;
+
+                    auto new_res = service_ptr->create(
+                        plugins::core::models::REFRESH_TOKEN_DEFINITION,
+                        system_token,
+                        new_vals
+                    );
+                    if (new_res.second.ko())
+                    {
+                        log_request(service_ptr, req, system_token, 500, 0,
+                                    "Failed to create new refresh token: " + new_res.second.error);
+                        return crow::response{500, "Failed to create new refresh token: " + new_res.second.error};
+                    }
+                    int new_id = new_res.first;
+
+                    // link old refresh to new one
+                    refresh.replaced_by_id = new_id;
+                    auto link_vals = refresh.to_values();
+                    service_ptr->update(
+                        plugins::core::models::REFRESH_TOKEN_DEFINITION,
+                        system_token,
+                        refresh.get_id(),
+                        link_vals
+                    );
+
+                    // return new refresh token to client
+                    response["refresh_token"] = raw_refresh;
+                    response["refresh_token_expires_at"] = new_refresh.expires_at;
+                }
+                else
+                {
+                    // sliding update only
+                    refresh.last_used_at = now;
+                    refresh.ip_address = req.remote_ip_address;
+                    refresh.user_agent = req.get_header_value("User-Agent");
+                    auto rv = refresh.to_values();
+                    rv[2] = now;
+                    service_ptr->update(
+                        plugins::core::models::REFRESH_TOKEN_DEFINITION,
+                        system_token,
+                        refresh.get_id(),
+                        rv
+                    );
+                    // no refresh token returned to client
+                }
+
                 log_request(service_ptr, req, system_token, 200, 0, "");
                 return crow::response{200, response};
+
             });
 
 

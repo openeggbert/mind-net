@@ -179,6 +179,15 @@ content: " (takes effect after restart) ";
     <label for="allowed_plugins">Allowed Plugins (comma separated)<span class="restart_needed"></span></label>
     <input type="text" id="allowed_plugins" name="allowed_plugins" value="{allowed_plugins}">
 
+    <label for="access_token_expires_in">Access token expires in (minutes)</label>
+    <input type="number" id="access_token_expires_in" name="access_token_expires_in" value="{access_token_expires_in}" min="5" max="43200">
+
+    <label for="refresh_token_expires_in">Refresh token expires in (minutes)</label>
+    <input type="number" id="refresh_token_expires_in" name="refresh_token_expires_in" value="{refresh_token_expires_in}" min="1440" max="432000">
+
+    <label for="refresh_token_rotation_threshold_in">Refresh token rotation threshold (minutes)</label>
+    <input type="number" id="refresh_token_expires_in" name="refresh_token_rotation_threshold_in" value="{refresh_token_rotation_threshold_in}" min="60" max="432000">
+
     <label class="checkbox">
     <input type="checkbox" id="schedule_restart" name="schedule_restart">
     Schedule restart
@@ -448,7 +457,8 @@ if (!form) {{
                 log);
             if (result.second.ko())
             {
-                essential::warn << "Saving record to the table super_admin_log failed for this reason: " << result.second.error <<
+                essential::warn << "Saving record to the table super_admin_log failed for this reason: " << result.
+                    second.error <<
                     log_object.to_json() << essential::commit;
             }
         };
@@ -482,9 +492,11 @@ if (!form) {{
         {
             auto params = req.url_params; // crow::query_string
 
-            if (params.get("message") == nullptr) {
+            if (params.get("message") == nullptr)
+            {
                 assert_super_admin()
-            } else
+            }
+            else
             {
                 string msg = params.get("message");
                 return crow::response(200, R"(
@@ -561,8 +573,8 @@ window.addEventListener("load", () => {
 
 
 showToast(")"
-+ msg +
-R"(           ");
+                                      + msg +
+                                      R"(           ");
 </script>
 
 
@@ -570,7 +582,7 @@ R"(           ");
 </body>
 </html>)"
 
-);
+                );
             }
 
             api::AccessTokenContext login_token{req, service_ptr};
@@ -585,13 +597,13 @@ R"(           ");
         {
             assert_super_admin()
 
-            string_map new_configuration;
+            string_map new_configuration_map;
             auto params = parse_urlencoded(req.body);
 
             for (const auto& key : params | std::views::keys)
             {
                 const auto& value = params[key];
-                new_configuration.insert({key, value});
+                new_configuration_map.insert({key, value});
             }
 
             // auto read_configuration = []()
@@ -614,7 +626,24 @@ R"(           ");
 
 
             // std::string old_value = read_configuration();
-            essential::g_configuration = essential::Configuration(new_configuration);
+            essential::Configuration new_configuration = essential::Configuration(new_configuration_map);;
+            std::string validation_result = new_configuration.validate();
+            if (!validation_result.empty())
+            {
+                // std::string error;
+                // error.reserve(validation_result.size());
+                // for (char c : validation_result)
+                // {
+                //     if (c == ' ')
+                //         error += "%20";
+                //     else
+                //         error += c;
+                // }
+
+                return crow::response(400, validation_result);
+
+            }
+            essential::g_configuration = new_configuration;
             essential::g_configuration.save_mind_net_properties();
             // std::string new_value = read_configuration();
             auto new_string_map = essential::load_mind_net_properties("mindnet.properties");
@@ -630,7 +659,7 @@ R"(           ");
                 "Configure POST",
                 "",
                 diff_
-                );
+            );
 
             if (params.contains("schedule_restart"))
             {
