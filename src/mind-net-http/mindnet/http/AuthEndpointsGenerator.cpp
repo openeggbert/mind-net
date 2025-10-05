@@ -4,7 +4,6 @@
 
 #include "mindnet/http/AuthEndpointsGenerator.h"
 
-#include <random>
 #include <string>
 
 #include "mindnet/api/IService.h"
@@ -23,30 +22,6 @@
 namespace mindnet::http
 {
     using mindnet::essential::g_configuration;
-
-
-    //openssl rand -base64 32
-
-    std::string generate_secret_key(size_t length = 32)
-    {
-        static const char charset[] =
-            "0123456789"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz"
-            "!@#$%^&*()-_=+[]{}<>?/|";
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dist(0, sizeof(charset) - 2);
-
-        std::string key;
-        key.reserve(length);
-        for (size_t i = 0; i < length; i++)
-        {
-            key.push_back(charset[dist(gen)]);
-        }
-        return key;
-    }
 
     crow::json::wvalue mask_sensitive(const crow::json::rvalue& body) {
         crow::json::wvalue safe;
@@ -169,8 +144,8 @@ namespace mindnet::http
             auto access_exp = now + g_configuration.access_token_expires_in * 60;
             auto refresh_exp = now + g_configuration.refresh_token_expires_in * 60;
 
-            std::string raw_access = generate_secret_key(32);
-            std::string raw_refresh = generate_secret_key(64);
+            std::string raw_access = util::Utils::generate_secret_key(32);
+            std::string raw_refresh = util::Utils::generate_secret_key(64);
 
             std::string access_hash = util::Utils::hash_sha_256(raw_access); // or SHA256
             std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh); // or SHA256
@@ -433,7 +408,7 @@ namespace mindnet::http
 
                 // 3. Generate new access token
                 auto access_exp = now + 15 * 60; // 15 minutes
-                std::string raw_access = generate_secret_key(32);
+                std::string raw_access = util::Utils::generate_secret_key(32);
                 std::string access_hash = util::Utils::hash_sha_256(raw_access);
 
                 plugins::core::models::AccessToken access_token;
@@ -492,7 +467,7 @@ namespace mindnet::http
                     }
 
                     // create new refresh
-                    std::string raw_refresh = generate_secret_key(64);
+                    std::string raw_refresh = util::Utils::generate_secret_key(64);
                     std::string refresh_hash_new = util::Utils::hash_sha_256(raw_refresh);
 
                     plugins::core::models::RefreshToken new_refresh;

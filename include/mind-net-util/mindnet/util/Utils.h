@@ -67,7 +67,13 @@ namespace mindnet::util
         static std::set<string> split_string_by_commas(const string& string_,
                                                        std::set<std::string>& result);
         static std::string hash_sha_256(const std::string& text);
-
+        //openssl rand -base64 32
+        static std::string generate_secret_key(
+            size_t length = 32,
+            bool numbers = true,
+            bool lower_case = true,
+            bool upper_case = true,
+            bool symbols = true);
 
         template <typename K, typename V>
         struct MapDiff

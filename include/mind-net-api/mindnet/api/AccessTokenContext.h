@@ -19,7 +19,7 @@ namespace mindnet::api
         int status{};
         bool system{false};
 
-        AccessTokenContext(int user_id, const std::string& msg, int status);
+        AccessTokenContext(int user_id, const std::string& msg, int status, bool system = false);
 
         AccessTokenContext(const crow::request& req, ServicePtr service_ptr);
 

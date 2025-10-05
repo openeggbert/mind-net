@@ -103,6 +103,16 @@ http://localhost:8888/web/
 
 The frontend is plain JavaScript – no build step required.
 
+#### Initial Administrator Login
+
+The default administrator credentials are provided in the file `pw.txt`. For security:
+
+1. Save these credentials in a secure location
+2. Delete the `pw.txt` file immediately
+3. Change the administrator password after your first login
+
+⚠️ Important: Complete these steps before using the system.
+
 ## 🔌 REST API
 
 * Versioned under: `/api/v1/...`

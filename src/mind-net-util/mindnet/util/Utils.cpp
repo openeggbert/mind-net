@@ -9,6 +9,7 @@
 #include <ctime>
 #include <string>
 #include <fstream>
+#include <random>
 #include <stdexcept>
 #include <regex>
 #include <openssl/sha.h>
@@ -243,5 +244,41 @@ namespace mindnet::util
 
         return os.str();
     }
+
+        std::string Utils::generate_secret_key(
+            size_t length,
+            bool numbers,
+            bool lower_case,
+            bool upper_case,
+            bool symbols)
+        {
+            std::string charset;
+
+            if (numbers)
+                charset += "0123456789";
+            if (upper_case)
+                charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if (lower_case)
+                charset += "abcdefghijklmnopqrstuvwxyz";
+            if (symbols)
+                charset += "!@#$%^&*()-_=+[]{}<>?/|";
+
+            if (charset.empty()) {
+                throw std::invalid_argument("At least one character set must be enabled.");
+            }
+
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::uniform_int_distribution<> dist(0, static_cast<int>(charset.size()) - 1);
+
+            std::string key;
+            key.reserve(length);
+            for (size_t i = 0; i < length; i++) {
+                key.push_back(charset[dist(gen)]);
+            }
+
+            return key;
+        }
+
 
 }

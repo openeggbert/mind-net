@@ -61,7 +61,7 @@ namespace mindnet::plugins::core::validators
             Admin,
             403, "You must be admin to create a user.")
 
-        return_if(ctx.role != mindnet::essential::UserRole::Admin && entity.role != g_configuration.default_user_role,
+        return_if(ctx.role < mindnet::essential::UserRole::Admin && entity.role != g_configuration.default_user_role && !ctx.token.system,
                   400, "role" " must be equal to " + user_role_to_string(g_configuration.
                       default_user_role))
 

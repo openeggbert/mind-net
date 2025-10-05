@@ -24,6 +24,7 @@
 #include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
 #include "mindnet/http/CrowLoggerAdapter.h"
 #include "mindnet/plugins/core/CorePluginFactory.h"
+#include "mindnet/plugins/core/models/User.h"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 // #include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
 // #include "mindnet/plugins/chat/ChatPluginFactory.h"
@@ -117,6 +118,50 @@ bool commands_function_start(
     std::shared_ptr<mindnet::api::IService>& service_ptr,
     int& exit_status)
 {
+    mindnet::api::AccessTokenContext system_token{0, "system", 403, true};
+
+    mindnet::orm::QueryParams params;
+    auto users = service_ptr->list(mindnet::plugins::core::models::USER_DEFINITION, system_token, params);
+    if (users.second.ko())
+    {
+        fatal << "Loading list of users during the start of application failed: " << users.second.ko() << commit;
+        exit(1);
+    }
+    if (users.first.empty())
+    {
+        mindnet::plugins::core::models::User user;
+        user.username = mindnet::util::Utils::generate_secret_key(16, true, true, true, false);
+        const auto& super_admin_password = mindnet::util::Utils::generate_secret_key(64);
+        user.password_hash = mindnet::util::Utils::hash_sha_256(super_admin_password);
+        user.display_name = "Superadmin";
+        user.profile_text = "Default administrator account created during system initialization";
+        user.role = mindnet::essential::UserRole::SuperAdmin;
+        user.status = mindnet::essential::UserStatus::Active;
+
+        auto user_to_values = user.to_values();
+        auto create_result = service_ptr.get()->
+                                             create(mindnet::plugins::core::models::USER_DEFINITION, system_token, user_to_values);
+        if (create_result.second.ko())
+        {
+            const auto& error = "Creating default administrator failed. " + create_result.second.error;
+            fatal << error << commit;
+            exit(1);
+        }
+        std::ofstream pw_txt("pw.txt");
+
+        if (!pw_txt) {
+            fatal << "Creating file pw.txt failed." << commit;
+            exit(1);
+        }
+
+        pw_txt << user.username << "\n";
+        pw_txt << super_admin_password <<"\n";
+
+        pw_txt.close(); // not necessary, will close automatically during destruction
+        debug << "File pw.txt was successfully created." << commit;
+        info << "Default administrator was successfully created" << commit;
+    }
+
     bool custom_host = false;
     bool custom_port = false;
     bool custom_frontend_port = false;
@@ -329,7 +374,7 @@ int main(int argc, char** argv)
     std::string conf_validation = g_configuration.validate();
     if (!conf_validation.empty())
     {
-        err << conf_validation << commit;
+        fatal << conf_validation << commit;
         exit(1);
     }
     std::vector<std::string> arguments;
