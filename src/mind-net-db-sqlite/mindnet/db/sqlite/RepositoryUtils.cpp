@@ -402,7 +402,7 @@ namespace mindnet::db::sqlite
                     err << "Filter column " << key << " not found in model " << def.get_model_name() << std::endl;
                     throw std::runtime_error("Filter column not found: " + key);
                 }
-                if (foreign_key && model::column_type_to_primitive_column_type(column_type)==model::PrimitiveColumnType::Number && stoi(value) == 0)
+                if (foreign_key && model::column_type_to_primitive_column_type(column_type)==model::PrimitiveColumnType::Number && value != "" && stoi(value) == 0)
                 {
                     continue;
                 }
@@ -451,8 +451,10 @@ namespace mindnet::db::sqlite
 
         SQLite::Database db(
             SQLITE_FILE_NAME,
-            SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
+            SQLite::OPEN_READONLY
         );
+
+        db.setBusyTimeout(5000);
         set_pragmas(db);
 
         SQLite::Statement* query_ptr = nullptr;
@@ -462,17 +464,6 @@ namespace mindnet::db::sqlite
             query_ptr = new SQLite::Statement(db, sql);
         }
         catch (const SQLite::Exception& e)
-        {
-            error = e.what();
-            delete query_ptr;
-            return {};
-        }
-
-        try
-        {
-            SQLite::Statement query(db, sql);
-        }
-        catch (SQLite::Exception& e)
         {
             error = e.what();
             delete query_ptr;
@@ -538,25 +529,35 @@ namespace mindnet::db::sqlite
             return results;
         }
 
-        SQLite::Statement query_count(db, sql_count);
-        bind_index = 1;
-        bind_query_filters(def, query_params, query_count, bind_index);
+        SQLite::Statement* query_count_ptr = nullptr;
+        try {
+            query_count_ptr = new SQLite::Statement(db, sql_count);
+            bind_index = 1;
+            bind_query_filters(def, query_params, *query_count_ptr, bind_index);
 
-        try
-        {
-            while (query_count.executeStep())
-            {
-                query_params.total_items = static_cast<int>(query_count.getColumn(0));
+            while (query_count_ptr->executeStep()) {
+                query_params.total_items = static_cast<int>(query_count_ptr->getColumn(0));
                 break;
             }
-        }
-        catch (SQLite::Exception& e)
-        {
+        } catch (SQLite::Exception& e) {
             error = e.what();
             delete query_ptr;
+            delete query_count_ptr;
             return results;
         }
-        delete query_ptr;
+
+        if (query_count_ptr) {
+            query_count_ptr->reset();
+            delete query_count_ptr;
+            query_count_ptr = nullptr;
+        }
+
+        if (query_ptr) {
+            query_ptr->reset();
+            delete query_ptr;
+            query_ptr = nullptr;
+        }
+
         return results;
     }
 }

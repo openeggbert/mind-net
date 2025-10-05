@@ -668,14 +668,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
-        //alert("ccc" + JSON.stringify(note, null, 2));
-        // if(content === null) {
-        //     const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
-        //     let content_id = await post_entity("content", new_content);
-        //     alert("content_id=" + content_id)
-        //     note.content_id = content_id;
-        //     content = await read_entity("content", note.content_id);
-        // }
 
         set_value("current_textarea", content === null ? "" : content.value);
 
@@ -749,7 +741,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         assign_meta_list_function("visited", "Visited", "visited")
         assign_meta_list_function("history", "History", "history")
 
-        set_value("children_label", "Root notes")
+        set_value("children_label", "Subnotes")
 
         document.getElementById("children_button_add").onclick = async function () {
             let title = prompt("Title of new note");
@@ -759,17 +751,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const new_note = JSON.parse("{\"importance\":0,\"sibling_order\":0,\"source_id\":0,\"title\":\"\",\"content_id\":0,\"parent_note_id\":0,\"difficulty\":0,\"map_id\":0,\"created_at\":0,\"alias_for_note_id\":0,\"updated_at\":0}")
 
                 new_note.title = title
-                new_note.map_id = map_id
+                new_note.map_id = note.map_id
+                new_note.parent_note_id = note.id
                 await post_entity("note", new_note)
             }
         };
 
-if(false){
+        if(true){
         let children = document.getElementById("children_ul");
 
         let notes = await list_all_entities(
-            "note",
-            "&sort=sibling_order&order=asc&fields=id,title&parent_note_id=0&map_id="+map_id
+            "note"
+            ,"&sort=sibling_order&order=asc&fields=id,title&parent_note_id=" + note.id + "&map_id="+note.map_id
         );
         for (const e of notes) {
 
