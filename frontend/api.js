@@ -135,7 +135,13 @@ export async function apiFetch(url, options = {}) {
             showError(`Error ${res.status}: ${text || res.statusText}`);
             return null;
         }
-        return res.json();
+        const ct = res.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+            return await res.json();
+        } else {
+            return await res.text();
+        }
+
     } catch (err) {
         showError(`Network error: ${err.message}`);
         return null;

@@ -34,7 +34,7 @@ namespace mindnet::plugins::slipbox
         auto notes = ctx.db->list(plugins::slipbox::models::NOTE_DEFINITION, ctx.token, query_params);
         if (notes.second.ko()) return {-1, notes.second.error};
         if (notes.first.empty()) return {
-            -1, std::string("There is no note with content id") + std::to_string(content_id)
+            -1, std::string("There is no note with content id ") + std::to_string(content_id)
         };
         plugins::slipbox::models::Note note;
         note.from_values(notes.first.at(0));

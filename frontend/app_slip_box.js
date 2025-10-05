@@ -250,7 +250,7 @@ export function showToast(message) {
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
-    }, 2000);
+    }, 3000);
 }
 
 window.showToast = showToast;
@@ -330,9 +330,20 @@ async function read_entity(entity, id) {
         );
 }
 
+async function delete_entity(entity, id) {
+    const url = new URL(`${API_BASE}/${entity}/${id}`);
+
+    return await apiFetch(url.toString(),
+        {
+            method: "DELETE",
+        }
+
+    );
+}
+
 async function put_entity(model_name, id, json) {
     const url = new URL(`${API_BASE}/${model_name}/${id}`);
-    let response = await apiFetch(url.toString(), {
+    return await apiFetch(url.toString(), {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(json)
@@ -342,7 +353,7 @@ async function put_entity(model_name, id, json) {
 
 async function post_entity(model_name, json) {
     const url = new URL(`${API_BASE}/${model_name}`);
-    let response = await apiFetch(url.toString(), {
+    return await apiFetch(url.toString(), {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(json)
@@ -365,6 +376,7 @@ export function refresh_page() {
 window.refresh_page = refresh_page;
 
 function refresh_page_to(url) {
+    console.debug("refresh_page_to=" + url);
     window.location.href = url;
 }
 
@@ -633,42 +645,80 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             }
         }
-        set_value("current_label", "Map")
-        set_value("current_id", map_id)
+        set_value("current_label", "Note")
+        set_value("current_id", note_id)
 
         get_element("current_title").onclick = function () {
-            showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
+            showWindowFrom("Detail of note #" + note_id, "index.html?entity=note&action=read&id=" + note_id)
         }
 
-        map = await read_entity("map", map_id);
-        set_value("current_title", map.name);
+        set_value("current_title", note.title);
 
         let current_title = document.getElementById("current_title");
         current_title.style.display = "inline-block";
         current_title.style.minWidth = "50px";
 
         get_element("current_button_rename").onclick = function () {
-            showError("Not yet implemented");
+            let new_name = prompt("Enter new name", note.title);
+            if(new_name !== undefined && new_name !== null) {
+                note.title = new_name;
+                set_value("current_title", note.title);
+            }
         }
 
         get_element("current_button_copy").onclick = function () {
-            copy_to_clipboard(map_id)
+            copy_to_clipboard(note_id)
         }
 
-        set_value("current_textarea", map.description);
+        let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
+        //alert("ccc" + JSON.stringify(note, null, 2));
+        // if(content === null) {
+        //     const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
+        //     let content_id = await post_entity("content", new_content);
+        //     alert("content_id=" + content_id)
+        //     note.content_id = content_id;
+        //     content = await read_entity("content", note.content_id);
+        // }
 
-        get_element("current_button_delete").onclick = function () {
-            showError("Not yet implemented");
+        set_value("current_textarea", content === null ? "" : content.value);
+
+        get_element("current_button_delete").onclick = async function () {
+            if (!confirm("Are you sure you want to delete this note?")) return;
+            try {
+                let response = await delete_entity("note", note_id);
+                console.info(response)
+                showToast(response)
+                await new Promise(r => setTimeout(r, 4000));
+                refresh_page_to(has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id);
+            } catch (err) {
+                showError("Delete failed: " + err.message);
+            }
         }
+
         get_element("current_button_cancel").onclick = function () {
             refresh_page()
         }
-        //{"team_id":0,"owner_id":1,"category":"","other_rights":7,"team_rights":7,"description":"aaaa","name":"aa","created_at":1759583934,"owner_rights":7,"updated_at":1759601801,"id":1}
 
-        get_element("current_button_save").onclick = function () {
-            map.description = get_element("current_textarea").value;
-            put_entity("map", map_id, map)
+        get_element("current_button_save").onclick = async function () {
+            let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
+            //alert("content" + JSON.stringify(content))
+            let content_id = content === null ? 0 : content.id;
+            if(content === null) {
+                const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
+                let content_created = await post_entity("content", new_content);
+                //alert("content_id=" + content_created.id)
+                note.content_id = content_created.id;
+            }
+            await put_entity("note", note_id, note)
+
+            if(content === null) content = await read_entity("content", note.content_id);
+            content.value = get_element("current_textarea").value;
+            let put_content_response = await put_entity("content", content.id, content);
+            //alert(JSON.stringify(put_content_response))
+
+
         }
+
         hide_element("meta_start")
 
         function assign_meta_list_function(models, Models, model) {
@@ -717,7 +767,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         };
 
-
+if(false){
         let children = document.getElementById("children_ul");
 
         let notes = await list_all_entities(
@@ -748,6 +798,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         }
 
+    }
     }
 
     document.getElementById("children_li_example").remove();

@@ -41,6 +41,9 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult NoteValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                  const Model& new_entity) const
     {
+        if (!slipbox::has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
+            return {403, "You do not have permission to update this note."};
+
         return ok_result;
     }
 
@@ -76,9 +79,6 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult NoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                              const Model& new_entity) const
     {
-        if (!slipbox::has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
-            return {403, "You do not have permission to update this note."};
-
         return_if(old_entity.content_id != 0 && new_entity.content_id == 0,
                   400, "content_id cannot be set to 0, if already set");
 

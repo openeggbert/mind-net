@@ -30,7 +30,16 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult ContentValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
     {
-        return ok_result;
+        auto result = slipbox::find_note_for_content(ctx, old_entity.get_id());
+        if (!result.second.empty()) return {400, result.second};
+        auto one = slipbox::find_note (ctx, result.first);;
+
+        auto ef = one.first.to_values();
+
+        auto note_validator = get_validator("note");
+        if (note_validator == nullptr) return {500, "No note validator found"};
+
+        return note_validator->can_update(ctx.db, ctx.token, ef);
     }
 
     OperationResult ContentValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
@@ -64,7 +73,7 @@ namespace mindnet::plugins::slipbox::validators
         auto note_id = slipbox::find_note_for_content(ctx, entity.get_id());
         if (!note_id.second.empty()) return {400, note_id.second};
         auto note = slipbox::find_note (ctx, note_id.first);;
-        if (note.second.empty()) return {400, note.second};
+        if (!note.second.empty()) return {400, note.second};
 
         auto note_validator = get_validator("note");
         if (note_validator == nullptr) return {500, "No note validator found"};
@@ -77,16 +86,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult ContentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                            const Model& new_entity) const
     {
-        auto result = slipbox::find_note_for_content(ctx, old_entity.get_id());
-        if (!result.second.empty()) return {400, result.second};
-        auto one = slipbox::find_note (ctx, old_entity.get_id());;
-
-        auto ef = one.first.to_values();
-
-        auto note_validator = get_validator("note");
-        if (note_validator == nullptr) return {500, "No note validator found"};
-
-        return note_validator->can_update(ctx.db, ctx.token, ef);
+        return ok_result;
     }
 
     OperationResult ContentValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const

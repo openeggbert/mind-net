@@ -234,11 +234,11 @@ namespace mindnet::api
                 if (!authorized_to) return {403, "You are not authorized to access resource. " + def->get_model_name() + " UPDATE"};
 
                 if (auto res = derived().validate_update_authorization(
-                    context, new_entity, old_entity); !res.ok())
+                    context, old_entity, new_entity); !res.ok())
                     return res;
             }
             if (auto res = derived().validate_update_integrity(
-                context, new_entity, old_entity); !res.ok())
+                context, old_entity, new_entity); !res.ok())
                 return res;
 
             return ok_result;
