@@ -1,6 +1,21 @@
+// ========================================
+// Imports & Globals
+// ========================================
 import {API_BASE, apiFetch} from "./api.js";
 import {showError, showInfo} from "./dom.js";
 
+let map_id = "";
+let note_id = "";
+let map = null;
+let note = null;
+let mode_maps = false;
+let mode_root = false;
+let mode_notes = false;
+let wasDragged = false;
+
+// ========================================
+// Panels
+// ========================================
 
 function set_flag(key, value) {
     if(value) {
@@ -14,36 +29,13 @@ function get_flag(key) {
     return localStorage.getItem(key) !== null
 }
 
-function set_parent_panel_collapsed(value) {
-    set_flag("slip_box.parent_panel_collapsed", value)
+function setPanelCollapsed(name, value) {
+    set_flag(`slip_box.${name}_panel_collapsed`, value);
+}
+function getPanelCollapsed(name) {
+    return get_flag(`slip_box.${name}_panel_collapsed`);
 }
 
-function get_parent_panel_collapsed() {
-    return get_flag("slip_box.parent_panel_collapsed")
-}
-function set_current_panel_collapsed(value) {
-    set_flag("slip_box.current_panel_collapsed", value)
-}
-
-function get_current_panel_collapsed() {
-    return get_flag("slip_box.current_panel_collapsed")
-}
-
-function set_meta_panel_collapsed(value) {
-    set_flag("slip_box.meta_panel_collapsed", value)
-}
-
-function get_meta_panel_collapsed() {
-    return get_flag("slip_box.meta_panel_collapsed")
-}
-
-function set_children_panel_collapsed(value) {
-    set_flag("slip_box.children_panel_collapsed", value)
-}
-
-function get_children_panel_collapsed() {
-    return get_flag("slip_box.children_panel_collapsed")
-}
 
 export function togglePanel(element, id) {
     const el = document.getElementById(id);
@@ -51,10 +43,10 @@ export function togglePanel(element, id) {
     const isCollapsed = el.classList.toggle('collapsed');
     // alert("element.id=" + element.id + " id=" + id + " isCollapsed=" + isCollapsed)
     switch (id) {
-        case "children_content" : set_children_panel_collapsed(isCollapsed);break;
-        case "parent_content" : set_parent_panel_collapsed(isCollapsed);break;
-        case "current_content" : set_current_panel_collapsed(isCollapsed);break;
-        case "meta_content" : set_meta_panel_collapsed(isCollapsed);break;
+        case "children_content": setPanelCollapsed("children", isCollapsed); break;
+        case "parent_content"  : setPanelCollapsed("parent"  , isCollapsed); break;
+        case "current_content" : setPanelCollapsed("current" , isCollapsed); break;
+        case "meta_content"    : setPanelCollapsed("meta"    , isCollapsed); break;
         default: console.warn("togglePanel() does not know id: " + id);
     }
     let simple = document.getElementById("app").dataset.version === "simple";
@@ -100,8 +92,9 @@ export function button_focus_onclick() {
 window.button_focus_onclick = button_focus_onclick;
 
 
-let wasDragged = false;
-
+// ========================================
+// Window
+// ========================================
 
 function makeDraggable(el) {
     const header = el.querySelector('.window_container-header');
@@ -168,7 +161,6 @@ export function showWindow() {
     }
 }
 
-
 window.showWindow = showWindow;
 
 export function clearWindow() {
@@ -212,65 +204,10 @@ export function showWindowFrom(title, url) {
     showWindow();
 }
 
-function hide_element(id) {
-    let el = document.getElementById(id);
-    if (el === null) return;
-    el.style.display = "none";
-}
+// ========================================
+// Entities (API calls)
+// ========================================
 
-function get_element(id) {
-    return document.getElementById(id);
-}
-
-function set_value(id, value) {
-    document.getElementById(id).innerHTML = value;
-}
-
-function copy_to_clipboard(text) {
-    navigator.clipboard.writeText(text);
-    showInfo("Copied to clipboard: " + text);
-}
-
-let map_id = "";
-let note_id = "";
-let map = null;
-let note = null;
-let mode_maps = false;
-let mode_root = false;
-let mode_notes = false;
-
-export function showToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    document.body.appendChild(toast);
-
-    requestAnimationFrame(() => toast.classList.add('show'));
-
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-window.showToast = showToast;
-
-function init_from_http_parameters() {
-    const params = new URLSearchParams(window.location.search);
-    let has_map_id = params.has("map_id");
-    let has_note_id = params.has("note_id");
-    if (has_map_id) {
-        map_id = params.get("map_id");
-        mode_root = true;
-    } else {
-        if (has_note_id) {
-            note_id = params.get("note_id");
-            mode_notes = true;
-        } else {
-            mode_maps = true;
-        }
-    }
-}
 
 async function list_entities(entity, additional_params = "", page_number = 1, page_size = 20) {
     const url = new URL(`${API_BASE}/${entity}`);
@@ -285,7 +222,7 @@ async function list_entities(entity, additional_params = "", page_number = 1, pa
             method: "GET",
             headers: {"Content-Type": "application/json"},
         }
-        );
+    );
     const total_pages = json?.total_pages || 1;
 
     const items = json?.items || [];
@@ -296,7 +233,7 @@ async function list_entities(entity, additional_params = "", page_number = 1, pa
 
 //entity, additional_params = "", page_number = 1, page_size = 20
 async function list_all_entities(entity, additional_params = "") {
-        let result = [];
+    let result = [];
     let page_size = 100;
     let page_number = 1;
 
@@ -327,7 +264,7 @@ async function read_entity(entity, id) {
             headers: {"Content-Type": "application/json"},
         }
 
-        );
+    );
 }
 
 async function delete_entity(entity, id) {
@@ -361,6 +298,45 @@ async function post_entity(model_name, json) {
 
 }
 
+// ========================================
+// Utils
+// ========================================
+
+function hide_element(id) {
+    let el = document.getElementById(id);
+    if (el === null) return;
+    el.style.display = "none";
+}
+
+function get_element(id) {
+    return document.getElementById(id);
+}
+
+function set_value(id, value) {
+    document.getElementById(id).innerHTML = value;
+}
+
+function copy_to_clipboard(text) {
+    navigator.clipboard.writeText(text);
+    showInfo("Copied to clipboard: " + text);
+}
+
+export function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('show'));
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+window.showToast = showToast;
+
 export function refresh_page() {
     let current_url = window.location.href;
     if (current_url !== undefined) {
@@ -380,6 +356,27 @@ function refresh_page_to(url) {
     window.location.href = url;
 }
 
+function init_from_http_parameters() {
+    const params = new URLSearchParams(window.location.search);
+    let has_map_id = params.has("map_id");
+    let has_note_id = params.has("note_id");
+    if (has_map_id) {
+        map_id = params.get("map_id");
+        mode_root = true;
+    } else {
+        if (has_note_id) {
+            note_id = params.get("note_id");
+            mode_notes = true;
+        } else {
+            mode_maps = true;
+        }
+    }
+}
+
+// ========================================
+// Main (DOMContentLoaded)
+// ========================================
+
 document.addEventListener('DOMContentLoaded', async () => {
 
     let disable_rest = false;
@@ -398,10 +395,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         togglePanel(toggle_meta, 'meta_content');
     }
 
-    if(get_parent_panel_collapsed()) togglePanel(toggle_parent, 'parent_content')
-    if(get_current_panel_collapsed() && !meta_collapsed) togglePanel(toggle_current, 'current_content')
-    if(get_meta_panel_collapsed()) togglePanel(toggle_meta, 'meta_content')
-    if(get_children_panel_collapsed()) togglePanel(toggle_children, 'children_content')
+    if(getPanelCollapsed("parent")) togglePanel(toggle_parent, 'parent_content')
+    if(getPanelCollapsed("current") && !meta_collapsed) togglePanel(toggle_current, 'current_content')
+    if(getPanelCollapsed("meta")) togglePanel(toggle_meta, 'meta_content')
+    if(getPanelCollapsed("children")) togglePanel(toggle_children, 'children_content')
 
 
 
