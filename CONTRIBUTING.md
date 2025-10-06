@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Slip Box component
 - [ ] Use SM-18, new entity review_session
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Super Memo component
@@ -183,5 +182,5 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Add hash sums for sql migrations - new column in table migration
 - [x] BUG Update of boolean values in SQLite is not working.
 - [x] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
-
+- [x] Slip Box component
 

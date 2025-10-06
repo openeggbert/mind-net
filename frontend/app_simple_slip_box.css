@@ -399,10 +399,51 @@ button.toggle_button:hover {
     cursor: pointer;
 }
 
+#toast_container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    align-items: center;
+}
+
+.toast {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    font-size: 15px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    min-width: 200px;
+    text-align: center;
+}
+
+.toast.info {
+    background: #7aed93;
+}
+.toast.warn {
+    background: #f39c12;
+}
+.toast.error {
+    background: #e74c3c;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
 #slip_box {
     display: none;
     display: block;
 }
+
 #loading_screen {
     position: fixed;
     inset: 0;
@@ -414,3 +455,4 @@ button.toggle_button:hover {
     font-size: 1.5em;
     z-index: 9999;
 }
+

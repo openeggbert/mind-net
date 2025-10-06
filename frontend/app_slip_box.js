@@ -2,12 +2,13 @@
 // Imports & Globals
 // ========================================
 import {API_BASE, apiFetch} from "./api.js";
-import {showError, showInfo} from "./dom.js";
 
 let map_id = "";
 let note_id = "";
 let map = null;
 let note = null;
+let original_map = null;
+let original_note = null;
 let mode_maps = false;
 let mode_root = false;
 let mode_notes = false;
@@ -249,7 +250,7 @@ async function list_all_entities(entity, additional_params = "") {
             break;
         }
         if(result.length >= 1000) {
-            showToast("Omitting some results: 1000 or more results. ")
+            show_toast("Omitting some results: 1000 or more results. ")
             break;
         }
     }
@@ -302,6 +303,57 @@ async function post_entity(model_name, json) {
 // Utils
 // ========================================
 
+// --- Difficulty ---
+const Difficulty = {
+    None: 0,
+    Easy: 1,
+    Medium: 2,
+    Hard: 3,
+    Expert: 4
+};
+
+function getDifficultyTexts() {
+    return Object.keys(Difficulty);
+}
+
+function difficultyToNumber(name) {
+    return Difficulty[name] ?? null;
+}
+
+function numberToDifficulty(num) {
+    for (const [key, value] of Object.entries(Difficulty)) {
+        if (value === num) return key;
+    }
+    return null;
+}
+
+// --- Importance ---
+const Importance = {
+    None: 0,
+    Low: 1,
+    Medium: 2,
+    High: 3
+};
+
+function getImportanceTexts() {
+    return Object.keys(Importance);
+}
+
+function importanceToNumber(name) {
+    return Importance[name] ?? null;
+}
+
+function numberToImportance(num) {
+    for (const [key, value] of Object.entries(Importance)) {
+        if (value === num) return key;
+    }
+    return null;
+}
+
+async function sleep_for_seconds(seconds) {
+    await new Promise(r => setTimeout(r, seconds * 1000));
+}
+
 function hide_element(id) {
     let el = document.getElementById(id);
     if (el === null) return;
@@ -318,24 +370,40 @@ function set_value(id, value) {
 
 function copy_to_clipboard(text) {
     navigator.clipboard.writeText(text);
-    showInfo("Copied to clipboard: " + text);
+    show_info("Copied to clipboard: " + text);
 }
 
-export function showToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.textContent = message;
-    document.body.appendChild(toast);
+function ensure_toast_container() {
+    let container = document.getElementById("toast_container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toast_container";
+        document.body.appendChild(container);
+    }
+    return container;
+}
 
-    requestAnimationFrame(() => toast.classList.add('show'));
+export function show_toast(message, type = "info") {
+    const container = ensure_toast_container();
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add("show"));
 
     setTimeout(() => {
-        toast.classList.remove('show');
+        toast.classList.remove("show");
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
 
-window.showToast = showToast;
+window.showToast = show_toast;
+
+function show_info(message) {show_toast(message, "info");}
+function show_warn(message) {show_toast(message, "warn");}
+function show_error(message) {show_toast(message, "error");}
 
 export function refresh_page() {
     let current_url = window.location.href;
@@ -413,7 +481,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     document.querySelectorAll('.add').forEach(btn => {
-        btn.addEventListener('click', () => showToast('New child added'));
+        btn.addEventListener('click', () => show_toast('New child added'));
     });
 
     const win = document.getElementById('window_container');
@@ -495,7 +563,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         current_title.style.minWidth = "50px";
 
         get_element("current_button_rename").onclick = function () {
-            showError("Not yet implemented");
+            show_error("Not yet implemented");
         }
 
         get_element("current_button_copy").onclick = function () {
@@ -505,7 +573,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         set_value("current_textarea", map.description);
 
         get_element("current_button_delete").onclick = function () {
-            showError("Not yet implemented");
+            show_error("Not yet implemented");
         }
         get_element("current_button_cancel").onclick = function () {
             refresh_page()
@@ -600,7 +668,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (mode_notes) {
 
 
-        note = await read_entity("note", note_id);
+        original_note = await read_entity("note", note_id);
+        note = structuredClone(original_note);
         let parent_note = note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id);
         let has_parent = note.parent_note_id !== 0;
 
@@ -625,7 +694,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             let new_parent_note_id = prompt("Enter new parent note ID");
 
-            if (new_parent_note_id !== undefined) {
+            if (new_parent_note_id !== undefined && new_parent_note_id !== null) {
                 note.parent_note_id = new_parent_note_id;
 
                 parent_note = note.parent_note_id === "0" ? null : await read_entity("note", note.parent_note_id);
@@ -669,6 +738,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
 
+        let original_content_value = content === null ? null : content.value;
+
         set_value("current_textarea", content === null ? "" : content.value);
 
         get_element("current_button_delete").onclick = async function () {
@@ -676,15 +747,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             try {
                 let response = await delete_entity("note", note_id);
                 console.info(response)
-                showToast(response)
-                await new Promise(r => setTimeout(r, 4000));
+                show_toast(response)
+                await sleep_for_seconds(4)
                 refresh_page_to(has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id);
             } catch (err) {
-                showError("Delete failed: " + err.message);
+                show_error("Delete failed: " + err.message);
             }
         }
 
         get_element("current_button_cancel").onclick = function () {
+
+            show_toast("Cancelling changes");
             refresh_page()
         }
 
@@ -698,18 +771,166 @@ document.addEventListener('DOMContentLoaded', async () => {
                 //alert("content_id=" + content_created.id)
                 note.content_id = content_created.id;
             }
-            await put_entity("note", note_id, note)
+            if(JSON.stringify(note) !== JSON.stringify(original_note)) {
+                await put_entity("note", note_id, note)
+                original_note = structuredClone(note)
+                show_info("Note changes were saved")
+            } else {
+                show_warn("Note was not changed")
+            }
 
             if(content === null) content = await read_entity("content", note.content_id);
             content.value = get_element("current_textarea").value;
-            let put_content_response = await put_entity("content", content.id, content);
-            //alert(JSON.stringify(put_content_response))
+            if(original_content_value !== content.value) {
+                let put_content_response = await put_entity("content", content.id, content);
+                show_toast("Content changes were saved");
+                original_content_value = content.value;
+            } else {
+                show_warn("Content was not changed")
+            }
+
+
 
 
         }
 
-        hide_element("meta_start")
+        function chooseOption(options) {
+            return new Promise((resolve) => {
+                // Overlay
+                const overlay = document.createElement("div");
+                overlay.style.position = "fixed";
+                overlay.style.top = 0;
+                overlay.style.left = 0;
+                overlay.style.width = "100%";
+                overlay.style.height = "100%";
+                overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
+                overlay.style.display = "flex";
+                overlay.style.justifyContent = "center";
+                overlay.style.alignItems = "center";
+                overlay.style.zIndex = 1000;
 
+                // Panel
+                const panel = document.createElement("div");
+                panel.style.background = "white";
+                panel.style.padding = "20px";
+                panel.style.borderRadius = "12px";
+                panel.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+                panel.style.display = "flex";
+                panel.style.flexDirection = "column";
+                panel.style.gap = "10px";
+                panel.style.minWidth = "200px";
+
+                // Create buttons for all options 
+                options.forEach((text) => {
+                    const btn = document.createElement("button");
+                    btn.textContent = text;
+                    btn.style.padding = "10px";
+                    btn.style.border = "1px solid #ccc";
+                    btn.style.borderRadius = "8px";
+                    btn.style.cursor = "pointer";
+                    btn.style.background = "#f0f0f0";
+                    btn.onmouseenter = () => (btn.style.background = "#e0e0e0");
+                    btn.onmouseleave = () => (btn.style.background = "#f0f0f0");
+                    btn.onclick = () => {
+                        cleanup();
+                        resolve(text);
+                    };
+                    panel.appendChild(btn);
+                });
+
+                // Cancel button
+                const cancelBtn = document.createElement("button");
+                cancelBtn.textContent = "Cancel";
+                cancelBtn.style.padding = "10px";
+                cancelBtn.style.border = "1px solid #ccc";
+                cancelBtn.style.borderRadius = "8px";
+                cancelBtn.style.cursor = "pointer";
+                cancelBtn.style.background = "#ffe0e0";
+                cancelBtn.onmouseenter = () => (cancelBtn.style.background = "#ffcccc");
+                cancelBtn.onmouseleave = () => (cancelBtn.style.background = "#ffe0e0");
+                cancelBtn.onclick = () => {
+                    cleanup();
+                    resolve(null);
+                };
+                panel.appendChild(cancelBtn);
+
+                overlay.appendChild(panel);
+                document.body.appendChild(overlay);
+
+                // Cleanup after closing
+                function cleanup() {
+                    document.body.removeChild(overlay);
+                }
+            });
+        }
+
+        get_element("meta_order").innerText = note.sibling_order;
+        get_element("current_button_edit_order").onclick = async function () {
+
+            const input = prompt("Enter new sibling order", note.sibling_order);
+            if (input !== null) {
+                let num = Number(input);
+                if (isNaN(num)) {
+                    alert("This is not number! " + input);
+                } else {
+                    note.sibling_order = num;
+                    get_element("meta_order").innerText = note.sibling_order;
+                    show_toast("Sibling order updated to " + note.sibling_order);
+                }
+            }
+
+        }
+        let meta_importance = get_element("meta_importance")
+
+        function refresh_importance_span() {
+            switch(note.importance) {
+                case 0: meta_importance.className = "tag none";break;
+                case 1: meta_importance.className = "tag low";break;
+                case 2: meta_importance.className = "tag medium";break;
+                case 3: meta_importance.className = "tag high";break;
+                default: console.warn("Unknown importance: " + note.importance)
+            }
+            meta_importance.innerText = numberToImportance(note.importance);
+        }
+        refresh_importance_span()
+
+        get_element("current_button_edit_importance").onclick = async function () {
+
+            const result = await chooseOption(getImportanceTexts());
+            if(result !== undefined && result !== null) {
+                note.importance = importanceToNumber(result);
+                refresh_importance_span()
+                show_toast("Importance updated to " + result);
+            }
+        }
+
+
+
+        let meta_difficulty = get_element("meta_difficulty")
+
+        function refresh_difficulty_span() {
+            switch(note.difficulty) {
+                case 0: meta_difficulty.className = "tag none";break;
+                case 1: meta_difficulty.className = "tag easy";break;
+                case 2: meta_difficulty.className = "tag medium";break;
+                case 3: meta_difficulty.className = "tag hard";break;
+                case 4: meta_difficulty.className = "tag expert";break;
+                default: console.warn("Unknown difficulty: " + note.difficulty)
+            }
+            meta_difficulty.innerText = numberToDifficulty(note.difficulty);
+        }
+        refresh_difficulty_span()
+
+        get_element("current_button_edit_difficulty").onclick = async function () {
+
+            const result = await chooseOption(getDifficultyTexts());
+            if(result !== undefined && result !== null) {
+                note.difficulty = difficultyToNumber(result);
+                refresh_difficulty_span()
+                show_toast("Difficulty updated to " + result);
+            }
+        }
+        
         function assign_meta_list_function(models, Models, model) {
             get_element("meta_button_" + models).onclick = function () {
                 showWindowFrom(Models, "index.html?entity=" + model + "&action=list");
@@ -792,6 +1013,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     document.getElementById("children_li_example").remove();
+
     document.getElementById("loading_screen").style.display = "none";
     document.getElementById("slip_box").style.display = "block";
 

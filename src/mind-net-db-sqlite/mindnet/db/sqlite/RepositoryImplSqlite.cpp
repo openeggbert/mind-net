@@ -143,13 +143,13 @@ namespace mindnet::db::sqlite
             auto primitive_column_type = column_type_to_primitive_column_type(column_type);
 
 
-            if (!auto_value) debug << "rvalue=" << rvalue << commit;
+            if (auto_value ? has_value : !auto_value) debug << "rvalue=" << rvalue << commit;
             if (mandatory && !has_value)
             {
                 throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");
             }
 
-            if (auto_value)
+            if (auto_value & !has_value)
             {
                 switch (primitive_column_type)
                 {
