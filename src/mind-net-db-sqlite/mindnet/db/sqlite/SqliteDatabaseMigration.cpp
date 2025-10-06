@@ -381,6 +381,8 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
         {
             trace << "validate()" << commit;
 
+            //TODO split into validate_structure() validate_meta_migrations() validate_schema_history()
+
             for (const char* table_name : {SchemaHistoryColumns::MODEL_NAME, orm::SchemaHistoryMetaColumns::MODEL_NAME})
             {
                 if (!validate_table_exists(db, table_name))

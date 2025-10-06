@@ -58,7 +58,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Add support for missing column types (JSON, BLOB, etc.)
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
-- [ ] Add keyboard shortcuts for slip box and super memo components
 
 ### Experimental
 - [ ] Chat component - Slack-like

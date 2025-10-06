@@ -387,3 +387,48 @@ Select the database type at runtime via configuration (`config.json`, env var `D
 * Easy to add new database backends.
 * Simplifies testing (could add `InMemoryDatabase` for unit tests).
 * Long-term maintainability.
+
+## TODO: Future Improvements for Personal C++ Knowledge System
+
+This list contains critical observations and enhancement suggestions based on current UI, architecture, and user experience. These are **not urgent** and can be revisited in the future when time allows.
+
+keyboard shortcuts, clickable tags, searchable field to the header
+
+---
+
+### 🧠 UX & Usability
+
+
+- [ ] Add tooltips and inline help for all buttons and metadata fields.
+- [ ] Provide visual feedback for actions (e.g. save, delete, copy) via toasts or highlights.
+- [ ] Add a breadcrumb or tree navigation for parent/child note structure.
+- [ ] Implement a read-only mode to prevent accidental edits during review.
+
+---
+
+
+### 🚀 Onboarding & Accessibility
+
+- [ ] Create a first-time user guide with screenshots.
+- [ ] Add sample notes or templates for Zettelkasten and SuperMemo.
+- [ ] Include inline explanations for metadata fields (e.g. what is "Order"?).
+- [ ] Add a welcome screen or setup wizard for new users.
+
+---
+
+### 🔧 Architecture & Extensibility
+
+- [ ] Add rate limiting to REST API for security.
+- [ ] Consider CI/CD pipeline for plugin testing and integration.
+- [ ] Explore export formats (Markdown, JSON) for notes.
+- [ ] Document plugin development process for future contributors.
+
+---
+
+### 🧪 Validation & Safety
+
+- [ ] Add syntax validation for metadata blocks.
+- [ ] Highlight invalid or incomplete key-value entries.
+- [ ] Add confirmation dialogs for destructive actions (e.g. delete).
+
+
