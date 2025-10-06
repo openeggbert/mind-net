@@ -1,16 +1,63 @@
+:root {
+    --color-bg: #f4f6f8;
+    --color-bg-alt: #eaeaea;
+    --color-text: #333;
+
+    --color-header: #2c3e50;
+    --color-header-text: #ffffff;
+
+    --color-primary: #3498db;
+    --color-primary-hover: #2686bf;
+
+    --color-danger: #e74c3c;
+    --color-danger-hover: #c0392b;
+
+    --color-neutral: #bdc3c7;
+    --color-neutral-hover: #a0a0a0;
+
+    --color-warning: #f39c12;
+    --color-warning-hover: #d68910;
+
+    --color-focus: #1d6fa5;
+    --color-focus-text: #1d3557;
+
+    --color-panel-bg: #ffffff;
+    --color-panel-border: #eee;
+
+    --color-current-bg: #fffef9;
+    --color-current-text: #1d3557;
+
+    --color-link: #1d6fa5;
+
+    --color-breadcrumb-bg: #eef2f5;
+    --color-breadcrumb-text: #666;
+
+    --color-meta-bg: #f9f9f9;
+    --color-meta-border: #ccc;
+
+    --color-tag-none: #8f978f;
+    --color-tag-low: #83c7e6;
+    --color-tag-medium: #4cdcbc;
+    --color-tag-high: #e67e22;
+    --color-tag-expert: #8e44ad;
+
+    --color-toast-info: #7aed93;
+    --color-toast-warn: #f39c12;
+    --color-toast-error: #e74c3c;
+}
+
 body {
-    background: #f4f6f8;
+    background: linear-gradient(to bottom, var(--color-bg), var(--color-bg-alt));
     margin: 0;
     padding: 0;
-    color: #333;
+    color: var(--color-text);
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-    background: linear-gradient(to bottom, #f4f6f8, #eaeaea);
 }
 
 header {
-    background: #2c3e50;
+    background: var(--color-header);
     padding: 10px;
-    color: white;
+    color: var(--color-header-text);
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -39,46 +86,40 @@ button {
     color: black;
 }
 
-
 button.add, button.save, button.toggle {
-    background: #3498db;
+    background: var(--color-primary);
     color: white;
 }
 
 button.delete {
-    background: #e74c3c;
+    background: var(--color-danger);
     color: white;
 }
 
 button.cancel {
-    background: #bdc3c7;
+    background: var(--color-neutral);
     color: black;
 }
 
 button.focus {
-    background: #f39c12;
+    background: var(--color-warning);
 }
 
 button.add:hover, button.save:hover, button.toggle:hover {
-    background: #2686bf;
+    background: var(--color-primary-hover);
 }
 
 button.delete:hover {
-    background: #c0392b;
+    background: var(--color-danger-hover);
 }
 
 button.cancel:hover {
-    background: #a0a0a0;
+    background: var(--color-neutral-hover);
 }
 
 button.focus:hover {
-    background: #d68910;
+    background: var(--color-warning-hover);
 }
-
-/*
-button.save { background: #27ae60; }
-button.save:hover { background: #1e8449; }
-*/
 
 main {
     display: flex;
@@ -90,7 +131,7 @@ main {
 }
 
 .panel {
-    background: #ffffff;
+    background: var(--color-panel-bg);
     border-radius: 8px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     padding: 20px;
@@ -99,7 +140,7 @@ main {
 
 .panel h2 {
     margin-top: 0;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--color-panel-border);
     padding-bottom: 6px;
     display: flex;
     justify-content: space-between;
@@ -108,7 +149,7 @@ main {
     letter-spacing: 0.5px;
     font-family: 'Segoe UI Semibold', 'Roboto', sans-serif;
     font-size: 1.6em;
-    color: #2c3e50;
+    color: var(--color-header);
     margin-bottom: 12px;
 }
 
@@ -176,17 +217,17 @@ li {
 .current_panel {
     flex: 2;
     font-size: 1.05em;
-    border: 3px solid #1d6fa5;
-    background: #fffef9;
+    border: 3px solid var(--color-focus);
+    background: var(--color-current-bg);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .current_panel h2 {
-    color: #1d3557;
+    color: var(--color-current-text);
 }
 
 .current_panel a {
-    color: #1d6fa5;
+    color: var(--color-link);
     text-decoration: none;
     font-weight: 500;
 }
@@ -213,22 +254,21 @@ li {
     line-height: 1.8;
     border-radius: 6px;
     padding: 16px;
-    color: #333;
+    color: var(--color-text);
     background: #fffdf2;
     border: 1px solid #ccc;
     min-height: 400px;
 }
 
-
 .meta {
     flex: 1;
     min-width: 240px;
-    background: #f9f9f9;
-    border-left: 4px solid #ccc;
+    background: var(--color-meta-bg);
+    border-left: 4px solid var(--color-meta-border);
 }
 
 .collapsed {
-    display: none !important;;
+    display: none !important;
 }
 
 .focus-mode .panel:not(.current_panel) {
@@ -242,22 +282,22 @@ li {
 }
 
 .breadcrumb {
-    color: #666;
+    color: var(--color-breadcrumb-text);
     margin-bottom: 10px;
-    background: #eef2f5;
+    background: var(--color-breadcrumb-bg);
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 0.95em;
 }
 
 .breadcrumb a {
-    color: #3498db;
+    color: var(--color-primary);
     text-decoration: none;
     margin-right: 6px;
 }
 
 .breadcrumb a:hover {
-    color: #1d6fa5;
+    color: var(--color-link);
     text-decoration: underline;
 }
 
@@ -279,7 +319,6 @@ li {
     resize: both;
     overflow: auto;
 }
-
 
 .window_container header {
     display: flex;
@@ -303,7 +342,6 @@ li {
     font-size: 0.95em;
     padding: 12px 16px;
 }
-
 
 #toast_container {
     position: fixed;
@@ -332,19 +370,18 @@ li {
 }
 
 .toast.info {
-    background: #7aed93;
+    background: var(--color-toast-info);
 }
 .toast.warn {
-    background: #f39c12;
+    background: var(--color-toast-warn);
 }
 .toast.error {
-    background: #e74c3c;
+    background: var(--color-toast-error);
 }
 
 .toast.show {
     opacity: 1;
 }
-
 
 .tag {
     padding: 2px 8px;
@@ -355,21 +392,21 @@ li {
 }
 
 .tag.none {
-    background: #8f978f;
+    background: var(--color-tag-none);
 }
 .tag.low,.tag.easy {
-    background: #83c7e6;
+    background: var(--color-tag-low);
 }
 .tag.medium {
-    background: #4cdcbc;
+    background: var(--color-tag-medium);
 }
 
 .tag.high,.tag.hard {
-    background: #e67e22;
+    background: var(--color-tag-high);
 }
 
 .tag.expert {
-    background: #8e44ad;
+    background: var(--color-tag-expert);
 }
 
 .presentation .panel {
@@ -379,7 +416,7 @@ li {
 
 .presentation .current_panel {
     background: #fefefe;
-    border-color: #1d6fa5;
+    border-color: var(--color-focus);
 }
 
 #parent_id::before,#current_id::before,.children_child_id::before {
@@ -429,5 +466,4 @@ li {
             min-height: unset;
         }
     }
-
 }
