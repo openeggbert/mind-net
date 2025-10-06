@@ -9,175 +9,179 @@
 </head>
 <body class="presentation">
 <div id="app" data-version="rich"></div>
-
 <div id="loading_screen">Loading…</div>
 <div id="slip_box">
-<header>
-    <div onclick="window.location.href='app_slip_box.html'">🧠 Slip Box</div>
-    <button onclick="window.location.href='index.html'">🌐 Mind Net</button>
-    <button id="button_previous" title="Previous sibling by order">← Previous</button>
-    <button id="button_next" title="Next sibling by order">Next →</button>
-    <button id="button_focus" class="focus" onclick="button_focus_onclick()">🧘 Focus Mode</button>
-    <button id="button_theme">🌓 Toggle Theme</button>
-</header>
 
-<main id="main">
-    <div class="breadcrumb">
-        📂 <a href="#">Home</a> › <a href="#">C++</a> › <a href="#">Constructors</a> › <strong>Note #43453</strong>
-    </div>
+    <header>
+        <div id="slipbox_header" onclick="window.location.href='app_slip_box.html'">🧠 Slip Box</div>
+        <button id="button_mindnet">🌐 Mind Net</button>
+        <button id="button_previous">← Previous</button>
+        <button id="button_next">Next →</button>
+        <button id="button_focus" class="focus">🧘 Focus Mode</button>
+        <button id="button_theme">🌓 Toggle Theme</button>
+    </header>
 
-    <section class="panel parent" id="parent">
-        <h2>
+    <main id="main">
+        <div class="breadcrumb">
+            📂 <a href="#">Home</a> › <a href="#">C++</a> › <a href="#">Constructors</a> › <strong>Note #43453</strong>
+        </div>
+
+        <section class="panel parent" id="parent">
+            <h2>
             <span class="label">
                 🧭 <span id="parent_label">Parent Note</span>
             </span>
-            <button class="toggle" onclick="togglePanel(this, 'parent_content')" id="collapsible-toggle-parent">▼</button>
+                <button class="toggle" id="collapsible-toggle-parent">▼
+                </button>
 
-        </h2>
-        <div id="parent_content">
-            <p><strong id="parent_id_label">ID:</strong> <span id="parent_id">4688</span></p>
-            <p><strong id="parent_title_label">Title:</strong> <a href="#" id="parent_title">Parent note</a></p>
-            <div class="actions">
-                <button id="parent_button_copy">📋 Copy</button>
-                <button id="parent_button_edit">✏️ Edit</button>
+            </h2>
+            <div id="parent_content">
+                <p><strong id="parent_id_label">ID:</strong> <span id="parent_id">4688</span></p>
+                <p><strong id="parent_title_label">Title:</strong> <a href="#" id="parent_title">Parent note</a></p>
+                <div class="actions">
+                    <button id="parent_button_copy">📋 Copy</button>
+                    <button id="parent_button_edit">✏️ Edit</button>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <div class="layout_row">
-        <section class="panel current_panel" id="current">
-            <h2>
+        <div class="layout_row">
+            <section class="panel current_panel" id="current">
+                <h2>
                 <span class="label">
                     📝 <span id="current_label">Note</span><span id="current_id">43453</span></span>
-                <button class="toggle" onclick="togglePanel(this, 'current_content')" id="collapsible-toggle-current">▼</button>
-            </h2>
-            <div id="current_content">
-                <p>
-                    <strong id="current_title_label">Title:</strong> <a href="#" id="current_title">Note title</a>
-                    <button id="current_button_rename">🔤 Rename</button>
-                    <button id="current_button_copy">📋 Copy</button>
-                </p>
-                <p>
-                    <button id="current_button_edit">✏️ Edit</button>
-                    <button id="current_button_read">📖 Read</button>
-                </p>
-                <textarea id="current_textarea">
+                    <button class="toggle" id="collapsible-toggle-current">▼
+                    </button>
+                </h2>
+                <div id="current_content">
+                    <p>
+                        <strong id="current_title_label">Title:</strong> <a href="#" id="current_title">Note title</a>
+                        <button id="current_button_rename">🔤 Rename</button>
+                        <button id="current_button_copy">📋 Copy</button>
+                    </p>
+                    <p>
+                        <button id="current_button_edit">✏️ Edit</button>
+                        <button id="current_button_read">📖 Read</button>
+                    </p>
+                    <textarea id="current_textarea">
 First paragraph of text…
 ## Related Notes
 [[Copy Constructor vs. Move Constructor]]
         </textarea>
-                <div class="actions">
-                    <button class="delete" id="current_button_delete">🗑️ Delete</button>
-                    <button class="cancel" id="current_button_cancel">↩️ Cancel</button>
-                    <button class="save" id="current_button_save">💾 Save</button>
+                    <div class="actions">
+                        <button class="delete" id="current_button_delete">🗑️ Delete</button>
+                        <button class="cancel" id="current_button_cancel">↩️ Cancel</button>
+                        <button class="save" id="current_button_save">💾 Save</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="panel meta" id="meta">
-            <h2>
+            <section class="panel meta" id="meta">
+                <h2>
                 <span class="label">
                     <span id="meta_label">📊 Metadata</span>
             </span>
-                <button class="toggle" id="collapsible-toggle-meta" onclick="togglePanel(this, 'meta_content')">▼</button>
-            </h2>
-            <div id="meta_content">
-                <div id="meta_start">
-                <ul>
-                    <li>
-                        <strong>Order:</strong> <span id="meta_order">3400</span>
-                        <button id="current_button_edit_order">✏️ Edit</button>
-                    </li>
-                    <li><strong>Importance:</strong> <span class="tag high" id="meta_importance">High</span>
-                        <button id="current_button_edit_importance">✏️ Edit</button>
-                    </li>
-                    <li><strong>Difficulty:</strong> <span class="tag expert" id="meta_difficulty">Expert</span>
-                        <button id="current_button_edit_difficulty">✏️ Edit</button>
-                    </li>
+                    <button class="toggle" id="collapsible-toggle-meta">▼
+                    </button>
+                </h2>
+                <div id="meta_content">
+                    <div id="meta_start">
+                        <ul>
+                            <li>
+                                <strong>Order:</strong> <span id="meta_order">3400</span>
+                                <button id="current_button_edit_order">✏️ Edit</button>
+                            </li>
+                            <li><strong>Importance:</strong> <span class="tag high" id="meta_importance">High</span>
+                                <button id="current_button_edit_importance">✏️ Edit</button>
+                            </li>
+                            <li><strong>Difficulty:</strong> <span class="tag expert" id="meta_difficulty">Expert</span>
+                                <button id="current_button_edit_difficulty">✏️ Edit</button>
+                            </li>
 
-                </ul>
+                        </ul>
                     </div>
 
+                    <div class="meta_section">
+                        <h3>📚 Knowledge</h3>
 
-                <div class="meta_section">
-                    <h3>📚 Knowledge</h3>
+                        <button id="meta_button_links">🔗 Links</button>
+                        <button id="meta_button_urls">🔍 Urls</button>
+                        <button id="meta_button_terms">📖 Terms</button>
+                        <button id="meta_button_sources">📄 Sources</button>
+                        <button id="meta_button_ideas">💡 Ideas</button>
+                        <button id="meta_button_questions">❓ Questions</button>
 
-                    <button id="meta_button_links">🔗 Links</button>
-                    <button id="meta_button_urls">🔍 Urls</button>
-                    <button id="meta_button_terms">📖 Terms</button>
-                    <button id="meta_button_sources">📄 Sources</button>
-                    <button id="meta_button_ideas">💡 Ideas</button>
-                    <button id="meta_button_questions" onclick="showWindow()">❓ Questions</button>
 
+                    </div>
+
+                    <div class="meta_section">
+                        <h3>🔗 Relations</h3>
+                        <button id="meta_button_backlinks">🔁 Backlinks</button>
+                        <button id="meta_button_siblings">👥 Siblings</button>
+                        <button id="meta_button_wanted_notes">📌 Wanted notes</button>
+                        <button id="meta_button_properties">📑 Properties</button>
+                        <button id="meta_button_tags">🏷️ Tags</button>
+                        <button id="meta_button_collections">📁 Collections</button>
+
+                    </div>
+
+                    <!-- Workflow section -->
+                    <div class="meta_section">
+                        <h3>⚙️ Workflow</h3>
+
+                        <button id="meta_button_alert">⚠️ Alerts</button>
+                        <button id="meta_button_flags">🚩 Flags</button>
+                        <button id="meta_button_projects">📂 Projects</button>
+                        <button id="meta_button_tasks">✅ Tasks</button>
+                        <button id="meta_button_pinned_notes">📍 Pinned notes</button>
+
+
+                    </div>
+
+                    <!-- Navigation section -->
+                    <div class="meta_section">
+                        <h3>🧭 Navigation</h3>
+                        <button id="meta_button_visited">👣 Visited</button>
+                        <button id="meta_button_history">🕓 History</button>
+                    </div>
 
                 </div>
+            </section>
+        </div>
 
-                <div class="meta_section">
-                    <h3>🔗 Relations</h3>
-                    <button id="meta_button_backlinks">🔁 Backlinks</button>
-                    <button id="meta_button_siblings">👥 Siblings</button>
-                    <button id="meta_button_wanted_notes">📌 Wanted notes</button>
-                    <button id="meta_button_properties">📑 Properties</button>
-                    <button id="meta_button_tags">🏷️ Tags</button>
-                    <button id="meta_button_collections" onclick="showWindow()">📁 Collections</button>
-
-                </div>
-
-                <!-- Workflow section -->
-                <div class="meta_section">
-                    <h3>⚙️ Workflow</h3>
-
-                    <button id="meta_button_alert">⚠️ Alerts</button>
-                    <button id="meta_button_flags">🚩 Flags</button>
-                    <button id="meta_button_projects">📂 Projects</button>
-                    <button id="meta_button_tasks">✅ Tasks</button>
-                    <button id="meta_button_pinned_notes">📍 Pinned notes</button>
-
-
-                </div>
-
-                <!-- Navigation section -->
-                <div class="meta_section">
-                    <h3>🧭 Navigation</h3>
-                    <button id="meta_button_visited">👣 Visited</button>
-                    <button id="meta_button_history">🕓 History</button>
-                </div>
-
-            </div>
-        </section>
-    </div>
-
-    <section class="panel children">
-        <h2>
+        <section class="panel children">
+            <h2>
             <span class="label">
                     📚 <span id="children_label">Subnotes</span>
             </span>
-            <button class="toggle" id="collapsible-toggle-children" onclick="togglePanel(this, 'children_content')">▼</button>
-        </h2>
+                <button class="toggle" id="collapsible-toggle-children">
+                    ▼
+                </button>
+            </h2>
 
-        <div id="children_content">
-            <button class="add" id="children_button_add">➕ Add</button>
-            <button id="children_button_refresh" onclick="refresh_page()">🔄 Refresh page</button>
-            <ul id="children_ul">
-                <li id="children_li_example"><span class="children_child_id" id="children_child_4689_id">4689</span>
-                    <a href="#" id="children_child_4689_title">Child 1</a>
-                    <button id="children_child_4689_button_copy">📋 Copy</button>
-                </li>
-            </ul>
+            <div id="children_content">
+                <button class="add" id="children_button_add">➕ Add</button>
+                <button id="children_button_refresh">🔄 Refresh page</button>
+                <ul id="children_ul">
+                    <li id="children_li_example"><span class="children_child_id" id="children_child_4689_id">4689</span>
+                        <a href="#" id="children_child_4689_title">Child 1</a>
+                        <button id="children_child_4689_button_copy">📋 Copy</button>
+                    </li>
+                </ul>
 
-        </div>
-    </section>
-</main>
+            </div>
+        </section>
+    </main>
 
-<div id="window_container" class="window_container">
-    <header class="window_container-header">
+    <div id="window_container" class="window_container">
+        <header class="window_container-header">
 
-        <span id="window_container_title">Window title</span>
-        <button onclick="closeWindow()">✖</button>
-    </header>
-    <div id="window_container_content"><p>Window content</p></div>
+            <span id="window_container_title">Window title</span>
+            <button onclick="closeWindow()">✖</button>
+        </header>
+        <div id="window_container_content"><p>Window content</p></div>
 
-</div>
+    </div>
 
 </div>
 

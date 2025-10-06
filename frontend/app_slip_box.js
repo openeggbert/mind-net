@@ -9,89 +9,148 @@ let map = null;
 let note = null;
 let original_map = null;
 let original_note = null;
+let original_content_value = null;
 let mode_maps = false;
 let mode_root = false;
 let mode_notes = false;
 let wasDragged = false;
+const simple = document.getElementById("app").dataset.version === "simple";
+const rich = !simple
+const panels = ["parent", "current", "meta", "children"]
+
+// ========================================
+// IDs
+// ========================================
+export const IDS = {
+    APP: "app",
+    LOADING_SCREEN: "loading_screen",
+    SLIP_BOX: "slip_box",
+
+    SLIPBOX_HEADER: "slipbox_header",
+    BUTTON_MINDNET: "button_mindnet",
+    BUTTON_PREVIOUS: "button_previous",
+    BUTTON_NEXT: "button_next",
+    BUTTON_FOCUS: "button_focus",
+    BUTTON_THEME: "button_theme",
+
+    MAIN: "main",
+
+    PARENT: "parent",
+    PARENT_LABEL: "parent_label",
+    COLLAPSIBLE_TOGGLE_PARENT: "collapsible-toggle-parent",
+    PARENT_CONTENT: "parent_content",
+    PARENT_ID_LABEL: "parent_id_label",
+    PARENT_ID: "parent_id",
+    PARENT_TITLE_LABEL: "parent_title_label",
+    PARENT_TITLE: "parent_title",
+    PARENT_BUTTON_COPY: "parent_button_copy",
+    PARENT_BUTTON_EDIT: "parent_button_edit",
+
+    CURRENT: "current",
+    CURRENT_LABEL: "current_label",
+    COLLAPSIBLE_TOGGLE_CURRENT: "collapsible-toggle-current",
+    CURRENT_ID: "current_id",
+    CURRENT_CONTENT: "current_content",
+    CURRENT_TITLE_LABEL: "current_title_label",
+    CURRENT_TITLE: "current_title",
+    CURRENT_BUTTON_RENAME: "current_button_rename",
+    CURRENT_BUTTON_COPY: "current_button_copy",
+    CURRENT_BUTTON_EDIT: "current_button_edit",
+    CURRENT_BUTTON_READ: "current_button_read",
+    CURRENT_TEXTAREA: "current_textarea",
+    CURRENT_BUTTON_DELETE: "current_button_delete",
+    CURRENT_BUTTON_CANCEL: "current_button_cancel",
+    CURRENT_BUTTON_SAVE: "current_button_save",
+
+    META: "meta",
+    META_LABEL: "meta_label",
+    COLLAPSIBLE_TOGGLE_META: "collapsible-toggle-meta",
+    META_CONTENT: "meta_content",
+    META_START: "meta_start",
+    META_ORDER: "meta_order",
+    META_IMPORTANCE: "meta_importance",
+    META_DIFFICULTY: "meta_difficulty",
+    CURRENT_BUTTON_EDIT_ORDER: "current_button_edit_order",
+    CURRENT_BUTTON_EDIT_IMPORTANCE: "current_button_edit_importance",
+    CURRENT_BUTTON_EDIT_DIFFICULTY: "current_button_edit_difficulty",
+
+    META_BUTTON_LINKS: "meta_button_links",
+    META_BUTTON_URLS: "meta_button_urls",
+    META_BUTTON_TERMS: "meta_button_terms",
+    META_BUTTON_SOURCES: "meta_button_sources",
+    META_BUTTON_IDEAS: "meta_button_ideas",
+    META_BUTTON_QUESTIONS: "meta_button_questions",
+
+    META_BUTTON_BACKLINKS: "meta_button_backlinks",
+    META_BUTTON_SIBLINGS: "meta_button_siblings",
+    META_BUTTON_WANTED_NOTES: "meta_button_wanted_notes",
+    META_BUTTON_PROPERTIES: "meta_button_properties",
+    META_BUTTON_TAGS: "meta_button_tags",
+    META_BUTTON_COLLECTIONS: "meta_button_collections",
+
+    META_BUTTON_ALERT: "meta_button_alert",
+    META_BUTTON_FLAGS: "meta_button_flags",
+    META_BUTTON_PROJECTS: "meta_button_projects",
+    META_BUTTON_TASKS: "meta_button_tasks",
+    META_BUTTON_PINNED_NOTES: "meta_button_pinned_notes",
+
+    META_BUTTON_VISITED: "meta_button_visited",
+    META_BUTTON_HISTORY: "meta_button_history",
+
+    CHILDREN_LABEL: "children_label",
+    COLLAPSIBLE_TOGGLE_CHILDREN: "collapsible-toggle-children",
+    CHILDREN_CONTENT: "children_content",
+    CHILDREN_BUTTON_ADD: "children_button_add",
+    CHILDREN_BUTTON_REFRESH: "children_button_refresh",
+    CHILDREN_UL: "children_ul",
+    CHILDREN_LI_EXAMPLE: "children_li_example",
+    CHILDREN_CHILD_4689_ID: "children_child_4689_id",
+    CHILDREN_CHILD_4689_TITLE: "children_child_4689_title",
+    CHILDREN_CHILD_4689_BUTTON_COPY: "children_child_4689_button_copy",
+
+    WINDOW_CONTAINER: "window_container",
+    WINDOW_CONTAINER_TITLE: "window_container_title",
+    WINDOW_CONTAINER_CONTENT: "window_container_content"
+};
+
 
 // ========================================
 // Panels
 // ========================================
 
-function set_flag(key, value) {
-    if(value) {
-        localStorage.setItem(key, "true")
-    } else {
-        localStorage.removeItem(key)
-    }
-}
-
-function get_flag(key) {
-    return localStorage.getItem(key) !== null
-}
-
-function setPanelCollapsed(name, value) {
-    set_flag(`slip_box.${name}_panel_collapsed`, value);
-}
-function getPanelCollapsed(name) {
-    return get_flag(`slip_box.${name}_panel_collapsed`);
-}
+const set_flag = (key, value) => value ? localStorage.setItem(key, "true") : localStorage.removeItem(key);
+const get_flag = key => localStorage.getItem(key) === "true";
+const setPanelCollapsed = (name, value) => set_flag(`slip_box.${name}_panel_collapsed`, value);
+const getPanelCollapsed = name => get_flag(`slip_box.${name}_panel_collapsed`);
 
 
 export function togglePanel(element, id) {
-    const el = document.getElementById(id);
-    //if (el === null) alert(id);
+    const el = get_element(id);
     const isCollapsed = el.classList.toggle('collapsed');
-    // alert("element.id=" + element.id + " id=" + id + " isCollapsed=" + isCollapsed)
-    switch (id) {
-        case "children_content": setPanelCollapsed("children", isCollapsed); break;
-        case "parent_content"  : setPanelCollapsed("parent"  , isCollapsed); break;
-        case "current_content" : setPanelCollapsed("current" , isCollapsed); break;
-        case "meta_content"    : setPanelCollapsed("meta"    , isCollapsed); break;
-        default: console.warn("togglePanel() does not know id: " + id);
-    }
-    let simple = document.getElementById("app").dataset.version === "simple";
-    if (element !== null) {
-        if (simple) {
-            element.textContent = isCollapsed ? "▶ Expand" : "▼ Collapse";
-        } else {
-            element.textContent = isCollapsed ? "▶" : "▼";
-        }
+    let panel = id.replace("_content", "")
+    panels.includes(panel) ? setPanelCollapsed(panel, isCollapsed) :console.warn("togglePanel() does not know id: " + id)
 
-    }
+    if (element) element.textContent = simple
+        ? (isCollapsed ? "▶ Expand" : "▼ Collapse")
+        : (isCollapsed ? "▶" : "▼");
 
-
-    if (id === "meta_content" && !simple) {
+    if (id === "meta_content" && !simple && window.innerWidth > 800) {
         const metaPanel = document.getElementById("meta");
         const metaLabel = document.getElementById("meta_label");
-        if (window.innerWidth > 800) {
-            if (isCollapsed) {
-
-                metaPanel.style.maxWidth = "50px";
-                metaPanel.style.minWidth = "50px";
-                metaPanel.style.overflow = "hidden";
-                metaLabel.style.display = "none";
-
-            } else {
-                metaPanel.style.removeProperty("max-width");
-                metaPanel.style.removeProperty("min-width");
-                metaPanel.style.removeProperty("overflow");
-                metaLabel.style.display = "inline";
-            }
+        if (isCollapsed) {
+            Object.assign(metaPanel.style, {
+                maxWidth: "50px", minWidth: "50px", overflow: "hidden"
+            });
+            metaLabel.style.display = "none";
+        } else {
+            ["max-width", "min-width", "overflow"].forEach(p => metaPanel.style.removeProperty(p));
+            metaLabel.style.display = "inline";
         }
     }
-
-
 }
-
 window.togglePanel = togglePanel;
-
-export function button_focus_onclick() {
-    document.body.classList.toggle('focus-mode');
-}
-
+export const button_focus_onclick = () => document.body.classList.toggle("focus-mode");
 window.button_focus_onclick = button_focus_onclick;
-
 
 // ========================================
 // Window
@@ -104,22 +163,20 @@ function makeDraggable(el) {
     function startDrag(x, y) {
         const rect = el.getBoundingClientRect();
         dragging = true;
-        wasDragged = true;   // uživatel pohnul
+        wasDragged = true;
         offsetX = x - rect.left;
         offsetY = y - rect.top;
         el.style.transform = "none";
         el.style.position = "fixed";
     }
 
-    function doDrag(x, y) {
+    const doDrag = (x, y) => {
         if (!dragging) return;
-        el.style.left = (x - offsetX) + "px";
-        el.style.top = (y - offsetY) + "px";
-    }
+        el.style.left = `${x - offsetX}px`;
+        el.style.top  = `${y - offsetY}px`;
+    };
 
-    function stopDrag() {
-        dragging = false;
-    }
+    const stopDrag = () => { dragging = false };
 
     // mouse
     header.addEventListener('mousedown', e => {
@@ -151,36 +208,25 @@ export function closeWindow() {
 }
 
 export function showWindow() {
-    const win = document.getElementById('window_container');
-    win.style.display = 'block';
+    const win = document.getElementById("window_container");
+    win.style.display = "block";
 
     if (!wasDragged) {
-        win.style.left = '50%';
-        win.style.top = '50%';
-        win.style.transform = 'translate(-50%, -50%)';
-        win.style.position = 'fixed';
+        Object.assign(win.style, {
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            position: "fixed"
+        });
     }
 }
-
 window.showWindow = showWindow;
-
-export function clearWindow() {
-    document.getElementById('window_container_content').innerHTML = "";
-}
-
+export const clearWindow = () => document.getElementById("window_container_content").innerHTML = "";
 window.clearWindow = clearWindow;
+export const setWindowTitle = title => document.getElementById("window_container_title").innerText = title;
+export const getWindowContent = () => document.getElementById("window_container_content");
+export const setWindowContent = text => getWindowContent().textContent = text;
 
-export function setWindowTitle(windowTitle) {
-    document.getElementById('window_container_title').innerText = windowTitle;
-}
-
-export function getWindowContent() {
-    return document.getElementById('window_container_content');
-}
-
-export function setWindowContent(text) {
-    getWindowContent().innerText = text;
-}
 
 export function setWindowContentByUrl(url) {
     clearWindow();
@@ -226,36 +272,24 @@ async function list_entities(entity, additional_params = "", page_number = 1, pa
     );
     const total_pages = json?.total_pages || 1;
 
-    const items = json?.items || [];
-
-    return items;
+    return json?.items || [];
 }
 
-
-//entity, additional_params = "", page_number = 1, page_size = 20
 async function list_all_entities(entity, additional_params = "") {
-    let result = [];
-    let page_size = 100;
-    let page_number = 1;
+    const result = [];
+    const page_size = 100;
+    let page_number = 1, items;
 
-    while(true) {
-        let items = await list_entities(entity, additional_params, page_number, page_size);
-        page_number++;
-        if(items.length > 0) {
-            items.forEach((item) => {
-                result.push(item);
-            })
-
-        } else {
-            break;
-        }
-        if(result.length >= 1000) {
-            show_toast("Omitting some results: 1000 or more results. ")
+    while ((items = await list_entities(entity, additional_params, page_number++, page_size)).length) {
+        result.push(...items);
+        if (result.length >= 1000) {
+            show_toast("Omitting some results: 1000 or more results.");
             break;
         }
     }
     return result;
 }
+
 async function read_entity(entity, id) {
     const url = new URL(`${API_BASE}/${entity}/${id}`);
 
@@ -275,7 +309,6 @@ async function delete_entity(entity, id) {
         {
             method: "DELETE",
         }
-
     );
 }
 
@@ -296,77 +329,50 @@ async function post_entity(model_name, json) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(json)
     });
-
 }
 
 // ========================================
 // Utils
 // ========================================
 
+
+function makeEnum(map) {
+    return {
+        map,
+        getTexts: () => Object.keys(map),
+        toNumber: name => map[name] ?? null,
+        fromNumber: num =>
+            Object.entries(map).find(([_, value]) => value === num)?.[0] ?? null
+    };
+}
+
 // --- Difficulty ---
-const Difficulty = {
+export const Difficulty = makeEnum({
     None: 0,
     Easy: 1,
     Medium: 2,
     Hard: 3,
     Expert: 4
-};
-
-function getDifficultyTexts() {
-    return Object.keys(Difficulty);
-}
-
-function difficultyToNumber(name) {
-    return Difficulty[name] ?? null;
-}
-
-function numberToDifficulty(num) {
-    for (const [key, value] of Object.entries(Difficulty)) {
-        if (value === num) return key;
-    }
-    return null;
-}
+});
 
 // --- Importance ---
-const Importance = {
+export const Importance = makeEnum({
     None: 0,
     Low: 1,
     Medium: 2,
     High: 3
+});
+const sleep_for_seconds = seconds => new Promise(r => setTimeout(r, seconds * 1000));
+const hide_element = id => {document.getElementById(id) && (document.getElementById(id).style.display = "none");};
+
+const hide_elements = (...ids) => ids.forEach(hide_element);
+
+const get_element = id => document.getElementById(id);
+
+const set_value = (id, value) => {
+    const el = get_element(id);
+    if (el) el.textContent = value;
 };
-
-function getImportanceTexts() {
-    return Object.keys(Importance);
-}
-
-function importanceToNumber(name) {
-    return Importance[name] ?? null;
-}
-
-function numberToImportance(num) {
-    for (const [key, value] of Object.entries(Importance)) {
-        if (value === num) return key;
-    }
-    return null;
-}
-
-async function sleep_for_seconds(seconds) {
-    await new Promise(r => setTimeout(r, seconds * 1000));
-}
-
-function hide_element(id) {
-    let el = document.getElementById(id);
-    if (el === null) return;
-    el.style.display = "none";
-}
-
-function get_element(id) {
-    return document.getElementById(id);
-}
-
-function set_value(id, value) {
-    document.getElementById(id).innerHTML = value;
-}
 
 function copy_to_clipboard(text) {
     navigator.clipboard.writeText(text);
@@ -401,43 +407,27 @@ export function show_toast(message, type = "info") {
 
 window.showToast = show_toast;
 
-function show_info(message) {show_toast(message, "info");}
-function show_warn(message) {show_toast(message, "warn");}
-function show_error(message) {show_toast(message, "error");}
+const makeShow = type => msg => show_toast(msg, type);
 
-export function refresh_page() {
-    let current_url = window.location.href;
-    if (current_url !== undefined) {
+const show_info  = makeShow("info");
+const show_warn  = makeShow("warn");
+const show_error = makeShow("error");
 
-        if (current_url.endsWith("#")) {
-            current_url = current_url.slice(0, -1);
-        }
-
-    }
-
-    window.location.href = current_url;
-}
+export const refresh_page = () => window.location.href = window.location.href.replace(/#$/, "");
 window.refresh_page = refresh_page;
-
-function refresh_page_to(url) {
-    console.debug("refresh_page_to=" + url);
-    window.location.href = url;
-}
+const refresh_page_to = url => window.location.href = url;
 
 function init_from_http_parameters() {
     const params = new URLSearchParams(window.location.search);
-    let has_map_id = params.has("map_id");
-    let has_note_id = params.has("note_id");
-    if (has_map_id) {
+
+    if (params.has("map_id")) {
         map_id = params.get("map_id");
         mode_root = true;
+    } else if (params.has("note_id")) {
+        note_id = params.get("note_id");
+        mode_notes = true;
     } else {
-        if (has_note_id) {
-            note_id = params.get("note_id");
-            mode_notes = true;
-        } else {
-            mode_maps = true;
-        }
+        mode_maps = true;
     }
 }
 
@@ -446,11 +436,29 @@ function init_from_http_parameters() {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    get_element(IDS.SLIPBOX_HEADER).title = "Go to list of all maps"
+    get_element(IDS.SLIPBOX_HEADER).style.cursor = "pointer"
+    get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
+    get_element("button_mindnet").title = "Go to Mind Net generic frontend"
+    get_element("button_previous").title = "Previous sibling by order";
+    get_element("button_next").title = "Next sibling by order";
+    if(!simple) {
+        get_element("button_focus").addEventListener("click", button_focus_onclick);
+        get_element("button_focus").title = "Turn on/off focus mode"
+    }
+
+    get_element("button_theme").addEventListener("click", () => {document.body.classList.toggle("dark");});
+    get_element("button_theme").title = "Switch dark/light theme"
+
+    panels.forEach(panel => {
+        if (rich || panel !== "parent") {
+            get_element("collapsible-toggle-" + panel)
+                .addEventListener("click", (e) => togglePanel(e.target, panel + "_content"));
+        }
+    })
 
     let disable_rest = false;
     //disable_rest = true;
-
-    let simple = document.getElementById("app").dataset.version === "simple";
 
     let toggle_parent = document.getElementById("collapsible-toggle-parent");
     let toggle_current = document.getElementById("collapsible-toggle-current");
@@ -463,23 +471,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         togglePanel(toggle_meta, 'meta_content');
     }
 
-    if(getPanelCollapsed("parent")) togglePanel(toggle_parent, 'parent_content')
+    if(!simple && getPanelCollapsed("parent")) togglePanel(toggle_parent, 'parent_content')
     if(getPanelCollapsed("current") && !meta_collapsed) togglePanel(toggle_current, 'current_content')
     if(getPanelCollapsed("meta")) togglePanel(toggle_meta, 'meta_content')
     if(getPanelCollapsed("children")) togglePanel(toggle_children, 'children_content')
 
-
-
-    // document.querySelectorAll('.actions button').forEach(btn => {
-    //     btn.addEventListener('click', () => {
-    //         const label = btn.textContent.trim();
-    //         if (label.includes('Copy')) showToast('Copied to clipboard');
-    //         if (label.includes('Save')) showToast('Note saved');
-    //         if (label.includes('Delete')) showToast('Note deleted');
-    //     });
-    // });
-
-
+    get_element("children_button_refresh").addEventListener("click", refresh_page)
     document.querySelectorAll('.add').forEach(btn => {
         btn.addEventListener('click', () => show_toast('New child added'));
     });
@@ -494,12 +491,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_maps) {
-        hide_element("button_previous");
-        hide_element("button_next");
-        hide_element("button_focus");
-        hide_element("parent");
-        hide_element("current");
-        hide_element("meta");
+        hide_elements("button_previous", "button_next", "button_focus", "parent", "current", "meta")
+
         set_value("children_label", "All maps");
         hide_element("collapsible-toggle-children");
 
@@ -523,7 +516,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             a.style.display = "inline-block";
             a.style.minWidth = "50px";
 
-            //http://localhost:8888/web/index.html?entity=map&action=create#
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
             button_copy.innerText = simple ? "Copy" :"📋 Copy";
@@ -537,8 +529,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (mode_root) {
         set_value("parent_label", "All maps")
-        hide_element("parent_id_label")
-        hide_element("parent_id")
+        hide_elements("parent_id_label", "parent_id")
         let parent_title = document.getElementById("parent_title");
         parent_title.innerText = "All maps";
         parent_title.href = "?";
@@ -738,7 +729,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
 
-        let original_content_value = content === null ? null : content.value;
+        original_content_value = content === null ? null : content.value;
 
         set_value("current_textarea", content === null ? "" : content.value);
 
@@ -890,15 +881,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 3: meta_importance.className = "tag high";break;
                 default: console.warn("Unknown importance: " + note.importance)
             }
-            meta_importance.innerText = numberToImportance(note.importance);
+            meta_importance.innerText = Importance.fromNumber(note.importance);
         }
         refresh_importance_span()
 
         get_element("current_button_edit_importance").onclick = async function () {
 
-            const result = await chooseOption(getImportanceTexts());
+            const result = await chooseOption(Importance.getTexts());
             if(result !== undefined && result !== null) {
-                note.importance = importanceToNumber(result);
+                note.importance = Importance.toNumber(result);
                 refresh_importance_span()
                 show_toast("Importance updated to " + result);
             }
@@ -917,15 +908,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 case 4: meta_difficulty.className = "tag expert";break;
                 default: console.warn("Unknown difficulty: " + note.difficulty)
             }
-            meta_difficulty.innerText = numberToDifficulty(note.difficulty);
+            meta_difficulty.innerText = Difficulty.fromNumber(note.difficulty);
         }
         refresh_difficulty_span()
 
         get_element("current_button_edit_difficulty").onclick = async function () {
 
-            const result = await chooseOption(getDifficultyTexts());
+            const result = await chooseOption(Difficulty.getTexts());
             if(result !== undefined && result !== null) {
-                note.difficulty = difficultyToNumber(result);
+                note.difficulty = Difficulty.toNumber(result);
                 refresh_difficulty_span()
                 show_toast("Difficulty updated to " + result);
             }
@@ -1016,6 +1007,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById("loading_screen").style.display = "none";
     document.getElementById("slip_box").style.display = "block";
+
+    if(mode_notes) window.addEventListener("beforeunload", async function (event) {
+        let note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
+        let current_textarea = get_element(IDS.CURRENT_TEXTAREA).value;
+        console.log("current_textarea=" + current_textarea)
+        console.log("original_content_value=" + original_content_value)
+        let content_changed = original_content_value === null ? current_textarea !== "" : original_content_value !== current_textarea;
+
+        console.log("note_changed=" + note_changed)
+        console.log("content_changed=" + content_changed)
+
+        if (note_changed || content_changed) {
+
+            event.preventDefault();
+            event.returnValue = "";
+            return "";
+        }
+    });
+
 
 
 });
