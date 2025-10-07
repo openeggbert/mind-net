@@ -17,17 +17,22 @@
 
 ## Session
 
-**Algorithm:**
- - 1/2/3/18
+* **int algorithm**
+  - 1/2/3/18
+  - 
+* **bool notes**
+* **bool questions**
+
 
 **Scope:**
-- Full review - all notes
-- Due Only review - only notes due for review
-- New Only review - only new notes for review
+- Manual review - all notes/questions
+- Due Only review - only notes/questions due for review
+- New Only review - only new notes/questions for review
+- Due + New review - both due and new notes/questions for review
 
 **Filter:**
 - Notes under the current note
-- Date range review - notes created within a date range
+- Date range review - notes/questions created within a date range
 - Tags review - notes with a specific tag
 - Collection review - notes from a specific collection
 

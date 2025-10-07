@@ -134,6 +134,240 @@ Pick one existing header file in the project and convert it into a C++20 module 
 SQLite’s native `ALTER TABLE` is limited. To add constraints later (e.g. `FOREIGN KEY`, `NOT NULL`, `UNIQUE`, `DEFAULT`), we can emulate them with triggers.
 Below are **trigger templates** you can reuse in migrations.
 
+trigger_constraint__{table}__{constraint_type}__{column(s)}[__{ref_table}__{ref_column(s)}]
+
+```aiignore
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iostream>
+#include <stdexcept>
+#include <algorithm>
+
+// pomocná utilita – split podle delimiteru
+std::vector<std::string> split(const std::string& s, const std::string& delim = "__") {
+    std::vector<std::string> parts;
+    size_t start = 0, end;
+    while ((end = s.find(delim, start)) != std::string::npos) {
+        parts.push_back(s.substr(start, end - start));
+        start = end + delim.length();
+    }
+    parts.push_back(s.substr(start));
+    return parts;
+}
+
+// TODO: implement decode_hex/decode_base64 if you will use encoding
+// for simplicity we'll just return the raw string here
+std::string decode_hex(const std::string& hex) {
+    // Simple dummy version - actually convert hex to string
+    return "[DECODED_CHECK_EXPR:" + hex + "]";
+}
+
+// hlavní funkce
+std::string parseTriggerConstraint(const std::string& triggerName) {
+    auto parts = split(triggerName);
+
+    if (parts.size() < 4 || parts[0] != "trigger_constraint") {
+        throw std::runtime_error("Not a valid constraint trigger name: " + triggerName);
+    }
+
+    std::string table = parts[1];
+    std::string type  = parts[2];
+
+    if (type == "foreign_key") {
+        if (parts.size() != 6) {
+            throw std::runtime_error("Invalid foreign key trigger format: " + triggerName);
+        }
+        std::string column    = parts[3];
+        std::string refTable  = parts[4];
+        std::string refColumn = parts[5];
+
+        std::ostringstream oss;
+        oss << "FOREIGN KEY(" << column << ") REFERENCES "
+            << refTable << "(" << refColumn << ")";
+        return oss.str();
+    }
+    else if (type == "unique") {
+        // parts[3] may contain multiple columns separated by '_'
+        std::string cols = parts[3];
+        std::replace(cols.begin(), cols.end(), '_', ','); 
+
+        std::ostringstream oss;
+        oss << "UNIQUE(" << cols << ")";
+        return oss.str();
+    }
+    else if (type == "check") {
+        if (parts.size() < 5) {
+            throw std::runtime_error("Invalid check trigger format: " + triggerName);
+        }
+        std::string column = parts[3];
+        std::string exprEncoded = parts[4];
+        std::string expr = exprEncoded;
+
+        // pokud je prefix "hex_" nebo "b64_", dekódovat
+        if (expr.rfind("hex_", 0) == 0) {
+            expr = decode_hex(expr.substr(4));
+        } else if (expr.rfind("b64_", 0) == 0) {
+            expr = "[DECODED_BASE64:" + expr.substr(4) + "]";
+        }
+
+        std::ostringstream oss;
+        oss << "CHECK(" << expr << ")";
+        return oss.str();
+    }
+
+    throw std::runtime_error("Unknown constraint type: " + type);
+}
+
+// demo
+int main() {
+    std::vector<std::string> triggers = {
+        "trigger_constraint__child__foreign_key__parent_id__parent__id",
+        "trigger_constraint__user__unique__username_email",
+        "trigger_constraint__task__check__due_date__hex_434845434b286475655f64617465203e3d20637265617465645f617429"
+    };
+
+    for (auto& t : triggers) {
+        try {
+            std::cout << t << "\n -> " << parseTriggerConstraint(t) << "\n\n";
+        } catch (const std::exception& ex) {
+            std::cerr << "Error: " << ex.what() << "\n";
+        }
+    }
+}
+```
+
+```aiignore
+trigger_constraint__child__foreign_key__parent_id__parent__id
+ -> FOREIGN KEY(parent_id) REFERENCES parent(id)
+
+trigger_constraint__user__unique__username_email
+ -> UNIQUE(username,email)
+
+trigger_constraint__task__check__due_date__hex_434845434b286475655f64617465203e3d20637265617465645f617429
+ -> CHECK([DECODED_CHECK_EXPR:434845434b286475655f64617465203e3d20637265617465645f617429])
+
+```
+
+
+```aiignore
+#include <string>
+#include <vector>
+#include <iostream>
+
+// Adds constraints to CREATE TABLE SQL
+std::string addConstraintsToCreate(const std::string& createSQL,
+                                   const std::vector<std::string>& constraints) {
+    // Find last ')'
+    auto pos = createSQL.find_last_of(')');
+    if (pos == std::string::npos) {
+        throw std::runtime_error("Invalid CREATE TABLE SQL");
+    }
+
+    std::string before = createSQL.substr(0, pos);
+    std::string after = createSQL.substr(pos); // Usually ")"
+
+    std::string result = before;
+
+    // Add comma before constraints if table already has columns
+    if (before.find('(') != std::string::npos && before.back() != '(') {
+        result += ",";
+    }
+    result += "\n  ";
+
+    // Join constraints with commas
+    for (size_t i = 0; i < constraints.size(); i++) {
+        result += constraints[i];
+        if (i + 1 < constraints.size()) {
+            result += ",\n  ";
+        }
+    }
+
+    result += after; // Add ")"
+    return result;
+}
+
+// Demo
+int main() {
+    std::string sql = "CREATE TABLE task (\n"
+                      "  id INTEGER PRIMARY KEY,\n"
+                      "  title TEXT,\n"
+                      "  created_at DATETIME,\n"
+                      "  due_date DATETIME\n"
+                      ")";
+    std::vector<std::string> constraints = {
+        "FOREIGN KEY(parent_id) REFERENCES parent(id)",
+        "CHECK(due_date >= created_at)"
+    };
+
+    std::string newSQL = addConstraintsToCreate(sql, constraints);
+    std::cout << newSQL << "\n";
+}
+
+```
+
+
+```
+---
+
+# ✅ Rebuild Engine – Checklist
+
+### 🔹 Preparation
+
+* [ ] **Adopt a unified trigger naming convention** with prefix `trigger_constraint__...`
+
+    * FOREIGN KEY:
+      `trigger_constraint__child__foreign_key__parent_id__parent__id`
+    * UNIQUE:
+      `trigger_constraint__user__unique__username_email`
+    * CHECK:
+      `trigger_constraint__task__check__due_date__hex_{encoded}`
+* [ ] Decide on **encoding** for CHECK expressions:
+
+    * `hex` (simple, safe)
+    * or `base64url` without padding (shorter names, safe characters)
+* [ ] Create a **seed test database** with a few tables (`task`, `user`, `child`/`parent`)
+* [ ] Add sample trigger names to your `todo.md` for reference
+
+---
+
+### 🔹 Implementation
+
+* [ ] Implement **C++ parser for trigger names** → function `parseTriggerConstraint`
+
+    * Returns SQL snippet:
+
+        * `FOREIGN KEY(...) REFERENCES ...`
+        * `UNIQUE(...)`
+        * `CHECK(...)` (decoded expression)
+* [ ] Implement **function to insert constraints into CREATE TABLE**
+
+    * Locate the last `)` and inject constraints before it
+* [ ] Implement **rebuild procedure for a single table**:
+
+    1. `ALTER TABLE t RENAME TO t_old`
+    2. `CREATE TABLE t (... + constraints...)`
+    3. `INSERT INTO t SELECT * FROM t_old`
+    4. `DROP TABLE t_old`
+    5. `DROP TRIGGER ...` (only constraint-triggers)
+* [ ] Test with seed database:
+
+    * Valid data → rebuild succeeds
+    * Invalid data → rebuild fails (as expected)
+
+---
+
+### 🔹 Stabilization
+
+* [ ] Extend rebuild to **iterate over all tables** from `sqlite_master`
+
+    * Collect all `trigger_constraint__...` triggers
+    * Reconstruct CREATE TABLE definitions with native constraints
+* [ ] Add **logging**: list all tables and constraints added during rebuild
+* [ ] Add **unit tests**: simulate multiple migrations, run rebuild, verify results
+* [ ] Add **performance benchmarks**: compare INSERT speed with FK vs. trigger-based checks
+```
+
 ---
 
 ## 1. Emulate **NOT NULL**

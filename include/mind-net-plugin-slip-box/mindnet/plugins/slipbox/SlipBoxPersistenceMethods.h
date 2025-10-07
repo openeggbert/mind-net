@@ -62,8 +62,8 @@ namespace mindnet::plugins::slipbox
     gen_find_h(slipbox, Property, property)
     gen_find_h(slipbox, Question, question)
     gen_find_h(slipbox, Link, link)
-    // gen_find_h(supermemo, Review, review)
-    // gen_find_h(supermemo, SM2State, sm2state)
+    // gen_find_h(repetition, R2Review, r2_review)
+    // gen_find_h(repetition, R2State, r2_state)
 
     gen_find_h(slipbox, Tag, tag)
     gen_find_h(slipbox, TagType, tag_type)
