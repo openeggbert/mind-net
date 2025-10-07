@@ -251,5 +251,55 @@ CREATE TABLE r18_perf_agg (
 );
 
     	)");
+
+    	add_migration("V10__create_repetition_indexes.sql", R"(
+
+-- Index for fast selection of "due items" (SM-18 and other algorithms)
+CREATE INDEX IF NOT EXISTS idx_r18_state_user_due
+    ON r18_state (user_id, next_review);
+
+CREATE INDEX IF NOT EXISTS idx_r4_state_user_due
+    ON r4_state (user_id, next_review);
+
+CREATE INDEX IF NOT EXISTS idx_r2_state_user_due
+    ON r2_state (user_id, next_review);
+
+CREATE INDEX IF NOT EXISTS idx_r0_state_user_due
+    ON r0_state (user_id, next_review);
+
+-- Indexes for fast lookups by note_id and question_id
+-- in review log and state tables
+
+-- r_review
+CREATE INDEX IF NOT EXISTS idx_r_review_note
+    ON r_review (note_id);
+CREATE INDEX IF NOT EXISTS idx_r_review_question
+    ON r_review (question_id);
+
+-- r0_state
+CREATE INDEX IF NOT EXISTS idx_r0_state_note
+    ON r0_state (note_id);
+CREATE INDEX IF NOT EXISTS idx_r0_state_question
+    ON r0_state (question_id);
+
+-- r2_state
+CREATE INDEX IF NOT EXISTS idx_r2_state_note
+    ON r2_state (note_id);
+CREATE INDEX IF NOT EXISTS idx_r2_state_question
+    ON r2_state (question_id);
+
+-- r4_state
+CREATE INDEX IF NOT EXISTS idx_r4_state_note
+    ON r4_state (note_id);
+CREATE INDEX IF NOT EXISTS idx_r4_state_question
+    ON r4_state (question_id);
+
+-- r18_state
+CREATE INDEX IF NOT EXISTS idx_r18_state_note
+    ON r18_state (note_id);
+CREATE INDEX IF NOT EXISTS idx_r18_state_question
+    ON r18_state (question_id);
+
+)");
     }
 }
