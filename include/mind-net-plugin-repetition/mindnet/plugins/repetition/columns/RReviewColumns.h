@@ -22,22 +22,22 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef R2REVIEWCOLUMNS_H
-#define R2REVIEWCOLUMNS_H
+#ifndef RREVIEWCOLUMNS_H
+#define RREVIEWCOLUMNS_H
 
 
 #include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::repetition::columns
 {
-    struct R2ReviewColumns : model::BaseColumns
+    struct RReviewColumns : model::BaseColumns
     {
-        R2ReviewColumns() = delete;
+        RReviewColumns() = delete;
 
-        R2ReviewColumns(const R2ReviewColumns&) = delete;
-        R2ReviewColumns& operator=(const R2ReviewColumns&) = delete;
+        RReviewColumns(const RReviewColumns&) = delete;
+        RReviewColumns& operator=(const RReviewColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "r2_review";
+        static constexpr const char* MODEL_NAME = "r_review";
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* R2_SESSION_ID = "r_session_id";
@@ -57,4 +57,4 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* CHANGED_ANSWER = "changed_answer";
     };
 }
-#endif // R2REVIEWCOLUMNS_H
+#endif // RREVIEWCOLUMNS_H

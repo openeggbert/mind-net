@@ -54,6 +54,7 @@ CREATE TABLE r_session (
     cloned_from_session_id INTEGER,
 
     algorithm INTEGER NOT NULL,
+
     notes BOOLEAN NOT NULL DEFAULT 1,
     questions INTEGER NOT NULL DEFAULT 1,
     scope INTEGER NOT NULL,
@@ -76,14 +77,16 @@ CREATE TABLE r_session (
 
 )");
 
-        add_migration("V2__create_r2_review.sql", R"(
-CREATE TABLE r2_review (
+    	add_migration("V4__create_r_review.sql", R"(
+CREATE TABLE r_review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
 
     user_id INTEGER NOT NULL,
     r_session_id INTEGER,
+
+    algorithm INTEGER NOT NULL,
 
     note_id INTEGER,
     question_id INTEGER,
@@ -109,8 +112,35 @@ CREATE TABLE r2_review (
 );
 
 )");
-        add_migration("V3__create_r2_state.sql", R"(
--- R-2 state for each note and user
+    	add_migration("V5__create_r0_state.sql", R"(
+
+CREATE TABLE r0_state (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+
+	user_id INTEGER NOT NULL,
+	note_id INTEGER,
+	question_id INTEGER,
+	CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
+
+	repetitions INTEGER DEFAULT 0,	  -- number of completed repetitions 
+	interval INTEGER DEFAULT 1,		 -- current interval in days (from fixed sequence)
+	next_review DATETIME,			   -- when next repetition should occur
+	last_review DATETIME,			   -- when last repetition occurred
+	last_quality INTEGER DEFAULT 0,	 -- last grade
+
+	UNIQUE (user_id, note_id),
+	UNIQUE (user_id, question_id),
+
+	FOREIGN KEY (note_id) REFERENCES note(id),
+	FOREIGN KEY (question_id) REFERENCES question(id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+)");
+
+	    add_migration("V6__create_r2_state.sql", R"(
 CREATE TABLE r2_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -138,6 +168,37 @@ CREATE TABLE r2_state (
 );
 )");
 
+    	add_migration("V7__create_r4_state.sql", R"(
+-- R-4 state for each note/question and user
+CREATE TABLE r4_state (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
 
+	user_id INTEGER NOT NULL,
+	note_id INTEGER,
+	question_id INTEGER,
+	CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
+
+	repetitions INTEGER DEFAULT 0,		  -- which repetition 
+	interval INTEGER DEFAULT 1,			 -- current interval (days)
+	ef_times_100 INTEGER DEFAULT 250 
+		CHECK (ef_times_100 >= 100 and ef_times_100 <= 500),
+											 -- E-Factor * 100
+	correction_factor REAL DEFAULT 1.0,	 -- new: coefficient for interval correction
+											-- (SM-4 adds adaptive adjustments)
+
+	next_review DATETIME,				   -- when next repetition should occur
+	last_review DATETIME,				   -- when last repetition occurred
+	last_quality INTEGER DEFAULT 0,		 -- last grade (0-5)
+
+	UNIQUE (user_id, note_id),
+	UNIQUE (user_id, question_id),
+
+	FOREIGN KEY (note_id) REFERENCES note(id),
+	FOREIGN KEY (question_id) REFERENCES question(id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+)");
     }
 }
