@@ -13,7 +13,7 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with this program. If not, see
+// along with this program. If not, see 
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,39 +22,38 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef R2REVIEWCOLUMNS_H
-#define R2REVIEWCOLUMNS_H
-
+#ifndef RSESSIONCOLUMNS_H
+#define RSESSIONCOLUMNS_H
 
 #include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::repetition::columns
 {
-    struct R2ReviewColumns : model::BaseColumns
+    struct RSessionColumns : model::BaseColumns
     {
-        R2ReviewColumns() = delete;
+        RSessionColumns() = delete;
 
-        R2ReviewColumns(const R2ReviewColumns&) = delete;
-        R2ReviewColumns& operator=(const R2ReviewColumns&) = delete;
+        RSessionColumns(const RSessionColumns&) = delete;
+        RSessionColumns& operator=(const RSessionColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "r2_review";
+        static constexpr const char* MODEL_NAME = "r_session";
 
         static constexpr const char* USER_ID = "user_id";
-        static constexpr const char* R2_SESSION_ID = "r_session_id";
+        static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* CLONED_FROM_SESSION_ID = "cloned_from_session_id";
 
-        static constexpr const char* NOTE_ID = "note_id";
-        static constexpr const char* QUESTION_ID = "question_id";
-
-        static constexpr const char* REVIEW_DATE = "review_date";
-        static constexpr const char* GRADE = "grade";
-        static constexpr const char* RESPONSE_DATA = "response_data";
+        static constexpr const char* ALGORITHM = "algorithm";
         static constexpr const char* NOTES = "notes";
+        static constexpr const char* QUESTIONS = "questions";
+        static constexpr const char* SCOPE = "scope";
 
-        static constexpr const char* STARTED_AT = "started_at";
-        static constexpr const char* ENDED_AT = "ended_at";
-        static constexpr const char* LATENCY_MS = "latency_ms";
+        static constexpr const char* FILTER_NOTES_UNDER = "filter_notes_under";
+        static constexpr const char* FILTER_DATE_FROM = "filter_date_from";
+        static constexpr const char* FILTER_DATE_TO = "filter_date_to";
+        static constexpr const char* FILTER_TAG = "filter_tag";
+        static constexpr const char* FILTER_COLLECTION = "filter_collection";
 
-        static constexpr const char* CHANGED_ANSWER = "changed_answer";
+        static constexpr const char* SELECTED_ITEMS = "selected_items";
     };
 }
-#endif // R2REVIEWCOLUMNS_H
+#endif // RSESSIONCOLUMNS_H

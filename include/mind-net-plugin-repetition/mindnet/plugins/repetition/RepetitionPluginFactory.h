@@ -4,7 +4,11 @@
 #ifndef REPETITIONPLUGINFACTORY_H
 #define REPETITIONPLUGINFACTORY_H
 
-
+/*
+ * Global parameters:
+ * Session is valid for x days=default 1 day
+ * Limit for session.selected_item=default 100 items
+ */
 #include "mindnet/api/PluginFactory.h"
 
 namespace mindnet::plugins::repetition
