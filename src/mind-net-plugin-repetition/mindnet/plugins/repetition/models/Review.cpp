@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/supermemo/models/Review.h"
+#include "mindnet/plugins/repetition/models/R2Review.h"
 
-namespace mindnet::plugins::supermemo::models
+namespace mindnet::plugins::repetition::models
 {
-    entity_fields Review::to_values() const
+    entity_fields R2Review::to_values() const
     {
         entity_fields result;
         result.push_back(id);
@@ -22,7 +22,7 @@ namespace mindnet::plugins::supermemo::models
         return result;
     }
 
-    void Review::from_values(const entity_fields& values)
+    void R2Review::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -40,12 +40,12 @@ namespace mindnet::plugins::supermemo::models
         notes = text();
     };
 
-    string Review::validate()
+    string R2Review::validate()
     {
-        using columns::ReviewColumns;
+        using columns::R2ReviewColumns;
 
         validator_chain_vector list{
-            [this] { return std::unexpected("Validation for Review was not yet implemented."); },
+            [this] { return std::unexpected("Validation for R2Review was not yet implemented."); },
         };
         return util::ValidatorChain::run(list);
     }

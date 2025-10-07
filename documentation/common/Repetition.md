@@ -1,4 +1,37 @@
-# SM-18 (SuperMemo 18)
+# Repetition 
+
+* https://en.wikipedia.org/wiki/SuperMemo
+* https://supermemo.guru/wiki/First_steps_of_SuperMemo
+* https://www.super-memory.com/
+
+## Scenario
+
+- Frontend shows
+  * title of the note.
+  * buttons: "Show answer", "Skip"
+- Once the user clicks "Show answer"
+  * The application shows: How well do you understand this? (0-5):
+  * User enters a number (0-5)
+  * Application updates REVIEW_IN_X_DAYS, EASINESS_FACTOR, REPETITION, EXPIRES_AT
+  * Continues to the next node
+
+## Session
+
+**Algorithm:**
+ - 1/2/3/18
+
+**Scope:**
+- Full review - all notes
+- Due Only review - only notes due for review
+- New Only review - only new notes for review
+
+**Filter:**
+- Notes under the current note
+- Date range review - notes created within a date range
+- Tags review - notes with a specific tag
+- Collection review - notes from a specific collection
+
+## Repetition 2 (inspired by SuperMemo 2)
 
 User defines the quality of the knowledge (0-5).
 
@@ -30,11 +63,11 @@ Output values:
 - Last review
 
 
-## How to Identify Articles with Weak Knowledge
+### How to Identify Articles with Weak Knowledge
 
 With your current SQLite schema, the application can easily detect which articles (or topics) a user is struggling with. Here are several strategies:
 
-### Select Questions with Weak SM-2 State
+#### Select Questions with Weak SM-2 State
 
 Use the `state` table to find questions that have:
 
@@ -53,7 +86,7 @@ WHERE s.user_id = ?
 
 ---
 
-### Aggregate Weak Questions by Article
+#### Aggregate Weak Questions by Article
 
 If each question is linked to an `article_id`, you can group weak questions by article:
 
@@ -71,7 +104,7 @@ This gives you a ranked list of articles with the most weak questions for a give
 
 ---
 
-### Alternatively: Use `review.grade`
+#### Alternatively: Use `review.grade`
 
 If you prefer to assess knowledge based on recent review performance:
 
@@ -87,35 +120,3 @@ ORDER BY avg_grade ASC;
 
 This highlights questions where the user consistently scores poorly.
 
-## Component Test
-
-### Scenario ###
-
-- Frontend shows
-    * title of the question.
-    * buttons: "Show answer", "Skip"
-- Once the user clicks "Show answer"
-    * The application shows: How well do you understand this? (0-5):
-    * User enters a number (0-5)
-    * Application updates REVIEW_IN_X_DAYS, EASINESS_FACTOR, REPETITION, EXPIRES_AT
-    * Continues to the next node
-
-### Test modes ###
-
-**Scope:** 
- - Full review - all notes
- - Due Only review - only notes due for review
-
-**Filter:**
- - Notes under the current note
- - Date range review - notes created within a date range
- - Tags review - notes with a specific tag
- - Collection review - notes from a specific collection
-
-
-## External links
-
- * https://en.wikipedia.org/wiki/SuperMemo
- * https://supermemo.guru/wiki/First_steps_of_SuperMemo
- * https://www.super-memory.com/
- * 

@@ -2,19 +2,19 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#include "mindnet/plugins/supermemo/migrations/SuperMemoSQLiteMigrationScripts.h"
+#include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
 
-namespace mindnet::plugins::supermemo::migrations
+namespace mindnet::plugins::repetition::migrations
 {
-    SuperMemoSQLiteMigrationScripts::SuperMemoSQLiteMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::SQLite)
+    RepetitionSQLiteMigrationScripts::RepetitionSQLiteMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::SQLite)
     {
     }
 
-    void SuperMemoSQLiteMigrationScripts::define_migrations()
+    void RepetitionSQLiteMigrationScripts::define_migrations()
     {
 
-        add_migration("V1__create_review.sql",R"(
-CREATE TABLE review (
+        add_migration("V1__create_r2_review.sql",R"(
+CREATE TABLE r2_review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
@@ -33,9 +33,9 @@ CREATE TABLE review (
 );
 
 )");
-        add_migration("V2__create_sm18_state.sql",R"(
--- SM-2 state for each note and user
-CREATE TABLE sm2_state (
+        add_migration("V2__create_r2_state.sql",R"(
+-- R-2 state for each note and user
+CREATE TABLE r2_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
 	updated_at DATETIME,
@@ -53,7 +53,7 @@ CREATE TABLE sm2_state (
     last_quality INTEGER DEFAULT 0,
 --
     UNIQUE (user_id, note_id),
-UNIQUE (user_id, question_id),
+    UNIQUE (user_id, question_id),
 
     FOREIGN KEY (note_id) REFERENCES note(id) ,
     FOREIGN KEY (question_id) REFERENCES question(id) ,

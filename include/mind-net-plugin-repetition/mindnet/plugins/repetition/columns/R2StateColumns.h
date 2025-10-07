@@ -22,23 +22,24 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SM2STATECOLUMNS_H
-#define SM2STATECOLUMNS_H
+#ifndef R2STATECOLUMNS_H
+#define R2STATECOLUMNS_H
+
 
 #include "mindnet/model/BaseColumns.h"
 #include "mindnet/essential/Helper.h"
 #include "mindnet/model/ColumnType.h"
 
-namespace mindnet::plugins::supermemo::columns
+namespace mindnet::plugins::repetition::columns
 {
-    struct SM2StateColumns : model::BaseColumns
+    struct R2StateColumns : model::BaseColumns
     {
-        SM2StateColumns() = delete;
+        R2StateColumns() = delete;
 
-        SM2StateColumns(const SM2StateColumns&) = delete;
-        SM2StateColumns& operator=(const SM2StateColumns&) = delete;
+        R2StateColumns(const R2StateColumns&) = delete;
+        R2StateColumns& operator=(const R2StateColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "sm2_state";
+        static constexpr const char* MODEL_NAME = "r2_state";
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* NOTE_ID = "note_id";
@@ -51,4 +52,4 @@ namespace mindnet::plugins::supermemo::columns
         static constexpr const char* LAST_QUALITY = "last_quality";
     };
 }
-#endif // SM2STATECOLUMNS_H
+#endif // R2STATECOLUMNS_H

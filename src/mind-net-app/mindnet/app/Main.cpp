@@ -26,7 +26,7 @@
 #include "mindnet/plugins/core/CorePluginFactory.h"
 #include "mindnet/plugins/core/models/User.h"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
-// #include "mindnet/plugins/supermemo/SuperMemoPluginFactory.h"
+#include "mindnet/plugins/repetition/RepetitionPluginFactory.h"
 // #include "mindnet/plugins/chat/ChatPluginFactory.h"
 // #include "mindnet/plugins/mail/MailPluginFactory.h"
 // #include "mindnet/plugins/suggestion/SuggestionPluginFactory.h"
@@ -347,7 +347,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 
     REGISTER_PLUGIN(core, Core)
     REGISTER_PLUGIN(slipbox, SlipBox)
-    // REGISTER_PLUGIN(supermemo, SuperMemo)
+    REGISTER_PLUGIN(repetition, Repetition)
     // REGISTER_PLUGIN(mail, Mail)
     // REGISTER_PLUGIN(chat, Chat)
     // REGISTER_PLUGIN(suggestion, Suggestion)

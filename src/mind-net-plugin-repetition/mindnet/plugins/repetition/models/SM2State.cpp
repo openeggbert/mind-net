@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/supermemo/models/SM2State.h"
+#include "mindnet/plugins/repetition/models/R2State.h"
 
-namespace mindnet::plugins::supermemo::models
+namespace mindnet::plugins::repetition::models
 {
-    entity_fields SM2State::to_values() const
+    entity_fields R2State::to_values() const
     {
         entity_fields result;
         result.push_back(id);
@@ -24,7 +24,7 @@ namespace mindnet::plugins::supermemo::models
         return result;
     }
 
-    void SM2State::from_values(const entity_fields& values)
+    void R2State::from_values(const entity_fields& values)
     {
         int i = 0;
 
@@ -44,9 +44,9 @@ namespace mindnet::plugins::supermemo::models
         last_quality = number();
     };
 
-    string SM2State::validate()
+    string R2State::validate()
     {
-        using columns::SM2StateColumns;
+        using columns::R2StateColumns;
 
         validator_chain_vector list{
             [this] { return std::unexpected("Validation for SM2State was not yet implemented."); },

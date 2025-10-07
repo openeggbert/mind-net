@@ -17,37 +17,40 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REVIEW_H
-#define REVIEW_H
+#ifndef R2STATE_H
+#define R2STATE_H
 
 #include <string>
 #include "mindnet/model/BaseModel.h"
 
 // ***** MACROS : START *****
-#define Model Review
-#define MODEL REVIEW
-#define COLS columns::ReviewColumns
-#include "../columns/ReviewColumns.h"
+#define Model R2State
+#define MODEL R2_STATE
+#define COLS columns::R2StateColumns
+#include "../columns/R2StateColumns.h"
 // ***** MACROS : END *****
 
-namespace mindnet::plugins::supermemo::models
+namespace mindnet::plugins::repetition::models
 {
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
 
-    inline def REVIEW_DEFINITION =
+    inline def R2_STATE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
-        .set_group("SuperMemo", 200).set_title_column(COLS::NOTE_ID).allow_reader_write()
+        .set_group("Repetition", 200).set_title_column(COLS::INTERVAL).allow_reader_write()
         .set_columns({
+            //
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
-            coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY),
-            coldef(COLS::REVIEW_DATE, DATETIME),
-            coldef(COLS::GRADE, INTEGER | READONLY),
-            coldef(COLS::RESPONSE_DATA),
-            coldef(COLS::NOTES),
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::QUESTION_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
+            coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
+            coldef(COLS::EF_TIMES_100, INTEGER).set_default_value(250),
+            coldef(COLS::NEXT_REVIEW, DATETIME),
+            coldef(COLS::LAST_REVIEW, DATETIME),
+            coldef(COLS::LAST_QUALITY, INTEGER).set_default_value(0),
         });
 
     struct Model : mindnet::model::BaseModel
@@ -55,10 +58,12 @@ namespace mindnet::plugins::supermemo::models
         int user_id{};
         int note_id{};
         int question_id{};
-        unixtime review_date;
-        int grade{};
-        string response_data;
-        string notes;
+        int repetitions{};
+        int interval{1};
+        int ef_times_100{250};
+        unixtime next_review;
+        unixtime last_review;
+        int last_quality{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -70,14 +75,16 @@ namespace mindnet::plugins::supermemo::models
                 user_id == other.user_id &&
                 note_id == other.note_id &&
                 question_id == other.question_id &&
-                review_date == other.review_date &&
-                grade == other.grade &&
-                response_data == other.response_data &&
-                notes == other.notes;
+                repetitions == other.repetitions &&
+                interval == other.interval &&
+                ef_times_100 == other.ef_times_100 &&
+                next_review == other.next_review &&
+                last_review == other.last_review &&
+                last_quality == other.last_quality;
         }
     };
 }
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // REVIEW_H
+#endif // R2STATE_H

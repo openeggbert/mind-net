@@ -1,19 +1,19 @@
 //
 // Created by robertvokac on 9/13/25.
 //
-#ifndef SUPERMEMOPLUGINFACTORY_H
-#define SUPERMEMOPLUGINFACTORY_H
+#ifndef REPETITIONPLUGINFACTORY_H
+#define REPETITIONPLUGINFACTORY_H
 
 
 #include "mindnet/api/PluginFactory.h"
 
-namespace mindnet::plugins::supermemo
+namespace mindnet::plugins::repetition
 {
-    class SuperMemoPluginFactory : public api::PluginFactory
+    class RepetitionPluginFactory : public api::PluginFactory
     {
     public:
         [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;
     };
 }
 
-#endif // SUPERMEMOPLUGINFACTORY_H
+#endif // REPETITIONPLUGINFACTORY_H

@@ -522,8 +522,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             button_copy.onclick = function () {
                 copy_to_clipboard(map.id);
             };
-
-
         }
     }
 

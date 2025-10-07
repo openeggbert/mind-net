@@ -22,21 +22,22 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef REVIEWCOLUMNS_H
-#define REVIEWCOLUMNS_H
+#ifndef R2REVIEWCOLUMNS_H
+#define R2REVIEWCOLUMNS_H
+
 
 #include "mindnet/model/BaseColumns.h"
 
-namespace mindnet::plugins::supermemo::columns
+namespace mindnet::plugins::repetition::columns
 {
-    struct ReviewColumns : model::BaseColumns
+    struct R2ReviewColumns : model::BaseColumns
     {
-        ReviewColumns() = delete;
+        R2ReviewColumns() = delete;
 
-        ReviewColumns(const ReviewColumns&) = delete;
-        ReviewColumns& operator=(const ReviewColumns&) = delete;
+        R2ReviewColumns(const R2ReviewColumns&) = delete;
+        R2ReviewColumns& operator=(const R2ReviewColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "review";
+        static constexpr const char* MODEL_NAME = "r2_review";
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* NOTE_ID = "note_id";
@@ -47,4 +48,4 @@ namespace mindnet::plugins::supermemo::columns
         static constexpr const char* NOTES = "notes";
     };
 }
-#endif // REVIEWCOLUMNS_H
+#endif // R2REVIEWCOLUMNS_H
