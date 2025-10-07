@@ -55,6 +55,7 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* LATENCY_MS = "latency_ms";
 
         static constexpr const char* CHANGED_ANSWER = "changed_answer";
+        static constexpr const char* DETAILS_JSON = "details_json";
     };
 }
 #endif // RREVIEWCOLUMNS_H

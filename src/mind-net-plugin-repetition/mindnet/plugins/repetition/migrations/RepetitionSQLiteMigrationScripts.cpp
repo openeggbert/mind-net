@@ -56,7 +56,7 @@ CREATE TABLE r_session (
     algorithm INTEGER NOT NULL,
 
     notes BOOLEAN NOT NULL DEFAULT 1,
-    questions INTEGER NOT NULL DEFAULT 1,
+    questions BOOLEAN NOT NULL DEFAULT 1,
     scope INTEGER NOT NULL,
 
     filter_notes_under INTEGER,
@@ -103,6 +103,10 @@ CREATE TABLE r_review (
 
 	-- user behavior
 	changed_answer BOOLEAN DEFAULT 0, -- changed answer during review?
+
+    details_json TEXT NOT NULL DEFAULT '{}',
+	-- optional JSON with algorithm-specific details
+	-- e.g. SM-18: {"R_before":0.72,"S_before":2.1,"S_after":2.4,"next_interval":4.5}
 
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (r_session_id) REFERENCES r_session(id),
@@ -185,7 +189,7 @@ CREATE TABLE r4_state (
 	ef_times_100 INTEGER DEFAULT 250 
 		CHECK (ef_times_100 >= 100 and ef_times_100 <= 500),
 											 -- E-Factor * 100
-	correction_factor REAL DEFAULT 1.0,	 -- new: coefficient for interval correction
+	correction_factor_times_100 INTEGER DEFAULT 100, 	 -- new: coefficient for interval correction
 											-- (SM-4 adds adaptive adjustments)
 
 	next_review DATETIME,				   -- when next repetition should occur
@@ -200,5 +204,52 @@ CREATE TABLE r4_state (
 	FOREIGN KEY (user_id) REFERENCES user(id)
 );
 )");
+
+
+    	add_migration("V8__create_r18_state.sql", R"(
+CREATE TABLE r18_state (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    user_id INTEGER NOT NULL,
+    note_id INTEGER,
+    question_id INTEGER,
+    CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
+
+    stability_times_100 INTEGER DEFAULT 100,    -- S
+	last_interval_times_100 INTEGER DEFAULT 0,  -- last interval (days)
+    repetitions INTEGER DEFAULT 0,
+    lapses INTEGER DEFAULT 0,
+    next_review DATETIME,
+    last_review DATETIME,
+    last_quality INTEGER DEFAULT 0,
+
+    UNIQUE (user_id, note_id),
+    UNIQUE (user_id, question_id),
+
+    FOREIGN KEY (note_id) REFERENCES note(id),
+    FOREIGN KEY (question_id) REFERENCES question(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+)");
+
+    	add_migration("V9__create_r18_perf_agg.sql", R"(
+CREATE TABLE r18_perf_agg (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    user_id INTEGER NOT NULL,
+    bin_log_t_times_100 INTEGER NOT NULL,  -- log(t) × 100
+    total INTEGER NOT NULL,
+    correct INTEGER NOT NULL,
+
+    UNIQUE (user_id, bin_log_t_times_100),
+
+    FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+    	)");
     }
 }
