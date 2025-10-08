@@ -35,22 +35,7 @@ namespace mindnet::plugins::repetition::models
         using columns::RGlobalSettingColumns;
 
         validator_chain_vector list{
-            [this]
-            {
-                if (key.empty())
-                {
-                    return std::unexpected("Key cannot be empty");
-                }
-                return std::expected<void>();
-            },
-            [this]
-            {
-                if (value.empty())
-                {
-                    return std::unexpected("Value cannot be empty");
-                }
-                return std::expected<void>();
-            }
+
         };
         return util::ValidatorChain::run(list);
     }

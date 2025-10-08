@@ -59,18 +59,9 @@ namespace mindnet::plugins::repetition::models
         using columns::RReviewColumns;
 
         validator_chain_vector list{
-            [this]
-            {
-                if (user_id <= 0) return std::unexpected("User ID must be positive");
-                if (cast64(algorithm) <= 0) return std::unexpected("Algorithm must be positive");
-                if (note_id <= 0 && question_id <= 0)
-                    return std::unexpected("Either note_id or question_id must be set");
-                if (grade < 0 || grade > 5)
-                    return std::unexpected("Grade must be between 0 and 5");
-                if (latency_ms < 0)
-                    return std::unexpected("Latency must be non-negative");
-                return std::expected<void>();
-            },
+            [this] {return test_true((note_id != 0 && question_id == 0) || (note_id == 0 && question_id != 0), "Either note_id or question_id must be set");},
+                [this] {return test_between(grade, 0, 5, RReviewColumns::GRADE);},
+                [this] {return test_at_least(latency_ms, 0, RReviewColumns::LATENCY_MS);}
         };
         return util::ValidatorChain::run(list);
     }
