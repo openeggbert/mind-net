@@ -2,8 +2,16 @@
 
 #include "mindnet/plugins/repetition/RepetitionPluginFactory.h"
 
-#include "mindnet/plugins/repetition/validators/R2ReviewValidator.h"
+#include "mindnet/plugins/repetition/validators/RGlobalSettingValidator.h"
+#include "mindnet/plugins/repetition/validators/RUserSettingValidator.h"
+#include "mindnet/plugins/repetition/validators/RSessionValidator.h"
+#include "mindnet/plugins/repetition/validators/RReviewValidator.h"
+#include "mindnet/plugins/repetition/validators/R0StateValidator.h"
 #include "mindnet/plugins/repetition/validators/R2StateValidator.h"
+#include "mindnet/plugins/repetition/validators/R4StateValidator.h"
+#include "mindnet/plugins/repetition/validators/R18StateValidator.h"
+#include "mindnet/plugins/repetition/validators/R18PerfAggValidator.h"
+
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
 
 namespace mindnet::plugins::repetition
@@ -20,8 +28,15 @@ namespace mindnet::plugins::repetition
 
         REGISTER_MIGRATIONS(Repetition, SQLite)
 
-        REGISTER_MODEL(r2_review, R2Review, R2_REVIEW)
+        REGISTER_MODEL(r_global_setting, RGlobalSetting, R_GLOBAL_SETTING)
+        REGISTER_MODEL(r_user_setting, RUserSetting, R_USER_SETTING)
+        REGISTER_MODEL(r_session, RSession, R_SESSION)
+        REGISTER_MODEL(r_review, RReview, R_REVIEW)
+        REGISTER_MODEL(r0_state, R0State, R0_STATE)
         REGISTER_MODEL(r2_state, R2State, R2_STATE)
+        REGISTER_MODEL(r4_state, R4State, R4_STATE)
+        REGISTER_MODEL(r18_state, R18State, R18_STATE)
+        REGISTER_MODEL(r18_perf_agg, R18PerfAgg, R18_PERF_AGG)
 
         plugin->close_for_changes();
         return plugin;

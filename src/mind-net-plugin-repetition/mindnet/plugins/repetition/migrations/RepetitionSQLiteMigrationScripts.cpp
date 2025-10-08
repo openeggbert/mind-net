@@ -118,7 +118,6 @@ CREATE TABLE r_review (
 
 )");
     	add_migration("V5__create_r0_state.sql", R"(
-
 CREATE TABLE r0_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -174,7 +173,6 @@ CREATE TABLE r2_state (
 )");
 
     	add_migration("V7__create_r4_state.sql", R"(
--- R-4 state for each note/question and user
 CREATE TABLE r4_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,

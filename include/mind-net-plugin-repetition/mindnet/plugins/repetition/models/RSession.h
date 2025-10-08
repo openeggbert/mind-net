@@ -50,7 +50,7 @@ namespace mindnet::plugins::repetition::models
         bool notes{true};
         bool questions{true};
         enums::RepetitionScope scope{};
-        int filter_notes_under{};
+        int filter_under_note{};
         unixtime filter_date_from{};
         unixtime filter_date_to{};
         int filter_tag{};
@@ -71,7 +71,7 @@ namespace mindnet::plugins::repetition::models
                 notes == other.notes &&
                 questions == other.questions &&
                 scope == other.scope &&
-                filter_notes_under == other.filter_notes_under &&
+                filter_under_note == other.filter_under_note &&
                 filter_date_from == other.filter_date_from &&
                 filter_date_to == other.filter_date_to &&
                 filter_tag == other.filter_tag &&

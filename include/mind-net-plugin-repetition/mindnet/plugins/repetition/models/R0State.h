@@ -35,8 +35,8 @@ namespace mindnet::plugins::repetition::models
     struct Model : mindnet::model::BaseModel
     {
         int user_id{};
-        std::optional<int> note_id; // Made optional
-        std::optional<int> question_id; // Made optional
+        int note_id; // Made optional
+        int question_id; // Made optional
         int repetitions{};
         int interval{1};
         unixtime next_review;
