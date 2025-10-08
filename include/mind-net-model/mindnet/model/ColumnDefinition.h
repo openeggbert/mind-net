@@ -277,6 +277,11 @@ namespace mindnet::model
             return *this;
         }
 
+        ColumnDefinition& set_default_value(bool value)
+        {
+            return set_default_value(value ? 1 : 0);
+        }
+
         ColumnDefinition& set_description(string str)
         {
             description = str;

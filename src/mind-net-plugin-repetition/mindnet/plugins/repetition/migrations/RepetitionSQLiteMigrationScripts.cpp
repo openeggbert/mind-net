@@ -59,18 +59,19 @@ CREATE TABLE r_session (
     questions BOOLEAN NOT NULL DEFAULT 1,
     scope INTEGER NOT NULL,
 
-    filter_notes_under INTEGER,
+    filter_under_note INTEGER,
     filter_date_from DATETIME,
     filter_date_to DATETIME,
     filter_tag INTEGER,
     filter_collection INTEGER,
 
     selected_items TEXT NOT NULL DEFAULT '{}', --example: {"note_ids":[3,4,5,6,7], "question_ids":[3,4,6,7,8]}
+    pinned BOOL DEFAULT 0,
 
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (map_id) REFERENCES map(id),
     FOREIGN KEY (cloned_from_session_id) REFERENCES r_session(id),
-    FOREIGN KEY (filter_notes_under) REFERENCES note(id),
+    FOREIGN KEY (filter_under_note) REFERENCES note(id),
     FOREIGN KEY (filter_tag) REFERENCES tag_type(id),
     FOREIGN KEY (filter_collection) REFERENCES collection(id)
 );
