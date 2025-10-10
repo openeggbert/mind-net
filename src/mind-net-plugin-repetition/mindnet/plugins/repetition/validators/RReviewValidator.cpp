@@ -19,28 +19,48 @@ namespace mindnet::plugins::repetition::validators
     using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult RReviewValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        // User can only create r_reviews for themselves
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Can only create r_reviews for yourself"};
+        }
         return ok_result;
     }
 
     OperationResult RReviewValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        // Users can only read their own r_reviews
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Can only access your own r_reviews"};
+        }
         return ok_result;
     }
 
     OperationResult RReviewValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
     {
-        return ok_result;
+        return {405, "Unsupported operation."};
+
     }
 
     OperationResult RReviewValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
+        return {405, "Unsupported operation."};
+
     }
 
     OperationResult RReviewValidator::validate_list_authorization(const RequestContext& ctx,
                                                                 const string_map& filter) const
     {
+        mandatory_filter(user_id)
+
+// Users can only list their own sessions
+auto it = filter.find("user_id");
+        if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
+        {
+            return {403, "Can only list your own r_sessions"};
+        }
         return ok_result;
     }
 
@@ -52,12 +72,12 @@ namespace mindnet::plugins::repetition::validators
 
     OperationResult RReviewValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return {405, "Unsupported operation."};
+        return ok_result;
     }
 
     OperationResult RReviewValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return {405, "Unsupported operation."};
+        return ok_result;
     }
 
     OperationResult RReviewValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,

@@ -44,6 +44,10 @@ inline NAME int_to_##PREFIX(int value) {                                     \
     }                                                                        \
 }                                                                            \
                                                                              \
+inline int PREFIX##_to_int(NAME value) {                                     \
+    return static_cast<int>(value);                                          \
+}                                                                            \
+                                                                             \
 inline model::EnumDefinition PREFIX##_to_enum_definition() {                 \
     return model::EnumDefinition{ PREFIX##_to_string,                        \
         static_cast<int>(PREFIX##_to_values().size()),                       \
@@ -59,8 +63,6 @@ inline model::EnumDefinition PREFIX##_to_enum_definition() {                 \
 #define DECLARE_INT_TO_ENUM_CASE(name, value, ENUM_NAME) case value: return ENUM_NAME::name;
 
 #endif // MIND_NET_ENUMUTILS_H
-
-
 
 
 //Usage

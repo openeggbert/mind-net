@@ -22,21 +22,22 @@ namespace mindnet::plugins::repetition::models
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Repetition", 200).set_title_column(COLS::NOTE_ID).allow_reader_write()
+        .allow_reader_write()
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::R_SESSION_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
             coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY),
-            coldef(COLS::REVIEW_DATE, DATETIME),
+            coldef(COLS::REVIEW_DATE, DATETIME | READONLY),
             coldef(COLS::GRADE, INTEGER | READONLY),
-            coldef(COLS::RESPONSE_DATA),
-            coldef(COLS::NOTES),
-            coldef(COLS::STARTED_AT, DATETIME),
-            coldef(COLS::ENDED_AT, DATETIME),
-            coldef(COLS::LATENCY_MS, INTEGER),
-            coldef(COLS::CHANGED_ANSWER, BOOL),
-            coldef(COLS::DETAILS_JSON, MANDATORY)
+            coldef(COLS::RESPONSE_DATA, READONLY),
+            coldef(COLS::NOTES, READONLY),
+            coldef(COLS::STARTED_AT, DATETIME | READONLY),
+            coldef(COLS::ENDED_AT, DATETIME | READONLY),
+            coldef(COLS::LATENCY_MS, INTEGER | READONLY),
+            coldef(COLS::CHANGED_ANSWER, BOOL | READONLY).set_default_value(false),
+            coldef(COLS::DETAILS_JSON, MANDATORY | READONLY)
         });
 
     struct Model : mindnet::model::BaseModel
