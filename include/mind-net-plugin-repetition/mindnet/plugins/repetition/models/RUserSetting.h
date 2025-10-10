@@ -41,10 +41,11 @@ namespace mindnet::plugins::repetition::models
         .set_all_rest_operations()
         .set_group("Repetition", 200)
         .set_title_column(COLS::KEY)
+        .allow_reader_write()
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY),
-            coldef(COLS::KEY, TEXT | MANDATORY),
-            coldef(COLS::VALUE, TEXT | MANDATORY),
+            coldef(COLS::KEY, MANDATORY | UNIQUE),
+            coldef(COLS::VALUE, MANDATORY),
         });
 
     struct Model : mindnet::model::BaseModel

@@ -34,6 +34,7 @@ mindnet::api::OperationResult validate_list_authorization(const RequestContext&,
 #define assert_role(ROLE) \
 return_if (ctx.role < mindnet::essential::UserRole:: ROLE, 403, "User does not have permission for this action.")
 
+#define assert_superadmin() assert_role(Admin)
 #define assert_admin() assert_role(Admin)
 #define assert_editor() assert_role(Editor)
 #define assert_reader() assert_role(Reader)

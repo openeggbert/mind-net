@@ -23,10 +23,7 @@ namespace mindnet::plugins::repetition::validators
         const RequestContext& ctx, const Model& entity) const
     {
         // Only admin should be able to create global settings
-        if (!ctx.has_admin_rights())
-        {
-            return {403, "Administrator rights required"};
-        }
+        assert_admin()
         return ok_result;
     }
 
@@ -42,10 +39,8 @@ namespace mindnet::plugins::repetition::validators
         const Model& new_entity) const
     {
         // Only admin should be able to update global settings
-        if (!ctx.has_admin_rights())
-        {
-            return {403, "Administrator rights required"};
-        }
+        assert_admin()
+
         return ok_result;
     }
 
@@ -53,10 +48,8 @@ namespace mindnet::plugins::repetition::validators
         const RequestContext& ctx, const Model& entity) const
     {
         // Only admin should be able to delete global settings
-        if (!ctx.has_admin_rights())
-        {
-            return {403, "Administrator rights required"};
-        }
+        assert_admin()
+
         return ok_result;
     }
 
@@ -70,14 +63,6 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RGlobalSettingValidator::validate_create_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        if (entity.key.empty())
-        {
-            return {400, "Key cannot be empty"};
-        }
-        if (entity.value.empty())
-        {
-            return {400, "Value cannot be empty"};
-        }
         return ok_result;
     }
 
@@ -91,14 +76,6 @@ namespace mindnet::plugins::repetition::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        if (new_entity.key.empty())
-        {
-            return {400, "Key cannot be empty"};
-        }
-        if (new_entity.value.empty())
-        {
-            return {400, "Value cannot be empty"};
-        }
         return ok_result;
     }
 

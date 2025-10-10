@@ -23,7 +23,7 @@ namespace mindnet::plugins::repetition::validators
         const RequestContext& ctx, const Model& entity) const
     {
         // Users can only create their own settings
-        if (ctx.user_id != entity.user_id)
+        if (ctx.token.user_id != entity.user_id)
         {
             return {403, "Can only create settings for yourself"};
         }
@@ -34,7 +34,7 @@ namespace mindnet::plugins::repetition::validators
                                                                        const Model& entity) const
     {
         // Users can only read their own settings
-        if (ctx.user_id != entity.user_id)
+        if (ctx.token.user_id != entity.user_id)
         {
             return {403, "Can only read your own settings"};
         }
@@ -46,7 +46,7 @@ namespace mindnet::plugins::repetition::validators
         const Model& new_entity) const
     {
         // Users can only update their own settings
-        if (ctx.user_id != new_entity.user_id)
+        if (ctx.token.user_id != new_entity.user_id)
         {
             return {403, "Can only update your own settings"};
         }
@@ -57,7 +57,7 @@ namespace mindnet::plugins::repetition::validators
         const RequestContext& ctx, const Model& entity) const
     {
         // Users can only delete their own settings
-        if (ctx.user_id != entity.user_id)
+        if (ctx.token.user_id != entity.user_id)
         {
             return {403, "Can only delete your own settings"};
         }
@@ -67,9 +67,11 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RUserSettingValidator::validate_list_authorization(const RequestContext& ctx,
                                                                        const string_map& filter) const
     {
+        mandatory_filter(user_id)
+
         // Users can only list their own settings
         auto it = filter.find("user_id");
-        if (it == filter.end() || std::stoi(it->second) != ctx.user_id)
+        if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
         {
             return {403, "Can only list your own settings"};
         }
@@ -79,14 +81,6 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RUserSettingValidator::validate_create_integrity(const RequestContext& ctx,
                                                                      const Model& entity) const
     {
-        if (entity.key.empty())
-        {
-            return {400, "Setting key cannot be empty"};
-        }
-        if (entity.value.empty())
-        {
-            return {400, "Setting value cannot be empty"};
-        }
         return ok_result;
     }
 
@@ -98,14 +92,6 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RUserSettingValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                      const Model& new_entity) const
     {
-        if (new_entity.key.empty())
-        {
-            return {400, "Setting key cannot be empty"};
-        }
-        if (new_entity.value.empty())
-        {
-            return {400, "Setting value cannot be empty"};
-        }
         return ok_result;
     }
 

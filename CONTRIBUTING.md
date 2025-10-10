@@ -38,7 +38,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE Support for export to static HTML files
 
 ### Extending
-- [ ] CronJobs
+- [ ] CronJobs - https://www.baeldung.com/cron-expressions
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')

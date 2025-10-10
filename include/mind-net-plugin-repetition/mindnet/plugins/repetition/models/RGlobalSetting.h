@@ -23,8 +23,8 @@ namespace mindnet::plugins::repetition::models
         .set_group("Repetition", 200)
         .set_title_column(COLS::KEY)
         .set_columns({
-            coldef(COLS::KEY, TEXT | MANDATORY | UNIQUE),
-            coldef(COLS::VALUE, TEXT | MANDATORY),
+            coldef(COLS::KEY, MANDATORY | UNIQUE),
+            coldef(COLS::VALUE, MANDATORY),
         });
 
     struct Model : mindnet::model::BaseModel

@@ -4,6 +4,8 @@
 
 #include "mindnet/plugins/repetition/models/RUserSetting.h"
 
+#include "mindnet/plugins/repetition/RSetting.h"
+
 namespace mindnet::plugins::repetition::models
 {
     entity_fields RUserSetting::to_values() const
@@ -37,18 +39,8 @@ namespace mindnet::plugins::repetition::models
         using columns::RUserSettingColumns;
 
         validator_chain_vector list{
-            [this]
-            {
-                if (key.empty())
-                {
-                    return std::unexpected("Key cannot be empty");
-                }
-                if (value.empty())
-                {
-                    return std::unexpected("Value cannot be empty");
-                }
-                return expected_t{};
-            }
+            [this] {return testt_at_least(key, 1, RUserSettingColumns::KEY);},
+            [this] {return test_true(r_setting_keys.contains(key), "Key " + key + " is not allowed.");}
         };
         return util::ValidatorChain::run(list);
     }
