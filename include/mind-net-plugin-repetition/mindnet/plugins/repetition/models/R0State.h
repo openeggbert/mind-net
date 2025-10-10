@@ -19,12 +19,13 @@ namespace mindnet::plugins::repetition::models
 
     inline def R0_STATE_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
         .set_group("Repetition", 200).set_title_column(COLS::INTERVAL).allow_reader_write()
+        .set_rest_operations("rl")
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY), // Optional
             coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY), // Optional
+
             coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
             coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
             coldef(COLS::NEXT_REVIEW, DATETIME),

@@ -90,7 +90,7 @@ CREATE TABLE r_review (
     algorithm INTEGER NOT NULL,
 
     note_id INTEGER,
-    question_id INTEGER,
+    question_id INTEGER
     CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
     review_date DATETIME,
@@ -125,7 +125,7 @@ CREATE TABLE r0_state (
 
 	user_id INTEGER NOT NULL,
 	note_id INTEGER,
-	question_id INTEGER,
+	question_id INTEGER
 	CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
 	repetitions INTEGER DEFAULT 0,	  -- number of completed repetitions 
@@ -152,7 +152,7 @@ CREATE TABLE r2_state (
 
     user_id INTEGER NOT NULL,
     note_id INTEGER,
-    question_id INTEGER,
+    question_id INTEGER
     CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
     repetitions INTEGER DEFAULT 0,
@@ -180,7 +180,7 @@ CREATE TABLE r4_state (
 
 	user_id INTEGER NOT NULL,
 	note_id INTEGER,
-	question_id INTEGER,
+	question_id INTEGER
 	CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
 	repetitions INTEGER DEFAULT 0,		  -- which repetition 
@@ -213,7 +213,7 @@ CREATE TABLE r18_state (
 
     user_id INTEGER NOT NULL,
     note_id INTEGER,
-    question_id INTEGER,
+    question_id INTEGER
     CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
     stability_times_100 INTEGER DEFAULT 100,    -- S

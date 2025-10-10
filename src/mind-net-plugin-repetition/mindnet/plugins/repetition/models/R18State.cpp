@@ -51,39 +51,15 @@ namespace mindnet::plugins::repetition::models
         using columns::R18StateColumns;
 
         validator_chain_vector list{
-            [this]
-            {
-                if (note_id == 0 && question_id == 0)
-                {
-                    return std::unexpected("Either note_id or question_id must be set");
-                }
-                if (note_id != 0 && question_id != 0)
-                {
-                    return std::unexpected("Only one of note_id or question_id can be set");
-                }
-                if (stability_times_100 < 0)
-                {
-                    return std::unexpected("stability_times_100 cannot be negative");
-                }
-                if (last_interval_times_100 < 0)
-                {
-                    return std::unexpected("last_interval_times_100 cannot be negative");
-                }
-                if (repetitions < 0)
-                {
-                    return std::unexpected("repetitions cannot be negative");
-                }
-                if (lapses < 0)
-                {
-                    return std::unexpected("lapses cannot be negative");
-                }
-                if (last_quality < 0 || last_quality > 5)
-                {
-                    return std::unexpected("last_quality must be between 0 and 5");
-                }
-                return std::expected<void>();
-            }
+            [this] {return test_true(note_id <= 0 && question_id <= 0, "Either note_id or question_id must be set");},
+            [this] {return test_at_least(stability_times_100, 0, R18StateColumns::STABILITY_TIMES_100);},
+            [this] {return test_at_least(last_interval_times_100, 0, R18StateColumns::LAST_INTERVAL_TIMES_100);},
+            [this] {return test_at_least(repetitions, 0, R18StateColumns::REPETITIONS);},
+            [this] {return test_at_least(lapses, 0, R18StateColumns::LAPSES);},
+            [this] {return test_between(last_quality, 0, 5, R18StateColumns::LAST_QUALITY);},
         };
         return util::ValidatorChain::run(list);
     }
+
+
 }

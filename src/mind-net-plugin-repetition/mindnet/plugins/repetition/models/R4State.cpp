@@ -51,35 +51,12 @@ namespace mindnet::plugins::repetition::models
         using columns::R4StateColumns;
 
         validator_chain_vector list{
-            [this]
-            {
-                // Validate that either note_id or question_id is set (not both null)
-                if (note_id == 0 && question_id == 0)
-                {
-                    return std::unexpected("Either note_id or question_id must be set");
-                }
-                // Validate required user_id
-                if (user_id == 0)
-                {
-                    return std::unexpected("user_id is required");
-                }
-                // Validate ef_times_100 range (100-500)
-                if (ef_times_100 < 100 || ef_times_100 > 500)
-                {
-                    return std::unexpected("ef_times_100 must be between 100 and 500");
-                }
-                // Validate correction_factor_times_100 has default 100
-                if (correction_factor_times_100 <= 0)
-                {
-                    correction_factor_times_100 = 100;
-                }
-                // Validate last_quality range (0-5)
-                if (last_quality < 0 || last_quality > 5)
-                {
-                    return std::unexpected("last_quality must be between 0 and 5");
-                }
-                return std::expected<void>();
-            }
+            [this] {return test_true(note_id <= 0 && question_id <= 0, "Either note_id or question_id must be set");},
+            [this] {return test_at_least(repetitions, 0, R4StateColumns::REPETITIONS);},
+            [this] {return test_at_least(interval, 1, R4StateColumns::INTERVAL);},
+            [this] {return test_between(ef_times_100, 100, 500, R4StateColumns::EF_TIMES_100);},
+            [this] {return test_between(correction_factor_times_100, 0, 100, R4StateColumns::CORRECTION_FACTOR_TIMES_100);},
+            [this] {return test_between(last_quality, 0, 5, R4StateColumns::LAST_QUALITY);},
         };
         return util::ValidatorChain::run(list);
     }

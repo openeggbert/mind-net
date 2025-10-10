@@ -44,20 +44,13 @@ namespace mindnet::plugins::repetition::models
 
     string R0State::validate()
     {
+        using columns::R0StateColumns;
+
         validator_chain_vector list{
-            [this]
-            {
-                if (user_id <= 0) return std::unexpected("User ID must be positive");
-                if (note_id <= 0 && question_id <= 0)
-                    return std::unexpected("Either note_id or question_id must be set");
-                if (repetitions < 0)
-                    return std::unexpected("Repetitions must be non-negative");
-                if (interval < 1)
-                    return std::unexpected("Interval must be at least 1");
-                if (last_quality < 0 || last_quality > 5)
-                    return std::unexpected("Last quality must be between 0 and 5");
-                return std::expected<void>();
-            },
+            [this] {return test_true(note_id <= 0 && question_id <= 0, "Either note_id or question_id must be set");},
+            [this] {return test_at_least(repetitions, 0, R0StateColumns::REPETITIONS);},
+            [this] {return test_at_least(interval, 1, R0StateColumns::INTERVAL);},
+            [this] {return test_between(last_quality, 0, 5, R0StateColumns::LAST_QUALITY);},
         };
         return util::ValidatorChain::run(list);
     }

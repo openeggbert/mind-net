@@ -33,7 +33,7 @@ namespace mindnet::plugins::repetition::models
 
     inline def R18_PERF_AGG_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
+        .set_rest_operations("rl")
         .set_group("Repetition", 200)
         .set_title_column(COLS::BIN_LOG_T_TIMES_100)
         .allow_reader_write()

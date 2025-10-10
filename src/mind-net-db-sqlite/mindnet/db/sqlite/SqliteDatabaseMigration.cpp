@@ -695,7 +695,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                     }
                     catch (SQLite::Exception& e)
                     {
-                        err << "Migration " << version << " failed: " << e.what() << commit;
+                        err << "Migration " << version << " for plugin " + plugin_name + " failed: " << e.what() << commit;
                     }
 
 

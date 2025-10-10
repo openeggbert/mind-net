@@ -141,7 +141,7 @@ namespace mindnet::model
         {
             if (!allowed_rest_operations.empty())
             {
-                throw std::invalid_argument("allowed_rest_operations were already set");
+                throw std::invalid_argument("allowed_rest_operations were already set for model definition " + model_name);
             }
             allowed_rest_operations = std::move(ops);
             return *this;
@@ -151,7 +151,7 @@ namespace mindnet::model
         {
             if (!allowed_rest_operations.empty())
             {
-                throw std::invalid_argument("allowed_rest_operations were already set");
+                throw std::invalid_argument("allowed_rest_operations were already set for model definition " + model_name);
             }
 
             if (ops_as_string.empty())

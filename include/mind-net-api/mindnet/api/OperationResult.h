@@ -5,6 +5,7 @@
 #define OPERATIONRESULT_H
 
 #define ok_result {}
+#define status_405_unsupported_operation {405, "Unsupported operation."};
 #define status_403_forbidden {403, "You are not authorized to access this resource."}
 
 #include <utility>

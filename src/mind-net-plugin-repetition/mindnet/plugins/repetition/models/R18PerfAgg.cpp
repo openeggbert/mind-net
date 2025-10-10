@@ -36,27 +36,13 @@ namespace mindnet::plugins::repetition::models
 
     string R18PerfAgg::validate()
     {
+        using columns::R18PerfAggColumns;
+
         validator_chain_vector list{
-            [this]
-            {
-                if (bin_log_t_times_100 < 0)
-                {
-                    return std::unexpected("bin_log_t_times_100 cannot be negative");
-                }
-                if (total < 0)
-                {
-                    return std::unexpected("total cannot be negative");
-                }
-                if (correct < 0)
-                {
-                    return std::unexpected("correct cannot be negative");
-                }
-                if (correct > total)
-                {
-                    return std::unexpected("correct cannot be greater than total");
-                }
-                return std::expected<void>();
-            }
+            [this] {return test_at_least(bin_log_t_times_100, 0, R18PerfAggColumns::BIN_LOG_T_TIMES_100);},
+            [this] {return test_at_least(total, 0, R18PerfAggColumns::TOTAL);},
+            [this] {return test_at_least(correct, 0, R18PerfAggColumns::CORRECT);},
+            [this] {return test_true(correct > total, "correct cannot be greater than total");}
         };
         return util::ValidatorChain::run(list);
     }

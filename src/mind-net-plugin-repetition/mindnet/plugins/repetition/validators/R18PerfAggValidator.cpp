@@ -22,10 +22,10 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18PerfAggValidator::validate_create_authorization(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        // Only allow logged-in users to create their own performance aggregates
-        if (ctx.user_id != entity.get_user_id())
+        // User can only create states for themselves
+        if (ctx.token.user_id != entity.user_id)
         {
-            return {403, "Can only create performance aggregates for yourself"};
+            return {403, "Can only create perf agg for yourself"};
         }
         return ok_result;
     }
@@ -33,10 +33,10 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18PerfAggValidator::validate_read_authorization(const RequestContext& ctx,
                                                                      const Model& entity) const
     {
-        // Users can only read their own performance data
-        if (ctx.user_id != entity.get_user_id())
+        // User can only create states for themselves
+        if (ctx.token.user_id != entity.user_id)
         {
-            return {403, "Can only access your own performance aggregates"};
+            return {403, "Can only access perf agg for yourself"};
         }
         return ok_result;
     }
@@ -45,11 +45,10 @@ namespace mindnet::plugins::repetition::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        // Users can only update their own performance data
-        if (ctx.user_id != old_entity.get_user_id() ||
-            old_entity.get_user_id() != new_entity.get_user_id())
+        // User can only create states for themselves
+        if (ctx.token.user_id != new_entity.user_id)
         {
-            return {403, "Can only update your own performance aggregates"};
+            return {403, "Can only update perf agg for yourself"};
         }
         return ok_result;
     }
@@ -57,31 +56,25 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18PerfAggValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        // Users can only delete their own performance data
-        if (ctx.user_id != entity.get_user_id())
-        {
-            return {403, "Can only delete your own performance aggregates"};
-        }
-        return ok_result;
+        return status_405_unsupported_operation
     }
 
     OperationResult R18PerfAggValidator::validate_list_authorization(const RequestContext& ctx,
                                                                      const string_map& filter) const
     {
-        // Allow listing but filtering will be handled in integrity check
-        return ok_result;
+            mandatory_filter(user_id)
+
+    // Users can only list their own perf aggs
+    auto it = filter.find("user_id");
+            if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
+            {
+                return {403, "Can only list your own perf aggs"};
+            }
+            return ok_result;
     }
 
     OperationResult R18PerfAggValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        if (entity.get_total() < 0)
-        {
-            return {400, "Total count cannot be negative"};
-        }
-        if (entity.get_correct() < 0 || entity.get_correct() > entity.get_total())
-        {
-            return {400, "Correct count must be between 0 and total"};
-        }
         return ok_result;
     }
 
@@ -93,14 +86,6 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18PerfAggValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                    const Model& new_entity) const
     {
-        if (new_entity.get_total() < 0)
-        {
-            return {400, "Total count cannot be negative"};
-        }
-        if (new_entity.get_correct() < 0 || new_entity.get_correct() > new_entity.get_total())
-        {
-            return {400, "Correct count must be between 0 and total"};
-        }
         return ok_result;
     }
 
@@ -112,12 +97,6 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18PerfAggValidator::validate_list_integrity(const RequestContext& ctx,
                                                                  const string_map& filter) const
     {
-        // Ensure users can only list their own performance data
-        if (filter.find("user_id") == filter.end() ||
-            std::stoi(filter.at("user_id")) != ctx.user_id)
-        {
-            return {400, "Must filter by your own user_id"};
-        }
         return ok_result;
     }
 
