@@ -15,17 +15,17 @@ namespace mindnet::plugins::repetition::models
         result.push_back(user_id);
         result.push_back(map_id);
         result.push_back(cloned_from_session_id);
-        result.push_back(algorithm);
+        result.push_back(cast64(algorithm));
         result.push_back(notes);
         result.push_back(questions);
-        result.push_back(scope);
+        result.push_back(cast64(scope));
         result.push_back(filter_under_note);
         result.push_back(cast64(filter_date_from));
         result.push_back(cast64(filter_date_to));
         result.push_back(filter_tag);
         result.push_back(filter_collection);
         result.push_back(selected_items);
-        result.push_back(pinned);
+        result.push_back(cast64(pinned));
         return result;
     }
 
@@ -41,10 +41,10 @@ namespace mindnet::plugins::repetition::models
         user_id = number();
         map_id = number();
         cloned_from_session_id = number();
-        algorithm = number();
+        algorithm = enums::int_to_repetition_algorithm(number());
         notes = boolean();
         questions = boolean();
-        scope = number();
+        scope = enums::int_to_repetition_scope(number());
         filter_under_note = number();
         filter_date_from = number();
         filter_date_to = number();
@@ -59,14 +59,7 @@ namespace mindnet::plugins::repetition::models
         using columns::RSessionColumns;
 
         validator_chain_vector list{
-            [this]
-            {
-                if (user_id <= 0) return std::unexpected("User ID must be positive");
-                if (map_id <= 0) return std::unexpected("Map ID must be positive");
-                if (algorithm <= 0) return std::unexpected("Algorithm must be positive");
-                if (scope < 0) return std::unexpected("Scope must be non-negative");
-                return std::expected<void>();
-            },
+            [this] { return test_true(notes || questions, "At least one of notes or questions must be enabled."); },
         };
         return util::ValidatorChain::run(list);
     }
