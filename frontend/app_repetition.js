@@ -2,7 +2,7 @@
 // Imports & Globals
 // ========================================
 
-import {getUserId, list_all_entities} from "./api.js";
+import {getUserId, list_all_entities, post_entity} from "./api.js";
 import {chooseOption, get_element, getOrFetchFromLocalStorage, minutes_to_ms} from "./dom.js";
 
 let user_id = null
@@ -147,6 +147,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const screen_user_settings = "screen_user_settings"
 
     let current_screen = screen_home;
+    const params = new URLSearchParams(window.location.search);
+    let param_screen = params.get("screen");
+    if(param_screen !== null && param_screen !== undefined) {
+        current_screen = param_screen;
+    }
 
     //
     get_element("repetition_header").title = "Go to list of all sessions"
@@ -192,8 +197,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
     const sixty_minutes = minutes_to_ms(60)
+    function refresh_param_screen() {
+        const url = new URL(window.location.href);
+        url.searchParams.set("screen", current_screen);
+        window.history.pushState({}, "", url);
+    }
     function render_screen_home() {
-
+        refresh_param_screen()
         main_content.innerHTML = "";
         let button_new_session = document.createElement("button");
         let button_sessions = document.createElement("button");
@@ -216,6 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_button("User settings",screen_user_settings)
     }
     async function render_screen_sessions() {
+        refresh_param_screen()
         main_content.innerHTML = "";
 
         let r_sessions = await list_all_entities("r_session", "user_id=" + user_id)
@@ -225,7 +236,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             main_content.appendChild(ul)
             r_sessions.forEach(json => {
                 let li = document.createElement("li");
-                li.innerHTML = JSON.stringify(json.value);
+                li.innerHTML = JSON.stringify(json, null, 2);
                 ul.appendChild(li)
             })
         } else{
@@ -234,8 +245,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     }
     function render_screen_new_session() {
+        refresh_param_screen()
 
         main_content.innerHTML = "";
+        main_content.style.textAlign = "left";
 
         function create_label(text, for_id) {
             let label = document.createElement("label")
@@ -258,17 +271,67 @@ document.addEventListener('DOMContentLoaded', async () => {
             let div = document.createElement("div")
             main_content.appendChild(div)
             div.style.marginBottom = "10px";
-            div.appendChild(create_label(text + ":",id))
+            if(type !== "hidden") div.appendChild(create_label(text + ":",id))
             div.appendChild(create_input(type,id))
+            if(type !== "hidden") div.appendChild(create_br())
+        }
+        function make_select(text, id, options){
+            let div = document.createElement("div")
+
+            main_content.appendChild(div)
+            div.style.marginBottom = "10px";
+            div.appendChild(create_label(text + ":",id))
+            let select = document.createElement("select")
+            select.name = id
+            select.id = id
+            div.appendChild(select)
             div.appendChild(create_br())
+            options.forEach(option => {
+                select.appendChild(option)
+            })
+        }
+        function make_option(text, value, selected = false){
+            let option = document.createElement("option")
+            option.value = value
+            option.innerText = text
+            if(selected) option.selected = true
+            return option;
         }
 
+        let button_save_session = document.createElement("button")
+        main_content.appendChild(button_save_session)
+        button_save_session.innerText = "Save"
+        main_content.appendChild(create_br())
+        main_content.appendChild(create_br())
+
         make_input("Map ID", "new_session_map_id", "number")
-        make_input("Cloned from session", "new_session_clone_id", "text")
-        make_input("Algorithm", "new_session_algorithm", "text")
-        make_input("Notes", "new_session_notes", "text")
-        make_input("Questions", "new_session_questions", "text")
-        make_input("Scope", "new_session_scope", "text")
+        make_input("Cloned from session", "new_session_cloned_from_session_id", "hidden")
+        
+        let algorithms =  [
+            make_option("R-0", 0),
+            make_option("R-2", 2),
+            make_option("R-4", 4),
+            make_option("R-18", 18, true),
+        ]
+        make_select("Algorithm", "new_session_algorithm",algorithms)
+        //make_input("Algorithm", "new_session_algorithm", "text")
+
+        make_input("Notes", "new_session_notes", "checkbox")
+        get_element("new_session_notes").checked = true
+        make_input("Questions", "new_session_questions", "checkbox")
+
+
+        let scopes = [
+            make_option("Manual", 0),
+            make_option("DueOnly", 1),
+            make_option("NewOnly", 2),
+            make_option("DueAndNew", 3, true)
+        ]
+
+
+
+        make_select("Scope", "new_session_scope", scopes)
+        
         make_input("Filter under note", "new_session_filter_under_note", "text")
         make_input("Filter date from", "new_session_filter_date_from", "date")
         make_input("Filter date to", "new_session_filter_date_to", "date")
@@ -276,9 +339,44 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_input("Filter collection", "new_session_filter_collection", "text")
         make_input("Selected items", "new_session_selected_items", "text")
         make_input("Pinned", "new_session_pinned", "checkbox")
+        button_save_session.onclick = function() {
+            let new_session = {};
+            new_session["user_id"] = user_id
+            new_session["map_id"] = get_element("new_session_map_id").value;
+            new_session["cloned_from_session_id"] = get_element("new_session_cloned_from_session_id").value;
+            if(new_session["cloned_from_session_id"] === "")new_session["cloned_from_session_id"] = 0
+            new_session["algorithm"] = get_element("new_session_algorithm").value;
+            new_session["notes"]=get_element("new_session_notes").checked ? 1 : 0;
+            new_session["questions"]=get_element("new_session_questions").checked ? 1 : 0;
+            new_session["scope"] = get_element("new_session_scope").value;
+
+            new_session["filter_under_note"] = get_element("new_session_filter_under_note").value;
+            if(new_session["filter_under_note"] === "")new_session["filter_under_note"] = 0
+
+            new_session["filter_date_from"] = get_element("new_session_filter_date_from").value;
+            if(new_session["filter_date_from"] === "")new_session["filter_date_from"] = 0
+
+            new_session["filter_date_to"] = get_element("new_session_filter_date_to").value;
+            if(new_session["filter_date_to"] === "")new_session["filter_date_to"] = 0
+
+            new_session["filter_tag"] = get_element("new_session_filter_tag").value;
+            if(new_session["filter_tag"] === "")new_session["filter_tag"] = 0
+
+            new_session["filter_collection"] = get_element("new_session_filter_collection").value;
+            if(new_session["filter_collection"] === "")new_session["filter_collection"] = 0
+
+
+            new_session["selected_items"] = get_element("new_session_selected_items").value;
+            if(new_session["selected_items"] === "")new_session["selected_items"] = "{}"
+            new_session["pinned"] = get_element("new_session_pinned").checked ? 1 : 0;
+
+            //alert(JSON.stringify(new_session));
+            post_entity("r_session", new_session);
+        }
     }
 
     function render() {
+        main_content.style.textAlign = "center";
         r_global_settings = getOrFetchFromLocalStorage("r_global_settings", load_r_global_settings, sixty_minutes)
         r_user_settings = getOrFetchFromLocalStorage("r_user_settings", load_r_user_settings, sixty_minutes)
 

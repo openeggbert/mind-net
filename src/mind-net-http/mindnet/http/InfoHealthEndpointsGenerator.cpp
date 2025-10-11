@@ -24,7 +24,7 @@ namespace mindnet::http
         static const std::string MINUTE = " minute ";
         static const std::string MINUTES = " minutes ";
         static const std::string SECOND = " second";
-        static const std::string SECONDS = " seconds";
+        static const std::string SECONDS = " seconds ";
         static const std::string MILLISECOND = " millisecond";
         static const std::string MILLISECONDS = " milliseconds";
     }

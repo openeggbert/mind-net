@@ -33,6 +33,11 @@ button {
     border-radius: 6px;
     cursor: pointer;
 }
+input[type="checkbox"] {
+    transform: scale(1.8);
+    margin: 6px;
+    cursor: pointer;
+}
 .show-btn { background: #444; color: #fff; }
 .rating-btn { background: #2e7d32; color: #fff; }
 .rating-btn:hover, .rating-btn-selected { background: #4fbc51; color: #fff; }
