@@ -1,7 +1,8 @@
 // ========================================
 // Imports & Globals
 // ========================================
-import {API_BASE, apiFetch} from "./api.js";
+
+import {get_element} from "./dom.js";
 
 let r_global_setting_id = ""
 let r_global_settings = null;
@@ -128,6 +129,25 @@ export function showWindowFrom(title, url) {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    get_element("repetition_header").title = "Go to list of all sessions"
+    get_element("repetition_header").style.cursor = "pointer"
+    get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
+    get_element("button_mindnet").title = "Go to Mind Net generic frontend"
+
+    get_element("button_sessions").addEventListener("click", () => {});
+    get_element("button_sessions").title = "Sessions"
+
+    get_element("button_settings").addEventListener("click", () => {});
+    get_element("button_settings").title = "User settings"
+
+    get_element("button_theme").addEventListener("click", () => {document.body.classList.toggle("dark");});
+    get_element("button_theme").title = "Switch dark/light theme"
+    //
+    const win = document.getElementById('window_container');
+    makeDraggable(win);
+
+    //
+
 
 });
 

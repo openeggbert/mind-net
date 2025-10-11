@@ -341,6 +341,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     get_element("button_theme").addEventListener("click", () => {document.body.classList.toggle("dark");});
     get_element("button_theme").title = "Switch dark/light theme"
 
+
+
     panels.forEach(panel => {
         if (rich || panel !== "parent") {
             get_element("collapsible-toggle-" + panel)
@@ -371,19 +373,92 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelectorAll('.add').forEach(btn => {
         btn.addEventListener('click', () => show_toast('New child added'));
     });
-
+    //
     const win = document.getElementById('window_container');
     makeDraggable(win);
-
+    //
     init_from_http_parameters();
 
     if (disable_rest) {
         return;
     }
 
-    if (mode_maps) {
-        hide_elements("button_previous", "button_next", "button_focus", "parent", "current", "meta")
 
+    // Header
+    if (mode_maps) hide_elements("button_previous", "button_next", "button_focus")
+
+    // Parent
+
+    if (mode_maps) hide_element("parent")
+
+    if (!mode_maps) {
+        original_note = mode_notes ? await read_entity("note", note_id) : null;
+        note = mode_notes ? structuredClone(original_note) : null;
+        let parent_note = mode_notes ? (note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id)) : null;
+        let has_parent = mode_notes ? note.parent_note_id !== 0 : null;
+
+        if(mode_root) set_value("parent_label", "All maps")
+        if(mode_notes) set_value("parent_label", has_parent? "Parent Note" : "Parent Map")
+
+        if(mode_root) hide_elements("parent_id_label", "parent_id")
+        map = mode_notes ? await read_entity("map", note.map_id) : null;
+        if(mode_notes) set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
+
+        let parent_title = document.getElementById("parent_title");
+        if(mode_root) {
+            parent_title.innerText = "All maps";
+            parent_title.href = "?";
+        }
+        if(mode_notes) {
+            parent_title.innerText = has_parent ? parent_note.title : map.name;
+            parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
+        }
+
+        get_element("parent_button_copy").onclick = function () {
+            if(mode_root) copy_to_clipboard(parent_title.href);
+            if(mode_maps) copy_to_clipboard(has_parent ? note.parent_note_id : note.map_id);
+        }
+
+        get_element("parent_button_edit").onclick = async function () {
+            if (mode_root) {
+                showWindowFrom("List of maps", "index.html?entity=map&action=list")
+                return;
+            }
+            //mode_notes
+            if (!has_parent && false) {
+                let confirmed = confirm("Are you sure you want to set a parent for this note? Now it has now parent.");
+                if (!confirmed) {
+                    return;
+                }
+            }
+            let new_parent_note_id = prompt("Enter new parent note ID");
+
+            if (new_parent_note_id !== undefined && new_parent_note_id !== null) {
+                note.parent_note_id = new_parent_note_id;
+
+                parent_note = note.parent_note_id === "0" ? null : await read_entity("note", note.parent_note_id);
+                has_parent = note.parent_note_id !== "0";
+
+                set_value("parent_label", has_parent ? "Parent Note" : "Parent Map")
+                set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
+
+                let parent_title = document.getElementById("parent_title");
+
+                let map_ = await read_entity("map", note.map_id);
+                parent_title.innerText = has_parent ? parent_note.title : map_.name;
+                parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
+            }
+        }
+    }
+
+    // Current
+    if (mode_maps) hide_element("current")
+
+    // Meta
+    if (mode_maps) hide_element("meta")
+
+    // Children
+    if (mode_maps) {
         set_value("children_label", "All maps");
         hide_element("collapsible-toggle-children");
 
@@ -415,19 +490,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
         }
     }
+    if (!mode_maps) {
+    }
 
     if (mode_root) {
-        set_value("parent_label", "All maps")
-        hide_elements("parent_id_label", "parent_id")
-        let parent_title = document.getElementById("parent_title");
-        parent_title.innerText = "All maps";
-        parent_title.href = "?";
-        get_element("parent_button_copy").onclick = function () {
-            copy_to_clipboard(parent_title.href);
-        }
-        get_element("parent_button_edit").onclick = function () {
-            showWindowFrom("List of maps", "index.html?entity=map&action=list")
-        }
         set_value("current_label", "Map")
         set_value("current_id", map_id)
 
@@ -464,6 +530,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             map.description = get_element("current_textarea").value;
             put_entity("map", map_id, map)
         }
+
+
+
         hide_element("meta_start")
 
         function assign_meta_list_function(models, Models, model) {
@@ -546,51 +615,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_notes) {
-
-
-        original_note = await read_entity("note", note_id);
-        note = structuredClone(original_note);
-        let parent_note = note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id);
-        let has_parent = note.parent_note_id !== 0;
-
-        set_value("parent_label", has_parent? "Parent Note" : "Parent Map")
-        map = await read_entity("map", note.map_id);
-
-        set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
-
-        let parent_title = document.getElementById("parent_title");
-        parent_title.innerText = has_parent ? parent_note.title : map.name;
-        parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
-
-        get_element("parent_button_copy").onclick = function () {
-            copy_to_clipboard(has_parent ? note.parent_note_id : note.map_id);
-        }
-        get_element("parent_button_edit").onclick = async function () {
-            if (!has_parent && false) {
-                let confirmed = confirm("Are you sure you want to set a parent for this note? Now it has now parent.");
-                if (!confirmed) {
-                    return;
-                }
-            }
-            let new_parent_note_id = prompt("Enter new parent note ID");
-
-            if (new_parent_note_id !== undefined && new_parent_note_id !== null) {
-                note.parent_note_id = new_parent_note_id;
-
-                parent_note = note.parent_note_id === "0" ? null : await read_entity("note", note.parent_note_id);
-                has_parent = note.parent_note_id !== "0";
-
-                set_value("parent_label", has_parent ? "Parent Note" : "Parent Map")
-                set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
-
-                let parent_title = document.getElementById("parent_title");
-
-                let map_ = await read_entity("map", note.map_id);
-                parent_title.innerText = has_parent ? parent_note.title : map_.name;
-                parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
-
-            }
-        }
         set_value("current_label", "Note")
         set_value("current_id", note_id)
 
