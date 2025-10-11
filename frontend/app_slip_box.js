@@ -129,7 +129,7 @@ export function togglePanel(element, id) {
     const el = get_element(id);
     const isCollapsed = el.classList.toggle('collapsed');
     let panel = id.replace("_content", "")
-    panels.includes(panel) ? setPanelCollapsed(panel, isCollapsed) :console.warn("togglePanel() does not know id: " + id)
+    panels.includes(panel) ? setPanelCollapsed(panel, isCollapsed) : console.warn("togglePanel() does not know id: " + id)
 
     if (element) element.textContent = simple
         ? (isCollapsed ? "▶ Expand" : "▼ Collapse")
@@ -149,6 +149,7 @@ export function togglePanel(element, id) {
         }
     }
 }
+
 window.togglePanel = togglePanel;
 export const button_focus_onclick = () => document.body.classList.toggle("focus-mode");
 window.button_focus_onclick = button_focus_onclick;
@@ -174,10 +175,12 @@ function makeDraggable(el) {
     const doDrag = (x, y) => {
         if (!dragging) return;
         el.style.left = `${x - offsetX}px`;
-        el.style.top  = `${y - offsetY}px`;
+        el.style.top = `${y - offsetY}px`;
     };
 
-    const stopDrag = () => { dragging = false };
+    const stopDrag = () => {
+        dragging = false
+    };
 
     // mouse
     header.addEventListener('mousedown', e => {
@@ -221,6 +224,7 @@ export function showWindow() {
         });
     }
 }
+
 window.showWindow = showWindow;
 export const clearWindow = () => document.getElementById("window_container_content").innerHTML = "";
 window.clearWindow = clearWindow;
@@ -303,8 +307,8 @@ window.showToast = show_toast;
 
 const makeShow = type => msg => show_toast(msg, type);
 
-const show_info  = makeShow("info");
-const show_warn  = makeShow("warn");
+const show_info = makeShow("info");
+const show_warn = makeShow("warn");
 const show_error = makeShow("error");
 
 export const refresh_page = () => window.location.href = window.location.href.replace(/#$/, "");
@@ -332,18 +336,21 @@ function init_from_http_parameters() {
 document.addEventListener('DOMContentLoaded', async () => {
     get_element(ID_SLIPBOX_HEADER).title = "Go to list of all maps"
     get_element(ID_SLIPBOX_HEADER).style.cursor = "pointer"
-    get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
+    get_element("button_mindnet").addEventListener("click", () => {
+        window.location.href = 'index.html'
+    });
     get_element("button_mindnet").title = "Go to Mind Net generic frontend"
     get_element("button_previous").title = "Previous sibling by order";
     get_element("button_next").title = "Next sibling by order";
-    if(!simple) {
+    if (!simple) {
         get_element("button_focus").addEventListener("click", button_focus_onclick);
         get_element("button_focus").title = "Turn on/off focus mode"
     }
 
-    get_element("button_theme").addEventListener("click", () => {document.body.classList.toggle("dark");});
+    get_element("button_theme").addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+    });
     get_element("button_theme").title = "Switch dark/light theme"
-
 
 
     panels.forEach(panel => {
@@ -367,10 +374,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         togglePanel(toggle_meta, 'meta_content');
     }
 
-    if(!simple && getPanelCollapsed("parent")) togglePanel(toggle_parent, 'parent_content')
-    if(getPanelCollapsed("current") && !meta_collapsed) togglePanel(toggle_current, 'current_content')
-    if(getPanelCollapsed("meta")) togglePanel(toggle_meta, 'meta_content')
-    if(getPanelCollapsed("children")) togglePanel(toggle_children, 'children_content')
+    if (!simple && getPanelCollapsed("parent")) togglePanel(toggle_parent, 'parent_content')
+    if (getPanelCollapsed("current") && !meta_collapsed) togglePanel(toggle_current, 'current_content')
+    if (getPanelCollapsed("meta")) togglePanel(toggle_meta, 'meta_content')
+    if (getPanelCollapsed("children")) togglePanel(toggle_children, 'children_content')
 
     get_element("children_button_refresh").addEventListener("click", refresh_page)
     document.querySelectorAll('.add').forEach(btn => {
@@ -400,26 +407,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         let parent_note = mode_notes ? (note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id)) : null;
         let has_parent = mode_notes ? note.parent_note_id !== 0 : null;
 
-        if(mode_root) set_value("parent_label", "All maps")
-        if(mode_notes) set_value("parent_label", has_parent? "Parent Note" : "Parent Map")
+        if (mode_root) set_value("parent_label", "All maps")
+        if (mode_notes) set_value("parent_label", has_parent ? "Parent Note" : "Parent Map")
 
-        if(mode_root) hide_elements("parent_id_label", "parent_id")
+        if (mode_root) hide_elements("parent_id_label", "parent_id")
         map = mode_notes ? await read_entity("map", note.map_id) : null;
-        if(mode_notes) set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
+        if (mode_notes) set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
 
         let parent_title = document.getElementById("parent_title");
-        if(mode_root) {
+        if (mode_root) {
             parent_title.innerText = "All maps";
             parent_title.href = "?";
         }
-        if(mode_notes) {
+        if (mode_notes) {
             parent_title.innerText = has_parent ? parent_note.title : map.name;
             parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
         }
 
         get_element("parent_button_copy").onclick = function () {
-            if(mode_root) copy_to_clipboard(parent_title.href);
-            if(mode_maps) copy_to_clipboard(has_parent ? note.parent_note_id : note.map_id);
+            if (mode_root) copy_to_clipboard(parent_title.href);
+            if (mode_notes) copy_to_clipboard(has_parent ? note.parent_note_id : note.map_id);
         }
 
         get_element("parent_button_edit").onclick = async function () {
@@ -461,11 +468,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         set_value("current_id", mode_root ? map_id : note_id)
 
         get_element("current_title").onclick = function () {
-            if(mode_root) showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
-            if(mode_notes) showWindowFrom("Detail of note #" + note_id, "index.html?entity=note&action=read&id=" + note_id)
+            if (mode_root) showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
+            if (mode_notes) showWindowFrom("Detail of note #" + note_id, "index.html?entity=note&action=read&id=" + note_id)
         }
 
-        if(mode_root) map = await read_entity("map", map_id);
+        if (mode_root) map = await read_entity("map", map_id);
         set_value("current_title", mode_root ? map.name : note.title);
         let current_title = document.getElementById("current_title");
         current_title.style.display = "inline-block";
@@ -478,7 +485,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             // mode_notes
             let new_name = prompt("Enter new name", note.title);
-            if(new_name !== undefined && new_name !== null) {
+            if (new_name !== undefined && new_name !== null) {
                 note.title = new_name;
                 set_value("current_title", note.title);
             }
@@ -488,14 +495,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             copy_to_clipboard(mode_root ? map_id : note_id)
         }
 
-        if(mode_root) set_value("current_textarea", map.description);
+        if (mode_root) set_value("current_textarea", map.description);
 
         let content = mode_notes ? (note.content_id === 0 ? null : await read_entity("content", note.content_id)) : null;
         original_content_value = mode_notes ? (content === null ? null : content.value) : null;
-        if(mode_notes) set_value("current_textarea", content === null ? "" : content.value);
+        if (mode_notes) set_value("current_textarea", content === null ? "" : content.value);
 
         get_element("current_button_delete").onclick = async function () {
-            if(mode_root) {
+            if (mode_root) {
                 show_error("Not yet implemented");
                 return;
             }
@@ -518,21 +525,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             refresh_page()
         }
 
-        if(mode_root) get_element("current_button_save").onclick = function () {
+        if (mode_root) get_element("current_button_save").onclick = function () {
             map.description = get_element("current_textarea").value;
             put_entity("map", map_id, map)
         }
-        if(mode_notes) get_element("current_button_save").onclick = async function () {
+        if (mode_notes) get_element("current_button_save").onclick = async function () {
             let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
             //alert("content" + JSON.stringify(content))
             let content_id = content === null ? 0 : content.id;
-            if(content === null) {
+            if (content === null) {
                 const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
                 let content_created = await post_entity("content", new_content);
                 //alert("content_id=" + content_created.id)
                 note.content_id = content_created.id;
             }
-            if(JSON.stringify(note) !== JSON.stringify(original_note)) {
+            if (JSON.stringify(note) !== JSON.stringify(original_note)) {
                 await put_entity("note", note_id, note)
                 original_note = structuredClone(note)
                 show_info("Note changes were saved")
@@ -540,9 +547,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 show_warn("Note was not changed")
             }
 
-            if(content === null) content = await read_entity("content", note.content_id);
+            if (content === null) content = await read_entity("content", note.content_id);
             content.value = get_element("current_textarea").value;
-            if(original_content_value !== content.value) {
+            if (original_content_value !== content.value) {
                 let put_content_response = await put_entity("content", content.id, content);
                 show_toast("Content changes were saved");
                 original_content_value = content.value;
@@ -557,8 +564,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Meta
     if (mode_maps) hide_element("meta")
     if (!mode_maps) {
-        if(mode_root) hide_element("meta_start")
-        if(mode_notes) {
+        if (mode_root) hide_element("meta_start")
+        if (mode_notes) {
             get_element("meta_order").innerText = note.sibling_order;
             get_element("current_button_edit_order").onclick = async function () {
 
@@ -578,21 +585,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             let meta_importance = get_element("meta_importance")
 
             function refresh_importance_span() {
-                switch(note.importance) {
-                    case 0: meta_importance.className = "tag none";break;
-                    case 1: meta_importance.className = "tag low";break;
-                    case 2: meta_importance.className = "tag medium";break;
-                    case 3: meta_importance.className = "tag high";break;
-                    default: console.warn("Unknown importance: " + note.importance)
+                switch (note.importance) {
+                    case 0:
+                        meta_importance.className = "tag none";
+                        break;
+                    case 1:
+                        meta_importance.className = "tag low";
+                        break;
+                    case 2:
+                        meta_importance.className = "tag medium";
+                        break;
+                    case 3:
+                        meta_importance.className = "tag high";
+                        break;
+                    default:
+                        console.warn("Unknown importance: " + note.importance)
                 }
                 meta_importance.innerText = Importance.fromNumber(note.importance);
             }
+
             refresh_importance_span()
 
             get_element("current_button_edit_importance").onclick = async function () {
 
                 const result = await chooseOption(Importance.getTexts());
-                if(result !== undefined && result !== null) {
+                if (result !== undefined && result !== null) {
                     note.importance = Importance.toNumber(result);
                     refresh_importance_span()
                     show_toast("Importance updated to " + result);
@@ -600,26 +617,37 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
 
-
             let meta_difficulty = get_element("meta_difficulty")
 
             function refresh_difficulty_span() {
-                switch(note.difficulty) {
-                    case 0: meta_difficulty.className = "tag none";break;
-                    case 1: meta_difficulty.className = "tag easy";break;
-                    case 2: meta_difficulty.className = "tag medium";break;
-                    case 3: meta_difficulty.className = "tag hard";break;
-                    case 4: meta_difficulty.className = "tag expert";break;
-                    default: console.warn("Unknown difficulty: " + note.difficulty)
+                switch (note.difficulty) {
+                    case 0:
+                        meta_difficulty.className = "tag none";
+                        break;
+                    case 1:
+                        meta_difficulty.className = "tag easy";
+                        break;
+                    case 2:
+                        meta_difficulty.className = "tag medium";
+                        break;
+                    case 3:
+                        meta_difficulty.className = "tag hard";
+                        break;
+                    case 4:
+                        meta_difficulty.className = "tag expert";
+                        break;
+                    default:
+                        console.warn("Unknown difficulty: " + note.difficulty)
                 }
                 meta_difficulty.innerText = Difficulty.fromNumber(note.difficulty);
             }
+
             refresh_difficulty_span()
 
             get_element("current_button_edit_difficulty").onclick = async function () {
 
                 const result = await chooseOption(Difficulty.getTexts());
-                if(result !== undefined && result !== null) {
+                if (result !== undefined && result !== null) {
                     note.difficulty = Difficulty.toNumber(result);
                     refresh_difficulty_span()
                     show_toast("Difficulty updated to " + result);
@@ -660,18 +688,61 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Children
+    if (mode_maps) set_value("children_label", "All maps");
+    if (mode_root) set_value("children_label", "Root notes")
+    if (mode_notes) set_value("children_label", "Subnotes")
+
+    if (mode_maps) hide_element("collapsible-toggle-children");
+
+    if (mode_maps) document.getElementById("children_button_add").onclick = function () {
+        setWindowTitle("Maps");
+        setWindowContentByUrl("index.html?entity=map&action=create");
+        showWindow();
+    };
+
+    if (mode_root) document.getElementById("children_button_add").onclick = async function () {
+        let title = prompt("Title of new note");
+
+        if (title !== undefined && title !== null) {
+
+            const new_note = JSON.parse("{\"importance\":0,\"sibling_order\":0,\"source_id\":0,\"title\":\"\",\"content_id\":0,\"parent_note_id\":0,\"difficulty\":0,\"map_id\":0,\"created_at\":0,\"alias_for_note_id\":0,\"updated_at\":0}")
+
+            new_note.title = title
+            new_note.map_id = map_id
+            await post_entity("note", new_note)
+        }
+    };
+
+    if (mode_notes) document.getElementById("children_button_add").onclick = async function () {
+        let title = prompt("Title of new note");
+
+        if (title !== undefined && title !== null) {
+
+            const new_note = JSON.parse("{\"importance\":0,\"sibling_order\":0,\"source_id\":0,\"title\":\"\",\"content_id\":0,\"parent_note_id\":0,\"difficulty\":0,\"map_id\":0,\"created_at\":0,\"alias_for_note_id\":0,\"updated_at\":0}")
+
+            new_note.title = title
+            new_note.map_id = note.map_id
+            new_note.parent_note_id = note.id
+            await post_entity("note", new_note)
+        }
+    };
+
+    let children = document.getElementById("children_ul");
+
+    let maps = null
+    let notes = null
+    if (mode_maps) maps = await list_all_entities("map", "&fields=id,name");
+    if (mode_root) notes = await list_all_entities(
+        "note",
+        "&sort=sibling_order&order=asc&fields=id,title&parent_note_id=0&map_id=" + map_id
+    );
+    if (mode_notes) notes = await list_all_entities(
+        "note"
+        , "&sort=sibling_order&order=asc&fields=id,title&parent_note_id=" + note.id + "&map_id=" + note.map_id
+    );
+
     if (mode_maps) {
-        set_value("children_label", "All maps");
-        hide_element("collapsible-toggle-children");
 
-        document.getElementById("children_button_add").onclick = function () {
-            setWindowTitle("Maps");
-            setWindowContentByUrl("index.html?entity=map&action=create");
-            showWindow();
-        };
-        let children = document.getElementById("children_ul");
-
-        let maps = await list_all_entities("map", "&fields=id,name");
         for (const map of maps) {
 
             const li = document.createElement("li");
@@ -686,42 +757,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
-            button_copy.innerText = simple ? "Copy" :"📋 Copy";
+            button_copy.innerText = simple ? "Copy" : "📋 Copy";
             button_copy.onclick = function () {
                 copy_to_clipboard(map.id);
             };
         }
     }
-    if (!mode_maps) {
-    }
 
     if (mode_root) {
 
-
-
-
-        set_value("children_label", "Root notes")
-
-        document.getElementById("children_button_add").onclick = async function () {
-            let title = prompt("Title of new note");
-
-            if (title !== undefined && title !== null) {
-
-                const new_note = JSON.parse("{\"importance\":0,\"sibling_order\":0,\"source_id\":0,\"title\":\"\",\"content_id\":0,\"parent_note_id\":0,\"difficulty\":0,\"map_id\":0,\"created_at\":0,\"alias_for_note_id\":0,\"updated_at\":0}")
-
-                new_note.title = title
-                new_note.map_id = map_id
-                await post_entity("note", new_note)
-            }
-        };
-
-
-        let children = document.getElementById("children_ul");
-
-        let notes = await list_all_entities(
-            "note",
-            "&sort=sibling_order&order=asc&fields=id,title&parent_note_id=0&map_id="+map_id
-        );
         for (const e of notes) {
 
             const li = document.createElement("li");
@@ -739,7 +783,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             //http://localhost:8888/web/index.html?entity=map&action=create#
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
-            button_copy.innerText = simple ? "Copy" :"📋 Copy";
+            button_copy.innerText = simple ? "Copy" : "📋 Copy";
             button_copy.onclick = function () {
                 copy_to_clipboard(e.id);
             };
@@ -749,29 +793,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_notes) {
-        set_value("children_label", "Subnotes")
 
-        document.getElementById("children_button_add").onclick = async function () {
-            let title = prompt("Title of new note");
-
-            if (title !== undefined && title !== null) {
-
-                const new_note = JSON.parse("{\"importance\":0,\"sibling_order\":0,\"source_id\":0,\"title\":\"\",\"content_id\":0,\"parent_note_id\":0,\"difficulty\":0,\"map_id\":0,\"created_at\":0,\"alias_for_note_id\":0,\"updated_at\":0}")
-
-                new_note.title = title
-                new_note.map_id = note.map_id
-                new_note.parent_note_id = note.id
-                await post_entity("note", new_note)
-            }
-        };
-
-        if(true){
-        let children = document.getElementById("children_ul");
-
-        let notes = await list_all_entities(
-            "note"
-            ,"&sort=sibling_order&order=asc&fields=id,title&parent_note_id=" + note.id + "&map_id="+note.map_id
-        );
         for (const e of notes) {
 
             const li = document.createElement("li");
@@ -789,7 +811,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             //http://localhost:8888/web/index.html?entity=map&action=create#
             const button_copy = document.createElement("button");
             li.appendChild(button_copy);
-            button_copy.innerText = simple ? "Copy" :"📋 Copy";
+            button_copy.innerText = simple ? "Copy" : "📋 Copy";
             button_copy.onclick = function () {
                 copy_to_clipboard(e.id);
             };
@@ -797,14 +819,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
     }
-    }
 
     document.getElementById("children_li_example").remove();
 
     document.getElementById("loading_screen").style.display = "none";
     document.getElementById("slip_box").style.display = "block";
 
-    if(mode_notes) window.addEventListener("beforeunload", async function (event) {
+    if (mode_notes) window.addEventListener("beforeunload", async function (event) {
         let note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
         let current_textarea = get_element(ID_CURRENT_TEXTAREA).value;
         console.log("current_textarea=" + current_textarea)
@@ -821,7 +842,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return "";
         }
     });
-
 
 
 });
