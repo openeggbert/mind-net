@@ -1,6 +1,6 @@
 import { HOST } from "./conf.js";
 import { PORT } from "./conf.js";
-import {showError} from "./dom.js";
+import {showError, showWarn} from "./dom.js";
 import {getEntitySchemas} from "./state.js";
 import {refreshToken} from "./auth.js";
 
@@ -165,6 +165,81 @@ export async function apiFetch(url, options = {}) {
         showError(`Network error: ${err.message}`);
         return null;
     }
+}
+
+export async function list_entities(entity, additional_params = "", page_number = 1, page_size = 20) {
+    const url = new URL(`${API_BASE}/${entity}`);
+
+    url.searchParams.set("page_number", page_number.toString());
+    url.searchParams.set("page_size", page_size.toString());
+
+    let finalUrl = url.toString() + additional_params;
+
+    const json = await apiFetch(finalUrl,
+        {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        }
+    );
+    const total_pages = json?.total_pages || 1;
+
+    return json?.items || [];
+}
+
+export async function list_all_entities(entity, additional_params = "") {
+    const result = [];
+    const page_size = 100;
+    let page_number = 1, items;
+
+    while ((items = await list_entities(entity, additional_params, page_number++, page_size)).length) {
+        result.push(...items);
+        if (result.length >= 1000) {
+            showWarn("Omitting some results: 1000 or more results.");
+            break;
+        }
+    }
+    return result;
+}
+
+export async function read_entity(entity, id) {
+    const url = new URL(`${API_BASE}/${entity}/${id}`);
+
+    return await apiFetch(url.toString(),
+        {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        }
+
+    );
+}
+
+export async function delete_entity(entity, id) {
+    const url = new URL(`${API_BASE}/${entity}/${id}`);
+
+    return await apiFetch(url.toString(),
+        {
+            method: "DELETE",
+        }
+    );
+}
+
+export async function put_entity(model_name, id, json) {
+    const url = new URL(`${API_BASE}/${model_name}/${id}`);
+    return await apiFetch(url.toString(), {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(json)
+    });
+
+}
+
+export async function post_entity(model_name, json) {
+    const url = new URL(`${API_BASE}/${model_name}`);
+    return await apiFetch(url.toString(), {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(json)
+    });
 }
 
 function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 * 1000) { // cache for 24 hours

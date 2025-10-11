@@ -1,7 +1,8 @@
 // ========================================
 // Imports & Globals
 // ========================================
-import {API_BASE, apiFetch} from "./api.js";
+import {API_BASE, apiFetch, delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
+import {makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard} from "./dom.js";
 
 let map_id = "";
 let note_id = "";
@@ -21,98 +22,95 @@ const panels = ["parent", "current", "meta", "children"]
 // ========================================
 // IDs
 // ========================================
-export const IDS = {
-    APP: "app",
-    LOADING_SCREEN: "loading_screen",
-    SLIP_BOX: "slip_box",
+export const ID_APP = "app";
+export const ID_LOADING_SCREEN = "loading_screen";
+export const ID_SLIP_BOX = "slip_box";
 
-    SLIPBOX_HEADER: "slipbox_header",
-    BUTTON_MINDNET: "button_mindnet",
-    BUTTON_PREVIOUS: "button_previous",
-    BUTTON_NEXT: "button_next",
-    BUTTON_FOCUS: "button_focus",
-    BUTTON_THEME: "button_theme",
+export const ID_SLIPBOX_HEADER = "slipbox_header";
+export const ID_BUTTON_MINDNET = "button_mindnet";
+export const ID_BUTTON_PREVIOUS = "button_previous";
+export const ID_BUTTON_NEXT = "button_next";
+export const ID_BUTTON_FOCUS = "button_focus";
+export const ID_BUTTON_THEME = "button_theme";
 
-    MAIN: "main",
+export const ID_MAIN = "main";
 
-    PARENT: "parent",
-    PARENT_LABEL: "parent_label",
-    COLLAPSIBLE_TOGGLE_PARENT: "collapsible-toggle-parent",
-    PARENT_CONTENT: "parent_content",
-    PARENT_ID_LABEL: "parent_id_label",
-    PARENT_ID: "parent_id",
-    PARENT_TITLE_LABEL: "parent_title_label",
-    PARENT_TITLE: "parent_title",
-    PARENT_BUTTON_COPY: "parent_button_copy",
-    PARENT_BUTTON_EDIT: "parent_button_edit",
+export const ID_PARENT = "parent";
+export const ID_PARENT_LABEL = "parent_label";
+export const ID_COLLAPSIBLE_TOGGLE_PARENT = "collapsible-toggle-parent";
+export const ID_PARENT_CONTENT = "parent_content";
+export const ID_PARENT_ID_LABEL = "parent_id_label";
+export const ID_PARENT_ID = "parent_id";
+export const ID_PARENT_TITLE_LABEL = "parent_title_label";
+export const ID_PARENT_TITLE = "parent_title";
+export const ID_PARENT_BUTTON_COPY = "parent_button_copy";
+export const ID_PARENT_BUTTON_EDIT = "parent_button_edit";
 
-    CURRENT: "current",
-    CURRENT_LABEL: "current_label",
-    COLLAPSIBLE_TOGGLE_CURRENT: "collapsible-toggle-current",
-    CURRENT_ID: "current_id",
-    CURRENT_CONTENT: "current_content",
-    CURRENT_TITLE_LABEL: "current_title_label",
-    CURRENT_TITLE: "current_title",
-    CURRENT_BUTTON_RENAME: "current_button_rename",
-    CURRENT_BUTTON_COPY: "current_button_copy",
-    CURRENT_BUTTON_EDIT: "current_button_edit",
-    CURRENT_BUTTON_READ: "current_button_read",
-    CURRENT_TEXTAREA: "current_textarea",
-    CURRENT_BUTTON_DELETE: "current_button_delete",
-    CURRENT_BUTTON_CANCEL: "current_button_cancel",
-    CURRENT_BUTTON_SAVE: "current_button_save",
+export const ID_CURRENT = "current";
+export const ID_CURRENT_LABEL = "current_label";
+export const ID_COLLAPSIBLE_TOGGLE_CURRENT = "collapsible-toggle-current";
+export const ID_CURRENT_ID = "current_id";
+export const ID_CURRENT_CONTENT = "current_content";
+export const ID_CURRENT_TITLE_LABEL = "current_title_label";
+export const ID_CURRENT_TITLE = "current_title";
+export const ID_CURRENT_BUTTON_RENAME = "current_button_rename";
+export const ID_CURRENT_BUTTON_COPY = "current_button_copy";
+export const ID_CURRENT_BUTTON_EDIT = "current_button_edit";
+export const ID_CURRENT_BUTTON_READ = "current_button_read";
+export const ID_CURRENT_TEXTAREA = "current_textarea";
+export const ID_CURRENT_BUTTON_DELETE = "current_button_delete";
+export const ID_CURRENT_BUTTON_CANCEL = "current_button_cancel";
+export const ID_CURRENT_BUTTON_SAVE = "current_button_save";
 
-    META: "meta",
-    META_LABEL: "meta_label",
-    COLLAPSIBLE_TOGGLE_META: "collapsible-toggle-meta",
-    META_CONTENT: "meta_content",
-    META_START: "meta_start",
-    META_ORDER: "meta_order",
-    META_IMPORTANCE: "meta_importance",
-    META_DIFFICULTY: "meta_difficulty",
-    CURRENT_BUTTON_EDIT_ORDER: "current_button_edit_order",
-    CURRENT_BUTTON_EDIT_IMPORTANCE: "current_button_edit_importance",
-    CURRENT_BUTTON_EDIT_DIFFICULTY: "current_button_edit_difficulty",
+export const ID_META = "meta";
+export const ID_META_LABEL = "meta_label";
+export const ID_COLLAPSIBLE_TOGGLE_META = "collapsible-toggle-meta";
+export const ID_META_CONTENT = "meta_content";
+export const ID_META_START = "meta_start";
+export const ID_META_ORDER = "meta_order";
+export const ID_META_IMPORTANCE = "meta_importance";
+export const ID_META_DIFFICULTY = "meta_difficulty";
+export const ID_CURRENT_BUTTON_EDIT_ORDER = "current_button_edit_order";
+export const ID_CURRENT_BUTTON_EDIT_IMPORTANCE = "current_button_edit_importance";
+export const ID_CURRENT_BUTTON_EDIT_DIFFICULTY = "current_button_edit_difficulty";
 
-    META_BUTTON_LINKS: "meta_button_links",
-    META_BUTTON_URLS: "meta_button_urls",
-    META_BUTTON_TERMS: "meta_button_terms",
-    META_BUTTON_SOURCES: "meta_button_sources",
-    META_BUTTON_IDEAS: "meta_button_ideas",
-    META_BUTTON_QUESTIONS: "meta_button_questions",
+export const ID_META_BUTTON_LINKS = "meta_button_links";
+export const ID_META_BUTTON_URLS = "meta_button_urls";
+export const ID_META_BUTTON_TERMS = "meta_button_terms";
+export const ID_META_BUTTON_SOURCES = "meta_button_sources";
+export const ID_META_BUTTON_IDEAS = "meta_button_ideas";
+export const ID_META_BUTTON_QUESTIONS = "meta_button_questions";
 
-    META_BUTTON_BACKLINKS: "meta_button_backlinks",
-    META_BUTTON_SIBLINGS: "meta_button_siblings",
-    META_BUTTON_WANTED_NOTES: "meta_button_wanted_notes",
-    META_BUTTON_PROPERTIES: "meta_button_properties",
-    META_BUTTON_TAGS: "meta_button_tags",
-    META_BUTTON_COLLECTIONS: "meta_button_collections",
+export const ID_META_BUTTON_BACKLINKS = "meta_button_backlinks";
+export const ID_META_BUTTON_SIBLINGS = "meta_button_siblings";
+export const ID_META_BUTTON_WANTED_NOTES = "meta_button_wanted_notes";
+export const ID_META_BUTTON_PROPERTIES = "meta_button_properties";
+export const ID_META_BUTTON_TAGS = "meta_button_tags";
+export const ID_META_BUTTON_COLLECTIONS = "meta_button_collections";
 
-    META_BUTTON_ALERT: "meta_button_alert",
-    META_BUTTON_FLAGS: "meta_button_flags",
-    META_BUTTON_PROJECTS: "meta_button_projects",
-    META_BUTTON_TASKS: "meta_button_tasks",
-    META_BUTTON_PINNED_NOTES: "meta_button_pinned_notes",
+export const ID_META_BUTTON_ALERT = "meta_button_alert";
+export const ID_META_BUTTON_FLAGS = "meta_button_flags";
+export const ID_META_BUTTON_PROJECTS = "meta_button_projects";
+export const ID_META_BUTTON_TASKS = "meta_button_tasks";
+export const ID_META_BUTTON_PINNED_NOTES = "meta_button_pinned_notes";
 
-    META_BUTTON_VISITED: "meta_button_visited",
-    META_BUTTON_HISTORY: "meta_button_history",
+export const ID_META_BUTTON_VISITED = "meta_button_visited";
+export const ID_META_BUTTON_HISTORY = "meta_button_history";
 
-    CHILDREN_LABEL: "children_label",
-    COLLAPSIBLE_TOGGLE_CHILDREN: "collapsible-toggle-children",
-    CHILDREN_CONTENT: "children_content",
-    CHILDREN_BUTTON_ADD: "children_button_add",
-    CHILDREN_BUTTON_REFRESH: "children_button_refresh",
-    CHILDREN_UL: "children_ul",
-    CHILDREN_LI_EXAMPLE: "children_li_example",
-    CHILDREN_CHILD_4689_ID: "children_child_4689_id",
-    CHILDREN_CHILD_4689_TITLE: "children_child_4689_title",
-    CHILDREN_CHILD_4689_BUTTON_COPY: "children_child_4689_button_copy",
+export const ID_CHILDREN_LABEL = "children_label";
+export const ID_COLLAPSIBLE_TOGGLE_CHILDREN = "collapsible-toggle-children";
+export const ID_CHILDREN_CONTENT = "children_content";
+export const ID_CHILDREN_BUTTON_ADD = "children_button_add";
+export const ID_CHILDREN_BUTTON_REFRESH = "children_button_refresh";
+export const ID_CHILDREN_UL = "children_ul";
+export const ID_CHILDREN_LI_EXAMPLE = "children_li_example";
+export const ID_CHILDREN_CHILD_4689_ID = "children_child_4689_id";
+export const ID_CHILDREN_CHILD_4689_TITLE = "children_child_4689_title";
+export const ID_CHILDREN_CHILD_4689_BUTTON_COPY = "children_child_4689_button_copy";
 
-    WINDOW_CONTAINER: "window_container",
-    WINDOW_CONTAINER_TITLE: "window_container_title",
-    WINDOW_CONTAINER_CONTENT: "window_container_content"
-};
-
+export const ID_WINDOW_CONTAINER = "window_container";
+export const ID_WINDOW_CONTAINER_TITLE = "window_container_title";
+export const ID_WINDOW_CONTAINER_CONTENT = "window_container_content";
 
 // ========================================
 // Panels
@@ -252,99 +250,8 @@ export function showWindowFrom(title, url) {
 }
 
 // ========================================
-// Entities (API calls)
-// ========================================
-
-
-async function list_entities(entity, additional_params = "", page_number = 1, page_size = 20) {
-    const url = new URL(`${API_BASE}/${entity}`);
-
-    url.searchParams.set("page_number", page_number.toString());
-    url.searchParams.set("page_size", page_size.toString());
-
-    let finalUrl = url.toString() + additional_params;
-
-    const json = await apiFetch(finalUrl,
-        {
-            method: "GET",
-            headers: {"Content-Type": "application/json"},
-        }
-    );
-    const total_pages = json?.total_pages || 1;
-
-    return json?.items || [];
-}
-
-async function list_all_entities(entity, additional_params = "") {
-    const result = [];
-    const page_size = 100;
-    let page_number = 1, items;
-
-    while ((items = await list_entities(entity, additional_params, page_number++, page_size)).length) {
-        result.push(...items);
-        if (result.length >= 1000) {
-            show_toast("Omitting some results: 1000 or more results.");
-            break;
-        }
-    }
-    return result;
-}
-
-async function read_entity(entity, id) {
-    const url = new URL(`${API_BASE}/${entity}/${id}`);
-
-    return await apiFetch(url.toString(),
-        {
-            method: "GET",
-            headers: {"Content-Type": "application/json"},
-        }
-
-    );
-}
-
-async function delete_entity(entity, id) {
-    const url = new URL(`${API_BASE}/${entity}/${id}`);
-
-    return await apiFetch(url.toString(),
-        {
-            method: "DELETE",
-        }
-    );
-}
-
-async function put_entity(model_name, id, json) {
-    const url = new URL(`${API_BASE}/${model_name}/${id}`);
-    return await apiFetch(url.toString(), {
-        method: "PUT",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(json)
-    });
-
-}
-
-async function post_entity(model_name, json) {
-    const url = new URL(`${API_BASE}/${model_name}`);
-    return await apiFetch(url.toString(), {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(json)
-    });
-}
-
-// ========================================
 // Utils
 // ========================================
-
-
-function makeEnum(map) {
-    return {
-        map,
-        getTexts: () => Object.keys(map),
-        toNumber: name => map[name] ?? null,
-        fromNumber: num =>
-            Object.entries(map).find(([_, value]) => value === num)?.[0] ?? null
-    };
-}
 
 // --- Difficulty ---
 export const Difficulty = makeEnum({
@@ -362,22 +269,6 @@ export const Importance = makeEnum({
     Medium: 2,
     High: 3
 });
-const sleep_for_seconds = seconds => new Promise(r => setTimeout(r, seconds * 1000));
-const hide_element = id => {document.getElementById(id) && (document.getElementById(id).style.display = "none");};
-
-const hide_elements = (...ids) => ids.forEach(hide_element);
-
-const get_element = id => document.getElementById(id);
-
-const set_value = (id, value) => {
-    const el = get_element(id);
-    if (el) el.textContent = value;
-};
-
-function copy_to_clipboard(text) {
-    navigator.clipboard.writeText(text);
-    show_info("Copied to clipboard: " + text);
-}
 
 function ensure_toast_container() {
     let container = document.getElementById("toast_container");
@@ -436,8 +327,8 @@ function init_from_http_parameters() {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    get_element(IDS.SLIPBOX_HEADER).title = "Go to list of all maps"
-    get_element(IDS.SLIPBOX_HEADER).style.cursor = "pointer"
+    get_element(ID_SLIPBOX_HEADER).title = "Go to list of all maps"
+    get_element(ID_SLIPBOX_HEADER).style.cursor = "pointer"
     get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
     get_element("button_mindnet").title = "Go to Mind Net generic frontend"
     get_element("button_previous").title = "Previous sibling by order";
@@ -1008,7 +899,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if(mode_notes) window.addEventListener("beforeunload", async function (event) {
         let note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
-        let current_textarea = get_element(IDS.CURRENT_TEXTAREA).value;
+        let current_textarea = get_element(ID_CURRENT_TEXTAREA).value;
         console.log("current_textarea=" + current_textarea)
         console.log("original_content_value=" + original_content_value)
         let content_changed = original_content_value === null ? current_textarea !== "" : original_content_value !== current_textarea;

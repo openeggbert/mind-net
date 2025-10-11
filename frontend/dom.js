@@ -119,3 +119,30 @@ export function showSuccess(msg) {
 export function showWarn(msg) {
     showToast(msg, 10000, "warn");
 }
+
+export function makeEnum(map) {
+    return {
+        map,
+        getTexts: () => Object.keys(map),
+        toNumber: name => map[name] ?? null,
+        fromNumber: num =>
+            Object.entries(map).find(([_, value]) => value === num)?.[0] ?? null
+    };
+}
+
+export const sleep_for_seconds = seconds => new Promise(r => setTimeout(r, seconds * 1000));
+export const hide_element = id => {document.getElementById(id) && (document.getElementById(id).style.display = "none");};
+
+export const hide_elements = (...ids) => ids.forEach(hide_element);
+
+export const get_element = id => document.getElementById(id);
+
+export const set_value = (id, value) => {
+    const el = get_element(id);
+    if (el) el.textContent = value;
+};
+
+export function copy_to_clipboard(text) {
+    navigator.clipboard.writeText(text);
+    showInfo("Copied to clipboard: " + text);
+}
