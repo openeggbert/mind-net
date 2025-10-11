@@ -453,9 +453,109 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Current
     if (mode_maps) hide_element("current")
+    if (!mode_maps) {
+        set_value("current_label", mode_root ? "Map" : "Note")
+        set_value("current_id", mode_root ? map_id : note_id)
+
+        get_element("current_title").onclick = function () {
+            if(mode_root) showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
+            if(mode_notes) showWindowFrom("Detail of note #" + note_id, "index.html?entity=note&action=read&id=" + note_id)
+        }
+
+        if(mode_root) map = await read_entity("map", map_id);
+        set_value("current_title", mode_root ? map.name : note.title);
+        let current_title = document.getElementById("current_title");
+        current_title.style.display = "inline-block";
+        current_title.style.minWidth = "50px";
+
+        get_element("current_button_rename").onclick = function () {
+            if (mode_root) {
+                show_error("Not yet implemented");
+                return;
+            }
+            // mode_notes
+            let new_name = prompt("Enter new name", note.title);
+            if(new_name !== undefined && new_name !== null) {
+                note.title = new_name;
+                set_value("current_title", note.title);
+            }
+        }
+
+        get_element("current_button_copy").onclick = function () {
+            copy_to_clipboard(mode_root ? map_id : note_id)
+        }
+
+        if(mode_root) set_value("current_textarea", map.description);
+
+        let content = mode_notes ? (note.content_id === 0 ? null : await read_entity("content", note.content_id)) : null;
+        original_content_value = mode_notes ? (content === null ? null : content.value) : null;
+        if(mode_notes) set_value("current_textarea", content === null ? "" : content.value);
+
+        get_element("current_button_delete").onclick = async function () {
+            if(mode_root) {
+                show_error("Not yet implemented");
+                return;
+            }
+            // mode_notes
+            if (!confirm("Are you sure you want to delete this note?")) return;
+            try {
+                let response = await delete_entity("note", note_id);
+                console.info(response)
+                show_toast(response)
+                await sleep_for_seconds(4)
+                refresh_page_to(has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id);
+            } catch (err) {
+                show_error("Delete failed: " + err.message);
+            }
+        }
+
+        get_element("current_button_cancel").onclick = function () {
+
+            show_toast("Cancelling changes");
+            refresh_page()
+        }
+
+        if(mode_root) get_element("current_button_save").onclick = function () {
+            map.description = get_element("current_textarea").value;
+            put_entity("map", map_id, map)
+        }
+        if(mode_notes) get_element("current_button_save").onclick = async function () {
+            let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
+            //alert("content" + JSON.stringify(content))
+            let content_id = content === null ? 0 : content.id;
+            if(content === null) {
+                const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
+                let content_created = await post_entity("content", new_content);
+                //alert("content_id=" + content_created.id)
+                note.content_id = content_created.id;
+            }
+            if(JSON.stringify(note) !== JSON.stringify(original_note)) {
+                await put_entity("note", note_id, note)
+                original_note = structuredClone(note)
+                show_info("Note changes were saved")
+            } else {
+                show_warn("Note was not changed")
+            }
+
+            if(content === null) content = await read_entity("content", note.content_id);
+            content.value = get_element("current_textarea").value;
+            if(original_content_value !== content.value) {
+                let put_content_response = await put_entity("content", content.id, content);
+                show_toast("Content changes were saved");
+                original_content_value = content.value;
+            } else {
+                show_warn("Content was not changed")
+            }
+        }
+
+
+    }
 
     // Meta
     if (mode_maps) hide_element("meta")
+    if (!mode_maps) {
+
+    }
 
     // Children
     if (mode_maps) {
@@ -494,43 +594,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_root) {
-        set_value("current_label", "Map")
-        set_value("current_id", map_id)
-
-        get_element("current_title").onclick = function () {
-            showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
-        }
-
-        map = await read_entity("map", map_id);
-        set_value("current_title", map.name);
-
-        let current_title = document.getElementById("current_title");
-        current_title.style.display = "inline-block";
-        current_title.style.minWidth = "50px";
-
-        get_element("current_button_rename").onclick = function () {
-            show_error("Not yet implemented");
-        }
-
-        get_element("current_button_copy").onclick = function () {
-            copy_to_clipboard(map_id)
-        }
-
-        set_value("current_textarea", map.description);
-
-        get_element("current_button_delete").onclick = function () {
-            show_error("Not yet implemented");
-        }
-        get_element("current_button_cancel").onclick = function () {
-            refresh_page()
-        }
         //{"team_id":0,"owner_id":1,"category":"","other_rights":7,"team_rights":7,"description":"aaaa","name":"aa","created_at":1759583934,"owner_rights":7,"updated_at":1759601801,"id":1}
-
-        get_element("current_button_save").onclick = function () {
-            map.description = get_element("current_textarea").value;
-            put_entity("map", map_id, map)
-        }
-
 
 
         hide_element("meta_start")
@@ -565,6 +629,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         //
         assign_meta_list_function("visited", "Visited", "visited")
         assign_meta_list_function("history", "History", "history")
+
+
 
         set_value("children_label", "Root notes")
 
@@ -615,89 +681,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_notes) {
-        set_value("current_label", "Note")
-        set_value("current_id", note_id)
-
-        get_element("current_title").onclick = function () {
-            showWindowFrom("Detail of note #" + note_id, "index.html?entity=note&action=read&id=" + note_id)
-        }
-
-        set_value("current_title", note.title);
-
-        let current_title = document.getElementById("current_title");
-        current_title.style.display = "inline-block";
-        current_title.style.minWidth = "50px";
-
-        get_element("current_button_rename").onclick = function () {
-            let new_name = prompt("Enter new name", note.title);
-            if(new_name !== undefined && new_name !== null) {
-                note.title = new_name;
-                set_value("current_title", note.title);
-            }
-        }
-
-        get_element("current_button_copy").onclick = function () {
-            copy_to_clipboard(note_id)
-        }
-
-        let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
-
-        original_content_value = content === null ? null : content.value;
-
-        set_value("current_textarea", content === null ? "" : content.value);
-
-        get_element("current_button_delete").onclick = async function () {
-            if (!confirm("Are you sure you want to delete this note?")) return;
-            try {
-                let response = await delete_entity("note", note_id);
-                console.info(response)
-                show_toast(response)
-                await sleep_for_seconds(4)
-                refresh_page_to(has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id);
-            } catch (err) {
-                show_error("Delete failed: " + err.message);
-            }
-        }
-
-        get_element("current_button_cancel").onclick = function () {
-
-            show_toast("Cancelling changes");
-            refresh_page()
-        }
-
-        get_element("current_button_save").onclick = async function () {
-            let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
-            //alert("content" + JSON.stringify(content))
-            let content_id = content === null ? 0 : content.id;
-            if(content === null) {
-                const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
-                let content_created = await post_entity("content", new_content);
-                //alert("content_id=" + content_created.id)
-                note.content_id = content_created.id;
-            }
-            if(JSON.stringify(note) !== JSON.stringify(original_note)) {
-                await put_entity("note", note_id, note)
-                original_note = structuredClone(note)
-                show_info("Note changes were saved")
-            } else {
-                show_warn("Note was not changed")
-            }
-
-            if(content === null) content = await read_entity("content", note.content_id);
-            content.value = get_element("current_textarea").value;
-            if(original_content_value !== content.value) {
-                let put_content_response = await put_entity("content", content.id, content);
-                show_toast("Content changes were saved");
-                original_content_value = content.value;
-            } else {
-                show_warn("Content was not changed")
-            }
-
-
-
-
-        }
-
         function chooseOption(options) {
             return new Promise((resolve) => {
                 // Overlay
