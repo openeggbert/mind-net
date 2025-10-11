@@ -815,9 +815,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             button_copy.onclick = function () {
                 copy_to_clipboard(e.id);
             };
-
         }
-
     }
 
     document.getElementById("children_li_example").remove();
