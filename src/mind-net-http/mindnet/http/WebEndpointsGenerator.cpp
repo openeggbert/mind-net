@@ -44,6 +44,7 @@ namespace mindnet::http
             static const std::unordered_set<std::string> common_allowed_files = {
                 "index.html",
                 "styles.css",
+                "common.css",
                 "scripts.js",
                 "conf.js",
                 "favicon.png",

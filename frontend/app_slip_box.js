@@ -2,7 +2,10 @@
 // Imports & Globals
 // ========================================
 import {API_BASE, apiFetch, delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
-import {makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard} from "./dom.js";
+import {
+    makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
+    chooseOption
+} from "./dom.js";
 
 let map_id = "";
 let note_id = "";
@@ -554,7 +557,106 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Meta
     if (mode_maps) hide_element("meta")
     if (!mode_maps) {
+        if(mode_root) hide_element("meta_start")
+        if(mode_notes) {
+            get_element("meta_order").innerText = note.sibling_order;
+            get_element("current_button_edit_order").onclick = async function () {
 
+                const input = prompt("Enter new sibling order", note.sibling_order);
+                if (input !== null) {
+                    let num = Number(input);
+                    if (isNaN(num)) {
+                        alert("This is not number! " + input);
+                    } else {
+                        note.sibling_order = num;
+                        get_element("meta_order").innerText = note.sibling_order;
+                        show_toast("Sibling order updated to " + note.sibling_order);
+                    }
+                }
+
+            }
+            let meta_importance = get_element("meta_importance")
+
+            function refresh_importance_span() {
+                switch(note.importance) {
+                    case 0: meta_importance.className = "tag none";break;
+                    case 1: meta_importance.className = "tag low";break;
+                    case 2: meta_importance.className = "tag medium";break;
+                    case 3: meta_importance.className = "tag high";break;
+                    default: console.warn("Unknown importance: " + note.importance)
+                }
+                meta_importance.innerText = Importance.fromNumber(note.importance);
+            }
+            refresh_importance_span()
+
+            get_element("current_button_edit_importance").onclick = async function () {
+
+                const result = await chooseOption(Importance.getTexts());
+                if(result !== undefined && result !== null) {
+                    note.importance = Importance.toNumber(result);
+                    refresh_importance_span()
+                    show_toast("Importance updated to " + result);
+                }
+            }
+
+
+
+            let meta_difficulty = get_element("meta_difficulty")
+
+            function refresh_difficulty_span() {
+                switch(note.difficulty) {
+                    case 0: meta_difficulty.className = "tag none";break;
+                    case 1: meta_difficulty.className = "tag easy";break;
+                    case 2: meta_difficulty.className = "tag medium";break;
+                    case 3: meta_difficulty.className = "tag hard";break;
+                    case 4: meta_difficulty.className = "tag expert";break;
+                    default: console.warn("Unknown difficulty: " + note.difficulty)
+                }
+                meta_difficulty.innerText = Difficulty.fromNumber(note.difficulty);
+            }
+            refresh_difficulty_span()
+
+            get_element("current_button_edit_difficulty").onclick = async function () {
+
+                const result = await chooseOption(Difficulty.getTexts());
+                if(result !== undefined && result !== null) {
+                    note.difficulty = Difficulty.toNumber(result);
+                    refresh_difficulty_span()
+                    show_toast("Difficulty updated to " + result);
+                }
+            }
+        }
+
+        function assign_meta_list_function(models, Models, model) {
+            get_element("meta_button_" + models).onclick = function () {
+                showWindowFrom(Models, "index.html?entity=" + model + "&action=list");
+            }
+        }
+
+        assign_meta_list_function("links", "Links", "link")
+        assign_meta_list_function("urls", "Urls", "url")
+        assign_meta_list_function("terms", "Terms", "term")
+        assign_meta_list_function("sources", "Sources", "source")
+        assign_meta_list_function("ideas", "Ideas", "idea")
+        assign_meta_list_function("questions", "Questions", "question")
+
+        // assign_meta_list_function("backlinks", "Backlinks", "backlink")
+        // assign_meta_list_function("siblings", "Siblings", "sibling")
+        hide_element("meta_button_backlinks")
+        hide_element("meta_button_siblings")
+        assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
+        assign_meta_list_function("properties", "Properties", "property")
+        assign_meta_list_function("tags", "Tags", "tag")
+        assign_meta_list_function("collections", "Collections", "collection")
+//
+        assign_meta_list_function("alert", "Alerts", "alert")
+        assign_meta_list_function("flags", "Flags", "flag")
+        assign_meta_list_function("projects", "Projects", "project")
+        assign_meta_list_function("tasks", "Tasks", "task")
+        assign_meta_list_function("pinned_notes", "Pinned notes", "pinned_note")
+        //
+        assign_meta_list_function("visited", "Visited", "visited")
+        assign_meta_list_function("history", "History", "history")
     }
 
     // Children
@@ -594,41 +696,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_root) {
-        //{"team_id":0,"owner_id":1,"category":"","other_rights":7,"team_rights":7,"description":"aaaa","name":"aa","created_at":1759583934,"owner_rights":7,"updated_at":1759601801,"id":1}
 
-
-        hide_element("meta_start")
-
-        function assign_meta_list_function(models, Models, model) {
-            get_element("meta_button_" + models).onclick = function () {
-                showWindowFrom(Models, "index.html?entity=" + model + "&action=list");
-            }
-        }
-
-        assign_meta_list_function("links", "Links", "link")
-        assign_meta_list_function("urls", "Urls", "url")
-        assign_meta_list_function("terms", "Terms", "term")
-        assign_meta_list_function("sources", "Sources", "source")
-        assign_meta_list_function("ideas", "Ideas", "idea")
-        assign_meta_list_function("questions", "Questions", "question")
-
-        // assign_meta_list_function("backlinks", "Backlinks", "backlink")
-        // assign_meta_list_function("siblings", "Siblings", "sibling")
-        hide_element("meta_button_backlinks")
-        hide_element("meta_button_siblings")
-        assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
-        assign_meta_list_function("properties", "Properties", "property")
-        assign_meta_list_function("tags", "Tags", "tag")
-        assign_meta_list_function("collections", "Collections", "collection")
-//
-        assign_meta_list_function("alert", "Alerts", "alert")
-        assign_meta_list_function("flags", "Flags", "flag")
-        assign_meta_list_function("projects", "Projects", "project")
-        assign_meta_list_function("tasks", "Tasks", "task")
-        assign_meta_list_function("pinned_notes", "Pinned notes", "pinned_note")
-        //
-        assign_meta_list_function("visited", "Visited", "visited")
-        assign_meta_list_function("history", "History", "history")
 
 
 
@@ -681,174 +749,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (mode_notes) {
-        function chooseOption(options) {
-            return new Promise((resolve) => {
-                // Overlay
-                const overlay = document.createElement("div");
-                overlay.style.position = "fixed";
-                overlay.style.top = 0;
-                overlay.style.left = 0;
-                overlay.style.width = "100%";
-                overlay.style.height = "100%";
-                overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
-                overlay.style.display = "flex";
-                overlay.style.justifyContent = "center";
-                overlay.style.alignItems = "center";
-                overlay.style.zIndex = 1000;
-
-                // Panel
-                const panel = document.createElement("div");
-                panel.style.background = "white";
-                panel.style.padding = "20px";
-                panel.style.borderRadius = "12px";
-                panel.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
-                panel.style.display = "flex";
-                panel.style.flexDirection = "column";
-                panel.style.gap = "10px";
-                panel.style.minWidth = "200px";
-
-                // Create buttons for all options 
-                options.forEach((text) => {
-                    const btn = document.createElement("button");
-                    btn.textContent = text;
-                    btn.style.padding = "10px";
-                    btn.style.border = "1px solid #ccc";
-                    btn.style.borderRadius = "8px";
-                    btn.style.cursor = "pointer";
-                    btn.style.background = "#f0f0f0";
-                    btn.onmouseenter = () => (btn.style.background = "#e0e0e0");
-                    btn.onmouseleave = () => (btn.style.background = "#f0f0f0");
-                    btn.onclick = () => {
-                        cleanup();
-                        resolve(text);
-                    };
-                    panel.appendChild(btn);
-                });
-
-                // Cancel button
-                const cancelBtn = document.createElement("button");
-                cancelBtn.textContent = "Cancel";
-                cancelBtn.style.padding = "10px";
-                cancelBtn.style.border = "1px solid #ccc";
-                cancelBtn.style.borderRadius = "8px";
-                cancelBtn.style.cursor = "pointer";
-                cancelBtn.style.background = "#ffe0e0";
-                cancelBtn.onmouseenter = () => (cancelBtn.style.background = "#ffcccc");
-                cancelBtn.onmouseleave = () => (cancelBtn.style.background = "#ffe0e0");
-                cancelBtn.onclick = () => {
-                    cleanup();
-                    resolve(null);
-                };
-                panel.appendChild(cancelBtn);
-
-                overlay.appendChild(panel);
-                document.body.appendChild(overlay);
-
-                // Cleanup after closing
-                function cleanup() {
-                    document.body.removeChild(overlay);
-                }
-            });
-        }
-
-        get_element("meta_order").innerText = note.sibling_order;
-        get_element("current_button_edit_order").onclick = async function () {
-
-            const input = prompt("Enter new sibling order", note.sibling_order);
-            if (input !== null) {
-                let num = Number(input);
-                if (isNaN(num)) {
-                    alert("This is not number! " + input);
-                } else {
-                    note.sibling_order = num;
-                    get_element("meta_order").innerText = note.sibling_order;
-                    show_toast("Sibling order updated to " + note.sibling_order);
-                }
-            }
-
-        }
-        let meta_importance = get_element("meta_importance")
-
-        function refresh_importance_span() {
-            switch(note.importance) {
-                case 0: meta_importance.className = "tag none";break;
-                case 1: meta_importance.className = "tag low";break;
-                case 2: meta_importance.className = "tag medium";break;
-                case 3: meta_importance.className = "tag high";break;
-                default: console.warn("Unknown importance: " + note.importance)
-            }
-            meta_importance.innerText = Importance.fromNumber(note.importance);
-        }
-        refresh_importance_span()
-
-        get_element("current_button_edit_importance").onclick = async function () {
-
-            const result = await chooseOption(Importance.getTexts());
-            if(result !== undefined && result !== null) {
-                note.importance = Importance.toNumber(result);
-                refresh_importance_span()
-                show_toast("Importance updated to " + result);
-            }
-        }
-
-
-
-        let meta_difficulty = get_element("meta_difficulty")
-
-        function refresh_difficulty_span() {
-            switch(note.difficulty) {
-                case 0: meta_difficulty.className = "tag none";break;
-                case 1: meta_difficulty.className = "tag easy";break;
-                case 2: meta_difficulty.className = "tag medium";break;
-                case 3: meta_difficulty.className = "tag hard";break;
-                case 4: meta_difficulty.className = "tag expert";break;
-                default: console.warn("Unknown difficulty: " + note.difficulty)
-            }
-            meta_difficulty.innerText = Difficulty.fromNumber(note.difficulty);
-        }
-        refresh_difficulty_span()
-
-        get_element("current_button_edit_difficulty").onclick = async function () {
-
-            const result = await chooseOption(Difficulty.getTexts());
-            if(result !== undefined && result !== null) {
-                note.difficulty = Difficulty.toNumber(result);
-                refresh_difficulty_span()
-                show_toast("Difficulty updated to " + result);
-            }
-        }
-        
-        function assign_meta_list_function(models, Models, model) {
-            get_element("meta_button_" + models).onclick = function () {
-                showWindowFrom(Models, "index.html?entity=" + model + "&action=list");
-            }
-        }
-
-        assign_meta_list_function("links", "Links", "link")
-        assign_meta_list_function("urls", "Urls", "url")
-        assign_meta_list_function("terms", "Terms", "term")
-        assign_meta_list_function("sources", "Sources", "source")
-        assign_meta_list_function("ideas", "Ideas", "idea")
-        assign_meta_list_function("questions", "Questions", "question")
-
-        // assign_meta_list_function("backlinks", "Backlinks", "backlink")
-        // assign_meta_list_function("siblings", "Siblings", "sibling")
-        hide_element("meta_button_backlinks")
-        hide_element("meta_button_siblings")
-        assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
-        assign_meta_list_function("properties", "Properties", "property")
-        assign_meta_list_function("tags", "Tags", "tag")
-        assign_meta_list_function("collections", "Collections", "collection")
-//
-        assign_meta_list_function("alert", "Alerts", "alert")
-        assign_meta_list_function("flags", "Flags", "flag")
-        assign_meta_list_function("projects", "Projects", "project")
-        assign_meta_list_function("tasks", "Tasks", "task")
-        assign_meta_list_function("pinned_notes", "Pinned notes", "pinned_note")
-        //
-        assign_meta_list_function("visited", "Visited", "visited")
-        assign_meta_list_function("history", "History", "history")
-
         set_value("children_label", "Subnotes")
 
         document.getElementById("children_button_add").onclick = async function () {

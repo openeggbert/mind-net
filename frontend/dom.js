@@ -146,3 +146,73 @@ export function copy_to_clipboard(text) {
     navigator.clipboard.writeText(text);
     showInfo("Copied to clipboard: " + text);
 }
+
+export function chooseOption(options) {
+    return new Promise((resolve) => {
+        // Overlay
+        const overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = 0;
+        overlay.style.left = 0;
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.backgroundColor = "rgba(0,0,0,0.5)";
+        overlay.style.display = "flex";
+        overlay.style.justifyContent = "center";
+        overlay.style.alignItems = "center";
+        overlay.style.zIndex = 1000;
+
+        // Panel
+        const panel = document.createElement("div");
+        panel.style.background = "white";
+        panel.style.padding = "20px";
+        panel.style.borderRadius = "12px";
+        panel.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+        panel.style.display = "flex";
+        panel.style.flexDirection = "column";
+        panel.style.gap = "10px";
+        panel.style.minWidth = "200px";
+
+        // Create buttons for all options
+        options.forEach((text) => {
+            const btn = document.createElement("button");
+            btn.textContent = text;
+            btn.style.padding = "10px";
+            btn.style.border = "1px solid #ccc";
+            btn.style.borderRadius = "8px";
+            btn.style.cursor = "pointer";
+            btn.style.background = "#f0f0f0";
+            btn.onmouseenter = () => (btn.style.background = "#e0e0e0");
+            btn.onmouseleave = () => (btn.style.background = "#f0f0f0");
+            btn.onclick = () => {
+                cleanup();
+                resolve(text);
+            };
+            panel.appendChild(btn);
+        });
+
+        // Cancel button
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "Cancel";
+        cancelBtn.style.padding = "10px";
+        cancelBtn.style.border = "1px solid #ccc";
+        cancelBtn.style.borderRadius = "8px";
+        cancelBtn.style.cursor = "pointer";
+        cancelBtn.style.background = "#ffe0e0";
+        cancelBtn.onmouseenter = () => (cancelBtn.style.background = "#ffcccc");
+        cancelBtn.onmouseleave = () => (cancelBtn.style.background = "#ffe0e0");
+        cancelBtn.onclick = () => {
+            cleanup();
+            resolve(null);
+        };
+        panel.appendChild(cancelBtn);
+
+        overlay.appendChild(panel);
+        document.body.appendChild(overlay);
+
+        // Cleanup after closing
+        function cleanup() {
+            document.body.removeChild(overlay);
+        }
+    });
+}
