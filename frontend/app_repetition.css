@@ -38,7 +38,14 @@ button {
 .rating-btn:hover, .rating-btn-selected { background: #4fbc51; color: #fff; }
 .info { font-size: 0.9em; color: #ccc; margin-top: 1em; }
 
-
+label {
+    margin-right: 10px;
+    min-width: 100px;
+    display: inline-block;
+}
+main {
+    margin:auto;
+}
 
 
 
@@ -94,7 +101,7 @@ button {
 
 
 header {
-    /*background: var(--color-header);*/
+    background: black;
     padding: 10px;
     color: var(--color-header-text);
     display: flex;

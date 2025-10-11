@@ -1,0 +1,906 @@
+commit 6f4973e97bbdabca4685b118a05689559eef272e
+Author: Robert Vokac <robertvokac@robertvokac.com>
+Date:   Sat Oct 11 13:46:32 2025 +0200
+
+    Refactoring of app_slip_box.js #5 + Migrated date unixtime format from seconds to milliseconds
+
+diff --git a/frontend/api.js b/frontend/api.js
+index b7932a9..07b57a5 100644
+--- a/frontend/api.js
++++ b/frontend/api.js
+@@ -61,11 +61,23 @@ export async function loadApplications() {
+     return data;
+ }
+ 
++const USER_ID = "user_id";
+ const ACCESS_TOKEN_KEY = "access_token";
+ const REFRESH_TOKEN_KEY = "refresh_token";
+ const ACCESS_TOKEN_EXPIRES_AT_KEY = "access_token_expires_at";
+ const REFRESH_TOKEN_EXPIRES_AT_KEY = "refresh_token_expires_at";
+ 
++export function getUserId() {
++    return localStorage.getItem(USER_ID);
++}
++
++export function setUserId(userid) {
++    if(userid === null){
++        localStorage.removeItem(USER_ID);
++    } else {
++    localStorage.setItem(USER_ID, userid);
++    }
++}
+ export function getAccessToken() {
+     return localStorage.getItem(ACCESS_TOKEN_KEY);
+ }
+@@ -108,16 +120,15 @@ async function ensureFreshAccessToken() {
+     const exp = getAccessTokenExpiresAt();
+     if (!exp) return;
+ 
+-    const nowSec = Math.floor(Date.now() / 1000);
+-    const expSec = Math.floor(Number(exp));
++    const nowMs = Date.now();
++    const expMs = Number(exp);
+ 
+-    // if expired or <= 60 s remaining, refresh
+-    if (expSec <= nowSec + 60) {
++    // if expired or ≤ 60 000 ms remaining
++    if (expMs <= nowMs + 60_000) {
+         const ok = await refreshToken();
+-        if (!ok) {
+-            console.warn("Failed to refresh access token automatically");
+-        }
++        if (!ok) console.warn("Failed to refresh access token automatically");
+     }
++
+ }
+ 
+ 
+diff --git a/frontend/app_repetition.css b/frontend/app_repetition.css
+index 2b71348..c667d22 100644
+--- a/frontend/app_repetition.css
++++ b/frontend/app_repetition.css
+@@ -35,6 +35,7 @@ button {
+ }
+ .show-btn { background: #444; color: #fff; }
+ .rating-btn { background: #2e7d32; color: #fff; }
++.rating-btn:hover, .rating-btn-selected { background: #4fbc51; color: #fff; }
+ .info { font-size: 0.9em; color: #ccc; margin-top: 1em; }
+ 
+ 
+@@ -93,7 +94,7 @@ button {
+ 
+ 
+ header {
+-    background: var(--color-header);
++    /*background: var(--color-header);*/
+     padding: 10px;
+     color: var(--color-header-text);
+     display: flex;
+diff --git a/frontend/app_repetition.html b/frontend/app_repetition.html
+index b805acd..6384a1d 100644
+--- a/frontend/app_repetition.html
++++ b/frontend/app_repetition.html
+@@ -14,30 +14,27 @@
+ <div id="slip_box">
+ 
+     <header>
+-        <div id="repetition_header" onclick="window.location.href='app_repetition_header.html'">🔁 Repetiton</div>
++        <div id="repetition_header" onclick="window.location.href='app_repetition.html'">🔁 Repetiton</div>
+         <button id="button_mindnet">🌐 Mind Net</button>
+-        <button id="button_sessions">Sessions →</button>
+         <button id="button_settings" class="focus">Settings</button>
+         <button id="button_theme">🌓 Toggle Theme</button>
+     </header>
+ 
+     <main id="main">
+ 
+-        <h2>SM-18 Zkoušení</h2>
+-
+         <div class="card">
+             <div class="front">❓ Co znamená <code>const</code> u parametru funkce v C++?</div>
+             <div class="back">✅ Označuje, že parametr nebude uvnitř funkce měněn.</div>
+-            <button class="show-btn" onclick="showAnswer()">Zobrazit odpověď</button>
++            <button class="show-btn" onclick="showOrHideAnswer()">Show answer</button>
+             <div id="rating">
+-                <p>Jak dobře sis poznámku vybavil?</p>
++                <p>How well did you recall the note?</p>
+                 <div>
+-                    <button class="rating-btn" onclick="rate(0)">0</button>
+-                    <button class="rating-btn" onclick="rate(1)">1</button>
+-                    <button class="rating-btn" onclick="rate(2)">2</button>
+-                    <button class="rating-btn" onclick="rate(3)">3</button>
+-                    <button class="rating-btn" onclick="rate(4)">4</button>
+-                    <button class="rating-btn" onclick="rate(5)">5</button>
++                    <button class="rating-btn" id="rating-btn-0" onclick="rate(0)">0</button>
++                    <button class="rating-btn" id="rating-btn-1" onclick="rate(1)">1</button>
++                    <button class="rating-btn" id="rating-btn-2" onclick="rate(2)">2</button>
++                    <button class="rating-btn" id="rating-btn-3" onclick="rate(3)">3</button>
++                    <button class="rating-btn" id="rating-btn-4" onclick="rate(4)">4</button>
++                    <button class="rating-btn" id="rating-btn-5" onclick="rate(5)">5</button>
+                 </div>
+             </div>
+             <div class="info" id="result"></div>
+diff --git a/frontend/app_repetition.js b/frontend/app_repetition.js
+index c42f59d..b39239c 100644
+--- a/frontend/app_repetition.js
++++ b/frontend/app_repetition.js
+@@ -2,11 +2,11 @@
+ // Imports & Globals
+ // ========================================
+ 
++import {delete_entity, getUserId, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
+ import {get_element} from "./dom.js";
+ 
+-let r_global_setting_id = ""
++let user_id = null
+ let r_global_settings = null;
+-let r_user_setting_id = ""
+ let r_user_settings = null;
+ let r_session_id = ""
+ let r_session = null;
+@@ -129,14 +129,18 @@ export function showWindowFrom(title, url) {
+ // ========================================
+ 
+ document.addEventListener('DOMContentLoaded', async () => {
++
++    user_id = getUserId()
++    let r_global_setting = await list_all_entities("r_global_setting")
++    r_global_setting.forEach(s =>alert (JSON.stringify(s)) );
++
++
+     get_element("repetition_header").title = "Go to list of all sessions"
+     get_element("repetition_header").style.cursor = "pointer"
++
+     get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
+     get_element("button_mindnet").title = "Go to Mind Net generic frontend"
+ 
+-    get_element("button_sessions").addEventListener("click", () => {});
+-    get_element("button_sessions").title = "Sessions"
+-
+     get_element("button_settings").addEventListener("click", () => {});
+     get_element("button_settings").title = "User settings"
+ 
+@@ -151,27 +155,33 @@ document.addEventListener('DOMContentLoaded', async () => {
+ 
+ });
+ 
++export function showOrHideAnswer() {
+ 
++    let back = document.querySelector('.back');
++    let showbtn = document.querySelector('.show-btn');
++    let shown = showbtn.innerText === "Hide answer"
+ 
+ 
++    document.querySelector('.back').style.display = shown ? 'none' : 'block';
++    showbtn.innerText = shown ? "Show answer" : "Hide answer";
+ 
+-
+-
+-
+-
+-
+-
+-export function showAnswer() {
+-    document.querySelector('.back').style.display = 'block';
+ }
+-window.showAnswer = showAnswer;
++window.showOrHideAnswer = showOrHideAnswer;
+ 
+ export function rate(q) {
+-    const S = 1.0; // aktuální stabilita
++    get_element("rating-btn-0").className = "rating-btn"
++    get_element("rating-btn-1").className = "rating-btn"
++    get_element("rating-btn-2").className = "rating-btn"
++    get_element("rating-btn-3").className = "rating-btn"
++    get_element("rating-btn-4").className = "rating-btn"
++    get_element("rating-btn-5").className = "rating-btn"
++
++    get_element("rating-btn-" + q).className = "rating-btn rating-btn-selected"
++
++    const S = 1.0; // current stability
+     const b = 0.6;
+     const R_target = 0.9;
+-    const elapsed = 1.0; // dny od posledního opakování
+-
++    const elapsed = 1.0; // days since last repetition
+     const R_now = Math.exp(-Math.pow(elapsed / S, b));
+     let S_after = S;
+     let next_I = 1.0;
+diff --git a/frontend/app_slip_box.js b/frontend/app_slip_box.js
+index b3ad2f8..a3c5a3d 100644
+--- a/frontend/app_slip_box.js
++++ b/frontend/app_slip_box.js
+@@ -1,7 +1,7 @@
+ // ========================================
+ // Imports & Globals
+ // ========================================
+-import {API_BASE, apiFetch, delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
++import {delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
+ import {
+     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
+     chooseOption
+diff --git a/frontend/auth.js b/frontend/auth.js
+index 3cfffa0..b124096 100644
+--- a/frontend/auth.js
++++ b/frontend/auth.js
+@@ -1,4 +1,4 @@
+-import {API_BASE, setAccessToken, setRefreshToken, getRefreshToken, apiFetch} from "./api.js";
++import {API_BASE, setAccessToken, setRefreshToken, getRefreshToken, apiFetch, setUserId} from "./api.js";
+ import {showError} from "./dom.js";
+ 
+ export async function login(username, password) {
+@@ -13,6 +13,7 @@ export async function login(username, password) {
+         return false;
+     }
+     const json = await res.json();
++    setUserId(json.user_id)
+     setAccessToken(json.access_token, json.access_token_expires_at);
+     setRefreshToken(json.refresh_token, json.refresh_token_expires_at);
+     return true;
+@@ -36,6 +37,7 @@ export async function logout() {
+         showError(`Logout failed: ${t || res.statusText}`);
+         return false;
+     }
++    setUserId(null)
+     setAccessToken(null);
+     setRefreshToken(null);
+     return true;
+@@ -67,11 +69,13 @@ export async function refreshToken() {
+     });
+     let res_status = res.status;
+     if (!res.ok && (res_status === 401 || res_status === 403)) {
++        setUserId(null)
+         setAccessToken(null);
+         setRefreshToken(null);
+         return false;
+     }
+     const json = await res.json();
++    setUserId(json.user_id)
+     setAccessToken(json.access_token, json.access_token_expires_at);
+     return true;
+ }
+diff --git a/frontend/dom.js b/frontend/dom.js
+index 7909a63..d2c53e3 100644
+--- a/frontend/dom.js
++++ b/frontend/dom.js
+@@ -13,18 +13,23 @@ export function getQueryParams() {
+ }
+ export function formatDateTime(value) {
+     if (!value || value === 0) return "";
+-    const d = new Date(Number(value) * 1000); // Unix timestamp in seconds
+-    const pad = n => n.toString().padStart(2,'0');
+-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
++    const d = new Date(Number(value)); // Unix timestamp in milliseconds
++    const pad = n => n.toString().padStart(2, '0');
++    const ms = String(d.getMilliseconds()).padStart(3, '0');
++    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} `
++        + `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${ms}`;
+ }
++
+ export function parseDateTimeToUnix(str) {
+     if (!str) return 0;
+-    const parts = str.split(/[- :]/);
+-    if (parts.length < 6) return 0;
+-    const [y,m,d,h,min,s] = parts.map(Number);
+-    return Math.floor(new Date(y,m-1,d,h,min,s).getTime()/1000);
++    // podpora i pro formát s ms: "YYYY-MM-DD HH:MM:SS.mmm"
++    const match = str.match(/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)(?:\.(\d{1,3}))?$/);
++    if (!match) return 0;
++    const [_, y, m, d, h, min, s, ms] = match.map(Number);
++    return new Date(y, m - 1, d, h, min, s, ms || 0).getTime(); // ms
+ }
+ 
++
+ // key: hidden_columns
+ // value: { "note": ["created_at","updated_at"], "user": ["password"] }
+ export function getHiddenColumns() {
+diff --git a/include/mind-net-plugin-repetition/mindnet/plugins/repetition/RSetting.h b/include/mind-net-plugin-repetition/mindnet/plugins/repetition/RSetting.h
+index 6fd8d61..b97fba6 100644
+--- a/include/mind-net-plugin-repetition/mindnet/plugins/repetition/RSetting.h
++++ b/include/mind-net-plugin-repetition/mindnet/plugins/repetition/RSetting.h
+@@ -12,28 +12,29 @@ namespace mindnet::plugins::repetition
+     using std::string;
+     using std::set;
+ 
+-    const string b = "b";
+-    const string R_target = "R_target";
+-    const string R_opt = "R_opt";
+-    const string alpha = "alpha";
+-    const string beta = "beta";
+-    const string gamma = "gamma";
+-    const string delta = "delta";
+-    const string k_over = "k_over";
+-    const string S_min = "S_min";
+-    const string short_retry = "short_retry";
++    const string r18_b = "r18_b";
++    const string r18_R_target = "r18_R_target";
++    const string r18_R_opt = "r18_R_opt";
++    const string r18_alpha = "r18_alpha";
++    const string r18_beta = "r18_beta";
++    const string r18_gamma = "r18_gamma";
++    const string r18_delta = "r18_delta";
++    const string r18_k_over = "r18_k_over";
++    const string r18_S_min = "r18_S_min";
++    const string r18_short_retry = "r18_short_retry";
+ 
+     const set r_setting_keys = {
+-        b,
+-        R_target,
+-        R_opt,
+-        alpha,
+-        beta,
+-        gamma,
+-        delta,
+-        k_over,
+-        S_min,
+-        short_retry
++        r18_b,
++        r18_R_target,
++        r18_R_opt,
++        r18_alpha,
++        r18_beta,
++        r18_gamma,
++        r18_delta,
++        r18_k_over,
++        r18_S_min,
++        r18_short_retry
+     };
++
+ }
+ #endif //MIND_NET_RSETTING_H
+diff --git a/include/mind-net-util/mindnet/util/Utils.h b/include/mind-net-util/mindnet/util/Utils.h
+index dda1a90..62dbc80 100644
+--- a/include/mind-net-util/mindnet/util/Utils.h
++++ b/include/mind-net-util/mindnet/util/Utils.h
+@@ -44,10 +44,10 @@ namespace mindnet::util
+ 
+     public:
+         static SM2Result calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef);
+-        static long long currentTimestamp();
+-        static long long currentUnixTimestamp();
+-        static string unixToFormattedString(ll unixTimestamp);
+-        static string print_current_timestamp();
++        static long long current_unix_timestamp_seconds();
++        static long long current_unix_timestamp_ms();
++        static string unixtime_to_string(unixtime unixTimestamp);
++        static string current_unixtime_to_string();
+         // static ll formattedStringToUnix(const std::string& formattedTime);
+ 
+         // Convert single letter 'a'-'z' to number 0-25
+diff --git a/src/mind-net-api/mindnet/api/AccessTokenContext.cpp b/src/mind-net-api/mindnet/api/AccessTokenContext.cpp
+index 091402d..4f73926 100644
+--- a/src/mind-net-api/mindnet/api/AccessTokenContext.cpp
++++ b/src/mind-net-api/mindnet/api/AccessTokenContext.cpp
+@@ -62,7 +62,7 @@ namespace mindnet::api
+                 msg = "Access token revoked";
+                 return;
+             }
+-            if (util::Utils::currentUnixTimestamp() >= access_token.expires_at)
++            if (util::Utils::current_unix_timestamp_ms() >= access_token.expires_at)
+             {
+                 status = 401;
+                 msg = "Access token expired";
+@@ -70,7 +70,7 @@ namespace mindnet::api
+             }
+ 
+             {
+-                access_token.last_used_at = util::Utils::currentUnixTimestamp();
++                access_token.last_used_at = util::Utils::current_unix_timestamp_ms();
+                 access_token.ip_address = req.remote_ip_address;
+                 access_token.user_agent = req.get_header_value("User-Agent");
+ 
+diff --git a/src/mind-net-api/mindnet/plugins/core/triggers/HistoryCommonTrigger.cpp b/src/mind-net-api/mindnet/plugins/core/triggers/HistoryCommonTrigger.cpp
+index 3e27ce4..c8a9577 100644
+--- a/src/mind-net-api/mindnet/plugins/core/triggers/HistoryCommonTrigger.cpp
++++ b/src/mind-net-api/mindnet/plugins/core/triggers/HistoryCommonTrigger.cpp
+@@ -78,7 +78,7 @@ namespace mindnet::plugins::core::triggers
+         }
+         history.reason = "";
+         auto f = history.to_values();
+-        int64_t now = static_cast<int64_t>(util::Utils::currentUnixTimestamp());
++        int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
+         f[1] = now;
+         f[2] = now;
+ 
+diff --git a/src/mind-net-app/mindnet/app/Main.cpp b/src/mind-net-app/mindnet/app/Main.cpp
+index 9b980b4..ac09a72 100644
+--- a/src/mind-net-app/mindnet/app/Main.cpp
++++ b/src/mind-net-app/mindnet/app/Main.cpp
+@@ -130,7 +130,10 @@ bool commands_function_start(
+     if (users.first.empty())
+     {
+         mindnet::plugins::core::models::User user;
+-        user.username = mindnet::util::Utils::generate_secret_key(16, true, true, true, false);
++        user.username =
++            mindnet::util::Utils::generate_secret_key(1, false, true, true, false)+
++            mindnet::util::Utils::generate_secret_key(15, true, true, true, false);
++
+         const auto& super_admin_password = mindnet::util::Utils::generate_secret_key(64);
+         user.password_hash = mindnet::util::Utils::hash_sha_256(super_admin_password);
+         user.display_name = "Superadmin";
+@@ -274,7 +277,7 @@ bool commands_function_start(
+ 
+     info << "Starting backend on port " << port << commit;
+     info << "Starting frontend on port " << frontend_port << commit;
+-    mindnet::essential::start_time = mindnet::util::Utils::currentUnixTimestamp();
++
+     g_configuration.host = host;
+     g_configuration.port = port;
+     g_configuration.frontend_port = frontend_port;
+@@ -359,7 +362,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
+ 
+ int main(int argc, char** argv)
+ {
+-    mindnet::essential::start_time = mindnet::util::Utils::currentUnixTimestamp();
++    mindnet::essential::start_time = mindnet::util::Utils::current_unix_timestamp_ms();
+ 
+     auto loggers = {
+         &fatal, &err, &warn, &info, &debug, &trace, &experiment
+@@ -367,7 +370,7 @@ int main(int argc, char** argv)
+ 
+     for (auto* logger : loggers)
+     {
+-        logger->set_timestamp_function(&mindnet::util::Utils::print_current_timestamp);
++        logger->set_timestamp_function(&mindnet::util::Utils::current_unixtime_to_string);
+     }
+ 
+     print_logo();
+diff --git a/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryImplSqlite.cpp b/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryImplSqlite.cpp
+index f90ccdd..e62f9ae 100644
+--- a/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryImplSqlite.cpp
++++ b/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryImplSqlite.cpp
+@@ -119,10 +119,10 @@ namespace mindnet::db::sqlite
+         //id
+         result.emplace_back(update ? static_cast<int64_t>(body["id"]) : 0);
+         //created at
+-        if (create) { result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp())); }
++        if (create) { result.emplace_back(static_cast<int64_t>(util::Utils::current_unix_timestamp_ms())); }
+         else { result.emplace_back(static_cast<int64_t>(0)); }
+         //updated at
+-        result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp()));
++        result.emplace_back(static_cast<int64_t>(util::Utils::current_unix_timestamp_ms()));
+ 
+         for (auto& col : model_definition.get_columns())
+         {
+diff --git a/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryUtils.cpp b/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryUtils.cpp
+index ca3343e..6c330f1 100644
+--- a/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryUtils.cpp
++++ b/src/mind-net-db-sqlite/mindnet/db/sqlite/RepositoryUtils.cpp
+@@ -141,10 +141,10 @@ namespace mindnet::db::sqlite
+         }
+     }
+ 
+-    void set_pragmas(SQLite::Database& db, bool temp_store = false)
++    void set_pragmas(SQLite::Database& db, bool temp_store = false, bool readonly = false)
+     {
+         db.exec("PRAGMA foreign_keys = ON;");
+-        db.exec("PRAGMA journal_mode = WAL;");
++        if (!readonly) db.exec("PRAGMA journal_mode = WAL;");
+         db.exec("PRAGMA busy_timeout = 5000;");
+         if (temp_store)
+         {
+@@ -249,7 +249,7 @@ namespace mindnet::db::sqlite
+                         // }
+                         // else
+                         // {
+-                        int number = (*query_ptr).getColumn(i);
++                        int64_t number = (*query_ptr).getColumn(i);
+                         result.push_back(number);
+                         // }
+                     }
+@@ -419,7 +419,7 @@ namespace mindnet::db::sqlite
+             case mindnet::model::ColumnType::DateTime:
+             case mindnet::model::ColumnType::Integer:
+                 {
+-                    int number = stoi(value);
++                    int64_t number = stol(value);
+                     // if (foreign_key && number == 0)
+                     // {
+                     //     debug << "Binding index " << bind_index << " with value NULL" << commit;
+@@ -455,7 +455,7 @@ namespace mindnet::db::sqlite
+         );
+ 
+         db.setBusyTimeout(5000);
+-        set_pragmas(db);
++        set_pragmas(db, false, true);
+ 
+         SQLite::Statement* query_ptr = nullptr;
+ 
+@@ -511,7 +511,7 @@ namespace mindnet::db::sqlite
+                     case mindnet::model::ColumnType::DateTime:
+                     case mindnet::model::ColumnType::Integer:
+                         {
+-                            int number = (*query_ptr).getColumn(i);
++                            int64_t number = (*query_ptr).getColumn(i);
+                             result.push_back(number);
+                         }
+                         break;
+diff --git a/src/mind-net-http/mindnet/http/AuthEndpointsGenerator.cpp b/src/mind-net-http/mindnet/http/AuthEndpointsGenerator.cpp
+index 5369d67..ff34e8a 100644
+--- a/src/mind-net-http/mindnet/http/AuthEndpointsGenerator.cpp
++++ b/src/mind-net-http/mindnet/http/AuthEndpointsGenerator.cpp
+@@ -42,6 +42,10 @@ namespace mindnet::http
+         return safe;
+     }
+ 
++    unixtime minutes_to_milliseconds(int minutes)
++    {
++        return ((unixtime)minutes) * 60* 1000;
++    }
+     void AuthEndpointsGenerator::create_auth_endpoints(
+         api::ServicePtr& service_ptr,
+         crow::SimpleApp& crow_app
+@@ -73,7 +77,7 @@ namespace mindnet::http
+                     entity_id,
+                     error);
+                 auto log = log_object.to_values();
+-                int64_t now = static_cast<int64_t>(mindnet::util::Utils::currentUnixTimestamp());
++                int64_t now = mindnet::util::Utils::current_unix_timestamp_ms();
+                 log[1] = now;
+                 log[2] = now;
+ 
+@@ -139,10 +143,10 @@ namespace mindnet::http
+             // -------------------------------
+             // 1. Token Generation
+             // -------------------------------
+-            auto now = util::Utils::currentUnixTimestamp();
++            auto now = util::Utils::current_unix_timestamp_ms();
+ 
+-            auto access_exp = now + g_configuration.access_token_expires_in * 60;
+-            auto refresh_exp = now + g_configuration.refresh_token_expires_in * 60;
++            auto access_exp = now + minutes_to_milliseconds(g_configuration.access_token_expires_in);
++            auto refresh_exp = now + minutes_to_milliseconds(g_configuration.refresh_token_expires_in);
+ 
+             std::string raw_access = util::Utils::generate_secret_key(32);
+             std::string raw_refresh = util::Utils::generate_secret_key(64);
+@@ -243,6 +247,11 @@ namespace mindnet::http
+             // 3. Return to client
+             // -------------------------------
+             crow::json::wvalue response;
++            response["user_id"] = user.get_id();
++            // response["username"] = user.username;
++            // response["display_name"] = user.display_name;
++            // response["role"] = essential::user_role_to_string(user.role);
++            // response["status"] = user_status_to_string(user.status);
+             response["access_token"] = raw_access;
+             response["access_token_expires_at"] = access_exp;
+             response["refresh_token"] = raw_refresh;
+@@ -273,7 +282,7 @@ namespace mindnet::http
+             std::string raw_refresh = body["refresh_token"].s();
+             std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
+ 
+-            auto now = util::Utils::currentUnixTimestamp();
++            auto now = util::Utils::current_unix_timestamp_ms();
+ 
+             // 1. Find refresh token
+             orm::QueryParams query;
+@@ -379,7 +388,7 @@ namespace mindnet::http
+                 std::string raw_refresh = body["refresh_token"].s();
+                 std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
+ 
+-                auto now = util::Utils::currentUnixTimestamp();
++                auto now = util::Utils::current_unix_timestamp_ms();
+ 
+                 // 1. Find refresh token
+                 orm::QueryParams query;
+@@ -407,7 +416,7 @@ namespace mindnet::http
+                 }
+ 
+                 // 3. Generate new access token
+-                auto access_exp = now + 15 * 60; // 15 minutes
++                auto access_exp = now + minutes_to_milliseconds(15); // 15 minutes
+                 std::string raw_access = util::Utils::generate_secret_key(32);
+                 std::string access_hash = util::Utils::hash_sha_256(raw_access);
+ 
+@@ -437,11 +446,16 @@ namespace mindnet::http
+                 }
+ 
+                 // 4. Decide if we need refresh token rotation
+-                int64_t seconds_left = refresh.expires_at - now;
+-                int64_t rotation_threshold = g_configuration.refresh_token_rotation_threshold_in * 60;
+-                bool need_rotation = seconds_left <= rotation_threshold;
++                int64_t milliseconds_left = refresh.expires_at - now;
++                int64_t rotation_threshold = minutes_to_milliseconds(g_configuration.refresh_token_rotation_threshold_in);
++                bool need_rotation = milliseconds_left <= rotation_threshold;
+ 
+                 crow::json::wvalue response;
++                response["user_id"] = refresh.user_id;
++// response["username"] = user.username;
++// response["display_name"] = user.display_name;
++// response["role"] = essential::user_role_to_string(user.role);
++// response["status"] = user_status_to_string(user.status);
+                 response["access_token"] = raw_access;
+                 response["access_token_expires_at"] = access_exp;
+ 
+@@ -474,7 +488,7 @@ namespace mindnet::http
+                     new_refresh.user_id = refresh.user_id;
+                     new_refresh.token_hash = refresh_hash_new;
+                     new_refresh.issued_at = now;
+-                    new_refresh.expires_at = now + 30 * 24 * 3600;
++                    new_refresh.expires_at = now + minutes_to_milliseconds(g_configuration.refresh_token_expires_in);
+                     new_refresh.rotated_from_id = refresh.get_id();
+                     new_refresh.last_used_at = now;
+                     new_refresh.ip_address = req.remote_ip_address;
+@@ -686,7 +700,7 @@ namespace mindnet::http
+         orm::QueryParams refresh_query;
+         refresh_query.add_filter(plugins::core::columns::RefreshTokenColumns::USER_ID, std::to_string(user.get_id()));
+         auto refresh_tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh_query);
+-        auto now = util::Utils::currentUnixTimestamp();
++        auto now = util::Utils::current_unix_timestamp_ms();
+         for (auto& r : refresh_tokens.first)
+         {
+             plugins::core::models::RefreshToken t;
+diff --git a/src/mind-net-http/mindnet/http/HttpServer.cpp b/src/mind-net-http/mindnet/http/HttpServer.cpp
+index 070e790..31f30fe 100644
+--- a/src/mind-net-http/mindnet/http/HttpServer.cpp
++++ b/src/mind-net-http/mindnet/http/HttpServer.cpp
+@@ -75,7 +75,7 @@ namespace mindnet::http
+         std::vector<fs::path> js_files;
+         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
+         {
+-            if (entry.path().extension() == ".js")
++            if (entry.path().extension() == ".js" && !entry.path().string().starts_with("app_"))
+             {
+                 js_files.push_back(entry.path());
+             }
+diff --git a/src/mind-net-http/mindnet/http/InfoHealthEndpointsGenerator.cpp b/src/mind-net-http/mindnet/http/InfoHealthEndpointsGenerator.cpp
+index ad1ab42..c40e035 100644
+--- a/src/mind-net-http/mindnet/http/InfoHealthEndpointsGenerator.cpp
++++ b/src/mind-net-http/mindnet/http/InfoHealthEndpointsGenerator.cpp
+@@ -25,6 +25,8 @@ namespace mindnet::http
+         static const std::string MINUTES = " minutes ";
+         static const std::string SECOND = " second";
+         static const std::string SECONDS = " seconds";
++        static const std::string MILLISECOND = " millisecond";
++        static const std::string MILLISECONDS = " milliseconds";
+     }
+ 
+     void create_info_endpoint(
+@@ -68,11 +70,15 @@ namespace mindnet::http
+         CROW_ROUTE(crow_app, "/health").methods(crow::HTTPMethod::GET)
+         ([service_ptr](const crow::request& req)
+         {
+-            auto print_duration = [](ll start_time, ll end_time)
++            auto print_duration = [](ll start_time, ll end_time, bool compact = false)
+             {
+-                static const int SECONDS_PER_DAY = 24 * 60 * 60;
+-                static const int SECONDS_PER_HOUR = 60 * 60;
+-                static const int SECONDS_PER_MINUTE = 60;
++                static const int MILLISECONDS_PER_SECOND = 1000;
++                static const int MILLISECONDS_PER_MINUTE = 60 * MILLISECONDS_PER_SECOND;
++                static const int MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
++                static const int MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
++
++
++
+ 
+                 //#define test_health_endpoint
+ #ifdef test_health_endpoint
+@@ -116,46 +122,79 @@ namespace mindnet::http
+                 ll elapsed_seconds = end_time - start_time + distrib(gen);
+ #else
+ 
+-                ll elapsed_seconds = end_time - start_time;
++                ll elapsed_milliseconds = end_time - start_time;
+ #endif
+                 short days = 0;
+                 short hours = 0;
+                 short minutes = 0;
+                 short seconds = 0;
+-                days = elapsed_seconds / SECONDS_PER_DAY;
+-                elapsed_seconds -= days * SECONDS_PER_DAY;
+-                hours = elapsed_seconds / SECONDS_PER_HOUR;
+-                elapsed_seconds -= hours * SECONDS_PER_HOUR;
+-                minutes = elapsed_seconds / SECONDS_PER_MINUTE;
+-                elapsed_seconds -= minutes * SECONDS_PER_MINUTE;
+-                seconds = elapsed_seconds;
++                short milliseconds = 0;
++
++                days = elapsed_milliseconds / MILLISECONDS_PER_DAY;
++                elapsed_milliseconds -= static_cast<ll>(days) * MILLISECONDS_PER_DAY;
++
++                hours = elapsed_milliseconds / MILLISECONDS_PER_HOUR;
++                elapsed_milliseconds -= static_cast<ll>(hours) * MILLISECONDS_PER_HOUR;
++
++                minutes = elapsed_milliseconds / MILLISECONDS_PER_MINUTE;
++                elapsed_milliseconds -= static_cast<ll>(minutes) * MILLISECONDS_PER_MINUTE;
++
++                seconds = elapsed_milliseconds / MILLISECONDS_PER_SECOND;
++                elapsed_milliseconds -= static_cast<ll>(seconds) * MILLISECONDS_PER_SECOND;
++
++                milliseconds = static_cast<short>(elapsed_milliseconds);
++
+                 std::ostringstream oss;
+-                if (days > 0)
+-                {
+-                    oss << days << (days == 1 ? Labels::DAY : Labels::DAYS);
+-                }
+-                if (hours > 0)
++
++                if (compact)
+                 {
+-                    oss << hours << (hours == 1 ? Labels::HOUR : Labels::HOURS);
++                    if (days > 0) oss << days << "d ";
++                    if (hours > 0) oss << hours << "h ";
++                    if (minutes > 0) oss << minutes << "m ";
++                    if (seconds > 0) oss << seconds << "s ";
++                    if (milliseconds > 0) oss << milliseconds << "ms";
++                    if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0)
++                        oss << "0ms";
+                 }
+-                if (minutes > 0)
++                else
+                 {
+-                    oss << minutes << (minutes == 1 ? Labels::MINUTE : Labels::MINUTES);
++                    if (days > 0)
++                        oss << days << (days == 1 ? Labels::DAY : Labels::DAYS);
++                    if (hours > 0)
++                        oss << hours << (hours == 1 ? Labels::HOUR : Labels::HOURS);
++                    if (minutes > 0)
++                        oss << minutes << (minutes == 1 ? Labels::MINUTE : Labels::MINUTES);
++                    if (seconds > 0)
++                        oss << seconds << (seconds == 1 ? Labels::SECOND : Labels::SECONDS);
++                    if (milliseconds > 0)
++                        oss << milliseconds << (milliseconds == 1 ? Labels::MILLISECOND : Labels::MILLISECONDS);
++
++                    if (days == 0 && hours == 0 && minutes == 0 && seconds == 0 && milliseconds == 0)
++                        oss << "0 milliseconds";
+                 }
+-                oss << seconds << (seconds == 1 ? Labels::SECOND : Labels::SECONDS);
++
+ 
+                 return oss.str();
+             };
+ 
+             nlohmann::ordered_json result;
+ 
+-            auto now = util::Utils::currentUnixTimestamp();
++            auto now = util::Utils::current_unix_timestamp_ms();
++
++            bool compact = false;
++            if (req.url_params.get("compact"))
++            {
++                std::string val = req.url_params.get("compact");
++                if (val == "1" || val == "true" || val == "yes")
++                    compact = true;
++            }
++
+             result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode || service_ptr->is_shutdown_scheduled() || service_ptr->is_restart_scheduled()
+                                    ? "MAINTENANCE"
+                                    : "UP";
+-            result["uptime"] = print_duration(essential::start_time, now);
+-            result["timestamp"] = util::Utils::unixToFormattedString(now);
+-            result["started_at"] = util::Utils::unixToFormattedString(essential::start_time);
++            result["uptime"] = print_duration(essential::start_time, now, compact);
++            result["timestamp"] = util::Utils::unixtime_to_string(now);
++            result["started_at"] = util::Utils::unixtime_to_string(essential::start_time);
+ 
+             return crow::response(200, result.dump(2));
+         });
+diff --git a/src/mind-net-http/mindnet/http/ModelEndpointGenerator.cpp b/src/mind-net-http/mindnet/http/ModelEndpointGenerator.cpp
+index e0e5e3b..699acbf 100644
+--- a/src/mind-net-http/mindnet/http/ModelEndpointGenerator.cpp
++++ b/src/mind-net-http/mindnet/http/ModelEndpointGenerator.cpp
+@@ -47,7 +47,7 @@ namespace mindnet::http
+          entity_id,
+          error);
+             auto log = log_object.to_values();
+-            int64_t now = static_cast<int64_t>(util::Utils::currentUnixTimestamp());
++            int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
+             log[1] = now;
+             log[2] = now;
+ 
+diff --git a/src/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.cpp b/src/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.cpp
+index 5193f14..09ce00e 100644
+--- a/src/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.cpp
++++ b/src/mind-net-http/mindnet/http/SuperAdminEndpointsGenerator.cpp
+@@ -439,7 +439,7 @@ if (!form) {{
+                 error,
+                 diff);
+             auto log = log_object.to_values();
+-            int64_t now = static_cast<int64_t>(mindnet::util::Utils::currentUnixTimestamp());
++            int64_t now = static_cast<int64_t>(mindnet::util::Utils::current_unix_timestamp_ms());
+             log[1] = now;
+             log[2] = now;
+ 
+diff --git a/src/mind-net-plugin-repetition/mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.cpp b/src/mind-net-plugin-repetition/mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.cpp
+index fa5ef6f..929b766 100644
+--- a/src/mind-net-plugin-repetition/mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.cpp
++++ b/src/mind-net-plugin-repetition/mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.cpp
+@@ -17,14 +17,29 @@ namespace mindnet::plugins::repetition::migrations
+     	add_migration("V1__create_r_global_setting.sql", R"(
+     	CREATE TABLE r_global_setting (
+ 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+-	created_at DATETIME,
+-	updated_at DATETIME,
++	created_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
++	updated_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
+ 
+ 	key TEXT NOT NULL,
+ 	value TEXT NOT NULL,
+ 
+ 	UNIQUE (key)
+ );
++
++INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
++  ('r18_b', 0.6),
++  ('r18_R_target', 0.9),
++  ('r18_R_opt', 0.9),
++  ('r18_alpha', 0.3),
++  ('r18_beta', 0.6),
++  ('r18_gamma', 0.2),
++  ('r18_delta', 0.4),
++  ('r18_k_over', 0.15),
++  ('r18_S_min', 0.5),
++  ('r18_short_retry', 0.5); -- 12 hours
++
++
++
+ )");
+ 
+     	add_migration("V2__create_r_user_setting.sql",R"(
+diff --git a/src/mind-net-util/mindnet/util/Utils.cpp b/src/mind-net-util/mindnet/util/Utils.cpp
+index ed9e87e..102adcd 100644
+--- a/src/mind-net-util/mindnet/util/Utils.cpp
++++ b/src/mind-net-util/mindnet/util/Utils.cpp
+@@ -59,37 +59,44 @@ namespace mindnet::util
+         // result.new_repetition = 3
+     }
+ 
+-    long long Utils::currentTimestamp()
++    long long Utils::current_unix_timestamp_seconds()
+     {
+-        time_t now = time(nullptr);
+-        struct tm* now2 = localtime(&now);
+-        char buffer[80];
+-        strftime(buffer, sizeof(buffer), "%Y%m%d%H%M%S", now2);
+-        return atoll(buffer);
++        return static_cast<long long>(std::time(nullptr));
+     }
+-
+-    long long Utils::currentUnixTimestamp()
++    long long Utils::current_unix_timestamp_ms()
+     {
+-        return static_cast<long long>(std::time(nullptr));
++        using namespace std::chrono;
++        return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
++
+     }
+ 
+-    std::string Utils::unixToFormattedString(ll unixTimestamp)
++    std::string Utils::unixtime_to_string(unixtime unixTimestamp)
+     {
+         if (unixTimestamp == 0)
+         {
+             return "none";
+         }
+-        std::time_t rawTime = static_cast<std::time_t>(unixTimestamp);
+-        std::tm* timeInfo = std::localtime(&rawTime);
+ 
+-        char buffer[21];
++        // split into seconds and milliseconds
++        std::time_t seconds = static_cast<std::time_t>(unixTimestamp / 1000);
++        int milliseconds = static_cast<int>(unixTimestamp % 1000);
++
++        std::tm* timeInfo = std::localtime(&seconds);
++
++        // basic format: YYYY-MM-DD HH:MM:SS.mmm
++        char buffer[32];
+         std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeInfo);
+-        return std::string(buffer);
++
++        // add milliseconds
++        char result[40];
++        std::snprintf(result, sizeof(result), "%s.%03d", buffer, milliseconds);
++    
++        return {result};
+     }
+ 
+-    string Utils::print_current_timestamp()
++    string Utils::current_unixtime_to_string()
+     {
+-        return Utils::unixToFormattedString(Utils::currentUnixTimestamp());
++        return Utils::unixtime_to_string(Utils::current_unix_timestamp_ms());
+     }
+ 
+     // Convert single letter 'a'-'z' to number 0-25

@@ -2,11 +2,11 @@
 // Imports & Globals
 // ========================================
 
-import {delete_entity, getUserId, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
-import {get_element} from "./dom.js";
+import {getUserId, list_all_entities} from "./api.js";
+import {chooseOption, get_element, getOrFetchFromLocalStorage, minutes_to_ms} from "./dom.js";
 
 let user_id = null
-let r_global_settings = null;
+let r_global_settings = {};
 let r_user_settings = null;
 let r_session_id = ""
 let r_session = null;
@@ -131,26 +131,193 @@ export function showWindowFrom(title, url) {
 document.addEventListener('DOMContentLoaded', async () => {
 
     user_id = getUserId()
-    let r_global_setting = await list_all_entities("r_global_setting")
-    r_global_setting.forEach(s =>alert (JSON.stringify(s)) );
+    let main = get_element("main")
+    let main_content = document.createElement("div")
+    main_content.id = "main_content"
+    main_content.style.margin = "0 auto";
+    main_content.style.textAlign = "center";
+    main.appendChild(main_content)
 
+    const screen_home = "screen_home"
+    const screen_sessions = "screen_sessions"
+    const screen_new_session = "screen_new_session"
+    const screen_new_review = "screen_new_review"
+    const screen_reviews = "screen_reviews"
+    const screen_global_settings = "screen_global_settings"
+    const screen_user_settings = "screen_user_settings"
 
+    let current_screen = screen_home;
+
+    //
     get_element("repetition_header").title = "Go to list of all sessions"
     get_element("repetition_header").style.cursor = "pointer"
 
     get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
     get_element("button_mindnet").title = "Go to Mind Net generic frontend"
 
-    get_element("button_settings").addEventListener("click", () => {});
-    get_element("button_settings").title = "User settings"
+    get_element("button_menu").addEventListener("click", () => {
+        current_screen = screen_home;
+        render()
+    });
+    get_element("button_menu").title = "Show the Menu"
 
     get_element("button_theme").addEventListener("click", () => {document.body.classList.toggle("dark");});
     get_element("button_theme").title = "Switch dark/light theme"
     //
     const win = document.getElementById('window_container');
     makeDraggable(win);
-
     //
+
+
+    async function load_r_global_settings() {
+        let r_global_settings_tmp = await list_all_entities("r_global_setting")
+        r_global_settings = {}
+
+        r_global_settings_tmp.forEach(json => {
+            r_global_settings[json.key] = json.value
+        });
+        return r_global_settings
+    }
+
+    async function load_r_user_settings() {
+        let r_user_settings_tmp = await list_all_entities("r_user_setting", "user_id=" + user_id)
+        r_user_settings = {}
+
+        r_user_settings_tmp.forEach(json =>
+        {
+            r_user_settings[json.key] = json.value
+        });
+        return r_user_settings
+    }
+
+
+    const sixty_minutes = minutes_to_ms(60)
+    function render_screen_home() {
+
+        main_content.innerHTML = "";
+        let button_new_session = document.createElement("button");
+        let button_sessions = document.createElement("button");
+
+        function make_button(text, screen) {
+            let button = document.createElement("button");
+            main_content.appendChild(button)
+            main_content.appendChild(document.createElement("br"))
+            button.innerText = text
+            button.style.minWidth = "200px"
+            button.onclick = function() {
+                current_screen = screen
+                render()
+            }
+        }
+
+        make_button("New session", screen_new_session)
+        make_button("Sessions", screen_sessions)
+        make_button("Global settings",screen_global_settings)
+        make_button("User settings",screen_user_settings)
+    }
+    async function render_screen_sessions() {
+        main_content.innerHTML = "";
+
+        let r_sessions = await list_all_entities("r_session", "user_id=" + user_id)
+
+        if(r_sessions.length > 0){
+            let ul = document.createElement("ul");
+            main_content.appendChild(ul)
+            r_sessions.forEach(json => {
+                let li = document.createElement("li");
+                li.innerHTML = JSON.stringify(json.value);
+                ul.appendChild(li)
+            })
+        } else{
+            main_content.innerHTML = "<p>No sessions found</p>";
+        }
+
+    }
+    function render_screen_new_session() {
+
+        main_content.innerHTML = "";
+
+        function create_label(text, for_id) {
+            let label = document.createElement("label")
+            label.innerText = text
+            label.for = for_id
+            return label
+        }
+        function create_input(type, id, value = "") {
+            let input = document.createElement("input")
+            input.type = type;
+            input.id = id
+            input.name = id
+            input.value = value === "" && type === "number" ? 0 : value
+            return input
+        }
+        function create_br() {
+            return document.createElement("br")
+        }
+        function make_input(text,id,type){
+            let div = document.createElement("div")
+            main_content.appendChild(div)
+            div.style.marginBottom = "10px";
+            div.appendChild(create_label(text + ":",id))
+            div.appendChild(create_input(type,id))
+            div.appendChild(create_br())
+        }
+
+        make_input("Map ID", "new_session_map_id", "number")
+        make_input("Cloned from session", "new_session_clone_id", "text")
+        make_input("Algorithm", "new_session_algorithm", "text")
+        make_input("Notes", "new_session_notes", "text")
+        make_input("Questions", "new_session_questions", "text")
+        make_input("Scope", "new_session_scope", "text")
+        make_input("Filter under note", "new_session_filter_under_note", "text")
+        make_input("Filter date from", "new_session_filter_date_from", "date")
+        make_input("Filter date to", "new_session_filter_date_to", "date")
+        make_input("Filter tag", "new_session_filter_tag", "text")
+        make_input("Filter collection", "new_session_filter_collection", "text")
+        make_input("Selected items", "new_session_selected_items", "text")
+        make_input("Pinned", "new_session_pinned", "checkbox")
+    }
+
+    function render() {
+        r_global_settings = getOrFetchFromLocalStorage("r_global_settings", load_r_global_settings, sixty_minutes)
+        r_user_settings = getOrFetchFromLocalStorage("r_user_settings", load_r_user_settings, sixty_minutes)
+
+        switch(current_screen) {
+            case screen_new_session: render_screen_new_session(); break;
+            case screen_sessions: render_screen_sessions(); break;
+            case screen_home: render_screen_home(); break;
+            default: alert("Unknown screen " + current_screen); render_screen_home()
+        }
+    }
+
+    render()
+
+
+    // await chooseOption(["a", "b", "c"])
+    // let new_session_table = document.createElement("table");
+    // main.appendChild(new_session_table);
+    // let new_session_table_tr_1 = document.createElement("tr");
+    // new_session_table.appendChild(new_session_table_tr_1);
+    // let new_session_table_tr_2 = document.createElement("tr");
+    // new_session_table.appendChild(new_session_table_tr_2);
+    // function create_th(text) {
+    //     let th = document.createElement("th")
+    //     th.innerText = text
+    //     return th
+    // }
+    // new_session_table_tr_1.appendChild(create_th("Map"))
+    // new_session_table_tr_1.appendChild(create_th("Cloned from session"))
+    // new_session_table_tr_1.appendChild(create_th("Algorithm"))
+    // new_session_table_tr_1.appendChild(create_th("Notes"))
+    // new_session_table_tr_1.appendChild(create_th("Questions"))
+    // new_session_table_tr_1.appendChild(create_th("Scope"))
+    // new_session_table_tr_1.appendChild(create_th("Filter under note"))
+    // new_session_table_tr_1.appendChild(create_th("Filter date from"))
+    // new_session_table_tr_1.appendChild(create_th("Filter date to"))
+    // new_session_table_tr_1.appendChild(create_th("Filter tag"))
+    // new_session_table_tr_1.appendChild(create_th("Filter collection"))
+    // new_session_table_tr_1.appendChild(create_th("Selected items"))
+    // new_session_table_tr_1.appendChild(create_th("Pinned"))
 
 
 });
@@ -199,7 +366,7 @@ export function rate(q) {
         const gamma = 0.2, delta = 0.4, S_min = 0.5;
         const loss = gamma * Math.pow(R_now, delta);
         S_after = Math.max(S_min, S * (1 - loss));
-        next_I = 0.5; // krátký retry
+        next_I = 0.5; // short retry
     }
 
     document.getElementById('result').innerHTML =

@@ -221,3 +221,55 @@ export function chooseOption(options) {
         }
     });
 }
+
+// 🔹 Save JSON object to localStorage with expiration (in milliseconds)
+export function saveToLocalStorage(key, data, ttlMs) {
+    try {
+        const now = Date.now();
+        const item = {
+            value: data,
+            expires: now + ttlMs
+        };
+        localStorage.setItem(key, JSON.stringify(item));
+    } catch (e) {
+        console.error(`Failed to save ${key} to localStorage:`, e);
+    }
+}
+
+// 🔹 Load JSON object from localStorage (returns null if it doesn't exist or has expired)
+export function loadFromLocalStorage(key) {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) return null;
+
+    try {
+        const item = JSON.parse(itemStr);
+        if (!item.expires || Date.now() > item.expires) {
+            localStorage.removeItem(key);
+            return null;
+        }
+        return item.value;
+    } catch (e) {
+        console.error(`Failed to parse ${key} from localStorage:`, e);
+        return null;
+    }
+}
+
+// 🔹 Get or fetch data, with caching to localStorage
+// fetchFn should be an async function returning the data
+export async function getOrFetchFromLocalStorage(key, fetchFn, ttlMs) {
+    const cached = loadFromLocalStorage(key);
+    if (cached !== null) return cached;
+
+    try {
+        const data = await fetchFn();
+        saveToLocalStorage(key, data, ttlMs);
+        return data;
+    } catch (e) {
+        console.error(`Failed to fetch data for ${key}:`, e);
+        return null;
+    }
+}
+
+export function minutes_to_ms(minutes) {
+    return minutes * 60 * 1000;
+}
