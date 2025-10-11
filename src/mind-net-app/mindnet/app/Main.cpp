@@ -130,7 +130,10 @@ bool commands_function_start(
     if (users.first.empty())
     {
         mindnet::plugins::core::models::User user;
-        user.username = mindnet::util::Utils::generate_secret_key(16, true, true, true, false);
+        user.username =
+            mindnet::util::Utils::generate_secret_key(1, false, true, true, false)+
+            mindnet::util::Utils::generate_secret_key(15, true, true, true, false);
+
         const auto& super_admin_password = mindnet::util::Utils::generate_secret_key(64);
         user.password_hash = mindnet::util::Utils::hash_sha_256(super_admin_password);
         user.display_name = "Superadmin";
@@ -274,7 +277,7 @@ bool commands_function_start(
 
     info << "Starting backend on port " << port << commit;
     info << "Starting frontend on port " << frontend_port << commit;
-    mindnet::essential::start_time = mindnet::util::Utils::currentUnixTimestamp();
+
     g_configuration.host = host;
     g_configuration.port = port;
     g_configuration.frontend_port = frontend_port;
@@ -359,7 +362,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 
 int main(int argc, char** argv)
 {
-    mindnet::essential::start_time = mindnet::util::Utils::currentUnixTimestamp();
+    mindnet::essential::start_time = mindnet::util::Utils::current_unix_timestamp_ms();
 
     auto loggers = {
         &fatal, &err, &warn, &info, &debug, &trace, &experiment
@@ -367,7 +370,7 @@ int main(int argc, char** argv)
 
     for (auto* logger : loggers)
     {
-        logger->set_timestamp_function(&mindnet::util::Utils::print_current_timestamp);
+        logger->set_timestamp_function(&mindnet::util::Utils::current_unixtime_to_string);
     }
 
     print_logo();

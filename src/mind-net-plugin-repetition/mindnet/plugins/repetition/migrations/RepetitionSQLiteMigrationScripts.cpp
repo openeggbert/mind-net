@@ -17,14 +17,29 @@ namespace mindnet::plugins::repetition::migrations
     	add_migration("V1__create_r_global_setting.sql", R"(
     	CREATE TABLE r_global_setting (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	created_at DATETIME,
-	updated_at DATETIME,
+	created_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
+	updated_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
 
 	key TEXT NOT NULL,
 	value TEXT NOT NULL,
 
 	UNIQUE (key)
 );
+
+INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
+  ('r18_b', 0.6),
+  ('r18_R_target', 0.9),
+  ('r18_R_opt', 0.9),
+  ('r18_alpha', 0.3),
+  ('r18_beta', 0.6),
+  ('r18_gamma', 0.2),
+  ('r18_delta', 0.4),
+  ('r18_k_over', 0.15),
+  ('r18_S_min', 0.5),
+  ('r18_short_retry', 0.5); -- 12 hours
+
+
+
 )");
 
     	add_migration("V2__create_r_user_setting.sql",R"(

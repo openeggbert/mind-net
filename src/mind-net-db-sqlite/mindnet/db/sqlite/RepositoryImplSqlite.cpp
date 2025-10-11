@@ -119,10 +119,10 @@ namespace mindnet::db::sqlite
         //id
         result.emplace_back(update ? static_cast<int64_t>(body["id"]) : 0);
         //created at
-        if (create) { result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp())); }
+        if (create) { result.emplace_back(static_cast<int64_t>(util::Utils::current_unix_timestamp_ms())); }
         else { result.emplace_back(static_cast<int64_t>(0)); }
         //updated at
-        result.emplace_back(static_cast<int64_t>(util::Utils::currentUnixTimestamp()));
+        result.emplace_back(static_cast<int64_t>(util::Utils::current_unix_timestamp_ms()));
 
         for (auto& col : model_definition.get_columns())
         {

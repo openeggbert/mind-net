@@ -42,6 +42,10 @@ namespace mindnet::http
         return safe;
     }
 
+    unixtime minutes_to_milliseconds(int minutes)
+    {
+        return ((unixtime)minutes) * 60* 1000;
+    }
     void AuthEndpointsGenerator::create_auth_endpoints(
         api::ServicePtr& service_ptr,
         crow::SimpleApp& crow_app
@@ -73,7 +77,7 @@ namespace mindnet::http
                     entity_id,
                     error);
                 auto log = log_object.to_values();
-                int64_t now = static_cast<int64_t>(mindnet::util::Utils::currentUnixTimestamp());
+                int64_t now = mindnet::util::Utils::current_unix_timestamp_ms();
                 log[1] = now;
                 log[2] = now;
 
@@ -139,10 +143,10 @@ namespace mindnet::http
             // -------------------------------
             // 1. Token Generation
             // -------------------------------
-            auto now = util::Utils::currentUnixTimestamp();
+            auto now = util::Utils::current_unix_timestamp_ms();
 
-            auto access_exp = now + g_configuration.access_token_expires_in * 60;
-            auto refresh_exp = now + g_configuration.refresh_token_expires_in * 60;
+            auto access_exp = now + minutes_to_milliseconds(g_configuration.access_token_expires_in);
+            auto refresh_exp = now + minutes_to_milliseconds(g_configuration.refresh_token_expires_in);
 
             std::string raw_access = util::Utils::generate_secret_key(32);
             std::string raw_refresh = util::Utils::generate_secret_key(64);
@@ -243,6 +247,11 @@ namespace mindnet::http
             // 3. Return to client
             // -------------------------------
             crow::json::wvalue response;
+            response["user_id"] = user.get_id();
+            // response["username"] = user.username;
+            // response["display_name"] = user.display_name;
+            // response["role"] = essential::user_role_to_string(user.role);
+            // response["status"] = user_status_to_string(user.status);
             response["access_token"] = raw_access;
             response["access_token_expires_at"] = access_exp;
             response["refresh_token"] = raw_refresh;
@@ -273,7 +282,7 @@ namespace mindnet::http
             std::string raw_refresh = body["refresh_token"].s();
             std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
 
-            auto now = util::Utils::currentUnixTimestamp();
+            auto now = util::Utils::current_unix_timestamp_ms();
 
             // 1. Find refresh token
             orm::QueryParams query;
@@ -379,7 +388,7 @@ namespace mindnet::http
                 std::string raw_refresh = body["refresh_token"].s();
                 std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
 
-                auto now = util::Utils::currentUnixTimestamp();
+                auto now = util::Utils::current_unix_timestamp_ms();
 
                 // 1. Find refresh token
                 orm::QueryParams query;
@@ -407,7 +416,7 @@ namespace mindnet::http
                 }
 
                 // 3. Generate new access token
-                auto access_exp = now + 15 * 60; // 15 minutes
+                auto access_exp = now + minutes_to_milliseconds(15); // 15 minutes
                 std::string raw_access = util::Utils::generate_secret_key(32);
                 std::string access_hash = util::Utils::hash_sha_256(raw_access);
 
@@ -437,11 +446,16 @@ namespace mindnet::http
                 }
 
                 // 4. Decide if we need refresh token rotation
-                int64_t seconds_left = refresh.expires_at - now;
-                int64_t rotation_threshold = g_configuration.refresh_token_rotation_threshold_in * 60;
-                bool need_rotation = seconds_left <= rotation_threshold;
+                int64_t milliseconds_left = refresh.expires_at - now;
+                int64_t rotation_threshold = minutes_to_milliseconds(g_configuration.refresh_token_rotation_threshold_in);
+                bool need_rotation = milliseconds_left <= rotation_threshold;
 
                 crow::json::wvalue response;
+                response["user_id"] = refresh.user_id;
+// response["username"] = user.username;
+// response["display_name"] = user.display_name;
+// response["role"] = essential::user_role_to_string(user.role);
+// response["status"] = user_status_to_string(user.status);
                 response["access_token"] = raw_access;
                 response["access_token_expires_at"] = access_exp;
 
@@ -474,7 +488,7 @@ namespace mindnet::http
                     new_refresh.user_id = refresh.user_id;
                     new_refresh.token_hash = refresh_hash_new;
                     new_refresh.issued_at = now;
-                    new_refresh.expires_at = now + 30 * 24 * 3600;
+                    new_refresh.expires_at = now + minutes_to_milliseconds(g_configuration.refresh_token_expires_in);
                     new_refresh.rotated_from_id = refresh.get_id();
                     new_refresh.last_used_at = now;
                     new_refresh.ip_address = req.remote_ip_address;
@@ -686,7 +700,7 @@ namespace mindnet::http
         orm::QueryParams refresh_query;
         refresh_query.add_filter(plugins::core::columns::RefreshTokenColumns::USER_ID, std::to_string(user.get_id()));
         auto refresh_tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, refresh_query);
-        auto now = util::Utils::currentUnixTimestamp();
+        auto now = util::Utils::current_unix_timestamp_ms();
         for (auto& r : refresh_tokens.first)
         {
             plugins::core::models::RefreshToken t;

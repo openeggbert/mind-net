@@ -44,10 +44,10 @@ namespace mindnet::util
 
     public:
         static SM2Result calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef);
-        static long long currentTimestamp();
-        static long long currentUnixTimestamp();
-        static string unixToFormattedString(ll unixTimestamp);
-        static string print_current_timestamp();
+        static long long current_unix_timestamp_seconds();
+        static long long current_unix_timestamp_ms();
+        static string unixtime_to_string(unixtime unixTimestamp);
+        static string current_unixtime_to_string();
         // static ll formattedStringToUnix(const std::string& formattedTime);
 
         // Convert single letter 'a'-'z' to number 0-25

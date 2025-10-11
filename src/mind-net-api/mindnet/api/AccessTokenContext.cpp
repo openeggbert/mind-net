@@ -62,7 +62,7 @@ namespace mindnet::api
                 msg = "Access token revoked";
                 return;
             }
-            if (util::Utils::currentUnixTimestamp() >= access_token.expires_at)
+            if (util::Utils::current_unix_timestamp_ms() >= access_token.expires_at)
             {
                 status = 401;
                 msg = "Access token expired";
@@ -70,7 +70,7 @@ namespace mindnet::api
             }
 
             {
-                access_token.last_used_at = util::Utils::currentUnixTimestamp();
+                access_token.last_used_at = util::Utils::current_unix_timestamp_ms();
                 access_token.ip_address = req.remote_ip_address;
                 access_token.user_agent = req.get_header_value("User-Agent");
 

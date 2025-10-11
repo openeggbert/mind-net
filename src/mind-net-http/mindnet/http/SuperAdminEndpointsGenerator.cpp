@@ -439,7 +439,7 @@ if (!form) {{
                 error,
                 diff);
             auto log = log_object.to_values();
-            int64_t now = static_cast<int64_t>(mindnet::util::Utils::currentUnixTimestamp());
+            int64_t now = static_cast<int64_t>(mindnet::util::Utils::current_unix_timestamp_ms());
             log[1] = now;
             log[2] = now;
 

@@ -141,10 +141,10 @@ namespace mindnet::db::sqlite
         }
     }
 
-    void set_pragmas(SQLite::Database& db, bool temp_store = false)
+    void set_pragmas(SQLite::Database& db, bool temp_store = false, bool readonly = false)
     {
         db.exec("PRAGMA foreign_keys = ON;");
-        db.exec("PRAGMA journal_mode = WAL;");
+        if (!readonly) db.exec("PRAGMA journal_mode = WAL;");
         db.exec("PRAGMA busy_timeout = 5000;");
         if (temp_store)
         {
@@ -249,7 +249,7 @@ namespace mindnet::db::sqlite
                         // }
                         // else
                         // {
-                        int number = (*query_ptr).getColumn(i);
+                        int64_t number = (*query_ptr).getColumn(i);
                         result.push_back(number);
                         // }
                     }
@@ -419,7 +419,7 @@ namespace mindnet::db::sqlite
             case mindnet::model::ColumnType::DateTime:
             case mindnet::model::ColumnType::Integer:
                 {
-                    int number = stoi(value);
+                    int64_t number = stol(value);
                     // if (foreign_key && number == 0)
                     // {
                     //     debug << "Binding index " << bind_index << " with value NULL" << commit;
@@ -455,7 +455,7 @@ namespace mindnet::db::sqlite
         );
 
         db.setBusyTimeout(5000);
-        set_pragmas(db);
+        set_pragmas(db, false, true);
 
         SQLite::Statement* query_ptr = nullptr;
 
@@ -511,7 +511,7 @@ namespace mindnet::db::sqlite
                     case mindnet::model::ColumnType::DateTime:
                     case mindnet::model::ColumnType::Integer:
                         {
-                            int number = (*query_ptr).getColumn(i);
+                            int64_t number = (*query_ptr).getColumn(i);
                             result.push_back(number);
                         }
                         break;

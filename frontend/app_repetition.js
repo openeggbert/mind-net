@@ -2,11 +2,11 @@
 // Imports & Globals
 // ========================================
 
+import {delete_entity, getUserId, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
 import {get_element} from "./dom.js";
 
-let r_global_setting_id = ""
+let user_id = null
 let r_global_settings = null;
-let r_user_setting_id = ""
 let r_user_settings = null;
 let r_session_id = ""
 let r_session = null;
@@ -129,13 +129,17 @@ export function showWindowFrom(title, url) {
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+
+    user_id = getUserId()
+    let r_global_setting = await list_all_entities("r_global_setting")
+    r_global_setting.forEach(s =>alert (JSON.stringify(s)) );
+
+
     get_element("repetition_header").title = "Go to list of all sessions"
     get_element("repetition_header").style.cursor = "pointer"
+
     get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
     get_element("button_mindnet").title = "Go to Mind Net generic frontend"
-
-    get_element("button_sessions").addEventListener("click", () => {});
-    get_element("button_sessions").title = "Sessions"
 
     get_element("button_settings").addEventListener("click", () => {});
     get_element("button_settings").title = "User settings"
@@ -151,27 +155,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+export function showOrHideAnswer() {
+
+    let back = document.querySelector('.back');
+    let showbtn = document.querySelector('.show-btn');
+    let shown = showbtn.innerText === "Hide answer"
 
 
+    document.querySelector('.back').style.display = shown ? 'none' : 'block';
+    showbtn.innerText = shown ? "Show answer" : "Hide answer";
 
-
-
-
-
-
-
-
-export function showAnswer() {
-    document.querySelector('.back').style.display = 'block';
 }
-window.showAnswer = showAnswer;
+window.showOrHideAnswer = showOrHideAnswer;
 
 export function rate(q) {
-    const S = 1.0; // aktuální stabilita
+    get_element("rating-btn-0").className = "rating-btn"
+    get_element("rating-btn-1").className = "rating-btn"
+    get_element("rating-btn-2").className = "rating-btn"
+    get_element("rating-btn-3").className = "rating-btn"
+    get_element("rating-btn-4").className = "rating-btn"
+    get_element("rating-btn-5").className = "rating-btn"
+
+    get_element("rating-btn-" + q).className = "rating-btn rating-btn-selected"
+
+    const S = 1.0; // current stability
     const b = 0.6;
     const R_target = 0.9;
-    const elapsed = 1.0; // dny od posledního opakování
-
+    const elapsed = 1.0; // days since last repetition
     const R_now = Math.exp(-Math.pow(elapsed / S, b));
     let S_after = S;
     let next_I = 1.0;

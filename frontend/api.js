@@ -61,11 +61,23 @@ export async function loadApplications() {
     return data;
 }
 
+const USER_ID = "user_id";
 const ACCESS_TOKEN_KEY = "access_token";
 const REFRESH_TOKEN_KEY = "refresh_token";
 const ACCESS_TOKEN_EXPIRES_AT_KEY = "access_token_expires_at";
 const REFRESH_TOKEN_EXPIRES_AT_KEY = "refresh_token_expires_at";
 
+export function getUserId() {
+    return localStorage.getItem(USER_ID);
+}
+
+export function setUserId(userid) {
+    if(userid === null){
+        localStorage.removeItem(USER_ID);
+    } else {
+    localStorage.setItem(USER_ID, userid);
+    }
+}
 export function getAccessToken() {
     return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
@@ -108,16 +120,15 @@ async function ensureFreshAccessToken() {
     const exp = getAccessTokenExpiresAt();
     if (!exp) return;
 
-    const nowSec = Math.floor(Date.now() / 1000);
-    const expSec = Math.floor(Number(exp));
+    const nowMs = Date.now();
+    const expMs = Number(exp);
 
-    // if expired or <= 60 s remaining, refresh
-    if (expSec <= nowSec + 60) {
+    // if expired or ≤ 60 000 ms remaining
+    if (expMs <= nowMs + 60_000) {
         const ok = await refreshToken();
-        if (!ok) {
-            console.warn("Failed to refresh access token automatically");
-        }
+        if (!ok) console.warn("Failed to refresh access token automatically");
     }
+
 }
 
 

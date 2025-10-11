@@ -75,7 +75,7 @@ namespace mindnet::http
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
         {
-            if (entry.path().extension() == ".js")
+            if (entry.path().extension() == ".js" && !entry.path().string().starts_with("app_"))
             {
                 js_files.push_back(entry.path());
             }

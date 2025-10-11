@@ -35,6 +35,7 @@ button {
 }
 .show-btn { background: #444; color: #fff; }
 .rating-btn { background: #2e7d32; color: #fff; }
+.rating-btn:hover, .rating-btn-selected { background: #4fbc51; color: #fff; }
 .info { font-size: 0.9em; color: #ccc; margin-top: 1em; }
 
 
@@ -93,7 +94,7 @@ button {
 
 
 header {
-    background: var(--color-header);
+    /*background: var(--color-header);*/
     padding: 10px;
     color: var(--color-header-text);
     display: flex;

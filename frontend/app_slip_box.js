@@ -1,7 +1,7 @@
 // ========================================
 // Imports & Globals
 // ========================================
-import {API_BASE, apiFetch, delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
+import {delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
     chooseOption

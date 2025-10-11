@@ -14,30 +14,27 @@
 <div id="slip_box">
 
     <header>
-        <div id="repetition_header" onclick="window.location.href='app_repetition_header.html'">🔁 Repetiton</div>
+        <div id="repetition_header" onclick="window.location.href='app_repetition.html'">🔁 Repetiton</div>
         <button id="button_mindnet">🌐 Mind Net</button>
-        <button id="button_sessions">Sessions →</button>
         <button id="button_settings" class="focus">Settings</button>
         <button id="button_theme">🌓 Toggle Theme</button>
     </header>
 
     <main id="main">
 
-        <h2>SM-18 Zkoušení</h2>
-
         <div class="card">
             <div class="front">❓ Co znamená <code>const</code> u parametru funkce v C++?</div>
             <div class="back">✅ Označuje, že parametr nebude uvnitř funkce měněn.</div>
-            <button class="show-btn" onclick="showAnswer()">Zobrazit odpověď</button>
+            <button class="show-btn" onclick="showOrHideAnswer()">Show answer</button>
             <div id="rating">
-                <p>Jak dobře sis poznámku vybavil?</p>
+                <p>How well did you recall the note?</p>
                 <div>
-                    <button class="rating-btn" onclick="rate(0)">0</button>
-                    <button class="rating-btn" onclick="rate(1)">1</button>
-                    <button class="rating-btn" onclick="rate(2)">2</button>
-                    <button class="rating-btn" onclick="rate(3)">3</button>
-                    <button class="rating-btn" onclick="rate(4)">4</button>
-                    <button class="rating-btn" onclick="rate(5)">5</button>
+                    <button class="rating-btn" id="rating-btn-0" onclick="rate(0)">0</button>
+                    <button class="rating-btn" id="rating-btn-1" onclick="rate(1)">1</button>
+                    <button class="rating-btn" id="rating-btn-2" onclick="rate(2)">2</button>
+                    <button class="rating-btn" id="rating-btn-3" onclick="rate(3)">3</button>
+                    <button class="rating-btn" id="rating-btn-4" onclick="rate(4)">4</button>
+                    <button class="rating-btn" id="rating-btn-5" onclick="rate(5)">5</button>
                 </div>
             </div>
             <div class="info" id="result"></div>

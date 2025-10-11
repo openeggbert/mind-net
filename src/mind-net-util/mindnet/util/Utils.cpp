@@ -59,37 +59,44 @@ namespace mindnet::util
         // result.new_repetition = 3
     }
 
-    long long Utils::currentTimestamp()
-    {
-        time_t now = time(nullptr);
-        struct tm* now2 = localtime(&now);
-        char buffer[80];
-        strftime(buffer, sizeof(buffer), "%Y%m%d%H%M%S", now2);
-        return atoll(buffer);
-    }
-
-    long long Utils::currentUnixTimestamp()
+    long long Utils::current_unix_timestamp_seconds()
     {
         return static_cast<long long>(std::time(nullptr));
     }
+    long long Utils::current_unix_timestamp_ms()
+    {
+        using namespace std::chrono;
+        return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 
-    std::string Utils::unixToFormattedString(ll unixTimestamp)
+    }
+
+    std::string Utils::unixtime_to_string(unixtime unixTimestamp)
     {
         if (unixTimestamp == 0)
         {
             return "none";
         }
-        std::time_t rawTime = static_cast<std::time_t>(unixTimestamp);
-        std::tm* timeInfo = std::localtime(&rawTime);
 
-        char buffer[21];
+        // split into seconds and milliseconds
+        std::time_t seconds = static_cast<std::time_t>(unixTimestamp / 1000);
+        int milliseconds = static_cast<int>(unixTimestamp % 1000);
+
+        std::tm* timeInfo = std::localtime(&seconds);
+
+        // basic format: YYYY-MM-DD HH:MM:SS.mmm
+        char buffer[32];
         std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeInfo);
-        return std::string(buffer);
+
+        // add milliseconds
+        char result[40];
+        std::snprintf(result, sizeof(result), "%s.%03d", buffer, milliseconds);
+    
+        return {result};
     }
 
-    string Utils::print_current_timestamp()
+    string Utils::current_unixtime_to_string()
     {
-        return Utils::unixToFormattedString(Utils::currentUnixTimestamp());
+        return Utils::unixtime_to_string(Utils::current_unix_timestamp_ms());
     }
 
     // Convert single letter 'a'-'z' to number 0-25

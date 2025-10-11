@@ -13,17 +13,22 @@ export function getQueryParams() {
 }
 export function formatDateTime(value) {
     if (!value || value === 0) return "";
-    const d = new Date(Number(value) * 1000); // Unix timestamp in seconds
-    const pad = n => n.toString().padStart(2,'0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const d = new Date(Number(value)); // Unix timestamp in milliseconds
+    const pad = n => n.toString().padStart(2, '0');
+    const ms = String(d.getMilliseconds()).padStart(3, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} `
+        + `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${ms}`;
 }
+
 export function parseDateTimeToUnix(str) {
     if (!str) return 0;
-    const parts = str.split(/[- :]/);
-    if (parts.length < 6) return 0;
-    const [y,m,d,h,min,s] = parts.map(Number);
-    return Math.floor(new Date(y,m-1,d,h,min,s).getTime()/1000);
+    // podpora i pro formát s ms: "YYYY-MM-DD HH:MM:SS.mmm"
+    const match = str.match(/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)(?:\.(\d{1,3}))?$/);
+    if (!match) return 0;
+    const [_, y, m, d, h, min, s, ms] = match.map(Number);
+    return new Date(y, m - 1, d, h, min, s, ms || 0).getTime(); // ms
 }
+
 
 // key: hidden_columns
 // value: { "note": ["created_at","updated_at"], "user": ["password"] }

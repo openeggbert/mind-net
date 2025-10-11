@@ -1,4 +1,4 @@
-import {API_BASE, setAccessToken, setRefreshToken, getRefreshToken, apiFetch} from "./api.js";
+import {API_BASE, setAccessToken, setRefreshToken, getRefreshToken, apiFetch, setUserId} from "./api.js";
 import {showError} from "./dom.js";
 
 export async function login(username, password) {
@@ -13,6 +13,7 @@ export async function login(username, password) {
         return false;
     }
     const json = await res.json();
+    setUserId(json.user_id)
     setAccessToken(json.access_token, json.access_token_expires_at);
     setRefreshToken(json.refresh_token, json.refresh_token_expires_at);
     return true;
@@ -36,6 +37,7 @@ export async function logout() {
         showError(`Logout failed: ${t || res.statusText}`);
         return false;
     }
+    setUserId(null)
     setAccessToken(null);
     setRefreshToken(null);
     return true;
@@ -67,11 +69,13 @@ export async function refreshToken() {
     });
     let res_status = res.status;
     if (!res.ok && (res_status === 401 || res_status === 403)) {
+        setUserId(null)
         setAccessToken(null);
         setRefreshToken(null);
         return false;
     }
     const json = await res.json();
+    setUserId(json.user_id)
     setAccessToken(json.access_token, json.access_token_expires_at);
     return true;
 }
