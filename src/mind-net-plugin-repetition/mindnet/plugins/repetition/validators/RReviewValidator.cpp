@@ -8,6 +8,7 @@
 #include "mindnet/plugins/core/enums/SingleRight.h"
 #include "mindnet/plugins/repetition/models/RReview.h"
 #include "mindnet/api/Persistence.h"
+#include "mindnet/plugins/repetition/models/RSession.h"
 
 #define Model RReview
 #define MODEL R_REVIEW
@@ -64,14 +65,20 @@ auto it = filter.find("user_id");
         return ok_result;
     }
 
-
-
-
-
-
-
     OperationResult RReviewValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
+        auto session_result = ctx.db->read(models::R_SESSION_DEFINITION, ctx.token, entity.r_session_id);
+        if (session_result.second.ko())
+        {
+            return {500, "Loading session " + std::to_string(entity.r_session_id) + " failed."};
+        }
+        models::RSession session;
+        session.from_values(session_result.first);
+        if (session.map_id != entity.map_id)
+        {
+            return {403, "Map ID must be same for both r_session and r_review."};
+        }
+
         return ok_result;
     }
 

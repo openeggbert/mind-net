@@ -12,7 +12,7 @@ import {
     formatDateTime, formatDateTimeHM,
     get_element,
     getOrFetchFromLocalStorage,
-    minutes_to_ms
+    minutes_to_ms, showError
 } from "./dom.js";
 import {  } from "./api.js";
 
@@ -21,7 +21,7 @@ let user_id = null
 let r_global_settings = {};
 let r_user_settings = null;
 let r_session_id = ""
-let r_session = null;
+let r_session_for_reviews = null;
 let r_review_id = ""
 let r_review = null;
 let r0_state_id = ""
@@ -342,7 +342,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnRun.className = "session-btn";
             btnRun.textContent = "Run";
             btnRun.onclick = () => {
-                alert("Run session " + json.id);
+                r_session_for_reviews = json
+                current_screen = screen_new_review
+                render()
             };
             actions.appendChild(btnRun);
 
@@ -427,7 +429,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return str;
         }
     }
-
 
     function render_screen_new_session() {
         refresh_param_screen()
@@ -594,13 +595,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let response = await post_entity("r_session", new_session);
             if(response === null) {
-                alert("Saving new session failed.")
+                showError("Saving new session failed.")
                 return;
             }
             clone_from_r_session = null
             current_screen = screen_sessions;
             render()
         }
+    }
+
+    function render_screen_new_review() {
+        refresh_param_screen()
+        main_content.innerHTML = "";
+
+        alert("new review");
+        r_session_for_reviews = null;
     }
 
     function render(new_current_screen = null) {
@@ -614,6 +623,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         switch(current_screen) {
             case screen_new_session: render_screen_new_session(); break;
             case screen_sessions: render_screen_sessions(); break;
+            case screen_new_review : render_screen_new_review(); break;
             case screen_home: render_screen_home(); break;
             default: alert("Unknown screen " + current_screen); render_screen_home()
         }

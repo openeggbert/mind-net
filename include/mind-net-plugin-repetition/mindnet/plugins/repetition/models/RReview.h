@@ -25,6 +25,7 @@ namespace mindnet::plugins::repetition::models
         .allow_reader_write()
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::R_SESSION_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
             coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
@@ -43,6 +44,7 @@ namespace mindnet::plugins::repetition::models
     struct Model : mindnet::model::BaseModel
     {
         int user_id{};
+        int map_id{};
         int r_session_id{};
         enums::RepetitionAlgorithm algorithm{};
         int note_id{};
@@ -65,6 +67,7 @@ namespace mindnet::plugins::repetition::models
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
+                map_id == other.map_id &&
                 r_session_id == other.r_session_id &&
                 algorithm == other.algorithm &&
                 note_id == other.note_id &&

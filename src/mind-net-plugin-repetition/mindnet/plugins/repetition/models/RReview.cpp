@@ -13,6 +13,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
         result.push_back(user_id);
+        result.push_back(map_id);
         result.push_back(r_session_id);
         result.push_back(repetition_algorithm_to_int(algorithm));
         result.push_back(note_id);
@@ -39,6 +40,7 @@ namespace mindnet::plugins::repetition::models
         created_at = number();
         updated_at = number();
         user_id = number();
+        map_id = number();
         r_session_id = number();
         algorithm = enums::int_to_repetition_algorithm(number());
         note_id = number();

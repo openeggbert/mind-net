@@ -41,6 +41,7 @@ namespace mindnet::plugins::repetition::columns
 
         // Core fields
         static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* MAP_ID = "map_id";
         static constexpr const char* R_SESSION_ID = "r_session_id";
         static constexpr const char* ALGORITHM = "algorithm";
 

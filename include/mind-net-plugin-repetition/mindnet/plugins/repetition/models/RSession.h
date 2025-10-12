@@ -61,6 +61,7 @@ namespace mindnet::plugins::repetition::models
         unixtime filter_date_to{};
         int filter_tag{};
         int filter_collection{};
+        //example: {"note_ids":[3,4,5,6,7], "question_ids":[3,4,6,7,8]}
         string selected_items{"{}"};
         bool pinned{false};
 

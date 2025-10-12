@@ -82,7 +82,7 @@ CREATE TABLE r_session (
     filter_tag INTEGER,
     filter_collection INTEGER,
 
-    selected_items TEXT NOT NULL DEFAULT '{}', --example: {"note_ids":[3,4,5,6,7], "question_ids":[3,4,6,7,8]}
+    selected_items TEXT NOT NULL DEFAULT '{}',
     pinned BOOL DEFAULT 0,
 
     FOREIGN KEY (user_id) REFERENCES user(id),
@@ -102,6 +102,7 @@ CREATE TABLE r_review (
 	updated_at DATETIME,
 
     user_id INTEGER NOT NULL,
+    map_id INTEGER NOT NULL,
     r_session_id INTEGER,
 
     algorithm INTEGER NOT NULL,

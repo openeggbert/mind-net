@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Use SM-18, new entity review_session
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] Super Memo component
 - [ ] TASK Check operator== implementations for all models
