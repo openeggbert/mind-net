@@ -273,7 +273,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-
         // Container
         let container = document.createElement("div");
         container.className = "session-list";
@@ -298,7 +297,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             🔄 Updated: ${formatDateTimeHM(json.updated_at)}<br>
             🧩 Map ID: ${json.map_id}<br>
             📑 Cloned from: ${json.cloned_from_session_id || "-"}<br>
-            📌 Pinned: <span id="Pinned">${json.pinned ? "Yes" : "No"}</span>
+            📌 Pinned: <span id="Pinned">${json.pinned ? "Yes" : "No"}</span><br>
+            📝 Description: ${json.description}
         `;
             card.appendChild(meta);
 
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         function create_br() {
             return document.createElement("br")
         }
-        function make_input(text,id,type){
+        function make_input(text,id,type = "text"){
             let div = document.createElement("div")
             main_content.appendChild(div)
             div.style.marginBottom = "10px";
@@ -522,15 +522,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         ]
 
         make_select("Scope", "new_session_scope", scopes)
+        make_input("Description", "new_session_description")
         
         make_input("Filter under note", "new_session_filter_under_note", "text")
         if(cloned) get_element("new_session_filter_under_note").value = clone_from_r_session.filter_under_note
 
+        function unix_ms_to_yyyymmdd(ms) {
+            if (ms === null || ms === undefined || ms === 0) return "";
+            const d = new Date(ms);
+            if (isNaN(d.getTime())) return "";
+
+            const year = d.getUTCFullYear();
+            const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(d.getUTCDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         make_input("Filter date from", "new_session_filter_date_from", "date")
-        if(cloned) get_element("new_session_filter_date_from").value = clone_from_r_session.filter_date_from
+        if(cloned) get_element("new_session_filter_date_from").value = unix_ms_to_yyyymmdd(clone_from_r_session.filter_date_from)
 
         make_input("Filter date to", "new_session_filter_date_to", "date")
-        if(cloned) get_element("new_session_filter_date_to").value = clone_from_r_session.filter_date_to
+        if(cloned) get_element("new_session_filter_date_to").value = unix_ms_to_yyyymmdd(clone_from_r_session.filter_date_to)
 
         make_input("Filter tag", "new_session_filter_tag", "text")
         if(cloned) get_element("new_session_filter_tag").value = clone_from_r_session.filter_tag
@@ -550,6 +562,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             new_session["notes"]=get_element("new_session_notes").checked ? 1 : 0;
             new_session["questions"]=get_element("new_session_questions").checked ? 1 : 0;
             new_session["scope"] = get_element("new_session_scope").value;
+            new_session["description"] = get_element("new_session_description").value;
 
             new_session["filter_under_note"] = get_element("new_session_filter_under_note").value;
             if(new_session["filter_under_note"] === "")new_session["filter_under_note"] = 0
@@ -575,12 +588,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             new_session["filter_collection"] = get_element("new_session_filter_collection").value;
             if(new_session["filter_collection"] === "")new_session["filter_collection"] = 0
 
-
             new_session["selected_items"] = get_element("new_session_selected_items").value;
             if(new_session["selected_items"] === "")new_session["selected_items"] = "{}"
             new_session["pinned"] = get_element("new_session_pinned").checked ? 1 : 0;
 
-            alert(JSON.stringify(new_session));
             let response = await post_entity("r_session", new_session);
             if(response === null) {
                 alert("Saving new session failed.")

@@ -24,6 +24,7 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* NOTES = "notes";
         static constexpr const char* QUESTIONS = "questions";
         static constexpr const char* SCOPE = "scope";
+        static constexpr const char* DESCRIPTION = "description";
 
         // Filter settings
         static constexpr const char* FILTER_UNDER_NOTE = "filter_under_note";

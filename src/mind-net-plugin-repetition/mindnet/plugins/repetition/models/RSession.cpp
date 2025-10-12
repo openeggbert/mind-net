@@ -19,6 +19,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(notes);
         result.push_back(questions);
         result.push_back(cast64(scope));
+        result.push_back(description);
         result.push_back(filter_under_note);
         result.push_back(cast64(filter_date_from));
         result.push_back(cast64(filter_date_to));
@@ -33,7 +34,15 @@ namespace mindnet::plugins::repetition::models
     {
         int i = 0;
 
-        def_helper_lambdas()
+        auto number = [&values, &i]
+        {
+            std::cout << "values[" << i << "]" << std::endl;
+            std::int64_t result = std::get<std::int64_t>(values[i++]);
+            std::cout << "result[" << i << "]" << result<< std::endl;
+            return result;
+        };
+        auto boolean = [&number] { return number() != 0; };
+        auto text = [&values, &i] { return std::get<std::string>(values[i++]); };
 
         set_id(number());
         created_at = number();
@@ -45,6 +54,7 @@ namespace mindnet::plugins::repetition::models
         notes = boolean();
         questions = boolean();
         scope = enums::int_to_repetition_scope(number());
+        description = text();
         filter_under_note = number();
         filter_date_from = number();
         filter_date_to = number();

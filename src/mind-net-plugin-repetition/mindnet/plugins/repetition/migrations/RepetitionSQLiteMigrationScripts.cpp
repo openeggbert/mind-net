@@ -74,6 +74,8 @@ CREATE TABLE r_session (
     questions BOOLEAN NOT NULL DEFAULT 1,
     scope INTEGER NOT NULL,
 
+    description TEXT,
+
     filter_under_note INTEGER,
     filter_date_from DATETIME,
     filter_date_to DATETIME,
