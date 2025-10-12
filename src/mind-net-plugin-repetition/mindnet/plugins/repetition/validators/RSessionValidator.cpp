@@ -88,8 +88,7 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RSessionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                  const Model& new_entity) const
     {
-        // Validate the same integrity rules as create
-        return validate_create_integrity(ctx, new_entity);
+        return ok_result;
     }
 
     OperationResult RSessionValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const

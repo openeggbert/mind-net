@@ -36,6 +36,10 @@ namespace mindnet::plugins::core::triggers
         const orm::QueryParams query_params)
     {
         if (def.get_model_name() == "history") return;
+        if (def.get_model_name() == "api_log") return;
+        if (def.get_model_name() == "auth_log") return;
+        if (def.get_model_name() == "super_admin_log") return;
+
         if (action_result.ko()) return;
 
         experiment << "Trigger: " << commit;

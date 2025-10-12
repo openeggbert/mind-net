@@ -2,8 +2,19 @@
 // Imports & Globals
 // ========================================
 
-import {getUserId, list_all_entities, post_entity} from "./api.js";
-import {chooseOption, get_element, getOrFetchFromLocalStorage, minutes_to_ms} from "./dom.js";
+import {
+    getUserId, list_all_entities, post_entity,
+    list_entities} from "./api.js";
+import {
+    chooseOption,
+    formatDate,
+    formatDateTime, formatDateTimeHM,
+    get_element,
+    getOrFetchFromLocalStorage,
+    minutes_to_ms
+} from "./dom.js";
+import {  } from "./api.js";
+
 
 let user_id = null
 let r_global_settings = {};
@@ -23,6 +34,8 @@ let r18_state = null;
 let r18_perfagg_id = ""
 let r18_perfagg = null;
 let wasDragged = false;
+
+let clone_from_r_session = null
 
 // ========================================
 // Window
@@ -195,7 +208,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return r_user_settings
     }
 
-
     const sixty_minutes = minutes_to_ms(60)
     function refresh_param_screen() {
         const url = new URL(window.location.href);
@@ -225,25 +237,171 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_button("Global settings",screen_global_settings)
         make_button("User settings",screen_user_settings)
     }
+
+    let currentPage = 1;
+    let totalPages = 1;
+    const pageSize = 10;
+
     async function render_screen_sessions() {
-        refresh_param_screen()
-        main_content.innerHTML = "";
+        refresh_param_screen();
+        main_content.innerHTML = "<h2>Your Sessions</h2>";
 
-        let r_sessions = await list_all_entities("r_session", "user_id=" + user_id)
+        const params = "&user_id=" + user_id + "&sort=created_at&order=desc";
 
-        if(r_sessions.length > 0){
-            let ul = document.createElement("ul");
-            main_content.appendChild(ul)
-            r_sessions.forEach(json => {
-                let li = document.createElement("li");
-                li.innerHTML = JSON.stringify(json, null, 2);
-                ul.appendChild(li)
-            })
-        } else{
-            main_content.innerHTML = "<p>No sessions found</p>";
+        const json = await list_entities("r_session", params, currentPage, pageSize);
+
+        const r_sessions = json.items || [];
+        totalPages = json.total_pages || 1;
+
+        if (r_sessions.length === 0) {
+            main_content.innerHTML += "<p>No sessions found.</p>";
+            return;
         }
 
+        // Container
+        let container = document.createElement("div");
+        container.className = "session-list";
+        main_content.appendChild(container);
+
+        // Cards
+        r_sessions.forEach(json => {
+            let card = document.createElement("div");
+            card.className = "session-card";
+
+            // Header
+            let title = document.createElement("div");
+            title.className = "session-title";
+            title.innerHTML = `Session #${json.id} — ${algoName(json.algorithm)} (${scopeName(json.scope)})`;
+            card.appendChild(title);
+
+            // Meta info
+            let meta = document.createElement("div");
+            meta.className = "session-meta";
+            meta.innerHTML = `
+            🕓 Created: ${formatDateTimeHM(json.created_at)}<br>
+            🔄 Updated: ${formatDateTimeHM(json.updated_at)}<br>
+            🧩 Map ID: ${json.map_id}<br>
+            📑 Cloned from: ${json.cloned_from_session_id || "-"}<br>
+            📌 Pinned: ${json.pinned ? "Yes" : "No"}
+        `;
+            card.appendChild(meta);
+
+            // Details toggle
+            let detailsBtn = document.createElement("button");
+            detailsBtn.className = "session-btn";
+            detailsBtn.textContent = "Show details";
+            detailsBtn.onclick = () => {
+                let d = card.querySelector(".session-details");
+                let shown = d.style.display !== "none";
+                d.style.display = shown ? "none" : "block";
+                detailsBtn.textContent = shown ? "Show details" : "Hide details";
+            };
+            card.appendChild(detailsBtn);
+
+            // Details table
+            let details = document.createElement("div");
+            details.className = "session-details";
+            details.style.display = "none";
+            details.innerHTML = `
+            <table class="session-table">
+                <tr><th>Algorithm</th><td>${algoName(json.algorithm)}</td></tr>
+                <tr><th>Notes</th><td>${json.notes ? "✅" : "❌"}</td></tr>
+                <tr><th>Questions</th><td>${json.questions ? "✅" : "❌"}</td></tr>
+                <tr><th>Scope</th><td>${scopeName(json.scope)}</td></tr>
+                <tr><th>Filter under note</th><td>${json.filter_under_note || "-"}</td></tr>
+                <tr><th>Filter date from</th><td>${formatDateTimeHM(json.filter_date_from)}</td></tr>
+                <tr><th>Filter date to</th><td>${formatDateTimeHM(json.filter_date_to)}</td></tr>
+                <tr><th>Filter tag</th><td>${json.filter_tag || "-"}</td></tr>
+                <tr><th>Filter collection</th><td>${json.filter_collection || "-"}</td></tr>
+                <tr><th>Selected items</th><td><pre>${formatJson(json.selected_items)}</pre></td></tr>
+            </table>
+        `;
+            card.appendChild(details);
+
+            // Actions
+            let actions = document.createElement("div");
+            actions.className = "session-actions";
+
+            let btnRun = document.createElement("button");
+            btnRun.className = "session-btn";
+            btnRun.textContent = "Run";
+            btnRun.onclick = () => {
+                alert("Run session " + json.id);
+            };
+            actions.appendChild(btnRun);
+
+            let btnClone = document.createElement("button");
+            btnClone.className = "session-btn danger";
+            btnClone.textContent = "Clone";
+            btnClone.onclick = () => {
+                //if (confirm("Clone session #" + json.id + "?")) {
+                    clone_from_r_session = json;
+                    alert(JSON.stringify(clone_from_r_session));
+                    render(screen_new_session);
+                //}
+            };
+            actions.appendChild(btnClone);
+
+            card.appendChild(actions);
+            container.appendChild(card);
+        });
+
+        // Pagination controls
+        render_pagination_controls();
     }
+
+    function render_pagination_controls() {
+        const footer = document.createElement("div");
+        footer.className = "pagination-footer";
+        footer.innerHTML = `
+        <button class="session-btn" data-action="first" ${currentPage === 1 ? "disabled" : ""}>⏮ First</button>
+        <button class="session-btn" data-action="prev" ${currentPage === 1 ? "disabled" : ""}>◀ Prev</button>
+        <span class="page-info">Page ${currentPage} / ${totalPages}</span>
+        <button class="session-btn" data-action="next" ${currentPage === totalPages ? "disabled" : ""}>Next ▶</button>
+        <button class="session-btn" data-action="last" ${currentPage === totalPages ? "disabled" : ""}>Last ⏭</button>
+    `;
+
+        const btnFirst = footer.querySelector('button[data-action="first"]');
+        const btnPrev  = footer.querySelector('button[data-action="prev"]');
+        const btnNext  = footer.querySelector('button[data-action="next"]');
+        const btnLast  = footer.querySelector('button[data-action="last"]');
+
+        btnFirst.onclick = () => { currentPage = 1; render_screen_sessions(); };
+        btnPrev.onclick  = () => { if (currentPage > 1) { currentPage--; render_screen_sessions(); } };
+        btnNext.onclick  = () => { if (currentPage < totalPages) { currentPage++; render_screen_sessions(); } };
+        btnLast.onclick  = () => { currentPage = totalPages; render_screen_sessions(); };
+
+        main_content.appendChild(footer);
+    }
+
+    function algoName(a) {
+        switch (a) {
+            case 0: return "R-0";
+            case 2: return "R-2";
+            case 4: return "R-4";
+            case 18: return "R-18";
+            default: return "Unknown";
+        }
+    }
+    function scopeName(s) {
+        switch (s) {
+            case 0: return "Manual";
+            case 1: return "DueOnly";
+            case 2: return "NewOnly";
+            case 3: return "DueAndNew";
+            default: return "Unknown";
+        }
+    }
+    function formatJson(str) {
+        try {
+            let obj = typeof str === "string" ? JSON.parse(str) : str;
+            return JSON.stringify(obj, null, 2);
+        } catch {
+            return str;
+        }
+    }
+
+
     function render_screen_new_session() {
         refresh_param_screen()
 
@@ -304,42 +462,58 @@ document.addEventListener('DOMContentLoaded', async () => {
         main_content.appendChild(create_br())
         main_content.appendChild(create_br())
 
+        let cloned = clone_from_r_session !== null;
+        let clone_algorithm = cloned ? clone_from_r_session.algorithm : null
+        let clone_scope = cloned ? clone_from_r_session.scope : null
         make_input("Map ID", "new_session_map_id", "number")
-        make_input("Cloned from session", "new_session_cloned_from_session_id", "hidden")
+        if(cloned) get_element("new_session_map_id").value = clone_from_r_session.map_id
+
+        make_input("Cloned from session", "new_session_cloned_from_session_id", "text")
+        get_element("new_session_cloned_from_session_id").readOnly = true
+        if(cloned) get_element("new_session_cloned_from_session_id").value = clone_from_r_session.id
         
         let algorithms =  [
-            make_option("R-0", 0),
-            make_option("R-2", 2),
-            make_option("R-4", 4),
-            make_option("R-18", 18, true),
+            make_option("R-0", 0, clone_algorithm === 0),
+            make_option("R-2", 2, clone_algorithm === 2),
+            make_option("R-4", 4, clone_algorithm === 4),
+            make_option("R-18", 18, cloned ? clone_algorithm === 18 : true),
         ]
         make_select("Algorithm", "new_session_algorithm",algorithms)
-        //make_input("Algorithm", "new_session_algorithm", "text")
 
         make_input("Notes", "new_session_notes", "checkbox")
         get_element("new_session_notes").checked = true
-        make_input("Questions", "new_session_questions", "checkbox")
+        if(cloned) get_element("new_session_notes").checked = clone_from_r_session.notes === 1
 
+        make_input("Questions", "new_session_questions", "checkbox")
+        if(cloned) get_element("new_session_questions").checked = clone_from_r_session.questions === 1
 
         let scopes = [
-            make_option("Manual", 0),
-            make_option("DueOnly", 1),
-            make_option("NewOnly", 2),
-            make_option("DueAndNew", 3, true)
+            make_option("Manual", 0, clone_scope === 0),
+            make_option("DueOnly", 1, clone_scope === 1),
+            make_option("NewOnly", 2, clone_scope === 2),
+            make_option("DueAndNew", 3, cloned ? clone_scope === 3 : true)
         ]
-
-
 
         make_select("Scope", "new_session_scope", scopes)
         
         make_input("Filter under note", "new_session_filter_under_note", "text")
+        if(cloned) get_element("new_session_filter_under_note").value = clone_from_r_session.filter_under_note
+
         make_input("Filter date from", "new_session_filter_date_from", "date")
+        if(cloned) get_element("new_session_filter_date_from").value = clone_from_r_session.filter_date_from
+
         make_input("Filter date to", "new_session_filter_date_to", "date")
+        if(cloned) get_element("new_session_filter_date_to").value = clone_from_r_session.filter_date_to
+
         make_input("Filter tag", "new_session_filter_tag", "text")
+        if(cloned) get_element("new_session_filter_tag").value = clone_from_r_session.filter_tag
+
         make_input("Filter collection", "new_session_filter_collection", "text")
+        if(cloned) get_element("new_session_filter_collection").value = clone_from_r_session.filter_tag
+
         make_input("Selected items", "new_session_selected_items", "text")
         make_input("Pinned", "new_session_pinned", "checkbox")
-        button_save_session.onclick = function() {
+        button_save_session.onclick = async function() {
             let new_session = {};
             new_session["user_id"] = user_id
             new_session["map_id"] = get_element("new_session_map_id").value;
@@ -353,10 +527,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             new_session["filter_under_note"] = get_element("new_session_filter_under_note").value;
             if(new_session["filter_under_note"] === "")new_session["filter_under_note"] = 0
 
-            new_session["filter_date_from"] = get_element("new_session_filter_date_from").value;
+            function yyyymmdd_to_unix_mx(yyyymmdd) {
+                if(yyyymmdd === null || yyyymmdd === undefined) {return 0}
+                let result = new Date(yyyymmdd + "T00:00:00Z").getTime()
+
+                if (isNaN(result)) {
+                    return 0;
+                }
+                return result
+            }
+            new_session["filter_date_from"] = yyyymmdd_to_unix_mx(get_element("new_session_filter_date_from").value);
             if(new_session["filter_date_from"] === "")new_session["filter_date_from"] = 0
 
-            new_session["filter_date_to"] = get_element("new_session_filter_date_to").value;
+            new_session["filter_date_to"] = yyyymmdd_to_unix_mx(get_element("new_session_filter_date_to").value);
             if(new_session["filter_date_to"] === "")new_session["filter_date_to"] = 0
 
             new_session["filter_tag"] = get_element("new_session_filter_tag").value;
@@ -370,12 +553,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(new_session["selected_items"] === "")new_session["selected_items"] = "{}"
             new_session["pinned"] = get_element("new_session_pinned").checked ? 1 : 0;
 
-            //alert(JSON.stringify(new_session));
-            post_entity("r_session", new_session);
+            alert(JSON.stringify(new_session));
+            let response = await post_entity("r_session", new_session);
+            if(response === null) {
+                alert("Saving new session failed.")
+                return;
+            }
+            clone_from_r_session = null
+            current_screen = screen_sessions;
+            render()
         }
     }
 
-    function render() {
+    function render(new_current_screen = null) {
+        if(new_current_screen !== null&& new_current_screen !== undefined) {
+            current_screen = new_current_screen;
+        }
         main_content.style.textAlign = "center";
         r_global_settings = getOrFetchFromLocalStorage("r_global_settings", load_r_global_settings, sixty_minutes)
         r_user_settings = getOrFetchFromLocalStorage("r_user_settings", load_r_user_settings, sixty_minutes)

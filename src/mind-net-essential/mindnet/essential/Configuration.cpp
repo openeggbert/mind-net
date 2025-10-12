@@ -65,17 +65,30 @@ namespace mindnet::essential
         return map.find(key) != map.end();
     }
 
-    std::set<string> split_string_by_commas(const string& string_, std::set<std::string>& result)
+    static inline std::string trim(const std::string& s)
     {
-        if (!string_.empty())
-        {
-            std::stringstream ss(string_);
-            std::string field_entry;
+        auto start = s.begin();
+        while (start != s.end() && std::isspace(*start))
+            start++;
 
-            while (std::getline(ss, field_entry, ','))
-            {
-                result.insert(field_entry);
-            }
+        auto end = s.end();
+        do {
+            end--;
+        } while (end != start && std::isspace(*end));
+
+        return std::string(start, end + 1);
+    }
+
+    std::set<std::string> split_string_by_commas(const std::string& str, std::set<std::string>& result)
+    {
+        std::stringstream ss(str);
+        std::string token;
+
+        while (std::getline(ss, token, ','))
+        {
+            token = trim(token);
+            if (!token.empty())
+                result.insert(token);
         }
         return result;
     }

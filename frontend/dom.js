@@ -11,18 +11,43 @@ export function getQueryParams() {
     const others = Object.fromEntries(params.entries());
     return {entity, action, others};
 }
-export function formatDateTime(value) {
+export function formatDateTime(
+    value,
+    showHours = true,
+    showMinutes = true,
+    showSeconds = true,
+    showMilliseconds = true
+) {
     if (!value || value === 0) return "";
-    const d = new Date(Number(value)); // Unix timestamp in milliseconds
+    const d = new Date(Number(value)); // Unix timestamp in ms
     const pad = n => n.toString().padStart(2, '0');
     const ms = String(d.getMilliseconds()).padStart(3, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} `
-        + `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${ms}`;
+
+    let result = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+    const timeParts = [];
+    if (showHours) timeParts.push(pad(d.getHours()));
+    if (showMinutes) timeParts.push(pad(d.getMinutes()));
+    if (showSeconds) timeParts.push(pad(d.getSeconds()));
+
+    if (timeParts.length > 0) {
+        result += " " + timeParts.join(":");
+        if (showMilliseconds) result += `.${ms}`;
+    }
+
+    return result;
+}
+
+export function formatDate(value){
+    return formatDateTime(value, false, false, false, false);
+}
+export function formatDateTimeHM(value){
+    return formatDateTime(value, true, true, false, false);
 }
 
 export function parseDateTimeToUnix(str) {
     if (!str) return 0;
-    // podpora i pro formát s ms: "YYYY-MM-DD HH:MM:SS.mmm"
+    // support for format with ms: "YYYY-MM-DD HH:MM:SS.mmm"
     const match = str.match(/^(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)(?:\.(\d{1,3}))?$/);
     if (!match) return 0;
     const [_, y, m, d, h, min, s, ms] = match.map(Number);
