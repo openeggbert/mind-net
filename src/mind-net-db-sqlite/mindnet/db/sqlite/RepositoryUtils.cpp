@@ -419,7 +419,15 @@ namespace mindnet::db::sqlite
             case mindnet::model::ColumnType::DateTime:
             case mindnet::model::ColumnType::Integer:
                 {
-                    int64_t number = stol(value);
+                    int64_t number = 0l;
+                    try
+                    {
+                        number = stol(value);
+                    } catch (std::exception& e)
+                    {
+                        err << "RepositoryUtils.bind_query_filters() : expected number, but got " << value << commit;
+                        throw SQLite::Exception("RepositoryUtils.bind_query_filters(): Expected number, but got " + value);
+                    }
                     // if (foreign_key && number == 0)
                     // {
                     //     debug << "Binding index " << bind_index << " with value NULL" << commit;
@@ -473,7 +481,19 @@ namespace mindnet::db::sqlite
         debug << "Page size: " << query_params.page_size << commit;
         debug << "Page number: " << query_params.page_number << commit;
         int bind_index = 1;
-        bind_query_filters(def, query_params, *query_ptr, bind_index);
+        try
+        {
+            bind_query_filters(def, query_params, *query_ptr, bind_index);
+        } catch (SQLite::Exception& e)
+        {
+            error = e.what();
+
+            query_ptr->reset();
+            delete query_ptr;
+            query_ptr = nullptr;
+
+            return {};
+        }
         // if (query_params.sort.has_value())
         // {
         //     (*query_ptr).bind(bind_index++, query_params.sort.value());
@@ -545,8 +565,15 @@ namespace mindnet::db::sqlite
         catch (SQLite::Exception& e)
         {
             error = e.what();
-            delete query_ptr;
+
+            query_count_ptr->reset();
             delete query_count_ptr;
+            query_count_ptr = nullptr;
+
+            query_ptr->reset();
+            delete query_ptr;
+            query_ptr = nullptr;
+
             return results;
         }
 

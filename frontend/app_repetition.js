@@ -267,9 +267,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         totalPages = json.total_pages || 1;
 
         if (r_sessions.length === 0) {
-            main_content.innerHTML += "<p>No sessions found.</p>";
+            const p = document.createElement("p");
+            p.textContent = "No sessions found.";
+            main_content.appendChild(p);
             return;
         }
+
 
         // Container
         let container = document.createElement("div");
@@ -295,7 +298,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             🔄 Updated: ${formatDateTimeHM(json.updated_at)}<br>
             🧩 Map ID: ${json.map_id}<br>
             📑 Cloned from: ${json.cloned_from_session_id || "-"}<br>
-            📌 Pinned: ${json.pinned ? "Yes" : "No"}
+            📌 Pinned: <span id="Pinned">${json.pinned ? "Yes" : "No"}</span>
         `;
             card.appendChild(meta);
 
@@ -359,7 +362,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 json.pinned = (!json.pinned) ? 1 : 0;
                 let response = await put_entity("r_session", json.id, json)
 
-                render(screen_sessions);
+                btnPinUnpin.textContent = json.pinned ? "Unpin" : "Pin";
+                get_element("Pinned").innerText = json.pinned ? "Yes" : "No";
+
+                //render(screen_sessions);
             };
             actions.appendChild(btnPinUnpin);
 
