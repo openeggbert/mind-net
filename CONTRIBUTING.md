@@ -35,6 +35,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Super Memo component
 - [ ] TASK Check operator== implementations for all models
 - [ ] FEATURE Support for export to static HTML files
+- [ ] FEATURE Query - name, args, returns string - for Validators and Triggers
 
 ### Extending
 - [ ] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)

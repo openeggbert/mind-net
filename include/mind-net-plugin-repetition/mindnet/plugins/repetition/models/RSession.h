@@ -10,6 +10,7 @@
 #define COLS columns::RSessionColumns
 #include "../columns/RSessionColumns.h"
 #include "mindnet/plugins/repetition/enums/RepetitionAlgorithm.h"
+#include "mindnet/plugins/repetition/enums/RepetitionSchedule.h"
 #include "mindnet/plugins/repetition/enums/RepetitionScope.h"
 // ***** MACROS : END *****
 
@@ -30,6 +31,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::CLONED_FROM_SESSION_ID, READONLY).set_foreign_key("r_session"),
 
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
+            coldef(COLS::SCHEDULE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
 
             coldef(COLS::NOTES, BOOL | MANDATORY | READONLY).set_default_value(true),
             coldef(COLS::QUESTIONS, BOOL | MANDATORY | READONLY).set_default_value(true),
@@ -52,6 +54,7 @@ namespace mindnet::plugins::repetition::models
         int map_id{};
         int cloned_from_session_id{};
         enums::RepetitionAlgorithm algorithm{};
+        enums::RepetitionSchedule schedule{};
         bool notes{true};
         bool questions{true};
         enums::RepetitionScope scope{};
@@ -76,6 +79,7 @@ namespace mindnet::plugins::repetition::models
                 map_id == other.map_id &&
                 cloned_from_session_id == other.cloned_from_session_id &&
                 algorithm == other.algorithm &&
+                schedule == other.schedule &&
                 notes == other.notes &&
                 questions == other.questions &&
                 scope == other.scope &&

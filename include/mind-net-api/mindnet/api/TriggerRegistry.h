@@ -19,7 +19,7 @@
 
 namespace mindnet::api
 {
-    constexpr entity_fields empty_entity_fields;
+    static entity_fields empty_entity_fields;
     const orm::QueryParams empty_query_params;
     class TriggerRegistry
     {
@@ -39,7 +39,7 @@ namespace mindnet::api
             const mindnet::model::ModelDefinition& def,
             int user_id,
             int id,
-            const entity_fields& fields = empty_entity_fields,
+            entity_fields& fields = empty_entity_fields,
             const orm::QueryParams& query_params = empty_query_params);
 
     private:

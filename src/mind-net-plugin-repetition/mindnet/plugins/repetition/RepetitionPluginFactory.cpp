@@ -13,6 +13,7 @@
 #include "mindnet/plugins/repetition/validators/R18PerfAggValidator.h"
 
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
+#include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.h"
 
 namespace mindnet::plugins::repetition
 {
@@ -37,6 +38,7 @@ namespace mindnet::plugins::repetition
         REGISTER_MODEL(r4_state, R4State, R4_STATE)
         REGISTER_MODEL(r18_state, R18State, R18_STATE)
         REGISTER_MODEL(r18_perf_agg, R18PerfAgg, R18_PERF_AGG)
+        plugin->register_trigger(std::make_shared<triggers::RSessionBeforeCreateTrigger>());
 
         plugin->close_for_changes();
         return plugin;

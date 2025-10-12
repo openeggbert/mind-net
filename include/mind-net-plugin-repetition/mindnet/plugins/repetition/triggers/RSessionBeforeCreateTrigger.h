@@ -1,18 +1,19 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef HISTORYCOMMONTRIGGER_H
-#define HISTORYCOMMONTRIGGER_H
+#ifndef RSESSIONBEFORECREATETRIGGER_H
+#define RSESSIONBEFORECREATETRIGGER_H
+
 #include "mindnet/api/Trigger.h"
 
-namespace mindnet::plugins::core::triggers
+namespace mindnet::plugins::repetition::triggers
 {
-    class HistoryCommonTrigger : public api::Trigger
+    class RSessionBeforeCreateTrigger : public api::Trigger
     {
     public:
-        HistoryCommonTrigger();
+        RSessionBeforeCreateTrigger();
 
-        ~HistoryCommonTrigger() override = default;
+        ~RSessionBeforeCreateTrigger() override = default;
         void run(
             mindnet::essential::Crudl operation,
             int stack_depth,
@@ -29,4 +30,4 @@ namespace mindnet::plugins::core::triggers
 
 }
 
-#endif // HISTORYCOMMONTRIGGER_H
+#endif // RSESSIONBEFORECREATETRIGGER_H

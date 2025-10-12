@@ -69,6 +69,7 @@ CREATE TABLE r_session (
     cloned_from_session_id INTEGER,
 
     algorithm INTEGER NOT NULL,
+    schedule INTEGER NOT NULL,
 
     notes BOOLEAN NOT NULL DEFAULT 1,
     questions BOOLEAN NOT NULL DEFAULT 1,

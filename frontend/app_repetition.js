@@ -260,7 +260,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const params = "&user_id=" + user_id + "&sort=created_at&order=desc"
             + (renderOnlyPinned ? "&pinned=1" : "")
 
-
         const json = await list_entities("r_session", params, currentPage, pageSize);
 
         const r_sessions = json.items || [];
@@ -296,8 +295,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             🕓 Created: ${formatDateTimeHM(json.created_at)}<br>
             🔄 Updated: ${formatDateTimeHM(json.updated_at)}<br>
             🧩 Map ID: ${json.map_id}<br>
+            🧮 Algorithm: ${algoName(json.algorithm)}<br>
+            📚 Schedule: ${scheduleName(json.schedule)}<br>
+            🎯 Scope: ${scopeName(json.scope)}<br>
             📑 Cloned from: ${json.cloned_from_session_id || "-"}<br>
-            📌 Pinned: <span id="Pinned">${json.pinned ? "Yes" : "No"}</span><br>
             📝 Description: ${json.description}
         `;
             card.appendChild(meta);
@@ -320,16 +321,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             details.style.display = "none";
             details.innerHTML = `
             <table class="session-table">
-                <tr><th>Algorithm</th><td>${algoName(json.algorithm)}</td></tr>
                 <tr><th>Notes</th><td>${json.notes ? "✅" : "❌"}</td></tr>
                 <tr><th>Questions</th><td>${json.questions ? "✅" : "❌"}</td></tr>
-                <tr><th>Scope</th><td>${scopeName(json.scope)}</td></tr>
                 <tr><th>Filter under note</th><td>${json.filter_under_note || "-"}</td></tr>
                 <tr><th>Filter date from</th><td>${formatDateTimeHM(json.filter_date_from)}</td></tr>
                 <tr><th>Filter date to</th><td>${formatDateTimeHM(json.filter_date_to)}</td></tr>
                 <tr><th>Filter tag</th><td>${json.filter_tag || "-"}</td></tr>
                 <tr><th>Filter collection</th><td>${json.filter_collection || "-"}</td></tr>
                 <tr><th>Selected items</th><td><pre>${formatJson(json.selected_items)}</pre></td></tr>
+                <tr><th>Pinned</th><td><span id="Pinned">${json.pinned ? "Yes" : "No"}</span></td></tr>
+                
             </table>
         `;
             card.appendChild(details);
@@ -421,6 +422,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             default: return "Unknown";
         }
     }
+
+    function scheduleName(s) {
+        switch (Number(s)) {
+            case 0: return "Depth First";
+            case 1: return "Breadth First";
+            case 2: return "Random";
+            case 3: return "Depth First Shuffled";
+            case 4: return "Interleaved";
+            case 5: return "Difficulty Sorted";
+            case 6: return "Chronological";
+            default: return "Unknown";
+        }
+    }
+
     function formatJson(str) {
         try {
             let obj = typeof str === "string" ? JSON.parse(str) : str;
@@ -492,6 +507,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let cloned = clone_from_r_session !== null;
         let clone_algorithm = cloned ? clone_from_r_session.algorithm : null
+        let clone_schedule = cloned ? clone_from_r_session.schedule : null
         let clone_scope = cloned ? clone_from_r_session.scope : null
         make_input("Map ID", "new_session_map_id", "number")
         if(cloned) get_element("new_session_map_id").value = clone_from_r_session.map_id
@@ -499,7 +515,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_input("Cloned from session", "new_session_cloned_from_session_id", "text")
         get_element("new_session_cloned_from_session_id").readOnly = true
         if(cloned) get_element("new_session_cloned_from_session_id").value = clone_from_r_session.id
-        
+
         let algorithms =  [
             make_option("R-0", 0, clone_algorithm === 0),
             make_option("R-2", 2, clone_algorithm === 2),
@@ -507,6 +523,20 @@ document.addEventListener('DOMContentLoaded', async () => {
             make_option("R-18", 18, cloned ? clone_algorithm === 18 : true),
         ]
         make_select("Algorithm", "new_session_algorithm",algorithms)
+
+        let schedules = [
+            make_option("Depth First", 0, clone_schedule === 0),
+            make_option("Breadth First", 1, cloned ? clone_schedule === 1 : true),
+            make_option("Random", 2, clone_schedule === 2),
+            make_option("Depth First Shuffled", 3, clone_schedule === 3),
+            make_option("Interleaved", 4, clone_schedule === 4),
+            make_option("Difficulty Sorted", 5, clone_schedule === 5),
+            make_option("Chronological", 6, clone_schedule === 6)
+        ];
+
+        make_select("Schedule", "new_session_schedule", schedules);
+        if (cloned && clone_from_r_session.schedule !== undefined)
+            get_element("new_session_schedule").value = clone_from_r_session.schedule;
 
         make_input("Notes", "new_session_notes", "checkbox")
         get_element("new_session_notes").checked = true
@@ -524,7 +554,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         make_select("Scope", "new_session_scope", scopes)
         make_input("Description", "new_session_description")
-        
+
         make_input("Filter under note", "new_session_filter_under_note", "text")
         if(cloned) get_element("new_session_filter_under_note").value = clone_from_r_session.filter_under_note
 
@@ -560,6 +590,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             new_session["cloned_from_session_id"] = get_element("new_session_cloned_from_session_id").value;
             if(new_session["cloned_from_session_id"] === "")new_session["cloned_from_session_id"] = 0
             new_session["algorithm"] = get_element("new_session_algorithm").value;
+            new_session["schedule"] = get_element("new_session_schedule").value;
             new_session["notes"]=get_element("new_session_notes").checked ? 1 : 0;
             new_session["questions"]=get_element("new_session_questions").checked ? 1 : 0;
             new_session["scope"] = get_element("new_session_scope").value;
@@ -608,7 +639,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         refresh_param_screen()
         main_content.innerHTML = "";
 
-        alert("new review");
         r_session_for_reviews = null;
     }
 
@@ -630,34 +660,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     render()
-
-
-    // await chooseOption(["a", "b", "c"])
-    // let new_session_table = document.createElement("table");
-    // main.appendChild(new_session_table);
-    // let new_session_table_tr_1 = document.createElement("tr");
-    // new_session_table.appendChild(new_session_table_tr_1);
-    // let new_session_table_tr_2 = document.createElement("tr");
-    // new_session_table.appendChild(new_session_table_tr_2);
-    // function create_th(text) {
-    //     let th = document.createElement("th")
-    //     th.innerText = text
-    //     return th
-    // }
-    // new_session_table_tr_1.appendChild(create_th("Map"))
-    // new_session_table_tr_1.appendChild(create_th("Cloned from session"))
-    // new_session_table_tr_1.appendChild(create_th("Algorithm"))
-    // new_session_table_tr_1.appendChild(create_th("Notes"))
-    // new_session_table_tr_1.appendChild(create_th("Questions"))
-    // new_session_table_tr_1.appendChild(create_th("Scope"))
-    // new_session_table_tr_1.appendChild(create_th("Filter under note"))
-    // new_session_table_tr_1.appendChild(create_th("Filter date from"))
-    // new_session_table_tr_1.appendChild(create_th("Filter date to"))
-    // new_session_table_tr_1.appendChild(create_th("Filter tag"))
-    // new_session_table_tr_1.appendChild(create_th("Filter collection"))
-    // new_session_table_tr_1.appendChild(create_th("Selected items"))
-    // new_session_table_tr_1.appendChild(create_th("Pinned"))
-
 
 });
 

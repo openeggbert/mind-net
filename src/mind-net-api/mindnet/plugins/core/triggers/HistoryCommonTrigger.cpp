@@ -32,7 +32,7 @@ namespace mindnet::plugins::core::triggers
         const mindnet::model::ModelDefinition def,
         int user_id,
         int id,
-        const entity_fields fields,
+        entity_fields& fields,
         const orm::QueryParams query_params)
     {
         if (def.get_model_name() == "history") return;

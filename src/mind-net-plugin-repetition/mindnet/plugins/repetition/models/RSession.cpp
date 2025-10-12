@@ -16,6 +16,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(map_id);
         result.push_back(cloned_from_session_id);
         result.push_back(cast64(algorithm));
+        result.push_back(cast64(schedule));
         result.push_back(notes);
         result.push_back(questions);
         result.push_back(cast64(scope));
@@ -51,6 +52,7 @@ namespace mindnet::plugins::repetition::models
         map_id = number();
         cloned_from_session_id = number();
         algorithm = enums::int_to_repetition_algorithm(number());
+        schedule = enums::int_to_repetition_schedule(number());
         notes = boolean();
         questions = boolean();
         scope = enums::int_to_repetition_scope(number());

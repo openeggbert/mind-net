@@ -105,7 +105,7 @@ namespace mindnet::api
             model::ModelDefinition def,
             int user_id,
             int id,
-            entity_fields fields,
+            entity_fields& fields,
             orm::QueryParams query_params
         ) = 0;
         //

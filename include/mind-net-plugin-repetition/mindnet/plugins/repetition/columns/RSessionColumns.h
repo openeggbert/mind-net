@@ -21,6 +21,7 @@ namespace mindnet::plugins::repetition::columns
 
         // Core session settings
         static constexpr const char* ALGORITHM = "algorithm";
+        static constexpr const char* SCHEDULE = "schedule";
         static constexpr const char* NOTES = "notes";
         static constexpr const char* QUESTIONS = "questions";
         static constexpr const char* SCOPE = "scope";
