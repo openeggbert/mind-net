@@ -14,8 +14,8 @@
 // If not, see <https://www.gnu.org/licenses/> or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPETITION_SCOPE_H
-#define REPETITION_SCOPE_H
+#ifndef REPETITIONENTITY_H
+#define REPETITIONENTITY_H
 
 #include <string>
 #include "mindnet/model/EnumDefinition.h"
@@ -24,15 +24,21 @@
 namespace mindnet::plugins::repetition::enums
 {
     /**
+     * @enum RepetitionEntity
      *
-     * @author robertvokac
+     * Defines the type of entity being used in a repetition session.
+     * 
+     * - Note (0): Represents a note entity in the system
+     * - Question (1): Represents a question entity in the system
+     *
+     * @author
+     *   Robert Vokac
      */
-#define REPETITION_SCOPE_LIST(X, ENUM_NAME) \
-X(DueOnly, 0, ENUM_NAME)                \
-X(NewOnly, 1, ENUM_NAME)                \
-X(DueAndNew, 2, ENUM_NAME)               \
-X(Manual, 3, ENUM_NAME)                 \
+#define REPETITION_ENTITY_LIST(X, ENUM_NAME)     \
+    X(Note, 0, ENUM_NAME)                        \
+    X(Question, 1, ENUM_NAME)
 
-    DECLARE_ENUM(RepetitionScope, repetition_scope, REPETITION_SCOPE_LIST)
+    DECLARE_ENUM(RepetitionEntity, repetition_entity, REPETITION_ENTITY_LIST)
 } // namespace mindnet::plugins::repetition::enums
-#endif
+
+#endif // REPETITIONENTITY_H

@@ -12,6 +12,7 @@
 namespace mindnet::plugins::repetition::triggers
 {
     using_loggers()
+
     RSessionBeforeCreateTrigger::RSessionBeforeCreateTrigger()
         : Trigger(
             "RSessionBeforeCreateTrigger",
@@ -24,6 +25,15 @@ namespace mindnet::plugins::repetition::triggers
     {
     }
 
+    std::vector<RepetitionId> find_repetition_ids(
+        std::vector<RepetitionId>& ids,
+        int stack_depth,
+        int user_id,
+        models::RSession& r_session,
+        int note_id)
+    {
+        return ids;
+    }
     void RSessionBeforeCreateTrigger::run(
         mindnet::essential::Crudl operation,
         int stack_depth,
@@ -35,9 +45,40 @@ namespace mindnet::plugins::repetition::triggers
         entity_fields& fields,
         const orm::QueryParams query_params)
     {
-
         models::RSession r_session;
         r_session.from_values(fields);
+
+        if (r_session.schedule == enums::RepetitionSchedule::DepthFirstShuffled)
+        {
+            validation_result = {400, "Unsupported schedule: DepthFirstShuffled"};
+            return;
+        }
+
+        if (r_session.schedule == enums::RepetitionSchedule::Interleaved)
+        {
+            validation_result = {400, "Unsupported schedule: Interleaved"};
+            return;
+        }
+
+        auto token = api::AccessTokenContext(user_id, "", 200);;
+        std::vector<RepetitionId> ids;
+
+        switch (r_session.algorithm)
+        {
+        case enums::RepetitionAlgorithm::Repetition0:
+            {
+                find_repetition_ids(ids, stack_depth, user_id, r_session, r_session.filter_under_note == 0);
+            }
+            break;
+        case enums::RepetitionAlgorithm::Repetition2: break;
+        case enums::RepetitionAlgorithm::Repetition4: break;
+        case enums::RepetitionAlgorithm::Repetition18: break;
+        default:
+            {
+                validation_result = {400, "Unsupported algorithm."};
+                return;
+            }
+        }
         r_session.selected_items = "{\"hello\": \"trigger\"}";
         fields = r_session.to_values();
     }

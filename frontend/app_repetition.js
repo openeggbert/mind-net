@@ -415,10 +415,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     function scopeName(s) {
         switch (s) {
-            case 0: return "Manual";
-            case 1: return "DueOnly";
-            case 2: return "NewOnly";
-            case 3: return "DueAndNew";
+            case 0: return "DueOnly";
+            case 1: return "NewOnly";
+            case 2: return "DueAndNew";
+            case 3: return "Manual";
             default: return "Unknown";
         }
     }
@@ -546,10 +546,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(cloned) get_element("new_session_questions").checked = clone_from_r_session.questions === 1
 
         let scopes = [
-            make_option("Manual", 0, clone_scope === 0),
-            make_option("DueOnly", 1, clone_scope === 1),
-            make_option("NewOnly", 2, clone_scope === 2),
-            make_option("DueAndNew", 3, cloned ? clone_scope === 3 : true)
+            make_option("DueOnly", 0, clone_scope === 0),
+            make_option("NewOnly", 1, clone_scope === 1),
+            make_option("DueAndNew", 2, cloned ? clone_scope === 2 : true),
+            make_option("Manual", 3, clone_scope === 3)
         ]
 
         make_select("Scope", "new_session_scope", scopes)

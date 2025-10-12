@@ -5,9 +5,15 @@
 #define RSESSIONBEFORECREATETRIGGER_H
 
 #include "mindnet/api/Trigger.h"
+#include "mindnet/plugins/repetition/enums/RepetitionEntity.h"
 
 namespace mindnet::plugins::repetition::triggers
 {
+    struct RepetitionId
+    {
+        enums::RepetitionEntity entity;
+        int64_t id;
+    };
     class RSessionBeforeCreateTrigger : public api::Trigger
     {
     public:
