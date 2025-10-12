@@ -244,6 +244,9 @@ export async function delete_entity(entity, id) {
 }
 
 export async function put_entity(model_name, id, json) {
+    if(id === undefined) {
+        throw "id required";
+    }
     const url = new URL(`${API_BASE}/${model_name}/${id}`);
     return await apiFetch(url.toString(), {
         method: "PUT",

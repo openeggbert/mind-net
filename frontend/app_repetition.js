@@ -4,7 +4,8 @@
 
 import {
     getUserId, list_all_entities, post_entity,
-    list_entities} from "./api.js";
+    list_entities, put_entity
+} from "./api.js";
 import {
     chooseOption,
     formatDate,
@@ -242,11 +243,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     let totalPages = 1;
     const pageSize = 10;
 
+    let renderOnlyPinned = false;
     async function render_screen_sessions() {
         refresh_param_screen();
         main_content.innerHTML = "<h2>Your Sessions</h2>";
 
-        const params = "&user_id=" + user_id + "&sort=created_at&order=desc";
+        main_content.innerHTML += "\n<label for=\"only_pinned\">Only pinned</label>\n";
+        main_content.innerHTML += "\n<input id=\"only_pinned\" type=\"checkbox\"/>\n";
+        get_element("only_pinned").checked = renderOnlyPinned
+        get_element("only_pinned").onclick = function() {
+            renderOnlyPinned = !renderOnlyPinned
+            get_element("only_pinned").checked = renderOnlyPinned
+            render()
+        }
+
+        const params = "&user_id=" + user_id + "&sort=created_at&order=desc"
+            + (renderOnlyPinned ? "&pinned=1" : "")
+
 
         const json = await list_entities("r_session", params, currentPage, pageSize);
 
@@ -334,13 +347,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             btnClone.className = "session-btn danger";
             btnClone.textContent = "Clone";
             btnClone.onclick = () => {
-                //if (confirm("Clone session #" + json.id + "?")) {
-                    clone_from_r_session = json;
-                    alert(JSON.stringify(clone_from_r_session));
-                    render(screen_new_session);
-                //}
+                clone_from_r_session = json;
+                render(screen_new_session);
             };
             actions.appendChild(btnClone);
+
+            let btnPinUnpin = document.createElement("button");
+            btnPinUnpin.className = "session-btn";
+            btnPinUnpin.textContent = json.pinned ? "Unpin" : "Pin";
+            btnPinUnpin.onclick = async () => {
+                json.pinned = (!json.pinned) ? 1 : 0;
+                let response = await put_entity("r_session", json.id, json)
+
+                render(screen_sessions);
+            };
+            actions.appendChild(btnPinUnpin);
 
             card.appendChild(actions);
             container.appendChild(card);
