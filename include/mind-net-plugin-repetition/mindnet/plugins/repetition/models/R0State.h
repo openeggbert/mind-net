@@ -23,8 +23,7 @@ namespace mindnet::plugins::repetition::models
         .set_rest_operations("rl")
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY), // Optional
-            coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY), // Optional
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
 
             coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
             coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
@@ -36,8 +35,7 @@ namespace mindnet::plugins::repetition::models
     struct Model : mindnet::model::BaseModel
     {
         int user_id{};
-        int note_id; // Made optional
-        int question_id; // Made optional
+        int note_id;
         int repetitions{};
         int interval{1};
         unixtime next_review;
@@ -53,7 +51,6 @@ namespace mindnet::plugins::repetition::models
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
                 note_id == other.note_id &&
-                question_id == other.question_id &&
                 repetitions == other.repetitions &&
                 interval == other.interval &&
                 next_review == other.next_review &&

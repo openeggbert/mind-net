@@ -29,7 +29,6 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::R_SESSION_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
             coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
-            coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::REVIEW_DATE, DATETIME | READONLY),
             coldef(COLS::GRADE, INTEGER | READONLY),
             coldef(COLS::RESPONSE_DATA, READONLY),
@@ -48,7 +47,6 @@ namespace mindnet::plugins::repetition::models
         int r_session_id{};
         enums::RepetitionAlgorithm algorithm{};
         int note_id{};
-        int question_id{};
         unixtime review_date;
         int grade{};
         string response_data;
@@ -71,7 +69,6 @@ namespace mindnet::plugins::repetition::models
                 r_session_id == other.r_session_id &&
                 algorithm == other.algorithm &&
                 note_id == other.note_id &&
-                question_id == other.question_id &&
                 review_date == other.review_date &&
                 grade == other.grade &&
                 response_data == other.response_data &&

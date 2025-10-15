@@ -17,7 +17,6 @@ namespace mindnet::plugins::repetition::models
         result.push_back(r_session_id);
         result.push_back(repetition_algorithm_to_int(algorithm));
         result.push_back(note_id);
-        result.push_back(question_id);
         result.push_back(cast64(review_date));
         result.push_back(grade);
         result.push_back(response_data);
@@ -44,7 +43,6 @@ namespace mindnet::plugins::repetition::models
         r_session_id = number();
         algorithm = enums::int_to_repetition_algorithm(number());
         note_id = number();
-        question_id = number();
         review_date = number();
         grade = number();
         response_data = text();
@@ -61,8 +59,7 @@ namespace mindnet::plugins::repetition::models
         using columns::RReviewColumns;
 
         validator_chain_vector list{
-            [this] {return test_true((note_id != 0 && question_id == 0) || (note_id == 0 && question_id != 0), "Either note_id or question_id must be set");},
-                [this] {return test_between(grade, 0, 5, RReviewColumns::GRADE);},
+             [this] {return test_between(grade, 0, 5, RReviewColumns::GRADE);},
                 [this] {return test_at_least(latency_ms, 0, RReviewColumns::LATENCY_MS);}
         };
         return util::ValidatorChain::run(list);

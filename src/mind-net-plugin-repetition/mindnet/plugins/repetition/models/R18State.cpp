@@ -14,7 +14,6 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(updated_at));
         result.push_back(user_id);
         result.push_back(note_id);
-        result.push_back(question_id);
         result.push_back(stability_times_100);
         result.push_back(last_interval_times_100);
         result.push_back(repetitions);
@@ -36,7 +35,6 @@ namespace mindnet::plugins::repetition::models
         updated_at = number();
         user_id = number();
         note_id = number();
-        question_id = number();
         stability_times_100 = number();
         last_interval_times_100 = number();
         repetitions = number();
@@ -51,7 +49,6 @@ namespace mindnet::plugins::repetition::models
         using columns::R18StateColumns;
 
         validator_chain_vector list{
-            [this] {return test_true(note_id <= 0 && question_id <= 0, "Either note_id or question_id must be set");},
             [this] {return test_at_least(stability_times_100, 0, R18StateColumns::STABILITY_TIMES_100);},
             [this] {return test_at_least(last_interval_times_100, 0, R18StateColumns::LAST_INTERVAL_TIMES_100);},
             [this] {return test_at_least(repetitions, 0, R18StateColumns::REPETITIONS);},

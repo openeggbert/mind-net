@@ -106,8 +106,6 @@ CREATE TABLE r_review (
     algorithm INTEGER NOT NULL,
 
     note_id INTEGER,
-    question_id INTEGER
-    CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
     review_date DATETIME,
     grade INTEGER CHECK (grade BETWEEN 0 AND 5),
@@ -127,8 +125,7 @@ CREATE TABLE r_review (
 
     FOREIGN KEY (user_id) REFERENCES user(id),
     FOREIGN KEY (r_session_id) REFERENCES r_session(id),
-    FOREIGN KEY (note_id) REFERENCES note(id),
-    FOREIGN KEY (question_id) REFERENCES question(id)
+    FOREIGN KEY (note_id) REFERENCES note(id)
 
 );
 
@@ -141,8 +138,6 @@ CREATE TABLE r0_state (
 
 	user_id INTEGER NOT NULL,
 	note_id INTEGER,
-	question_id INTEGER
-	CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
 	repetitions INTEGER DEFAULT 0,	  -- number of completed repetitions 
 	interval INTEGER DEFAULT 1,		 -- current interval in days (from fixed sequence)
@@ -151,10 +146,8 @@ CREATE TABLE r0_state (
 	last_quality INTEGER DEFAULT 0,	 -- last grade
 
 	UNIQUE (user_id, note_id),
-	UNIQUE (user_id, question_id),
 
 	FOREIGN KEY (note_id) REFERENCES note(id),
-	FOREIGN KEY (question_id) REFERENCES question(id),
 	FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
@@ -168,8 +161,6 @@ CREATE TABLE r2_state (
 
     user_id INTEGER NOT NULL,
     note_id INTEGER,
-    question_id INTEGER
-    CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
     repetitions INTEGER DEFAULT 0,
     interval INTEGER DEFAULT 1,
@@ -180,10 +171,8 @@ CREATE TABLE r2_state (
     last_quality INTEGER DEFAULT 0,
 
     UNIQUE (user_id, note_id),
-    UNIQUE (user_id, question_id),
 
-    FOREIGN KEY (note_id) REFERENCES note(id) ,
-    FOREIGN KEY (question_id) REFERENCES question(id) ,
+    FOREIGN KEY (note_id) REFERENCES note(id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 )");
@@ -196,8 +185,6 @@ CREATE TABLE r4_state (
 
 	user_id INTEGER NOT NULL,
 	note_id INTEGER,
-	question_id INTEGER
-	CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
 	repetitions INTEGER DEFAULT 0,		  -- which repetition 
 	interval INTEGER DEFAULT 1,			 -- current interval (days)
@@ -212,10 +199,8 @@ CREATE TABLE r4_state (
 	last_quality INTEGER DEFAULT 0,		 -- last grade (0-5)
 
 	UNIQUE (user_id, note_id),
-	UNIQUE (user_id, question_id),
 
 	FOREIGN KEY (note_id) REFERENCES note(id),
-	FOREIGN KEY (question_id) REFERENCES question(id),
 	FOREIGN KEY (user_id) REFERENCES user(id)
 );
 )");
@@ -229,8 +214,6 @@ CREATE TABLE r18_state (
 
     user_id INTEGER NOT NULL,
     note_id INTEGER,
-    question_id INTEGER
-    CHECK (note_id IS NOT NULL OR question_id IS NOT NULL),
 
     stability_times_100 INTEGER DEFAULT 100,    -- S
 	last_interval_times_100 INTEGER DEFAULT 0,  -- last interval (days)
@@ -241,10 +224,8 @@ CREATE TABLE r18_state (
     last_quality INTEGER DEFAULT 0,
 
     UNIQUE (user_id, note_id),
-    UNIQUE (user_id, question_id),
 
     FOREIGN KEY (note_id) REFERENCES note(id),
-    FOREIGN KEY (question_id) REFERENCES question(id),
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 )");
@@ -282,38 +263,28 @@ CREATE INDEX IF NOT EXISTS idx_r2_state_user_due
 CREATE INDEX IF NOT EXISTS idx_r0_state_user_due
     ON r0_state (user_id, next_review);
 
--- Indexes for fast lookups by note_id and question_id
+-- Indexes for fast lookups by note_id
 -- in review log and state tables
 
 -- r_review
 CREATE INDEX IF NOT EXISTS idx_r_review_note
     ON r_review (note_id);
-CREATE INDEX IF NOT EXISTS idx_r_review_question
-    ON r_review (question_id);
 
 -- r0_state
 CREATE INDEX IF NOT EXISTS idx_r0_state_note
     ON r0_state (note_id);
-CREATE INDEX IF NOT EXISTS idx_r0_state_question
-    ON r0_state (question_id);
 
 -- r2_state
 CREATE INDEX IF NOT EXISTS idx_r2_state_note
     ON r2_state (note_id);
-CREATE INDEX IF NOT EXISTS idx_r2_state_question
-    ON r2_state (question_id);
 
 -- r4_state
 CREATE INDEX IF NOT EXISTS idx_r4_state_note
     ON r4_state (note_id);
-CREATE INDEX IF NOT EXISTS idx_r4_state_question
-    ON r4_state (question_id);
 
 -- r18_state
 CREATE INDEX IF NOT EXISTS idx_r18_state_note
     ON r18_state (note_id);
-CREATE INDEX IF NOT EXISTS idx_r18_state_question
-    ON r18_state (question_id);
 
 )");
     }

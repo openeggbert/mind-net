@@ -43,8 +43,7 @@ namespace mindnet::plugins::repetition::models
         .set_columns({
             //
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY), // Optional
-            coldef(COLS::QUESTION_ID, FOREIGN_KEY | READONLY), // Optional
+            coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
 
             coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
             coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
@@ -59,7 +58,6 @@ namespace mindnet::plugins::repetition::models
     {
         int user_id{};
         int note_id{};
-        int question_id{};
         int repetitions{};
         int interval{1};
         int ef_times_100{250};
@@ -76,7 +74,6 @@ namespace mindnet::plugins::repetition::models
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
                 note_id == other.note_id &&
-                question_id == other.question_id &&
                 repetitions == other.repetitions &&
                 interval == other.interval &&
                 ef_times_100 == other.ef_times_100 &&

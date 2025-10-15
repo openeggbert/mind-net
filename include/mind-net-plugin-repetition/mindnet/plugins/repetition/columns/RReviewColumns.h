@@ -45,9 +45,8 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* R_SESSION_ID = "r_session_id";
         static constexpr const char* ALGORITHM = "algorithm";
 
-        // Review target (must have either note_id or question_id)
+        // Review target (must have note_id)
         static constexpr const char* NOTE_ID = "note_id";
-        static constexpr const char* QUESTION_ID = "question_id";
 
         // Review data
         static constexpr const char* REVIEW_DATE = "review_date";
