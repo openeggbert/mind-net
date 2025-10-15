@@ -17,8 +17,6 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cloned_from_session_id);
         result.push_back(cast64(algorithm));
         result.push_back(cast64(schedule));
-        result.push_back(notes);
-        result.push_back(questions);
         result.push_back(cast64(scope));
         result.push_back(description);
         result.push_back(filter_under_note);
@@ -53,8 +51,6 @@ namespace mindnet::plugins::repetition::models
         cloned_from_session_id = number();
         algorithm = enums::int_to_repetition_algorithm(number());
         schedule = enums::int_to_repetition_schedule(number());
-        notes = boolean();
-        questions = boolean();
         scope = enums::int_to_repetition_scope(number());
         description = text();
         filter_under_note = number();
@@ -71,7 +67,6 @@ namespace mindnet::plugins::repetition::models
         using columns::RSessionColumns;
 
         validator_chain_vector list{
-            [this] { return test_true(notes || questions, "At least one of notes or questions must be enabled."); },
             [this] { return test_true(filter_under_note == 0,  "filter_under_note is not yet supported"); },
             [this] { return test_true(filter_date_from == 0,  "filter_date_from is not yet supported"); },
             [this] { return test_true(filter_date_to == 0,  "filter_date_to is not yet supported"); },

@@ -321,8 +321,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             details.style.display = "none";
             details.innerHTML = `
             <table class="session-table">
-                <tr><th>Notes</th><td>${json.notes ? "✅" : "❌"}</td></tr>
-                <tr><th>Questions</th><td>${json.questions ? "✅" : "❌"}</td></tr>
                 <tr><th>Filter under note</th><td>${json.filter_under_note || "-"}</td></tr>
                 <tr><th>Filter date from</th><td>${formatDateTimeHM(json.filter_date_from)}</td></tr>
                 <tr><th>Filter date to</th><td>${formatDateTimeHM(json.filter_date_to)}</td></tr>
@@ -538,13 +536,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (cloned && clone_from_r_session.schedule !== undefined)
             get_element("new_session_schedule").value = clone_from_r_session.schedule;
 
-        make_input("Notes", "new_session_notes", "checkbox")
-        get_element("new_session_notes").checked = true
-        if(cloned) get_element("new_session_notes").checked = clone_from_r_session.notes === 1
-
-        make_input("Questions", "new_session_questions", "checkbox")
-        if(cloned) get_element("new_session_questions").checked = clone_from_r_session.questions === 1
-
         let scopes = [
             make_option("DueOnly", 0, clone_scope === 0),
             make_option("NewOnly", 1, clone_scope === 1),
@@ -591,8 +582,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             if(new_session["cloned_from_session_id"] === "")new_session["cloned_from_session_id"] = 0
             new_session["algorithm"] = get_element("new_session_algorithm").value;
             new_session["schedule"] = get_element("new_session_schedule").value;
-            new_session["notes"]=get_element("new_session_notes").checked ? 1 : 0;
-            new_session["questions"]=get_element("new_session_questions").checked ? 1 : 0;
             new_session["scope"] = get_element("new_session_scope").value;
             new_session["description"] = get_element("new_session_description").value;
 

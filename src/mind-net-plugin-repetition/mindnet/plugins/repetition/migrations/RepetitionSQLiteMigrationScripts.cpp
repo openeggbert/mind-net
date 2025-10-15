@@ -70,9 +70,6 @@ CREATE TABLE r_session (
 
     algorithm INTEGER NOT NULL,
     schedule INTEGER NOT NULL,
-
-    notes BOOLEAN NOT NULL DEFAULT 1,
-    questions BOOLEAN NOT NULL DEFAULT 1,
     scope INTEGER NOT NULL,
 
     description TEXT,

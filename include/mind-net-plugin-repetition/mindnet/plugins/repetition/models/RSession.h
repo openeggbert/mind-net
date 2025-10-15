@@ -33,8 +33,6 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
             coldef(COLS::SCHEDULE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
 
-            coldef(COLS::NOTES, BOOL | MANDATORY | READONLY).set_default_value(true),
-            coldef(COLS::QUESTIONS, BOOL | MANDATORY | READONLY).set_default_value(true),
             coldef(COLS::SCOPE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
             coldef(COLS::DESCRIPTION, READONLY),
 
@@ -55,8 +53,6 @@ namespace mindnet::plugins::repetition::models
         int cloned_from_session_id{};
         enums::RepetitionAlgorithm algorithm{};
         enums::RepetitionSchedule schedule{};
-        bool notes{true};
-        bool questions{true};
         enums::RepetitionScope scope{};
         std::string description;
         int filter_under_note{};
@@ -80,8 +76,6 @@ namespace mindnet::plugins::repetition::models
                 cloned_from_session_id == other.cloned_from_session_id &&
                 algorithm == other.algorithm &&
                 schedule == other.schedule &&
-                notes == other.notes &&
-                questions == other.questions &&
                 scope == other.scope &&
                 description == other.description &&
                 filter_under_note == other.filter_under_note &&
