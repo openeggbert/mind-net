@@ -47,6 +47,8 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* SIBLING_ORDER = "sibling_order";
         static constexpr const char* IMPORTANCE = "importance";
         static constexpr const char* DIFFICULTY = "difficulty";
+        static constexpr const char* PATH = "path";
+        static constexpr const char* DEPTH = "depth";
     };
 }
 #endif // NOTECOLUMNS_H

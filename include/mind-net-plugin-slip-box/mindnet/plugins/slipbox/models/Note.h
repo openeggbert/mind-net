@@ -56,7 +56,9 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
                                      set_description("Importance level of the note."),
             coldef(COLS::DIFFICULTY).set_default_value(0).set_enum_definition(enums::difficulty_to_enum_definition()).
-                                     set_description("Difficulty level of the note.")
+                                     set_description("Difficulty level of the note."),
+            coldef(COLS::PATH, INTERNAL),
+            coldef(COLS::DEPTH, INTEGER | INTERNAL),
         })
         .add_custom_list_action("note", "List children", {"parent_note_id", "{id}"})
         .add_custom_create_action("note", "Add child", {"parent_note_id", "{id}"})
@@ -75,11 +77,13 @@ namespace mindnet::plugins::slipbox::models
         int parent_note_id{};
         int content_id{};
         int source_id{};
-        int alist_for_note_id{};
+        int alias_for_note_id{};
         string title;
         int sibling_order{};
         enums::Importance importance{enums::Importance::Undefined};
         enums::Difficulty difficulty{enums::Difficulty::Undefined};
+        string path;
+        int depth{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -88,9 +92,10 @@ namespace mindnet::plugins::slipbox::models
             return id == other.id && map_id == other.map_id &&
                 sibling_order == other.sibling_order && title == other.title &&
                 content_id == other.content_id && source_id== other.source_id &&
-                    alist_for_note_id == other.alist_for_note_id &&
+                    alias_for_note_id == other.alias_for_note_id &&
                     parent_note_id == other.parent_note_id &&
                 importance == other.importance && difficulty == other.difficulty &&
+                    path == other.path && depth == other.depth &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
     };

@@ -409,24 +409,29 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
             for (int i = 1; i <= last_meta_version; ++i)
             {
                 SQLite::Statement q(db,
-                    "SELECT checksum FROM " + string(orm::SchemaHistoryMetaColumns::MODEL_NAME) +
-                    " WHERE version=?"
+                                    "SELECT checksum FROM " + string(orm::SchemaHistoryMetaColumns::MODEL_NAME) +
+                                    " WHERE version=?"
                 );
                 q.bind(1, i);
-                if (!q.executeStep()) {
+                if (!q.executeStep())
+                {
                     throw std::runtime_error("Meta migration version " + std::to_string(i) + " not found");
                 }
                 std::string found_checksum = q.getColumn(0).getString();
 
                 std::string expected_sql;
-                if (i == 1) {
+                if (i == 1)
+                {
                     expected_sql = ""; // bootstrap
-                } else {
+                }
+                else
+                {
                     expected_sql = meta_migrations[i];
                 }
                 std::string expected_checksum = util::Utils::hash_sha_256(expected_sql);
 
-                if (found_checksum != expected_checksum) {
+                if (found_checksum != expected_checksum)
+                {
                     err << "Meta migration checksum mismatch for version " << i
                         << ": expected " << expected_checksum
                         << " but found " << found_checksum << commit;
@@ -660,9 +665,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                 trace << "last_applied=" << last_applied
                     << ", available=" << available << commit;
 
-                for (int version = last_applied + 1;
-                     version <= available;
-                     version++)
+                for (int version = last_applied + 1; version <= available; version++)
                 {
                     debug << "Applying migration " << migration_scripts_ptr->get_migration_file_name(version) << commit;
 
@@ -681,47 +684,58 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                             return false;
                         }
                     }
+
                     const string& sql = migration_scripts_ptr->get_sql(version);
-
-                    bool migrated = false;
                     auto start = std::chrono::high_resolution_clock::now();
+                    bool migrated = false;
 
-                    SQLite::Transaction tx(db);
+                    string checksum;
+                    string chain_hash;
+                    long duration{0};
+                    string installed_on;
 
                     try
                     {
+                        db.exec("BEGIN;");
+                        // 1️⃣ execute the migration
                         db.exec(sql);
                         migrated = true;
+
+                        // 2️⃣ prepare data for schema_history
+                        auto end = std::chrono::high_resolution_clock::now();
+                        duration = duration_cast<std::chrono::microseconds>(end - start).count();
+
+                        string prev_chain = version == 1 ? "" : sql_chain_hashes[version - 1];
+                        checksum = util::Utils::hash_sha_256(sql);
+                        chain_hash = util::Utils::hash_sha_256(prev_chain + checksum);
+                        sql_chain_hashes[version] = chain_hash;
+
+                        installed_on = get_current_datetime();
+
+                        // 3️⃣ writing the migration record (part of the same transaction!)
+                        bool inserted = insert_migration(db, version, checksum, chain_hash, installed_on, duration,
+                                                         migrated);
+                        if (!inserted)
+                        {
+                            throw std::runtime_error(
+                                "Failed to insert schema_history for migration " + std::to_string(version));
+                        }
+
+                        db.exec("COMMIT;");
+                        info << "Migration " << version << " applied successfully." << commit;
                     }
-                    catch (SQLite::Exception& e)
+                    catch (const std::exception& e)
                     {
-                        err << "Migration " << version << " for plugin " + plugin_name + " failed: " << e.what() << commit;
-                    }
-
-
-                    auto end = std::chrono::high_resolution_clock::now();
-                    auto duration = duration_cast<std::chrono::microseconds>(
-                        end - start).count();
-
-                    string prev_chain = version == 1 ? "" : sql_chain_hashes[version - 1];
-                    string checksum = util::Utils::hash_sha_256(sql);
-                    string chain_hash = util::Utils::hash_sha_256(prev_chain + checksum);
-                    sql_chain_hashes[version] = chain_hash;
-
-                    string installed_on = get_current_datetime();
-
-                    bool inserted = insert_migration(db, version, checksum, chain_hash, installed_on,
-                                                     duration, migrated);
-                    if (!inserted)
-                    {
-                        err << "Migration " << version
-                            << " failed, it could not be inserted into the database." << commit;
-                        return false;
-                    }
-                    tx.commit();
-                    if (!migrated)
-                    {
-                        err << "Migration " << version << " failed." << commit;
+                        try
+                        {
+                            db.exec("ROLLBACK;");
+                            insert_migration(db, version, checksum, chain_hash, installed_on, duration,
+                                                        migrated);
+                        }
+                        catch (...)
+                        {
+                        }
+                        err << "Migration " << version << " failed and was rolled back: " << e.what() << commit;
                         return false;
                     }
                 }

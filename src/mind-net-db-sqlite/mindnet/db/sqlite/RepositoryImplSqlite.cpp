@@ -138,12 +138,17 @@ namespace mindnet::db::sqlite
             auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
             crow::json::type crow_json_type = has_value ? rvalue.t() : crow::json::type::Null;
             bool auto_value = col.is_auto();
+            bool internal_value = col.is_internal();
+            if (internal_value)
+            {
+                int abc = 4;
+            }
 
             auto column_type = col.get_column_type();
             auto primitive_column_type = column_type_to_primitive_column_type(column_type);
 
 
-            if (auto_value ? has_value : !auto_value) debug << "rvalue=" << rvalue << commit;
+            if (auto_value ? has_value : false) debug << "rvalue=" << rvalue << commit;
             if (mandatory && !has_value)
             {
                 throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");

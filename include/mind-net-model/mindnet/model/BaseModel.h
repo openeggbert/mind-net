@@ -166,6 +166,7 @@ namespace mindnet::model
     inline string validate_readonly(entity_fields& old_, entity_fields& new_, ModelDefinition& def_)
     {
         if (old_.size() != new_.size()) return "The number of fields in the entity has changed";
+
         auto columns = def_.get_columns();
         for (int i = 0; i < old_.size(); i++)
         {
@@ -175,6 +176,48 @@ namespace mindnet::model
             {
                 return "Value of column " + column.get_column_name() + " is readonly and cannot be changed.";
             }
+        }
+        return "";
+    }
+
+    inline string validate_internal(entity_fields& old_, entity_fields& new_, ModelDefinition& def_)
+    {
+        if (old_.size() != new_.size()) return "The number of fields in the entity has changed";
+
+        auto columns = def_.get_columns();
+        for (int i = 0; i < new_.size(); i++)
+        {
+            auto column = columns[i];
+            if (!column.is_internal()) continue;
+            if (old_[i] != new_[i])
+                return "Value of column " + column.get_column_name() + " is internal and cannot be changed by user.";
+        }
+        return "";
+    }
+
+    inline string validate_internal(entity_fields& new_, ModelDefinition& def_)
+    {
+        auto columns = def_.get_columns();
+        for (int i = 0; i < new_.size(); i++)
+        {
+            auto column = columns[i];
+            if (!column.is_internal()) continue;
+            auto value = new_[i];
+            auto value_int64_t = std::get_if<int64_t>(&value);
+            auto value_string = std::get_if<string>(&value);
+            if (value_int64_t && *value_int64_t != 0)
+            {
+                return "Value of column " + column.get_column_name() + " is internal and cannot be set by user.";
+            }
+            if (value_string && *value_string != "")
+            {
+                return "Value of column " + column.get_column_name() + " is internal and cannot be set by user.";
+            }
+            if (!value_int64_t && !value_string)
+            {
+                return "Value of column " + column.get_column_name() + " has unsupported std::variant type.";
+            }
+
         }
         return "";
     }

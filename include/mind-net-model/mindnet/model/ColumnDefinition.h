@@ -38,6 +38,7 @@ using mindnet::model::FOREIGN_KEY;\
 using mindnet::model::AUTO;\
 using mindnet::model::HIDDEN;\
 using mindnet::model::READONLY;\
+using mindnet::model::INTERNAL;\
 using mindnet::model::TEXT;\
 using mindnet::model::TEXTAREA;\
 using mindnet::model::INTEGER;\
@@ -56,13 +57,14 @@ namespace mindnet::model
         AUTO = 1 << 3,
         HIDDEN = 1 << 4,
         READONLY = 1 << 5,
-        TEXT = 1 << 6,
-        TEXTAREA = 1 << 7,
-        INTEGER = 1 << 8,
-        REAL = 1 << 9,
-        BLOB = 1 << 10,
-        BOOL = 1 << 11,
-        DATETIME = 1 << 12
+        INTERNAL  = 1 << 6,
+        TEXT = 1 << 7,
+        TEXTAREA = 1 << 8,
+        INTEGER = 1 << 9,
+        REAL = 1 << 10,
+        BLOB = 1 << 11,
+        BOOL = 1 << 12,
+        DATETIME = 1 << 13
     };
 
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
@@ -74,6 +76,7 @@ namespace mindnet::model
             AUTO,
             HIDDEN,
             READONLY,
+            INTERNAL,
             TEXT,
             TEXTAREA,
             INTEGER,
@@ -97,6 +100,7 @@ namespace mindnet::model
         bool auto_ = false;
         bool hidden = false;
         bool readonly = false;
+        bool internal_ = false;
         std::string default_value;
         string description;
 
@@ -234,6 +238,11 @@ namespace mindnet::model
             return readonly;
         }
 
+        [[nodiscard]] const bool is_internal() const
+        {
+            return internal_;
+        }
+
         [[nodiscard]] const string& get_description() const
         {
             return description;
@@ -321,6 +330,12 @@ namespace mindnet::model
             return *this;
         }
 
+        ColumnDefinition& set_internal()
+        {
+            internal_ = true;
+            return *this;
+        }
+
         ColumnDefinition& flags(int flags)
         {
             if (flags == 0)
@@ -341,6 +356,7 @@ namespace mindnet::model
             if (flags_set.contains(AUTO)) set_auto();
             if (flags_set.contains(HIDDEN)) set_hidden();
             if (flags_set.contains(READONLY)) set_readonly();
+            if (flags_set.contains(INTERNAL)) set_internal();
             //
             if (flags_set.contains(TEXT)) column_type = mindnet::model::ColumnType::Text;
             if (flags_set.contains(TEXTAREA)) column_type = mindnet::model::ColumnType::TextArea;

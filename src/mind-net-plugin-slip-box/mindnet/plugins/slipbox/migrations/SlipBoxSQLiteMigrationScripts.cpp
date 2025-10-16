@@ -81,6 +81,10 @@ CREATE TABLE note (
     importance INTEGER DEFAULT 0,
     difficulty INTEGER DEFAULT 0,
 
+    -- hierarchical metadata
+    path TEXT,               -- e.g. '/000001/000045/000099'
+    depth INTEGER DEFAULT 0, -- hierarchical depth (0=root, 1=child, etc.)
+
     FOREIGN KEY (map_id) REFERENCES map(id),
     FOREIGN KEY (parent_note_id) REFERENCES note(id),
     FOREIGN KEY (content_id) REFERENCES content(id),
@@ -93,6 +97,58 @@ CREATE INDEX idx_note_parent_note_id ON note(parent_note_id);
 CREATE INDEX idx_note_content_id ON note(content_id);
 CREATE INDEX idx_note_source_id ON note(source_id);
 CREATE INDEX idx_note_parent_sibling ON note(parent_note_id, sibling_order);
+CREATE INDEX idx_note_path ON note(path);
+CREATE INDEX idx_note_depth ON note(depth);
+
+
+CREATE TRIGGER IF NOT EXISTS trg_note_prevent_cycles
+BEFORE UPDATE OF parent_note_id ON note
+FOR EACH ROW
+WHEN NEW.parent_note_id IS NOT NULL
+BEGIN
+    WITH RECURSIVE ancestors(id) AS (
+        SELECT parent_note_id FROM note WHERE id = NEW.parent_note_id
+        UNION ALL
+        SELECT n.parent_note_id FROM note n
+        JOIN ancestors a ON n.id = a.id
+    )
+    SELECT
+        CASE
+            WHEN EXISTS (SELECT 1 FROM ancestors WHERE id = NEW.id)
+            THEN RAISE(ABORT, 'Cycle detected in note hierarchy')
+        END;
+END;
+
+
+CREATE TRIGGER IF NOT EXISTS trg_note_set_path_depth_after_insert
+AFTER INSERT ON note
+FOR EACH ROW
+BEGIN
+	-- if it has parent
+    UPDATE note
+    SET
+        path = (
+            SELECT
+                CASE
+                    WHEN parent_note_id IS NULL THEN
+                        printf('/%06d', NEW.id)
+                    ELSE
+                        (SELECT path || '/' || printf('%06d', NEW.id)
+                         FROM note AS parent
+                         WHERE parent.id = NEW.parent_note_id)
+                END
+        ),
+        depth = (
+            SELECT
+                CASE
+                    WHEN parent_note_id IS NULL THEN 0
+                    ELSE (SELECT depth + 1
+                          FROM note AS parent
+                          WHERE parent.id = NEW.parent_note_id)
+                END
+        )
+    WHERE id = NEW.id;
+END;
 
 )");
         add_migration("V5__create_property.sql", R"(

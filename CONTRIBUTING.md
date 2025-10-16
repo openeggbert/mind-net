@@ -64,6 +64,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE Implement complex Filtering in REST API
 - [ ] Add support for Docker
 - [ ] Rewrite enums using EnumUtils.h
+- [ ] Table note - new column path9
 
 
 ### Table File

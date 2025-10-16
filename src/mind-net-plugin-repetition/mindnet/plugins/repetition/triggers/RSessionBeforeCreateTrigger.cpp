@@ -25,8 +25,8 @@ namespace mindnet::plugins::repetition::triggers
     {
     }
 
-    std::vector<RepetitionId> find_repetition_ids(
-        std::vector<RepetitionId>& ids,
+    std::vector<int> find_repetition_ids(
+        std::vector<int>& ids,
         int stack_depth,
         int user_id,
         models::RSession& r_session,
@@ -61,7 +61,7 @@ namespace mindnet::plugins::repetition::triggers
         }
 
         auto token = api::AccessTokenContext(user_id, "", 200);;
-        std::vector<RepetitionId> ids;
+        std::vector<int> ids;
 
         switch (r_session.algorithm)
         {

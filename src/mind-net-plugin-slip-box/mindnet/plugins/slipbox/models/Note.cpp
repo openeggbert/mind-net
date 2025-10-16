@@ -16,11 +16,14 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(parent_note_id);
         result.push_back(content_id);
         result.push_back(source_id);
-        result.push_back(alist_for_note_id);
+        result.push_back(alias_for_note_id);
         result.push_back(title);
         result.push_back(sibling_order);
         result.push_back(cast64(importance));
         result.push_back(cast64(difficulty));
+        result.push_back(path);
+        result.push_back(cast64(depth));
+
         return result;
     }
 
@@ -38,11 +41,13 @@ namespace mindnet::plugins::slipbox::models
         parent_note_id = number();
         content_id = number();
         source_id = number();
-        alist_for_note_id = number();
+        alias_for_note_id = number();
         title = text();
         sibling_order = number();
         importance = static_cast<enums::Importance>(number());
         difficulty = static_cast<enums::Difficulty>(number());
+        path = text();
+        depth = number();
     }
 
     string Note::validate()

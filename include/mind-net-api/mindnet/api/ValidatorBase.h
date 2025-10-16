@@ -120,7 +120,10 @@ namespace mindnet::api
             //
             if (auto error = entity.validate(); !error.empty())
                 return {400, error};
-            if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()); !error.
+            auto def = db->get_model_definition(get_model_name()).value();
+            if (auto error = validate_internal(ef, def); !error.empty())
+                return {400, error};
+            if (auto error = model::validate_enums(ef, def); !error.
                 empty())
                 return {400, error};
             ////
@@ -222,6 +225,8 @@ namespace mindnet::api
 
             auto def = db->get_model_definition(derived().get_model_name()).value();
             if (auto error = validate_readonly(old_values, ef, def); !error.empty())
+                return {400, error};
+            if (auto error = validate_internal(old_values, ef, def); !error.empty())
                 return {400, error};
             if (auto error = model::validate_enums(ef, db->get_model_definition(get_model_name()).value()); !error.
                 empty())
