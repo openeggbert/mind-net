@@ -54,7 +54,8 @@ namespace mindnet::plugins::slipbox::triggers
         try
         {
             res = call_query(db::sqlite::queries::QUERY_UpdateNotePathAndDepth, req);
-        } catch (...)
+            info << "Query UpdateNotePathAndDepth successful" << commit;
+        } catch (std::string e)
         {
             err << "Query UpdateNotePathAndDepth failed" << commit;
         }
