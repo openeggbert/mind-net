@@ -12,10 +12,9 @@ import {
     formatDateTime, formatDateTimeHM,
     get_element,
     getOrFetchFromLocalStorage,
-    minutes_to_ms, showError
+    minutes_to_ms, showError, showInfo,
+    saveToLocalStorage, loadFromLocalStorage
 } from "./dom.js";
-import {  } from "./api.js";
-
 
 let user_id = null
 let r_global_settings = {};
@@ -59,10 +58,12 @@ function makeDraggable(el) {
     const doDrag = (x, y) => {
         if (!dragging) return;
         el.style.left = `${x - offsetX}px`;
-        el.style.top  = `${y - offsetY}px`;
+        el.style.top = `${y - offsetY}px`;
     };
 
-    const stopDrag = () => { dragging = false };
+    const stopDrag = () => {
+        dragging = false
+    };
 
     // mouse
     header.addEventListener('mousedown', e => {
@@ -106,6 +107,7 @@ export function showWindow() {
         });
     }
 }
+
 window.showWindow = showWindow;
 export const clearWindow = () => document.getElementById("window_container_content").innerHTML = "";
 window.clearWindow = clearWindow;
@@ -152,6 +154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     main_content.style.textAlign = "center";
     main.appendChild(main_content)
 
+    const screen_demo = "screen_demo"
     const screen_home = "screen_home"
     const screen_sessions = "screen_sessions"
     const screen_new_session = "screen_new_session"
@@ -163,7 +166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let current_screen = screen_home;
     const params = new URLSearchParams(window.location.search);
     let param_screen = params.get("screen");
-    if(param_screen !== null && param_screen !== undefined) {
+    if (param_screen !== null && param_screen !== undefined) {
         current_screen = param_screen;
     }
 
@@ -171,7 +174,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     get_element("repetition_header").title = "Go to list of all sessions"
     get_element("repetition_header").style.cursor = "pointer"
 
-    get_element("button_mindnet").addEventListener("click", ()=> {window.location.href='index.html'});
+    get_element("button_mindnet").addEventListener("click", () => {
+        window.location.href = 'index.html'
+    });
     get_element("button_mindnet").title = "Go to Mind Net generic frontend"
 
     get_element("button_menu").addEventListener("click", () => {
@@ -180,11 +185,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
     get_element("button_menu").title = "Show the Menu"
 
-    get_element("button_theme").addEventListener("click", () => {document.body.classList.toggle("dark");});
+    get_element("button_theme").addEventListener("click", () => {
+        document.body.classList.toggle("dark");
+    });
     get_element("button_theme").title = "Switch dark/light theme"
     //
     const win = document.getElementById('window_container');
     makeDraggable(win);
+
     //
 
 
@@ -202,19 +210,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         let r_user_settings_tmp = await list_all_entities("r_user_setting", "user_id=" + user_id)
         r_user_settings = {}
 
-        r_user_settings_tmp.forEach(json =>
-        {
+        r_user_settings_tmp.forEach(json => {
             r_user_settings[json.key] = json.value
         });
         return r_user_settings
     }
 
     const sixty_minutes = minutes_to_ms(60)
+
     function refresh_param_screen() {
         const url = new URL(window.location.href);
         url.searchParams.set("screen", current_screen);
         window.history.pushState({}, "", url);
     }
+
+    function render_screen_demo() {
+        refresh_param_screen()
+        main_content.innerHTML = "";
+
+        main_content.innerHTML = `
+                <div class="card">
+            <div class="front">❓ What does <code>const</code> mean as a function parameter in C++?</div>
+            <div class="back">✅ Indicates that the parameter will not be modified within the function.</div>
+            <button class="show-btn" onclick="showOrHideAnswer()">Show answer</button>
+            <div id="rating">
+                <p>How well did you recall the note?</p>
+                <div>
+                    <button class="rating-btn" id="rating-btn-0" onclick="rate_demo(0)">0</button>
+                    <button class="rating-btn" id="rating-btn-1" onclick="rate_demo(1)">1</button>
+                    <button class="rating-btn" id="rating-btn-2" onclick="rate_demo(2)">2</button>
+                    <button class="rating-btn" id="rating-btn-3" onclick="rate_demo(3)">3</button>
+                    <button class="rating-btn" id="rating-btn-4" onclick="rate_demo(4)">4</button>
+                    <button class="rating-btn" id="rating-btn-5" onclick="rate_demo(5)">5</button>
+                </div>
+            </div>
+            
+            <div id="actions">
+                <p>Next action</p>
+                <div>
+                    <button class="rating-btn" id="send-btn">Send</button>
+                    <button class="rating-btn" id="skip-btn">Skip</button>
+                </div>
+            </div>
+            <div class="info" id="result"></div>
+        </div>
+        `;
+
+    }
+
     function render_screen_home() {
         refresh_param_screen()
         main_content.innerHTML = "";
@@ -227,7 +270,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             main_content.appendChild(document.createElement("br"))
             button.innerText = text
             button.style.minWidth = "200px"
-            button.onclick = function() {
+            button.onclick = function () {
                 current_screen = screen
                 render()
             }
@@ -235,8 +278,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         make_button("New session", screen_new_session)
         make_button("Sessions", screen_sessions)
-        make_button("Global settings",screen_global_settings)
-        make_button("User settings",screen_user_settings)
+        make_button("Global settings", screen_global_settings)
+        make_button("User settings", screen_user_settings)
+        make_button("Demo", screen_demo)
     }
 
     let currentPage = 1;
@@ -244,6 +288,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const pageSize = 10;
 
     let renderOnlyPinned = false;
+
     async function render_screen_sessions() {
         refresh_param_screen();
         main_content.innerHTML = "<h2>Your Sessions</h2>";
@@ -251,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         main_content.innerHTML += "\n<label for=\"only_pinned\">Only pinned</label>\n";
         main_content.innerHTML += "\n<input id=\"only_pinned\" type=\"checkbox\"/>\n";
         get_element("only_pinned").checked = renderOnlyPinned
-        get_element("only_pinned").onclick = function() {
+        get_element("only_pinned").onclick = function () {
             renderOnlyPinned = !renderOnlyPinned
             get_element("only_pinned").checked = renderOnlyPinned
             render()
@@ -337,15 +382,22 @@ document.addEventListener('DOMContentLoaded', async () => {
             let actions = document.createElement("div");
             actions.className = "session-actions";
 
-            let btnRun = document.createElement("button");
-            btnRun.className = "session-btn";
-            btnRun.textContent = "Run";
-            btnRun.onclick = () => {
-                r_session_for_reviews = json
-                current_screen = screen_new_review
-                render()
-            };
-            actions.appendChild(btnRun);
+            const created = new Date(json.created_at);
+            const now = new Date();
+            const oneDayMs = 24 * 60 * 60 * 1000;
+            const youngerThanDay = (now - created) <= oneDayMs;
+
+            if (youngerThanDay) {
+                let btnRun = document.createElement("button");
+                btnRun.className = "session-btn";
+                btnRun.textContent = "Run";
+                btnRun.onclick = () => {
+                    r_session_for_reviews = json
+                    current_screen = screen_new_review
+                    render()
+                };
+                actions.appendChild(btnRun);
+            }
 
             let btnClone = document.createElement("button");
             btnClone.className = "session-btn danger";
@@ -390,47 +442,82 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
 
         const btnFirst = footer.querySelector('button[data-action="first"]');
-        const btnPrev  = footer.querySelector('button[data-action="prev"]');
-        const btnNext  = footer.querySelector('button[data-action="next"]');
-        const btnLast  = footer.querySelector('button[data-action="last"]');
+        const btnPrev = footer.querySelector('button[data-action="prev"]');
+        const btnNext = footer.querySelector('button[data-action="next"]');
+        const btnLast = footer.querySelector('button[data-action="last"]');
 
-        btnFirst.onclick = () => { currentPage = 1; render_screen_sessions(); };
-        btnPrev.onclick  = () => { if (currentPage > 1) { currentPage--; render_screen_sessions(); } };
-        btnNext.onclick  = () => { if (currentPage < totalPages) { currentPage++; render_screen_sessions(); } };
-        btnLast.onclick  = () => { currentPage = totalPages; render_screen_sessions(); };
+        btnFirst.onclick = () => {
+            currentPage = 1;
+            render_screen_sessions();
+        };
+        btnPrev.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                render_screen_sessions();
+            }
+        };
+        btnNext.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                render_screen_sessions();
+            }
+        };
+        btnLast.onclick = () => {
+            currentPage = totalPages;
+            render_screen_sessions();
+        };
 
         main_content.appendChild(footer);
     }
 
     function algoName(a) {
         switch (a) {
-            case 0: return "R-0";
-            case 2: return "R-2";
-            case 4: return "R-4";
-            case 18: return "R-18";
-            default: return "Unknown";
+            case 0:
+                return "R-0";
+            case 2:
+                return "R-2";
+            case 4:
+                return "R-4";
+            case 18:
+                return "R-18";
+            default:
+                return "Unknown";
         }
     }
+
     function scopeName(s) {
         switch (s) {
-            case 0: return "DueOnly";
-            case 1: return "NewOnly";
-            case 2: return "DueAndNew";
-            case 3: return "All";
-            default: return "Unknown";
+            case 0:
+                return "DueOnly";
+            case 1:
+                return "NewOnly";
+            case 2:
+                return "DueAndNew";
+            case 3:
+                return "All";
+            default:
+                return "Unknown";
         }
     }
 
     function scheduleName(s) {
         switch (Number(s)) {
-            case 0: return "Depth First";
-            case 1: return "Breadth First";
-            case 2: return "Random";
-            case 3: return "Depth First Shuffled";
-            case 4: return "Interleaved";
-            case 5: return "Difficulty Sorted";
-            case 6: return "Chronological";
-            default: return "Unknown";
+            case 0:
+                return "Depth First";
+            case 1:
+                return "Breadth First";
+            case 2:
+                return "Random";
+            case 3:
+                return "Depth First Shuffled";
+            case 4:
+                return "Interleaved";
+            case 5:
+                return "Difficulty Sorted";
+            case 6:
+                return "Chronological";
+            default:
+                return "Unknown";
         }
     }
 
@@ -455,6 +542,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             label.for = for_id
             return label
         }
+
         function create_input(type, id, value = "") {
             let input = document.createElement("input")
             input.type = type;
@@ -463,23 +551,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             input.value = value === "" && type === "number" ? 0 : value
             return input
         }
+
         function create_br() {
             return document.createElement("br")
         }
-        function make_input(text,id,type = "text"){
+
+        function make_input(text, id, type = "text") {
             let div = document.createElement("div")
             main_content.appendChild(div)
             div.style.marginBottom = "10px";
-            if(type !== "hidden") div.appendChild(create_label(text + ":",id))
-            div.appendChild(create_input(type,id))
-            if(type !== "hidden") div.appendChild(create_br())
+            if (type !== "hidden") div.appendChild(create_label(text + ":", id))
+            div.appendChild(create_input(type, id))
+            if (type !== "hidden") div.appendChild(create_br())
         }
-        function make_select(text, id, options){
+
+        function make_select(text, id, options) {
             let div = document.createElement("div")
 
             main_content.appendChild(div)
             div.style.marginBottom = "10px";
-            div.appendChild(create_label(text + ":",id))
+            div.appendChild(create_label(text + ":", id))
             let select = document.createElement("select")
             select.name = id
             select.id = id
@@ -489,11 +580,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 select.appendChild(option)
             })
         }
-        function make_option(text, value, selected = false){
+
+        function make_option(text, value, selected = false) {
             let option = document.createElement("option")
             option.value = value
             option.innerText = text
-            if(selected) option.selected = true
+            if (selected) option.selected = true
             return option;
         }
 
@@ -508,19 +600,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         let clone_schedule = cloned ? clone_from_r_session.schedule : null
         let clone_scope = cloned ? clone_from_r_session.scope : null
         make_input("Map ID", "new_session_map_id", "number")
-        if(cloned) get_element("new_session_map_id").value = clone_from_r_session.map_id
+        if (cloned) get_element("new_session_map_id").value = clone_from_r_session.map_id
 
         make_input("Cloned from session", "new_session_cloned_from_session_id", "text")
         get_element("new_session_cloned_from_session_id").readOnly = true
-        if(cloned) get_element("new_session_cloned_from_session_id").value = clone_from_r_session.id
+        if (cloned) get_element("new_session_cloned_from_session_id").value = clone_from_r_session.id
 
-        let algorithms =  [
+        let algorithms = [
             make_option("R-0", 0, clone_algorithm === 0),
             make_option("R-2", 2, clone_algorithm === 2),
             make_option("R-4", 4, clone_algorithm === 4),
             make_option("R-18", 18, cloned ? clone_algorithm === 18 : true),
         ]
-        make_select("Algorithm", "new_session_algorithm",algorithms)
+        make_select("Algorithm", "new_session_algorithm", algorithms)
 
         let schedules = [
             make_option("Depth First", 0, clone_schedule === 0),
@@ -547,7 +639,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_input("Description", "new_session_description")
 
         make_input("Filter under note", "new_session_filter_under_note", "text")
-        if(cloned) get_element("new_session_filter_under_note").value = clone_from_r_session.filter_under_note
+        if (cloned) get_element("new_session_filter_under_note").value = clone_from_r_session.filter_under_note
 
         function unix_ms_to_yyyymmdd(ms) {
             if (ms === null || ms === undefined || ms === 0) return "";
@@ -561,35 +653,37 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         make_input("Filter date from", "new_session_filter_date_from", "date")
-        if(cloned) get_element("new_session_filter_date_from").value = unix_ms_to_yyyymmdd(clone_from_r_session.filter_date_from)
+        if (cloned) get_element("new_session_filter_date_from").value = unix_ms_to_yyyymmdd(clone_from_r_session.filter_date_from)
 
         make_input("Filter date to", "new_session_filter_date_to", "date")
-        if(cloned) get_element("new_session_filter_date_to").value = unix_ms_to_yyyymmdd(clone_from_r_session.filter_date_to)
+        if (cloned) get_element("new_session_filter_date_to").value = unix_ms_to_yyyymmdd(clone_from_r_session.filter_date_to)
 
         make_input("Filter tag", "new_session_filter_tag", "text")
-        if(cloned) get_element("new_session_filter_tag").value = clone_from_r_session.filter_tag
+        if (cloned) get_element("new_session_filter_tag").value = clone_from_r_session.filter_tag
 
         make_input("Filter collection", "new_session_filter_collection", "text")
-        if(cloned) get_element("new_session_filter_collection").value = clone_from_r_session.filter_tag
+        if (cloned) get_element("new_session_filter_collection").value = clone_from_r_session.filter_tag
 
         make_input("Selected items", "new_session_selected_items", "text")
         make_input("Pinned", "new_session_pinned", "checkbox")
-        button_save_session.onclick = async function() {
+        button_save_session.onclick = async function () {
             let new_session = {};
             new_session["user_id"] = user_id
             new_session["map_id"] = get_element("new_session_map_id").value;
             new_session["cloned_from_session_id"] = get_element("new_session_cloned_from_session_id").value;
-            if(new_session["cloned_from_session_id"] === "")new_session["cloned_from_session_id"] = 0
+            if (new_session["cloned_from_session_id"] === "") new_session["cloned_from_session_id"] = 0
             new_session["algorithm"] = get_element("new_session_algorithm").value;
             new_session["schedule"] = get_element("new_session_schedule").value;
             new_session["scope"] = get_element("new_session_scope").value;
             new_session["description"] = get_element("new_session_description").value;
 
             new_session["filter_under_note"] = get_element("new_session_filter_under_note").value;
-            if(new_session["filter_under_note"] === "")new_session["filter_under_note"] = 0
+            if (new_session["filter_under_note"] === "") new_session["filter_under_note"] = 0
 
             function yyyymmdd_to_unix_mx(yyyymmdd) {
-                if(yyyymmdd === null || yyyymmdd === undefined) {return 0}
+                if (yyyymmdd === null || yyyymmdd === undefined) {
+                    return 0
+                }
                 let result = new Date(yyyymmdd + "T00:00:00Z").getTime()
 
                 if (isNaN(result)) {
@@ -597,24 +691,25 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 return result
             }
+
             new_session["filter_date_from"] = yyyymmdd_to_unix_mx(get_element("new_session_filter_date_from").value);
-            if(new_session["filter_date_from"] === "")new_session["filter_date_from"] = 0
+            if (new_session["filter_date_from"] === "") new_session["filter_date_from"] = 0
 
             new_session["filter_date_to"] = yyyymmdd_to_unix_mx(get_element("new_session_filter_date_to").value);
-            if(new_session["filter_date_to"] === "")new_session["filter_date_to"] = 0
+            if (new_session["filter_date_to"] === "") new_session["filter_date_to"] = 0
 
             new_session["filter_tag"] = get_element("new_session_filter_tag").value;
-            if(new_session["filter_tag"] === "")new_session["filter_tag"] = 0
+            if (new_session["filter_tag"] === "") new_session["filter_tag"] = 0
 
             new_session["filter_collection"] = get_element("new_session_filter_collection").value;
-            if(new_session["filter_collection"] === "")new_session["filter_collection"] = 0
+            if (new_session["filter_collection"] === "") new_session["filter_collection"] = 0
 
             new_session["selected_items"] = get_element("new_session_selected_items").value;
-            if(new_session["selected_items"] === "")new_session["selected_items"] = "{}"
+            if (new_session["selected_items"] === "") new_session["selected_items"] = "{}"
             new_session["pinned"] = get_element("new_session_pinned").checked ? 1 : 0;
 
             let response = await post_entity("r_session", new_session);
-            if(response === null) {
+            if (response === null) {
                 showError("Saving new session failed.")
                 return;
             }
@@ -624,27 +719,176 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    // ============================================================
+// 🧠 Session-used note tracking (expiring after 1 day)
+// ============================================================
+
+// saves note_id to the list of note_ids for the given session 
+    function addNoteIdToSession(sessionId, noteId) {
+        const key = `r_session_used_notes_${sessionId}`;
+        const ttlMs = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+
+        let usedNotes = loadFromLocalStorage(key) || [];
+
+        // only add if not already present
+        if (!usedNotes.includes(noteId)) {
+            usedNotes.push(noteId);
+            saveToLocalStorage(key, usedNotes, ttlMs);
+        }
+    }
+
+// loads the list of used note_ids (returns [] if expired)
+    function getUsedNotesForSession(sessionId) {
+        const key = `r_session_used_notes_${sessionId}`;
+        return loadFromLocalStorage(key) || [];
+    }
+
+// checks if note_id has already been used
+    function wasNoteUsed(sessionId, noteId) {
+        const usedNotes = getUsedNotesForSession(sessionId);
+        return usedNotes.includes(noteId);
+    }
+
+
     function render_screen_new_review() {
         refresh_param_screen()
         main_content.innerHTML = "";
+
+        if (r_session_for_reviews === null || r_session_for_reviews === undefined) {
+            showError("Session for reviews is not set. Select session")
+            render(screen_sessions)
+            return;
+        }
+        let note_ids = JSON.parse(r_session_for_reviews.selected_items).note_ids
+        if (note_ids.length === 0) {
+            showInfo("This session has no notes to be reviewed");
+            render(screen_sessions)
+            return;
+        }
+
+        let demo = `
+        <div class="card">
+            <div class="front">❓ What does <code>const</code> mean as a function parameter in C++?</div>
+            <div class="back">✅ Indicates that the parameter will not be modified within the function.</div>
+            <button class="show-btn" onclick="showOrHideAnswer()">Show answer</button>
+            <div id="rating">
+                <p>How well did you recall the note?</p>
+                <div>
+                    <button class="rating-btn" id="rating-btn-0" onclick="rate_demo(0)">0</button>
+                    <button class="rating-btn" id="rating-btn-1" onclick="rate_demo(1)">1</button>
+                    <button class="rating-btn" id="rating-btn-2" onclick="rate_demo(2)">2</button>
+                    <button class="rating-btn" id="rating-btn-3" onclick="rate_demo(3)">3</button>
+                    <button class="rating-btn" id="rating-btn-4" onclick="rate_demo(4)">4</button>
+                    <button class="rating-btn" id="rating-btn-5" onclick="rate_demo(5)">5</button>
+                </div>
+            </div>
+            
+            <div id="actions">
+                <p>Next action</p>
+                <div>
+                    <button class="rating-btn" id="send-btn">Send</button>
+                    <button class="rating-btn" id="skip-btn">Skip</button>
+                </div>
+            </div>
+            <div class="info" id="result"></div>
+        </div>
+        `;
+
+        alert(JSON.stringify(note_ids));
+        for (let note_id of note_ids) {
+            if (wasNoteUsed(r_session_for_reviews.id, note_id)) {
+                console.log("Skipping note with ID " + note_id);
+                continue;
+            }
+            main_content.innerHTML = "";
+
+            let div_card = document.createElement("div");
+            div_card.classList.add("card");
+            main_content.appendChild(div_card);
+
+            let div_front = document.createElement("div");
+            div_front.classList.add("front");
+            div_front.innerText = "❓ " + "Note " + note_id;
+            div_card.appendChild(div_front);
+
+            let div_back = document.createElement("div");
+            div_back.classList.add("back");
+            div_back.innerText = "✅ " + "Answer " + note_id;
+            div_card.appendChild(div_back);
+
+            let button_show_btn = document.createElement("button");
+            button_show_btn.classList.add("show-btn");
+            button_show_btn.innerText = "Show answer";
+            button_show_btn.addEventListener("click", showOrHideAnswer);
+            div_card.appendChild(button_show_btn);
+
+            let div_rating = document.createElement("div");
+            div_rating.classList.add("rating");
+            div_card.appendChild(div_rating);
+
+            let p_rating = document.createElement("p");
+            p_rating.innerText = "How well did you recall the note?";
+            div_card.appendChild(p_rating);
+
+            div_card.innerHTML += `
+            <div>
+                    <button class="rating-btn" id="rating-btn-0">0</button>
+                    <button class="rating-btn" id="rating-btn-1">1</button>
+                    <button class="rating-btn" id="rating-btn-2">2</button>
+                    <button class="rating-btn" id="rating-btn-3">3</button>
+                    <button class="rating-btn" id="rating-btn-4">4</button>
+                    <button class="rating-btn" id="rating-btn-5">5</button>
+                </div>
+            `
+
+            let div_actions = document.createElement("div");
+            div_card.appendChild(div_actions);
+            let p_actions = document.createElement("p");
+            p_actions.innerHTML = "Next action"
+            div_actions.appendChild(p_actions);
+
+            div_actions.innerHTML += `
+                            <div>
+                    <button class="rating-btn" id="send-btn">Send</button>
+                    <button class="rating-btn" id="skip-btn">Skip</button>
+                </div>
+            `
+
+            div_card.innerHTML += `<div class="info" id="result"></div>`
+
+            //addNoteIdToSession(r_session_for_reviews.id, note_id);
+        }
 
         r_session_for_reviews = null;
     }
 
     function render(new_current_screen = null) {
-        if(new_current_screen !== null&& new_current_screen !== undefined) {
+        if (new_current_screen !== null && new_current_screen !== undefined) {
             current_screen = new_current_screen;
         }
         main_content.style.textAlign = "center";
         r_global_settings = getOrFetchFromLocalStorage("r_global_settings", load_r_global_settings, sixty_minutes)
         r_user_settings = getOrFetchFromLocalStorage("r_user_settings", load_r_user_settings, sixty_minutes)
 
-        switch(current_screen) {
-            case screen_new_session: render_screen_new_session(); break;
-            case screen_sessions: render_screen_sessions(); break;
-            case screen_new_review : render_screen_new_review(); break;
-            case screen_home: render_screen_home(); break;
-            default: alert("Unknown screen " + current_screen); render_screen_home()
+        switch (current_screen) {
+            case screen_new_session:
+                render_screen_new_session();
+                break;
+            case screen_sessions:
+                render_screen_sessions();
+                break;
+            case screen_new_review :
+                render_screen_new_review();
+                break;
+            case screen_home:
+                render_screen_home();
+                break;
+            case screen_demo:
+                render_screen_demo();
+                break;
+            default:
+                alert("Unknown screen " + current_screen);
+                render_screen_home()
         }
     }
 
@@ -658,14 +902,14 @@ export function showOrHideAnswer() {
     let showbtn = document.querySelector('.show-btn');
     let shown = showbtn.innerText === "Hide answer"
 
-
     document.querySelector('.back').style.display = shown ? 'none' : 'block';
     showbtn.innerText = shown ? "Show answer" : "Hide answer";
 
 }
+
 window.showOrHideAnswer = showOrHideAnswer;
 
-export function rate(q) {
+export function rate_demo(q) {
     get_element("rating-btn-0").className = "rating-btn"
     get_element("rating-btn-1").className = "rating-btn"
     get_element("rating-btn-2").className = "rating-btn"
@@ -701,7 +945,8 @@ export function rate(q) {
 
     document.getElementById('result').innerHTML =
         `📈 Retrievability: ${R_now.toFixed(3)}<br>
-         📅 Další opakování za: ${next_I.toFixed(2)} dní<br>
-         🧠 Nová stabilita: ${S_after.toFixed(2)} dní`;
+         📅 Next repetition in: ${next_I.toFixed(2)} days<br>
+         🧠 New stability: ${S_after.toFixed(2)} days`;
 }
-window.rate = rate;
+
+window.rate_demo = rate_demo;

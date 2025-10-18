@@ -38,6 +38,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] FEATURE Query - name, args, returns string - for Validators and Triggers
 
 ### Extending
+- [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 - [ ] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files

@@ -174,7 +174,7 @@ LIMIT {limit};
             }
 
             response["note_ids"] = note_ids;
-            response["sql"] = sql;
+            //response["sql"] = sql;
         }
         catch (SQLite::Exception& e)
         {

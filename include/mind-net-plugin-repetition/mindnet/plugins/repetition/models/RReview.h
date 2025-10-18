@@ -20,7 +20,7 @@ namespace mindnet::plugins::repetition::models
 
     inline def R_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
+        .set_rest_operations("cr")
         .set_group("Repetition", 200).set_title_column(COLS::NOTE_ID).allow_reader_write()
         .allow_reader_write()
         .set_columns({
