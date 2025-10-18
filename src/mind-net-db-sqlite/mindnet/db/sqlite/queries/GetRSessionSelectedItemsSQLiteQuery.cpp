@@ -15,7 +15,11 @@ FROM note n
 JOIN r{algorithm}_state s ON s.note_id = n.id
 WHERE s.user_id = {user_id}
   AND s.next_review <= {now_ms}
-  AND n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+  AND (
+    {filter_under_note} = 0
+    OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+)
+
 {order_by}
 LIMIT {limit};
 
@@ -25,13 +29,17 @@ FROM note n
 LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
 WHERE s.note_id IS NULL
-  AND n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+  AND (
+    {filter_under_note} = 0
+    OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+)
+
 {order_by}
 LIMIT {limit};
 )";
     const std::string SQL_DUE_AND_NEW= R"(
 WITH root AS (
-    SELECT path AS prefix FROM note WHERE id = {filter_under_note}
+    SELECT path AS prefix FROM note WHERE ({filter_under_note} = 0) OR (id = {filter_under_note})
 ),
 due AS (
     SELECT n.id AS note_id
@@ -60,34 +68,12 @@ LIMIT {limit};
 
 )";
     const std::string SQL_ALL= R"(
-WITH root AS (
-    SELECT path AS prefix FROM note WHERE id = {filter_under_note}
-),
-due AS (
-    SELECT n.id AS note_id
-    FROM note n
-    JOIN r18_state s ON s.note_id = n.id
-    WHERE s.user_id = {user_id}
-      AND s.next_review <= {now_ms}
-      AND n.path LIKE (SELECT prefix || '%' FROM root)
-),
-new AS (
-    SELECT n.id AS note_id
-    FROM note n
-    LEFT JOIN r18_state s
-      ON s.note_id = n.id AND s.user_id = {user_id}
-    WHERE s.note_id IS NULL
-      AND n.path LIKE (SELECT prefix || '%' FROM root)
-)
-SELECT note_id
-FROM (
-    SELECT note_id FROM due
-    UNION
-    SELECT note_id FROM new
-)
+SELECT n.id AS note_id
+FROM note n
+WHERE ({filter_under_note} = 0)
+   OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
 {order_by}
 LIMIT {limit};
-
 )";
 
     GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
@@ -127,15 +113,23 @@ LIMIT {limit};
 
         // --- ORDER BY based on schedule ---
         std::string order_sql_part;
+
         switch (schedule)
         {
-        case 0: order_sql_part = "ORDER BY n.path"; break;
-        case 1: order_sql_part = "ORDER BY n.depth ASC, n.id ASC"; break;
-        case 2: order_sql_part = "ORDER BY random()"; break;
-        case 3: order_sql_part = "ORDER BY n.path, random()"; break;
-        case 4: order_sql_part = "ORDER BY (n.depth % 3), random()"; break;
-        case 5: order_sql_part = "ORDER BY s.repetitions ASC, s.next_review ASC"; break;
-        case 6: order_sql_part = "ORDER BY n.created_at ASC"; break;
+        case 0: order_sql_part = "ORDER BY n.path"; break;                              // DepthFirst
+        case 1: order_sql_part = "ORDER BY n.depth ASC, n.id ASC"; break;               // BreadthFirst
+        case 2: order_sql_part = "ORDER BY random()"; break;                            // Random
+        case 3: order_sql_part = "ORDER BY n.path, random()"; break;                    // DepthFirstShuffled
+        case 4: order_sql_part = "ORDER BY (n.depth % 3), random()"; break;             // Interleaved
+        case 5: // DifficultySorted
+            if (scope == 0) // DueOnly
+                order_sql_part = "ORDER BY s.repetitions ASC, s.next_review ASC";
+            else if (scope == 2) // DueAndNew
+                order_sql_part = "ORDER BY note_id ASC"; // s.* is no longer visible
+            else
+                order_sql_part = "ORDER BY n.created_at ASC"; // fallback
+            break;
+        case 6: order_sql_part = "ORDER BY n.created_at ASC"; break;                    // Chronological
         default:
             throw std::invalid_argument("Invalid schedule value");
         }
@@ -149,7 +143,7 @@ LIMIT {limit};
             {"limit", std::to_string(limit)},
             {"order_by", order_sql_part}
         };
-      
+
         std::string sql = *sql_template;
         for (const auto& [key, val] : vars)
         {
@@ -170,8 +164,9 @@ LIMIT {limit};
             db.exec("PRAGMA journal_mode=WAL;");
 
             debug << sql << commit;
+            debug << "Executing scope=" << scope << " schedule=" << schedule << " algorithm=" << algorithm << commit;
             SQLite::Statement query(db, sql);
-            std::vector<int64_t> note_ids = nlohmann::json::array();
+            std::vector<int64_t> note_ids;
 
             while (query.executeStep())
             {

@@ -38,7 +38,7 @@ namespace mindnet::util
     test_result test_ne(int number, int eq_to, const string field)
     {
         return test_true(number != eq_to,
-                         "Expected " + field + " to not be " + std::to_string(eq_to) + " but was " + std::to_string(
+                         "Expected " + field + " not to be " + std::to_string(eq_to) + " but was " + std::to_string(
                              number));
     }
     test_result test_not_null(int number, const string field)
