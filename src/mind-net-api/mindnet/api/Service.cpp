@@ -205,16 +205,17 @@ namespace mindnet::api
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
         auto action = Crudl::Update;
-        auto validation_result = can_update(def.get_model_name(), token, fields);
+        entity_fields old_fields{};
+        auto validation_result = can_update(def.get_model_name(), token, fields, old_fields);
         trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
-                                      token.user_id, id, fields);
+                                      token.user_id, id, fields, old_fields);
         if (validation_result.ko())
         {
             return validation_result;
         }
         auto action_result = db_ptr->update(def, token, id, fields);
         trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result, def,
-                                      token.user_id, id, fields);
+                                      token.user_id, id, fields, old_fields);
         if (validation_result.ko())
         {
             return validation_result;
@@ -252,7 +253,7 @@ namespace mindnet::api
         auto action = Crudl::List;
         auto validation_result = can_list(def.get_model_name(), token, query_params.filters);
         trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
-                                      token.user_id, 0, api::empty_entity_fields, query_params);
+                                      token.user_id, 0, api::empty_entity_fields, empty_entity_fields, query_params);
 
         if (validation_result.ko())
         {
@@ -260,7 +261,7 @@ namespace mindnet::api
         }
         auto action_result = db_ptr->list(def, token, query_params);
         trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
-                                      def, token.user_id, 0, api::empty_entity_fields, query_params);
+                                      def, token.user_id, 0, api::empty_entity_fields, empty_entity_fields, query_params);
         if (validation_result.ko())
         {
             return {{}, validation_result};
@@ -318,14 +319,14 @@ namespace mindnet::api
     }
 
     OperationResult Service::can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                        entity_fields& ef)
+                                        entity_fields& ef, entity_fields& old_fields)
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
         std::shared_ptr<IValidator> v2 = get_validator(model_definition.get_model_name());
         if (v2 != nullptr)
         {
-            return v2->can_update(db_ptr, token, ef);
+            return v2->can_update(db_ptr, token, ef, old_fields);
         }
         return {
             500, "Validator is not implemented for " + model_definition.get_model_name() +

@@ -107,6 +107,7 @@ namespace mindnet::api
             int user_id,
             int id,
             entity_fields& fields,
+            entity_fields& old_fields,
             orm::QueryParams query_params
         ) = 0;
         //

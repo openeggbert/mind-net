@@ -44,6 +44,7 @@ namespace mindnet::plugins::repetition::triggers
         int user_id,
         int id,
         entity_fields& fields,
+        entity_fields& old_fields,
         const orm::QueryParams query_params)
     {
         models::RSession r_session;

@@ -41,7 +41,7 @@ namespace mindnet::api
 
         virtual OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, int id) const = 0;
 
-        virtual OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const = 0;
+        virtual OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef, entity_fields& old_fields) const = 0;
 
         virtual OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, int id) const = 0;
 

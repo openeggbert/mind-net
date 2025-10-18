@@ -56,7 +56,7 @@ namespace mindnet::api
                                    entity_fields& ef) override;
         OperationResult can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token, int id) override;
         OperationResult can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                   entity_fields& ef) override;
+                                   entity_fields& ef, entity_fields& old_fields) override;
         OperationResult can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token, int id) override;
         OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                  string_map& filter) override;

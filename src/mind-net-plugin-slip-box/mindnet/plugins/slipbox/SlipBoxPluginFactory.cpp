@@ -2,6 +2,8 @@
 
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.h"
 #include "mindnet/api/Plugin.h"
 #include "mindnet/api/PluginFactory.h"
 #include "mindnet/plugins/slipbox/validators/CollectionValidator.h"
@@ -25,6 +27,7 @@
 #include "mindnet/plugins/slipbox/validators/TaskValidator.h"
 #include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.h"
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.h"
+#include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.h"
 
 namespace mindnet::plugins::slipbox
 {
@@ -65,6 +68,9 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(project, Project, PROJECT)
         REGISTER_MODEL(task, Task, TASK)
         REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
+
+        plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
 
         plugin->close_for_changes();
         return plugin;

@@ -26,6 +26,7 @@ namespace mindnet::api
         int user_id,
         int id,
         entity_fields& fields,
+        entity_fields& old_fields,
         const orm::QueryParams& query_params)
     {
 
@@ -44,7 +45,7 @@ namespace mindnet::api
             for (auto& trigger : crudIt->second)
             {
                 trigger->run(operation, ++stack_depth, validation_result, action_result,
-                             def, user_id, id, fields, query_params);
+                             def, user_id, id, fields, old_fields, query_params);
             }
         }
     }

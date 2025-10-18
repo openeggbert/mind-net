@@ -33,6 +33,7 @@ namespace mindnet::plugins::core::triggers
         int user_id,
         int id,
         entity_fields& fields,
+        entity_fields& old_fields,
         const orm::QueryParams query_params)
     {
         if (def.get_model_name() == "history") return;

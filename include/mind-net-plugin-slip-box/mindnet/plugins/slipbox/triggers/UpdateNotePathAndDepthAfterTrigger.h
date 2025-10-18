@@ -1,20 +1,19 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef RSESSIONBEFORECREATETRIGGER_H
-#define RSESSIONBEFORECREATETRIGGER_H
+
+
 
 #include "mindnet/api/Trigger.h"
 
-namespace mindnet::plugins::repetition::triggers
+namespace mindnet::plugins::slipbox::triggers
 {
-
-    class RSessionBeforeCreateTrigger : public api::Trigger
+    class UpdateNotePathAndDepthAfterTrigger : public api::Trigger
     {
     public:
-        RSessionBeforeCreateTrigger();
+        UpdateNotePathAndDepthAfterTrigger();
 
-        ~RSessionBeforeCreateTrigger() override = default;
+        ~UpdateNotePathAndDepthAfterTrigger() override = default;
         void run(
             mindnet::essential::Crudl operation,
             int stack_depth,
@@ -31,5 +30,3 @@ namespace mindnet::plugins::repetition::triggers
     };
 
 }
-
-#endif // RSESSIONBEFORECREATETRIGGER_H

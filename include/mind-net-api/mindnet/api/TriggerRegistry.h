@@ -40,6 +40,7 @@ namespace mindnet::api
             int user_id,
             int id,
             entity_fields& fields = empty_entity_fields,
+            entity_fields& old_fields = empty_entity_fields,
             const orm::QueryParams& query_params = empty_query_params);
 
     private:

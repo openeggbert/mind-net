@@ -39,7 +39,8 @@ namespace mindnet::plugins::slipbox::validators
         auto note_validator = get_validator("note");
         if (note_validator == nullptr) return {500, "No note validator found"};
 
-        return note_validator->can_update(ctx.db, ctx.token, ef);
+        auto new_values = new_entity.to_values();
+        return note_validator->can_update(ctx.db, ctx.token, ef, new_values);
     }
 
     OperationResult ContentValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const

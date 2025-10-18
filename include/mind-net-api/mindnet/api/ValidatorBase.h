@@ -188,7 +188,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const
+        OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef, entity_fields& old_fields) const
         {
             auto action = Crudl::Update;
             static_assert(
@@ -216,7 +216,7 @@ namespace mindnet::api
             auto [old_values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(),
                                                    token, new_entity.get_id());
             if (read_err.ko()) return read_err;
-
+            old_fields = old_values;
             Model old_entity;
             old_entity.from_values(old_values);
             //

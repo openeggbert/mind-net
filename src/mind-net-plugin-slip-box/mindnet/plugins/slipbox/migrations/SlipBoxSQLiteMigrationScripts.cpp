@@ -150,6 +150,37 @@ BEGIN
     WHERE id = NEW.id;
 END;
 
+
+CREATE TRIGGER IF NOT EXISTS trg_note_set_path_depth_after_update
+AFTER UPDATE OF parent_note_id ON note
+FOR EACH ROW
+BEGIN
+    UPDATE note
+    SET
+        path = (
+            SELECT
+                CASE
+                    WHEN NEW.parent_note_id IS NULL THEN
+                        printf('/%06d', NEW.id)
+                    ELSE
+                        (SELECT path || '/' || printf('%06d', NEW.id)
+                         FROM note AS parent
+                         WHERE parent.id = NEW.parent_note_id)
+                END
+        ),
+        depth = (
+            SELECT
+                CASE
+                    WHEN NEW.parent_note_id IS NULL THEN 0
+                    ELSE (SELECT depth + 1
+                          FROM note AS parent
+                          WHERE parent.id = NEW.parent_note_id)
+                END
+        )
+    WHERE id = NEW.id;
+END;
+
+
 )");
         add_migration("V5__create_property.sql", R"(
 CREATE TABLE property(
