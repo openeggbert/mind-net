@@ -28,6 +28,7 @@ namespace mindnet::api
 
         virtual bool has_model(const std::string& name) = 0;
         virtual std::vector<std::string>& list_model_names() = 0;
+        virtual nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) = 0;
         //
         virtual std::pair<int, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                        entity_fields& fields, int stack_depth = 0) = 0;

@@ -8,6 +8,7 @@
 
 #include "MigrationScripts.h"
 #include "ModelRegistration.h"
+#include "Query.h"
 #include "Trigger.h"
 
 namespace mindnet::model
@@ -41,10 +42,12 @@ namespace mindnet::api
             const std::shared_ptr<IValidator>& validator,
             std::shared_ptr<RepositoryFactory>& repository_factory);
         void register_trigger(const TriggerPtr& trigger);
+        void register_query(const QueryPtr& query);
         void register_migrations(const MigrationScriptsPtr& migration_scripts);
         [[nodiscard]] MigrationScriptsPtr get_migration_scripts() const;
         void destroy_migration_scripts();
         [[nodiscard]] const std::vector<TriggerPtr>& get_triggers() const;
+        [[nodiscard]] const std::vector<QueryPtr>& get_queries() const;
         [[nodiscard]] const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
 
     private:
@@ -55,6 +58,7 @@ namespace mindnet::api
         bool is_closed_for_changes_ = false;
         std::vector<std::shared_ptr<ModelRegistration>> model_registrations;
         std::vector<TriggerPtr> triggers;
+        std::vector<QueryPtr> queries;
         MigrationScriptsPtr migration_scripts_ = nullptr;
     };
 

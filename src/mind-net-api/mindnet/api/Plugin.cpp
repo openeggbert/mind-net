@@ -97,6 +97,16 @@ namespace mindnet::api
         return triggers.push_back(trigger);
     }
 
+    void Plugin::register_query(const QueryPtr& query)
+    {
+        essential::DatabaseType current_database_type = essential::g_configuration.database_type;
+        if (query.get()->get_database_type() != current_database_type)
+        {
+            return;
+        }
+        return queries.push_back(query);
+    }
+
     void Plugin::register_migrations(const MigrationScriptsPtr& migration_scripts)
     {
         essential::DatabaseType current_database_type = essential::g_configuration.database_type;
@@ -120,6 +130,11 @@ namespace mindnet::api
     const std::vector<TriggerPtr>& Plugin::get_triggers() const
     {
         return triggers;
+    }
+
+    const std::vector<QueryPtr>& Plugin::get_queries() const
+    {
+        return queries;
     }
 
     const std::vector<std::shared_ptr<ModelRegistration>>& Plugin::get_model_registrations() const

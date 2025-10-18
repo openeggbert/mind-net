@@ -124,42 +124,63 @@ namespace mindnet::http
     {
         crow::json::wvalue wjson;
 
-        for (const auto& key : rjson.keys())
+        for (const auto& kv : rjson)
         {
-            const auto& val = rjson[key];
+            const std::string& key = kv.key();
+            const auto& val = kv;
 
             switch (val.t())
             {
             case crow::json::type::Null:
-                wjson[key] = crow::json::wvalue(); // default = null
+                wjson[key] = crow::json::wvalue();
                 break;
+
             case crow::json::type::String:
                 wjson[key] = val.s();
                 break;
+
             case crow::json::type::Number:
-                wjson[key] = val.d();
-                break;
+                {
+                    double d = val.d();
+                    if (std::isfinite(d) &&
+                        std::floor(d) == d &&
+                        d >= static_cast<double>(std::numeric_limits<long long>::min()) &&
+                        d <= static_cast<double>(std::numeric_limits<long long>::max()))
+                    {
+                        wjson[key] = static_cast<long long>(d);
+                    }
+                    else
+                    {
+                        wjson[key] = d;
+                    }
+                    break;
+                }
+
             case crow::json::type::True:
             case crow::json::type::False:
                 wjson[key] = val.b();
                 break;
+
             case crow::json::type::List:
                 {
                     crow::json::wvalue::list list;
+                    list.reserve(val.size());
                     for (size_t i = 0; i < val.size(); ++i)
-                    {
                         list.push_back(rjson_to_wjson(val[i]));
-                    }
                     wjson[key] = std::move(list);
                     break;
                 }
+
             case crow::json::type::Object:
                 wjson[key] = rjson_to_wjson(val);
                 break;
-            default: throw std::runtime_error("Unknown type");
+
+            default:
+                throw std::runtime_error("Unknown crow::json type: " + std::to_string(static_cast<int>(val.t())));
             }
         }
 
         return wjson;
     }
+
 }

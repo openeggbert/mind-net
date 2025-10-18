@@ -8,6 +8,7 @@
 #include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/plugins/repetition/models/RSession.h"
 #include "mindnet/util/Utils.h"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetSelectedItemsSQLiteQuery.h"
 
 namespace mindnet::plugins::repetition::triggers
 {
@@ -79,7 +80,9 @@ namespace mindnet::plugins::repetition::triggers
                 return;
             }
         }
-        r_session.selected_items = "{\"hello\": \"trigger\"}";
+        nlohmann::json req;
+
+        r_session.selected_items = call_query(db::sqlite::queries::QUERY_GetSelectedItemsQuery, req).dump();
         fields = r_session.to_values();
     }
 }

@@ -13,6 +13,7 @@
 #include "mindnet/plugins/repetition/validators/R18PerfAggValidator.h"
 
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetSelectedItemsSQLiteQuery.h"
 #include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.h"
 
 namespace mindnet::plugins::repetition
@@ -40,6 +41,7 @@ namespace mindnet::plugins::repetition
         REGISTER_MODEL(r18_perf_agg, R18PerfAgg, R18_PERF_AGG)
         plugin->register_trigger(std::make_shared<triggers::RSessionBeforeCreateTrigger>());
 
+        plugin->register_query(std::make_shared<db::sqlite::queries::GetSelectedItemsSQLiteQuery>());
         plugin->close_for_changes();
         return plugin;
     }

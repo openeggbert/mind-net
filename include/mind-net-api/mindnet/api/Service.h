@@ -21,6 +21,7 @@ namespace mindnet::api
         api::DbPtr db_ptr;
         api::PluginRegistryPtr plugin_registry_ptr;
         api::TriggerRegistryPtr trigger_registry_ptr;
+        std::map<string,QueryPtr> query_map;
 
     public:
         Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
@@ -29,6 +30,8 @@ namespace mindnet::api
         bool has_model(const std::string& model_name) override;
 
         std::vector<std::string>& list_model_names() override;
+
+        nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) override;
 
         std::pair<int, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                entity_fields& fields, int stack_depth = 0) ;

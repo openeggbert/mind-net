@@ -12,6 +12,7 @@
 #include "mindnet/essential/Crudl.h"
 #include "mindnet/orm/QueryParams.h"
 #include "mindnet/model/ModelDefinition.h"
+#include <nlohmann/json.hpp>
 
 namespace mindnet {
     namespace orm
@@ -116,6 +117,7 @@ namespace mindnet::api
         inline const std::vector<mindnet::essential::Crudl>& get_operations() const { return operations; }
         inline const TriggerPhase& get_phase() const { return phase; }
         inline const std::string& get_table() const { return table; }
+        nlohmann::json call_query(const std::string& query_name, nlohmann::json& request);
 
     private:
         //std::string condition;
