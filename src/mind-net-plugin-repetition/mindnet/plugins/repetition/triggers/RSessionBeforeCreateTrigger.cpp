@@ -8,7 +8,7 @@
 #include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/plugins/repetition/models/RSession.h"
 #include "mindnet/util/Utils.h"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetSelectedItemsSQLiteQuery.h"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
 
 namespace mindnet::plugins::repetition::triggers
 {
@@ -82,7 +82,7 @@ namespace mindnet::plugins::repetition::triggers
         }
         nlohmann::json req;
 
-        r_session.selected_items = call_query(db::sqlite::queries::QUERY_GetSelectedItemsQuery, req).dump();
+        r_session.selected_items = call_query(db::sqlite::queries::QUERY_GetRSessionSelectedItemsQuery, req).dump();
         fields = r_session.to_values();
     }
 }

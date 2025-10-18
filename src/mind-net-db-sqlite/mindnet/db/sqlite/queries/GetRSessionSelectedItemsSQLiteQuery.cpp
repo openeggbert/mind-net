@@ -2,19 +2,19 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/db/sqlite/queries/GetSelectedItemsSQLiteQuery.h"
+#include "mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "mindnet/db/sqlite/SqliteFileName.h"
 #include "mindnet/essential/DatabaseType.h"
 
 namespace mindnet::db::sqlite::queries
 {
-    GetSelectedItemsSQLiteQuery::GetSelectedItemsSQLiteQuery()
+    GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
     : Query("GetSelectedItemsQuery", "Returns new note ids for repetition session", essential::DatabaseType::SQLite)
     {
     }
 
-    nlohmann::json GetSelectedItemsSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json request)
     {
         nlohmann::json response;
 
