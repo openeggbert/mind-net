@@ -67,7 +67,6 @@ namespace mindnet::plugins::repetition::models
         using columns::RSessionColumns;
 
         validator_chain_vector list{
-            [this] { return test_true(filter_under_note == 0,  "filter_under_note is not yet supported"); },
             [this] { return test_true(filter_date_from == 0,  "filter_date_from is not yet supported"); },
             [this] { return test_true(filter_date_to == 0,  "filter_date_to is not yet supported"); },
             [this] { return test_true(filter_tag == 0,  "filter_tag is not yet supported"); },

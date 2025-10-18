@@ -31,7 +31,7 @@ namespace mindnet::plugins::repetition::enums
 X(DueOnly, 0, ENUM_NAME)                \
 X(NewOnly, 1, ENUM_NAME)                \
 X(DueAndNew, 2, ENUM_NAME)               \
-X(Manual, 3, ENUM_NAME)                 \
+X(All, 3, ENUM_NAME)                 \
 
     DECLARE_ENUM(RepetitionScope, repetition_scope, REPETITION_SCOPE_LIST)
 } // namespace mindnet::plugins::repetition::enums

@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             case 0: return "DueOnly";
             case 1: return "NewOnly";
             case 2: return "DueAndNew";
-            case 3: return "Manual";
+            case 3: return "All";
             default: return "Unknown";
         }
     }
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             make_option("DueOnly", 0, clone_scope === 0),
             make_option("NewOnly", 1, clone_scope === 1),
             make_option("DueAndNew", 2, cloned ? clone_scope === 2 : true),
-            make_option("Manual", 3, clone_scope === 3)
+            make_option("All", 3, clone_scope === 3)
         ]
 
         make_select("Scope", "new_session_scope", scopes)

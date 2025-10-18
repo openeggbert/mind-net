@@ -9,7 +9,7 @@
 
 namespace mindnet::db::sqlite::queries
 {
-    const std::string QUERY_GetRSessionSelectedItemsQuery = "GetRSessionSelectedItemsQuery";
+    const std::string QUERY_GetRSessionSelectedItemsQuery = "GetRSessionSelectedItems";
 
     class GetRSessionSelectedItemsSQLiteQuery : public api::Query
     {

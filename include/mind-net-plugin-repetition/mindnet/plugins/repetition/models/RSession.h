@@ -31,7 +31,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::CLONED_FROM_SESSION_ID, READONLY).set_foreign_key("r_session"),
 
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
-            coldef(COLS::SCHEDULE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
+            coldef(COLS::SCHEDULE, MANDATORY | READONLY).set_enum_definition(enums::repetition_schedule_to_enum_definition()),
 
             coldef(COLS::SCOPE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
             coldef(COLS::DESCRIPTION, READONLY),
@@ -60,7 +60,7 @@ namespace mindnet::plugins::repetition::models
         unixtime filter_date_to{};
         int filter_tag{};
         int filter_collection{};
-        //example: {"note_ids":[3,4,5,6,7], "question_ids":[3,4,6,7,8]}
+        //example: {"note_ids":[3,4,5,6,7]}
         string selected_items{"{}"};
         bool pinned{false};
 
