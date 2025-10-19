@@ -36,6 +36,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 - [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Query - name, args, returns string - for Validators and Triggers
+- [ ] Add Markdown parsing in the C++ backend: https://github.com/progsource/maddy https://github.com/mity/md4c
 
 ### Extending
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours

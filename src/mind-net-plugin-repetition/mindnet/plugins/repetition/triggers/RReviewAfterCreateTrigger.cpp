@@ -41,8 +41,8 @@ namespace mindnet::plugins::repetition::triggers
             break;
         case enums::RepetitionAlgorithm::Repetition2: model_definition = &models::R2_STATE_DEFINITION;
             break;
-        // case enums::RepetitionAlgorithm::Repetition4: model_definition = &models::R4_STATE_DEFINITION; break;
-        // case enums::RepetitionAlgorithm::Repetition18: model_definition = &models::R18_STATE_DEFINITION; break;
+        case enums::RepetitionAlgorithm::Repetition4: model_definition = &models::R4_STATE_DEFINITION; break;
+        case enums::RepetitionAlgorithm::Repetition18: model_definition = &models::R18_STATE_DEFINITION; break;
         default:
             {
                 validation_result = {400, "Unsupported algorithm."};
@@ -245,7 +245,7 @@ namespace mindnet::plugins::repetition::triggers
                 r0_state.repetitions = correct ? r0_state.repetitions + 1 : 0;
                 // Interval is based on previous repetition count (before increment)
                 r0_state.interval = get_next_r0_interval(old_repetitions, correct);
-                
+
                 r0_state.next_review = util::Utils::current_unix_timestamp_ms() + r0_state.interval *
                     MILLISECONDS_PER_DAY;
                 r0_state.last_review = r_review.review_date;
@@ -279,7 +279,7 @@ namespace mindnet::plugins::repetition::triggers
                 r2_state.from_values(read_r2_state.first);
 
                 const int q = std::clamp(r_review.grade, 0, 5);
-                
+
 
                 double ef = r2_state.ef_times_100 / 100.0;
                 int interval = r2_state.interval;
@@ -445,44 +445,35 @@ namespace mindnet::plugins::repetition::triggers
                 const double gamma = 0.2;
                 const double delta = 0.4;
                 const double k_over = 0.15;
-                const double S_min = 0.5; // in days
-                const double short_retry = 0.5; // half-day retry after failure
+                const double S_min = 0.5;
+                const double short_retry = 0.5;
+                const double t0 = 0.2;
+                const double R_inf = 0.02;
+                const double fatigue_lambda = 0.1;
+                const double theta = 1.0; // user sensitivity
 
-                // =======================
-                // Load state values
-                // =======================
                 double S = r18_state.stability_times_100 / 100.0;
-                double I_last = r18_state.last_interval_times_100 / 100.0;
                 int reps = r18_state.repetitions;
                 int lapses = r18_state.lapses;
+                const double now_ms = (double)util::Utils::current_unix_timestamp_ms();
+                const double elapsed_days = std::max(
+                    0.0, (now_ms - (double)r18_state.last_review) / MILLISECONDS_PER_DAY);
 
                 // =======================
-                // Compute elapsed time t (days)
-                // =======================
-                const double now_ms = static_cast<double>(util::Utils::current_unix_timestamp_ms());
-                const double last_review_ms = static_cast<double>(r18_state.last_review);
-                const double elapsed_days = std::max(0.0, (now_ms - last_review_ms) / MILLISECONDS_PER_DAY);
-
-                // =======================
-                // Helper functions
+                // New retrievability with offset and asymptote
                 // =======================
                 auto retrievability = [&](double t, double Sval)
                 {
                     if (Sval <= 1e-9) Sval = 1e-9;
-                    double x = t / Sval;
-                    return std::exp(-std::pow(std::max(0.0, x), b));
+                    double x = (t + t0) / Sval;
+                    double base = std::exp(-std::pow(std::max(0.0, x), b));
+                    return R_inf + (1.0 - R_inf) * base;
                 };
+
                 auto interval_for_target = [&](double Sval, double Rval)
                 {
                     double val = Sval * std::pow(-std::log(std::max(1e-9, Rval)), 1.0 / b);
-                    return std::clamp(val, 0.1, 36500.0); // limit to 0.1 .. 100 years
-                };
-                auto f_q = [&](int qval)
-                {
-                    if (qval <= 2) return 0.0;
-                    if (qval == 3) return 0.9;
-                    if (qval == 4) return 1.0;
-                    return 1.1; // q == 5
+                    return std::clamp(val, 0.1, 36500.0);
                 };
 
                 // =======================
@@ -494,20 +485,22 @@ namespace mindnet::plugins::repetition::triggers
                 double g_over = 1.0 + k_over * overdue;
 
                 // =======================
-                // Compute new stability
+                // Stability (with user sensitivity)
                 // =======================
                 double S_before = S;
                 double S_after = S_before;
 
                 if (q >= 3)
                 {
-                    // Success
-                    double gain = alpha * f_q(q) * std::pow((1.0 - R_now), beta) * g_over;
-                    S_after = S_before * (1.0 + gain);
+                    double gain = alpha * (q == 3 ? 0.9 : q == 4 ? 1.0 : 1.1)
+                        * std::pow((1.0 - R_now), beta)
+                        * g_over;
+
+                    double user_factor = std::pow(theta, 0.5);
+                    S_after = S_before * (1.0 + gain * user_factor);
                 }
                 else
                 {
-                    // Failure
                     double loss = gamma * std::pow(R_now, delta);
                     S_after = std::max(S_min, S_before * (1.0 - loss));
                     lapses += 1;
@@ -515,28 +508,27 @@ namespace mindnet::plugins::repetition::triggers
                 }
 
                 // =======================
-                // Compute next interval
+                // Adaptive interval with fatigue penalty
                 // =======================
-                double next_interval_days = 0.0;
-                if (q >= 3)
-                    next_interval_days = interval_for_target(S_after, R_target);
-                else
-                    next_interval_days = short_retry;
+                auto fatigue = [&](double t) { return std::max(0.0, 1.0 - std::exp(-t / 2.0)); };
 
-                next_interval_days = std::clamp(next_interval_days, 0.1, 36500.0);
+                double next_interval_days = (q >= 3)
+                                                ? interval_for_target(S_after, R_target) * (1.0 + fatigue_lambda *
+                                                    fatigue(elapsed_days))
+                                                : short_retry;
+
+                next_interval_days = std::clamp(next_interval_days, 0.1, 3650.0);
 
                 // =======================
-                // Update state fields
+                // Update state
                 // =======================
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
                 r18_state.last_quality = q;
-                r18_state.last_review = static_cast<int64_t>(now_ms);
-                r18_state.stability_times_100 = static_cast<int>(std::round(S_after * 100.0));
-                r18_state.last_interval_times_100 = static_cast<int>(std::round(next_interval_days * 100.0));
-                r18_state.next_review = static_cast<int64_t>(
-                    now_ms + next_interval_days * MILLISECONDS_PER_DAY
-                );
+                r18_state.last_review = (int64_t)now_ms;
+                r18_state.stability_times_100 = (int)std::round(S_after * 100.0);
+                r18_state.last_interval_times_100 = (int)std::round(next_interval_days * 100.0);
+                r18_state.next_review = (int64_t)(now_ms + next_interval_days * MILLISECONDS_PER_DAY);
 
                 // =======================
                 // Write to database
@@ -553,15 +545,16 @@ namespace mindnet::plugins::repetition::triggers
                     return;
                 }
 
-                debug << "SM18 review for note_id=" << r_review.note_id
+                debug << "SM18+ review for note_id=" << r_review.note_id
                     << " q=" << q
                     << " reps=" << r18_state.repetitions
-                    << " lapses=" << r18_state.lapses
                     << " S_before=" << S_before
                     << " S_after=" << S_after
                     << " R_now=" << R_now
                     << " interval=" << next_interval_days << "d"
-                    << " overdue_factor=" << g_over
+                    << " overdue=" << overdue
+                    << " fatigue_lambda=" << fatigue_lambda
+                    << " theta=" << theta
                     << commit;
             };
             break;

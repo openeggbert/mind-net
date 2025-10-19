@@ -289,3 +289,201 @@ CREATE INDEX IF NOT EXISTS idx_r18_state_note
 )");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+/*
+CREATE TABLE r_session_metric (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   r_session_id INTEGER NOT NULL,
+   user_id INTEGER NOT NULL,
+   total_items INTEGER NOT NULL,
+   correct_items INTEGER NOT NULL,
+   avg_latency_ms INTEGER,
+   avg_grade REAL,
+   FOREIGN KEY (r_session_id) REFERENCES r_session(id)
+);
+
+INSERT INTO r_session_metric (r_session_id, user_id, total_items, correct_items, avg_latency_ms, avg_grade)
+SELECT
+  r_session_id,
+  user_id,
+  COUNT(*) AS total_items,
+  SUM(CASE WHEN grade >= 3 THEN 1 ELSE 0 END) AS correct_items,
+  AVG(latency_ms) AS avg_latency_ms,
+  AVG(grade) AS avg_grade
+FROM r_review
+WHERE r_session_id = ?
+GROUP BY r_session_id, user_id;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Here’s your English version formatted as a clear `todo.md`:
+
+````markdown
+# TODO – SM-18 Prediction Log
+
+```sql
+CREATE TABLE r18_prediction_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    user_id INTEGER NOT NULL,
+    note_id INTEGER,
+    question_id INTEGER,
+    predicted_R REAL NOT NULL,
+    actual_grade INTEGER NOT NULL,
+    was_correct BOOLEAN NOT NULL
+);
+````
+
+---
+
+## 🧠 Purpose
+
+The **`r18_prediction_log`** table is designed to log the *predicted retrievability* versus the *actual user response*.
+It’s a key diagnostic tool for **debugging, tuning, and validating** the SM-18 algorithm.
+
+---
+
+## 🕐 When to Populate It
+
+On each review (if SM-18 is the active algorithm):
+
+1. **Compute retrievability before the review:**
+
+   ```cpp
+   double R_before = retrievability(elapsed, S, b);
+   ```
+
+2. **Capture the actual user response:**
+
+   * `actual_grade` = rating `0–5`
+   * `was_correct` = `grade >= 3`
+
+3. **Insert a new record:**
+
+   ```sql
+   INSERT INTO r18_prediction_log (
+     created_at, user_id, note_id, question_id,
+     predicted_R, actual_grade, was_correct
+   ) VALUES (?, ?, ?, ?, ?, ?, ?);
+   ```
+
+---
+
+## 📊 What This Enables
+
+### 1. Measure Prediction Accuracy
+
+Compare `predicted_R` vs `was_correct` to see where the model over- or under-estimates recall.
+
+### 2. Tune Model Parameters (e.g. b, α, γ)
+
+If `predicted_R` is high but users often fail, the model is **too optimistic** — parameters can be adjusted accordingly.
+
+### 3. Evaluate New SM-18 Variants
+
+Compare how different formulations of `R(t|S)` perform in predicting user recall.
+
+### 4. Personalization
+
+Track accuracy per user and build **personal learning profiles** or **user-specific parameter sets**.
+
+---
+
+## 📋 Example Analysis Query
+
+```sql
+SELECT
+  ROUND(predicted_R, 2) AS R_bin,
+  COUNT(*) AS total,
+  SUM(CASE WHEN was_correct THEN 1 ELSE 0 END) AS correct,
+  ROUND(AVG(actual_grade), 2) AS avg_grade
+FROM r18_prediction_log
+WHERE user_id = ?
+GROUP BY R_bin
+ORDER BY R_bin;
+```
+
+✅ This shows how predicted retrievability corresponds to actual success rates across different recall probabilities.
+
+---
+
+## 🧩 Summary
+
+The `r18_prediction_log` table serves as:
+
+* A **passive log** for model performance analysis
+* A **foundation for adaptive parameter tuning**
+* A **research and personalization tool** for improving SM-18
+
+---
+
+👉 *Next step:* optionally implement a C++ function that automatically inserts into this table on every review.
+
+```
+```
+
+
+
+
+
+
+add_migration("V11__create_r18_adaptive_parameters.sql", R"(
+CREATE TABLE r18_adaptive_parameters (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
+	updated_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
+	
+	user_id INTEGER NOT NULL,
+	
+	-- Learning parameters (stored as integers multiplied by 100)
+	alpha_times_100 INTEGER DEFAULT 30,	   -- learning rate parameter
+	gamma_times_100 INTEGER DEFAULT 20,	   -- forgetting rate parameter
+	beta_times_100 INTEGER DEFAULT 60,		-- difficulty scaling parameter
+	
+	-- Performance metrics
+	total_reviews INTEGER DEFAULT 0,		  -- total number of reviews
+	successful_reviews INTEGER DEFAULT 0,	  -- number of successful reviews
+	average_response_time_ms INTEGER DEFAULT 0,-- average response time
+	
+	-- Adaptation settings
+	last_adaptation_time DATETIME,			-- when parameters were last updated
+	reviews_since_adaptation INTEGER DEFAULT 0,-- reviews since last parameter update
+	minimum_reviews_for_adaptation INTEGER DEFAULT 50, -- minimum reviews needed before adapting
+	
+	UNIQUE (user_id),
+	FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+-- Index for quick parameter lookups by user
+CREATE INDEX idx_r18_adaptive_parameters_user 
+ON r18_adaptive_parameters(user_id);
+
+-- Initialize parameters for existing users
+INSERT OR IGNORE INTO r18_adaptive_parameters (user_id)
+SELECT id FROM user;
+)");
+
+*/
