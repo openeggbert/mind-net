@@ -54,7 +54,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         auto note = slipbox::find_note (ctx, entity.note_id);;
-        if (note.second.empty()) return {400, note.second};
+        if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -105,8 +105,8 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(note_id)
         auto note_id = std::stoi(filter.at("note_id"));
 
-        auto note = slipbox::find_tag_type (ctx, note_id);;
-        if (note.second.empty()) return {400, note.second};
+        auto note = slipbox::find_note (ctx, note_id);;
+        if (!note.second.empty()) return {400, note.second};
 
         if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
             return {

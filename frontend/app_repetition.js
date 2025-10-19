@@ -1028,6 +1028,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 showInfo("Note was reviewed: #" + note_id + " " + note.title)
                 addNoteIdToSession(r_session_for_reviews.id, note_id);
+
+                main_content.innerHTML = "";
             } else if (action === "skip") {
                 // skipped - don't store anything
                 showInfo("Note was skipped: #" + note_id + " " + note.title)
