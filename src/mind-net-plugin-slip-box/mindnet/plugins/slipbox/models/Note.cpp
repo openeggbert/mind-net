@@ -55,7 +55,7 @@ namespace mindnet::plugins::slipbox::models
         using columns::NoteColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(id, parent_note_id, NoteColumns::ID); },
+            [this] { return id == 0 ? test_ok() : test_ne(id, parent_note_id, NoteColumns::ID); },
             [this] { return test_ne(map_id, 0, NoteColumns::MAP_ID); },
             [this] { return testt_between(title, 1, 256, NoteColumns::TITLE); },
         };

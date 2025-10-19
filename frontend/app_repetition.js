@@ -4,7 +4,7 @@
 
 import {
     getUserId, list_all_entities, post_entity,
-    list_entities, put_entity
+    list_entities, put_entity, read_entity
 } from "./api.js";
 import {
     chooseOption,
@@ -137,6 +137,25 @@ export function showWindowFrom(title, url) {
     }
     setWindowContentByUrl(url)
     showWindow();
+}
+
+// ========================================
+// Utils
+// ========================================
+
+class StopWatch {
+    start() {
+        this.startTime = Date.now();
+    }
+
+    stop() {
+        this.endTime = Date.now();
+    }
+
+    get elapsedMs() {
+        if (this.startTime === undefined || this.endTime === undefined) return 0;
+        return this.endTime - this.startTime;
+    }
 }
 
 
@@ -664,7 +683,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_input("Filter collection", "new_session_filter_collection", "text")
         if (cloned) get_element("new_session_filter_collection").value = clone_from_r_session.filter_tag
 
-        make_input("Selected items", "new_session_selected_items", "text")
+        make_input("Selected items", "new_session_selected_items", "hidden")
         make_input("Pinned", "new_session_pinned", "checkbox")
         button_save_session.onclick = async function () {
             let new_session = {};
@@ -749,8 +768,48 @@ document.addEventListener('DOMContentLoaded', async () => {
         return usedNotes.includes(noteId);
     }
 
+    function showOrHideAnswer() {
+        let back = document.querySelector('.back');
+        let showbtn = document.querySelector('.show-btn');
+        let shown = showbtn.innerText === "Hide answer"
 
-    function render_screen_new_review() {
+        document.querySelector('.back').style.display = shown ? 'none' : 'block';
+        showbtn.innerText = shown ? "Show answer" : "Hide answer";
+
+    }
+    window.showOrHideAnswer=showOrHideAnswer
+
+    async function waitForSendOrSkip(selected_grade_ref) {
+        return new Promise(resolve => {
+            const sendBtn = document.getElementById("send-btn");
+            const skipBtn = document.getElementById("skip-btn");
+
+            function cleanup(result) {
+                sendBtn.removeEventListener("click", onSend);
+                skipBtn.removeEventListener("click", onSkip);
+                resolve(result);
+            }
+
+            function onSend() {
+                if (selected_grade_ref.current === -1) {
+                    showInfo("⚠️ Please select a grade (0–5) before sending.");
+                    return;
+                }
+
+                cleanup("send");
+            }
+
+            function onSkip() {
+                cleanup("skip");
+            }
+
+            sendBtn.addEventListener("click", onSend);
+            skipBtn.addEventListener("click", onSkip);
+        });
+    }
+
+
+    async function render_screen_new_review() {
         refresh_param_screen()
         main_content.innerHTML = "";
 
@@ -766,54 +825,39 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        let demo = `
-        <div class="card">
-            <div class="front">❓ What does <code>const</code> mean as a function parameter in C++?</div>
-            <div class="back">✅ Indicates that the parameter will not be modified within the function.</div>
-            <button class="show-btn" onclick="showOrHideAnswer()">Show answer</button>
-            <div id="rating">
-                <p>How well did you recall the note?</p>
-                <div>
-                    <button class="rating-btn" id="rating-btn-0" onclick="rate_demo(0)">0</button>
-                    <button class="rating-btn" id="rating-btn-1" onclick="rate_demo(1)">1</button>
-                    <button class="rating-btn" id="rating-btn-2" onclick="rate_demo(2)">2</button>
-                    <button class="rating-btn" id="rating-btn-3" onclick="rate_demo(3)">3</button>
-                    <button class="rating-btn" id="rating-btn-4" onclick="rate_demo(4)">4</button>
-                    <button class="rating-btn" id="rating-btn-5" onclick="rate_demo(5)">5</button>
-                </div>
-            </div>
-            
-            <div id="actions">
-                <p>Next action</p>
-                <div>
-                    <button class="rating-btn" id="send-btn">Send</button>
-                    <button class="rating-btn" id="skip-btn">Skip</button>
-                </div>
-            </div>
-            <div class="info" id="result"></div>
-        </div>
-        `;
-
-        alert(JSON.stringify(note_ids));
+        console.debug(JSON.stringify(note_ids));
         for (let note_id of note_ids) {
             if (wasNoteUsed(r_session_for_reviews.id, note_id)) {
                 console.log("Skipping note with ID " + note_id);
                 continue;
             }
+            let note = await read_entity("note", note_id)
             main_content.innerHTML = "";
 
+            let content = note.content_id === 0 ? null : await read_entity("content", note.content_id)
+
             let div_card = document.createElement("div");
+            document.createElement("div");
             div_card.classList.add("card");
             main_content.appendChild(div_card);
 
             let div_front = document.createElement("div");
             div_front.classList.add("front");
-            div_front.innerText = "❓ " + "Note " + note_id;
+            div_front.innerText = "❓ " + note.title;
             div_card.appendChild(div_front);
 
             let div_back = document.createElement("div");
             div_back.classList.add("back");
-            div_back.innerText = "✅ " + "Answer " + note_id;
+            console.debug("content=" + JSON.stringify(content))
+
+            if (content === null || content.value === null) {
+                let span = document.createElement("span");
+                div_back.innerText = "✅ ";
+                span.innerText = "This note is missing the answer";
+                div_back.appendChild(span)
+            } else {
+                div_back.innerText = "✅ " + content.value;
+            }
             div_card.appendChild(div_back);
 
             let button_show_btn = document.createElement("button");
@@ -830,16 +874,95 @@ document.addEventListener('DOMContentLoaded', async () => {
             p_rating.innerText = "How well did you recall the note?";
             div_card.appendChild(p_rating);
 
-            div_card.innerHTML += `
-            <div>
-                    <button class="rating-btn" id="rating-btn-0">0</button>
-                    <button class="rating-btn" id="rating-btn-1">1</button>
-                    <button class="rating-btn" id="rating-btn-2">2</button>
-                    <button class="rating-btn" id="rating-btn-3">3</button>
-                    <button class="rating-btn" id="rating-btn-4">4</button>
-                    <button class="rating-btn" id="rating-btn-5">5</button>
-                </div>
-            `
+            let answer_change_count = 0
+
+            let div_rating_buttons = document.createElement("div");
+            div_card.appendChild(div_rating_buttons);
+            let selected_grade_ref = { current: -1 };
+
+            function make_rating_button(grade) {
+                let rating_btn = document.createElement("button");
+                rating_btn.classList.add("rating-btn");
+                rating_btn.id = "rating-btn-" + grade;
+                rating_btn.innerText = grade;
+
+                rating_btn.addEventListener("click", function() {
+                    if (selected_grade_ref.current !== -1) {
+                        answer_change_count = answer_change_count + 1;
+                        console.debug("grade changed")
+                    }
+                    selected_grade_ref.current = grade;
+
+                    for (let i = 0; i <= 5; i++) {
+                        get_element("rating-btn-" + i).className = "rating-btn";
+                    }
+                    rating_btn.className = "rating-btn rating-btn-selected";
+                });
+                div_rating_buttons.appendChild(rating_btn);
+                return rating_btn;
+            }
+
+
+            let rating_btn_0 = make_rating_button(0)
+            let rating_btn_1 = make_rating_button(1)
+            let rating_btn_2 = make_rating_button(2)
+            let rating_btn_3 = make_rating_button(3)
+            let rating_btn_4 = make_rating_button(4)
+            let rating_btn_5 = make_rating_button(5)
+
+
+            // Create collapsible legend for rating scale
+            let div_legend_container = document.createElement("div");
+            div_legend_container.classList.add("legend-container");
+            div_legend_container.style.marginTop = "10px";
+            div_card.appendChild(div_legend_container);
+
+// Show/hide button 
+            let btn_toggle_legend = document.createElement("button");
+            btn_toggle_legend.classList.add("show-btn");
+            btn_toggle_legend.innerText = "Show legend";
+            div_legend_container.appendChild(btn_toggle_legend);
+
+// Legend content
+            let div_legend = document.createElement("div");
+            div_legend.classList.add("rating-legend");
+            div_legend.style.display = "none";
+            div_legend.style.textAlign = "left";
+            div_legend.style.fontSize = "0.9em";
+            div_legend.style.maxWidth = "600px";
+            div_legend.style.margin = "10px auto";
+            div_legend.style.lineHeight = "1.4em";
+            div_legend.style.padding = "8px 12px";
+            div_legend.style.border = "1px solid rgba(0,0,0,0.1)";
+            div_legend.style.borderRadius = "8px";
+            div_legend.style.background = "rgba(0,0,0,0.03)";
+
+            function makeLegendLine(num, text) {
+                let p = document.createElement("p");
+                p.style.margin = "2px 0";
+                let b = document.createElement("b");
+                b.innerText = num + ": ";
+                p.appendChild(b);
+                p.append(text);
+                return p;
+            }
+
+            div_legend.appendChild(makeLegendLine(0, "Total blackout — complete failure to recall the information."));
+            div_legend.appendChild(makeLegendLine(1, "Incorrect response, but upon seeing the correct answer it felt familiar."));
+            div_legend.appendChild(makeLegendLine(2, "Incorrect response, but upon seeing the correct answer it seemed easy to remember."));
+            div_legend.appendChild(makeLegendLine(3, "Correct response, but required significant effort to recall."));
+            div_legend.appendChild(makeLegendLine(4, "Correct response, after some hesitation."));
+            div_legend.appendChild(makeLegendLine(5, "Correct response with perfect recall."));
+
+            div_legend_container.appendChild(div_legend);
+
+// Toggle display event listener
+            btn_toggle_legend.addEventListener("click", () => {
+                const isVisible = div_legend.style.display === "block";
+                div_legend.style.display = isVisible ? "none" : "block";
+                btn_toggle_legend.innerText = isVisible ? "Show legend" : "Hide legend";
+            });
+
 
             let div_actions = document.createElement("div");
             div_card.appendChild(div_actions);
@@ -847,18 +970,72 @@ document.addEventListener('DOMContentLoaded', async () => {
             p_actions.innerHTML = "Next action"
             div_actions.appendChild(p_actions);
 
-            div_actions.innerHTML += `
-                            <div>
-                    <button class="rating-btn" id="send-btn">Send</button>
-                    <button class="rating-btn" id="skip-btn">Skip</button>
-                </div>
-            `
+            let div_next_action = document.createElement("div");
+            div_card.appendChild(div_next_action);
 
-            div_card.innerHTML += `<div class="info" id="result"></div>`
+            function make_action_button(id, text) {
+                let button = document.createElement("button");
+                div_next_action.append(button);
+                button.classList.add("action-btn");
+                button.id = id;
+                button.innerText = text;
+                return button;
+            }
 
-            //addNoteIdToSession(r_session_for_reviews.id, note_id);
+            let button_send_btn = make_action_button("send-btn", "Send")
+            let button_skip_btn = make_action_button("skip-btn", "Skip")
+
+            let div_info = document.createElement("div");
+            div_card.appendChild(div_info);
+            div_info.classList.add("info");
+            div_info.id= "result"
+
+            const sw = new StopWatch();
+            sw.start();
+            const action = await waitForSendOrSkip(selected_grade_ref);
+            sw.stop();
+
+
+            console.debug(sw.elapsedMs + " ms")
+            console.log(`User chose: ${action} for note_id=${note_id}`);
+
+            if (action === "send") {
+                // store result in DB
+
+                if(selected_grade_ref.current === -1) {
+                    showInfo("You did not selected a grade.")
+                }
+
+                const new_r_review = {
+                    user_id: user_id,
+                    map_id: r_session_for_reviews.map_id,
+                    r_session_id: r_session_for_reviews.id,
+                    algorithm: r_session_for_reviews.algorithm,
+                    note_id: note_id,
+                    review_date: Date.now(),
+                    grade: selected_grade_ref.current ,
+                    response_data: "{}",
+                    notes: "",
+                    started_at: sw.startTime,
+                    ended_at: sw.endTime,
+                    latency_ms: sw.elapsedMs,
+                    answer_change_count: answer_change_count,
+                    details_json: "{}"
+                };
+                console.debug(JSON.stringify(new_r_review))
+                let resp = await post_entity("r_review", new_r_review)
+                console.debug(JSON.stringify(resp));
+
+                showInfo("Note was reviewed: #" + note_id + " " + note.title)
+                addNoteIdToSession(r_session_for_reviews.id, note_id);
+            } else if (action === "skip") {
+                // skipped - don't store anything
+                showInfo("Note was skipped: #" + note_id + " " + note.title)
+            }
+
         }
 
+        main_content.innerHTML = "<p>All notes in this session were reviewed.</p>"
         r_session_for_reviews = null;
     }
 
@@ -895,19 +1072,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     render()
 
 });
-
-export function showOrHideAnswer() {
-
-    let back = document.querySelector('.back');
-    let showbtn = document.querySelector('.show-btn');
-    let shown = showbtn.innerText === "Hide answer"
-
-    document.querySelector('.back').style.display = shown ? 'none' : 'block';
-    showbtn.innerText = shown ? "Show answer" : "Hide answer";
-
-}
-
-window.showOrHideAnswer = showOrHideAnswer;
 
 export function rate_demo(q) {
     get_element("rating-btn-0").className = "rating-btn"

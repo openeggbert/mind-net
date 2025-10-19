@@ -130,9 +130,42 @@ async function ensureFreshAccessToken() {
 
 }
 
+function maybeCleanupLocalStorage() {
+    // 1 in 1000 chance to run
+    if (Math.floor(Math.random() * 1000) !== 500) return;
+
+    const now = Date.now();
+
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+
+        try {
+            const value = localStorage.getItem(key);
+            if (!value) continue;
+
+            const parsed = JSON.parse(value);
+
+            // check if it's an object with expires property and not null
+            if (parsed && typeof parsed === "object" && "expires" in parsed) {
+                const expires = Number(parsed.expires);
+                if (!isNaN(expires) && expires < now) {
+                    localStorage.removeItem(key);
+                    // move index back because localStorage size decreased
+                    i--;
+                }
+            }
+        } catch {
+            // ignore invalid JSON
+        }
+    }
+}
+
 
 // Overload apiFetch to always send Authorization header
 export async function apiFetch(url, options = {}) {
+    maybeCleanupLocalStorage();
+
     const headers = options.headers || {};
 
     const skipAuth = url.includes("/auth/login") ||

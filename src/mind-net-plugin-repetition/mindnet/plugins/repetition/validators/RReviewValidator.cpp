@@ -100,7 +100,7 @@ auto it = filter.find("user_id");
 
     OperationResult RReviewValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
     {
-        return {405, "Unsupported operation."};
+        return ok_result;
     }
 
     string RReviewValidator::get_model_name() const

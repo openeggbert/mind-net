@@ -38,10 +38,52 @@ input[type="checkbox"] {
     margin: 6px;
     cursor: pointer;
 }
-.show-btn { background: #444; color: #fff; }
-.rating-btn { background: #2e7d32; color: #fff; }
-.rating-btn:hover, .rating-btn-selected { background: #4fbc51; color: #fff; }
-.info { font-size: 0.9em; color: #ccc; margin-top: 1em; }
+.show-btn {
+    background: #444;
+    color: #fff;
+}
+
+.show-btn:hover {
+    background: #555;
+    color: #fff;
+}
+
+.rating-btn {
+    background: #2e7d32;
+    color: #fff;
+}
+
+.rating-btn:hover {
+    background: #4fbc51;
+    color: #fff;
+}
+
+.rating-btn-selected {
+    background: #4fbc51;
+    color: #fff;
+}
+
+.action-btn {
+    background: #1e6fb8;
+    color: #fff;
+}
+
+.action-btn:hover {
+    background: #2f89d9;
+    color: #fff;
+}
+
+.action-btn:active {
+    background: #195c96;
+    color: #fff;
+}
+
+.info {
+    font-size: 0.9em;
+    color: #ccc;
+    margin-top: 1em;
+}
+
 
 label {
     margin-right: 10px;

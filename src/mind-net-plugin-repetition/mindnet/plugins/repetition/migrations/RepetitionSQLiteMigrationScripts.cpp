@@ -117,7 +117,7 @@ CREATE TABLE r_review (
 	latency_ms INTEGER,	-- response time in ms
 
 	-- user behavior
-	changed_answer BOOLEAN DEFAULT 0, -- changed answer during review?
+	answer_change_count INTEGER DEFAULT 0,
 
     details_json TEXT NOT NULL DEFAULT '{}',
 	-- optional JSON with algorithm-specific details

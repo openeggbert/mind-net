@@ -60,7 +60,7 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* LATENCY_MS = "latency_ms";
 
         // User behavior
-        static constexpr const char* CHANGED_ANSWER = "changed_answer";
+        static constexpr const char* ANSWER_CHANGE_COUNT = "answer_change_count";
 
         // Algorithm-specific data
         static constexpr const char* DETAILS_JSON = "details_json";

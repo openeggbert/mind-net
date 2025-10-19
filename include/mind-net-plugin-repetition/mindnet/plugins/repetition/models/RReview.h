@@ -20,7 +20,7 @@ namespace mindnet::plugins::repetition::models
 
     inline def R_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_rest_operations("cr")
+        .set_rest_operations("crl")
         .set_group("Repetition", 200).set_title_column(COLS::NOTE_ID).allow_reader_write()
         .allow_reader_write()
         .set_columns({
@@ -36,7 +36,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::STARTED_AT, DATETIME | READONLY),
             coldef(COLS::ENDED_AT, DATETIME | READONLY),
             coldef(COLS::LATENCY_MS, INTEGER | READONLY),
-            coldef(COLS::CHANGED_ANSWER, BOOL | READONLY).set_default_value(false),
+            coldef(COLS::ANSWER_CHANGE_COUNT, INTEGER | READONLY).set_default_value(0),
             coldef(COLS::DETAILS_JSON, MANDATORY | READONLY)
         });
 
@@ -54,7 +54,7 @@ namespace mindnet::plugins::repetition::models
         unixtime started_at;
         unixtime ended_at;
         int latency_ms{};
-        bool changed_answer{false};
+        int answer_change_count{0};
         string details_json{"{}"};
 
         create_model_h_methods(Model, MODEL)
@@ -76,7 +76,7 @@ namespace mindnet::plugins::repetition::models
                 started_at == other.started_at &&
                 ended_at == other.ended_at &&
                 latency_ms == other.latency_ms &&
-                changed_answer == other.changed_answer &&
+                answer_change_count == other.answer_change_count &&
                 details_json == other.details_json;
         }
     };
