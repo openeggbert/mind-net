@@ -1057,7 +1057,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         main_content.innerHTML = `
         <h3>🧩 Testing questions for note #${note_id}</h3>
         <div id="test_container"></div>
-        <div id="test_feedback" style="margin-top:10px; font-weight:bold;"></div>
+        <div id="test_feedback" style="margin-top:10px;font-weight:bold;"></div>
     `;
         const container = get_element("test_container");
         const feedback = get_element("test_feedback");
@@ -1066,31 +1066,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         const questions = response.items || response;
         if (!questions || questions.length === 0) {
             showInfo("No questions for this note.");
-            return { correctCount: 0, total: 0, percent: 0 };
+            return { correctCount: 0, attemptedCount: 0, percent: 0 };
         }
 
         let correctCount = 0;
-        let total = questions.length;
+        let attemptedCount = 0;
+        let skippedCount = 0;
 
-        for (let i = 0; i < total; i++) {
-            const q = questions[i];
+        for (let q of questions) {
             const result = await render_single_question(q, container, feedback);
             if (result === "quit") break;
+            if (result === "skip") {
+                skippedCount++;
+                continue;
+            }
             if (result === "correct") correctCount++;
+            if (result === "correct" || result === "wrong") attemptedCount++;
         }
 
-        const percent = ((correctCount / total) * 100).toFixed(1);
+        const percent =
+            attemptedCount > 0
+                ? ((correctCount / attemptedCount) * 100).toFixed(1)
+                : "0.0";
 
+        feedback.innerText = "";
         container.innerHTML = `
         <h3>✅ Test completed</h3>
-        <p>Correct answers: ${correctCount} / ${total}</p>
+        <p>Correct answers: ${correctCount} / ${attemptedCount}</p>
         <p>Accuracy: ${percent}%</p>
+        <p>Skipped: ${skippedCount}</p>
         <button id="btn_back_to_notes">Back to Notes</button>
     `;
 
         return new Promise(resolve => {
             get_element("btn_back_to_notes").onclick = () =>
-                resolve({ correctCount, total, percent });
+                resolve({ correctCount, attemptedCount, percent });
         });
     }
 
@@ -1116,21 +1126,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const btnYes = document.createElement("button");
             const btnNo = document.createElement("button");
-            const button_show_hide = document.createElement("button");
+            const btnShow = document.createElement("button");
             const btnSend = document.createElement("button");
             const btnSkip = document.createElement("button");
             const btnQuit = document.createElement("button");
 
             btnYes.innerText = "Yes";
             btnNo.innerText = "No";
-            button_show_hide.innerText = "Show";
+            btnShow.innerText = "Show";
             btnSend.innerText = "Send";
             btnSkip.innerText = "Skip";
             btnQuit.innerText = "Quit";
 
-            let p_did_you_know = document.createElement("p");
-            p_did_you_know.innerText = "Did you know? ";
-            card.appendChild(p_did_you_know);
+            const pAsk = document.createElement("p");
+            pAsk.innerText = "Did you know?";
+            card.appendChild(pAsk);
+
             let selected = null;
 
             [btnYes, btnNo].forEach(b => {
@@ -1145,16 +1156,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             card.appendChild(document.createElement("br"));
-            [button_show_hide, btnSend, btnSkip, btnQuit].forEach(b => {
+            [btnShow, btnSend, btnSkip, btnQuit].forEach(b => {
                 b.classList.add("action-btn");
                 card.appendChild(b);
             });
 
-            button_show_hide.onclick = () => {
-                let current_text = button_show_hide.innerText;
-                answerDiv.style.display =
-                    answerDiv.style.display === "none" ? "block" : "none";
-                button_show_hide.innerText = current_text === "Show" ? "Hide":"Show";
+            btnShow.onclick = () => {
+                const visible = answerDiv.style.display === "block";
+                answerDiv.style.display = visible ? "none" : "block";
+                btnShow.innerText = visible ? "Show" : "Hide";
             };
 
             btnSend.onclick = () => {
@@ -1163,13 +1173,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return;
                 }
 
-                const correct = "yes" === selected;
+                const correct = q.correct_answer
+                    ? q.correct_answer.toLowerCase() === selected
+                    : selected === "yes"; // fallback if not defined
                 feedback.innerText = correct ? "✅ Correct!" : "❌ Wrong!";
-                // let's add a short delay so the user can read the result
                 setTimeout(() => resolve(correct ? "correct" : "wrong"), 800);
             };
 
-            btnSkip.onclick = () => resolve("skip");
+            btnSkip.onclick = () => {
+                feedback.innerText = "⏭️ Skipped.";
+                setTimeout(() => resolve("skip"), 400);
+            };
+
             btnQuit.onclick = () => resolve("quit");
         });
     }
