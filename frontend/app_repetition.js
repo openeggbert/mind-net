@@ -826,7 +826,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         console.debug(JSON.stringify(note_ids));
-        for (let note_id of note_ids) {
+        for await (let note_id of note_ids) {
             if (wasNoteUsed(r_session_for_reviews.id, note_id)) {
                 console.log("Skipping note with ID " + note_id);
                 continue;
@@ -1001,9 +1001,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (action === "send") {
                 // store result in DB
-
-                if(selected_grade_ref.current === -1) {
-                    showInfo("You did not selected a grade.")
+                if (selected_grade_ref.current === -1) {
+                    showInfo("You did not select a grade.")
                 }
 
                 const new_r_review = {
@@ -1013,7 +1012,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     algorithm: r_session_for_reviews.algorithm,
                     note_id: note_id,
                     review_date: Date.now(),
-                    grade: selected_grade_ref.current ,
+                    grade: selected_grade_ref.current,
                     response_data: "{}",
                     notes: "",
                     started_at: sw.startTime,
@@ -1022,15 +1021,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                     answer_change_count: answer_change_count,
                     details_json: "{}"
                 };
-                console.debug(JSON.stringify(new_r_review))
-                let resp = await post_entity("r_review", new_r_review)
-                console.debug(JSON.stringify(resp));
 
-                showInfo("Note was reviewed: #" + note_id + " " + note.title)
+                await post_entity("r_review", new_r_review);
+                showInfo(`Note was reviewed: #${note_id} ${note.title}`);
                 addNoteIdToSession(r_session_for_reviews.id, note_id);
 
-                main_content.innerHTML = "";
-            } else if (action === "skip") {
+                // ⏸️ čekáme na další akci uživatele
+                await new Promise(resolve => {
+                    main_content.innerHTML = `
+            <h3>✅ Note reviewed: ${note.title}</h3>
+            <button id="btn_next_note">Next Note</button>
+            <button id="btn_test_note">Test</button>
+        `;
+
+                    get_element("btn_next_note").onclick = () => resolve();
+                    get_element("btn_test_note").onclick = async () => {
+                        await run_questions_for_note(note_id);
+                        resolve();
+                    };
+
+                });
+            }
+            else if (action === "skip") {
                 // skipped - don't store anything
                 showInfo("Note was skipped: #" + note_id + " " + note.title)
             }
@@ -1040,6 +1052,128 @@ document.addEventListener('DOMContentLoaded', async () => {
         main_content.innerHTML = "<p>All notes in this session were reviewed.</p>"
         r_session_for_reviews = null;
     }
+
+    async function run_questions_for_note(note_id) {
+        main_content.innerHTML = `
+        <h3>🧩 Testing questions for note #${note_id}</h3>
+        <div id="test_container"></div>
+        <div id="test_feedback" style="margin-top:10px; font-weight:bold;"></div>
+    `;
+        const container = get_element("test_container");
+        const feedback = get_element("test_feedback");
+
+        const response = await list_entities("question", "note_id=" + note_id);
+        const questions = response.items || response;
+        if (!questions || questions.length === 0) {
+            showInfo("No questions for this note.");
+            return { correctCount: 0, total: 0, percent: 0 };
+        }
+
+        let correctCount = 0;
+        let total = questions.length;
+
+        for (let i = 0; i < total; i++) {
+            const q = questions[i];
+            const result = await render_single_question(q, container, feedback);
+            if (result === "quit") break;
+            if (result === "correct") correctCount++;
+        }
+
+        const percent = ((correctCount / total) * 100).toFixed(1);
+
+        container.innerHTML = `
+        <h3>✅ Test completed</h3>
+        <p>Correct answers: ${correctCount} / ${total}</p>
+        <p>Accuracy: ${percent}%</p>
+        <button id="btn_back_to_notes">Back to Notes</button>
+    `;
+
+        return new Promise(resolve => {
+            get_element("btn_back_to_notes").onclick = () =>
+                resolve({ correctCount, total, percent });
+        });
+    }
+
+    async function render_single_question(q, container, feedback) {
+        return new Promise(resolve => {
+            container.innerHTML = "";
+            feedback.innerText = "";
+
+            const card = document.createElement("div");
+            card.classList.add("card");
+            container.appendChild(card);
+
+            const questionDiv = document.createElement("div");
+            questionDiv.classList.add("front");
+            questionDiv.innerText = "❓ " + q.question_text;
+            card.appendChild(questionDiv);
+
+            const answerDiv = document.createElement("div");
+            answerDiv.classList.add("back");
+            answerDiv.innerText = "Answer: " + (q.answers_json || "unknown");
+            answerDiv.style.display = "none";
+            card.appendChild(answerDiv);
+
+            const btnYes = document.createElement("button");
+            const btnNo = document.createElement("button");
+            const button_show_hide = document.createElement("button");
+            const btnSend = document.createElement("button");
+            const btnSkip = document.createElement("button");
+            const btnQuit = document.createElement("button");
+
+            btnYes.innerText = "Yes";
+            btnNo.innerText = "No";
+            button_show_hide.innerText = "Show";
+            btnSend.innerText = "Send";
+            btnSkip.innerText = "Skip";
+            btnQuit.innerText = "Quit";
+
+            let p_did_you_know = document.createElement("p");
+            p_did_you_know.innerText = "Did you know? ";
+            card.appendChild(p_did_you_know);
+            let selected = null;
+
+            [btnYes, btnNo].forEach(b => {
+                b.classList.add("rating-btn");
+                card.appendChild(b);
+                b.onclick = () => {
+                    selected = b.innerText.toLowerCase();
+                    btnYes.classList.remove("rating-btn-selected");
+                    btnNo.classList.remove("rating-btn-selected");
+                    b.classList.add("rating-btn-selected");
+                };
+            });
+
+            card.appendChild(document.createElement("br"));
+            [button_show_hide, btnSend, btnSkip, btnQuit].forEach(b => {
+                b.classList.add("action-btn");
+                card.appendChild(b);
+            });
+
+            button_show_hide.onclick = () => {
+                let current_text = button_show_hide.innerText;
+                answerDiv.style.display =
+                    answerDiv.style.display === "none" ? "block" : "none";
+                button_show_hide.innerText = current_text === "Show" ? "Hide":"Show";
+            };
+
+            btnSend.onclick = () => {
+                if (!selected) {
+                    feedback.innerText = "⚠️ Please select Yes or No first.";
+                    return;
+                }
+
+                const correct = "yes" === selected;
+                feedback.innerText = correct ? "✅ Correct!" : "❌ Wrong!";
+                // let's add a short delay so the user can read the result
+                setTimeout(() => resolve(correct ? "correct" : "wrong"), 800);
+            };
+
+            btnSkip.onclick = () => resolve("skip");
+            btnQuit.onclick = () => resolve("quit");
+        });
+    }
+
 
     function render(new_current_screen = null) {
         if (new_current_screen !== null && new_current_screen !== undefined) {
