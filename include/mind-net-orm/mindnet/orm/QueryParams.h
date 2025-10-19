@@ -30,6 +30,13 @@ namespace mindnet::orm
             filters[key] = value;
         }
 
+
+        // helper: add filter
+        void add_filter(const std::string& key, const int value)
+        {
+            filters[key] = std::to_string(value);
+        }
+
         void remove_filter(const std::string& key)
         {
             filters.erase(key);

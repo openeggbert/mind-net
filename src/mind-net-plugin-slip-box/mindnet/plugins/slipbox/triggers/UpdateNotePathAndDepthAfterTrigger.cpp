@@ -38,6 +38,10 @@ namespace mindnet::plugins::slipbox::triggers
         entity_fields& old_fields,
         const orm::QueryParams query_params)
     {
+        if (action_result.ko())
+        {
+            return;
+        }
         models::Note new_note;
         models::Note old_note;
         new_note.from_values(fields);
