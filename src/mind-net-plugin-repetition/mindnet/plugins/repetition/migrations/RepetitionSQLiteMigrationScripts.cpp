@@ -26,21 +26,20 @@ namespace mindnet::plugins::repetition::migrations
 	UNIQUE (key)
 );
 
-INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
-  ('b', 0.6),
-  ('R_target', 0.9),
-  ('R_opt', 0.9),
-  ('alpha', 0.3),
-  ('beta', 0.6),
-  ('gamma', 0.2),
-  ('delta', 0.4),
-  ('k_over', 0.15),
-  ('S_min', 0.5),
-  ('short_retry', 0.5); -- 12 hours
-
-
-
 )");
+
+  //   	INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
+  // ('b', 0.6),
+  // ('R_target', 0.9),
+  // ('R_opt', 0.9),
+  // ('alpha', 0.3),
+  // ('beta', 0.6),
+  // ('gamma', 0.2),
+  // ('delta', 0.4),
+  // ('k_over', 0.15),
+  // ('S_min', 0.5),
+  // ('short_retry', 0.5); -- 12 hours
+
 
     	add_migration("V2__create_r_user_setting.sql",R"(
 CREATE TABLE r_user_setting (
