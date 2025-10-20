@@ -27,16 +27,16 @@ namespace mindnet::plugins::repetition::migrations
 );
 
 INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
-  ('r18_b', 0.6),
-  ('r18_R_target', 0.9),
-  ('r18_R_opt', 0.9),
-  ('r18_alpha', 0.3),
-  ('r18_beta', 0.6),
-  ('r18_gamma', 0.2),
-  ('r18_delta', 0.4),
-  ('r18_k_over', 0.15),
-  ('r18_S_min', 0.5),
-  ('r18_short_retry', 0.5); -- 12 hours
+  ('b', 0.6),
+  ('R_target', 0.9),
+  ('R_opt', 0.9),
+  ('alpha', 0.3),
+  ('beta', 0.6),
+  ('gamma', 0.2),
+  ('delta', 0.4),
+  ('k_over', 0.15),
+  ('S_min', 0.5),
+  ('short_retry', 0.5); -- 12 hours
 
 
 

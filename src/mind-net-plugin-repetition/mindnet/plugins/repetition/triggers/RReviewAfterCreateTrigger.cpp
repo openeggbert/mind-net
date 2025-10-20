@@ -4,6 +4,8 @@
 
 #include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.h"
 
+#include <shared_mutex>
+
 #include "mindnet/essential/Global.h"
 #include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/plugins/core/models/AuthLog.h"
@@ -11,8 +13,44 @@
 #include "mindnet/plugins/repetition/models/R18State.h"
 #include "mindnet/plugins/repetition/models/R2State.h"
 #include "mindnet/plugins/repetition/models/R4State.h"
+#include "mindnet/plugins/repetition/models/RGlobalSetting.h"
+#include "mindnet/plugins/repetition/models/RUserSetting.h"
 #include "mindnet/plugins/repetition/models/RReview.h"
 #include "mindnet/util/Utils.h"
+
+// ============================================================
+// PARAMETER RESOLUTION (r_user_setting -> r_global_setting -> default)
+// ============================================================
+
+namespace
+{
+    struct ParamKey
+    {
+        int user_id;
+        std::string key;
+    };
+
+    struct ParamKeyHash
+    {
+        size_t operator()(ParamKey const& k) const noexcept
+        {
+            return std::hash<long long>{}((static_cast<long long>(k.user_id) << 32) ^ std::hash<std::string>{}(k.key));
+        }
+    };
+
+    struct ParamKeyEq
+    {
+        bool operator()(ParamKey const& a, ParamKey const& b) const noexcept
+        {
+            return a.user_id == b.user_id && a.key == b.key;
+        }
+    };
+
+    static std::unordered_map<ParamKey, double, ParamKeyHash, ParamKeyEq> g_user_param_cache;
+    static std::unordered_map<std::string, double> g_global_param_cache;
+    static std::shared_mutex g_user_param_mutex;
+    static std::shared_mutex g_global_param_mutex;
+} // namespace
 
 namespace mindnet::plugins::repetition::triggers
 {
@@ -41,8 +79,10 @@ namespace mindnet::plugins::repetition::triggers
             break;
         case enums::RepetitionAlgorithm::Repetition2: model_definition = &models::R2_STATE_DEFINITION;
             break;
-        case enums::RepetitionAlgorithm::Repetition4: model_definition = &models::R4_STATE_DEFINITION; break;
-        case enums::RepetitionAlgorithm::Repetition18: model_definition = &models::R18_STATE_DEFINITION; break;
+        case enums::RepetitionAlgorithm::Repetition4: model_definition = &models::R4_STATE_DEFINITION;
+            break;
+        case enums::RepetitionAlgorithm::Repetition18: model_definition = &models::R18_STATE_DEFINITION;
+            break;
         default:
             {
                 validation_result = {400, "Unsupported algorithm."};
@@ -60,6 +100,94 @@ namespace mindnet::plugins::repetition::triggers
         if (!correct) return SM0_INTERVALS[0];
         int next_index = std::min(previous_repetitions, static_cast<int>(SM0_INTERVALS.size()) - 1);
         return SM0_INTERVALS[next_index];
+    }
+
+    std::optional<double> RReviewAfterCreateTrigger::fetch_user_param(
+        int user_id,
+        const std::string& key,
+        mindnet::api::AccessTokenContext& token,
+        int stack_depth)
+    {
+        ParamKey pk{user_id, key};
+        {   // 🔒 read lock
+            std::shared_lock lock(g_user_param_mutex);
+            if (auto it = g_user_param_cache.find(pk); it != g_user_param_cache.end())
+                return it->second;
+        }
+
+        mindnet::orm::QueryParams qp;
+        qp.add_filter("user_id", user_id);
+        qp.add_filter("key", key);
+        auto res = run_list(models::R_USER_SETTING_DEFINITION, token, qp, stack_depth);
+        if (res.second.ok() && !res.first.empty())
+        {
+            const auto& row = res.first.front();
+            models::RUserSetting setting;
+            setting.from_values(row);
+
+            double val{};
+            try { val = std::stod(setting.value); }
+            catch (...)
+            {
+                return std::nullopt;
+            }
+            {   // 🔒 write lock
+                std::unique_lock lock(g_user_param_mutex);
+                g_user_param_cache.emplace(pk, val);
+            }
+            return val;
+        }
+        return std::nullopt;
+    }
+
+    std::optional<double> RReviewAfterCreateTrigger::fetch_global_param(
+        const std::string& key,
+        api::AccessTokenContext& token,
+        int stack_depth)
+    {
+
+        {   // 🔒 read lock
+            std::shared_lock lock(g_global_param_mutex);
+            if (auto it = g_global_param_cache.find(key); it != g_global_param_cache.end())
+                return it->second;
+        }
+
+        orm::QueryParams qp;
+        qp.add_filter("key", key);
+        auto res = run_list(models::R_GLOBAL_SETTING_DEFINITION, token, qp, stack_depth);
+        if (res.second.ok() && !res.first.empty())
+        {
+            const auto& row = res.first.front();
+            models::RGlobalSetting setting;
+            setting.from_values(row);
+
+
+            double val{};
+
+            try { val = std::stod(setting.value); }
+            catch (...)
+            {
+                return std::nullopt;
+            }
+            {   // 🔒 write lock
+                std::unique_lock lock(g_global_param_mutex);
+                g_global_param_cache.emplace(key, val);
+            }
+            return val;
+        }
+        return std::nullopt;
+    }
+
+    double RReviewAfterCreateTrigger::get_param(
+        int user_id,
+        const std::string& key,
+        double def,
+        api::AccessTokenContext& token,
+        int stack_depth)
+    {
+        if (auto u = fetch_user_param(user_id, key, token, stack_depth)) return *u;
+        if (auto g = fetch_global_param(key, token, stack_depth)) return *g;
+        return def;
     }
 
     void RReviewAfterCreateTrigger::run(
@@ -351,7 +479,7 @@ namespace mindnet::plugins::repetition::triggers
                 r4_state.from_values(read_r4_state.first);
 
                 const int q = std::clamp(r_review.grade, 0, 5);
-                
+
 
                 double ef = r4_state.ef_times_100 / 100.0;
                 double cf = r4_state.correction_factor_times_100 / 100.0;
@@ -437,27 +565,44 @@ namespace mindnet::plugins::repetition::triggers
                 // =======================
                 // Model parameters (SM-18)
                 // =======================
-                const double b = 0.6;
-                const double R_target = 0.9;
-                const double R_opt = 0.9;
-                const double alpha = 0.3;
-                const double beta = 0.6;
-                const double gamma = 0.2;
-                const double delta = 0.4;
-                const double k_over = 0.15;
-                const double S_min = 0.5;
-                const double short_retry = 0.5;
-                const double t0 = 0.2;
-                const double R_inf = 0.02;
-                const double fatigue_lambda = 0.1;
-                const double theta = 1.0; // user sensitivity
+                const double b               = get_param(user_id, "b",               0.6, token, stack_depth);
+                const double R_target        = get_param(user_id, "R_target",        0.9, token, stack_depth);
+                const double R_opt           = get_param(user_id, "R_opt",           0.9, token, stack_depth);
+                const double alpha           = get_param(user_id, "alpha",           0.3, token, stack_depth);
+                const double beta            = get_param(user_id, "beta",            0.6, token, stack_depth);
+                const double gamma           = get_param(user_id, "gamma",           0.2, token, stack_depth);
+                const double delta           = get_param(user_id, "delta",           0.4, token, stack_depth);
+                const double k_over          = get_param(user_id, "k_over",          0.15, token, stack_depth);
+                const double S_min           = get_param(user_id, "S_min",           0.5, token, stack_depth);
+                const double short_retry     = get_param(user_id, "short_retry",     0.5, token, stack_depth);
+                const double t0              = get_param(user_id, "t0",              0.2, token, stack_depth);
+                const double R_inf           = get_param(user_id, "R_infty",         0.02, token, stack_depth);
+                const double fatigue_lambda  = get_param(user_id, "fatigue_lambda",  0.1, token, stack_depth);
+                const double theta           = get_param(user_id, "theta",           1.0, token, stack_depth);
 
                 double S = r18_state.stability_times_100 / 100.0;
                 int reps = r18_state.repetitions;
                 int lapses = r18_state.lapses;
-                const double now_ms = (double)util::Utils::current_unix_timestamp_ms();
-                const double elapsed_days = std::max(
-                    0.0, (now_ms - (double)r18_state.last_review) / MILLISECONDS_PER_DAY);
+
+                // --- deterministic time based on review_date
+                const double now_ms = static_cast<double>(
+                    r_review.review_date > 0 ? r_review.review_date : util::Utils::current_unix_timestamp_ms());
+
+                // --- protection for first review 
+                double elapsed_days = 0.0;
+                if (r18_state.last_review > 0)
+                {
+                    elapsed_days = std::max(
+                        0.0, (now_ms - static_cast<double>(r18_state.last_review)) / MILLISECONDS_PER_DAY);
+                }
+                else
+                {
+                    // fallback: use previous intervals or small seed
+                    elapsed_days = (r18_state.last_interval_times_100 > 0)
+                                       ? static_cast<double>(r18_state.last_interval_times_100) / 100.0
+                                       : 0.1;
+                }
+
 
                 // =======================
                 // New retrievability with offset and asymptote
@@ -473,7 +618,7 @@ namespace mindnet::plugins::repetition::triggers
                 auto interval_for_target = [&](double Sval, double Rval)
                 {
                     double val = Sval * std::pow(-std::log(std::max(1e-9, Rval)), 1.0 / b);
-                    return std::clamp(val, 0.1, 36500.0);
+                    return std::clamp(val, 0.1, 3650.0);
                 };
 
                 // =======================
@@ -522,6 +667,11 @@ namespace mindnet::plugins::repetition::triggers
                 // =======================
                 // Update state
                 // =======================
+
+                if (!std::isfinite(S_after)) S_after = std::max(S_min, 1.0);
+                S_after = std::clamp(S_after, S_min, 1e6);
+                next_interval_days = std::clamp(next_interval_days, 0.1, 3650.0);
+
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
                 r18_state.last_quality = q;

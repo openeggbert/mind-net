@@ -10,7 +10,6 @@
 
 namespace mindnet::plugins::repetition::triggers
 {
-
     class RReviewAfterCreateTrigger : public api::Trigger
     {
     public:
@@ -30,8 +29,25 @@ namespace mindnet::plugins::repetition::triggers
             const orm::QueryParams query_params
         );
 
-    };
+    private:
+        std::optional<double> fetch_user_param(
+            int user_id,
+            const std::string& key,
+            mindnet::api::AccessTokenContext& token,
+            int stack_depth);
 
+        std::optional<double> fetch_global_param(
+            const std::string& key,
+            api::AccessTokenContext& token,
+            int stack_depth);
+
+        double get_param(
+            int user_id,
+            const std::string& key,
+            double def,
+            api::AccessTokenContext& token,
+            int stack_depth);
+    };
 }
 
 #endif // RREVIEWAFTERCREATETRIGGER_H
