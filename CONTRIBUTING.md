@@ -33,10 +33,10 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Critical
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] TASK Check operator== implementations for all models
-- [ ] FEATURE Support for export to static HTML files
 - [ ] Add Markdown parsing in the C++ backend: https://github.com/progsource/maddy https://github.com/mity/md4c
 
 ### Extending
+- [ ] FEATURE Support for export to static HTML files
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 - [ ] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
 - [ ] FEATURE Support for PostgresSQL storage
