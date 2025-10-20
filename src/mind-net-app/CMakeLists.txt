@@ -21,6 +21,7 @@ target_link_libraries(mind_net_app PRIVATE
         mind_net_db_sqlite
         mind_net_plugin_slip_box
         mind_net_plugin_repetition
+#        mind_net_plugin_mail
         nlohmann_json::nlohmann_json
 )
 
