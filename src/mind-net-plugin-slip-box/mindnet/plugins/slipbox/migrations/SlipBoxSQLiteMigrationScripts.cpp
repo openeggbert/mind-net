@@ -24,9 +24,9 @@ CREATE TABLE map (
 
     owner_id INTEGER NOT NULL,
     team_id INTEGER,
-    owner_rights INTEGER CHECK (owner_rights >= 0 and owner_rights <= 7),
-    team_rights INTEGER CHECK (team_rights >= 0 and team_rights <= 7),
-    other_rights INTEGER CHECK (other_rights >= 0 and other_rights <= 7),
+    owner_rights INTEGER NOT NULL CHECK (owner_rights >= 0 and owner_rights <= 7),
+    team_rights INTEGER NOT NULL CHECK (team_rights >= 0 and team_rights <= 7),
+    other_rights INTEGER NOT NULL CHECK (other_rights >= 0 and other_rights <= 7),
 
 	FOREIGN KEY(owner_id) REFERENCES user(id),
     FOREIGN KEY(team_id) REFERENCES team(id)
