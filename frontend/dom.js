@@ -161,9 +161,33 @@ export function makeEnum(map) {
 }
 
 export const sleep_for_seconds = seconds => new Promise(r => setTimeout(r, seconds * 1000));
-export const hide_element = id => {document.getElementById(id) && (document.getElementById(id).style.display = "none");};
+
+export const hide_element = id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+};
+
+export const show_element = id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    const tag = el.tagName.toLowerCase();
+    if (tag === "span") {
+        el.style.display = "inline";
+    } else if (tag === "button") {
+        el.style.display = "inline-block";
+    } else {
+        el.style.display = "block";
+    }
+};
 
 export const hide_elements = (...ids) => ids.forEach(hide_element);
+export const show_elements = (...ids) => ids.forEach(show_element);
+export const show_or_hide_elements = (show, ...ids) =>
+    ids.forEach(id => (show ? show_element(id) : hide_element(id)));
+export const show_or_hide_element = (show, id) =>
+    show ? show_element(id) : hide_element(id);
+
 
 export const get_element = id => document.getElementById(id);
 

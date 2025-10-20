@@ -4,7 +4,7 @@
 import {delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
-    chooseOption
+    chooseOption, show_elements, show_or_hide_elements, show_or_hide_element
 } from "./dom.js";
 
 let map_id = "";
@@ -311,29 +311,63 @@ const show_info = makeShow("info");
 const show_warn = makeShow("warn");
 const show_error = makeShow("error");
 
-export const refresh_page = () => window.location.href = window.location.href.replace(/#$/, "");
-window.refresh_page = refresh_page;
-const refresh_page_to = url => window.location.href = url;
+// export const refresh_page = () => window.location.href = window.location.href.replace(/#$/, "");
+// window.refresh_page = refresh_page;
+// const refresh_page_to = url => window.location.href = url;
+
+export function refresh_page() {
+    render(); // redraws current state
+}
 
 function init_from_http_parameters() {
-    const params = new URLSearchParams(window.location.search);
+    const params = parse_url_params();
+    mode_maps = mode_root = mode_notes = false;
 
-    if (params.has("map_id")) {
-        map_id = params.get("map_id");
+    if (params.map_id) {
+        map_id = params.map_id;
         mode_root = true;
-    } else if (params.has("note_id")) {
-        note_id = params.get("note_id");
+    } else if (params.note_id) {
+        note_id = params.note_id;
         mode_notes = true;
     } else {
         mode_maps = true;
     }
 }
 
+function parse_url_params() {
+    const params = new URLSearchParams(window.location.search);
+    return Object.fromEntries(params.entries());
+}
+
+function set_url_params(params, replace = false) {
+    const query = new URLSearchParams(params).toString();
+    const new_url = `${window.location.pathname}?${query}`;
+    if (replace) history.replaceState(params, "", new_url);
+    else history.pushState(params, "", new_url);
+}
+
+export function navigate_to(params) {
+    set_url_params(params);
+    render();
+}
+window.navigate_to = navigate_to;
+
+window.addEventListener("popstate", () => {
+    render();
+});
+
+
+
 // ========================================
 // Main (DOMContentLoaded)
 // ========================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+    init_dom();
+    await render();
+});
+
+function init_dom() {
     get_element(ID_SLIPBOX_HEADER).title = "Go to list of all maps"
     get_element(ID_SLIPBOX_HEADER).style.cursor = "pointer"
     get_element("button_mindnet").addEventListener("click", () => {
@@ -360,9 +394,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     })
 
-    let disable_rest = false;
-    //disable_rest = true;
-
     let toggle_parent = document.getElementById("collapsible-toggle-parent");
     let toggle_current = document.getElementById("collapsible-toggle-current");
     let toggle_meta = document.getElementById("collapsible-toggle-meta");
@@ -380,28 +411,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (getPanelCollapsed("children")) togglePanel(toggle_children, 'children_content')
 
     get_element("children_button_refresh").addEventListener("click", refresh_page)
-    document.querySelectorAll('.add').forEach(btn => {
-        btn.addEventListener('click', () => show_toast('New child added'));
-    });
+    // document.querySelectorAll('.add').forEach(btn => {
+    //     btn.addEventListener('click', () => show_toast('New child added'));
+    // });
     //
     const win = document.getElementById('window_container');
     makeDraggable(win);
-    //
+}
+
+let beforeUnloadAttached = false;
+
+async function render() {
     init_from_http_parameters();
 
-    if (disable_rest) {
-        return;
-    }
-
+    let mode_root_or_notes = mode_root || mode_notes;
 
     // Header
-    if (mode_maps) hide_elements("button_previous", "button_next", "button_focus")
+    show_or_hide_elements(mode_root_or_notes, "button_previous", "button_next", "button_focus")
 
     // Parent
+    show_or_hide_element(mode_root_or_notes, "parent")
 
-    if (mode_maps) hide_element("parent")
-
-    if (!mode_maps) {
+    if (mode_root_or_notes) {
         original_note = mode_notes ? await read_entity("note", note_id) : null;
         note = mode_notes ? structuredClone(original_note) : null;
         let parent_note = mode_notes ? (note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id)) : null;
@@ -410,7 +441,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (mode_root) set_value("parent_label", "All maps")
         if (mode_notes) set_value("parent_label", has_parent ? "Parent Note" : "Parent Map")
 
-        if (mode_root) hide_elements("parent_id_label", "parent_id")
+        show_or_hide_elements(mode_notes, "parent_id_label", "parent_id")
         map = mode_notes ? await read_entity("map", note.map_id) : null;
         if (mode_notes) set_value("parent_id", has_parent ? note.parent_note_id : note.map_id);
 
@@ -462,8 +493,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Current
-    if (mode_maps) hide_element("current")
-    if (!mode_maps) {
+    show_or_hide_element(mode_root_or_notes, "current")
+
+    if (mode_root_or_notes) {
         set_value("current_label", mode_root ? "Map" : "Note")
         set_value("current_id", mode_root ? map_id : note_id)
 
@@ -495,11 +527,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             copy_to_clipboard(mode_root ? map_id : note_id)
         }
 
+        set_value("current_textarea", "");
         if (mode_root) set_value("current_textarea", map.description);
 
         let content = mode_notes ? (note.content_id === 0 ? null : await read_entity("content", note.content_id)) : null;
         original_content_value = mode_notes ? (content === null ? null : content.value) : null;
         if (mode_notes) set_value("current_textarea", content === null ? "" : content.value);
+
+        let has_parent = mode_root ? false : note.parent_note_id !== "0";
 
         get_element("current_button_delete").onclick = async function () {
             if (mode_root) {
@@ -513,7 +548,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.info(response)
                 show_toast(response)
                 await sleep_for_seconds(4)
-                refresh_page_to(has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id);
+                navigate_to(has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+
+
             } catch (err) {
                 show_error("Delete failed: " + err.message);
             }
@@ -562,9 +599,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     // Meta
-    if (mode_maps) hide_element("meta")
-    if (!mode_maps) {
-        if (mode_root) hide_element("meta_start")
+        show_or_hide_element(mode_root_or_notes, "meta")
+
+    if (mode_root_or_notes) {
+        show_or_hide_element(mode_notes, "meta_start")
         if (mode_notes) {
             get_element("meta_order").innerText = note.sibling_order;
             get_element("current_button_edit_order").onclick = async function () {
@@ -615,7 +653,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     show_toast("Importance updated to " + result);
                 }
             }
-
 
             let meta_difficulty = get_element("meta_difficulty")
 
@@ -692,7 +729,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (mode_root) set_value("children_label", "Root notes")
     if (mode_notes) set_value("children_label", "Subnotes")
 
-    if (mode_maps) hide_element("collapsible-toggle-children");
+    show_or_hide_element(mode_root_or_notes, "collapsible-toggle-children");
 
     if (mode_maps) document.getElementById("children_button_add").onclick = function () {
         setWindowTitle("Maps");
@@ -728,6 +765,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     let children = document.getElementById("children_ul");
+    children.innerText = ""
 
     let maps = null
     let notes = null
@@ -818,12 +856,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    document.getElementById("children_li_example").remove();
+    //document.getElementById("children_li_example").remove();
 
     document.getElementById("loading_screen").style.display = "none";
     document.getElementById("slip_box").style.display = "block";
 
-    if (mode_notes) window.addEventListener("beforeunload", async function (event) {
+    if (mode_notes && !beforeUnloadAttached) window.addEventListener("beforeunload", async function (event) {
         let note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
         let current_textarea = get_element(ID_CURRENT_TEXTAREA).value;
         console.log("current_textarea=" + current_textarea)
@@ -840,6 +878,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return "";
         }
     });
+    beforeUnloadAttached = true;
 
 
-});
+}

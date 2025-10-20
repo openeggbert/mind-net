@@ -45,6 +45,7 @@ namespace mindnet::http
                 "index.html",
                 "styles.css",
                 "common.css",
+                "common.js",
                 "scripts.js",
                 "conf.js",
                 "favicon.png",

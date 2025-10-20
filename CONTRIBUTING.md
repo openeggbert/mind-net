@@ -32,10 +32,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Critical
 - [ ] Fix validators and move authorization into the correct methods
-- [ ] Super Memo component
 - [ ] TASK Check operator== implementations for all models
 - [ ] FEATURE Support for export to static HTML files
-- [ ] FEATURE Query - name, args, returns string - for Validators and Triggers
 - [ ] Add Markdown parsing in the C++ backend: https://github.com/progsource/maddy https://github.com/mity/md4c
 
 ### Extending
@@ -186,4 +184,5 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] BUG Update of boolean values in SQLite is not working.
 - [x] BUG Action list sometimes fails - AND is missing in the generated SQL statement.
 - [x] Slip Box component
-
+- [x] Super Memo component
+- [x] FEATURE Query - name, args, returns string - for Validators and Triggers
