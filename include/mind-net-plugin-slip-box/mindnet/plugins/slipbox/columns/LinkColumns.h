@@ -41,6 +41,7 @@ namespace mindnet::plugins::slipbox::columns
 
         static constexpr const char* FROM_NOTE_ID = "from_note_id";
         static constexpr const char* TO_NOTE_ID = "to_note_id";
+        static constexpr const char* TO_NOTE_TITLE = "to_note_title";
         static constexpr const char* LABEL = "label";
     };
 }

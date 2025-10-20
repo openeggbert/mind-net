@@ -45,14 +45,16 @@ namespace mindnet::plugins::slipbox::models
         .set_columns({
             coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
             coldef(COLS::TO_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),
+            coldef(COLS::TO_NOTE_TITLE, MANDATORY | READONLY),
             coldef(COLS::LABEL),
         });
     ;
 
     struct Model : mindnet::model::BaseModel
     {
-        int from_note_id;
-        int to_note_id;
+        int64_t from_note_id;
+        int64_t to_note_id;
+        string to_note_title;
         string label;
 
         create_model_h_methods(Model, MODEL)
@@ -60,6 +62,7 @@ namespace mindnet::plugins::slipbox::models
         bool operator==(const Model& other) const
         {
             return id == other.id && from_note_id == other.from_note_id && to_note_id == other.to_note_id &&
+                to_note_title == other.to_note_title &&
                 label == other.label && created_at == other.created_at && updated_at == other.
                 updated_at;
         }

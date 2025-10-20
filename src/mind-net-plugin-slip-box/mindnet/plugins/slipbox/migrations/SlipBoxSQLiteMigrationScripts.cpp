@@ -40,7 +40,8 @@ CREATE TABLE content (
 
 	value TEXT NOT NULL,
 	format INTEGER DEFAULT 0,
-    version INTEGER DEFAULT 1
+    version INTEGER DEFAULT 1,
+    last_parsed_at DATETIME DEFAULT 0
 );
 CREATE INDEX idx_content_value ON content(value);
 )");
@@ -288,6 +289,7 @@ CREATE TABLE link(
 
 	from_note_id INTEGER NOT NULL,
 	to_note_id INTEGER NOT NULL,
+	to_note_title TEXT NOT NULL,
     label TEXT,
 
 	CHECK (from_note_id <> to_note_id),

@@ -42,6 +42,7 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* VALUE = "value";
         static constexpr const char* FORMAT = "format";
         static constexpr const char* VERSION = "version";
+        static constexpr const char* LAST_PARSED_AT = "last_parsed_at";
     };
 }
 #endif // CONTENTCOLUMNS_H

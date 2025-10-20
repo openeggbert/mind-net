@@ -51,6 +51,7 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::FORMAT).set_default_value(0).set_enum_definition(
                 enums::content_format_to_enum_definition()).set_description("Content format type"),
             coldef(COLS::VERSION, INTEGER).set_default_value("1").set_description("Content version number"),
+            coldef(COLS::LAST_PARSED_AT, DATETIME).set_default_value("0"),
             //
         })
         .add_custom_list_action("note", "Get note", {"content_id", "{id}"});
@@ -60,6 +61,7 @@ namespace mindnet::plugins::slipbox::models
         string value;
         enums::ContentFormat format{};
         int version{1};
+        unixtime last_parsed_at{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -70,7 +72,8 @@ namespace mindnet::plugins::slipbox::models
                 updated_at == other.updated_at &&
                 value == other.value &&
                 format == other.format &&
-                version == other.version;
+                version == other.version &&
+                last_parsed_at == other.last_parsed_at;
         }
     };
 }

@@ -15,6 +15,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(value);
         result.push_back(cast64(format));
         result.push_back(version);
+        result.push_back(cast64(last_parsed_at));
         return result;
     }
 
@@ -31,6 +32,7 @@ namespace mindnet::plugins::slipbox::models
         value = text();
         format = static_cast<enums::ContentFormat>(number());
         version = number();
+        last_parsed_at = number();
     }
 
     string Content::validate()

@@ -14,6 +14,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(cast64(updated_at));
         result.push_back(from_note_id);
         result.push_back(to_note_id);
+        result.push_back(to_note_title);
         result.push_back(label);
         return result;
     }
@@ -29,6 +30,7 @@ namespace mindnet::plugins::slipbox::models
         updated_at = number();
         from_note_id = number();
         to_note_id = number();
+        to_note_title = text();
         label = text();
     };
 
@@ -39,6 +41,7 @@ namespace mindnet::plugins::slipbox::models
         validator_chain_vector list{
             [this] { return test_ne(from_note_id, 0, LinkColumns::FROM_NOTE_ID); },
             [this] { return test_ne(to_note_id, 0, LinkColumns::TO_NOTE_ID); },
+            [this] { return testt_not_empty(to_note_title, LinkColumns::TO_NOTE_TITLE); },
         };
         return util::ValidatorChain::run(list);
     }
