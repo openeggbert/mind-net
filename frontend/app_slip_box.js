@@ -219,10 +219,6 @@ const show_info = makeShow("info");
 const show_warn = makeShow("warn");
 const show_error = makeShow("error");
 
-// export const refresh_page = () => window.location.href = window.location.href.replace(/#$/, "");
-// window.refresh_page = refresh_page;
-// const refresh_page_to = url => window.location.href = url;
-
 export function refresh_page() {
     render(); // redraws current state
 }
@@ -335,19 +331,23 @@ function init_dom() {
 let beforeUnloadAttached = false;
 
 function link_to(a, params) {
-    // prevents duplicate event listeners
-    if (a._hasLinkListener) return;
-    a._hasLinkListener = true;
-
-    // set URL into href
+    // always update href
     a.href = "?" + new URLSearchParams(params).toString();
 
-    // attach event listener only once 
-    a.addEventListener("click", (event) => {
-        event.preventDefault();
-        navigate_to(params);
-    });
+    // add listener only once, but don't store 'params' in closure
+    if (!a._hasLinkListener) {
+        a.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            // get current href
+            const url = new URL(a.href, window.location.origin);
+            const p = Object.fromEntries(url.searchParams.entries());
+            navigate_to(p);
+        });
+        a._hasLinkListener = true;
+    }
 }
+
 async function render() {
     console.log("render() called", performance.now());
 
@@ -659,6 +659,17 @@ async function render() {
     if (mode_notes) set_value("children_label", "Subnotes")
 
     show_or_hide_element(mode_root_or_notes, "collapsible-toggle-children");
+
+
+    show_or_hide_element(mode_root_or_notes, "children_button_go_up");
+
+    let parent_title = document.getElementById("parent_title");
+
+    if (mode_root_or_notes) document.getElementById("children_button_go_up").onclick = function () {
+
+        parent_title.click()
+    };
+
 
     if (mode_maps) document.getElementById("children_button_add").onclick = function () {
         setWindowTitle("Maps");
