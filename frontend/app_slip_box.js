@@ -18,102 +18,10 @@ let mode_maps = false;
 let mode_root = false;
 let mode_notes = false;
 let wasDragged = false;
+let suppressPopstate = false;
 const simple = document.getElementById("app").dataset.version === "simple";
 const rich = !simple
 const panels = ["parent", "current", "meta", "children"]
-
-// ========================================
-// IDs
-// ========================================
-export const ID_APP = "app";
-export const ID_LOADING_SCREEN = "loading_screen";
-export const ID_SLIP_BOX = "slip_box";
-
-export const ID_SLIPBOX_HEADER = "slipbox_header";
-export const ID_BUTTON_MINDNET = "button_mindnet";
-export const ID_BUTTON_PREVIOUS = "button_previous";
-export const ID_BUTTON_NEXT = "button_next";
-export const ID_BUTTON_FOCUS = "button_focus";
-export const ID_BUTTON_THEME = "button_theme";
-
-export const ID_MAIN = "main";
-
-export const ID_PARENT = "parent";
-export const ID_PARENT_LABEL = "parent_label";
-export const ID_COLLAPSIBLE_TOGGLE_PARENT = "collapsible-toggle-parent";
-export const ID_PARENT_CONTENT = "parent_content";
-export const ID_PARENT_ID_LABEL = "parent_id_label";
-export const ID_PARENT_ID = "parent_id";
-export const ID_PARENT_TITLE_LABEL = "parent_title_label";
-export const ID_PARENT_TITLE = "parent_title";
-export const ID_PARENT_BUTTON_COPY = "parent_button_copy";
-export const ID_PARENT_BUTTON_EDIT = "parent_button_edit";
-
-export const ID_CURRENT = "current";
-export const ID_CURRENT_LABEL = "current_label";
-export const ID_COLLAPSIBLE_TOGGLE_CURRENT = "collapsible-toggle-current";
-export const ID_CURRENT_ID = "current_id";
-export const ID_CURRENT_CONTENT = "current_content";
-export const ID_CURRENT_TITLE_LABEL = "current_title_label";
-export const ID_CURRENT_TITLE = "current_title";
-export const ID_CURRENT_BUTTON_RENAME = "current_button_rename";
-export const ID_CURRENT_BUTTON_COPY = "current_button_copy";
-export const ID_CURRENT_BUTTON_EDIT = "current_button_edit";
-export const ID_CURRENT_BUTTON_READ = "current_button_read";
-export const ID_CURRENT_TEXTAREA = "current_textarea";
-export const ID_CURRENT_BUTTON_DELETE = "current_button_delete";
-export const ID_CURRENT_BUTTON_CANCEL = "current_button_cancel";
-export const ID_CURRENT_BUTTON_SAVE = "current_button_save";
-
-export const ID_META = "meta";
-export const ID_META_LABEL = "meta_label";
-export const ID_COLLAPSIBLE_TOGGLE_META = "collapsible-toggle-meta";
-export const ID_META_CONTENT = "meta_content";
-export const ID_META_START = "meta_start";
-export const ID_META_ORDER = "meta_order";
-export const ID_META_IMPORTANCE = "meta_importance";
-export const ID_META_DIFFICULTY = "meta_difficulty";
-export const ID_CURRENT_BUTTON_EDIT_ORDER = "current_button_edit_order";
-export const ID_CURRENT_BUTTON_EDIT_IMPORTANCE = "current_button_edit_importance";
-export const ID_CURRENT_BUTTON_EDIT_DIFFICULTY = "current_button_edit_difficulty";
-
-export const ID_META_BUTTON_LINKS = "meta_button_links";
-export const ID_META_BUTTON_URLS = "meta_button_urls";
-export const ID_META_BUTTON_TERMS = "meta_button_terms";
-export const ID_META_BUTTON_SOURCES = "meta_button_sources";
-export const ID_META_BUTTON_IDEAS = "meta_button_ideas";
-export const ID_META_BUTTON_QUESTIONS = "meta_button_questions";
-
-export const ID_META_BUTTON_BACKLINKS = "meta_button_backlinks";
-export const ID_META_BUTTON_SIBLINGS = "meta_button_siblings";
-export const ID_META_BUTTON_WANTED_NOTES = "meta_button_wanted_notes";
-export const ID_META_BUTTON_PROPERTIES = "meta_button_properties";
-export const ID_META_BUTTON_TAGS = "meta_button_tags";
-export const ID_META_BUTTON_COLLECTIONS = "meta_button_collections";
-
-export const ID_META_BUTTON_ALERT = "meta_button_alert";
-export const ID_META_BUTTON_FLAGS = "meta_button_flags";
-export const ID_META_BUTTON_PROJECTS = "meta_button_projects";
-export const ID_META_BUTTON_TASKS = "meta_button_tasks";
-export const ID_META_BUTTON_PINNED_NOTES = "meta_button_pinned_notes";
-
-export const ID_META_BUTTON_VISITED = "meta_button_visited";
-export const ID_META_BUTTON_HISTORY = "meta_button_history";
-
-export const ID_CHILDREN_LABEL = "children_label";
-export const ID_COLLAPSIBLE_TOGGLE_CHILDREN = "collapsible-toggle-children";
-export const ID_CHILDREN_CONTENT = "children_content";
-export const ID_CHILDREN_BUTTON_ADD = "children_button_add";
-export const ID_CHILDREN_BUTTON_REFRESH = "children_button_refresh";
-export const ID_CHILDREN_UL = "children_ul";
-export const ID_CHILDREN_LI_EXAMPLE = "children_li_example";
-export const ID_CHILDREN_CHILD_4689_ID = "children_child_4689_id";
-export const ID_CHILDREN_CHILD_4689_TITLE = "children_child_4689_title";
-export const ID_CHILDREN_CHILD_4689_BUTTON_COPY = "children_child_4689_button_copy";
-
-export const ID_WINDOW_CONTAINER = "window_container";
-export const ID_WINDOW_CONTAINER_TITLE = "window_container_title";
-export const ID_WINDOW_CONTAINER_CONTENT = "window_container_content";
 
 // ========================================
 // Panels
@@ -347,13 +255,18 @@ function set_url_params(params, replace = false) {
 }
 
 export function navigate_to(params) {
+    suppressPopstate = true;
     set_url_params(params);
     render();
+    // suppress popstate for a short time (ca 100ms)
+    setTimeout(() => suppressPopstate = false, 200);
 }
+
+
 window.navigate_to = navigate_to;
 
 window.addEventListener("popstate", () => {
-    render();
+    if (!suppressPopstate) render();
 });
 
 
@@ -368,8 +281,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function init_dom() {
-    get_element(ID_SLIPBOX_HEADER).title = "Go to list of all maps"
-    get_element(ID_SLIPBOX_HEADER).style.cursor = "pointer"
+    get_element("slipbox_header").title = "Go to list of all maps"
+    get_element("slipbox_header").style.cursor = "pointer"
     get_element("button_mindnet").addEventListener("click", () => {
         window.location.href = 'index.html'
     });
@@ -421,7 +334,23 @@ function init_dom() {
 
 let beforeUnloadAttached = false;
 
+function link_to(a, params) {
+    // prevents duplicate event listeners
+    if (a._hasLinkListener) return;
+    a._hasLinkListener = true;
+
+    // set URL into href
+    a.href = "?" + new URLSearchParams(params).toString();
+
+    // attach event listener only once 
+    a.addEventListener("click", (event) => {
+        event.preventDefault();
+        navigate_to(params);
+    });
+}
 async function render() {
+    console.log("render() called", performance.now());
+
     init_from_http_parameters();
 
     let mode_root_or_notes = mode_root || mode_notes;
@@ -448,11 +377,11 @@ async function render() {
         let parent_title = document.getElementById("parent_title");
         if (mode_root) {
             parent_title.innerText = "All maps";
-            parent_title.href = "?";
+            link_to(parent_title, {}); // go to homepage without parameters
         }
         if (mode_notes) {
             parent_title.innerText = has_parent ? parent_note.title : map.name;
-            parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
+            link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
         }
 
         get_element("parent_button_copy").onclick = function () {
@@ -487,7 +416,7 @@ async function render() {
 
                 let map_ = await read_entity("map", note.map_id);
                 parent_title.innerText = has_parent ? parent_note.title : map_.name;
-                parent_title.href = has_parent ? "?note_id=" + note.parent_note_id : "?map_id=" + note.map_id;
+                link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
             }
         }
     }
@@ -765,7 +694,7 @@ async function render() {
     };
 
     let children = document.getElementById("children_ul");
-    children.innerText = ""
+    children.replaceChildren(); // 🧮 destroys all children along with event listeners
 
     let maps = null
     let notes = null
@@ -789,7 +718,7 @@ async function render() {
             let a = document.createElement("a")
             li.appendChild(a);
             a.innerText = map.name;
-            a.href = "?map_id=" + map.id;
+            link_to(a, { map_id: map.id });
             a.style.display = "inline-block";
             a.style.minWidth = "50px";
 
@@ -812,7 +741,7 @@ async function render() {
             let a = document.createElement("a")
             li.appendChild(a);
             a.innerText = e.title;
-            a.href = "?note_id=" + e.id;
+            link_to(a, { note_id: e.id });
             a.style.display = "inline-block";
             a.style.minWidth = "20px";
             a.style.marginRight = "10px";
@@ -840,7 +769,7 @@ async function render() {
             let a = document.createElement("a")
             li.appendChild(a);
             a.innerText = e.title;
-            a.href = "?note_id=" + e.id;
+            link_to(a, { note_id: e.id });
             a.style.display = "inline-block";
             a.style.minWidth = "20px";
             a.style.marginRight = "10px";
@@ -863,7 +792,7 @@ async function render() {
 
     if (mode_notes && !beforeUnloadAttached) window.addEventListener("beforeunload", async function (event) {
         let note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
-        let current_textarea = get_element(ID_CURRENT_TEXTAREA).value;
+        let current_textarea = get_element("current_textarea").value;
         console.log("current_textarea=" + current_textarea)
         console.log("original_content_value=" + original_content_value)
         let content_changed = original_content_value === null ? current_textarea !== "" : original_content_value !== current_textarea;
