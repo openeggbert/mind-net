@@ -289,6 +289,19 @@ function init_dom() {
         get_element("button_focus").addEventListener("click", button_focus_onclick);
         get_element("button_focus").title = "Turn on/off focus mode"
     }
+    get_element("button_jump_to_note").addEventListener("click", () => {
+        const input = prompt("Enter note ID");
+        if (input === null) return; // canceled
+
+        const id = String(input).trim();
+        if (!/^\d+$/.test(id)) {
+            show_error("Note ID must be a whole number.");
+            return;
+        }
+
+        navigate_to({note_id: id}); // SPA navigation → immediately re-renders the given note
+    });
+
 
     get_element("button_theme").addEventListener("click", () => {
         document.body.classList.toggle("dark");
@@ -349,6 +362,7 @@ function link_to(a, params) {
 }
 
 async function render() {
+    // TODO split into renderParent(), renderCurrent(), renderMeta(), renderChildren().
     console.log("render() called", performance.now());
 
     init_from_http_parameters();

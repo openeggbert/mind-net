@@ -57,11 +57,15 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Add support for missing column types (JSON, BLOB, etc.)
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
+- [ ] Plugin slipbox : import note as JSON and via the web interface
 
 ### Experimental
-- [ ] Chat component - Slack-like
-- [ ] Mail component - E-mail like
+- [ ] Chat plugin - Slack-like
+- [ ] Mail plugin - E-mail like
+- [ ] Suggestion plugin - E-mail like
+- [ ] Plugin can create new REST endpoints
 - [ ] FEATURE Implement complex Filtering in REST API
+- [ ] New abstract class Provider
 - [ ] Add support for Docker
 - [ ] Rewrite enums using EnumUtils.h
 - [ ] Table note - new column path9

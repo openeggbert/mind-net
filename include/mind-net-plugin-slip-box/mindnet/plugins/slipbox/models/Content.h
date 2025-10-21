@@ -58,6 +58,7 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
+        // definition, example, note
         string value;
         enums::ContentFormat format{};
         int version{1};
