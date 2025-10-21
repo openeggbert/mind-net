@@ -172,7 +172,7 @@ export const show_element = id => {
     if (!el) return;
 
     const tag = el.tagName.toLowerCase();
-    if (tag === "span") {
+    if (tag === "span" || tag === "strong") {
         el.style.display = "inline";
     } else if (tag === "button") {
         el.style.display = "inline-block";
