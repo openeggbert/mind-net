@@ -81,7 +81,7 @@ namespace mindnet::api
         return {500, error};
     }
 
-    OperationResult Persistence::remove(model::ModelDefinition& def, api::AccessTokenContext& token, int id)
+    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, int id)
     {
         string_map empty_map;
 
@@ -92,7 +92,7 @@ namespace mindnet::api
     }
 
     std::pair<std::vector<entity_fields>, OperationResult> Persistence::list(
-        ModelDefinition& def,
+        const ModelDefinition& def,
         api::AccessTokenContext& token,
         orm::QueryParams& query_params)
     {

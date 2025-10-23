@@ -21,6 +21,7 @@ typedef unsigned long long ull;
 typedef ull unixtime;
 typedef unsigned short ushort;
 using std::string;
+typedef int64_t i64;
 
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;

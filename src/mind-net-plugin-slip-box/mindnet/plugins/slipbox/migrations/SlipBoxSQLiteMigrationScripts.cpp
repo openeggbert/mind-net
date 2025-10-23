@@ -86,6 +86,8 @@ CREATE TABLE note (
     path TEXT,               -- e.g. '/000001/000045/000099'
     depth INTEGER DEFAULT 0, -- hierarchical depth (0=root, 1=child, etc.)
 
+    UNIQUE(content_id),
+
     FOREIGN KEY (map_id) REFERENCES map(id),
     FOREIGN KEY (parent_note_id) REFERENCES note(id),
     FOREIGN KEY (content_id) REFERENCES content(id),

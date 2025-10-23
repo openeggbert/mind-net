@@ -32,7 +32,7 @@ namespace mindnet::orm
 
 
         // helper: add filter
-        void add_filter(const std::string& key, const int value)
+        void add_filter(const std::string& key, const i64 value)
         {
             filters[key] = std::to_string(value);
         }

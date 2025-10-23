@@ -27,6 +27,7 @@
 #include "mindnet/plugins/slipbox/validators/TaskValidator.h"
 #include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.h"
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.h"
+#include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.h"
 
 namespace mindnet::plugins::slipbox
@@ -70,6 +71,7 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
 
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
 
         plugin->close_for_changes();

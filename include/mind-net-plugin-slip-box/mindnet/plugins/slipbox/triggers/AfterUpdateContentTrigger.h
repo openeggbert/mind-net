@@ -1,20 +1,20 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H
-#define UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H
+#ifndef AFTERUPDATECONTENTTRIGGER_H
+#define AFTERUPDATECONTENTTRIGGER_H
 
 
 #include "mindnet/api/Trigger.h"
 
 namespace mindnet::plugins::slipbox::triggers
 {
-    class UpdateNotePathAndDepthAfterTrigger : public api::Trigger
+    class AfterUpdateContentTrigger : public api::Trigger
     {
     public:
-        UpdateNotePathAndDepthAfterTrigger();
+        AfterUpdateContentTrigger();
 
-        ~UpdateNotePathAndDepthAfterTrigger() override = default;
+        ~AfterUpdateContentTrigger() override = default;
         void run(
             mindnet::essential::Crudl operation,
             int stack_depth,
@@ -31,4 +31,4 @@ namespace mindnet::plugins::slipbox::triggers
     };
 
 }
-#endif // UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H
+#endif // AFTERUPDATECONTENTTRIGGER_H

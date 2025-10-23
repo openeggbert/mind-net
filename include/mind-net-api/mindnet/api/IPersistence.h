@@ -30,9 +30,9 @@ namespace mindnet::api
                                                                int id) = 0;
         virtual OperationResult update(const ModelDefinition& def, AccessTokenContext& token, int id,
                                        entity_fields& fields) = 0;
-        virtual OperationResult remove(ModelDefinition& def, AccessTokenContext& token, int id) = 0;
+        virtual OperationResult remove(const ModelDefinition& def, AccessTokenContext& token, int id) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
-            ModelDefinition& def, AccessTokenContext& token, orm::QueryParams& query_params) = 0;
+            const ModelDefinition& def, AccessTokenContext& token, orm::QueryParams& query_params) = 0;
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //

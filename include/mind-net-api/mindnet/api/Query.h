@@ -8,6 +8,7 @@
 #include <memory>
 #include <string>
 #include <nlohmann/json.hpp>
+#include "mindnet/essential/DatabaseType.h"
 
 namespace mindnet::api
 {

@@ -42,8 +42,8 @@ namespace mindnet::api
         using CreateFn = std::pair<int, OperationResult>(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, entity_fields&, int);
         using ReadFn   = std::pair<entity_fields, OperationResult>(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, int, int);
         using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, int, entity_fields&, int);
-        using DeleteFn = OperationResult(Service::*)(model::ModelDefinition&, api::AccessTokenContext&, int, int);
-        using ListFn   = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(model::ModelDefinition&, api::AccessTokenContext&, orm::QueryParams&, int);
+        using DeleteFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, int, int);
+        using ListFn   = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, orm::QueryParams&, int);
 
 
           Trigger(
@@ -88,12 +88,12 @@ namespace mindnet::api
             return (service_ptr->*update_fn)(def, token, id, fields, depth);
         }
 
-        OperationResult run_delete(model::ModelDefinition& def, api::AccessTokenContext& token, int id, int depth)
+        OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, int id, int depth)
         {
             return (service_ptr->*delete_fn)(def, token, id, depth);
         }
 
-        std::pair<std::vector<entity_fields>, OperationResult> run_list(model::ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params, int depth)
+        std::pair<std::vector<entity_fields>, OperationResult> run_list(const model::ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params, int depth)
         {
             return (service_ptr->*list_fn)(def, token, query_params, depth);
         }

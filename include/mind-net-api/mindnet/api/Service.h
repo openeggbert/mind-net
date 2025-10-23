@@ -39,8 +39,8 @@ namespace mindnet::api
         read(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0) ;
         OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
                                entity_fields& fields, int stack_depth = 0) ;
-        OperationResult remove(ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0) ;
-        std::pair<std::vector<entity_fields>, OperationResult> list(ModelDefinition& def, api::AccessTokenContext& token,
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0) ;
+        std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def, api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params, int stack_depth = 0) ;
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
