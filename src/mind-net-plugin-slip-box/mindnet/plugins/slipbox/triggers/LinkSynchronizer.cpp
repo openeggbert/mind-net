@@ -34,7 +34,7 @@ namespace mindnet::plugins::slipbox::triggers
           stack_depth(stack_depth),
           note_id(note_id),
           run_delete_(std::move(run_delete)),
-          run_create_(std::move(run_create_))
+          run_create_(std::move(run_create))
     {
     }
 

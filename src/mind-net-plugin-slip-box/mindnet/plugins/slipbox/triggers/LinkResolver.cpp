@@ -21,11 +21,6 @@ namespace mindnet::plugins::slipbox::triggers
         std::vector<std::string> new_links;
         std::vector<std::string> new_wanted_notes;
         std::unordered_map<std::string, i64> title_to_id;
-        LinkResolution link_resolution;
-        link_resolution.existing = new_links;
-        link_resolution.missing = new_wanted_notes;
-        link_resolution.title_to_id = title_to_id;
-
 
         // --- handle SQLite 900-parameter limit -----------------------------
         std::unordered_set<std::string> uniq_titles;
@@ -91,6 +86,10 @@ namespace mindnet::plugins::slipbox::triggers
             << new_wanted_notes.size() << " wanted notes, "
             << "in map_id=" << map_id << essential::commit;
 
+        LinkResolution link_resolution;
+        link_resolution.existing = new_links;
+        link_resolution.missing = new_wanted_notes;
+        link_resolution.title_to_id = title_to_id;
         return link_resolution;
     }
 }
