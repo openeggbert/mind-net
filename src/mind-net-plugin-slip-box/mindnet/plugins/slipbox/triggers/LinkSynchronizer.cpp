@@ -11,6 +11,7 @@
 #include "mindnet/plugins/slipbox/models/Link.h"
 #include "mindnet/plugins/slipbox/models/Url.h"
 #include "mindnet/plugins/slipbox/models/WantedNote.h"
+#include "mindnet/util/Utils.h"
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -76,6 +77,8 @@ namespace mindnet::plugins::slipbox::triggers
             {
                 Entity entity = make_entity_fn(val);
                 auto v = entity.to_values();
+                v[1] = mindnet::util::Utils::current_unix_timestamp_ms();
+                v[2] = mindnet::util::Utils::current_unix_timestamp_ms();
                 auto result = run_create_(def, token, v, stack_depth);
                 if (result.second.ko())
                     warn << "Failed to insert " << name << "='" << val << "' for note_id=" << note_id

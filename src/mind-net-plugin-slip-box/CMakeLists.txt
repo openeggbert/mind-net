@@ -13,6 +13,7 @@ target_include_directories(mind_net_plugin_slip_box
         ${CMAKE_SOURCE_DIR}/include/mind-net-essential
         ${CMAKE_SOURCE_DIR}/include/mind-net-model
         ${CMAKE_SOURCE_DIR}/include/mind-net-api
+        ${CMAKE_SOURCE_DIR}/include/mind-net-util
 )
 
 
@@ -21,6 +22,7 @@ target_link_libraries(mind_net_plugin_slip_box
         mind_net_essential
         mind_net_model
         mind_net_api
+        mind_net_util
 )
 
 target_precompile_headers(mind_net_plugin_slip_box PRIVATE

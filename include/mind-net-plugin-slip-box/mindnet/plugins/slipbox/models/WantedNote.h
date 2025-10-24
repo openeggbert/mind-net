@@ -50,7 +50,7 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int from_note_id{};
+        i64 from_note_id{};
         string to_note_title;
 
         create_model_h_methods(Model, MODEL)

@@ -138,6 +138,9 @@ namespace mindnet::model
         {
             os << to_json();
         };
+        bool operator<(const BaseModel& other) const {
+            return id < other.id;
+        }
     };
 
     inline string validate_enums(const entity_fields& fields_, const ModelDefinition& def_)

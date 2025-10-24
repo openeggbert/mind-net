@@ -52,8 +52,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int64_t from_note_id;
-        int64_t to_note_id;
+        i64 from_note_id;
+        i64 to_note_id;
         string to_note_title;
         string label;
 
