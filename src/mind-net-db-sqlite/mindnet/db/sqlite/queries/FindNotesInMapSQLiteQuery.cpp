@@ -30,7 +30,7 @@ namespace mindnet::db::sqlite::queries
         }
         std::vector<std::string> note_titles = request["note_titles"];
 
-        std::string map_id = request["map_id"];
+        i64 map_id = request["map_id"];
 
         std::string sql = "select id, title from note where map_id = ? and title in (";
         int note_titles_index = 0;
@@ -39,7 +39,7 @@ namespace mindnet::db::sqlite::queries
         {
             sql+= "?";
             note_titles_last_index = note_titles.size() - 1;
-            if (!note_titles_last_index)
+            if (note_titles_index < note_titles_last_index)
             {
                 sql += ",";
             }
@@ -62,6 +62,7 @@ namespace mindnet::db::sqlite::queries
             std::vector<string> found_note_titles;
             std::map<string, i64> found_note_ids;
             int index = 0;
+            query.bind(++index, map_id);
             for (auto& m : note_titles)
             {
                 query.bind(++index, m);
@@ -69,8 +70,8 @@ namespace mindnet::db::sqlite::queries
 
             while (query.executeStep())
             {
-                found_note_ids[query.getColumn(2)] = query.getColumn(1).getInt64();
-                found_note_titles.push_back(query.getColumn(2));
+                found_note_ids[query.getColumn(1)] = query.getColumn(0).getInt64();
+                found_note_titles.push_back(query.getColumn(1));
             }
 
             response["found_note_titles"] = found_note_titles;
@@ -78,6 +79,7 @@ namespace mindnet::db::sqlite::queries
         }
         catch (SQLite::Exception& e)
         {
+            essential::err << e.what() << essential::commit;
             response["error"] = e.what();
             response["sql_failed"] = sql;
         }

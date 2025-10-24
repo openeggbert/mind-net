@@ -48,7 +48,10 @@ namespace mindnet::plugins::slipbox::triggers{
         return s;
     }
 
-    static const std::regex kUrlRe(R"((https?://[^\s<>"\)\]]+))", std::regex::icase);
+    static const std::regex kUrlRe(
+        R"((https?|ftp)://[^\s<>"'()\[\]]+)",
+        std::regex::icase
+    );
 
     std::vector<Match> find_urls(const std::string& s)
     {

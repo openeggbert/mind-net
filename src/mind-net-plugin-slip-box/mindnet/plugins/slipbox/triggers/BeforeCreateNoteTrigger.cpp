@@ -8,7 +8,6 @@
 #include "mindnet/essential/Global.h"
 #include "mindnet/plugins/slipbox/models/Link.h"
 #include "mindnet/plugins/slipbox/models/Note.h"
-#include "mindnet/plugins/slipbox/models/WantedNote.h"
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.h"
 
 

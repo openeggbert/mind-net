@@ -20,6 +20,7 @@
 #include "mindnet/plugins/slipbox/triggers/ContentLinkParser.h"
 #include "mindnet/plugins/slipbox/triggers/LinkResolver.h"
 #include "mindnet/plugins/slipbox/triggers/LinkSynchronizer.h"
+#include "mindnet/util/Utils.h"
 
 
 namespace mindnet::plugins::slipbox::triggers
@@ -149,7 +150,8 @@ namespace mindnet::plugins::slipbox::triggers
                 << new_links_or_wanted_notes.size() << ")" << commit;
         }
 
-        std::function<nlohmann::json(const std::string&, nlohmann::json&)>  call_query_lambda = [this] (const std::string& query_name, nlohmann::json& request)
+        std::function<nlohmann::json(const std::string&, nlohmann::json&)> call_query_lambda = [this
+            ](const std::string& query_name, nlohmann::json& request)
         {
             return call_query(query_name, request);
         };
@@ -249,24 +251,20 @@ namespace mindnet::plugins::slipbox::triggers
             const model::ModelDefinition&,
             api::AccessTokenContext&,
             int,
-            int
-        )> run_delete_lambda = [this](const model::ModelDefinition& def,
-                                       api::AccessTokenContext& token,
-                                       int id,
-                                       int depth) -> api::OperationResult
+            int)> run_delete_lambda = [this](const model::ModelDefinition& def,
+                                             api::AccessTokenContext& token,
+                                             int id,
+                                             int depth) -> api::OperationResult
         {
             return run_delete(def, token, id, depth);
         };
 
 
-
-
-
         std::function<std::pair<int, api::OperationResult>(
-        const model::ModelDefinition&,
-        api::AccessTokenContext&,
-        entity_fields&,
-        int)> run_create_lambda = [this](
+            const model::ModelDefinition&,
+            api::AccessTokenContext&,
+            entity_fields&,
+            int)> run_create_lambda = [this](
             const model::ModelDefinition& def,
             api::AccessTokenContext& token,
             entity_fields& fields,
@@ -282,15 +280,17 @@ namespace mindnet::plugins::slipbox::triggers
             note.get_id(),
             run_delete_lambda,
             run_create_lambda
-            );
+        );
         sync.sync_urls(old_urls, old_urls_ids, parsed.urls);
         sync.sync_links(old_links, old_links_ids, link_resolution.existing, link_resolution.title_to_id);
         sync.sync_wanted_notes(old_wanted_notes, old_wanted_notes_ids, link_resolution.missing);
 
-
-
-
-
-
+        new_content.last_parsed_at = util::Utils::current_unix_timestamp_ms();
+        auto v = new_content.to_values();
+        auto run_content_update = run_update(models::CONTENT_DEFINITION, token, new_content.get_id(), v, stack_depth);
+        if (run_content_update.ko())
+        {
+            err << "Failed to update content: " << run_content_update.error << commit;
+        }
     }
 }
