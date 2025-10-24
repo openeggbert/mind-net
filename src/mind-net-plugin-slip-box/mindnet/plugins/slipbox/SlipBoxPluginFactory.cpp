@@ -2,6 +2,8 @@
 
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.h"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.h"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.h"
 #include "mindnet/api/Plugin.h"
@@ -29,6 +31,7 @@
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.h"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateUpdateNoteTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.h"
+#include "mindnet/plugins/slipbox/triggers/BeforeCreateNoteTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.h"
 
 namespace mindnet::plugins::slipbox
@@ -74,8 +77,10 @@ namespace mindnet::plugins::slipbox
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateUpdateNoteTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::BeforeCreateNoteTrigger>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
-
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());
         plugin->close_for_changes();
         return plugin;
     }

@@ -10,7 +10,10 @@
 
 namespace mindnet::db::sqlite::queries
 {
-
+    FindNotesInMapSQLiteQuery::FindNotesInMapSQLiteQuery()
+    : Query(QUERY_FindNotesInMap, "FindNotesInMapSQLiteQuery", essential::DatabaseType::SQLite)
+    {
+    }
 
     nlohmann::json FindNotesInMapSQLiteQuery::call(nlohmann::json request)
     {

@@ -49,7 +49,7 @@ namespace mindnet::plugins::slipbox::triggers
 
                 try
                 {
-                    nlohmann::json res = call(db::sqlite::queries::QUERY_FindNotesInMapQuery, req);
+                    nlohmann::json res = call(db::sqlite::queries::QUERY_FindNotesInMap, req);
                     for (auto& el : res.at("found_note_titles"))
                         found_note_titles.insert(el.get<std::string>());
 

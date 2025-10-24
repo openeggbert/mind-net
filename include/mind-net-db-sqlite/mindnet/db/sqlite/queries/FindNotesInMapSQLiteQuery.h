@@ -9,7 +9,7 @@
 
 namespace mindnet::db::sqlite::queries
 {
-    const std::string QUERY_FindNotesInMapQuery = "FindNotesInMapQuery";
+    const std::string QUERY_FindNotesInMap = "FindNotesInMapQuery";
 
     class FindNotesInMapSQLiteQuery : public api::Query
     {
