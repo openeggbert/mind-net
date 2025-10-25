@@ -41,7 +41,9 @@ CREATE TABLE content (
 	value TEXT NOT NULL,
 	format INTEGER DEFAULT 0,
     version INTEGER DEFAULT 1,
-    last_parsed_at DATETIME DEFAULT 0
+
+    last_parsed_success_at DATETIME,
+    last_parsed_fail_at DATETIME
 );
 CREATE INDEX idx_content_value ON content(value);
 )");

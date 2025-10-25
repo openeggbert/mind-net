@@ -103,7 +103,6 @@ namespace mindnet::plugins::slipbox::triggers
             return;
         }
 
-
         if (new_content.value == old_content.value)
         {
             info << "Content value unchanged; skipping link parse for content_id="
@@ -115,12 +114,29 @@ namespace mindnet::plugins::slipbox::triggers
                                             ? api::AccessTokenContext(user_id, "system", 403)
                                             : api::AccessTokenContext(user_id, "", 200);
 
+        bool success{false};
+        auto update_content = [&]()
+        {
+            new_content.last_parsed_success_at = 0;
+            new_content.last_parsed_fail_at = 0;
+            if (success) new_content.last_parsed_success_at = util::Utils::current_unix_timestamp_ms();
+            if (!success) new_content.last_parsed_fail_at = util::Utils::current_unix_timestamp_ms();
+            auto v = new_content.to_values();
+            auto run_content_update = run_update(models::CONTENT_DEFINITION, token, new_content.get_id(), v,
+                                                 stack_depth);
+            if (run_content_update.ko())
+            {
+                err << "Failed to update content: " << run_content_update.error << commit;
+            }
+        };
+
         orm::QueryParams params;
         params.add_filter("content_id", new_content.get_id());
         auto list_notes_result = run_list(models::NOTE_DEFINITION, token, params, stack_depth);
         if (auto& result = list_notes_result.second; result.ko())
         {
             err << "Failed to list notes: " << result.error << commit;
+            update_content();
             return;
         }
         auto& notes = list_notes_result.first;
@@ -128,6 +144,8 @@ namespace mindnet::plugins::slipbox::triggers
         {
             err << "Unexpected note count (" << notes.size()
                 << ") for content_id=" << new_content.get_id() << commit;
+
+            update_content();
             return;
         }
 
@@ -180,6 +198,9 @@ namespace mindnet::plugins::slipbox::triggers
                 {
                     err << "Failed to list URL for note_id=" << note.get_id()
                         << ": " << res.error << commit;
+
+                    update_content();
+                    return;
                 }
                 else
                 {
@@ -203,6 +224,9 @@ namespace mindnet::plugins::slipbox::triggers
                 {
                     err << "Failed to list LINK for note_id=" << note.get_id()
                         << ": " << res.error << commit;
+
+                    update_content();
+                    return;
                 }
                 else
                 {
@@ -226,6 +250,9 @@ namespace mindnet::plugins::slipbox::triggers
                 {
                     err << "Failed to list WANTED_NOTE for note_id=" << note.get_id()
                         << ": " << res.error << commit;
+
+                    update_content();
+                    return;
                 }
                 else
                 {
@@ -285,12 +312,7 @@ namespace mindnet::plugins::slipbox::triggers
         sync.sync_links(old_links, old_links_ids, link_resolution.existing, link_resolution.title_to_id);
         sync.sync_wanted_notes(old_wanted_notes, old_wanted_notes_ids, link_resolution.missing);
 
-        new_content.last_parsed_at = util::Utils::current_unix_timestamp_ms();
-        auto v = new_content.to_values();
-        auto run_content_update = run_update(models::CONTENT_DEFINITION, token, new_content.get_id(), v, stack_depth);
-        if (run_content_update.ko())
-        {
-            err << "Failed to update content: " << run_content_update.error << commit;
-        }
+        success = true;
+        update_content();
     }
 }

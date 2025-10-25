@@ -4,7 +4,7 @@
 import {delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
-    chooseOption, show_elements, show_or_hide_elements, show_or_hide_element
+    chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element
 } from "./dom.js";
 
 let map_id = "";
@@ -468,6 +468,17 @@ async function render() {
 
         get_element("current_button_copy").onclick = function () {
             copy_to_clipboard(mode_root ? map_id : note_id)
+        }
+
+        show_element("current_button_edit")
+        hide_element("current_button_read")
+        get_element("current_button_edit").onclick = function () {
+            hide_element("current_button_edit")
+            show_element("current_button_read")
+        }
+        get_element("current_button_read").onclick = function () {
+            hide_element("current_button_read")
+            show_element("current_button_edit")
         }
 
         set_value("current_textarea", "");
