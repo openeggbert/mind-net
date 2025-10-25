@@ -165,3 +165,31 @@ a.note-unknown {
 a.note-wanted, a.note-unknown {
     cursor: help;
 }
+
+
+#markdown_toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.markdown-btn {
+    background: #f4f4f4!important;
+    border: 1px solid #ccc!important;
+    border-radius: 4px!important;
+    padding: 2px 6px!important;
+    font-size: 0.9em!important;
+    cursor: pointer!important;
+    transition: background 0.2s!important;
+    min-width: 40px;
+    min-height: 30px;
+}
+
+.markdown-btn:hover {
+    background: #e6e6e6!important;
+}
+
+.markdown-btn:active {
+    background: #ddd!important;
+}

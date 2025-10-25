@@ -283,8 +283,8 @@ const show_info = makeShow("info");
 const show_warn = makeShow("warn");
 const show_error = makeShow("error");
 
-export function refresh_page() {
-    render(); // redraws current state
+export async function refresh_page() {
+    await render(); // redraws current state
 }
 
 function init_from_http_parameters() {
@@ -314,10 +314,10 @@ function set_url_params(params, replace = false) {
     else history.pushState(params, "", new_url);
 }
 
-export function navigate_to(params) {
+export async function navigate_to(params) {
     suppressPopstate = true;
     set_url_params(params);
-    render();
+    await render();
     // suppress popstate for a short time (ca 100ms)
     setTimeout(() => suppressPopstate = false, 200);
 }
@@ -405,31 +405,39 @@ function init_dom() {
     makeDraggable(win);
 }
 
-let beforeUnloadAttached = false;
+let beforeUnloadHandler = null;
 
-function link_to(a, params) {
+async function link_to(a, params) {
     // always update href
     a.href = "?" + new URLSearchParams(params).toString();
 
     // add listener only once, but don't store 'params' in closure
     if (!a._hasLinkListener) {
-        a.addEventListener("click", (event) => {
+        a.addEventListener("click", async (event) => {
             event.preventDefault();
 
             // get current href
             const url = new URL(a.href, window.location.origin);
             const p = Object.fromEntries(url.searchParams.entries());
-            navigate_to(p);
+            await navigate_to(p);
         });
         a._hasLinkListener = true;
     }
 }
 
+let render_number = 0
 async function render() {
     // TODO split into renderParent(), renderCurrent(), renderMeta(), renderChildren().
-    console.log("render() called", performance.now());
+    render_number++;
+    console.log("render() #" + render_number + " called", performance.now());
+
+    note = null;
+    original_note = null;
+    original_content_value = null;
+    console.log("render note_id", note_id, "note=", note);
 
     init_from_http_parameters();
+    const local_note_id = note_id;
 
     let mode_root_or_notes = mode_root || mode_notes;
 
@@ -440,7 +448,7 @@ async function render() {
     show_or_hide_element(mode_root_or_notes, "parent")
 
     if (mode_root_or_notes) {
-        original_note = mode_notes ? await read_entity("note", note_id) : null;
+        original_note = mode_notes ? await read_entity("note", local_note_id) : null;
         note = mode_notes ? structuredClone(original_note) : null;
         let parent_note = mode_notes ? (note.parent_note_id === 0 ? null : await read_entity("note", note.parent_note_id)) : null;
         let has_parent = mode_notes ? note.parent_note_id !== 0 : null;
@@ -455,11 +463,11 @@ async function render() {
         let parent_title = document.getElementById("parent_title");
         if (mode_root) {
             parent_title.innerText = "All maps";
-            link_to(parent_title, {}); // go to homepage without parameters
+            await link_to(parent_title, {}); // go to homepage without parameters
         }
         if (mode_notes) {
             parent_title.innerText = has_parent ? parent_note.title : map.name;
-            link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+            await link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
         }
 
         get_element("parent_button_copy").onclick = function () {
@@ -494,7 +502,7 @@ async function render() {
 
                 let map_ = await read_entity("map", note.map_id);
                 parent_title.innerText = has_parent ? parent_note.title : map_.name;
-                link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+                await link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
             }
         }
     }
@@ -504,11 +512,11 @@ async function render() {
 
     if (mode_root_or_notes) {
         set_value("current_label", mode_root ? "Map" : "Note")
-        set_value("current_id", mode_root ? map_id : note_id)
+        set_value("current_id", mode_root ? map_id : local_note_id)
 
         get_element("current_title").onclick = function () {
             if (mode_root) showWindowFrom("Detail of map #" + map_id, "index.html?entity=map&action=read&id=" + map_id)
-            if (mode_notes) showWindowFrom("Detail of note #" + note_id, "index.html?entity=note&action=read&id=" + note_id)
+            if (mode_notes) showWindowFrom("Detail of note #" + local_note_id, "index.html?entity=note&action=read&id=" + local_note_id)
         }
 
         if (mode_root) map = await read_entity("map", map_id);
@@ -531,13 +539,92 @@ async function render() {
         }
 
         get_element("current_button_copy").onclick = function () {
-            copy_to_clipboard(mode_root ? map_id : note_id)
+            copy_to_clipboard(mode_root ? map_id : local_note_id)
         }
 
-        show_element("current_button_edit")
+        show_or_hide_element(mode_notes, "current_button_edit")
         hide_element("current_button_read")
 
+
+        // Always recreate a fresh <textarea> to avoid value persistence between notes
+        {
+            const oldTextarea = get_element("current_textarea");
+            if (oldTextarea) {
+                const newTextarea = document.createElement("textarea");
+                newTextarea.id = "current_textarea";
+                newTextarea.className = oldTextarea.className;
+                newTextarea.placeholder = oldTextarea.placeholder;
+                newTextarea.rows = oldTextarea.rows;
+                newTextarea.cols = oldTextarea.cols;
+                newTextarea.style.width = oldTextarea.style.width;
+                newTextarea.style.height = oldTextarea.style.height;
+                oldTextarea.parentNode.replaceChild(newTextarea, oldTextarea);
+            }
+        }
+
+        {
+            const oldToolbar = document.getElementById("markdown_toolbar");
+            if (oldToolbar) oldToolbar.remove();
+        }
+
         const textarea = get_element("current_textarea");
+
+// Markdown toolbar
+        function createMarkdownToolbar(textarea) {
+            let toolbar = document.getElementById("markdown_toolbar");
+
+            // if already exists, just show
+            if (toolbar) {
+                toolbar.style.display = "flex";
+                return;
+            }
+
+            toolbar = document.createElement("div");
+            toolbar.id = "markdown_toolbar";
+            toolbar.style.display = "flex";
+            toolbar.style.gap = "4px";
+            toolbar.style.marginBottom = "6px";
+
+            const buttons = [
+                { label: "B", title: "Bold", before: "**", after: "**" },
+                { label: "I", title: "Italic", before: "*", after: "*" },
+                { label: "H1", title: "Heading 1", before: "# ", after: "" },
+                { label: "H2", title: "Heading 2", before: "## ", after: "" },
+                { label: "H3", title: "Heading 3", before: "### ", after: "" },
+                { label: "Code", title: "Inline code", before: "`", after: "`" },
+                { label: "Code block", title: "Code block", before: "```\n", after: "\n```" },
+                { label: "Quote", title: "Blockquote", before: "> ", after: "" },
+                { label: "Link", title: "Insert link", before: "[", after: "](url)" },
+                { label: "[[...]]", title: "Wiki link", before: "[[", after: "]]" },
+                { label: "UL", title: "List item", before: "- ", after: "" },
+                { label: "[ ]", title: "Checkbox", before: "- [ ] ", after: "" },
+                { label: "---", title: "Divider", before: "\n---\n", after: "" },
+            ];
+
+            buttons.forEach(cfg => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = cfg.label;
+                btn.title = cfg.title;
+                btn.className = "markdown-btn";
+                btn.addEventListener("click", () => insertMarkdown(textarea, cfg.before, cfg.after));
+                toolbar.appendChild(btn);
+            });
+
+            textarea.parentNode.insertBefore(toolbar, textarea);
+        }
+
+// helper
+        function insertMarkdown(textarea, before, after) {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = textarea.value.substring(start, end);
+            const newText = before + selected + after;
+            textarea.setRangeText(newText, start, end, "end");
+            textarea.focus();
+        }
+
+
         let markdownPreviewDiv = get_element("markdown_preview");
         if(markdownPreviewDiv != null) {
             markdownPreviewDiv.remove();
@@ -545,8 +632,8 @@ async function render() {
         }
 
         async function convert_wikilinks_to_markdown(markdown_text) {
-            let links = await list_all_entities("link", "&from_note_id=" + note_id)
-            let wanted_notes = await list_all_entities("wanted_note", "&from_note_id=" + note_id)
+            let links = await list_all_entities("link", "&from_note_id=" + local_note_id)
+            let wanted_notes = await list_all_entities("wanted_note", "&from_note_id=" + local_note_id)
 
             // alert(JSON.stringify(links, null, 2));
             // alert(JSON.stringify(wanted_notes, null, 2));
@@ -593,27 +680,37 @@ async function render() {
             }
             textarea.style.display = "block";
 
+            // creates / shows toolbar
+            createMarkdownToolbar(textarea);
+
             hide_element("current_button_edit");
             show_element("current_button_read");
         };
 
+        hide_element("markdown_toolbar")
+
         get_element("current_button_read").onclick = async function () {
             if(mode_notes) {
                 await render_markdown()
+                hide_element("markdown_toolbar")
             } else {
                 hide_element("current_button_read");
                 show_element("current_button_edit");
+                hide_element("markdown_toolbar")
             }
         };
 
         set_value("current_textarea", "");
         if (mode_root) set_value("current_textarea", map.description);
+        if (mode_root) hide_element("markdown_preview")
+        if (mode_root) show_element("current_textarea")
 
         let content = mode_notes ? (note.content_id === 0 ? null : await read_entity("content", note.content_id)) : null;
         original_content_value = mode_notes ? (content === null ? null : content.value) : null;
+
         if (mode_notes) set_value("current_textarea", content === null ? "" : content.value);
 
-        if(mode_notes) render_markdown()
+        if(mode_notes) await render_markdown()
 
         let has_parent = mode_root ? false : note.parent_note_id !== "0";
 
@@ -625,11 +722,11 @@ async function render() {
             // mode_notes
             if (!confirm("Are you sure you want to delete this note?")) return;
             try {
-                let response = await delete_entity("note", note_id);
+                let response = await delete_entity("note", local_note_id);
                 console.info(response)
                 show_toast(response)
                 await sleep_for_seconds(4)
-                navigate_to(has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+                await navigate_to(has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
 
 
             } catch (err) {
@@ -644,6 +741,7 @@ async function render() {
         }
 
         if (mode_root) get_element("current_button_save").onclick = function () {
+            console.log("saving note_id", local_note_id, "textarea=", get_element("current_textarea").value);
             map.description = get_element("current_textarea").value;
             put_entity("map", map_id, map)
         }
@@ -658,12 +756,15 @@ async function render() {
                 note.content_id = content_created.id;
             }
             if (JSON.stringify(note) !== JSON.stringify(original_note)) {
-                await put_entity("note", note_id, note)
+                await put_entity("note", local_note_id, note)
                 original_note = structuredClone(note)
                 show_info("Note changes were saved")
             } else {
                 show_warn("Note was not changed")
             }
+
+
+
 
             if (content === null) content = await read_entity("content", note.content_id);
             content.value = get_element("current_textarea").value;
@@ -674,6 +775,9 @@ async function render() {
             } else {
                 show_warn("Content was not changed")
             }
+
+
+
         }
 
 
@@ -932,7 +1036,7 @@ async function render() {
             let a = document.createElement("a")
             li.appendChild(a);
             a.innerText = e.title;
-            link_to(a, { note_id: e.id });
+            await link_to(a, { note_id: e.id });
             a.style.display = "inline-block";
             a.style.minWidth = "20px";
             a.style.marginRight = "10px";
@@ -953,24 +1057,39 @@ async function render() {
     document.getElementById("loading_screen").style.display = "none";
     document.getElementById("slip_box").style.display = "block";
 
-    if (mode_notes && !beforeUnloadAttached) window.addEventListener("beforeunload", async function (event) {
-        let note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
-        let current_textarea = get_element("current_textarea").value;
-        console.log("current_textarea=" + current_textarea)
-        console.log("original_content_value=" + original_content_value)
-        let content_changed = original_content_value === null ? current_textarea !== "" : original_content_value !== current_textarea;
 
-        console.log("note_changed=" + note_changed)
-        console.log("content_changed=" + content_changed)
+    // Remove old listener if it exists
+    if (beforeUnloadHandler) {
+        window.removeEventListener("beforeunload", beforeUnloadHandler);
+        beforeUnloadHandler = null;
+    }
 
-        if (note_changed || content_changed) {
+// Add event listener for current note
+    if (mode_notes) {
+        beforeUnloadHandler = function (event) {
+            const current_textarea = get_element("current_textarea").value;
 
-            event.preventDefault();
-            event.returnValue = "";
-            return "";
-        }
-    });
-    beforeUnloadAttached = true;
+            const note_changed = JSON.stringify(note) !== JSON.stringify(original_note);
+            const content_changed =
+                original_content_value === null
+                    ? current_textarea !== ""
+                    : original_content_value !== current_textarea;
+
+            console.log("note_changed", note_changed, "content_changed", content_changed);
+
+            if (note_changed || content_changed) {
+                event.preventDefault();
+                event.returnValue = "";
+                return "";
+            }
+        };
+
+        window.addEventListener("beforeunload", beforeUnloadHandler);
+    }
+
+    
+    
 
 
+    console.log("render() #" + render_number + " ended");
 }
