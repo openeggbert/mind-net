@@ -47,6 +47,22 @@ namespace mindnet::api
         return apps;
     }
 
+    std::vector<string> Plugin::get_library_files() const
+    {
+        return library_files;
+    }
+
+    void Plugin::register_library_file(const string library_file)
+    {
+        if (is_closed_for_changes_)
+        {
+            warn << "Plugin " << name << " is closed for changes" << commit;
+            return;
+        }
+
+        library_files.push_back(library_file);
+    }
+
     bool Plugin::is_closed_for_changes() const
     {
         return is_closed_for_changes_;

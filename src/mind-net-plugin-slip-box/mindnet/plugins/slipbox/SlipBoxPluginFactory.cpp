@@ -81,6 +81,11 @@ namespace mindnet::plugins::slipbox
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());
+        plugin->register_library_file("markdown-it.min.js");
+        plugin->register_library_file("highlight.min.js");
+        plugin->register_library_file("markdown-it-emoji.min.js");
+        plugin->register_library_file("github.min.css");
+
         plugin->close_for_changes();
         return plugin;
     }

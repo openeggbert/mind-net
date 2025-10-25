@@ -75,6 +75,10 @@ namespace mindnet::http
                     plugin_allowed_files.insert(path_prefix + ".css");
                     plugin_allowed_files.insert(path_prefix + ".js");
                 }
+                for (auto& library_file : plugin->get_library_files())
+                {
+                    plugin_allowed_files.insert(library_file);
+                }
             }
 
             if (common_allowed_files.find(file_name) == common_allowed_files.end()

@@ -35,6 +35,8 @@ namespace mindnet::api
         [[nodiscard]] const std::string& get_description() const;
         [[nodiscard]] const std::vector<std::string>& depends_on_plugins() const;
         [[nodiscard]] std::vector<string> get_apps() const;
+        [[nodiscard]] std::vector<string> get_library_files() const;
+        void register_library_file(string library_file);
         void close_for_changes();
         [[nodiscard]] bool is_closed_for_changes() const;
         void register_model(
@@ -55,6 +57,7 @@ namespace mindnet::api
         std::string description;
         std::vector<string> plugins_which_this_plugin_depends_on;
         std::vector<string> apps;
+        std::vector<string> library_files;
         bool is_closed_for_changes_ = false;
         std::vector<std::shared_ptr<ModelRegistration>> model_registrations;
         std::vector<TriggerPtr> triggers;

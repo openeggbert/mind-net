@@ -23,6 +23,70 @@ const simple = document.getElementById("app").dataset.version === "simple";
 const rich = !simple
 const panels = ["parent", "current", "meta", "children"]
 
+
+// ========================================
+// Markdown Renderer (syntax highlight + emoji)
+// ========================================
+const md = window.markdownit({
+    html: false,
+    linkify: true,
+    typographer: true,
+    highlight: function (str, lang) {
+        if (lang && window.hljs.getLanguage(lang)) {
+            try {
+                return '<pre class="hljs"><code>' +
+                    window.hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                    '</code></pre>';
+            } catch (__) {}
+        }
+        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+    }
+});
+
+// plugin for emoji (:smile:, :rocket:, etc.)
+md.use(window.markdownitEmoji);
+
+md.use(function(md) {
+    const defaultRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+        return self.renderToken(tokens, idx, options);
+    };
+
+    md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+        const hrefIndex = tokens[idx].attrIndex('href');
+        if (hrefIndex >= 0) {
+            const href = tokens[idx].attrs[hrefIndex][1];
+            if (href.startsWith('#wanted:')) {
+                tokens[idx].attrPush(['class', 'note-wanted']);
+                tokens[idx].attrs[hrefIndex][1] = '#'; // neutralize href
+            } else if (href.startsWith('#unknown:')) {
+                tokens[idx].attrPush(['class', 'note-unknown']);
+                tokens[idx].attrs[hrefIndex][1] = '#';
+            }
+        }
+        return defaultRender(tokens, idx, options, env, self);
+    };
+});
+
+document.addEventListener("click", e => {
+    const a = e.target.closest("a.note-wanted, a.note-unknown");
+    if (!a) return;
+
+    e.preventDefault();
+    const title = a.textContent;
+
+    if (a.classList.contains("note-wanted")) {
+        show_error(`Note "${title}" does not yet exist.`);
+        copy_to_clipboard(title)
+    } else if (a.classList.contains("note-unknown")) {
+        show_error(`Note "${title}" maybe exists, but is not yet linked. Save and reload to update.`);
+    }
+});
+
+
+// configure highlight.js appearance
+window.hljs.configure({languages: ['cpp', 'js', 'json', 'html', 'sql', 'python']});
+
+
 // ========================================
 // Panels
 // ========================================
@@ -472,14 +536,75 @@ async function render() {
 
         show_element("current_button_edit")
         hide_element("current_button_read")
+
+        const textarea = get_element("current_textarea");
+        let markdownPreviewDiv = get_element("markdown_preview");
+        if(markdownPreviewDiv != null) {
+            markdownPreviewDiv.remove();
+            markdownPreviewDiv = null;
+        }
+
+        async function convert_wikilinks_to_markdown(markdown_text) {
+            let links = await list_all_entities("link", "&from_note_id=" + note_id)
+            let wanted_notes = await list_all_entities("wanted_note", "&from_note_id=" + note_id)
+
+            // alert(JSON.stringify(links, null, 2));
+            // alert(JSON.stringify(wanted_notes, null, 2));
+            return markdown_text.replace(/\[\[([^\]]+)\]\]/g, (match, title) => {
+                const link = links.find(l => l.to_note_title === title);
+                const wanted_note = wanted_notes.find(wn => wn.to_note_title === title);
+                if (link) {
+                    return `[${title}](?note_id=${link.to_note_id})`;
+                } else if (wanted_note) {
+                    // Red link
+                    return `[${title}](#wanted:${title} "Note does not yet exist.")`;
+                } else {
+                    // Orange link
+                    return `[${title}](#unknown:${title} "Note maybe exists, but is not yet linked. Save and reload to update.")`;
+                }
+            });
+
+        }
+        async function render_markdown() {
+            // switch to read mode = render Markdown
+            const markdownText = await convert_wikilinks_to_markdown(textarea.value);
+            const html = md.render(markdownText);
+
+            markdownPreviewDiv = document.createElement("div");
+            markdownPreviewDiv.id = "markdown_preview";
+            markdownPreviewDiv.innerHTML = html;
+            markdownPreviewDiv.style.border = "1px solid #ccc";
+            markdownPreviewDiv.style.padding = "8px";
+            markdownPreviewDiv.style.background = "var(--bg, #fafafa)";
+            markdownPreviewDiv.style.whiteSpace = "normal";
+            //markdownPreviewDiv.style.overflow = "auto";
+
+            textarea.style.display = "none";
+            textarea.parentNode.insertBefore(markdownPreviewDiv, textarea);
+
+            hide_element("current_button_read");
+            show_element("current_button_edit");
+        }
         get_element("current_button_edit").onclick = function () {
-            hide_element("current_button_edit")
-            show_element("current_button_read")
-        }
-        get_element("current_button_read").onclick = function () {
-            hide_element("current_button_read")
-            show_element("current_button_edit")
-        }
+            // switch back to edit mode
+            if (markdownPreviewDiv) {
+                markdownPreviewDiv.remove();
+                markdownPreviewDiv = null;
+            }
+            textarea.style.display = "block";
+
+            hide_element("current_button_edit");
+            show_element("current_button_read");
+        };
+
+        get_element("current_button_read").onclick = async function () {
+            if(mode_notes) {
+                await render_markdown()
+            } else {
+                hide_element("current_button_read");
+                show_element("current_button_edit");
+            }
+        };
 
         set_value("current_textarea", "");
         if (mode_root) set_value("current_textarea", map.description);
@@ -487,6 +612,8 @@ async function render() {
         let content = mode_notes ? (note.content_id === 0 ? null : await read_entity("content", note.content_id)) : null;
         original_content_value = mode_notes ? (content === null ? null : content.value) : null;
         if (mode_notes) set_value("current_textarea", content === null ? "" : content.value);
+
+        if(mode_notes) render_markdown()
 
         let has_parent = mode_root ? false : note.parent_note_id !== "0";
 

@@ -33,7 +33,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Critical
 - [ ] Fix validators and move authorization into the correct methods
 - [ ] TASK Check operator== implementations for all models
-- [ ] Add Markdown parsing in the C++ backend: https://github.com/progsource/maddy https://github.com/mity/md4c
 
 ### Extending
 - [ ] FEATURE Support for export to static HTML files
