@@ -41,9 +41,9 @@ namespace mindnet::plugins::slipbox::models
         .set_all_rest_operations()
         .set_group("Slip Box", 100)
         .set_columns({
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY)
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY)
             .set_description("User who pinned the note"),
-            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY)
+            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY)
             .set_description("ID of the pinned note"),
             coldef(COLS::POSITION, INTEGER)
             .set_description("Optional position for ordering pinned notes"),

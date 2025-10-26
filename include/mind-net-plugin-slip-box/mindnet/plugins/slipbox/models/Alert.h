@@ -55,7 +55,7 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::REPEAT_COUNT, INTEGER).set_default_value(0).set_description("Number of times to repeat"),
             coldef(COLS::REPEAT_UNTIL, DATETIME).set_default_value(0).set_description("Repeat until this time"),
 
-            coldef(COLS::USER_ID, MANDATORY).set_foreign_key("user").set_description("User ID"),
+            coldef(COLS::USER_ID, MANDATORY | READONLY).set_foreign_key("user").set_description("User ID"),
             coldef(COLS::NOTE_ID).set_foreign_key("note").set_description("Associated note ID"),
             coldef(COLS::URL, TEXT).set_description("Associated URL"),
 

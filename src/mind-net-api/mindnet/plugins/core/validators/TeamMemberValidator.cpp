@@ -19,36 +19,8 @@ namespace mindnet::plugins::core::validators
     using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult TeamMemberValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
-    }
-
-    OperationResult TeamMemberValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult TeamMemberValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult TeamMemberValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult TeamMemberValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
-    {
-        return ok_result;
-    }
-
-
-    OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
-    {
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "User does not have permission to create a team member.");
+               403, "User does not have permission to create a team member.");
 
         auto team = core::find_team (ctx, entity.team_id);;
         return_if(!team.second.empty(), 400, "Team does not exist.")
@@ -68,13 +40,11 @@ namespace mindnet::plugins::core::validators
         {
             return {403, "You can only add members to your team."};
         }
-        return_if(entity.left_at != 0,
-                  400, "left_at must be set to 0 during team member creation")
 
         return ok_result;
     }
 
-    OperationResult TeamMemberValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamMemberValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
         auto team_member = core::find_team_member (ctx, entity.get_id());
         return_if(!team_member.second.empty(), 400, team_member.second);
@@ -96,8 +66,8 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult TeamMemberValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                              const Model& new_entity) const
+    OperationResult TeamMemberValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                  const Model& new_entity) const
     {
         auto team = core::find_team (ctx, old_entity.team_id);
         return_if(team.second.empty(), 400, team.second)
@@ -108,15 +78,16 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-    OperationResult TeamMemberValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamMemberValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
         auto team_member = core::find_team_member (ctx, entity.user_id);
         return_if(team_member.second.empty(), 400, team_member.second)
 
-        return OperationResult(403, "Deleting team members is forbidden. Set status to DELETED.");
+        return ok_result;
     }
 
-    OperationResult TeamMemberValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult TeamMemberValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                const string_map& filter) const
     {
         if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
 
@@ -126,6 +97,37 @@ namespace mindnet::plugins::core::validators
         return_if(!is_member.empty(),
                   403, "Only team members can list team members.")
 
+        return ok_result;
+    }
+
+
+    OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return_if(entity.left_at != 0,
+               400, "left_at must be set to 0 during team member creation")
+
+        return ok_result;
+    }
+
+    OperationResult TeamMemberValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TeamMemberValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
+                                                              const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult TeamMemberValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+
+        return OperationResult(403, "Deleting team members is forbidden. Set status to DELETED.");
+    }
+
+    OperationResult TeamMemberValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    {
         return ok_result;
     }
 

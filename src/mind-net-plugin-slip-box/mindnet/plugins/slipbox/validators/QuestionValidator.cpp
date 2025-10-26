@@ -17,43 +17,13 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::QuestionValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
-    OperationResult QuestionValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
+
+    OperationResult QuestionValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                     const Model& entity) const
     {
-        return ok_result;
-    }
-
-    OperationResult QuestionValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult QuestionValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult QuestionValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult QuestionValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
-    {
-        return ok_result;
-    }
-
-
-
-
-
-
-
-    OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
-    {
-        auto note = slipbox::find_note (ctx, entity.note_id);;
+        auto note = slipbox::find_note(ctx, entity.note_id);;
         if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
@@ -63,9 +33,9 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to create a question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult QuestionValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto note = slipbox::find_note (ctx, entity.note_id);;
+        auto note = slipbox::find_note(ctx, entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -75,10 +45,10 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to delete this question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                            const Model& new_entity) const
+    OperationResult QuestionValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
+                                                                     const Model& new_entity) const
     {
-        auto note = slipbox::find_note (ctx, old_entity.note_id);;
+        auto note = slipbox::find_note(ctx, old_entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
@@ -88,9 +58,10 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to update this question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult QuestionValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                     const Model& entity) const
     {
-        auto note = slipbox::find_note (ctx, entity.note_id);;
+        auto note = slipbox::find_note(ctx, entity.note_id);;
         if (note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Delete))
@@ -100,12 +71,13 @@ namespace mindnet::plugins::slipbox::validators
         return {403, "You do not have permission to update this question for this note."};
     }
 
-    OperationResult QuestionValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult QuestionValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                   const string_map& filter) const
     {
         mandatory_filter(note_id)
         auto note_id = std::stoi(filter.at("note_id"));
 
-        auto note = slipbox::find_note (ctx, note_id);;
+        auto note = slipbox::find_note(ctx, note_id);;
         if (!note.second.empty()) return {400, note.second};
 
         if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -116,6 +88,34 @@ namespace mindnet::plugins::slipbox::validators
                     + ".")
             };
 
+        return ok_result;
+    }
+
+
+    OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
+                                                                 const Model& new_entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult QuestionValidator::validate_list_integrity(const RequestContext& ctx,
+                                                               const string_map& filter) const
+    {
         return ok_result;
     }
 

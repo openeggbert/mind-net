@@ -40,7 +40,8 @@ namespace mindnet::plugins::slipbox::models
 
         validator_chain_vector list{
             [this] { return test_ne(user_id, 0, PinnedNoteColumns::USER_ID); },
-            [this] { return test_ne(note_id, 0, PinnedNoteColumns::NOTE_ID); }
+            [this] { return test_ne(note_id, 0, PinnedNoteColumns::NOTE_ID); },
+            [this] { return test_at_least(position, 0, PinnedNoteColumns::POSITION); }
         };
         return util::ValidatorChain::run(list);
     }

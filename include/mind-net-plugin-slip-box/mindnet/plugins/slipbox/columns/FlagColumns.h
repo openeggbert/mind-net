@@ -41,7 +41,7 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* MODEL_NAME = "flag";
 
         // Primary and foreign key columns
-        static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* NOTE_ID = "note_id";
 
         // Main content columns
         static constexpr const char* TITLE = "title";

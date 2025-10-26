@@ -22,22 +22,22 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult PinnedNoteValidator::validate_create_authorization(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        // // Only the owner can pin notes
-        // if (ctx.user_id != entity.user_id)
-        // {
-        //     return {"Unauthorized: Only note owner can pin notes"};
-        // }
+        // Only the owner can pin notes
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Unauthorized: Only note owner can pin notes"};
+        }
         return ok_result;
     }
 
     OperationResult PinnedNoteValidator::validate_read_authorization(const RequestContext& ctx,
                                                                      const Model& entity) const
     {
-        // // Can read if public or owner
-        // if (!entity.is_public && ctx.user_id != entity.user_id)
-        // {
-        //     return {"Unauthorized: Cannot read private pinned note"};
-        // }
+        // Can read if public or owner
+        if (!entity.is_public && ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Unauthorized: Cannot read private pinned note"};
+        }
         return ok_result;
     }
 
@@ -45,22 +45,22 @@ namespace mindnet::plugins::slipbox::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        // // Only owner can update their pins
-        // if (ctx.user_id != old_entity.user_id)
-        // {
-        //     return {"Unauthorized: Only owner can update pinned note"};
-        // }
+        // Only owner can update their pins
+        if (ctx.token.user_id != old_entity.user_id)
+        {
+            return {403, "Unauthorized: Only owner can update pinned note"};
+        }
         return ok_result;
     }
 
     OperationResult PinnedNoteValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        // // Only owner can unpin notes
-        // if (ctx.user_id != entity.user_id)
-        // {
-        //     return {"Unauthorized: Only owner can unpin notes"};
-        // }
+        // Only owner can unpin notes
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Unauthorized: Only owner can unpin notes"};
+        }
         return ok_result;
     }
 
@@ -73,22 +73,6 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult PinnedNoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        // // Validate required fields
-        // if (entity.user_id == 0)
-        // {
-        //     return {"user_id is required"};
-        // }
-        // if (entity.note_id == 0)
-        // {
-        //     return {"note_id is required"};
-        // }
-        //
-        // // Position should be positive if provided
-        // if (entity.position < 0)
-        // {
-        //     return {"position must be non-negative"};
-        // }
-
         return ok_result;
     }
 
@@ -100,22 +84,6 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult PinnedNoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                    const Model& new_entity) const
     {
-        // // Cannot change user_id or note_id
-        // if (old_entity.user_id != new_entity.user_id)
-        // {
-        //     return {"Cannot change user_id of pinned note"};
-        // }
-        // if (old_entity.note_id != new_entity.note_id)
-        // {
-        //     return {"Cannot change note_id of pinned note"};
-        // }
-        //
-        // // Position should be positive if provided
-        // if (new_entity.position < 0)
-        // {
-        //     return {"position must be non-negative"};
-        // }
-
         return ok_result;
     }
 

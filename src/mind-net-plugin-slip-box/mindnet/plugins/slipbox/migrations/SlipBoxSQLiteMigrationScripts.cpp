@@ -462,12 +462,12 @@ CREATE TABLE flag(
     created_at DATETIME,
     updated_at DATETIME,
 
-    map_id INTEGER NOT NULL,
+    note_id INTEGER NOT NULL,
 	title TEXT NOT NULL,
 
-    UNIQUE (map_id, title),
+    UNIQUE (note_id, title),
 
-	FOREIGN KEY (map_id) REFERENCES map(id)
+    FOREIGN KEY (note_id) REFERENCES note(id)
 );
 
 CREATE INDEX idx_flag_map_id ON flag(map_id);

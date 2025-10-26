@@ -21,42 +21,42 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult AlertValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        // // Only allow creating alerts for self
-        // if (ctx.user_id != entity.user_id)
-        // {
-        //     return {"Unauthorized - can only create alerts for self"};
-        // }
+        // Only allow creating alerts for self
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Unauthorized - can only create alerts for self"};
+        }
         return ok_result;
     }
 
     OperationResult AlertValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        // // Only allow reading own alerts
-        // if (ctx.user_id != entity.user_id)
-        // {
-        //     return {"Unauthorized - can only read own alerts"};
-        // }
+        // Only allow reading own alerts
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Unauthorized - can only read own alerts"};
+        }
         return ok_result;
     }
 
     OperationResult AlertValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
     {
-        // // Only allow updating own alerts
-        // if (ctx.user_id != old_entity.user_id || ctx.user_id != new_entity.user_id)
-        // {
-        //     return {"Unauthorized - can only update own alerts"};
-        // }
+        // Only allow updating own alerts
+        if (ctx.token.user_id != old_entity.user_id || ctx.token.user_id != new_entity.user_id)
+        {
+            return {40403, "Unauthorized - can only update own alerts"};
+        }
         return ok_result;
     }
 
     OperationResult AlertValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        // // Only allow deleting own alerts
-        // if (ctx.user_id != entity.user_id)
-        // {
-        //     return {"Unauthorized - can only delete own alerts"};
-        // }
+        // Only allow deleting own alerts
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Unauthorized - can only delete own alerts"};
+        }
         return ok_result;
     }
 
@@ -69,27 +69,6 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult AlertValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        // // Validate required fields
-        // if (entity.title.empty())
-        // {
-        //     return {"Title is required"};
-        // }
-        //
-        // // Validate dates
-        // if (entity.trigger_at <= 0)
-        // {
-        //     return {"Invalid trigger_at date"};
-        // }
-        //
-        // // Validate repeat settings
-        // if (entity.repeat_interval > 0)
-        // {
-        //     if (entity.repeat_until > 0 && entity.repeat_until <= entity.trigger_at)
-        //     {
-        //         return {"repeat_until must be after trigger_at"};
-        //     }
-        // }
-
         return ok_result;
     }
 
@@ -101,19 +80,6 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult AlertValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                               const Model& new_entity) const
     {
-        // // Run same validations as create
-        // auto create_result = validate_create_integrity(ctx, new_entity);
-        // if (!create_result.ok())
-        // {
-        //     return create_result;
-        // }
-        //
-        // // Cannot change user_id
-        // if (new_entity.user_id != old_entity.user_id)
-        // {
-        //     return {"Cannot change alert owner"};
-        // }
-
         return ok_result;
     }
 

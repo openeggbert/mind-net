@@ -19,12 +19,24 @@ namespace mindnet::plugins::slipbox::validators
     using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
     OperationResult ContentValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not create content.")
+
         return ok_result;
     }
 
     OperationResult ContentValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
+        auto note_id = slipbox::find_note_for_content(ctx, entity.get_id());
+        if (!note_id.second.empty()) return {400, note_id.second};
+        auto note = slipbox::find_note (ctx, note_id.first);;
+        if (!note.second.empty()) return {400, note.second};
+
+        auto note_validator = get_validator("note");
+        if (note_validator == nullptr) return {500, "No note validator found"};
+
+        auto note_ = note.first.to_values();
+
+        return note_validator->can_read(ctx.db, ctx.token, note_id.first);
     }
 
     OperationResult ContentValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
@@ -45,7 +57,13 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
+        auto result = slipbox::find_note_for_content(ctx, entity.get_id());
+        if (!result.second.empty()) return {400, result.second};
+
+        auto note_validator = get_validator("note");
+        if (note_validator == nullptr) return {500, "No note validator found"};
+
+        return note_validator->can_delete(ctx.db, ctx.token, result.first);
     }
 
     OperationResult ContentValidator::validate_list_authorization(const RequestContext& ctx,
@@ -62,7 +80,6 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not create content.")
         return_if(entity.version != 1,
                   404, "version must be 1 during message creation.");
 
@@ -71,17 +88,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto note_id = slipbox::find_note_for_content(ctx, entity.get_id());
-        if (!note_id.second.empty()) return {400, note_id.second};
-        auto note = slipbox::find_note (ctx, note_id.first);;
-        if (!note.second.empty()) return {400, note.second};
-
-        auto note_validator = get_validator("note");
-        if (note_validator == nullptr) return {500, "No note validator found"};
-
-        auto note_ = note.first.to_values();
-
-        return note_validator->can_read(ctx.db, ctx.token, note_id.first);
+        return ok_result;
     }
 
     OperationResult ContentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
@@ -92,13 +99,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult ContentValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        auto result = slipbox::find_note_for_content(ctx, entity.get_id());
-        if (!result.second.empty()) return {400, result.second};
-
-        auto note_validator = get_validator("note");
-        if (note_validator == nullptr) return {500, "No note validator found"};
-
-        return note_validator->can_delete(ctx.db, ctx.token, result.first);
+        return ok_result;
     }
 
     OperationResult ContentValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const

@@ -31,7 +31,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ## BACKLOG
 
 ### Critical
-- [ ] Fix validators and move authorization into the correct methods
 - [ ] TASK Check operator== implementations for all models
 
 ### Extending
@@ -189,3 +188,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Slip Box component
 - [x] Super Memo component
 - [x] FEATURE Query - name, args, returns string - for Validators and Triggers
+- [x] Fix validators and move authorization into the correct methods

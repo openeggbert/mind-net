@@ -40,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline def LINK_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_all_rest_operations()
+        .set_rest_operations("rl")
         .set_group("Slip Box", 100)
         .set_columns({
             coldef(COLS::FROM_NOTE_ID, MANDATORY | READONLY).set_foreign_key("note"),

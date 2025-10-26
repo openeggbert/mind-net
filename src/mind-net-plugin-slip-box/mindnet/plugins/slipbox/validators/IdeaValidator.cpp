@@ -94,15 +94,6 @@ namespace mindnet::plugins::slipbox::validators
         {
             return ok_result;
         }
-        if (user_id_filled)
-        {
-            if (stoi(filter.at("user_id")) != ctx.token.user_id)
-            {
-                return {403, "You filter using user_id, which is not equal to your user_id"};
-            }
-            else { return ok_result; }
-        }
-
 
         return {403, "Your filter for ideas is wrong."};
     }

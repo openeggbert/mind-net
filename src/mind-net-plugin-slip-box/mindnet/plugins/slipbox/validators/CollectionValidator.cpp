@@ -39,6 +39,8 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult CollectionValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        assert_editor()
+
         return ok_result;
     }
 

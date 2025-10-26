@@ -35,7 +35,14 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult NoteValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
+        auto map = slipbox::find_map(ctx, entity.map_id);
+        if (!map.second.empty()) return {400, map.second};
+
+        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        {
+            return ok_result;
+        }
+        return {403, "You do not have permission to read this note."};
     }
 
     OperationResult NoteValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
@@ -49,54 +56,15 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult NoteValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
-    }
-
-    OperationResult NoteValidator::validate_list_authorization(const RequestContext& ctx,
-                                                               const string_map& filter) const
-    {
-        return ok_result;
-    }
-
-
-    OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
-    {
-        return ok_result;
-    }
-
-    OperationResult NoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
-    {
-        auto map = slipbox::find_map(ctx, entity.map_id);
-        if (!map.second.empty()) return {400, map.second};
-
-        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
-        {
-            return ok_result;
-        }
-        return {403, "You do not have permission to read this note."};
-    }
-
-    OperationResult NoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                             const Model& new_entity) const
-    {
-        return_if(old_entity.content_id != 0 && new_entity.content_id == 0,
-                  400, "content_id cannot be set to 0, if already set");
-
-        return ok_result;
-    }
-
-    OperationResult NoteValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
-    {
         if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
         return {403, "You do not have permission to delete this note."};
-
-        return ok_result;
     }
 
-    OperationResult NoteValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult NoteValidator::validate_list_authorization(const RequestContext& ctx,
+                                                               const string_map& filter) const
     {
         orm::QueryParams params;
         params.page_size = 100;
@@ -123,6 +91,37 @@ namespace mindnet::plugins::slipbox::validators
             }
             params.page_number++;
         }
+
+        return ok_result;
+    }
+
+
+    OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
+                                                             const Model& new_entity) const
+    {
+        return_if(old_entity.content_id != 0 && new_entity.content_id == 0,
+                  400, "content_id cannot be set to 0, if already set");
+
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    {
+        return ok_result;
+    }
+
+    OperationResult NoteValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    {
         return ok_result;
     }
 

@@ -20,6 +20,7 @@ namespace mindnet::plugins::slipbox::validators
     using mindnet::essential::g_configuration;
     OperationResult UrlValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        assert_editor()
         return ok_result;
     }
 
@@ -31,11 +32,13 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult UrlValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                   const Model& new_entity) const
     {
+        assert_editor()
         return ok_result;
     }
 
     OperationResult UrlValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
+        assert_editor()
         return ok_result;
     }
 
@@ -53,7 +56,6 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult UrlValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        assert_editor()
         return ok_result;
     }
 
@@ -65,13 +67,11 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult UrlValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                         const Model& new_entity) const
     {
-        assert_editor()
         return ok_result;
     }
 
     OperationResult UrlValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        assert_editor()
         return ok_result;
     }
 
