@@ -10,12 +10,15 @@
 #include "mindnet/api/AccessTokenContext.h"
 #include "mindnet/plugins/core/models/AuthLog.h"
 #include "mindnet/plugins/repetition/models/R0State.h"
+#include "mindnet/plugins/repetition/models/R18PerfAgg.h"
+#include "mindnet/plugins/repetition/models/R18PredictionLog.h"
 #include "mindnet/plugins/repetition/models/R18State.h"
 #include "mindnet/plugins/repetition/models/R2State.h"
 #include "mindnet/plugins/repetition/models/R4State.h"
 #include "mindnet/plugins/repetition/models/RGlobalSetting.h"
 #include "mindnet/plugins/repetition/models/RUserSetting.h"
 #include "mindnet/plugins/repetition/models/RReview.h"
+#include "mindnet/plugins/repetition/models/RSession.h"
 #include "mindnet/util/Utils.h"
 
 // ============================================================
@@ -109,7 +112,8 @@ namespace mindnet::plugins::repetition::triggers
         int stack_depth)
     {
         ParamKey pk{user_id, key};
-        {   // 🔒 read lock
+        {
+            // 🔒 read lock
             std::shared_lock lock(g_user_param_mutex);
             if (auto it = g_user_param_cache.find(pk); it != g_user_param_cache.end())
                 return it->second;
@@ -131,7 +135,8 @@ namespace mindnet::plugins::repetition::triggers
             {
                 return std::nullopt;
             }
-            {   // 🔒 write lock
+            {
+                // 🔒 write lock
                 std::unique_lock lock(g_user_param_mutex);
                 g_user_param_cache.emplace(pk, val);
             }
@@ -145,8 +150,8 @@ namespace mindnet::plugins::repetition::triggers
         api::AccessTokenContext& token,
         int stack_depth)
     {
-
-        {   // 🔒 read lock
+        {
+            // 🔒 read lock
             std::shared_lock lock(g_global_param_mutex);
             if (auto it = g_global_param_cache.find(key); it != g_global_param_cache.end())
                 return it->second;
@@ -169,7 +174,8 @@ namespace mindnet::plugins::repetition::triggers
             {
                 return std::nullopt;
             }
-            {   // 🔒 write lock
+            {
+                // 🔒 write lock
                 std::unique_lock lock(g_global_param_mutex);
                 g_global_param_cache.emplace(key, val);
             }
@@ -211,6 +217,34 @@ namespace mindnet::plugins::repetition::triggers
         r_review.from_values(fields);
 
         auto token = api::AccessTokenContext(user_id, "", 200);
+
+        // ============================================
+        // Skip updates for "All" sessions
+        // ============================================
+        if (r_review.r_session_id > 0)
+        {
+            // load r_session to determine scope
+            auto read_rsession = run_read(models::R_SESSION_DEFINITION, token, r_review.r_session_id, stack_depth);
+            if (read_rsession.second.ok())
+            {
+                models::RSession session;
+                session.from_values(read_rsession.first);
+                // 3 = Scope::All
+                if (session.scope == enums::RepetitionScope::All)
+                {
+                    debug << "Skipping state update for note_id=" << r_review.note_id
+                        << " (scope=All)" << commit;
+                    return;
+                }
+            }
+            if (read_rsession.second.ko())
+            {
+                err << "Reading r_session with ID " << r_review.r_session_id << " failed: " << read_rsession.second.
+                    error << commit;
+                return;
+            }
+        }
+
         model::ModelDefinition* model_definition = nullptr;
 
         if (!is_algorithm_supported(validation_result, r_review, model_definition)) return;
@@ -561,24 +595,25 @@ namespace mindnet::plugins::repetition::triggers
                 r18_state.from_values(read_r18_state.first);
 
                 const int q = std::clamp(r_review.grade, 0, 5);
+                bool was_correct = q >= 3;
 
                 // =======================
                 // Model parameters (SM-18)
                 // =======================
-                const double b               = get_param(user_id, "b",               0.6, token, stack_depth);
-                const double R_target        = get_param(user_id, "R_target",        0.9, token, stack_depth);
-                const double R_opt           = get_param(user_id, "R_opt",           0.9, token, stack_depth);
-                const double alpha           = get_param(user_id, "alpha",           0.3, token, stack_depth);
-                const double beta            = get_param(user_id, "beta",            0.6, token, stack_depth);
-                const double gamma           = get_param(user_id, "gamma",           0.2, token, stack_depth);
-                const double delta           = get_param(user_id, "delta",           0.4, token, stack_depth);
-                const double k_over          = get_param(user_id, "k_over",          0.15, token, stack_depth);
-                const double S_min           = get_param(user_id, "S_min",           0.5, token, stack_depth);
-                const double short_retry     = get_param(user_id, "short_retry",     0.5, token, stack_depth);
-                const double t0              = get_param(user_id, "t0",              0.2, token, stack_depth);
-                const double R_inf           = get_param(user_id, "R_infty",         0.02, token, stack_depth);
-                const double fatigue_lambda  = get_param(user_id, "fatigue_lambda",  0.1, token, stack_depth);
-                const double theta           = get_param(user_id, "theta",           1.0, token, stack_depth);
+                const double b = get_param(user_id, "b", 0.6, token, stack_depth);
+                const double R_target = get_param(user_id, "R_target", 0.9, token, stack_depth);
+                const double R_opt = get_param(user_id, "R_opt", 0.9, token, stack_depth);
+                const double alpha = get_param(user_id, "alpha", 0.3, token, stack_depth);
+                const double beta = get_param(user_id, "beta", 0.6, token, stack_depth);
+                const double gamma = get_param(user_id, "gamma", 0.2, token, stack_depth);
+                const double delta = get_param(user_id, "delta", 0.4, token, stack_depth);
+                const double k_over = get_param(user_id, "k_over", 0.15, token, stack_depth);
+                const double S_min = get_param(user_id, "S_min", 0.5, token, stack_depth);
+                const double short_retry = get_param(user_id, "short_retry", 0.5, token, stack_depth);
+                const double t0 = get_param(user_id, "t0", 0.2, token, stack_depth);
+                const double R_inf = get_param(user_id, "R_infty", 0.02, token, stack_depth);
+                const double fatigue_lambda = get_param(user_id, "fatigue_lambda", 0.1, token, stack_depth);
+                const double theta = get_param(user_id, "theta", 1.0, token, stack_depth);
 
                 double S = r18_state.stability_times_100 / 100.0;
                 int reps = r18_state.repetitions;
@@ -588,7 +623,7 @@ namespace mindnet::plugins::repetition::triggers
                 const double now_ms = static_cast<double>(
                     r_review.review_date > 0 ? r_review.review_date : util::Utils::current_unix_timestamp_ms());
 
-                // --- protection for first review 
+                // --- protection for first review
                 double elapsed_days = 0.0;
                 if (r18_state.last_review > 0)
                 {
@@ -706,6 +741,57 @@ namespace mindnet::plugins::repetition::triggers
                     << " fatigue_lambda=" << fatigue_lambda
                     << " theta=" << theta
                     << commit;
+
+
+                {
+                    double R_pred = R_now; // retrievability before review
+                    int R_pred_times_100 = (int)(R_pred * 100.0);
+
+                    models::R18PredictionLog r18_prediction_log;
+
+                    r18_prediction_log.user_id = r_review.user_id;
+                    r18_prediction_log.note_id = r_review.note_id;
+                    r18_prediction_log.predicted_R_times_100 = R_pred_times_100;
+                    r18_prediction_log.actual_grade = q;
+                    r18_prediction_log.was_correct = was_correct;
+                    auto plv = r18_prediction_log.to_values();
+                    plv[1] = util::Utils::current_unix_timestamp_ms();
+                    plv[2] = util::Utils::current_unix_timestamp_ms();
+                    run_create(models::R18_PREDICTION_LOG_DEFINITION, token, plv, stack_depth);
+                }
+                {
+                    int bin_log_t_times_100 = static_cast<int>(std::round(100.0 * std::log(elapsed_days + 1.0)));
+
+                    orm::QueryParams qpa;
+                    qpa.add_filter("user_id", r_review.user_id);
+                    qpa.add_filter("bin_log_t_times_100", bin_log_t_times_100);
+                    auto list = run_list(models::R18_PERF_AGG_DEFINITION, token, qpa, stack_depth);
+
+                    if (list.second.ok()) {
+                        if (list.first.empty()) {
+                            models::R18PerfAgg perf;
+                            perf.user_id = r_review.user_id;
+                            perf.bin_log_t_times_100 = bin_log_t_times_100;
+                            perf.total = 1;
+                            perf.correct = was_correct ? 1 : 0;
+                            auto v = perf.to_values();
+
+                            v[1] = util::Utils::current_unix_timestamp_ms();
+                            v[2] = util::Utils::current_unix_timestamp_ms();
+                            run_create(models::R18_PERF_AGG_DEFINITION, token, v, stack_depth);
+                        } else {
+                            auto row = list.first.front();
+                            models::R18PerfAgg perf;
+                            perf.from_values(row);
+                            perf.total += 1;
+                            if (was_correct) perf.correct += 1;
+                            auto v = perf.to_values();
+                            v[2] = util::Utils::current_unix_timestamp_ms();
+                            run_update(models::R18_PERF_AGG_DEFINITION, token, perf.get_id(), v, stack_depth);
+                        }
+                    }
+
+                }
             };
             break;
         }

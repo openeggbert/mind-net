@@ -37,17 +37,13 @@ WHERE s.note_id IS NULL
 {order_by}
 LIMIT {limit};
 )";
-    const std::string SQL_DUE_AND_NEW= R"(
-WITH root AS (
-    SELECT path AS prefix FROM note WHERE ({filter_under_note} = 0) OR (id = {filter_under_note})
-),
-due AS (
+    const std::string SQL_DUE_AND_NEW = R"(
+WITH due AS (
     SELECT n.id AS note_id
     FROM note n
     JOIN r{algorithm}_state s ON s.note_id = n.id
     WHERE s.user_id = {user_id}
       AND s.next_review <= {now_ms}
-      AND n.path LIKE (SELECT prefix || '%' FROM root)
 ),
 new AS (
     SELECT n.id AS note_id
@@ -55,18 +51,20 @@ new AS (
     LEFT JOIN r{algorithm}_state s
       ON s.note_id = n.id AND s.user_id = {user_id}
     WHERE s.note_id IS NULL
-      AND n.path LIKE (SELECT prefix || '%' FROM root)
 )
-SELECT note_id
-FROM (
+SELECT n.id AS note_id
+FROM note n
+JOIN (
     SELECT note_id FROM due
     UNION
     SELECT note_id FROM new
-)
+) x ON x.note_id = n.id
+WHERE ({filter_under_note} = 0
+       OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note}))
 {order_by}
 LIMIT {limit};
-
 )";
+
     const std::string SQL_ALL= R"(
 SELECT n.id AS note_id
 FROM note n
@@ -174,7 +172,7 @@ LIMIT {limit};
             }
 
             response["note_ids"] = note_ids;
-            //response["sql"] = sql;
+            response["sql"] = sql;
         }
         catch (SQLite::Exception& e)
         {

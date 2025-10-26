@@ -247,7 +247,23 @@ CREATE TABLE r18_perf_agg (
 
     	)");
 
-    	add_migration("V10__create_repetition_indexes.sql", R"(
+    	add_migration("V10__create_r18_prediction_log.sql", R"(
+CREATE TABLE r18_prediction_log (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+	user_id INTEGER NOT NULL,
+	note_id INTEGER,
+	predicted_R_times_100 INTEGER NOT NULL,
+	actual_grade INTEGER NOT NULL,
+	was_correct BOOLEAN NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES user(id),
+	FOREIGN KEY (note_id) REFERENCES note(id)
+);
+)");
+
+
+    	add_migration("V11__create_repetition_indexes.sql", R"(
 
 -- Index for fast selection of "due items" (SM-18 and other algorithms)
 CREATE INDEX IF NOT EXISTS idx_r18_state_user_due
@@ -286,6 +302,8 @@ CREATE INDEX IF NOT EXISTS idx_r18_state_note
     ON r18_state (note_id);
 
 )");
+
+
     }
 }
 
