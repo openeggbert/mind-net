@@ -220,7 +220,7 @@ namespace mindnet::api
             return {{}, validation_result};
         }
 
-        if (action_result.second.ok()) mask_hidden_columns(def, action_result.first);
+        if (token.is_not_system() && action_result.second.ok()) mask_hidden_columns(def, action_result.first);
 
         return action_result;
     };
@@ -291,7 +291,7 @@ namespace mindnet::api
         {
             return {{}, validation_result};
         }
-        if (action_result.second.ok())
+        if (token.is_not_system() && action_result.second.ok())
         {
             for (entity_fields& fields : action_result.first)
             mask_hidden_columns(def, fields);
