@@ -470,7 +470,7 @@ CREATE TABLE flag(
     FOREIGN KEY (note_id) REFERENCES note(id)
 );
 
-CREATE INDEX idx_flag_map_id ON flag(map_id);
+CREATE INDEX idx_flag_note_id ON flag(note_id);
 
 )");
     	add_migration("V19__create_project.sql", R"(
