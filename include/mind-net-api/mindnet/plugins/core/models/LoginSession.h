@@ -38,8 +38,9 @@ namespace mindnet::plugins::core::models
 
     inline def LOGIN_SESSION_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_rest_operations("crl")
+        .set_rest_operations("rl")
         .set_group("Core", 300)
+        .allow_reader_write()
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY),
             coldef(COLS::ACCESS_TOKEN_ID, FOREIGN_KEY | MANDATORY),

@@ -551,7 +551,8 @@ namespace mindnet::http
         CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)([service_ptr, &log_request](const crow::request& req)
         {
             check_maintenance_mode()
-            api::AccessTokenContext ctx{req, service_ptr};
+
+            api::AccessTokenContext ctx{0, "system", 403};
 
             if (g_configuration.registration_mode == essential::RegistrationMode::AdminAddsUsers)
             {
@@ -581,8 +582,8 @@ namespace mindnet::http
             orm::QueryParams query_params;
             query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
             query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
-            api::AccessTokenContext login_token{req, service_ptr};
-            auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, login_token, query_params);
+
+            auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, ctx, query_params);
             if (users.second.ko())
             {
                 log_request(service_ptr, req, ctx, 500, 0, "Checking, if user already exists, failed. " + users.second.error);
@@ -607,7 +608,7 @@ namespace mindnet::http
 
             auto fields_ = user.to_values();
             auto create_result = service_ptr.get()->
-                                             create(plugins::core::models::USER_DEFINITION, login_token, fields_);
+                                             create(plugins::core::models::USER_DEFINITION, ctx, fields_);
             if (create_result.second.ko())
             {
                 log_request(service_ptr, req, ctx, 400, 0, "Registration failed. " + create_result.second.error);

@@ -40,7 +40,7 @@ namespace mindnet::plugins::core::models
 
     inline def USER_DEFINITION =
         def(COLS::MODEL_NAME)
-        .set_rest_operations("crl")
+        .set_rest_operations("crul")
         .set_group("Core", 300)
         .set_title_column(COLS::USERNAME).allow_reader_write()
         .set_columns({

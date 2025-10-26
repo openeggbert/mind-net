@@ -4,6 +4,7 @@
 
 #include "mindnet/api/Service.h"
 #include "mindnet/essential/Global.h"
+#include "mindnet/plugins/core/models/RefreshToken.h"
 //
 
 namespace mindnet::api
@@ -171,6 +172,27 @@ namespace mindnet::api
         return action_result;
     };
 
+    bool mask_hidden_columns(const ModelDefinition& def, entity_fields& fields)
+    {
+        int column_index = 0;
+        bool has_hidden_column = false;
+        for (const model::ColumnDefinition& c: def.get_columns())
+        {
+            const auto& type = c.get_column_type();
+            const auto& primitive_type = model::column_type_to_primitive_column_type(type);
+            if (c.is_hidden())
+            {
+                has_hidden_column = true;
+                switch (primitive_type) {
+                case model::PrimitiveColumnType::Text: fields[column_index] = "*"; break;
+                case model::PrimitiveColumnType::Number: fields[column_index] = 0; break;
+                default: fields[column_index] = "*"; warn << "Unknown primitive type: " << model::primitive_column_type_to_string(primitive_type) << commit; break;
+                }
+            }
+            column_index++;
+        }
+        return has_hidden_column;
+    }
     std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, api::AccessTokenContext& token,
                                                             int id, int stack_depth)
     {
@@ -197,6 +219,9 @@ namespace mindnet::api
         {
             return {{}, validation_result};
         }
+
+        if (action_result.second.ok()) mask_hidden_columns(def, action_result.first);
+
         return action_result;
     };
 
@@ -265,6 +290,12 @@ namespace mindnet::api
         if (validation_result.ko())
         {
             return {{}, validation_result};
+        }
+        if (action_result.second.ok())
+        {
+            for (entity_fields& fields : action_result.first)
+            mask_hidden_columns(def, fields);
+
         }
         return action_result;
     };

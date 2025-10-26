@@ -45,7 +45,7 @@ namespace mindnet::plugins::core::validators
     {
         bool logged_user_updates_himself = ctx.token.user_id == old_entity.get_id();
 
-        return_if(ctx.role != mindnet::essential::UserRole::Admin && !logged_user_updates_himself,
+        return_if(ctx.role < mindnet::essential::UserRole::Admin && !logged_user_updates_himself,
                   403, "You can only update your own user.")
 
         return ok_result;
@@ -100,19 +100,21 @@ namespace mindnet::plugins::core::validators
 
         if (!ctx.token.system)
         {
-            return_if(new_entity.password_hash != "*",
+            return_if(new_entity.password_hash != old_entity.password_hash,
                       400, "password cannot be changed here, use /change-password endpoint instead");
         }
 
         bool role_different = new_entity.role != old_entity.role;
         return_if(role_different && logged_user_updates_himself,
-                  400, "role cannot be changed");
+                  400, "Role cannot be changed. You cannot change your own role.");
 
-        return_if(role_different && ctx.role != mindnet::essential::UserRole::Admin,
-                  400, "role cannot be changed");
+        return_if(role_different && ctx.role < mindnet::essential::UserRole::Admin,
+                  400, "Role cannot be changed. You must be at least Admin.");
+        return_if(role_different && ctx.role == mindnet::essential::UserRole::Admin && old_entity.role == essential::UserRole::SuperAdmin,
+          400, "Role cannot be changed. You must be at least SuperAdmin to change role of a SuperAdmin user.");
 
-        return_if(old_entity.status != new_entity.status && ctx.role != mindnet::essential::UserRole::Admin,
-                  400, "status cannot be changed by yourself")
+        return_if(old_entity.status != new_entity.status && ctx.role < mindnet::essential::UserRole::Admin,
+                  400, "Status cannot be changed by yourself.")
 
         return ok_result;
     }

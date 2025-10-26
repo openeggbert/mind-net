@@ -24,7 +24,11 @@ namespace mindnet::api
         AccessTokenContext(const crow::request& req, ServicePtr service_ptr);
 
         bool ok() const { return status == 200; }
-        bool ko() { return !ok(); }
+        bool ko() const { return !ok(); }
+        bool is_system() const
+        {
+            return user_id == 0 && msg == "system" && status == 403;
+        }
     };
 }
 
