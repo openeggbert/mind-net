@@ -11,6 +11,7 @@
 #include "mindnet/plugins/repetition/validators/R4StateValidator.h"
 #include "mindnet/plugins/repetition/validators/R18StateValidator.h"
 #include "mindnet/plugins/repetition/validators/R18PerfAggValidator.h"
+#include "mindnet/plugins/repetition/validators/R18PredictionLogValidator.h"
 
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
@@ -40,6 +41,8 @@ namespace mindnet::plugins::repetition
         REGISTER_MODEL(r4_state, R4State, R4_STATE)
         REGISTER_MODEL(r18_state, R18State, R18_STATE)
         REGISTER_MODEL(r18_perf_agg, R18PerfAgg, R18_PERF_AGG)
+        REGISTER_MODEL(r18_prediction_log, R18PredictionLog, R18_PREDICTION_LOG)
+
         plugin->register_trigger(std::make_shared<triggers::RSessionBeforeCreateTrigger>());
         plugin->register_trigger(std::make_shared<triggers::RReviewAfterCreateTrigger>());
 
