@@ -34,6 +34,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Extending
+- [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 - [ ] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)

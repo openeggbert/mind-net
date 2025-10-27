@@ -403,3 +403,15 @@ table td:last-child {
     content: "\A"; /* new line after last button */
     white-space: pre;
 }
+
+.form-row.has-error input,
+.form-row.has-error select,
+.form-row.has-error textarea {
+    border-color: #e74c3c;
+    outline-color: #e74c3c;
+}
+.field-error {
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 4px;
+}

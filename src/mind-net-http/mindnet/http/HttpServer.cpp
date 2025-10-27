@@ -75,7 +75,13 @@ namespace mindnet::http
         std::vector<fs::path> js_files;
         for (const auto& entry : fs::directory_iterator(directory_for_static_files))
         {
-            if (entry.path().extension() == ".js" && !entry.path().string().starts_with("app_"))
+            const auto& file_name = entry.path().filename().string();
+            if (
+                entry.path().extension() == ".js" &&
+                !file_name.starts_with("app_") &&
+                file_name != "markdown-it.min.js" &&
+                file_name != "markdown-it-emoji.min.js" &&
+                file_name != "highlight.min.js")
             {
                 js_files.push_back(entry.path());
             }

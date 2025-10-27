@@ -24,7 +24,7 @@ import {selectAction, changePage} from "./navigation.js";
 
 
 
-export async function renderEntityForm(entity, data = {}) {
+export async function renderEntityForm(entity, data = {}, errors = {}) {
     const schema = getEntitySchemas()[entity];
     if (!schema) return;
 
@@ -43,28 +43,45 @@ export async function renderEntityForm(entity, data = {}) {
     html += `<p style="color:red; font-size:0.9rem;">* Required fields</p>`;
 
     filterColumnsForForm(schema.fields).forEach(f => {
+        const hasErr = !!errors[f.name];
+        const titleAttr = f.description ? `title="${f.description}"` : '';
+        const errHtml = hasErr ? `<div class="field-error">${errors[f.name]}</div>` : '';
+
+        if (f.enum) {
+            html += `<div class="form-row ${hasErr?'has-error':''}">
+            <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
+            <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
+                ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
+            </select>
+            ${errHtml}
+        </div>`;
+            return;
+        }
+
+        if (f.type === 'checkbox') {
+            const checked = (data[f.name] === 1 || data[f.name] === '1' || data[f.name] === true);
+            html += `<div class="form-row ${hasErr?'has-error':''}">
+            <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
+            <input type="checkbox" id="${f.name}" name="${f.name}" ${checked ? 'checked' : ''}>
+            ${errHtml}
+        </div>`;
+            return;
+        }
+
+        // default (text/number/datetime atd.)
         let type = f.type === "datetime" ? "text" : f.type;
         let value = data[f.name] ?? "";
         if (f.type === "datetime" && value) {
             if (!isNaN(value)) value = formatDateTime(Number(value));
         }
 
-        const titleAttr = f.description ? `title="${f.description}"` : '';
-
-        if (f.enum) {
-            html += `<div class="form-row">
-                <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
-                <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
-                    ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
-                </select>
-            </div>`;
-        } else {
-            html += `<div class="form-row">
-                <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
-                <input type="${type}" id="${f.name}" name="${f.name}" value="${value}" ${f.required ? "required" : ""}>
-            </div>`;
-        }
+        html += `<div class="form-row ${hasErr?'has-error':''}">
+        <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
+        <input type="${type}" id="${f.name}" name="${f.name}" value="${value}" ${f.required ? "required" : ""} autocomplete="on">
+        ${errHtml}
+    </div>`;
     });
+
 
     html += `<button type="submit">Save</button></form>`;
     contentArea.innerHTML = html;
@@ -91,7 +108,7 @@ export async function renderEntityForm(entity, data = {}) {
                             payload[key] = (value === "on" || value === "1" || value === true) ? 1 : 0;
                             break;
                         case "datetime":
-                            payload[key] = parseDateTimeToUnix(value);
+                            payload[key] = value ? parseDateTimeToUnix(value) : null;
                             break;
                         default:
                             payload[key] = value ?? "";
@@ -110,13 +127,23 @@ export async function renderEntityForm(entity, data = {}) {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(payload)
             });
-            showInfo("Saved");
 
+            // If backend returned null or non-OK response (not caught by apiFetch)
+            if (!res_json) {
+                // Form stays in place
+                showError("Save failed — backend returned error.");
+                return;
+            }
+
+            showInfo("Saved");
             selectAction("list");
         } catch (err) {
-            showError(`Network error: ${err.message}`);
+            // For thrown errors (e.g. network error)
+            showError(`Save error: ${err?.message || "Unknown error"}`);
+            renderEntityForm(entity, payload);
         }
-    });
+
+});
 }
 
 export async function renderEntityRead(entity, id) {

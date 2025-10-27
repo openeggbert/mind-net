@@ -43,7 +43,6 @@ namespace mindnet::plugins::slipbox::models
 
         validator_chain_vector list{
             [this] { return testt_between(title, 1, 64, TermColumns::TITLE); },
-            [this] { return testt_between(disambiguation, 1, 64, TermColumns::DISAMBIGUATION); },
             [this] { return test_ne(map_id, 0, TermColumns::MAP_ID); },
         };
         return util::ValidatorChain::run(list);

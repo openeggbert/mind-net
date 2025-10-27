@@ -105,7 +105,7 @@ namespace mindnet::http
             check_maintenance_mode()
 
             auto body = crow::json::load(req.body);
-            api::AccessTokenContext system_token{0, "system", 403};\
+            api::AccessTokenContext system_token{0, "system", 403};
             if (!body || !body.has("username") || !body.has("password"))
             {
                 log_request(service_ptr, req, system_token, 403, 0 , "Missing username or password");
