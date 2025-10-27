@@ -632,26 +632,30 @@ async function render() {
         }
 
         async function convert_wikilinks_to_markdown(markdown_text) {
-            let links = await list_all_entities("link", "&from_note_id=" + local_note_id)
-            let wanted_notes = await list_all_entities("wanted_note", "&from_note_id=" + local_note_id)
+            const links = await list_all_entities("link", "&from_note_id=" + local_note_id);
+            const wanted_notes = await list_all_entities("wanted_note", "&from_note_id=" + local_note_id);
 
-            // alert(JSON.stringify(links, null, 2));
-            // alert(JSON.stringify(wanted_notes, null, 2));
-            return markdown_text.replace(/\[\[([^\]]+)\]\]/g, (match, title) => {
+            const regex = /\[\[\s*([^\[\]]+?)\s*\]\]/g;
+
+            return markdown_text.replace(regex, (match, title) => {
+                title = title.trim();
+                const encoded = encodeURIComponent(title); // 🔑 tohle opraví problém s mezerami
+
                 const link = links.find(l => l.to_note_title === title);
                 const wanted_note = wanted_notes.find(wn => wn.to_note_title === title);
+
                 if (link) {
                     return `[${title}](?note_id=${link.to_note_id})`;
                 } else if (wanted_note) {
-                    // Red link
-                    return `[${title}](#wanted:${title} "Note does not yet exist.")`;
+                    return `[${title}](#wanted:${encoded} "Note does not yet exist.")`;
                 } else {
-                    // Orange link
-                    return `[${title}](#unknown:${title} "Note maybe exists, but is not yet linked. Save and reload to update.")`;
+                    return `[${title}](#unknown:${encoded} "Note maybe exists, but is not yet linked. Save and reload to update.")`;
                 }
             });
-
         }
+
+
+
         async function render_markdown() {
             // switch to read mode = render Markdown
             const markdownText = await convert_wikilinks_to_markdown(textarea.value);

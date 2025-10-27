@@ -193,3 +193,22 @@ a.note-wanted, a.note-unknown {
 .markdown-btn:active {
     background: #ddd!important;
 }
+
+/* --- Lists (fix bullet visibility) --- */
+#markdown_preview ul,
+#markdown_preview ol {
+    margin: 1em 0 1em 1.5em;
+    padding-left: 1.5em;
+}
+
+#markdown_preview ul {
+    list-style-type: disc;
+}
+
+#markdown_preview ol {
+    list-style-type: decimal;
+}
+
+#markdown_preview li {
+    margin: 0.2em 0;
+}
