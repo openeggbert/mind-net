@@ -338,7 +338,7 @@ namespace mindnet::plugins::repetition::triggers
                     state.user_id = r_review.user_id;
                     state.note_id = r_review.note_id;
 
-                    state.stability_times_100 = 100;
+                    state.stability_times_100 = 400;
                     state.last_interval_times_100 = 0;
                     state.repetitions = 0;
                     state.lapses = 0;
@@ -697,15 +697,14 @@ namespace mindnet::plugins::repetition::triggers
                                                     fatigue(elapsed_days))
                                                 : short_retry;
 
-                next_interval_days = std::clamp(next_interval_days, 0.1, 3650.0);
-
                 // =======================
                 // Update state
                 // =======================
 
                 if (!std::isfinite(S_after)) S_after = std::max(S_min, 1.0);
                 S_after = std::clamp(S_after, S_min, 1e6);
-                next_interval_days = std::clamp(next_interval_days, 0.1, 3650.0);
+                const double min_interval_days = get_param(user_id, "min_interval_days", 0.01, token, stack_depth);
+                next_interval_days = std::clamp(next_interval_days, min_interval_days, 3650.0);
 
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
