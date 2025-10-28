@@ -52,7 +52,7 @@ namespace mindnet::plugins::repetition::models
             [this] {return test_at_least(repetitions, 0, R4StateColumns::REPETITIONS);},
             [this] {return test_at_least(interval, 1, R4StateColumns::INTERVAL);},
             [this] {return test_between(ef_times_100, 100, 500, R4StateColumns::EF_TIMES_100);},
-            [this] {return test_between(correction_factor_times_100, 0, 100, R4StateColumns::CORRECTION_FACTOR_TIMES_100);},
+            [this] {return test_between(correction_factor_times_100, 0, 110, R4StateColumns::CORRECTION_FACTOR_TIMES_100);},
             [this] {return test_between(last_quality, 0, 5, R4StateColumns::LAST_QUALITY);},
         };
         return util::ValidatorChain::run(list);
