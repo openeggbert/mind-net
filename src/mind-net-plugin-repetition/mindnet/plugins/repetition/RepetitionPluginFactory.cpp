@@ -1,5 +1,3 @@
-
-
 #include "mindnet/plugins/repetition/RepetitionPluginFactory.h"
 
 #include "mindnet/plugins/repetition/validators/RGlobalSettingValidator.h"
@@ -21,6 +19,7 @@
 namespace mindnet::plugins::repetition
 {
     const string REPETITION_PLUGIN_NAME = "repetition";
+
     api::PluginPtr RepetitionPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(

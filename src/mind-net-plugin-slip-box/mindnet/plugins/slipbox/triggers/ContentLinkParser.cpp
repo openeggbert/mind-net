@@ -5,8 +5,8 @@
 #include "mindnet/plugins/slipbox/triggers/ContentLinkParser.h"
 #include <regex>
 
-namespace mindnet::plugins::slipbox::triggers{
-
+namespace mindnet::plugins::slipbox::triggers
+{
     inline std::string rtrim_url_punct(std::string s)
     {
         auto is_simple_punct = [](char c)
@@ -55,7 +55,7 @@ namespace mindnet::plugins::slipbox::triggers{
 
     std::vector<Match> find_urls(const std::string& s)
     {
-        std::vector < Match > out;
+        std::vector<Match> out;
         out.reserve(16);
 
         for (std::sregex_iterator it(s.begin(), s.end(), kUrlRe), end; it != end; ++it)
@@ -106,7 +106,7 @@ namespace mindnet::plugins::slipbox::triggers{
     std::vector<Match> find_double_brackets(const std::string& s)
     {
         static const std::regex db_re(R"(\[\[([^\[\]]+?)\]\])");
-        std::vector < Match > out;
+        std::vector<Match> out;
         out.reserve(16);
 
         for (std::sregex_iterator it(s.begin(), s.end(), db_re), end; it != end; ++it)
@@ -119,6 +119,7 @@ namespace mindnet::plugins::slipbox::triggers{
         }
         return out;
     }
+
     ParsedLinks ContentLinkParser::parse_links(const std::string& content)
     {
         ParsedLinks out;
@@ -134,5 +135,4 @@ namespace mindnet::plugins::slipbox::triggers{
         }
         return out;
     }
-
 }

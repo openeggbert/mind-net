@@ -8,7 +8,6 @@
 
 namespace mindnet::plugins::repetition::triggers
 {
-
     class RSessionBeforeCreateTrigger : public api::Trigger
     {
     public:
@@ -27,9 +26,7 @@ namespace mindnet::plugins::repetition::triggers
             entity_fields& old_fields,
             const orm::QueryParams query_params
         );
-
     };
-
 }
 
 #endif // RSESSIONBEFORECREATETRIGGER_H

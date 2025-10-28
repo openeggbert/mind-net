@@ -6,7 +6,8 @@
 
 namespace mindnet::plugins::core::migrations
 {
-    CoreSQLiteMigrationScripts::CoreSQLiteMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::SQLite)
+    CoreSQLiteMigrationScripts::CoreSQLiteMigrationScripts() : MigrationScripts(
+        mindnet::essential::DatabaseType::SQLite)
     {
     }
 
@@ -105,7 +106,7 @@ CREATE INDEX idx_history_created_at ON history(created_at);
 
 )");
 
-    	add_migration("V5__create_api_log.sql", R"(
+        add_migration("V5__create_api_log.sql", R"(
 CREATE TABLE api_log (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -133,7 +134,7 @@ CREATE INDEX idx_api_log_entity ON api_log(entity_name, entity_id);
 
 )");
 
-    	add_migration("V6__create_access_token.sql", R"(
+        add_migration("V6__create_access_token.sql", R"(
 CREATE TABLE access_token (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -174,7 +175,7 @@ CREATE INDEX idx_access_token_last_used
 
 )");
 
-    	add_migration("V7__create_refresh_token.sql", R"(
+        add_migration("V7__create_refresh_token.sql", R"(
 CREATE TABLE refresh_token (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -206,7 +207,7 @@ CREATE INDEX idx_refresh_token_user_id ON refresh_token(user_id);
 CREATE INDEX idx_refresh_token_expires_at ON refresh_token(expires_at);
 )");
 
-    	add_migration("V8__create_login_session.sql", R"(
+        add_migration("V8__create_login_session.sql", R"(
 CREATE TABLE login_session (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -237,7 +238,7 @@ CREATE INDEX idx_login_session_expires_at ON login_session(expires_at);
 
 )");
 
-    	add_migration("V9__create_auth_log.sql", R"(
+        add_migration("V9__create_auth_log.sql", R"(
 CREATE TABLE auth_log (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -267,7 +268,7 @@ CREATE TABLE auth_log (
 );
 )");
 
-    	add_migration("V10__create_super_admin_log.sql", R"(
+        add_migration("V10__create_super_admin_log.sql", R"(
 CREATE TABLE super_admin_log (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -295,7 +296,5 @@ CREATE TABLE super_admin_log (
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
 )");
-
-
     }
 }

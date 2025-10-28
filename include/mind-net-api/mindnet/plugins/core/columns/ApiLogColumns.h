@@ -36,23 +36,23 @@ namespace mindnet::plugins::core::columns
         ApiLogColumns(const ApiLogColumns&) = delete;
         ApiLogColumns& operator=(const ApiLogColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME    = "api_log";
+        static constexpr const char* MODEL_NAME = "api_log";
 
         // who
-        static constexpr const char* USER_ID       = "user_id";
-        static constexpr const char* IP_ADDRESS    = "ip_address";
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* IP_ADDRESS = "ip_address";
 
         // what
-        static constexpr const char* ENDPOINT      = "endpoint";
-        static constexpr const char* METHOD        = "method";
-        static constexpr const char* ENTITY_NAME   = "entity_name";
-        static constexpr const char* ENTITY_ID     = "entity_id";
-        static constexpr const char* PARAMETERS    = "parameters";
-        static constexpr const char* REQUEST_BODY  = "request_body";
+        static constexpr const char* ENDPOINT = "endpoint";
+        static constexpr const char* METHOD = "method";
+        static constexpr const char* ENTITY_NAME = "entity_name";
+        static constexpr const char* ENTITY_ID = "entity_id";
+        static constexpr const char* PARAMETERS = "parameters";
+        static constexpr const char* REQUEST_BODY = "request_body";
 
         // result
-        static constexpr const char* STATUS_CODE   = "status_code";
-        static constexpr const char* ERROR   = "error";
+        static constexpr const char* STATUS_CODE = "status_code";
+        static constexpr const char* ERROR = "error";
     };
 }
 

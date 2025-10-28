@@ -243,8 +243,6 @@ namespace mindnet::http
         });
 
 
-
-
         // LIST
         CROW_ROUTE(crow_app, "/api/v1/app").methods(crow::HTTPMethod::GET)
         ([service_ptr](const crow::request& req)
@@ -262,12 +260,9 @@ namespace mindnet::http
                 {
                     apps_as_json.push_back(app);
                 }
-
             }
             result["items"] = std::move(apps_as_json);
             return crow::response(200, result);
         });
-
-
     }
 }

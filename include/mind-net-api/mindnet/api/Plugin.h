@@ -28,7 +28,7 @@ namespace mindnet::api
             const std::string& description_,
             std::vector<string> apps_ = {},
             const std::vector<std::string>& plugins_which_this_plugin_depends_on_ = {}
-            );
+        );
         ~Plugin() = default;
 
         [[nodiscard]] const std::string& get_name() const;

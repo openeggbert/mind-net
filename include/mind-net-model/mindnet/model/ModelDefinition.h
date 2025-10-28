@@ -100,10 +100,12 @@ namespace mindnet::model
         {
             return custom_actions;
         }
+
         const std::string& get_title_column() const
         {
             return title_column;
         }
+
         const bool is_reader_can_write() const
         {
             return reader_can_write;
@@ -141,7 +143,8 @@ namespace mindnet::model
         {
             if (!allowed_rest_operations.empty())
             {
-                throw std::invalid_argument("allowed_rest_operations were already set for model definition " + model_name);
+                throw std::invalid_argument(
+                    "allowed_rest_operations were already set for model definition " + model_name);
             }
             allowed_rest_operations = std::move(ops);
             return *this;
@@ -151,7 +154,8 @@ namespace mindnet::model
         {
             if (!allowed_rest_operations.empty())
             {
-                throw std::invalid_argument("allowed_rest_operations were already set for model definition " + model_name);
+                throw std::invalid_argument(
+                    "allowed_rest_operations were already set for model definition " + model_name);
             }
 
             if (ops_as_string.empty())
@@ -198,6 +202,7 @@ namespace mindnet::model
             virtual_table = value;
             return *this;
         }
+
         ModelDefinition& set_title_column(std::string title_column_)
         {
             title_column = title_column_;

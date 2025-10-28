@@ -23,12 +23,12 @@ namespace mindnet::essential
     string_map load_mind_net_properties(const std::string& filename);
 
     // Access token expiration (in minutes)
-    constexpr int ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE = 5;        // 5 minutes
-    constexpr int ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE = 43200;    // 30 days
+    constexpr int ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE = 5; // 5 minutes
+    constexpr int ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE = 43200; // 30 days
 
     // Refresh token expiration (in minutes)
-    constexpr int REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE = 1440;    // 1 day
-    constexpr int REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE = 432000;  // ~300 days
+    constexpr int REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE = 1440; // 1 day
+    constexpr int REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE = 432000; // ~300 days
 
     // Refresh token rotation threshold (in minutes)
     constexpr int REFRESH_TOKEN_ROTATION_THRESHOLD_MIN_VALUE = 60; // 1 hour
@@ -60,8 +60,8 @@ namespace mindnet::essential
         //other
         LogLevel max_log_level{ERROR};
         std::set<string> allowed_plugins;
-        int access_token_expires_in{15};           // minutes
-        int refresh_token_expires_in{43200};       // minutes (30 days)
+        int access_token_expires_in{15}; // minutes
+        int refresh_token_expires_in{43200}; // minutes (30 days)
         int refresh_token_rotation_threshold_in{10080}; // minutes (7 days)
 
         Configuration(const string_map& map);

@@ -15,30 +15,35 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::CollectionItemValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
 
 
-    OperationResult CollectionItemValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_create_authorization(
+        const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
 
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_read_authorization(
+        const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+    OperationResult CollectionItemValidator::validate_update_authorization(
+        const RequestContext& ctx, const Model& old_entity,
+        const Model& new_entity) const
     {
         assert_editor()
 
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_delete_authorization(
+        const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
 
@@ -46,38 +51,39 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult CollectionItemValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                                         const string_map& filter) const
     {
         return ok_result;
     }
 
 
-
-
-
-    OperationResult CollectionItemValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_create_integrity(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_read_integrity(const RequestContext& ctx,
+                                                                     const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+    OperationResult CollectionItemValidator::validate_update_integrity(const RequestContext& ctx,
+                                                                       const Model& old_entity,
+                                                                       const Model& new_entity) const
     {
         return ok_result;
     }
 
-    OperationResult CollectionItemValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult CollectionItemValidator::validate_delete_integrity(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         return ok_result;
     }
 
     OperationResult CollectionItemValidator::validate_list_integrity(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                                     const string_map& filter) const
     {
         return ok_result;
     }

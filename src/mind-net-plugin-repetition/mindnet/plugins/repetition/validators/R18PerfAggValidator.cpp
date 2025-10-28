@@ -62,15 +62,15 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18PerfAggValidator::validate_list_authorization(const RequestContext& ctx,
                                                                      const string_map& filter) const
     {
-            mandatory_filter(user_id)
+        mandatory_filter(user_id)
 
-    // Users can only list their own perf aggs
-    auto it = filter.find("user_id");
-            if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
-            {
-                return {403, "Can only list your own perf aggs"};
-            }
-            return ok_result;
+        // Users can only list their own perf aggs
+        auto it = filter.find("user_id");
+        if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
+        {
+            return {403, "Can only list your own perf aggs"};
+        }
+        return ok_result;
     }
 
     OperationResult R18PerfAggValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const

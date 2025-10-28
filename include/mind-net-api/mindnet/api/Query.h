@@ -12,7 +12,6 @@
 
 namespace mindnet::api
 {
-
     class Query
     {
     public:

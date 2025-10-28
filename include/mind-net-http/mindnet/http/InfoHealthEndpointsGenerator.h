@@ -10,14 +10,13 @@
 
 namespace mindnet::http
 {
-
     class InfoHealthEndpointsGenerator
     {
     public:
         void create_info_health_endpoints(
             const api::ServicePtr& service_ptr,
             crow::SimpleApp& crow_app
-            );
+        );
     };
 }
 

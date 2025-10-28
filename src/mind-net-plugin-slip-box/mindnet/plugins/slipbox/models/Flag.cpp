@@ -35,7 +35,7 @@ namespace mindnet::plugins::slipbox::models
         using columns::FlagColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(note_id, 0, FlagColumns::NOTE_ID);},
+            [this] { return test_ne(note_id, 0, FlagColumns::NOTE_ID); },
             [this] { return testt_not_empty(title, FlagColumns::TITLE); },
         };
         return util::ValidatorChain::run(list);

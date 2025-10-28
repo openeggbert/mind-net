@@ -27,8 +27,6 @@ namespace mindnet::plugins::slipbox::triggers
             entity_fields& old_fields,
             const orm::QueryParams query_params
         );
-
     };
-
 }
 #endif // AFTERCREATEUPDATENOTETRIGGER_H

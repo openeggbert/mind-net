@@ -63,7 +63,7 @@ namespace mindnet::plugins::core::models
         using_test_utils()
 
         validator_chain_vector list{
-            [this] { return test_ne(user_id, 0,AccessTokenColumns::USER_ID); },
+            [this] { return test_ne(user_id, 0, AccessTokenColumns::USER_ID); },
             [this] { return testt_not_empty(token_hash, AccessTokenColumns::TOKEN_HASH); },
             [this] { return test_ne(issued_at, 0, AccessTokenColumns::ISSUED_AT); },
             [this]

@@ -14,7 +14,6 @@
 
 namespace mindnet::api
 {
-
     struct MigrationScript
     {
         const int number;
@@ -24,10 +23,13 @@ namespace mindnet::api
     };
 
     const std::regex sql_file_name_format("^V(\\d+)__([a-zA-Z0-9_]+)\\.sql$");
+
     class MigrationScripts
     {
     public:
-        explicit MigrationScripts(const essential::DatabaseType database_type_ ) : database_type(database_type_){};
+        explicit MigrationScripts(const essential::DatabaseType database_type_) : database_type(database_type_)
+        {
+        };
         virtual ~MigrationScripts() = default;
 
         size_t get_count()
@@ -41,21 +43,21 @@ namespace mindnet::api
             ensure_defined();
             ensury_migration_number_is_in_range(migration_number);
 
-            return migrations[migration_number-1].sql;
+            return migrations[migration_number - 1].sql;
         }
 
         std::string get_migration_name(size_t migration_number)
         {
             ensure_defined();
             ensury_migration_number_is_in_range(migration_number);
-            return migrations[migration_number-1].name;
+            return migrations[migration_number - 1].name;
         }
 
         std::string get_migration_file_name(size_t migration_number)
         {
             ensure_defined();
             ensury_migration_number_is_in_range(migration_number);
-            return migrations[migration_number-1].file_name;
+            return migrations[migration_number - 1].file_name;
         }
 
         [[nodiscard]] const essential::DatabaseType& get_database_type() const { return database_type; }
@@ -111,7 +113,6 @@ namespace mindnet::api
 
         bool defined = false;
         essential::DatabaseType database_type = essential::DatabaseType::Unknown;
-
     };
 
     typedef std::shared_ptr<MigrationScripts> MigrationScriptsPtr;

@@ -38,14 +38,16 @@ namespace mindnet::http
                 }
             }
         };
-        auto log_request = [] (const api::ServicePtr& service_ptr, const crow::request& req, api::AccessTokenContext& login_token, int status_code, int entity_id = 0, const std::string& error = "")
+        auto log_request = [](const api::ServicePtr& service_ptr, const crow::request& req,
+                              api::AccessTokenContext& login_token, int status_code, int entity_id = 0,
+                              const std::string& error = "")
         {
             auto log_object = plugins::core::models::api_log_from_crow_request(
-         req,
-         login_token.user_id,
-         status_code,
-         entity_id,
-         error);
+                req,
+                login_token.user_id,
+                status_code,
+                entity_id,
+                error);
             auto log = log_object.to_values();
             int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
             log[1] = now;
@@ -53,7 +55,8 @@ namespace mindnet::http
 
             if (service_ptr == nullptr)
             {
-                warn << "Saving record to the table log failed for this reason: service_ptr == nullptr " << log_object.to_json() << commit;
+                warn << "Saving record to the table log failed for this reason: service_ptr == nullptr " << log_object.
+                    to_json() << commit;
                 return;
             }
 
@@ -62,11 +65,11 @@ namespace mindnet::http
             auto result = service_ptr->create(
                 plugins::core::models::API_LOG_DEFINITION,
                 token_to_be_used,
-                log)
-                ;
+                log);
             if (result.second.ko())
             {
-                warn << "Saving record to the table api_log failed for this reason: " << result.second.error << log_object.to_json() << commit;
+                warn << "Saving record to the table api_log failed for this reason: " << result.second.error <<
+                    log_object.to_json() << commit;
             }
         };
         auto create_lambda_function = [&service_ptr, &def, log_request](const crow::request& req)
@@ -75,12 +78,15 @@ namespace mindnet::http
 
             trace << "Create lambda function called" << commit;
             api::AccessTokenContext login_token{req, service_ptr};
-            if (!def.get_allowed_rest_operations().contains(Crudl::Create)){
-                log_request(service_ptr, req, login_token, 405, 0, "Method not allowed for model " + def.get_model_name() + ".");
+            if (!def.get_allowed_rest_operations().contains(Crudl::Create))
+            {
+                log_request(service_ptr, req, login_token, 405, 0,
+                            "Method not allowed for model " + def.get_model_name() + ".");
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             }
             crow::json::rvalue body = crow::json::load(req.body);
-            if (!body) {
+            if (!body)
+            {
                 log_request(service_ptr, req, login_token, 400, 0, "Invalid input. Body is missing or not valid.");
                 return crow::response(400, "Invalid input. Body is missing or not valid.");
             }
@@ -95,8 +101,9 @@ namespace mindnet::http
             entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::Create, def);
             if (fields.size() != def.get_columns().size())
             {
-                log_request(service_ptr, req, login_token, 500, 0, "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
-                    + def.get_model_name() + ".");
+                log_request(service_ptr, req, login_token, 500, 0,
+                            "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
+                            + def.get_model_name() + ".");
                 return crow::response(
                     500,
                     "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
@@ -106,7 +113,8 @@ namespace mindnet::http
             auto last_inserted_id = service_ptr.get()->create(def, login_token, fields);
             if (last_inserted_id.first == -1)
             {
-                log_request(service_ptr, req, login_token, 500, 0, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
+                log_request(service_ptr, req, login_token, 500, 0,
+                            "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
                 return crow::response(
                     500, "Saving the " + def.get_model_name() + " failed. Error: " + last_inserted_id.second.error);
             }
@@ -118,7 +126,8 @@ namespace mindnet::http
             return crow::response(200, res);
         };
 
-        auto read_lambda_function = [&service_ptr, &def, &split_string_by_commas, &log_request](const crow::request& req, int id)
+        auto read_lambda_function = [&service_ptr, &def, &split_string_by_commas, &log_request
+            ](const crow::request& req, int id)
         {
             check_maintenance_mode()
 
@@ -128,7 +137,8 @@ namespace mindnet::http
 
             if (!def.get_allowed_rest_operations().contains(Crudl::Read))
             {
-                log_request(service_ptr, req, login_token, 405, id, "Method not allowed for model " + def.get_model_name() + ".");
+                log_request(service_ptr, req, login_token, 405, id,
+                            "Method not allowed for model " + def.get_model_name() + ".");
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             }
             entity_fields values;
@@ -150,13 +160,16 @@ namespace mindnet::http
             }
             catch (std::runtime_error& e)
             {
-                log_request(service_ptr, req, login_token, 404, id, "The " + def.get_model_name() + " with id " + std::to_string(id) + " was not found. " + error);
+                log_request(service_ptr, req, login_token, 404, id,
+                            "The " + def.get_model_name() + " with id " + std::to_string(id) + " was not found. " +
+                            error);
                 return crow::response(
                     404, "The " + def.get_model_name() + " with id " + std::to_string(id) + " was not found. " + error);
             }
             if (!error.empty())
             {
-                log_request(service_ptr, req, login_token, error_http_status, id, "You cannot read the model. " + error);
+                log_request(service_ptr, req, login_token, error_http_status, id,
+                            "You cannot read the model. " + error);
                 return crow::response(error_http_status, "You cannot read the model. " + error);
             }
 
@@ -178,7 +191,8 @@ namespace mindnet::http
 
             if (!def.get_allowed_rest_operations().contains(Crudl::Update))
             {
-                log_request(service_ptr, req, login_token, 405, id, "Method not allowed for model " + def.get_model_name() + ".");
+                log_request(service_ptr, req, login_token, 405, id,
+                            "Method not allowed for model " + def.get_model_name() + ".");
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             }
             crow::json::rvalue body = crow::json::load(req.body);
@@ -197,14 +211,16 @@ namespace mindnet::http
 
             if (id != body["id"].i())
             {
-                log_request(service_ptr, req, login_token, 400, id, "Invalid input. id in body is not equal to id in url.");
+                log_request(service_ptr, req, login_token, 400, id,
+                            "Invalid input. id in body is not equal to id in url.");
                 return crow::response(400, "Invalid input. id in body is not equal to id in url.");
             }
             entity_fields fields = service_ptr->request_to_entity_fields(body, Crudl::Update, def);
             if (fields.size() != def.get_columns().size())
             {
-                log_request(service_ptr, req, login_token, 500, id, "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
-                    + def.get_model_name() + ".");
+                log_request(service_ptr, req, login_token, 500, id,
+                            "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
+                            + def.get_model_name() + ".");
                 return crow::response(
                     500,
                     "Server issue. Function request_to_entity_fields() is not correctly implemented for model "
@@ -214,8 +230,10 @@ namespace mindnet::http
             auto success = service_ptr->update(def, login_token, id, fields);
             if (success.ko())
             {
-                log_request(service_ptr, req, login_token, 404, id, "Update failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
-                    success.error);
+                log_request(service_ptr, req, login_token, 404, id,
+                            "Update failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. "
+                            +
+                            success.error);
 
                 return crow::response(
                     404, "Update failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
@@ -237,7 +255,8 @@ namespace mindnet::http
             api::AccessTokenContext login_token{req, service_ptr};
             if (!def.get_allowed_rest_operations().contains(Crudl::Delete))
             {
-                log_request(service_ptr, req, login_token, 405, id, "Method not allowed for model " + def.get_model_name() + ".");
+                log_request(service_ptr, req, login_token, 405, id,
+                            "Method not allowed for model " + def.get_model_name() + ".");
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             }
 
@@ -245,8 +264,10 @@ namespace mindnet::http
 
             if (success.ko())
             {
-                log_request(service_ptr, req, login_token, 404, id, "Delete failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
-                    success.error);
+                log_request(service_ptr, req, login_token, 404, id,
+                            "Delete failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. "
+                            +
+                            success.error);
                 return crow::response(
                     404, "Delete failed. " + def.get_model_name() + " with id " + std::to_string(id) + " not found. " +
                     success.error);
@@ -256,7 +277,8 @@ namespace mindnet::http
             return crow::response(200, def.get_model_name() + " with id " + std::to_string(id) + " was deleted.");
         };
 
-        auto list_lambda_function = [&service_ptr, &def, &split_string_by_commas, &log_request](const crow::request& req)
+        auto list_lambda_function = [&service_ptr, &def, &split_string_by_commas, &log_request
+            ](const crow::request& req)
         {
             check_maintenance_mode()
 
@@ -265,7 +287,8 @@ namespace mindnet::http
 
             if (!def.get_allowed_rest_operations().contains(Crudl::List))
             {
-                log_request(service_ptr, req, login_token, 405, 0, "Method not allowed for model " + def.get_model_name() + ".");
+                log_request(service_ptr, req, login_token, 405, 0,
+                            "Method not allowed for model " + def.get_model_name() + ".");
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             }
             int page_number = req.url_params.get("page_number") ? std::stoi(req.url_params.get("page_number")) : 1;
@@ -322,10 +345,12 @@ namespace mindnet::http
             auto all_records = service_ptr->list(def, login_token, query_params);
             if (all_records.second.ko())
             {
-                log_request(service_ptr, req, login_token, all_records.second.status, 0, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
-                    error);
+                log_request(service_ptr, req, login_token, all_records.second.status, 0,
+                            "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
+                            error);
                 return crow::response(
-                    all_records.second.status, "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
+                    all_records.second.status,
+                    "Failed to list " + def.get_model_name() + " records. " + "Error: " + all_records.second.
                     error);
             }
 

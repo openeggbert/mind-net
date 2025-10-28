@@ -53,7 +53,6 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* IMPORTANT = "important";
         static constexpr const char* IS_PUBLIC = "is_public";
         static constexpr const char* PINNED = "pinned";
-
     };
 }
 #endif // IDEACOLUMNS_H

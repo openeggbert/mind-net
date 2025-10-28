@@ -12,7 +12,6 @@ namespace mindnet::orm
 
     struct SchemaHistory
     {
-
         string plugin_name;
         int version;
         string description;

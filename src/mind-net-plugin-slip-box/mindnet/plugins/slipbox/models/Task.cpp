@@ -78,7 +78,11 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_between(progress, 0, 100, TaskColumns::PROGRESS); },
             [this] { return test_ne(created_by, 0, TaskColumns::CREATED_BY); },
             [this] { return test_ne(owner_id, 0, TaskColumns::OWNER_ID); },
-            [this] { return test_false(due_date && start_date && due_date < start_date, "Due date cannot be before start date"); }
+            [this]
+            {
+                return test_false(due_date && start_date && due_date < start_date,
+                                  "Due date cannot be before start date");
+            }
         };
         return util::ValidatorChain::run(list);
     }

@@ -10,11 +10,11 @@
 
 namespace mindnet::db::sqlite::queries
 {
-
     FindNextSiblingOrderSQLiteQuery::FindNextSiblingOrderSQLiteQuery()
-    : Query(QUERY_FindNextSiblingOrder, "FindNextSiblingOrderSQLiteQuery", essential::DatabaseType::SQLite)
+        : Query(QUERY_FindNextSiblingOrder, "FindNextSiblingOrderSQLiteQuery", essential::DatabaseType::SQLite)
     {
     }
+
     nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json request)
     {
         nlohmann::json response;
@@ -31,9 +31,9 @@ namespace mindnet::db::sqlite::queries
         i64 parent_note_id = request["parent_note_id"];
         i64 map_id = request["map_id"];
 
-        std::string sql = parent_note_id == 0 ?
-                              "select max(sibling_order) from note where map_id = ? and parent_note_id is null" :
-                              "select max(sibling_order) from note where map_id = ? and parent_note_id = ?";
+        std::string sql = parent_note_id == 0
+                              ? "select max(sibling_order) from note where map_id = ? and parent_note_id is null"
+                              : "select max(sibling_order) from note where map_id = ? and parent_note_id = ?";
 
         // --- Execute SQL query ---
         try
@@ -45,7 +45,8 @@ namespace mindnet::db::sqlite::queries
             db.exec("PRAGMA journal_mode=WAL;");
 
             essential::debug << sql << essential::commit;
-            essential::debug << "Executing FindNextSiblingOrderSQLiteQuery map_id=" << map_id << " parent_note_id=" << parent_note_id << essential::commit;
+            essential::debug << "Executing FindNextSiblingOrderSQLiteQuery map_id=" << map_id << " parent_note_id=" <<
+                parent_note_id << essential::commit;
             SQLite::Statement query(db, sql);
 
 
@@ -60,7 +61,7 @@ namespace mindnet::db::sqlite::queries
             }
 
             // Round max_sibling_order up to next hundred and add +100 for next sibling slot
-            next_sibling_order = ((max_sibling_order + 99)/ 100 + 1) * 100;
+            next_sibling_order = ((max_sibling_order + 99) / 100 + 1) * 100;
 
             response["next_sibling_order"] = next_sibling_order;
         }

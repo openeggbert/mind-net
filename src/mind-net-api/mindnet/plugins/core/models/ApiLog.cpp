@@ -34,18 +34,18 @@ namespace mindnet::plugins::core::models
         auto text = [&values, &i] { return std::get<std::string>(values[i++]); };
 
         set_id(number());
-        created_at   = number();
-        updated_at   = number();
-        user_id      = number();
-        ip_address   = text();
-        endpoint     = text();
-        method       = static_cast<enums::HttpMethod>(number());
-        entity_name  = text();
-        entity_id    = number();
-        parameters   = text();
+        created_at = number();
+        updated_at = number();
+        user_id = number();
+        ip_address = text();
+        endpoint = text();
+        method = static_cast<enums::HttpMethod>(number());
+        entity_name = text();
+        entity_id = number();
+        parameters = text();
         request_body = text();
-        status_code  = number();
-        error         = text();
+        status_code = number();
+        error = text();
     }
 
     string ApiLog::validate()
@@ -67,7 +67,7 @@ namespace mindnet::plugins::core::models
     {
         std::ostringstream oss;
         bool first = true;
-        for (auto& key: qs.keys())
+        for (auto& key : qs.keys())
         {
             auto value = qs.get(key);
             if (!first) oss << "&";
@@ -77,7 +77,8 @@ namespace mindnet::plugins::core::models
         return oss.str();
     }
 
-    const ApiLog api_log_from_crow_request(const crow::request& req, int user_id, int status_code, int entity_id, std::string error)
+    const ApiLog api_log_from_crow_request(const crow::request& req, int user_id, int status_code, int entity_id,
+                                           std::string error)
     {
         ApiLog log;
 
@@ -137,5 +138,4 @@ namespace mindnet::plugins::core::models
 
         return log;
     }
-
 }

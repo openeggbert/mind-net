@@ -27,7 +27,6 @@
 
 namespace mindnet::plugins::core::enums
 {
-
     inline mindnet::model::EnumDefinition user_status_to_enum_definition()
     {
         return mindnet::model::EnumDefinition{

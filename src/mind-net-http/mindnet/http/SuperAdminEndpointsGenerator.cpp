@@ -641,7 +641,6 @@ showToast(")"
                 // }
 
                 return crow::response(400, validation_result);
-
             }
             essential::g_configuration = new_configuration;
             essential::g_configuration.save_mind_net_properties();

@@ -97,7 +97,6 @@ namespace mindnet::plugins::core::models
         const std::string& action,
         std::string error = "",
         const std::string& diff = "");
-
 }
 #undef Model
 #undef MODEL

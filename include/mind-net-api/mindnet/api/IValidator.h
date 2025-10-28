@@ -19,9 +19,10 @@
 // Integrity: Does the operation preserve the system’s logic?
 // Consistency: Are key dependencies present (e.g., a parent note)?
 
-namespace mindnet::api {
-
-    class IPersistence; }
+namespace mindnet::api
+{
+    class IPersistence;
+}
 
 namespace mindnet::api
 {
@@ -41,7 +42,8 @@ namespace mindnet::api
 
         virtual OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, int id) const = 0;
 
-        virtual OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef, entity_fields& old_fields) const = 0;
+        virtual OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef,
+                                           entity_fields& old_fields) const = 0;
 
         virtual OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, int id) const = 0;
 

@@ -16,8 +16,11 @@
 namespace mindnet::plugins::repetition::validators
 {
     using validators::R2StateValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
-    OperationResult R2StateValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
+
+    OperationResult R2StateValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                    const Model& entity) const
     {
         // User can only create states for themselves
         if (ctx.token.user_id != entity.user_id)
@@ -38,7 +41,7 @@ namespace mindnet::plugins::repetition::validators
     }
 
     OperationResult R2StateValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+                                                                    const Model& new_entity) const
     {
         // Users can only update their own states
         if (ctx.token.user_id != new_entity.user_id)
@@ -48,13 +51,14 @@ namespace mindnet::plugins::repetition::validators
         return ok_result;
     }
 
-    OperationResult R2StateValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult R2StateValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                    const Model& entity) const
     {
         return status_405_unsupported_operation
     }
 
     OperationResult R2StateValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                                  const string_map& filter) const
     {
         mandatory_filter(user_id)
 
@@ -68,11 +72,6 @@ namespace mindnet::plugins::repetition::validators
     }
 
 
-
-
-
-
-
     OperationResult R2StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
@@ -84,7 +83,7 @@ namespace mindnet::plugins::repetition::validators
     }
 
     OperationResult R2StateValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                            const Model& new_entity) const
+                                                                const Model& new_entity) const
     {
         return ok_result;
     }

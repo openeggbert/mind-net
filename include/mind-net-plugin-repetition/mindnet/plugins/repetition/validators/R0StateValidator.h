@@ -23,7 +23,6 @@ namespace mindnet::plugins::repetition::validators
         using Model = R0State;
 
         create_method_prototypes_for_ValidatorBase(Model)
-
     };
 }
 #endif // R0STATEVALIDATOR_H

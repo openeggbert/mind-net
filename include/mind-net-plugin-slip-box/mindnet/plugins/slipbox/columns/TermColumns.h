@@ -43,8 +43,6 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* TITLE = "title";
         static constexpr const char* DISAMBIGUATION = "disambiguation";
-
-
     };
 }
 #endif // TERMCOLUMNS_H

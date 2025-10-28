@@ -27,14 +27,12 @@
 
 namespace mindnet::plugins::core::enums
 {
-
     inline mindnet::model::EnumDefinition crudl_to_enum_definition()
     {
         return mindnet::model::EnumDefinition{
             mindnet::essential::crudl_to_string, essential::CRUDL_VALUE_COUNT, 0, 1, 2, 3, 4, 5
         };
     }
-
 }
 
 #endif // CRUDL_H_PLUGIN_CORE

@@ -10,14 +10,13 @@
 
 namespace mindnet::http
 {
-
     class ModelDefinitionEndpointsGenerator
     {
     public:
         void create_model_definition_endpoints(
             const api::ServicePtr& service_ptr,
             crow::SimpleApp& crow_app
-            );
+        );
     };
 }
 

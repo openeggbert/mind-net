@@ -10,7 +10,6 @@
 
 namespace mindnet::orm
 {
-
     string SqlUtils::generate_insert_sql(const model::ModelDefinition& definition)
     // const std::string& table_name, const std::vector<const char*>& columns,
     //                                    bool auto_increment)
@@ -111,7 +110,7 @@ namespace mindnet::orm
                 const auto& column_name = it->first;
                 const auto& value = it->second;
                 bool foreign_key = false;
-                for (auto& col: def.get_columns())
+                for (auto& col : def.get_columns())
                 {
                     if (std::string(col.get_column_name()) == column_name)
                     {
@@ -122,7 +121,8 @@ namespace mindnet::orm
                 if (foreign_key && value == "0")
                 {
                     sql += column_name + " IS NULL ";
-                } else
+                }
+                else
                 {
                     sql += column_name + " = ?";
                 }
@@ -147,9 +147,9 @@ namespace mindnet::orm
         return sql;
     }
 
-    string SqlUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params, model::ModelDefinition& def)
+    string SqlUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params,
+                                               model::ModelDefinition& def)
     {
         return generate_select_all_sql(table_name, query_params, def, true);
     }
-
 }

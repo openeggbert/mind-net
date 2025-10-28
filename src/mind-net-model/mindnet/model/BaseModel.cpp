@@ -22,7 +22,6 @@
 
 namespace mindnet::model
 {
-
     [[nodiscard]] JSON model_to_json(
         entity_fields fields,
         const ModelDefinition& definition)
@@ -41,5 +40,4 @@ namespace mindnet::model
         }
         return json;
     }
-
 }

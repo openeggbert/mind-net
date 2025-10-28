@@ -54,7 +54,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult FlagValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-                return ok_result;
+        return ok_result;
     }
 
     OperationResult FlagValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const

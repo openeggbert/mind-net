@@ -6,7 +6,8 @@
 
 namespace mindnet::plugins::slipbox::migrations
 {
-    SlipBoxSQLiteMigrationScripts::SlipBoxSQLiteMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::SQLite)
+    SlipBoxSQLiteMigrationScripts::SlipBoxSQLiteMigrationScripts() : MigrationScripts(
+        mindnet::essential::DatabaseType::SQLite)
     {
     }
 
@@ -392,7 +393,7 @@ CREATE INDEX idx_idea_title ON idea(title);
 )");
 
 
-    	add_migration("V16__create_wanted_note.sql", R"(
+        add_migration("V16__create_wanted_note.sql", R"(
 CREATE TABLE wanted_note(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -410,7 +411,7 @@ CREATE INDEX idx_wanted_note_from_note_id ON wanted_note(from_note_id);
 
 )");
 
-    	add_migration("V17__create_alert.sql", R"(
+        add_migration("V17__create_alert.sql", R"(
 CREATE TABLE alert (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -456,7 +457,7 @@ CREATE INDEX idx_alert_note_id ON alert(note_id);
 )");
 
 
-    	add_migration("V18__create_flag.sql", R"(
+        add_migration("V18__create_flag.sql", R"(
 CREATE TABLE flag(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -473,7 +474,7 @@ CREATE TABLE flag(
 CREATE INDEX idx_flag_note_id ON flag(note_id);
 
 )");
-    	add_migration("V19__create_project.sql", R"(
+        add_migration("V19__create_project.sql", R"(
 CREATE TABLE project (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -516,7 +517,7 @@ CREATE INDEX idx_project_assigned_to ON project(assigned_to);
 )");
 
 
-    	add_migration("V20__create_task.sql", R"(
+        add_migration("V20__create_task.sql", R"(
 CREATE TABLE task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -578,7 +579,7 @@ CREATE INDEX idx_task_blocked ON task(blocked_by_task_id);
 
 )");
 
-    	add_migration("V21__create_pinned_note.sql", R"(
+        add_migration("V21__create_pinned_note.sql", R"(
 CREATE TABLE pinned_note(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,

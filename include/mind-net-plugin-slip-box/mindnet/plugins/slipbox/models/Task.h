@@ -48,7 +48,8 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::TITLE, MANDATORY).set_description("Task title"),
             coldef(COLS::DESCRIPTION).set_description("Task description"),
             coldef(COLS::PROGRESS, INTEGER).set_description("Task progress (0-100)"),
-            coldef(COLS::STATUS).set_enum_definition(task_status_to_enum_definition()).set_default_value(0).set_description("Task status"),
+            coldef(COLS::STATUS).set_enum_definition(task_status_to_enum_definition()).set_default_value(0).
+                                 set_description("Task status"),
             coldef(COLS::IMPORTANT, BOOL).set_default_value(0).set_description("Task importance flag"),
             coldef(COLS::AS_SOON_AS_POSSIBLE, BOOL).set_default_value(0).set_description("As soon as possible"),
             coldef(COLS::START_DATE, DATETIME).set_description("Task start date"),

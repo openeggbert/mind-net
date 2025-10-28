@@ -6,13 +6,12 @@
 
 namespace mindnet::plugins::core::migrations
 {
-    CorePostgreSQLMigrationScripts::CorePostgreSQLMigrationScripts() : MigrationScripts(mindnet::essential::DatabaseType::PostgreSQL)
+    CorePostgreSQLMigrationScripts::CorePostgreSQLMigrationScripts() : MigrationScripts(
+        mindnet::essential::DatabaseType::PostgreSQL)
     {
     }
 
     void CorePostgreSQLMigrationScripts::define_migrations()
     {
-
-
     }
 }

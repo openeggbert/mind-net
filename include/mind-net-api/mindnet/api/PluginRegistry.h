@@ -12,13 +12,19 @@
 
 namespace mindnet::api
 {
-    struct CyclicDependencyException : std::runtime_error {
-        explicit CyclicDependencyException(const std::string& msg) : std::runtime_error(msg) {}
+    struct CyclicDependencyException : std::runtime_error
+    {
+        explicit CyclicDependencyException(const std::string& msg) : std::runtime_error(msg)
+        {
+        }
     };
 
-    struct MissingDependencyException : std::runtime_error {
+    struct MissingDependencyException : std::runtime_error
+    {
         explicit MissingDependencyException(const std::string& message)
-            : std::runtime_error(message) {}
+            : std::runtime_error(message)
+        {
+        }
     };
 
 
@@ -34,10 +40,11 @@ namespace mindnet::api
         [[nodiscard]] PluginPtr get_plugin(const std::string& plugin_name) const;
         void register_plugin(const PluginPtr& plugin);
         [[nodiscard]] int get_plugin_count() const;
+
     private:
         std::map<std::string, PluginPtr> plugins;
     };
-    typedef std::shared_ptr<PluginRegistry> PluginRegistryPtr;
 
+    typedef std::shared_ptr<PluginRegistry> PluginRegistryPtr;
 }
 #endif // PLUGINREGISTRY_H

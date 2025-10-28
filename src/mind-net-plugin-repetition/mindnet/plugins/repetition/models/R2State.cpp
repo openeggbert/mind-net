@@ -47,10 +47,10 @@ namespace mindnet::plugins::repetition::models
         using columns::R2StateColumns;
 
         validator_chain_vector list{
-            [this] {return test_at_least(repetitions, 0, R2StateColumns::REPETITIONS);},
-            [this] {return test_at_least(interval, 1, R2StateColumns::INTERVAL);},
-            [this] {return test_between(ef_times_100, 100, 500, R2StateColumns::EF_TIMES_100);},
-            [this] {return test_between(last_quality, 0, 5, R2StateColumns::LAST_QUALITY);},
+            [this] { return test_at_least(repetitions, 0, R2StateColumns::REPETITIONS); },
+            [this] { return test_at_least(interval, 1, R2StateColumns::INTERVAL); },
+            [this] { return test_between(ef_times_100, 100, 500, R2StateColumns::EF_TIMES_100); },
+            [this] { return test_between(last_quality, 0, 5, R2StateColumns::LAST_QUALITY); },
         };
         return util::ValidatorChain::run(list);
     }

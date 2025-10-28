@@ -39,10 +39,10 @@ namespace mindnet::plugins::repetition::models
         using columns::R18PerfAggColumns;
 
         validator_chain_vector list{
-            [this] {return test_at_least(bin_log_t_times_100, 0, R18PerfAggColumns::BIN_LOG_T_TIMES_100);},
-            [this] {return test_at_least(total, 0, R18PerfAggColumns::TOTAL);},
-            [this] {return test_at_least(correct, 0, R18PerfAggColumns::CORRECT);},
-            [this] {return test_true(correct > total, "correct cannot be greater than total");}
+            [this] { return test_at_least(bin_log_t_times_100, 0, R18PerfAggColumns::BIN_LOG_T_TIMES_100); },
+            [this] { return test_at_least(total, 0, R18PerfAggColumns::TOTAL); },
+            [this] { return test_at_least(correct, 0, R18PerfAggColumns::CORRECT); },
+            [this] { return test_true(correct > total, "correct cannot be greater than total"); }
         };
         return util::ValidatorChain::run(list);
     }

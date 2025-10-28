@@ -37,7 +37,6 @@ namespace mindnet::api
     public:
         virtual ~RepositoryFactory() = default;
         virtual std::shared_ptr<IRepository> create(const model::ModelDefinition& model_definition) = 0;
-
     };
 }
 

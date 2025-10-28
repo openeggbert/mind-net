@@ -730,7 +730,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                         {
                             db.exec("ROLLBACK;");
                             insert_migration(db, version, checksum, chain_hash, installed_on, duration,
-                                                        migrated);
+                                             migrated);
                         }
                         catch (...)
                         {

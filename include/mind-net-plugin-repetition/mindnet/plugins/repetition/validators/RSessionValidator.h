@@ -23,7 +23,6 @@ namespace mindnet::plugins::repetition::validators
         using Model = RSession;
 
         create_method_prototypes_for_ValidatorBase(Model)
-
     };
 }
 #endif // RSESSION_VALIDATOR_H

@@ -526,9 +526,10 @@ namespace mindnet::plugins::repetition::triggers
                 r4_state.from_values(read_r4_state.first);
 
                 // Correction Factor tuning
-                const double CF_GAIN = get_param(user_id, "cf_gain", 0.025, token, stack_depth); // default jemnější než 0.05
-                const double CF_MIN  = get_param(user_id, "cf_min", 0.9, token, stack_depth);
-                const double CF_MAX  = get_param(user_id, "cf_max", 1.1, token, stack_depth);
+                const double CF_GAIN = get_param(user_id, "cf_gain", 0.025, token, stack_depth);
+                // default jemnější než 0.05
+                const double CF_MIN = get_param(user_id, "cf_min", 0.9, token, stack_depth);
+                const double CF_MAX = get_param(user_id, "cf_max", 1.1, token, stack_depth);
 
                 const int q = std::clamp(r_review.grade, 0, 5);
 
@@ -564,7 +565,6 @@ namespace mindnet::plugins::repetition::triggers
                         interval = static_cast<int>(std::round(interval * ef * cf));
 
                     reps += 1;
-
                 }
 
                 // --- clamp interval globally ---
@@ -790,8 +790,10 @@ namespace mindnet::plugins::repetition::triggers
                     qpa.add_filter("bin_log_t_times_100", bin_log_t_times_100);
                     auto list = run_list(models::R18_PERF_AGG_DEFINITION, token, qpa, stack_depth);
 
-                    if (list.second.ok()) {
-                        if (list.first.empty()) {
+                    if (list.second.ok())
+                    {
+                        if (list.first.empty())
+                        {
                             models::R18PerfAgg perf;
                             perf.user_id = r_review.user_id;
                             perf.bin_log_t_times_100 = bin_log_t_times_100;
@@ -802,7 +804,9 @@ namespace mindnet::plugins::repetition::triggers
                             v[1] = util::Utils::current_unix_timestamp_ms();
                             v[2] = util::Utils::current_unix_timestamp_ms();
                             run_create(models::R18_PERF_AGG_DEFINITION, token, v, stack_depth);
-                        } else {
+                        }
+                        else
+                        {
                             auto row = list.first.front();
                             models::R18PerfAgg perf;
                             perf.from_values(row);
@@ -813,7 +817,6 @@ namespace mindnet::plugins::repetition::triggers
                             run_update(models::R18_PERF_AGG_DEFINITION, token, perf.get_id(), v, stack_depth);
                         }
                     }
-
                 }
             };
             break;

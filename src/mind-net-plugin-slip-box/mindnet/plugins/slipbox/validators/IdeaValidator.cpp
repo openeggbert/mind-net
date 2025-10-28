@@ -15,7 +15,8 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::IdeaValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
 
     OperationResult IdeaValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {

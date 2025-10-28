@@ -3,13 +3,15 @@
 //
 
 #include "mindnet/http/CrowLoggerAdapter.h"
+
 namespace mindnet::http
 {
-
-    void CrowLoggerAdapter::log(const std::string& message, CrowLogLevel level) {
+    void CrowLoggerAdapter::log(const std::string& message, CrowLogLevel level)
+    {
         using namespace mindnet::essential;
 
-        switch (level) {
+        switch (level)
+        {
         case CrowLogLevel::Debug:
             debug << "[Crow] " << message << commit;
             break;

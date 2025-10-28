@@ -17,8 +17,11 @@
 namespace mindnet::plugins::repetition::validators
 {
     using validators::RReviewValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
-    OperationResult RReviewValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
+
+    OperationResult RReviewValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                    const Model& entity) const
     {
         // User can only create r_reviews for themselves
         if (ctx.token.user_id != entity.user_id)
@@ -39,25 +42,24 @@ namespace mindnet::plugins::repetition::validators
     }
 
     OperationResult RReviewValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+                                                                    const Model& new_entity) const
     {
         return {405, "Unsupported operation."};
-
     }
 
-    OperationResult RReviewValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult RReviewValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                    const Model& entity) const
     {
         return {405, "Unsupported operation."};
-
     }
 
     OperationResult RReviewValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                                  const string_map& filter) const
     {
         mandatory_filter(user_id)
 
-// Users can only list their own sessions
-auto it = filter.find("user_id");
+        // Users can only list their own sessions
+        auto it = filter.find("user_id");
         if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
         {
             return {403, "Can only list your own r_sessions"};
@@ -88,7 +90,7 @@ auto it = filter.find("user_id");
     }
 
     OperationResult RReviewValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                          const Model& new_entity) const
+                                                                const Model& new_entity) const
     {
         return {405, "Unsupported operation."};
     }

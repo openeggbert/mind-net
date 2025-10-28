@@ -63,11 +63,10 @@ namespace mindnet::plugins::slipbox::triggers
             auto v = new_note.to_values();
             fields = v;
             info << "Query FindNextSiblingOrder successful" << commit;
-        } catch (std::exception& e)
+        }
+        catch (std::exception& e)
         {
             err << "Query UpdateNotePathAndDepth failed" << commit;
         }
-
-
     }
 }

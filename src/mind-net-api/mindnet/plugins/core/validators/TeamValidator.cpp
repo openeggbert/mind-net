@@ -15,11 +15,13 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::TeamValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
+
     OperationResult TeamValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
-          403, "User does not have permission to create a team.");
+                  403, "User does not have permission to create a team.");
 
         return ok_result;
     }
@@ -30,7 +32,7 @@ namespace mindnet::plugins::core::validators
     }
 
     OperationResult TeamValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+                                                                 const Model& new_entity) const
     {
         return_if(ctx.role != mindnet::essential::UserRole::Admin && ctx.token.user_id != new_entity.leader_id,
                   403, "Only team leader can update the team.")
@@ -44,21 +46,16 @@ namespace mindnet::plugins::core::validators
     OperationResult TeamValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return_if(ctx.role < mindnet::essential::UserRole::Admin,
-          403, "Only admins can delete a team. Contact admin");
+                  403, "Only admins can delete a team. Contact admin");
 
         return ok_result;
     }
 
     OperationResult TeamValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                               const string_map& filter) const
     {
         return ok_result;
     }
-
-
-
-
-
 
 
     OperationResult TeamValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
@@ -77,7 +74,7 @@ namespace mindnet::plugins::core::validators
     }
 
     OperationResult TeamValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                        const Model& new_entity) const
+                                                             const Model& new_entity) const
     {
         return ok_result;
     }

@@ -38,15 +38,16 @@ namespace mindnet::plugins::slipbox::models
 
     inline def COLLECTION_ITEM_DEFINITION =
         def(COLS::MODEL_NAME).set_title_column(COLS::NOTE_ID)
-        .set_all_rest_operations()
-        .set_group("Slip Box", 100)
-        .set_columns({
-            coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
-                "Foreign key referencing the collection"),
-            coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
-                "Foreign key referencing the note"),
-            coldef(COLS::ORDER_INDEX, INTEGER).set_description("Ordering index of the item within the collection"),
-        });
+                             .set_all_rest_operations()
+                             .set_group("Slip Box", 100)
+                             .set_columns({
+                                 coldef(COLS::COLLECTION_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
+                                     "Foreign key referencing the collection"),
+                                 coldef(COLS::NOTE_ID, FOREIGN_KEY | MANDATORY | READONLY).set_description(
+                                     "Foreign key referencing the note"),
+                                 coldef(COLS::ORDER_INDEX, INTEGER).set_description(
+                                     "Ordering index of the item within the collection"),
+                             });
 
     struct Model : mindnet::model::BaseModel
     {

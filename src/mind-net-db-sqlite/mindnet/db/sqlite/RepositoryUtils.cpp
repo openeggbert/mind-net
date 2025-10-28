@@ -423,10 +423,12 @@ namespace mindnet::db::sqlite
                     try
                     {
                         number = stol(value);
-                    } catch (std::exception& e)
+                    }
+                    catch (std::exception& e)
                     {
                         err << "RepositoryUtils.bind_query_filters() : expected number, but got " << value << commit;
-                        throw SQLite::Exception("RepositoryUtils.bind_query_filters(): Expected number, but got " + value);
+                        throw SQLite::Exception(
+                            "RepositoryUtils.bind_query_filters(): Expected number, but got " + value);
                     }
                     // if (foreign_key && number == 0)
                     // {
@@ -484,7 +486,8 @@ namespace mindnet::db::sqlite
         try
         {
             bind_query_filters(def, query_params, *query_ptr, bind_index);
-        } catch (SQLite::Exception& e)
+        }
+        catch (SQLite::Exception& e)
         {
             error = e.what();
 

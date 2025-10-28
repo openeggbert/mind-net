@@ -11,7 +11,7 @@
 namespace mindnet::db::sqlite::queries
 {
     FindNotesInMapSQLiteQuery::FindNotesInMapSQLiteQuery()
-    : Query(QUERY_FindNotesInMap, "FindNotesInMapSQLiteQuery", essential::DatabaseType::SQLite)
+        : Query(QUERY_FindNotesInMap, "FindNotesInMapSQLiteQuery", essential::DatabaseType::SQLite)
     {
     }
 
@@ -37,7 +37,7 @@ namespace mindnet::db::sqlite::queries
         int note_titles_last_index = note_titles.size() - 1;
         for (auto& m : note_titles)
         {
-            sql+= "?";
+            sql += "?";
             note_titles_last_index = note_titles.size() - 1;
             if (note_titles_index < note_titles_last_index)
             {
@@ -46,7 +46,6 @@ namespace mindnet::db::sqlite::queries
             note_titles_index++;
         }
         sql += ")";
-
 
 
         // --- Execute SQL query ---

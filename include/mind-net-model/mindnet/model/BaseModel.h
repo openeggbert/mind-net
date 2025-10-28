@@ -82,7 +82,7 @@ using mindnet::util::testt_at_least;\
 using mindnet::util::testt_at_most;\
 using mindnet::util::testt_between;\
 using mindnet::util::testt_not_empty;\
-using mindnet::util::testt_is_alpha_or_digit;\
+using mindnet::util::testt_is_alpha_or_digit;
 
 namespace mindnet::model
 {
@@ -138,7 +138,9 @@ namespace mindnet::model
         {
             os << to_json();
         };
-        bool operator<(const BaseModel& other) const {
+
+        bool operator<(const BaseModel& other) const
+        {
             return id < other.id;
         }
     };
@@ -157,10 +159,10 @@ namespace mindnet::model
 
                 if (!column.get_enum_definition()->is_value_valid(value_int64_t))
                 {
-                    return "Invalid enum value " + std::to_string(value_int64_t) + " for column '" + column.get_column_name() +
+                    return "Invalid enum value " + std::to_string(value_int64_t) + " for column '" + column.
+                        get_column_name() +
                         "'. Please provide a valid value from the allowed enum options.";
                 }
-
             }
         }
         return "";
@@ -220,7 +222,6 @@ namespace mindnet::model
             {
                 return "Value of column " + column.get_column_name() + " has unsupported std::variant type.";
             }
-
         }
         return "";
     }

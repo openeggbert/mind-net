@@ -21,7 +21,7 @@ namespace mindnet::api
         api::DbPtr db_ptr;
         api::PluginRegistryPtr plugin_registry_ptr;
         api::TriggerRegistryPtr trigger_registry_ptr;
-        std::map<string,QueryPtr> query_map;
+        std::map<string, QueryPtr> query_map;
 
     public:
         Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
@@ -34,14 +34,16 @@ namespace mindnet::api
         nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) override;
 
         std::pair<int, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
-                                               entity_fields& fields, int stack_depth = 0) ;
+                                               entity_fields& fields, int stack_depth = 0);
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0) ;
+        read(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0);
         OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
-                               entity_fields& fields, int stack_depth = 0) ;
-        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0) ;
-        std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def, api::AccessTokenContext& token,
-                                                                    orm::QueryParams& query_params, int stack_depth = 0) ;
+                               entity_fields& fields, int stack_depth = 0);
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0);
+        std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
+                                                                    api::AccessTokenContext& token,
+                                                                    orm::QueryParams& query_params,
+                                                                    int stack_depth = 0);
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 
@@ -54,10 +56,12 @@ namespace mindnet::api
         std::shared_ptr<IValidator> get_validator(const std::string& name);
         OperationResult can_create(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                    entity_fields& ef) override;
-        OperationResult can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token, int id) override;
+        OperationResult can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token,
+                                 int id) override;
         OperationResult can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                    entity_fields& ef, entity_fields& old_fields) override;
-        OperationResult can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token, int id) override;
+        OperationResult can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token,
+                                   int id) override;
         OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                  string_map& filter) override;
 

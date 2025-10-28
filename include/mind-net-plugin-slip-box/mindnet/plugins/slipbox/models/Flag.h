@@ -45,8 +45,7 @@ namespace mindnet::plugins::slipbox::models
             .set_description("Associated map ID"),
             coldef(COLS::TITLE, MANDATORY)
             .set_description("Flag title")
-        })
-        ;
+        });
 
     struct Model : mindnet::model::BaseModel
     {

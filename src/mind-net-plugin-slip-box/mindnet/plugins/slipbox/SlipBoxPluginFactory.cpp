@@ -1,5 +1,3 @@
-
-
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
 
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.h"
@@ -37,6 +35,7 @@
 namespace mindnet::plugins::slipbox
 {
     const string SLIP_BOX_PLUGIN_NAME = "slip_box";
+
     api::PluginPtr SlipBoxPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(

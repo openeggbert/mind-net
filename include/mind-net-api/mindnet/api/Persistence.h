@@ -24,7 +24,6 @@ namespace mindnet::api
         std::vector<std::string> repository_names;
         std::shared_ptr<IRepository> get_repository(const std::string& name);
 
-
     public:
         Persistence(PluginRegistryPtr& get_plugin_registry);
         ~Persistence() override;
@@ -40,7 +39,8 @@ namespace mindnet::api
         OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
                                entity_fields& fields) override;
         OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, int id) override;
-        std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def, api::AccessTokenContext& token,
+        std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
+                                                                    api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params) override;
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;

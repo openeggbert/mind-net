@@ -62,7 +62,7 @@ namespace mindnet::api
     inline bool is_authorization_enabled(const RequestContext& ctx)
     {
         using namespace mindnet;
-        if (ctx.token.user_id == 0 && ctx.token.msg == "system") {return false;}
+        if (ctx.token.user_id == 0 && ctx.token.msg == "system") { return false; }
 
         switch (g_configuration.access_mode)
         {
@@ -131,10 +131,14 @@ namespace mindnet::api
             if (is_authorization_enabled(context))
             {
                 auto def = db->get_model_definition(get_model_name());
-                auto authorized_to = token.is_system() || is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {403, "You are not authorized to access resource. " + def->get_model_name() + " CREATE"};
-                if (logged_user.role < essential::UserRole::Admin) if (auto res = derived().validate_create_authorization(context, entity); !res.ok())
-                    return res;
+                auto authorized_to = token.is_system() || is_authorized_to(
+                    logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
+                if (!authorized_to) return {
+                    403, "You are not authorized to access resource. " + def->get_model_name() + " CREATE"
+                };
+                if (logged_user.role < essential::UserRole::Admin)
+                    if (auto res = derived().validate_create_authorization(context, entity); !res.ok())
+                        return res;
             }
             if (auto res = derived().validate_create_integrity(context, entity); !res.ok())
                 return res;
@@ -176,11 +180,15 @@ namespace mindnet::api
             if (is_authorization_enabled(context))
             {
                 auto def = db->get_model_definition(get_model_name());
-                auto authorized_to = token.is_system() || is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {403, "You are not authorized to access resource. " + def->get_model_name() + " READ"};
+                auto authorized_to = token.is_system() || is_authorized_to(
+                    logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
+                if (!authorized_to) return {
+                    403, "You are not authorized to access resource. " + def->get_model_name() + " READ"
+                };
 
-                if (logged_user.role < essential::UserRole::Admin) if (auto res = derived().validate_read_authorization(context, entity); !res.ok())
-                    return res;
+                if (logged_user.role < essential::UserRole::Admin)
+                    if (auto res = derived().validate_read_authorization(context, entity); !res.ok())
+                        return res;
             }
             if (auto res = derived().validate_read_integrity(context, entity); !res.ok())
                 return res;
@@ -188,7 +196,8 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& new_fields, entity_fields& old_fields) const
+        OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& new_fields,
+                                   entity_fields& old_fields) const
         {
             auto action = Crudl::Update;
             static_assert(
@@ -215,26 +224,28 @@ namespace mindnet::api
             new_entity.from_values(new_fields);
 
             auto [old_values, read_err] = db->read(db->get_model_definition(derived().get_model_name()).value(),
-                                       token, new_entity.get_id());
+                                                   token, new_entity.get_id());
             if (read_err.ko()) return read_err;
             old_fields = old_values;
 
             bool has_hidden_column = false;
             auto def = db->get_model_definition(derived().get_model_name()).value();
             int column_index = 0;
-            for (const model::ColumnDefinition& c: def.get_columns())
+            for (const model::ColumnDefinition& c : def.get_columns())
             {
                 if (c.is_hidden())
                 {
                     has_hidden_column = true;
                     auto type = c.get_column_type();
                     auto primitive_type = model::column_type_to_primitive_column_type(type);
-                    if (primitive_type == model::PrimitiveColumnType::Text && std::get<string>(new_fields[column_index]) == "*")
+                    if (primitive_type == model::PrimitiveColumnType::Text && std::get<string>(new_fields[column_index])
+                        == "*")
                     {
                         new_fields[column_index] = std::get<string>(old_fields[column_index]);
                     }
 
-                    if (primitive_type == model::PrimitiveColumnType::Number && std::get<i64>(new_fields[column_index]) == 0)
+                    if (primitive_type == model::PrimitiveColumnType::Number && std::get<i64>(new_fields[column_index])
+                        == 0)
                     {
                         new_fields[column_index] = std::get<i64>(old_fields[column_index]);
                     }
@@ -255,7 +266,8 @@ namespace mindnet::api
                 return {400, error};
             if (auto error = validate_internal(old_values, new_fields, def); !error.empty())
                 return {400, error};
-            if (auto error = model::validate_enums(new_fields, db->get_model_definition(get_model_name()).value()); !error.
+            if (auto error = model::validate_enums(new_fields, db->get_model_definition(get_model_name()).value()); !
+                error.
                 empty())
                 return {400, error};
             ////
@@ -263,12 +275,16 @@ namespace mindnet::api
             if (is_authorization_enabled(context))
             {
                 auto def = db->get_model_definition(get_model_name());
-                auto authorized_to = token.is_system() || is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {403, "You are not authorized to access resource. " + def->get_model_name() + " UPDATE"};
+                auto authorized_to = token.is_system() || is_authorized_to(
+                    logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
+                if (!authorized_to) return {
+                    403, "You are not authorized to access resource. " + def->get_model_name() + " UPDATE"
+                };
 
-                if (logged_user.role < essential::UserRole::Admin) if (auto res = derived().validate_update_authorization(
-                    context, old_entity, new_entity); !res.ok())
-                    return res;
+                if (logged_user.role < essential::UserRole::Admin)
+                    if (auto res = derived().validate_update_authorization(
+                        context, old_entity, new_entity); !res.ok())
+                        return res;
             }
             if (auto res = derived().validate_update_integrity(
                 context, old_entity, new_entity); !res.ok())
@@ -308,11 +324,15 @@ namespace mindnet::api
             if (is_authorization_enabled(context))
             {
                 auto def = db->get_model_definition(get_model_name());
-                auto authorized_to = token.is_system() || is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {403, "You are not authorized to access resource. " + def->get_model_name() + " DELETE"};
+                auto authorized_to = token.is_system() || is_authorized_to(
+                    logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
+                if (!authorized_to) return {
+                    403, "You are not authorized to access resource. " + def->get_model_name() + " DELETE"
+                };
 
-                if (logged_user.role < essential::UserRole::Admin) if (auto res = derived().validate_delete_authorization(context, entity); !res.ok())
-                    return res;
+                if (logged_user.role < essential::UserRole::Admin)
+                    if (auto res = derived().validate_delete_authorization(context, entity); !res.ok())
+                        return res;
             }
             if (auto res = derived().validate_delete_integrity(context, entity); !res.ok())
                 return res;
@@ -346,11 +366,16 @@ namespace mindnet::api
             if (is_authorization_enabled(context))
             {
                 auto def = db->get_model_definition(get_model_name());
-                auto authorized_to = token.is_system() || is_authorized_to(logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {logged_user.role == essential::UserRole::Guest ? 401 : 403, "You are not authorized to access resource. " + def->get_model_name() + " LIST"};
+                auto authorized_to = token.is_system() || is_authorized_to(
+                    logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
+                if (!authorized_to) return {
+                    logged_user.role == essential::UserRole::Guest ? 401 : 403,
+                    "You are not authorized to access resource. " + def->get_model_name() + " LIST"
+                };
 
-                if (logged_user.role < essential::UserRole::Admin) if (auto res = derived().validate_list_authorization(context, filter); !res.ok())
-                    return res;
+                if (logged_user.role < essential::UserRole::Admin)
+                    if (auto res = derived().validate_list_authorization(context, filter); !res.ok())
+                        return res;
             }
             if (auto res = derived().validate_list_integrity(context, filter); !res.ok())
                 return res;

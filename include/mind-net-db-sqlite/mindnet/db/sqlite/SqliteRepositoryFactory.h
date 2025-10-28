@@ -34,7 +34,6 @@ namespace mindnet::db::sqlite
         virtual ~SqliteRepositoryFactory() = default;
         SqliteRepositoryFactory();
         std::shared_ptr<api::IRepository> create(const model::ModelDefinition& model_definition) override;
-
     };
 }
 

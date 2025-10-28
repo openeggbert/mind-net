@@ -25,9 +25,7 @@ namespace mindnet::plugins::core::triggers
             entity_fields& old_fields,
             const orm::QueryParams query_params
         );
-
     };
-
 }
 
 #endif // HISTORYCOMMONTRIGGER_H

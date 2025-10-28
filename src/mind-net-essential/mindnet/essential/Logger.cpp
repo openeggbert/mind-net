@@ -3,7 +3,8 @@
 #include "mindnet/essential/ConsolePrinter.h"
 #include "mindnet/essential/Configuration.h"
 
-namespace mindnet::essential {
+namespace mindnet::essential
+{
     Logger::Logger(LogLevel log_level)
         : ConsolePrinter(
               "[" + log_level_to_string(log_level) + "] ",

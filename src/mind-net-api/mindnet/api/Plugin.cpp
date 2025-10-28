@@ -78,11 +78,12 @@ namespace mindnet::api
     }
 
     std::set<string> registered_models;
+
     void Plugin::register_model(
         model::ModelDefinition& model_definition,
         const std::shared_ptr<IValidator>& validator,
         std::shared_ptr<RepositoryFactory>& repository_factory
-        )
+    )
     {
         if (is_closed_for_changes_)
         {
@@ -103,7 +104,7 @@ namespace mindnet::api
             model_definition,
             validator,
             repository
-            );
+        );
 
         model_registrations.push_back(registration);
     }

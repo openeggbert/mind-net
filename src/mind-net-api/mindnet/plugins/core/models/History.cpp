@@ -45,9 +45,17 @@ namespace mindnet::plugins::core::models
         validator_chain_vector list{
             [this] { return test_at_least(user_id, 0, HistoryColumns::USER_ID); },
             [this] { return testt_not_empty(table_name, HistoryColumns::TABLE_NAME); },
-            [this] { return test_true(operation == mindnet::essential::Crudl::List ? true : record_id != 0, "Record ID must not be 0");},
+            [this]
+            {
+                return test_true(operation == mindnet::essential::Crudl::List ? true : record_id != 0,
+                                 "Record ID must not be 0");
+            },
             [this] { return test_ne(cast64(operation), 0, HistoryColumns::OPERATION); },
-            [this] { return test_true(operation == mindnet::essential::Crudl::List ? true : !data_json.empty(), "data_json must not be empty");},
+            [this]
+            {
+                return test_true(operation == mindnet::essential::Crudl::List ? true : !data_json.empty(),
+                                 "data_json must not be empty");
+            },
         };
         return util::ValidatorChain::run(list);
     }

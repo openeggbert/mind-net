@@ -49,6 +49,7 @@ namespace mindnet::plugins::core
         query_params.filters.emplace("email", user_email);
         return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
+
     string is_member_of_team(const api::RequestContext& ctx, int team_id)
     {
         auto team_result = ctx.db->read(plugins::core::models::TEAM_DEFINITION, ctx.token, team_id);
@@ -76,5 +77,4 @@ namespace mindnet::plugins::core
     // gen_find_cpp(mail, Message, message, MESSAGE)
     gen_find_cpp(core, Team, team, TEAM)
     gen_find_cpp(core, TeamMember, team_member, TEAM_MEMBER)
-
 }

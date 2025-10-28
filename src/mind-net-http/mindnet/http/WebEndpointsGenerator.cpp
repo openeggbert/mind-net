@@ -13,7 +13,7 @@
 namespace mindnet::http
 {
     WebEndpointsGenerator::WebEndpointsGenerator(const std::string& directory_for_static_files_)
-        :directory_for_static_files(directory_for_static_files_)
+        : directory_for_static_files(directory_for_static_files_)
     {
     }
 

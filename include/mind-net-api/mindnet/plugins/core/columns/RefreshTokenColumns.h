@@ -31,19 +31,19 @@ namespace mindnet::plugins::core::columns
         RefreshTokenColumns(const RefreshTokenColumns&) = delete;
         RefreshTokenColumns& operator=(const RefreshTokenColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME      = "refresh_token";
+        static constexpr const char* MODEL_NAME = "refresh_token";
 
-        static constexpr const char* USER_ID         = "user_id";
-        static constexpr const char* TOKEN_HASH      = "token_hash";
-        static constexpr const char* ISSUED_AT       = "issued_at";
-        static constexpr const char* EXPIRES_AT      = "expires_at";
-        static constexpr const char* IS_REVOKED      = "is_revoked";
-        static constexpr const char* REVOKED_AT      = "revoked_at";
-        static constexpr const char* REPLACED_BY_ID  = "replaced_by_id";
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* TOKEN_HASH = "token_hash";
+        static constexpr const char* ISSUED_AT = "issued_at";
+        static constexpr const char* EXPIRES_AT = "expires_at";
+        static constexpr const char* IS_REVOKED = "is_revoked";
+        static constexpr const char* REVOKED_AT = "revoked_at";
+        static constexpr const char* REPLACED_BY_ID = "replaced_by_id";
         static constexpr const char* ROTATED_FROM_ID = "rotated_from_id";
-        static constexpr const char* LAST_USED_AT    = "last_used_at";
-        static constexpr const char* IP_ADDRESS      = "ip_address";
-        static constexpr const char* USER_AGENT      = "user_agent";
+        static constexpr const char* LAST_USED_AT = "last_used_at";
+        static constexpr const char* IP_ADDRESS = "ip_address";
+        static constexpr const char* USER_AGENT = "user_agent";
     };
 }
 

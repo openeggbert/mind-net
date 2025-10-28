@@ -38,6 +38,7 @@ namespace mindnet::api
             return !ok();
         }
     };
+
     inline OperationResult empty_result;
 }
 

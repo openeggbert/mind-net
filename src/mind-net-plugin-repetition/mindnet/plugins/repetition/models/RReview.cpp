@@ -59,12 +59,12 @@ namespace mindnet::plugins::repetition::models
         using columns::RReviewColumns;
 
         validator_chain_vector list{
-             [this] {return test_between(grade, 0, 5, RReviewColumns::GRADE);},
-            [this] {return test_true(started_at < ended_at,"started_at must be less than ended_at");},
+            [this] { return test_between(grade, 0, 5, RReviewColumns::GRADE); },
+            [this] { return test_true(started_at < ended_at, "started_at must be less than ended_at"); },
 
-            [this] {return test_at_least(latency_ms, 0, RReviewColumns::LATENCY_MS);},
-            [this] {return test_eq(latency_ms, ended_at - started_at, RReviewColumns::LATENCY_MS);},
-            [this] {return test_at_least(answer_change_count, 0, RReviewColumns::ANSWER_CHANGE_COUNT);}
+            [this] { return test_at_least(latency_ms, 0, RReviewColumns::LATENCY_MS); },
+            [this] { return test_eq(latency_ms, ended_at - started_at, RReviewColumns::LATENCY_MS); },
+            [this] { return test_at_least(answer_change_count, 0, RReviewColumns::ANSWER_CHANGE_COUNT); }
         };
         return util::ValidatorChain::run(list);
     }

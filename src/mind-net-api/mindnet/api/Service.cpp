@@ -176,23 +176,30 @@ namespace mindnet::api
     {
         int column_index = 0;
         bool has_hidden_column = false;
-        for (const model::ColumnDefinition& c: def.get_columns())
+        for (const model::ColumnDefinition& c : def.get_columns())
         {
             const auto& type = c.get_column_type();
             const auto& primitive_type = model::column_type_to_primitive_column_type(type);
             if (c.is_hidden())
             {
                 has_hidden_column = true;
-                switch (primitive_type) {
-                case model::PrimitiveColumnType::Text: fields[column_index] = "*"; break;
-                case model::PrimitiveColumnType::Number: fields[column_index] = 0; break;
-                default: fields[column_index] = "*"; warn << "Unknown primitive type: " << model::primitive_column_type_to_string(primitive_type) << commit; break;
+                switch (primitive_type)
+                {
+                case model::PrimitiveColumnType::Text: fields[column_index] = "*";
+                    break;
+                case model::PrimitiveColumnType::Number: fields[column_index] = 0;
+                    break;
+                default: fields[column_index] = "*";
+                    warn << "Unknown primitive type: " << model::primitive_column_type_to_string(primitive_type) <<
+                        commit;
+                    break;
                 }
             }
             column_index++;
         }
         return has_hidden_column;
     }
+
     std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, api::AccessTokenContext& token,
                                                             int id, int stack_depth)
     {
@@ -286,7 +293,8 @@ namespace mindnet::api
         }
         auto action_result = db_ptr->list(def, token, query_params);
         trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
-                                      def, token.user_id, 0, api::empty_entity_fields, empty_entity_fields, query_params);
+                                      def, token.user_id, 0, api::empty_entity_fields, empty_entity_fields,
+                                      query_params);
         if (validation_result.ko())
         {
             return {{}, validation_result};
@@ -294,8 +302,7 @@ namespace mindnet::api
         if (token.is_not_system() && action_result.second.ok())
         {
             for (entity_fields& fields : action_result.first)
-            mask_hidden_columns(def, fields);
-
+                mask_hidden_columns(def, fields);
         }
         return action_result;
     };

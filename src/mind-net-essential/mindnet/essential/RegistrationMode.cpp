@@ -9,7 +9,6 @@
 
 namespace mindnet::essential
 {
-
     std::string registration_mode_to_string(RegistrationMode registration_mode)
     {
         switch (registration_mode)

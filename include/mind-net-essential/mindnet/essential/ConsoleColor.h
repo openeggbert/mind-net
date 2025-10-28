@@ -8,7 +8,6 @@
 
 namespace mindnet::essential
 {
-
     enum class ConsoleColor
     {
         UNKNOWN = -1,

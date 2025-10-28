@@ -17,7 +17,8 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::LoginSessionValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
 
     OperationResult LoginSessionValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const

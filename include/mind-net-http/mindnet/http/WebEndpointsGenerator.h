@@ -10,7 +10,6 @@
 
 namespace mindnet::http
 {
-
     struct CachedFile
     {
         std::string content;
@@ -24,7 +23,7 @@ namespace mindnet::http
         void create_web_endpoints(
             const api::ServicePtr& service_ptr,
             crow::SimpleApp& crow_app
-            );
+        );
 
     private:
         std::unordered_map<std::string, CachedFile> file_cache;

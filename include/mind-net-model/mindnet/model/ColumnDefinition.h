@@ -57,7 +57,7 @@ namespace mindnet::model
         AUTO = 1 << 3,
         HIDDEN = 1 << 4,
         READONLY = 1 << 5,
-        INTERNAL  = 1 << 6,
+        INTERNAL = 1 << 6,
         TEXT = 1 << 7,
         TEXTAREA = 1 << 8,
         INTEGER = 1 << 9,
@@ -218,6 +218,7 @@ namespace mindnet::model
         {
             return default_value;
         }
+
         [[nodiscard]] const int get_default_int_value() const
         {
             return default_value.empty() ? 0 : std::stoi(default_value);

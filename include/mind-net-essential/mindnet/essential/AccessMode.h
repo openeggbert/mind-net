@@ -16,15 +16,16 @@ namespace mindnet::essential
 
     enum class AccessMode
     {
-        MaintenanceMode = 0,                   // API disabled: no access for any user
-        AdminsReadOnly = 1,                    // Only Admins can read; all other users denied
-        AdminsReadWrite = 2,                   // Only Admins can read/write; all other users denied
-        AuthenticatedReadOnly = 3,             // JWT required; authenticated users can only read
-        AuthenticatedReadWrite = 4,            // JWT required; authenticated users can read/write according to roles
-        AuthenticatedFullAccess = 5,           // JWT required; all authenticated users have full access (roles ignored)
-        PublicReadOnlyAuthenticatedReadOnly = 6,   // Guests can read; authenticated users restricted to read-only
-        PublicReadOnlyAuthenticatedReadWrite = 7,  // Guests can read; authenticated users can read/write according to roles
-        PublicFullAccess = 8                   // Fully open API: guests and authenticated users have unrestricted access
+        MaintenanceMode = 0, // API disabled: no access for any user
+        AdminsReadOnly = 1, // Only Admins can read; all other users denied
+        AdminsReadWrite = 2, // Only Admins can read/write; all other users denied
+        AuthenticatedReadOnly = 3, // JWT required; authenticated users can only read
+        AuthenticatedReadWrite = 4, // JWT required; authenticated users can read/write according to roles
+        AuthenticatedFullAccess = 5, // JWT required; all authenticated users have full access (roles ignored)
+        PublicReadOnlyAuthenticatedReadOnly = 6, // Guests can read; authenticated users restricted to read-only
+        PublicReadOnlyAuthenticatedReadWrite = 7,
+        // Guests can read; authenticated users can read/write according to roles
+        PublicFullAccess = 8 // Fully open API: guests and authenticated users have unrestricted access
     };
 
     inline std::vector<AccessMode> access_mode_to_values()
@@ -132,6 +133,5 @@ namespace mindnet::essential
         Crudl action,
         bool reader_can_write
     );
-
 }
 #endif // ACCESSMODE_H

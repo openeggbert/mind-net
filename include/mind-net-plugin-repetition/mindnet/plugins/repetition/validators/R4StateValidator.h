@@ -24,28 +24,28 @@ namespace mindnet::plugins::repetition::validators
 
         create_method_prototypes_for_ValidatorBase(Model)
 
-    // protected:
-    //     // Add validation methods for specific R4State fields
-    //     bool validateEfTimes100(const Model& model) const
-    //     {
-    //         return model.ef_times_100 >= 100 && model.ef_times_100 <= 500;
-    //     }
-    //
-    //     bool validateNoteOrQuestionPresent(const Model& model) const
-    //     {
-    //         return (model.note_id.has_value() || model.question_id.has_value()) &&
-    //             !(model.note_id.has_value() && model.question_id.has_value());
-    //     }
-    //
-    //     bool validateIntervalAndRepetitions(const Model& model) const
-    //     {
-    //         return model.interval >= 1 && model.repetitions >= 0;
-    //     }
-    //
-    //     bool validateQuality(const Model& model) const
-    //     {
-    //         return model.last_quality >= 0 && model.last_quality <= 5;
-    //     }
+        // protected:
+        //     // Add validation methods for specific R4State fields
+        //     bool validateEfTimes100(const Model& model) const
+        //     {
+        //         return model.ef_times_100 >= 100 && model.ef_times_100 <= 500;
+        //     }
+        //
+        //     bool validateNoteOrQuestionPresent(const Model& model) const
+        //     {
+        //         return (model.note_id.has_value() || model.question_id.has_value()) &&
+        //             !(model.note_id.has_value() && model.question_id.has_value());
+        //     }
+        //
+        //     bool validateIntervalAndRepetitions(const Model& model) const
+        //     {
+        //         return model.interval >= 1 && model.repetitions >= 0;
+        //     }
+        //
+        //     bool validateQuality(const Model& model) const
+        //     {
+        //         return model.last_quality >= 0 && model.last_quality <= 5;
+        //     }
     };
 }
 #endif // R4STATEVALIDATOR_H

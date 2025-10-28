@@ -71,6 +71,5 @@ namespace mindnet::essential
     {
         return user_status_to_string(static_cast<UserStatus>(status));
     }
-
 }
 #endif // USERSTATUS_H

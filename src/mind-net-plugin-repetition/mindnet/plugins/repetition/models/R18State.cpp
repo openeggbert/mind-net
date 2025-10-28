@@ -49,14 +49,12 @@ namespace mindnet::plugins::repetition::models
         using columns::R18StateColumns;
 
         validator_chain_vector list{
-            [this] {return test_at_least(stability_times_100, 0, R18StateColumns::STABILITY_TIMES_100);},
-            [this] {return test_at_least(last_interval_times_100, 0, R18StateColumns::LAST_INTERVAL_TIMES_100);},
-            [this] {return test_at_least(repetitions, 0, R18StateColumns::REPETITIONS);},
-            [this] {return test_at_least(lapses, 0, R18StateColumns::LAPSES);},
-            [this] {return test_between(last_quality, 0, 5, R18StateColumns::LAST_QUALITY);},
+            [this] { return test_at_least(stability_times_100, 0, R18StateColumns::STABILITY_TIMES_100); },
+            [this] { return test_at_least(last_interval_times_100, 0, R18StateColumns::LAST_INTERVAL_TIMES_100); },
+            [this] { return test_at_least(repetitions, 0, R18StateColumns::REPETITIONS); },
+            [this] { return test_at_least(lapses, 0, R18StateColumns::LAPSES); },
+            [this] { return test_between(last_quality, 0, 5, R18StateColumns::LAST_QUALITY); },
         };
         return util::ValidatorChain::run(list);
     }
-
-
 }

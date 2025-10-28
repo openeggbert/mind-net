@@ -21,8 +21,6 @@ namespace mindnet::db::sqlite::queries
         nlohmann::json call(nlohmann::json request) override;
 
     private:
-
     };
-
 }
 #endif // GETRSESSIONSELECTEDITEMSSQLITEQUERY_H

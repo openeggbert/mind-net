@@ -20,7 +20,7 @@ namespace mindnet::http
             crow::SimpleApp& crow_app,
             procedure_ptr request_restart,
             procedure_ptr request_shutdown
-            );
+        );
     };
 }
 

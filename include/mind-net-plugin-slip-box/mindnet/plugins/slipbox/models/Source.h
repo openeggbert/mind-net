@@ -87,7 +87,6 @@ namespace mindnet::plugins::slipbox::models
                 && created_at == other.created_at
                 && updated_at == other.updated_at;
         }
-
     };
 }
 #undef Model

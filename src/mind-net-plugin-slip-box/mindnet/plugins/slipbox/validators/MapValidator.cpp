@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult MapValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.owner_id != ctx.token.user_id,
-          400, "Only owner can create maps")
+                  400, "Only owner can create maps")
 
         return ok_result;
     }
@@ -34,7 +34,7 @@ namespace mindnet::plugins::slipbox::validators
         if (entity.owner_id == ctx.token.user_id) return ok_result;
         if (entity.team_id != 0 && plugins::core::enums::can_read(entity.team_rights))
         {
-            auto team = core::find_team (ctx, entity.team_id);;
+            auto team = core::find_team(ctx, entity.team_id);;
             check_found(team);
             string is_member_of_team_result = core::is_member_of_team(ctx, team.first.get_id());
             if (is_member_of_team_result.empty()) return ok_result;
@@ -45,11 +45,10 @@ namespace mindnet::plugins::slipbox::validators
         }
 
         return {403, "You can not read this map."};
-
     }
 
     OperationResult MapValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                  const Model& new_entity) const
+                                                                const Model& new_entity) const
     {
         using core::enums::can_write;
 
@@ -58,7 +57,7 @@ namespace mindnet::plugins::slipbox::validators
 
         if (old_entity.team_id != 0 && can_write(old_entity.team_rights))
         {
-            auto team = core::find_team (ctx, old_entity.team_id);;
+            auto team = core::find_team(ctx, old_entity.team_id);;
             check_found(team);
             string is_member_of_team_result = core::is_member_of_team(ctx, team.first.get_id());
             team_can_write = is_member_of_team_result.empty();
@@ -82,7 +81,7 @@ namespace mindnet::plugins::slipbox::validators
 
         if (entity.team_id != 0 && can_delete(entity.team_rights))
         {
-            auto team = core::find_team (ctx, entity.team_id);;
+            auto team = core::find_team(ctx, entity.team_id);;
             check_found(team);
             string is_member_of_team_result = core::is_member_of_team(ctx, team.first.get_id());
             team_can_delete = is_member_of_team_result.empty();
@@ -98,7 +97,7 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult MapValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                const string_map& filter) const
+                                                              const string_map& filter) const
     {
         orm::QueryParams params;
         params.page_size = 100;
@@ -116,21 +115,17 @@ namespace mindnet::plugins::slipbox::validators
                 plugins::slipbox::models::Map map;
                 map.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, map.get_id());
-                if (check_result.ko()) return {
-                    400,
-                    std::string("You request list containing map with ID ") + std::to_string(map.get_id()) +
-                    ", but you cannot read this map. The reason: " + check_result.error
-                };
+                if (check_result.ko())
+                    return {
+                        400,
+                        std::string("You request list containing map with ID ") + std::to_string(map.get_id()) +
+                        ", but you cannot read this map. The reason: " + check_result.error
+                    };
             }
             params.page_number++;
         }
         return ok_result;
     }
-
-
-
-
-
 
 
     OperationResult MapValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
@@ -140,7 +135,7 @@ namespace mindnet::plugins::slipbox::validators
 
         if (entity.team_id != 0)
         {
-            auto team = core::find_team (ctx, entity.team_id);
+            auto team = core::find_team(ctx, entity.team_id);
             if (!team.second.empty()) return {400, "Team does not exist."};
         }
 
@@ -153,16 +148,13 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult MapValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                       const Model& new_entity) const
+                                                            const Model& new_entity) const
     {
-
         return ok_result;
     }
 
     OperationResult MapValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
-
-
         return ok_result;
     }
 

@@ -37,8 +37,8 @@ namespace mindnet::plugins::repetition::models
         using columns::RGlobalSettingColumns;
 
         validator_chain_vector list{
-            [this] {return testt_at_least(key, 1, RGlobalSettingColumns::KEY);},
-            [this] {return test_true(r_setting_keys.contains(key), "Key " + key + " is not allowed.");}
+            [this] { return testt_at_least(key, 1, RGlobalSettingColumns::KEY); },
+            [this] { return test_true(r_setting_keys.contains(key), "Key " + key + " is not allowed."); }
         };
         return util::ValidatorChain::run(list);
     }

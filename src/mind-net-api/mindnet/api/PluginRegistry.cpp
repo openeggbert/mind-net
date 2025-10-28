@@ -28,25 +28,31 @@ namespace mindnet::api
         return keys;
     }
 
-    std::vector<std::string> PluginRegistry::get_plugin_names_sorted_by_dependencies() const {
+    std::vector<std::string> PluginRegistry::get_plugin_names_sorted_by_dependencies() const
+    {
         std::unordered_map<std::string, PluginPtr> plugin_map;
-        for (auto& p : plugins) {
+        for (auto& p : plugins)
+        {
             plugin_map[p.first] = p.second;
         }
 
         std::unordered_map<std::string, int> visit_state; // 0=unvisited,1=visiting,2=visited
         std::vector<std::string> sorted;
 
-        std::function<void(const std::string&)> dfs = [&](const std::string& name) {
-            if (visit_state[name] == 1) {
+        std::function<void(const std::string&)> dfs = [&](const std::string& name)
+        {
+            if (visit_state[name] == 1)
+            {
                 throw CyclicDependencyException("Cyclic dependency detected at plugin: " + name);
             }
             if (visit_state[name] == 2) return;
 
             visit_state[name] = 1;
             auto plugin = plugin_map.at(name); // must exist, otherwise error elsewhere
-            for (auto& dep : plugin->depends_on_plugins()) {
-                if (plugin_map.find(dep) == plugin_map.end()) {
+            for (auto& dep : plugin->depends_on_plugins())
+            {
+                if (plugin_map.find(dep) == plugin_map.end())
+                {
                     throw MissingDependencyException(
                         "Plugin '" + name + "' depends on missing plugin: " += dep
                     );
@@ -57,8 +63,10 @@ namespace mindnet::api
             sorted.push_back(name);
         };
 
-        for (auto& p : plugins) {
-            if (visit_state[p.first] == 0) {
+        for (auto& p : plugins)
+        {
+            if (visit_state[p.first] == 0)
+            {
                 dfs(p.first);
             }
         }

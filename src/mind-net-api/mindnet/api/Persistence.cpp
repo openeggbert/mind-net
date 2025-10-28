@@ -14,11 +14,10 @@ namespace mindnet::api
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {
-
         for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
         {
             auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
-            for (auto& model_registration: plugin->get_model_registrations())
+            for (auto& model_registration : plugin->get_model_registrations())
             {
                 auto model_definition = model_registration->model_definition;
                 auto model_name = model_definition.get_model_name();
@@ -26,7 +25,6 @@ namespace mindnet::api
                 repository_names.emplace_back(model_name);
             }
         }
-
     }
 
     Persistence::~Persistence()

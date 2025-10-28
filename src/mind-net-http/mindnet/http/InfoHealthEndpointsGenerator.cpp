@@ -30,11 +30,10 @@ namespace mindnet::http
     }
 
     void create_info_endpoint(
-            const api::ServicePtr& service_ptr,
-            crow::SimpleApp& crow_app
-            )
+        const api::ServicePtr& service_ptr,
+        crow::SimpleApp& crow_app
+    )
     {
-
         //READ
         CROW_ROUTE(crow_app, "/info").methods(crow::HTTPMethod::GET)
         ([service_ptr](const crow::request& req)
@@ -62,9 +61,9 @@ namespace mindnet::http
     }
 
     void create_health_endpoint(
-            const api::ServicePtr& service_ptr,
-            crow::SimpleApp& crow_app
-            )
+        const api::ServicePtr& service_ptr,
+        crow::SimpleApp& crow_app
+    )
     {
         //READ
         CROW_ROUTE(crow_app, "/health").methods(crow::HTTPMethod::GET)
@@ -76,8 +75,6 @@ namespace mindnet::http
                 static const int MILLISECONDS_PER_MINUTE = 60 * MILLISECONDS_PER_SECOND;
                 static const int MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
                 static const int MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
-
-
 
 
                 //#define test_health_endpoint
@@ -189,7 +186,8 @@ namespace mindnet::http
                     compact = true;
             }
 
-            result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode || service_ptr->is_shutdown_scheduled() || service_ptr->is_restart_scheduled()
+            result["status"] = g_configuration.access_mode == essential::AccessMode::MaintenanceMode || service_ptr->
+                               is_shutdown_scheduled() || service_ptr->is_restart_scheduled()
                                    ? "MAINTENANCE"
                                    : "UP";
             result["uptime"] = print_duration(essential::start_time, now, compact);
@@ -207,6 +205,5 @@ namespace mindnet::http
     {
         create_info_endpoint(service_ptr, crow_app);
         create_health_endpoint(service_ptr, crow_app);
-
     }
 }

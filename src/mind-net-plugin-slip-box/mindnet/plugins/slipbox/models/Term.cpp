@@ -34,7 +34,6 @@ namespace mindnet::plugins::slipbox::models
         note_id = number();
         title = text();
         disambiguation = text();
-
     }
 
     string Term::validate()

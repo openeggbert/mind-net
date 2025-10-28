@@ -32,6 +32,7 @@ namespace mindnet::essential
     {
         Undefined = 0, Create = 1, Read = 2, Update = 3, Delete = 4, List = 5
     };
+
     inline constexpr int CRUDL_VALUE_COUNT = 6;
 
     inline std::string crudl_to_string(Crudl difficulty)

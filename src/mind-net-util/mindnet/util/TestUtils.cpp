@@ -40,9 +40,11 @@ namespace mindnet::util
     {
         string field_string = field;
         return test_true(number != eq_to,
-                         "Expected " + field_string + " not to be " + std::to_string(eq_to) + " but was " + std::to_string(
+                         "Expected " + field_string + " not to be " + std::to_string(eq_to) + " but was " +
+                         std::to_string(
                              number));
     }
+
     test_result test_not_null(int64_t number, const char* field)
     {
         return test_ne(number, 0, field);

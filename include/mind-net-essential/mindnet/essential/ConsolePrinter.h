@@ -38,14 +38,17 @@ namespace mindnet::essential
         {
             return true;
         }
-        bool is_disabled() {
+
+        bool is_disabled()
+        {
             return !is_enabled();
         }
 
         template <typename T>
         ConsolePrinter& operator<<(const T& value)
         {
-            if (is_enabled()) {
+            if (is_enabled())
+            {
                 std::lock_guard<std::recursive_mutex> lock(mtx);
                 buffer << value;
             }

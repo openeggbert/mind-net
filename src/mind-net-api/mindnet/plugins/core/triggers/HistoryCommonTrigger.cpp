@@ -12,6 +12,7 @@
 namespace mindnet::plugins::core::triggers
 {
     using_loggers()
+
     HistoryCommonTrigger::HistoryCommonTrigger()
         : Trigger(
             "HistoryCommonTrigger",
@@ -47,7 +48,7 @@ namespace mindnet::plugins::core::triggers
         experiment << "Hello trigger " << commit;
         experiment << "get_name " << get_name() << commit;
         experiment << "get_priority " << get_priority() << commit;
-        for (auto& o:get_operations())
+        for (auto& o : get_operations())
         {
             experiment << "get_operations " << crudl_to_string(o) << commit;
         }
@@ -58,7 +59,7 @@ namespace mindnet::plugins::core::triggers
         experiment << "Arguments: " << commit;
         experiment << "operation " << crudl_to_string(operation) << commit;
         experiment << "validation_result.status " << validation_result.status << commit;
-        experiment << "validation_result.error " << validation_result.error  << commit;
+        experiment << "validation_result.error " << validation_result.error << commit;
         experiment << "action_result.status " << action_result.status << commit;
         experiment << "action_result.error " << action_result.error << commit;
         experiment << "def.get_model_name() " << def.get_model_name() << commit;
@@ -66,7 +67,9 @@ namespace mindnet::plugins::core::triggers
         experiment << "id " << id << commit;
         experiment << "fields.size() " << fields.size() << commit;
         experiment << "query_params.fields.size() " << query_params.fields.size() << commit;
-        api::AccessTokenContext token = user_id == 0 ? api::AccessTokenContext(user_id, "system", 403) : api::AccessTokenContext(user_id, "", 200);
+        api::AccessTokenContext token = user_id == 0
+                                            ? api::AccessTokenContext(user_id, "system", 403)
+                                            : api::AccessTokenContext(user_id, "", 200);
 
         models::History history;
 
@@ -77,7 +80,8 @@ namespace mindnet::plugins::core::triggers
         if (operation == mindnet::essential::Crudl::Create || operation == mindnet::essential::Crudl::Update)
         {
             history.data_json = model_to_json(fields, def).dump(4);
-        } else
+        }
+        else
         {
             history.data_json = "{}";
         }

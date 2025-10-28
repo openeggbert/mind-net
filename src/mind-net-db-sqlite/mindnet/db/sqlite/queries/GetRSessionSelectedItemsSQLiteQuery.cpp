@@ -9,7 +9,7 @@
 
 namespace mindnet::db::sqlite::queries
 {
-    const std::string SQL_DUE_ONLY= R"(
+    const std::string SQL_DUE_ONLY = R"(
 SELECT n.id AS note_id
 FROM note n
 JOIN r{algorithm}_state s ON s.note_id = n.id
@@ -24,7 +24,7 @@ WHERE s.user_id = {user_id}
 LIMIT {limit};
 
 )";
-    const std::string SQL_NEW_ONLY= R"(SELECT n.id AS note_id
+    const std::string SQL_NEW_ONLY = R"(SELECT n.id AS note_id
 FROM note n
 LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
@@ -65,7 +65,7 @@ WHERE ({filter_under_note} = 0
 LIMIT {limit};
 )";
 
-    const std::string SQL_ALL= R"(
+    const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
 FROM note n
 WHERE ({filter_under_note} = 0)
@@ -75,7 +75,8 @@ LIMIT {limit};
 )";
 
     GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
-    : Query(QUERY_GetRSessionSelectedItemsQuery, "Returns new note ids for repetition session", essential::DatabaseType::SQLite)
+        : Query(QUERY_GetRSessionSelectedItemsQuery, "Returns new note ids for repetition session",
+                essential::DatabaseType::SQLite)
     {
     }
 
@@ -101,10 +102,14 @@ LIMIT {limit};
         const std::string* sql_template = nullptr;
         switch (scope)
         {
-        case 0: sql_template = &SQL_DUE_ONLY; break;
-        case 1: sql_template = &SQL_NEW_ONLY; break;
-        case 2: sql_template = &SQL_DUE_AND_NEW; break;
-        case 3: sql_template = &SQL_ALL; break;
+        case 0: sql_template = &SQL_DUE_ONLY;
+            break;
+        case 1: sql_template = &SQL_NEW_ONLY;
+            break;
+        case 2: sql_template = &SQL_DUE_AND_NEW;
+            break;
+        case 3: sql_template = &SQL_ALL;
+            break;
         default:
             throw std::invalid_argument("Invalid scope value");
         }
@@ -114,11 +119,16 @@ LIMIT {limit};
 
         switch (schedule)
         {
-        case 0: order_sql_part = "ORDER BY n.path"; break;                              // DepthFirst
-        case 1: order_sql_part = "ORDER BY n.depth ASC, n.id ASC"; break;               // BreadthFirst
-        case 2: order_sql_part = "ORDER BY random()"; break;                            // Random
-        case 3: order_sql_part = "ORDER BY n.path, random()"; break;                    // DepthFirstShuffled
-        case 4: order_sql_part = "ORDER BY (n.depth % 3), random()"; break;             // Interleaved
+        case 0: order_sql_part = "ORDER BY n.path";
+            break; // DepthFirst
+        case 1: order_sql_part = "ORDER BY n.depth ASC, n.id ASC";
+            break; // BreadthFirst
+        case 2: order_sql_part = "ORDER BY random()";
+            break; // Random
+        case 3: order_sql_part = "ORDER BY n.path, random()";
+            break; // DepthFirstShuffled
+        case 4: order_sql_part = "ORDER BY (n.depth % 3), random()";
+            break; // Interleaved
         case 5: // DifficultySorted
             if (scope == 0) // DueOnly
                 order_sql_part = "ORDER BY s.repetitions ASC, s.next_review ASC";
@@ -127,7 +137,8 @@ LIMIT {limit};
             else
                 order_sql_part = "ORDER BY n.created_at ASC"; // fallback
             break;
-        case 6: order_sql_part = "ORDER BY n.created_at ASC"; break;                    // Chronological
+        case 6: order_sql_part = "ORDER BY n.created_at ASC";
+            break; // Chronological
         default:
             throw std::invalid_argument("Invalid schedule value");
         }
@@ -172,7 +183,7 @@ LIMIT {limit};
             }
 
             response["note_ids"] = note_ids;
-            response["sql"] = sql;
+            //response["sql"] = sql;
         }
         catch (SQLite::Exception& e)
         {

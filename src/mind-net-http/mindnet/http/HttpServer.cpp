@@ -39,7 +39,6 @@ namespace mindnet::http
         {
             return crow::response(200, "ok");
         });
-
     }
 
     void HttpServer::request_shutdown()
@@ -121,7 +120,6 @@ namespace mindnet::http
     {
         web_endpoints_generator_ = std::make_shared<WebEndpointsGenerator>(directory_for_static_files);
         web_endpoints_generator_->create_web_endpoints(service_ptr, crow_app);
-
     }
 
     void HttpServer::create_model_definition_endpoints(const api::ServicePtr& service_ptr)
@@ -142,9 +140,9 @@ namespace mindnet::http
         gen.create_superadmin_endpoints(
             service_ptr,
             crow_app,
-            [this]{ request_restart(); },
-            [this]{ request_shutdown(); }
-            );
+            [this] { request_restart(); },
+            [this] { request_shutdown(); }
+        );
     }
 
     void HttpServer::create_authentication_endpoints(api::ServicePtr& service_ptr)
@@ -153,6 +151,6 @@ namespace mindnet::http
         gen.create_auth_endpoints(
             service_ptr,
             crow_app
-            );
+        );
     }
 }

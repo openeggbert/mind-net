@@ -57,13 +57,13 @@ namespace mindnet::plugins::repetition::models
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                   created_at == other.created_at &&
-                   updated_at == other.updated_at &&
-                   user_id == other.user_id &&
-                   note_id == other.note_id &&
-                   predicted_R_times_100 == other.predicted_R_times_100 &&
-                   actual_grade == other.actual_grade &&
-                   was_correct == other.was_correct;
+                created_at == other.created_at &&
+                updated_at == other.updated_at &&
+                user_id == other.user_id &&
+                note_id == other.note_id &&
+                predicted_R_times_100 == other.predicted_R_times_100 &&
+                actual_grade == other.actual_grade &&
+                was_correct == other.was_correct;
         }
     };
 }

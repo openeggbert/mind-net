@@ -15,7 +15,8 @@
 namespace mindnet::plugins::core::validators
 {
     using validators::ApiLogValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
 
     // ===== Authorization =====
     OperationResult ApiLogValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const

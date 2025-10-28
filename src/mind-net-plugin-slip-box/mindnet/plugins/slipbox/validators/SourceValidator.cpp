@@ -16,7 +16,8 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::SourceValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
 
     OperationResult SourceValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
@@ -37,7 +38,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult SourceValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = slipbox::find_map (ctx, entity.map_id);
+        auto map = slipbox::find_map(ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
         if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))

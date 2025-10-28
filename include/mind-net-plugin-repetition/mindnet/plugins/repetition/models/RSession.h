@@ -30,13 +30,15 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::CLONED_FROM_SESSION_ID, READONLY).set_foreign_key("r_session"),
 
-            coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
-            coldef(COLS::SCHEDULE, MANDATORY | READONLY).set_enum_definition(enums::repetition_schedule_to_enum_definition()),
+            coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(
+                enums::repetition_algorithm_to_enum_definition()),
+            coldef(COLS::SCHEDULE, MANDATORY | READONLY).set_enum_definition(
+                enums::repetition_schedule_to_enum_definition()),
 
             coldef(COLS::SCOPE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
             coldef(COLS::DESCRIPTION, READONLY),
 
-            coldef(COLS::FILTER_UNDER_NOTE,READONLY).set_foreign_key("note"),
+            coldef(COLS::FILTER_UNDER_NOTE, READONLY).set_foreign_key("note"),
             coldef(COLS::FILTER_DATE_FROM, DATETIME | READONLY),
             coldef(COLS::FILTER_DATE_TO, DATETIME | READONLY),
             coldef(COLS::FILTER_TAG, READONLY).set_foreign_key("tag"),
@@ -83,7 +85,7 @@ namespace mindnet::plugins::repetition::models
                 filter_date_to == other.filter_date_to &&
                 filter_tag == other.filter_tag &&
                 filter_collection == other.filter_collection &&
-                selected_items == other.selected_items&&
+                selected_items == other.selected_items &&
                 pinned == other.pinned;
         }
     };

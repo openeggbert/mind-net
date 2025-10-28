@@ -50,8 +50,9 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::SNOOZE_UNTIL, DATETIME).set_description("Snooze until this time"),
             coldef(COLS::EXPIRES_AT, DATETIME).set_description("Expiration time"),
 
-            coldef(COLS::REPEAT_INTERVAL).set_enum_definition(enums::alert_repeat_interval_to_enum_definition()).set_default_value(0).set_description(
-                "Repeat interval (e.g. DAILY, WEEKLY)"),
+            coldef(COLS::REPEAT_INTERVAL).set_enum_definition(enums::alert_repeat_interval_to_enum_definition()).
+                                          set_default_value(0).set_description(
+                                              "Repeat interval (e.g. DAILY, WEEKLY)"),
             coldef(COLS::REPEAT_COUNT, INTEGER).set_default_value(0).set_description("Number of times to repeat"),
             coldef(COLS::REPEAT_UNTIL, DATETIME).set_default_value(0).set_description("Repeat until this time"),
 
@@ -62,10 +63,12 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::TITLE, TEXT | MANDATORY).set_description("Alert title"),
             coldef(COLS::MESSAGE, TEXT).set_description("Alert message"),
 
-            coldef(COLS::STATUS).set_enum_definition(enums::alert_status_to_enum_definition()).set_default_value(0).set_description("Alert status (ACTIVE, TRIGGERED, etc)"),
+            coldef(COLS::STATUS).set_enum_definition(enums::alert_status_to_enum_definition()).set_default_value(0).
+                                 set_description("Alert status (ACTIVE, TRIGGERED, etc)"),
 
             coldef(COLS::IMPORTANT, BOOL).set_default_value(0).set_description("Whether this alert is important"),
-            coldef(COLS::CHANNEL, INTEGER).set_description("Notification channel").set_enum_definition(enums::alert_channel_to_enum_definition())
+            coldef(COLS::CHANNEL, INTEGER).set_description("Notification channel").set_enum_definition(
+                enums::alert_channel_to_enum_definition())
         });
 
     struct Model : mindnet::model::BaseModel

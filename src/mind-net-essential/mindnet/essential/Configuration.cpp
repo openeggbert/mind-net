@@ -72,9 +72,11 @@ namespace mindnet::essential
             start++;
 
         auto end = s.end();
-        do {
+        do
+        {
             end--;
-        } while (end != start && std::isspace(*end));
+        }
+        while (end != start && std::isspace(*end));
 
         return std::string(start, end + 1);
     }
@@ -110,7 +112,7 @@ namespace mindnet::essential
             ss << "," << *it;
             ++it;
         }
-    
+
         return ss.str();
     }
 
@@ -127,8 +129,10 @@ namespace mindnet::essential
         save_enum(database_type)
         if (database_type == DatabaseType::Unknown)
         {
-            std::cerr << "[FATAL] You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application." << std::endl;
-            throw std::runtime_error("You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application.");
+            std::cerr << "[FATAL] You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application." <<
+                std::endl;
+            throw std::runtime_error(
+                "You cannot set DatabaseType::Unknown in mindnet.properties. Exiting application.");
         }
         //
         save_enum(access_mode)
@@ -207,13 +211,15 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
                 }
                 catch (const fs::filesystem_error& e)
                 {
-                    std::cerr << "[FATAL] Error during creating directory: " << backup_dir << " " << e.what() << std::endl;
+                    std::cerr << "[FATAL] Error during creating directory: " << backup_dir << " " << e.what() <<
+                        std::endl;
                     return false;;
                 }
             }
 
             string old_name = "mindnet.properties";
-            auto new_name = backup_dir + "/" + old_name + "." + std::to_string(static_cast<long long>(std::time(nullptr)));
+            auto new_name = backup_dir + "/" + old_name + "." + std::to_string(
+                static_cast<long long>(std::time(nullptr)));
             try
             {
                 fs::rename(old_name, new_name);
@@ -222,14 +228,16 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
             catch (const fs::filesystem_error& e)
             {
                 std::cerr << "[FATAL] Renaming file failed: old_name=" << old_name <<
-                ", new_name=" << new_name << ", reason=" << e.what() << std::endl;
+                    ", new_name=" << new_name << ", reason=" << e.what() << std::endl;
                 return false;
             }
             {
                 const fs::path dir = backup_dir;
 
-                for (const auto& entry : fs::directory_iterator(dir)) {
-                    if (fs::is_regular_file(entry.path())) {
+                for (const auto& entry : fs::directory_iterator(dir))
+                {
+                    if (fs::is_regular_file(entry.path()))
+                    {
                         auto ftime = fs::last_write_time(entry);
 
                         // Convert filesystem time to system_clock::time_point
@@ -243,22 +251,23 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
 
                         //std::cout << "[TRACE] " << entry.path().filename().string() << " is " << days << " days old" << std::endl;
 
-                        if (days > 90) {
+                        if (days > 90)
+                        {
                             std::cout << "[INFO] Deleting " << entry.path() <<
                                 ", which is old " << days << " days " << std::endl;
 
                             //todo remove macro
-                            #define enable_backup_cleanup
-                            #ifdef enable_backup_cleanup
+#define enable_backup_cleanup
+#ifdef enable_backup_cleanup
                             std::error_code ec;
                             fs::remove(entry.path(), ec);
-                            if (ec) {
+                            if (ec)
+                            {
                                 std::cout << "[WARN] Failed to delete " << entry.path()
-                                          << ": " << ec.message() << std::endl;
+                                    << ": " << ec.message() << std::endl;
                             }
-                            #endif
+#endif
                         }
-
                     }
                 }
             }
@@ -319,9 +328,11 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
     push_entry(STRINGIFY(enum_name), enum_name##_options);
 
         ////
-        auto generate_options = [](auto values, auto to_string, auto current, const std::string& prefix) {
+        auto generate_options = [](auto values, auto to_string, auto current, const std::string& prefix)
+        {
             std::string html;
-            for (auto v : values) {
+            for (auto v : values)
+            {
                 std::string name = to_string(v);
                 std::string selected = (v == current) ? " selected" : "";
                 html += fmt::format("<option value=\"{}\"{}>{}</option>\n",
@@ -330,7 +341,7 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
             return html;
         };
 
-auto env_to_str = [](Environment e) {return environment_to_string(e);};
+        auto env_to_str = [](Environment e) { return environment_to_string(e); };
 
         std::string environment_options = generate_options(
             environment_to_values(),
@@ -339,7 +350,7 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
             "environment"
         );
 
-        auto db_to_str = [](DatabaseType e) {return database_type_to_string(e);};
+        auto db_to_str = [](DatabaseType e) { return database_type_to_string(e); };
 
         std::string database_type_options = generate_options(
             essential::database_type_to_values(),
@@ -348,7 +359,7 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
             "database_type"
         );
 
-        auto acc_to_str = [](AccessMode e) {return access_mode_to_string(e);};
+        auto acc_to_str = [](AccessMode e) { return access_mode_to_string(e); };
 
         std::string access_mode_options = generate_options(
             essential::access_mode_to_values(),
@@ -357,7 +368,7 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
             "access_mode"
         );
 
-        auto reg_to_str = [](RegistrationMode e) {return registration_mode_to_string(e);};
+        auto reg_to_str = [](RegistrationMode e) { return registration_mode_to_string(e); };
 
         std::string registration_mode_options = generate_options(
             essential::registration_mode_to_values(),
@@ -366,7 +377,7 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
             "registration_mode"
         );
 
-        auto role_to_str = [](UserRole e) {return user_role_to_string(e);};
+        auto role_to_str = [](UserRole e) { return user_role_to_string(e); };
 
         std::string default_user_role_options = generate_options(
             essential::user_role_to_values(),
@@ -375,7 +386,7 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
             "default_user_role"
         );
 
-        auto log_to_str = [](LogLevel e) {return log_level_to_string(e);};
+        auto log_to_str = [](LogLevel e) { return log_level_to_string(e); };
 
         std::string max_log_level_options = generate_options(
             essential::log_level_to_values(),
@@ -419,21 +430,26 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
     std::string Configuration::validate()
     {
         if (access_token_expires_in < ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE)
-            return "\"Access token expires in\" must be at least " + std::to_string(ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE) + " minutes";
+            return "\"Access token expires in\" must be at least " + std::to_string(ACCESS_TOKEN_EXPIRES_IN_MIN_VALUE) +
+                " minutes";
         if (access_token_expires_in > ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE)
-            return "\"Access token expires in\" must be at most " + std::to_string(ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE) + " minutes";
+            return "\"Access token expires in\" must be at most " + std::to_string(ACCESS_TOKEN_EXPIRES_IN_MAX_VALUE) +
+                " minutes";
 
         if (refresh_token_expires_in < REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE)
-            return "\"Refresh token expires in\" must be at least " + std::to_string(REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE) + " minutes";
+            return "\"Refresh token expires in\" must be at least " + std::to_string(REFRESH_TOKEN_EXPIRES_IN_MIN_VALUE)
+                + " minutes";
         if (refresh_token_expires_in > REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE)
-            return "\"Refresh token expires in\" must be at most " + std::to_string(REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE) + " minutes";
+            return "\"Refresh token expires in\" must be at most " + std::to_string(REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE)
+                + " minutes";
 
         int refresh_token_min = access_token_expires_in * 2;
         if (refresh_token_expires_in < refresh_token_min)
             return "\"Refresh token expires in\" must be at least twice of \"Access token expires in\"";
 
         if (refresh_token_rotation_threshold_in < REFRESH_TOKEN_ROTATION_THRESHOLD_MIN_VALUE)
-            return "\"Refresh token rotation threshold\" must be at least " + std::to_string(REFRESH_TOKEN_ROTATION_THRESHOLD_MIN_VALUE) + " minutes";
+            return "\"Refresh token rotation threshold\" must be at least " + std::to_string(
+                REFRESH_TOKEN_ROTATION_THRESHOLD_MIN_VALUE) + " minutes";
         if (refresh_token_rotation_threshold_in > refresh_token_expires_in)
             return "\"Refresh token rotation threshold\" must not exceed \"Refresh token expires in\"";
 
@@ -444,13 +460,12 @@ auto env_to_str = [](Environment e) {return environment_to_string(e);};
         if (refresh_token_rotation_threshold_in < min_threshold || refresh_token_rotation_threshold_in > max_threshold)
         {
             return "\"Refresh token rotation threshold\" must be between 20% (" +
-                   std::to_string(min_threshold) + " minutes) and 50% (" +
-                   std::to_string(max_threshold) + " minutes) of \"Refresh token expires in\" (" +
-                   std::to_string(refresh_token_expires_in) + " minutes)";
+                std::to_string(min_threshold) + " minutes) and 50% (" +
+                std::to_string(max_threshold) + " minutes) of \"Refresh token expires in\" (" +
+                std::to_string(refresh_token_expires_in) + " minutes)";
         }
 
 
         return "";
     }
-
 }

@@ -27,7 +27,8 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::R_SESSION_ID, FOREIGN_KEY | READONLY),
-            coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(enums::repetition_algorithm_to_enum_definition()),
+            coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(
+                enums::repetition_algorithm_to_enum_definition()),
             coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::REVIEW_DATE, DATETIME | READONLY),
             coldef(COLS::GRADE, INTEGER | READONLY),

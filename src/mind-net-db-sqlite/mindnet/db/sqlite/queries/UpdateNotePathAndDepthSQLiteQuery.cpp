@@ -10,7 +10,8 @@
 namespace mindnet::db::sqlite::queries
 {
     UpdateNotePathAndDepthSQLiteQuery::UpdateNotePathAndDepthSQLiteQuery()
-    : Query(QUERY_UpdateNotePathAndDepth, "Updates paths and depth of all descendants", essential::DatabaseType::SQLite)
+        : Query(QUERY_UpdateNotePathAndDepth, "Updates paths and depth of all descendants",
+                essential::DatabaseType::SQLite)
     {
     }
 

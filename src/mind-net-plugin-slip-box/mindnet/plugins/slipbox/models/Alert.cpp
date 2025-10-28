@@ -66,7 +66,11 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_ne(user_id, 0, AlertColumns::USER_ID); },
             [this] { return test_at_least(trigger_at, 0, AlertColumns::TRIGGER_AT); },
             [this] { return testt_between(title, 1, 255, AlertColumns::TITLE); },
-            [this] { return test_false(repeat_until > 0 && repeat_until <= trigger_at, "repeat_until must be after trigger_at"); },
+            [this]
+            {
+                return test_false(repeat_until > 0 && repeat_until <= trigger_at,
+                                  "repeat_until must be after trigger_at");
+            },
         };
         return util::ValidatorChain::run(list);
     }

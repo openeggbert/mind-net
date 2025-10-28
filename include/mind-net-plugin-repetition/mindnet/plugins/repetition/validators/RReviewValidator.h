@@ -21,7 +21,6 @@ namespace mindnet::plugins::repetition::validators
         using Model = RReview;
 
         create_method_prototypes_for_ValidatorBase(Model)
-
     };
 }
 #endif // RREVIEWVALIDATOR_H

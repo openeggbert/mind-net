@@ -13,8 +13,7 @@ namespace mindnet::plugins::repetition::migrations
 
     void RepetitionSQLiteMigrationScripts::define_migrations()
     {
-
-    	add_migration("V1__create_r_global_setting.sql", R"(
+        add_migration("V1__create_r_global_setting.sql", R"(
     	CREATE TABLE r_global_setting (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME DEFAULT (unixepoch(CURRENT_TIMESTAMP) * 1000),
@@ -28,20 +27,20 @@ namespace mindnet::plugins::repetition::migrations
 
 )");
 
-  //   	INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
-  // ('b', 0.6),
-  // ('R_target', 0.9),
-  // ('R_opt', 0.9),
-  // ('alpha', 0.3),
-  // ('beta', 0.6),
-  // ('gamma', 0.2),
-  // ('delta', 0.4),
-  // ('k_over', 0.15),
-  // ('S_min', 0.5),
-  // ('short_retry', 0.5); -- 12 hours
+        //   	INSERT OR IGNORE INTO r_global_setting(key, value) VALUES
+        // ('b', 0.6),
+        // ('R_target', 0.9),
+        // ('R_opt', 0.9),
+        // ('alpha', 0.3),
+        // ('beta', 0.6),
+        // ('gamma', 0.2),
+        // ('delta', 0.4),
+        // ('k_over', 0.15),
+        // ('S_min', 0.5),
+        // ('short_retry', 0.5); -- 12 hours
 
 
-    	add_migration("V2__create_r_user_setting.sql",R"(
+        add_migration("V2__create_r_user_setting.sql", R"(
 CREATE TABLE r_user_setting (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -92,7 +91,7 @@ CREATE TABLE r_session (
 
 )");
 
-    	add_migration("V4__create_r_review.sql", R"(
+        add_migration("V4__create_r_review.sql", R"(
 CREATE TABLE r_review (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -129,7 +128,7 @@ CREATE TABLE r_review (
 );
 
 )");
-    	add_migration("V5__create_r0_state.sql", R"(
+        add_migration("V5__create_r0_state.sql", R"(
 CREATE TABLE r0_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -152,7 +151,7 @@ CREATE TABLE r0_state (
 
 )");
 
-	    add_migration("V6__create_r2_state.sql", R"(
+        add_migration("V6__create_r2_state.sql", R"(
 CREATE TABLE r2_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -176,7 +175,7 @@ CREATE TABLE r2_state (
 );
 )");
 
-    	add_migration("V7__create_r4_state.sql", R"(
+        add_migration("V7__create_r4_state.sql", R"(
 CREATE TABLE r4_state (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -205,7 +204,7 @@ CREATE TABLE r4_state (
 )");
 
 
-    	add_migration("V8__create_r18_state.sql", R"(
+        add_migration("V8__create_r18_state.sql", R"(
 CREATE TABLE r18_state (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -229,7 +228,7 @@ CREATE TABLE r18_state (
 );
 )");
 
-    	add_migration("V9__create_r18_perf_agg.sql", R"(
+        add_migration("V9__create_r18_perf_agg.sql", R"(
 CREATE TABLE r18_perf_agg (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -247,7 +246,7 @@ CREATE TABLE r18_perf_agg (
 
     	)");
 
-    	add_migration("V10__create_r18_prediction_log.sql", R"(
+        add_migration("V10__create_r18_prediction_log.sql", R"(
 CREATE TABLE r18_prediction_log (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -263,7 +262,7 @@ CREATE TABLE r18_prediction_log (
 )");
 
 
-    	add_migration("V11__create_repetition_indexes.sql", R"(
+        add_migration("V11__create_repetition_indexes.sql", R"(
 
 -- Index for fast selection of "due items" (SM-18 and other algorithms)
 CREATE INDEX IF NOT EXISTS idx_r18_state_user_due
@@ -302,19 +301,8 @@ CREATE INDEX IF NOT EXISTS idx_r18_state_note
     ON r18_state (note_id);
 
 )");
-
-
     }
 }
-
-
-
-
-
-
-
-
-
 
 
 /*

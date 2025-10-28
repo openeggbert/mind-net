@@ -15,9 +15,8 @@ namespace mindnet::http
     class HttpServer
     {
     public:
-
         HttpServer(api::ServicePtr& service_ptr,
-                   std::string  directory_for_static_files = std::string("static"));
+                   std::string directory_for_static_files = std::string("static"));
         void request_shutdown();
         void request_restart();
         void run(const string& host = "http://localhost", int port = 8080, int frontend_port = 8080);
@@ -37,7 +36,6 @@ namespace mindnet::http
         api::ServicePtr service_ptr_;
         std::string directory_for_static_files;
         std::shared_ptr<WebEndpointsGenerator> web_endpoints_generator_ = nullptr;
-
 
 
         //

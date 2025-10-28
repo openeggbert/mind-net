@@ -35,6 +35,5 @@ namespace mindnet::plugins::repetition
         S_min,
         short_retry
     };
-
 }
 #endif //MIND_NET_RSETTING_H

@@ -25,11 +25,13 @@ namespace mindnet::api
 
         bool ok() const { return status == 200; }
         bool ko() const { return !ok(); }
+
         bool is_system() const
         {
             if (system) return true;
             return user_id == 0 && msg == "system" && status == 403;
         }
+
         bool is_not_system() const
         {
             return !is_system();

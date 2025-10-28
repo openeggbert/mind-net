@@ -6,13 +6,15 @@
 #define MIND_NET_DATABASECREDENTIALS_H
 #include <string>
 
-namespace mindnet::essential {
-struct DatabaseCredentials {
-    std::string host;
-    int port{};
-    std::string name;
-    std::string user;
-    std::string password;
-};
+namespace mindnet::essential
+{
+    struct DatabaseCredentials
+    {
+        std::string host;
+        int port{};
+        std::string name;
+        std::string user;
+        std::string password;
+    };
 }
 #endif //MIND_NET_DATABASECREDENTIALS_H

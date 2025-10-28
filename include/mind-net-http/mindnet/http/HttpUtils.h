@@ -11,8 +11,7 @@ if (\
                 service_ptr->is_shutdown_scheduled() ||\
                 service_ptr->is_restart_scheduled()\
                 ) return\
-                crow::response(503, "Maintenance Mode. Service Unavailable.");\
-
+                crow::response(503, "Maintenance Mode. Service Unavailable.");
 
 #include "crow.h"
 #include <string>

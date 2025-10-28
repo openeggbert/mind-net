@@ -63,11 +63,11 @@ namespace mindnet::util
     {
         return static_cast<long long>(std::time(nullptr));
     }
+
     long long Utils::current_unix_timestamp_ms()
     {
         using namespace std::chrono;
         return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-
     }
 
     std::string Utils::unixtime_to_string(unixtime unixTimestamp)
@@ -90,7 +90,7 @@ namespace mindnet::util
         // add milliseconds
         char result[40];
         std::snprintf(result, sizeof(result), "%s.%03d", buffer, milliseconds);
-    
+
         return {result};
     }
 
@@ -225,7 +225,8 @@ namespace mindnet::util
 
         return result;
     }
-    std::set<string> Utils::split_string_by_commas (const string& string_, std::set<std::string>& result)
+
+    std::set<string> Utils::split_string_by_commas(const string& string_, std::set<std::string>& result)
     {
         if (!string_.empty())
         {
@@ -252,40 +253,40 @@ namespace mindnet::util
         return os.str();
     }
 
-        std::string Utils::generate_secret_key(
-            size_t length,
-            bool numbers,
-            bool lower_case,
-            bool upper_case,
-            bool symbols)
+    std::string Utils::generate_secret_key(
+        size_t length,
+        bool numbers,
+        bool lower_case,
+        bool upper_case,
+        bool symbols)
+    {
+        std::string charset;
+
+        if (numbers)
+            charset += "0123456789";
+        if (upper_case)
+            charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (lower_case)
+            charset += "abcdefghijklmnopqrstuvwxyz";
+        if (symbols)
+            charset += "!@#$%^&*()-_=+[]{}<>?/|";
+
+        if (charset.empty())
         {
-            std::string charset;
-
-            if (numbers)
-                charset += "0123456789";
-            if (upper_case)
-                charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            if (lower_case)
-                charset += "abcdefghijklmnopqrstuvwxyz";
-            if (symbols)
-                charset += "!@#$%^&*()-_=+[]{}<>?/|";
-
-            if (charset.empty()) {
-                throw std::invalid_argument("At least one character set must be enabled.");
-            }
-
-            std::random_device rd;
-            std::mt19937 gen(rd());
-            std::uniform_int_distribution<> dist(0, static_cast<int>(charset.size()) - 1);
-
-            std::string key;
-            key.reserve(length);
-            for (size_t i = 0; i < length; i++) {
-                key.push_back(charset[dist(gen)]);
-            }
-
-            return key;
+            throw std::invalid_argument("At least one character set must be enabled.");
         }
 
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dist(0, static_cast<int>(charset.size()) - 1);
 
+        std::string key;
+        key.reserve(length);
+        for (size_t i = 0; i < length; i++)
+        {
+            key.push_back(charset[dist(gen)]);
+        }
+
+        return key;
+    }
 }

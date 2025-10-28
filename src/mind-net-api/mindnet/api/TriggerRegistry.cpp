@@ -29,7 +29,6 @@ namespace mindnet::api
         entity_fields& old_fields,
         const orm::QueryParams& query_params)
     {
-
         std::vector<std::string> v{def.get_model_name(), "*"};
         for (auto& s : v)
         {

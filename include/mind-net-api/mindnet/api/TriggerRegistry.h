@@ -21,6 +21,7 @@ namespace mindnet::api
 {
     static entity_fields empty_entity_fields;
     const orm::QueryParams empty_query_params;
+
     class TriggerRegistry
     {
     public:
@@ -50,6 +51,7 @@ namespace mindnet::api
 
         TableMap registry_;
     };
+
     typedef std::shared_ptr<TriggerRegistry> TriggerRegistryPtr;
 }
 

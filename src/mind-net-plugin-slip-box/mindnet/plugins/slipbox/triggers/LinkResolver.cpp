@@ -54,7 +54,8 @@ namespace mindnet::plugins::slipbox::triggers
                         found_note_titles.insert(el.get<std::string>());
 
 
-                    for (auto& [title, id] : res.at("found_note_ids").items()) {
+                    for (auto& [title, id] : res.at("found_note_ids").items())
+                    {
                         title_to_id[title] = id.get<i64>();
                     }
 
@@ -74,7 +75,8 @@ namespace mindnet::plugins::slipbox::triggers
         }
 
 
-        for (auto& e : wikilinks) {
+        for (auto& e : wikilinks)
+        {
             if (title_to_id.contains(e))
                 new_links.push_back(e);
             else

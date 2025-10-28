@@ -34,6 +34,5 @@ X(Repetition4, 4, ENUM_NAME)               \
 X(Repetition18, 18, ENUM_NAME)
 
     DECLARE_ENUM(RepetitionAlgorithm, repetition_algorithm, REPETITION_ALGORITHM_LIST)
-
 } // namespace mindnet::plugins::repetition::enums
 #endif // REPETITIONALGORITHM_H

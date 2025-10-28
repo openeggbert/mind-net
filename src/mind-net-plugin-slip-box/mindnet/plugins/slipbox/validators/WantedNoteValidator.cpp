@@ -16,7 +16,8 @@
 namespace mindnet::plugins::slipbox::validators
 {
     using validators::WantedNoteValidator;
-    using mindnet::api::OperationResult;using mindnet::essential::g_configuration;
+    using mindnet::api::OperationResult;
+    using mindnet::essential::g_configuration;
 
     OperationResult WantedNoteValidator::validate_create_authorization(const RequestContext& ctx,
                                                                        const Model& entity) const
@@ -25,9 +26,9 @@ namespace mindnet::plugins::slipbox::validators
     }
 
     OperationResult WantedNoteValidator::validate_read_authorization(const RequestContext& ctx,
-                                                                  const Model& entity) const
+                                                                     const Model& entity) const
     {
-        auto note = slipbox::find_note (ctx, entity.from_note_id);;
+        auto note = slipbox::find_note(ctx, entity.from_note_id);;
         if (!note.second.empty()) return {400, note.second};
 
         if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -37,13 +38,15 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult WantedNoteValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                              const Model& new_entity) const
+    OperationResult WantedNoteValidator::validate_update_authorization(const RequestContext& ctx,
+                                                                       const Model& old_entity,
+                                                                       const Model& new_entity) const
     {
         return status_403_forbidden;
     }
 
-    OperationResult WantedNoteValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult WantedNoteValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         return ok_result;
     }
@@ -55,7 +58,7 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(from_note_id)
         auto note_id = std::stoi(filter.at("from_note_id"));
 
-        auto note = slipbox::find_note (ctx, note_id);;
+        auto note = slipbox::find_note(ctx, note_id);;
         if (!note.second.empty()) return {400, note.second};
 
         if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -77,11 +80,13 @@ namespace mindnet::plugins::slipbox::validators
     {
         return ok_result;
     }
+
     OperationResult WantedNoteValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                         const Model& new_entity) const
+                                                                   const Model& new_entity) const
     {
         return status_403_forbidden;
     }
+
     OperationResult WantedNoteValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;

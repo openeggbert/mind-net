@@ -52,7 +52,8 @@ namespace mindnet::plugins::slipbox::triggers
         std::string new_title = new_note.title;
         std::string old_title = old_note.title;
 
-        if (operation == essential::Crudl::Update && new_title == old_title) {
+        if (operation == essential::Crudl::Update && new_title == old_title)
+        {
             info << "Note title unchanged, skipping link/wanted-note sync" << commit;
             return;
         }
@@ -60,8 +61,8 @@ namespace mindnet::plugins::slipbox::triggers
         i64 map_id = new_note.map_id;
 
         api::AccessTokenContext token = user_id == 0
-                                    ? api::AccessTokenContext(user_id, "system", 403)
-                                    : api::AccessTokenContext(user_id, "", 200);
+                                            ? api::AccessTokenContext(user_id, "system", 403)
+                                            : api::AccessTokenContext(user_id, "", 200);
 
         auto has_map_this_note = [&](i64 note_id)
         {
@@ -77,23 +78,24 @@ namespace mindnet::plugins::slipbox::triggers
             return !list_notes.first.empty();
         };
 
-        auto find_wanted_notes_for_title = [&](const std::string& title) {
-        orm::QueryParams params_wanted_notes;
-        params_wanted_notes.add_filter("to_note_title", title);
-        auto list_wanted_notes = run_list(models::WANTED_NOTE_DEFINITION, token, params_wanted_notes, stack_depth);
+        auto find_wanted_notes_for_title = [&](const std::string& title)
+        {
+            orm::QueryParams params_wanted_notes;
+            params_wanted_notes.add_filter("to_note_title", title);
+            auto list_wanted_notes = run_list(models::WANTED_NOTE_DEFINITION, token, params_wanted_notes, stack_depth);
             std::set<models::WantedNote> wanted_notes;
-        if (list_wanted_notes.second.ko())
-        {
-            err << "Listing wanted notes failed";
-            return wanted_notes;
-        }
+            if (list_wanted_notes.second.ko())
+            {
+                err << "Listing wanted notes failed";
+                return wanted_notes;
+            }
 
-        for (auto& e:list_wanted_notes.first)
-        {
-            models::WantedNote wn;
-            wn.from_values(e);
-            if (has_map_this_note(wn.from_note_id)) wanted_notes.insert(wn);
-        }
+            for (auto& e : list_wanted_notes.first)
+            {
+                models::WantedNote wn;
+                wn.from_values(e);
+                if (has_map_this_note(wn.from_note_id)) wanted_notes.insert(wn);
+            }
             return wanted_notes;
         };
 
@@ -110,7 +112,7 @@ namespace mindnet::plugins::slipbox::triggers
                 err << "Listing links failed";
                 return links;
             }
-            for (auto& e:list_links.first)
+            for (auto& e : list_links.first)
             {
                 models::Link l;
                 l.from_values(e);
@@ -159,28 +161,27 @@ namespace mindnet::plugins::slipbox::triggers
         };
         if (operation == essential::Crudl::Create || operation == essential::Crudl::Update)
         {
-           auto wanted_notes =  find_wanted_notes_for_title(new_title);
-            for (const auto& wn:wanted_notes)
+            auto wanted_notes = find_wanted_notes_for_title(new_title);
+            for (const auto& wn : wanted_notes)
             {
                 auto link = convert_wanted_note_to_link(wn, id);
                 delete_wanted_note(wn);
                 save_link(link);
                 info << "Converted WantedNote→Link: from=" << wn.from_note_id
-     << " to=" << new_title << commit;
+                    << " to=" << new_title << commit;
             }
         }
         if (operation == essential::Crudl::Update)
         {
-            auto links =  find_links_for_title(old_title);
-            for (const auto& l:links)
+            auto links = find_links_for_title(old_title);
+            for (const auto& l : links)
             {
                 auto wn = convert_link_to_wanted_note(l);
                 delete_link(l);
                 save_wanted_note(wn);
                 info << "Converted Link→WantedNote: from=" << l.from_note_id
-     << " old_title=" << old_title << commit;
+                    << " old_title=" << old_title << commit;
             }
         }
-
     }
 }

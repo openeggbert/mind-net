@@ -10,14 +10,13 @@
 
 namespace mindnet::http
 {
-
     class AuthEndpointsGenerator
     {
     public:
         void create_auth_endpoints(
             api::ServicePtr& service_ptr,
             crow::SimpleApp& crow_app
-            );
+        );
     };
 }
 

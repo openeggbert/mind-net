@@ -22,7 +22,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TaskValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
-        
+
         return ok_result;
     }
 
@@ -37,8 +37,8 @@ namespace mindnet::plugins::slipbox::validators
         // Private tasks can only be read by the owner, creator, or assigned user
         if (
             ctx.token.user_id != entity.owner_id &&
-                ctx.token.user_id != entity.created_by &&
-                ctx.token.user_id != entity.assigned_to)
+            ctx.token.user_id != entity.created_by &&
+            ctx.token.user_id != entity.assigned_to)
         {
             return {403, "No permission to read this task"};
         }
@@ -50,8 +50,8 @@ namespace mindnet::plugins::slipbox::validators
     {
         // Only owner, creator or assigned user can update
         if (ctx.token.user_id != old_entity.owner_id &&
-                ctx.token.user_id != old_entity.created_by &&
-                ctx.token.user_id != old_entity.assigned_to)
+            ctx.token.user_id != old_entity.created_by &&
+            ctx.token.user_id != old_entity.assigned_to)
         {
             return {403, "No permission to update this task"};
         }
@@ -62,7 +62,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         // Only owner or creator can delete
         if (ctx.token.user_id != entity.owner_id &&
-                ctx.token.user_id != entity.created_by)
+            ctx.token.user_id != entity.created_by)
         {
             return {403, "No permission to delete this task"};
         }

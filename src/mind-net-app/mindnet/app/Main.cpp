@@ -50,9 +50,11 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         debug << "Migrating schema for plugin " << plugin_name << commit;
         auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
         auto migration_scripts = plugin->get_migration_scripts();
-        if (migration_scripts == nullptr || migration_scripts.get()->get_database_type() != g_configuration.database_type)
+        if (migration_scripts == nullptr || migration_scripts.get()->get_database_type() != g_configuration.
+            database_type)
         {
-            fatal << "Plugin " + plugin_name + " does not have migration scripts for configured database type: " + mindnet::essential::database_type_to_string(g_configuration.database_type);
+            fatal << "Plugin " + plugin_name + " does not have migration scripts for configured database type: " +
+                mindnet::essential::database_type_to_string(g_configuration.database_type);
             exit(1);
         }
         bool migration_result =
@@ -68,7 +70,6 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         err << "Migrating schema for plugin " << plugin_name << ": KO. Failed." << commit;
         exit(ExitStatus::MIGRATION_FAILED);
     }
-
 }
 
 void print_logo()
@@ -128,7 +129,7 @@ bool commands_function_start(
     {
         mindnet::plugins::core::models::User user;
         user.username =
-            mindnet::util::Utils::generate_secret_key(1, false, true, true, false)+
+            mindnet::util::Utils::generate_secret_key(1, false, true, true, false) +
             mindnet::util::Utils::generate_secret_key(15, true, true, true, false);
 
         const auto& super_admin_password = mindnet::util::Utils::generate_secret_key(64);
@@ -140,7 +141,8 @@ bool commands_function_start(
 
         auto user_to_values = user.to_values();
         auto create_result = service_ptr.get()->
-                                             create(mindnet::plugins::core::models::USER_DEFINITION, system_token, user_to_values);
+                                         create(mindnet::plugins::core::models::USER_DEFINITION, system_token,
+                                                user_to_values);
         if (create_result.second.ko())
         {
             const auto& error = "Creating default administrator failed. " + create_result.second.error;
@@ -149,13 +151,14 @@ bool commands_function_start(
         }
         std::ofstream pw_txt("pw.txt");
 
-        if (!pw_txt) {
+        if (!pw_txt)
+        {
             fatal << "Creating file pw.txt failed." << commit;
             exit(1);
         }
 
         pw_txt << user.username << "\n";
-        pw_txt << super_admin_password <<"\n";
+        pw_txt << super_admin_password << "\n";
 
         pw_txt.close(); // not necessary, will close automatically during destruction
         debug << "File pw.txt was successfully created." << commit;
@@ -245,7 +248,8 @@ bool commands_function_start(
         fatal << "Static directory does not exist: " << static_directory << commit;
         exit_status = 1;
         return true;
-    } else
+    }
+    else
     {
         info << "Static directory exists: " << static_directory << commit;
     }

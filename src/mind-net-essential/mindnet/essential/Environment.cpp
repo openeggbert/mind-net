@@ -9,7 +9,7 @@
 
 namespace mindnet::essential
 {
-     std::string environment_to_string(const Environment& environment)
+    std::string environment_to_string(const Environment& environment)
     {
         switch (environment)
         {

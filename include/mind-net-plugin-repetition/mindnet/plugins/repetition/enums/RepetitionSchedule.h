@@ -82,7 +82,6 @@ namespace mindnet::plugins::repetition::enums
     X(Chronological, 6, ENUM_NAME)
 
     DECLARE_ENUM(RepetitionSchedule, repetition_schedule, REPETITION_SCHEDULE_LIST)
-
 } // namespace mindnet::plugins::repetition::enums
 
 #endif // REPETITIONSCHEDULE_H
