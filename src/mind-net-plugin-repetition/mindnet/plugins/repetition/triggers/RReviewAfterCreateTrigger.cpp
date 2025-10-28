@@ -609,7 +609,7 @@ namespace mindnet::plugins::repetition::triggers
                 const double delta = get_param(user_id, "delta", 0.4, token, stack_depth);
                 const double k_over = get_param(user_id, "k_over", 0.15, token, stack_depth);
                 const double S_min = get_param(user_id, "S_min", 0.5, token, stack_depth);
-                const double short_retry = get_param(user_id, "short_retry", 0.5, token, stack_depth);
+                const double short_retry = get_param(user_id, "short_retry", 0.02, token, stack_depth);
                 const double t0 = get_param(user_id, "t0", 0.2, token, stack_depth);
                 const double R_inf = get_param(user_id, "R_infty", 0.02, token, stack_depth);
                 const double fatigue_lambda = get_param(user_id, "fatigue_lambda", 0.1, token, stack_depth);
