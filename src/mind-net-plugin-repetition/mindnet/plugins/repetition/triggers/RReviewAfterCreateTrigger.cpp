@@ -98,7 +98,7 @@ namespace mindnet::plugins::repetition::triggers
     //https://super-memory.com/english/ol/beginning.htm#Algorithm
     static int get_next_r0_interval(int previous_repetitions, bool correct)
     {
-        const static std::vector<int> SM0_INTERVALS = {1, 6, 16, 35, 62, 100, 150, 210};
+        const static std::vector<int> SM0_INTERVALS = {1, 6, 16, 35, 62, 100, 150, 210, 300, 420};
 
         if (!correct) return SM0_INTERVALS[0];
         int next_index = std::min(previous_repetitions, static_cast<int>(SM0_INTERVALS.size()) - 1);
@@ -385,6 +385,11 @@ namespace mindnet::plugins::repetition::triggers
         // ============================================================
         // Updating state record.
         // ============================================================
+        // --- tunable safety caps (user/global settings) ---
+        const double EF_MAX = get_param(user_id, "ef_max", 2.6, token, stack_depth); // upper limit of EF
+        const int MAX_INTERVAL_DAYS = (int)std::round(
+            get_param(user_id, "max_interval_days", 1825.0, token, stack_depth)); // max 5 years
+
         switch (r_review.algorithm)
         {
         case enums::RepetitionAlgorithm::Repetition0:
@@ -463,10 +468,18 @@ namespace mindnet::plugins::repetition::triggers
 
                     // Update EF (Easiness Factor)
                     ef = ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
+
+                    // clamp EF to [1.3, EF_MAX]
                     if (ef < 1.3) ef = 1.3;
+                    if (ef > EF_MAX) ef = EF_MAX;
 
                     reps += 1;
                 }
+
+                // --- clamp interval globally ---
+                if (interval < 1) interval = 1;
+                if (interval > MAX_INTERVAL_DAYS) interval = MAX_INTERVAL_DAYS;
+
 
                 // Update the state
                 r2_state.repetitions = reps;
@@ -512,8 +525,12 @@ namespace mindnet::plugins::repetition::triggers
                 models::R4State r4_state;
                 r4_state.from_values(read_r4_state.first);
 
-                const int q = std::clamp(r_review.grade, 0, 5);
+                // Correction Factor tuning
+                const double CF_GAIN = get_param(user_id, "cf_gain", 0.025, token, stack_depth); // default jemnější než 0.05
+                const double CF_MIN  = get_param(user_id, "cf_min", 0.9, token, stack_depth);
+                const double CF_MAX  = get_param(user_id, "cf_max", 1.1, token, stack_depth);
 
+                const int q = std::clamp(r_review.grade, 0, 5);
 
                 double ef = r4_state.ef_times_100 / 100.0;
                 double cf = r4_state.correction_factor_times_100 / 100.0;
@@ -530,13 +547,14 @@ namespace mindnet::plugins::repetition::triggers
                 else
                 {
                     // update correction factor
-                    cf = 1.0 + ((q - 3) * 0.05);
-                    if (cf < 0.7) cf = 0.7;
-                    if (cf > 1.5) cf = 1.5;
+                    cf = 1.0 + (q - 3) * CF_GAIN;
+                    if (cf < CF_MIN) cf = CF_MIN;
+                    if (cf > CF_MAX) cf = CF_MAX;
 
-                    // update easiness factor (same formula as SM-2)
+                    // update easiness factor (SM-2 formula) + clamp
                     ef = ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
                     if (ef < 1.3) ef = 1.3;
+                    if (ef > EF_MAX) ef = EF_MAX;
 
                     if (reps == 0)
                         interval = 1;
@@ -546,7 +564,13 @@ namespace mindnet::plugins::repetition::triggers
                         interval = static_cast<int>(std::round(interval * ef * cf));
 
                     reps += 1;
+
                 }
+
+                // --- clamp interval globally ---
+                if (interval < 1) interval = 1;
+                if (interval > MAX_INTERVAL_DAYS) interval = MAX_INTERVAL_DAYS;
+
 
                 // save back
                 r4_state.repetitions = reps;
