@@ -59,7 +59,9 @@ export function buildGlobals(modelDef, schemas) {
 }
 
 export function mapColumnType(colType) {
-    switch (colType) {
+    const t = colType.toUpperCase();
+
+    switch (t) {
         case "TEXT": return "text";
         case "TEXTAREA": return "textarea";
         case "INTEGER": return "number";
