@@ -338,7 +338,7 @@ namespace mindnet::plugins::repetition::triggers
                     state.user_id = r_review.user_id;
                     state.note_id = r_review.note_id;
 
-                    state.stability_times_100 = 400;
+                    state.stability_times_100 = 800;
                     state.last_interval_times_100 = 0;
                     state.repetitions = 0;
                     state.lapses = 0;
@@ -624,9 +624,9 @@ namespace mindnet::plugins::repetition::triggers
                 // =======================
                 // Model parameters (SM-18)
                 // =======================
-                const double b = get_param(user_id, "b", 0.6, token, stack_depth);
-                const double R_target = get_param(user_id, "R_target", 0.9, token, stack_depth);
-                const double R_opt = get_param(user_id, "R_opt", 0.9, token, stack_depth);
+                const double b = get_param(user_id, "b", 1.1, token, stack_depth);
+                const double R_target = get_param(user_id, "R_target", 0.8, token, stack_depth);
+                const double R_opt = get_param(user_id, "R_opt", 0.8, token, stack_depth);
                 const double alpha = get_param(user_id, "alpha", 0.3, token, stack_depth);
                 const double beta = get_param(user_id, "beta", 0.6, token, stack_depth);
                 const double gamma = get_param(user_id, "gamma", 0.2, token, stack_depth);
@@ -686,23 +686,33 @@ namespace mindnet::plugins::repetition::triggers
                 double R_now = retrievability(elapsed_days, S);
                 double I_opt = interval_for_target(S, R_opt);
                 double overdue = std::max(0.0, elapsed_days / std::max(1e-9, I_opt) - 1.0);
-                double g_over = 1.0 + k_over * overdue;
 
+                double g_over = 1.0 + k_over * overdue;
+                const double G_OVER_MAX = get_param(user_id, "g_over_max", 1.5, token, stack_depth); // +50 % max
+                g_over = std::clamp(g_over, 0.0, G_OVER_MAX);
                 // =======================
                 // Stability (with user sensitivity)
                 // =======================
                 double S_before = S;
                 double S_after = S_before;
 
-                if (q >= 3)
-                {
+                if (q >= 3) {
                     double gain = alpha * (q == 3 ? 0.9 : q == 4 ? 1.0 : 1.1)
-                        * std::pow((1.0 - R_now), beta)
-                        * g_over;
+                                * std::pow((1.0 - R_now), beta)
+                                * g_over;
+
+                    // ↓↓↓ přidej:
+                    const double S_DAMP = get_param(user_id, "s_damp", 200.0, token, stack_depth); // ~dny „optimálního“ intervalu
+                    double damp = 1.0 / (1.0 + (S_before / std::max(1e-9, S_DAMP))); // 1→0 se zvyšujícím se S
+                    gain *= damp;
+
+                    const double MAX_GAIN = get_param(user_id, "max_gain", 0.35, token, stack_depth);
+                    gain = std::clamp(gain, 0.0, MAX_GAIN);
 
                     double user_factor = std::pow(theta, 0.5);
                     S_after = S_before * (1.0 + gain * user_factor);
                 }
+
                 else
                 {
                     double loss = gamma * std::pow(R_now, delta);
@@ -716,10 +726,26 @@ namespace mindnet::plugins::repetition::triggers
                 // =======================
                 auto fatigue = [&](double t) { return std::max(0.0, 1.0 - std::exp(-t / 2.0)); };
 
+                double base_interval = interval_for_target(S_after, R_target);
+
+                // fatigue only for wrong answers
+                double fatigue_multiplier = (q < 3)
+                                                ? (1.0 + fatigue_lambda * fatigue(elapsed_days))
+                                                : 1.0;
+
                 double next_interval_days = (q >= 3)
-                                                ? interval_for_target(S_after, R_target) * (1.0 + fatigue_lambda *
-                                                    fatigue(elapsed_days))
-                                                : short_retry;
+                    ? base_interval * fatigue_multiplier
+                    : short_retry;
+
+
+                double interval_scale = get_param(user_id, "interval_scale", 1.2, token, stack_depth);
+                next_interval_days *= interval_scale;
+
+                if (q >= 3 && r18_state.last_interval_times_100 > 0) {
+                    const double GROWTH_CAP = get_param(user_id, "growth_cap", 3.0, token, stack_depth); // max 3× jump
+                    double last_days = r18_state.last_interval_times_100 / 100.0;
+                    next_interval_days = std::min(next_interval_days, last_days * GROWTH_CAP);
+                }
 
                 // =======================
                 // Update state

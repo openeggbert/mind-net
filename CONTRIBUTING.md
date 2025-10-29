@@ -32,6 +32,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Critical
 - [ ] TASK Check operator== implementations for all models
+- [ ] Plugin Slipbox: fulltext search
 
 ### Extending
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
