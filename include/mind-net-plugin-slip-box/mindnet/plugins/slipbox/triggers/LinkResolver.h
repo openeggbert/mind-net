@@ -17,8 +17,8 @@ namespace mindnet::plugins::slipbox::triggers
 {
     struct LinkResolution
     {
-        std::vector<std::string> existing;
-        std::vector<std::string> missing;
+        std::vector<WikiLink> existing;
+        std::vector<WikiLink> missing;
         std::unordered_map<std::string, i64> title_to_id;
     };
 
@@ -28,7 +28,7 @@ namespace mindnet::plugins::slipbox::triggers
     public:
         static LinkResolution resolve(
             i64 map_id,
-            const std::vector<std::string>& wikilinks,
+            const std::vector<WikiLink>& wikilinks,
             std::function<nlohmann::json(const std::string&, nlohmann::json&)>& call);
     };
 }

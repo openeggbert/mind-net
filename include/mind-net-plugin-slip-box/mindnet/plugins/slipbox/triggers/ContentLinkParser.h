@@ -12,15 +12,23 @@ namespace mindnet::plugins::slipbox::triggers
 {
     struct Match
     {
-        std::string text;
+        std::string full;
+        std::string title;
+        std::string display;
         std::size_t pos;
         std::size_t len;
+    };
+
+    struct WikiLink
+    {
+        std::string title;
+        std::string display;
     };
 
     struct ParsedLinks
     {
         std::vector<std::string> urls;
-        std::vector<std::string> wikilinks;
+        std::vector<WikiLink> wikilinks;
     };
 
     class ContentLinkParser

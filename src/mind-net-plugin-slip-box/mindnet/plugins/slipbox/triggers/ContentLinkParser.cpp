@@ -63,7 +63,7 @@ namespace mindnet::plugins::slipbox::triggers
             const auto& m = *it;
             std::size_t pos = static_cast<std::size_t>(m.position());
             std::string cleaned = rtrim_url_punct(m.str());
-            out.push_back({cleaned, pos, cleaned.size()});
+            out.push_back({cleaned, "", "", pos, cleaned.size()});
             if (out.size() > 10000) break;
         }
         return out;
@@ -105,7 +105,10 @@ namespace mindnet::plugins::slipbox::triggers
 
     std::vector<Match> find_double_brackets(const std::string& s)
     {
-        static const std::regex db_re(R"(\[\[([^\[\]]+?)\]\])");
+        static const std::regex db_re(
+            R"(\[\[\s*([^\|\]]+?)(?:\|([^\]]*))?\s*\]\])"
+        );
+
         std::vector<Match> out;
         out.reserve(16);
 
@@ -113,26 +116,60 @@ namespace mindnet::plugins::slipbox::triggers
         {
             const auto& m = *it;
             std::size_t pos = static_cast<std::size_t>(m.position());
+            std::size_t len = static_cast<std::size_t>(m.length(0));
+
             std::string full = m.str(0);
-            out.push_back({std::move(full), pos, static_cast<std::size_t>(m.length(0))});
+            std::string title = m[1].str();
+
+            std::string display;
+            if (m[2].matched)
+                display = m[2].str();
+            else
+                display = title;
+
+            if (display.empty())
+                display = title;
+
+            out.push_back({
+                std::move(full),
+                std::move(title),
+                std::move(display),
+                pos,
+                len
+            });
+
             if (out.size() > 10000) break;
         }
+
         return out;
     }
+
+
 
     ParsedLinks ContentLinkParser::parse_links(const std::string& content)
     {
         ParsedLinks out;
         auto urls = find_urls(content);
         auto dbls = find_double_brackets(content);
+
         out.urls.reserve(urls.size());
         out.wikilinks.reserve(dbls.size());
-        for (auto& m : urls) out.urls.emplace_back(std::move(m.text));
+
+        // URLs
+        for (auto& m : urls)
+            out.urls.emplace_back(std::move(m.full));
+
+        // Wikilinks
         for (auto& m : dbls)
         {
-            std::string inner = m.text.substr(2, m.len - 4);
-            out.wikilinks.emplace_back(wikilink_title(std::move(inner)));
+            // m.title was already extracted cleanly
+            std::string title = wikilink_title(m.title);
+            std::string display = m.display.empty() ? title : m.display;
+
+            out.wikilinks.push_back({ std::move(title), std::move(display) });
         }
+
         return out;
     }
+
 }

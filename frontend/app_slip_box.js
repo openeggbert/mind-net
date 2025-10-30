@@ -57,11 +57,21 @@ md.use(function(md) {
             const href = tokens[idx].attrs[hrefIndex][1];
             if (href.startsWith('#wanted:')) {
                 tokens[idx].attrPush(['class', 'note-wanted']);
-                tokens[idx].attrs[hrefIndex][1] = '#'; // neutralize href
+
+                const title = decodeURIComponent(href.substring('#wanted:'.length));
+                tokens[idx].attrPush(['data-title', title]);
+
+                tokens[idx].attrs[hrefIndex][1] = '#';
+
             } else if (href.startsWith('#unknown:')) {
                 tokens[idx].attrPush(['class', 'note-unknown']);
+
+                const title = decodeURIComponent(href.substring('#unknown:'.length));
+                tokens[idx].attrPush(['data-title', title]);
+
                 tokens[idx].attrs[hrefIndex][1] = '#';
             }
+
         }
         return defaultRender(tokens, idx, options, env, self);
     };
@@ -72,15 +82,17 @@ document.addEventListener("click", e => {
     if (!a) return;
 
     e.preventDefault();
-    const title = a.textContent;
+
+    const title = a.getAttribute("data-title") || a.textContent || "";
 
     if (a.classList.contains("note-wanted")) {
         show_error(`Note "${title}" does not yet exist.`);
-        copy_to_clipboard(title)
+        copy_to_clipboard(title);
     } else if (a.classList.contains("note-unknown")) {
         show_error(`Note "${title}" maybe exists, but is not yet linked. Save and reload to update.`);
     }
 });
+
 
 
 // configure highlight.js appearance
@@ -646,24 +658,26 @@ async function render() {
         }
 
         async function convert_wikilinks_to_markdown(markdown_text) {
+
             const links = await list_all_entities("link", "&from_note_id=" + local_note_id);
             const wanted_notes = await list_all_entities("wanted_note", "&from_note_id=" + local_note_id);
 
-            const regex = /\[\[\s*([^\[\]]+?)\s*\]\]/g;
+            const regex = /\[\[\s*([^\|\]]+?)(?:\|([^\]]+?))?\s*\]\]/g;
 
-            return markdown_text.replace(regex, (match, title) => {
+            return markdown_text.replace(regex, (match, title, display) => {
                 title = title.trim();
-                const encoded = encodeURIComponent(title); // 🔑 tohle opraví problém s mezerami
+                display = display ? display.trim() : title;
+                const encoded = encodeURIComponent(title);
 
                 const link = links.find(l => l.to_note_title === title);
                 const wanted_note = wanted_notes.find(wn => wn.to_note_title === title);
 
                 if (link) {
-                    return `[${title}](?note_id=${link.to_note_id})`;
+                    return `[${display}](?note_id=${link.to_note_id})`;
                 } else if (wanted_note) {
-                    return `[${title}](#wanted:${encoded} "Note does not yet exist.")`;
+                    return `[${display}](#wanted:${encoded} "Note does not yet exist.")`;
                 } else {
-                    return `[${title}](#unknown:${encoded} "Note maybe exists, but is not yet linked. Save and reload to update.")`;
+                    return `[${display}](#unknown:${encoded} "Note maybe exists, but is not yet linked. Save and reload to update.")`;
                 }
             });
         }

@@ -16,6 +16,7 @@
 #include <map>
 
 #include "mindnet/api/OperationResult.h"
+#include "mindnet/plugins/slipbox/triggers/ContentLinkParser.h"
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -44,12 +45,12 @@ namespace mindnet::plugins::slipbox::triggers
 
         void sync_links(const std::vector<std::string>& old_links,
                         const std::map<std::string, i64>& old_links_ids,
-                        const std::vector<std::string>& new_links,
+                        const std::vector<WikiLink>& new_links,
                         const std::unordered_map<std::string, i64>& title_to_id);
 
         void sync_wanted_notes(const std::vector<std::string>& old_wanted,
                                const std::map<std::string, i64>& old_wanted_ids,
-                               const std::vector<std::string>& new_wanted);
+                               const std::vector<WikiLink>& new_wanted);
 
     private:
         api::AccessTokenContext& token;
