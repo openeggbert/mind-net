@@ -46,12 +46,14 @@ namespace mindnet::plugins::slipbox::models
             .set_description("Reference to the source note"),
             coldef(COLS::TO_NOTE_TITLE, MANDATORY)
             .set_description("Title of the target note"),
+            coldef(COLS::LABEL)
         });
 
     struct Model : mindnet::model::BaseModel
     {
         i64 from_note_id{};
         string to_note_title;
+        string label;
 
         create_model_h_methods(Model, MODEL)
 
@@ -61,7 +63,8 @@ namespace mindnet::plugins::slipbox::models
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
                 from_note_id == other.from_note_id &&
-                to_note_title == other.to_note_title;
+                to_note_title == other.to_note_title &&
+                label == other.label;
         }
     };
 }

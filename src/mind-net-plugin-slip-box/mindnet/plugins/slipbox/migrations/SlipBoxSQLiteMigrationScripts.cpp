@@ -600,5 +600,19 @@ CREATE INDEX idx_pinned_note_user_id ON pinned_note(user_id);
 CREATE INDEX idx_pinned_note_note_id ON pinned_note(note_id);
 
 )");
+
+    	add_migration("V22__alter_table_wanted_note_add_column_label.sql", R"(
+ALTER TABLE wanted_note ADD COLUMN label TEXT;
+
+)");
+
+    	add_migration("V23__update_table_wanted_note_set_column_label_to_empty_string.sql", R"(
+UPDATE wanted_note SET label = '' WHERE label IS NULL;
+
+
+)");
+
+
+
     }
 }

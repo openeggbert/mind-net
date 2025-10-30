@@ -14,6 +14,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(cast64(updated_at));
         result.push_back(cast64(from_note_id));
         result.push_back(to_note_title);
+        result.push_back(label);
 
         return result;
     }
@@ -30,6 +31,7 @@ namespace mindnet::plugins::slipbox::models
         //
         from_note_id = number();
         to_note_title = text();
+        label = text();
     }
 
     string WantedNote::validate()
