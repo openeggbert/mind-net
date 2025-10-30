@@ -15,6 +15,13 @@ FROM note n
 JOIN r{algorithm}_state s ON s.note_id = n.id
 WHERE s.user_id = {user_id}
   AND s.next_review <= {now_ms}
+
+  AND n.content_id IS NOT NULL
+  AND EXISTS (
+      SELECT 1 FROM content c
+      WHERE c.id = n.content_id AND TRIM(c.value) <> ''
+  )
+
   AND (
     {filter_under_note} = 0
     OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
@@ -24,11 +31,19 @@ WHERE s.user_id = {user_id}
 LIMIT {limit};
 
 )";
-    const std::string SQL_NEW_ONLY = R"(SELECT n.id AS note_id
+    const std::string SQL_NEW_ONLY = R"(
+SELECT n.id AS note_id
 FROM note n
 LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
 WHERE s.note_id IS NULL
+
+  AND n.content_id IS NOT NULL
+  AND EXISTS (
+      SELECT 1 FROM content c
+      WHERE c.id = n.content_id AND TRIM(c.value) <> ''
+  )
+
   AND (
     {filter_under_note} = 0
     OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
@@ -59,19 +74,38 @@ JOIN (
     UNION
     SELECT note_id FROM new
 ) x ON x.note_id = n.id
-WHERE ({filter_under_note} = 0
-       OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note}))
+
+WHERE
+      n.content_id IS NOT NULL
+  AND EXISTS (
+      SELECT 1 FROM content c
+      WHERE c.id = n.content_id AND TRIM(c.value) <> ''
+  )
+  AND (
+       {filter_under_note} = 0
+       OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+)
 {order_by}
 LIMIT {limit};
+
 )";
 
     const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
 FROM note n
-WHERE ({filter_under_note} = 0)
-   OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+WHERE
+      n.content_id IS NOT NULL
+  AND EXISTS (
+      SELECT 1 FROM content c
+      WHERE c.id = n.content_id AND TRIM(c.value) <> ''
+  )
+  AND (
+       {filter_under_note} = 0
+       OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+)
 {order_by}
 LIMIT {limit};
+
 )";
 
     GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
