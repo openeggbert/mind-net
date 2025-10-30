@@ -140,21 +140,21 @@ function makeDraggable(el) {
         wasDragged = true;
         offsetX = x - rect.left;
         offsetY = y - rect.top;
-        el.style.transform = "none";
         el.style.position = "fixed";
+        el.style.transform = "none";
     }
 
-    const doDrag = (x, y) => {
+    function doDrag(x, y) {
         if (!dragging) return;
         el.style.left = `${x - offsetX}px`;
         el.style.top = `${y - offsetY}px`;
-    };
+    }
 
-    const stopDrag = () => {
-        dragging = false
-    };
+    function stopDrag() {
+        dragging = false;
+    }
 
-    // mouse
+    // --- Mouse support ---
     header.addEventListener('mousedown', e => {
         startDrag(e.clientX, e.clientY);
         e.preventDefault();
@@ -162,37 +162,51 @@ function makeDraggable(el) {
     document.addEventListener('mousemove', e => doDrag(e.clientX, e.clientY));
     document.addEventListener('mouseup', stopDrag);
 
-    // touch
+    // --- Touch support ---
     header.addEventListener('touchstart', e => {
         const t = e.touches[0];
         startDrag(t.clientX, t.clientY);
         e.preventDefault();
-    }, {passive: false});
+    }, { passive: false });
+
     document.addEventListener('touchmove', e => {
         const t = e.touches[0];
         doDrag(t.clientX, t.clientY);
-    }, {passive: false});
+    }, { passive: false });
+
     document.addEventListener('touchend', stopDrag);
 }
 
+
 window.closeWindow = closeWindow;
+
 
 export function closeWindow() {
     const win = document.getElementById('window_container');
+
     win.style.display = 'none';
-    window.closeWindow = closeWindow;
+
+    Promise.resolve().then(() => {
+        wasDragged = false;
+        win.style.left = "";
+        win.style.top = "";
+        win.style.transform = "translate(-50%, -50%)";
+        win.style.position = "fixed";
+    });
 }
+
+
 
 export function showWindow() {
     const win = document.getElementById("window_container");
     win.style.display = "block";
+    win.style.position = "fixed";
 
     if (!wasDragged) {
         Object.assign(win.style, {
             left: "50%",
             top: "50%",
-            transform: "translate(-50%, -50%)",
-            position: "fixed"
+            transform: "translate(-50%, -50%)"
         });
     }
 }
