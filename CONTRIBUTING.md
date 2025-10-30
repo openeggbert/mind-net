@@ -35,7 +35,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Plugin Slipbox: fulltext search
 
 ### Extending
-- [ ] Links will allow labels using |
 - [ ] r_session - new column description - optional
 - [ ] Path in slipbox plugin
 - [ ] Previous next in slipbox plugin
@@ -198,4 +197,5 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Fix validators and move authorization into the correct methods
 - [x] Ignore empty notes in repetition
 - [x] Bug - window jumps and then can't be closed on mobile
+- [x] Links will allow labels using |
 - 
