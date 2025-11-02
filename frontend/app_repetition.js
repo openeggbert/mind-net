@@ -1030,11 +1030,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             let button_send_btn = session_scope_is_all ? null : make_action_button("send-btn", "Send")
             let button_skip_btn = make_action_button("skip-btn", session_scope_is_all ? "Next" : "Skip")
 
-            let div_info = document.createElement("div");
-            div_card.appendChild(div_info);
-            div_info.classList.add("info");
-            div_info.id= "result"
-
             const sw = new StopWatch();
             sw.start();
             const action = await waitForSendOrSkip(selected_grade_ref);
@@ -1071,12 +1066,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showInfo(`Note was reviewed: #${note_id} ${note.title}`);
                 addNoteIdToSession(r_session_for_reviews.id, note_id);
 
+                let states = await list_entities("r" + r_session_for_reviews.algorithm+ "_state","&user_id=" + user_id + "&note_id=" + note_id);
+                let state = states.items[0]
 
                 await new Promise(resolve => {
                     main_content.innerHTML = `
             <h3>✅ Note reviewed: ${note.title}</h3>
+            <div class="info" id="result">
+            📅 Next review : ${state === null ? "?" : formatDateTimeHM(state.next_review)}<br>
+            🔢 Repetitions: ${state === null ? "?" : state.repetitions}
+            </div>
             <button id="btn_next_note">Next Note</button>
             <button id="btn_test_note">Test</button>
+            
         `;
 
                     get_element("btn_next_note").onclick = () => resolve();

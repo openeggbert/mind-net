@@ -80,9 +80,11 @@ input[type="checkbox"] {
 }
 
 .info {
-    font-size: 0.9em;
+    text-align: left;
+    font-size: 1.25em;
     color: #ccc;
-    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 4em;
 }
 
 
