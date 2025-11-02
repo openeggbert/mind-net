@@ -651,6 +651,12 @@ CREATE INDEX idx_map_collection_item_collection ON map_collection_item(map_colle
 CREATE INDEX idx_map_collection_item_map ON map_collection_item(map_id);
 )");
 
+    	add_migration("V26__create_several_indexes_on_table_note.sql", R"(
+CREATE INDEX idx_note_path_sibling ON note(path, sibling_order);
+CREATE INDEX idx_note_depth_sibling ON note(depth, sibling_order);
+CREATE INDEX idx_note_depth_sibling_id ON note(depth, sibling_order, id);
+)");
+
 
 
 

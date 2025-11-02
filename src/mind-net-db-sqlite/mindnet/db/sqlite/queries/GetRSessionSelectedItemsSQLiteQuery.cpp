@@ -11,7 +11,7 @@ namespace mindnet::db::sqlite::queries
 {
     const std::string SQL_DUE_ONLY = R"(
 SELECT n.id AS note_id
-FROM note n
+FROM note n {parent_join}
 JOIN r{algorithm}_state s ON s.note_id = n.id
 {map_join}
 WHERE s.user_id = {user_id}
@@ -33,10 +33,47 @@ WHERE s.user_id = {user_id}
 {order_by}
 LIMIT {limit};
 )";
+    const std::string SQL_DUE_ONLY_DFS = R"(
+WITH RECURSIVE ord(note_id, ord_key) AS (
+    SELECT n0.id,
+           printf('/%06d', n0.sibling_order)
+    FROM note n0
+    WHERE n0.parent_note_id IS NULL
+
+    UNION ALL
+
+    SELECT c.id,
+           ord.ord_key || '/' || printf('%06d', c.sibling_order)
+    FROM note c
+    JOIN ord ON ord.note_id = c.parent_note_id
+),
+due AS (
+    SELECT n.id AS note_id
+    FROM note n
+    JOIN r{algorithm}_state s ON s.note_id = n.id
+    WHERE s.user_id = {user_id}
+      AND s.next_review <= {now_ms}
+)
+SELECT n.id AS note_id
+FROM note n
+JOIN due d ON d.note_id = n.id
+JOIN ord o ON o.note_id = n.id
+{map_join}
+WHERE
+      n.content_id IS NOT NULL
+  AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
+  AND (
+        {filter_under_note} = 0
+        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+  )
+  {map_where}
+ORDER BY o.ord_key ASC, n.id ASC
+LIMIT {limit};
+)";
 
     const std::string SQL_NEW_ONLY = R"(
 SELECT n.id AS note_id
-FROM note n
+FROM note n {parent_join}
 LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
 {map_join}
@@ -59,6 +96,43 @@ WHERE s.note_id IS NULL
 LIMIT {limit};
 )";
 
+    const std::string SQL_NEW_ONLY_DFS = R"(
+WITH RECURSIVE ord(note_id, ord_key) AS (
+    SELECT n0.id,
+           printf('/%06d', n0.sibling_order)
+    FROM note n0
+    WHERE n0.parent_note_id IS NULL
+
+    UNION ALL
+
+    SELECT c.id,
+           ord.ord_key || '/' || printf('%06d', c.sibling_order)
+    FROM note c
+    JOIN ord ON ord.note_id = c.parent_note_id
+),
+new AS (
+    SELECT n.id AS note_id
+    FROM note n
+    LEFT JOIN r{algorithm}_state s
+      ON s.note_id = n.id AND s.user_id = {user_id}
+    WHERE s.note_id IS NULL
+)
+SELECT n.id AS note_id
+FROM note n
+JOIN new ne ON ne.note_id = n.id
+JOIN ord o ON o.note_id = n.id
+{map_join}
+WHERE
+      n.content_id IS NOT NULL
+  AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
+  AND (
+        {filter_under_note} = 0
+        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+  )
+  {map_where}
+ORDER BY o.ord_key ASC, n.id ASC
+LIMIT {limit};
+)";
 
     const std::string SQL_DUE_AND_NEW = R"(
 WITH due AS (
@@ -76,7 +150,7 @@ new AS (
     WHERE s.note_id IS NULL
 )
 SELECT n.id AS note_id
-FROM note n
+FROM note n {parent_join}
 JOIN (
     SELECT note_id FROM due
     UNION
@@ -101,11 +175,60 @@ WHERE
 LIMIT {limit};
 )";
 
+    const std::string SQL_DUE_AND_NEW_DFS = R"(
+WITH RECURSIVE ord(note_id, ord_key) AS (
+    SELECT n0.id,
+           printf('/%06d', n0.sibling_order)
+    FROM note n0
+    WHERE n0.parent_note_id IS NULL
+
+    UNION ALL
+
+    SELECT c.id,
+           ord.ord_key || '/' || printf('%06d', c.sibling_order)
+    FROM note c
+    JOIN ord ON ord.note_id = c.parent_note_id
+),
+due AS (
+    SELECT n.id AS note_id
+    FROM note n
+    JOIN r{algorithm}_state s ON s.note_id = n.id
+    WHERE s.user_id = {user_id}
+      AND s.next_review <= {now_ms}
+),
+new AS (
+    SELECT n.id AS note_id
+    FROM note n
+    LEFT JOIN r{algorithm}_state s
+      ON s.note_id = n.id AND s.user_id = {user_id}
+    WHERE s.note_id IS NULL
+),
+all_set AS (
+    SELECT note_id FROM due
+    UNION
+    SELECT note_id FROM new
+)
+SELECT n.id AS note_id
+FROM note n
+JOIN all_set x ON x.note_id = n.id
+JOIN ord o ON o.note_id = n.id
+{map_join}
+WHERE
+      n.content_id IS NOT NULL
+  AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
+  AND (
+        {filter_under_note} = 0
+        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+  )
+  {map_where}
+ORDER BY o.ord_key ASC, n.id ASC
+LIMIT {limit};
+)";
 
 
     const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
-FROM note n
+FROM note n {parent_join}
 {map_join}
 WHERE
       n.content_id IS NOT NULL
@@ -123,6 +246,37 @@ WHERE
 {order_by}
 LIMIT {limit};
 )";
+
+    const std::string SQL_ALL_DFS = R"(
+WITH RECURSIVE ord(note_id, ord_key) AS (
+    SELECT n0.id,
+           printf('/%06d', n0.sibling_order)
+    FROM note n0
+    WHERE n0.parent_note_id IS NULL
+
+    UNION ALL
+
+    SELECT c.id,
+           ord.ord_key || '/' || printf('%06d', c.sibling_order)
+    FROM note c
+    JOIN ord ON ord.note_id = c.parent_note_id
+)
+SELECT n.id AS note_id
+FROM note n
+JOIN ord o ON o.note_id = n.id
+{map_join}
+WHERE
+      n.content_id IS NOT NULL
+  AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
+  AND (
+        {filter_under_note} = 0
+        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+  )
+  {map_where}
+ORDER BY o.ord_key ASC, n.id ASC
+LIMIT {limit};
+)";
+
 
 
     GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
@@ -155,13 +309,17 @@ LIMIT {limit};
         const std::string* sql_template = nullptr;
         switch (scope)
         {
-        case 0: sql_template = &SQL_DUE_ONLY;
+        case 0:
+            sql_template = (schedule == 0 ? &SQL_DUE_ONLY_DFS : &SQL_DUE_ONLY);
             break;
-        case 1: sql_template = &SQL_NEW_ONLY;
+        case 1:
+            sql_template = (schedule == 0 ? &SQL_NEW_ONLY_DFS : &SQL_NEW_ONLY);
             break;
-        case 2: sql_template = &SQL_DUE_AND_NEW;
+        case 2:
+            sql_template = (schedule == 0 ? &SQL_DUE_AND_NEW_DFS : &SQL_DUE_AND_NEW);
             break;
-        case 3: sql_template = &SQL_ALL;
+        case 3:
+            sql_template = (schedule == 0 ? &SQL_ALL_DFS : &SQL_ALL);
             break;
         default:
             throw std::invalid_argument("Invalid scope value");
@@ -172,26 +330,44 @@ LIMIT {limit};
 
         switch (schedule)
         {
-        case 0: order_sql_part = "ORDER BY n.path";
-            break; // DepthFirst
-        case 1: order_sql_part = "ORDER BY n.depth ASC, n.id ASC";
-            break; // BreadthFirst
-        case 2: order_sql_part = "ORDER BY random()";
-            break; // Random
-        case 3: order_sql_part = "ORDER BY n.path, random()";
-            break; // DepthFirstShuffled
-        case 4: order_sql_part = "ORDER BY (n.depth % 3), random()";
-            break; // Interleaved
-        case 5: // DifficultySorted
-            if (scope == 0) // DueOnly
-                order_sql_part = "ORDER BY s.repetitions ASC, s.next_review ASC";
-            else if (scope == 2) // DueAndNew
-                order_sql_part = "ORDER BY note_id ASC"; // s.* is no longer visible
-            else
-                order_sql_part = "ORDER BY n.created_at ASC"; // fallback
+        case 0: // DepthFirst → DFS uses its own ORDER BY, do NOT set order_sql_part
+            order_sql_part = "";
             break;
-        case 6: order_sql_part = "ORDER BY n.created_at ASC";
-            break; // Chronological
+
+            case 1: // BreadthFirst
+            order_sql_part = "ORDER BY n.depth ASC, n.sibling_order ASC, n.id ASC";
+            break;
+
+        case 2: // Random
+            order_sql_part = "ORDER BY random()";
+            break;
+
+        case 3: // DepthFirstShuffled
+            order_sql_part =
+                "ORDER BY "
+                "CASE WHEN n.parent_note_id IS NULL THEN 0 ELSE 1 END, "
+                "COALESCE(p.sibling_order, 0), "
+                "n.sibling_order ASC, "
+                "random()";
+            break;
+
+        case 4: // Interleaved
+            order_sql_part = "ORDER BY (n.depth % 3), n.sibling_order ASC, random()";
+            break;
+
+        case 5: // DifficultySorted
+            if (scope == 0)
+                order_sql_part = "ORDER BY s.repetitions ASC, s.next_review ASC, n.sibling_order ASC";
+            else if (scope == 2)
+                order_sql_part = "ORDER BY note_id ASC";
+            else
+                order_sql_part = "ORDER BY n.created_at ASC";
+            break;
+
+        case 6: // Chronological
+            order_sql_part = "ORDER BY n.created_at ASC";
+            break;
+
         default:
             throw std::invalid_argument("Invalid schedule value");
         }
@@ -212,6 +388,9 @@ LIMIT {limit};
 
             map_where_sql = "";
         }
+
+        std::string parent_join_sql = "LEFT JOIN note p ON p.id = n.parent_note_id";
+
         // --- Replace placeholders ---
         std::unordered_map<std::string, std::string> vars = {
             {"map_id", std::to_string(map_id)},
@@ -221,9 +400,10 @@ LIMIT {limit};
             {"filter_under_note", std::to_string(filter_under_note)},
             {"now_ms", std::to_string(now_ms)},
             {"limit", std::to_string(limit)},
-            {"order_by", order_sql_part},
+            {"order_by", (schedule == 0 ? "" : order_sql_part)},
             {"map_join", map_join_sql},
             {"map_where", map_where_sql},
+            {"parent_join", parent_join_sql},
 
         };
 
