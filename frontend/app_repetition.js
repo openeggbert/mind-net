@@ -13,7 +13,7 @@ import {
     get_element,
     getOrFetchFromLocalStorage,
     minutes_to_ms, showError, showInfo,
-    saveToLocalStorage, loadFromLocalStorage, hide_element
+    saveToLocalStorage, loadFromLocalStorage, hide_element, showWarn
 } from "./dom.js";
 
 let user_id = null
@@ -371,7 +371,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             📝 Description: ${json.description}
         `;
             card.appendChild(meta);
-            console.log("get_element(" + map_collection_id_+ ")=" + get_element(map_collection_id_))
             if(json.map_id === 0) get_element(map_id_).remove();
             if(json.map_collection_id === 0) get_element(map_collection_id_).remove();
 
@@ -795,7 +794,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const skipBtn = document.getElementById("skip-btn");
 
             function cleanup(result) {
-                sendBtn.removeEventListener("click", onSend);
+                if(sendBtn != null) sendBtn.removeEventListener("click", onSend);
                 skipBtn.removeEventListener("click", onSkip);
                 resolve(result);
             }
@@ -813,7 +812,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cleanup("skip");
             }
 
-            sendBtn.addEventListener("click", onSend);
+            if(sendBtn != null) sendBtn.addEventListener("click", onSend);
             skipBtn.addEventListener("click", onSkip);
         });
     }
@@ -834,6 +833,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             render(screen_sessions)
             return;
         }
+        const session_scope_is_all = r_session_for_reviews.scope === 3;
+        if(session_scope_is_all) showWarn("The session scope is \"All\". Next review dates will not be updated.")
+
+        let r0 = r_session_for_reviews.algorithm === 0
 
         console.debug(JSON.stringify(note_ids));
         for await (let note_id of note_ids) {
@@ -858,7 +861,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let div_back = document.createElement("div");
             div_back.classList.add("back");
-            console.debug("content=" + JSON.stringify(content))
 
             if (content === null || content.value === null) {
                 let span = document.createElement("span");
@@ -867,6 +869,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 div_back.appendChild(span)
             } else {
                 div_back.innerText = "✅ " + content.value;
+                function hasMultipleLines(text) {
+                    return text.includes('\n');
+                }
+                if(!hasMultipleLines(content.value)) {
+                    div_back.style.textAlign = "center";
+                }
             }
             div_card.appendChild(div_back);
 
@@ -880,23 +888,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             div_rating.classList.add("rating");
             div_card.appendChild(div_rating);
 
-            let p_rating = document.createElement("p");
-            p_rating.innerText = "How well did you recall the note?";
-            div_card.appendChild(p_rating);
+            if (!session_scope_is_all) {
+                let p_rating = document.createElement("p");
+                p_rating.innerText = r0 ? "Did you remember?" : "How well did you recall the note?";
+                div_card.appendChild(p_rating);
+            }
+
 
             let answer_change_count = 0
 
             let div_rating_buttons = document.createElement("div");
             div_card.appendChild(div_rating_buttons);
-            let selected_grade_ref = { current: -1 };
+            let selected_grade_ref = {current: -1};
 
             function make_rating_button(grade) {
                 let rating_btn = document.createElement("button");
                 rating_btn.classList.add("rating-btn");
                 rating_btn.id = "rating-btn-" + grade;
-                rating_btn.innerText = grade;
+                rating_btn.innerText = r0 ? (grade >= 3 ? "Yes" : "No") : grade;
 
-                rating_btn.addEventListener("click", function() {
+                rating_btn.addEventListener("click", function () {
                     if (selected_grade_ref.current !== -1) {
                         answer_change_count = answer_change_count + 1;
                         console.debug("grade changed")
@@ -904,6 +915,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     selected_grade_ref.current = grade;
 
                     for (let i = 0; i <= 5; i++) {
+                        if(r0 && i >0 && i < 5) continue
                         get_element("rating-btn-" + i).className = "rating-btn";
                     }
                     rating_btn.className = "rating-btn rating-btn-selected";
@@ -912,14 +924,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return rating_btn;
             }
 
-
+            if (!session_scope_is_all) {
+            if(r0) make_rating_button(5)
             let rating_btn_0 = make_rating_button(0)
-            let rating_btn_1 = make_rating_button(1)
-            let rating_btn_2 = make_rating_button(2)
-            let rating_btn_3 = make_rating_button(3)
-            let rating_btn_4 = make_rating_button(4)
-            let rating_btn_5 = make_rating_button(5)
-
+            if (!r0) {
+                let rating_btn_1 = make_rating_button(1)
+                let rating_btn_2 = make_rating_button(2)
+                let rating_btn_3 = make_rating_button(3)
+                let rating_btn_4 = make_rating_button(4)
+            }
+            if(!r0) make_rating_button(5)
+        }
 
             // Create collapsible legend for rating scale
             let div_legend_container = document.createElement("div");
@@ -928,13 +943,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             div_card.appendChild(div_legend_container);
 
 // Show/hide button 
-            let btn_toggle_legend = document.createElement("button");
-            btn_toggle_legend.classList.add("show-btn");
-            btn_toggle_legend.innerText = "Show legend";
-            div_legend_container.appendChild(btn_toggle_legend);
+            let btn_toggle_legend = session_scope_is_all ? null : document.createElement("button");
+            if(!session_scope_is_all && !r0) {
+                btn_toggle_legend.classList.add("show-btn");
+                btn_toggle_legend.innerText = "Show legend";
+                div_legend_container.appendChild(btn_toggle_legend);
+            }
+
 
 // Legend content
-            let div_legend = document.createElement("div");
+            let div_legend = session_scope_is_all ? null : document.createElement("div");
+            if(!session_scope_is_all) {
             div_legend.classList.add("rating-legend");
             div_legend.style.display = "none";
             div_legend.style.textAlign = "left";
@@ -965,9 +984,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             div_legend.appendChild(makeLegendLine(5, "Correct response with perfect recall."));
 
             div_legend_container.appendChild(div_legend);
+            }
 
 // Toggle display event listener
-            btn_toggle_legend.addEventListener("click", () => {
+            if(!session_scope_is_all) btn_toggle_legend.addEventListener("click", () => {
                 const isVisible = div_legend.style.display === "block";
                 div_legend.style.display = isVisible ? "none" : "block";
                 btn_toggle_legend.innerText = isVisible ? "Show legend" : "Hide legend";
@@ -976,9 +996,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let div_actions = document.createElement("div");
             div_card.appendChild(div_actions);
+            if(!session_scope_is_all) {
             let p_actions = document.createElement("p");
             p_actions.innerHTML = "Next action"
             div_actions.appendChild(p_actions);
+            }
 
             let div_next_action = document.createElement("div");
             div_card.appendChild(div_next_action);
@@ -992,8 +1014,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return button;
             }
 
-            let button_send_btn = make_action_button("send-btn", "Send")
-            let button_skip_btn = make_action_button("skip-btn", "Skip")
+            let button_send_btn = session_scope_is_all ? null : make_action_button("send-btn", "Send")
+            let button_skip_btn = make_action_button("skip-btn", session_scope_is_all ? "Next" : "Skip")
 
             let div_info = document.createElement("div");
             div_card.appendChild(div_info);
@@ -1036,7 +1058,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showInfo(`Note was reviewed: #${note_id} ${note.title}`);
                 addNoteIdToSession(r_session_for_reviews.id, note_id);
 
-                // ⏸️ čekáme na další akci uživatele
+
                 await new Promise(resolve => {
                     main_content.innerHTML = `
             <h3>✅ Note reviewed: ${note.title}</h3>
@@ -1054,7 +1076,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             else if (action === "skip") {
                 // skipped - don't store anything
-                showInfo("Note was skipped: #" + note_id + " " + note.title)
+                if(!session_scope_is_all) showInfo("Note was skipped: #" + note_id + " " + note.title)
             }
 
         }
