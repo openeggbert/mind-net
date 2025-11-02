@@ -14,6 +14,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(updated_at));
         result.push_back(user_id);
         result.push_back(map_id);
+        result.push_back(map_collection_id);
         result.push_back(cloned_from_session_id);
         result.push_back(cast64(algorithm));
         result.push_back(cast64(schedule));
@@ -48,6 +49,7 @@ namespace mindnet::plugins::repetition::models
         updated_at = number();
         user_id = number();
         map_id = number();
+        map_collection_id = number();
         cloned_from_session_id = number();
         algorithm = enums::int_to_repetition_algorithm(number());
         schedule = enums::int_to_repetition_schedule(number());
@@ -67,6 +69,10 @@ namespace mindnet::plugins::repetition::models
         using columns::RSessionColumns;
 
         validator_chain_vector list{
+            [this]
+            {
+                return test_true((map_id > 0) != (map_collection_id > 0),
+                                 "either map_id or map_collection_id must be set"); },
             [this] { return test_true(filter_date_from == 0, "filter_date_from is not yet supported"); },
             [this] { return test_true(filter_date_to == 0, "filter_date_to is not yet supported"); },
             [this] { return test_true(filter_tag == 0, "filter_tag is not yet supported"); },

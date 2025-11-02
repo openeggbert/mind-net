@@ -44,6 +44,33 @@ namespace mindnet::db::sqlite
     using orm::SchemaHistoryColumns;
     using_loggers()
 
+    /* TODO REFACTOR (future improvement):
+ *
+ * The migration engine works reliably, but the DBMigration::migrate() method
+ * has become too large and mixes several responsibilities:
+ *   - migration execution
+ *   - transaction control
+ *   - checksum and chain-hash calculation
+ *   - schema_history writing
+ *   - foreign key toggling
+ *
+ * Refactor into smaller helper methods, for example:
+ *
+ *   bool applyMigration(int version, const std::string& sql);
+ *   bool writeHistoryEntry(...);
+ *   bool executeWithTransaction(...);
+ *   bool toggleForeignKeys(bool enable);
+ *
+ * Benefits:
+ *   - better readability and maintainability
+ *   - easier debugging and unit testing
+ *   - cleaner control flow
+ *
+ * The current implementation works and is safe, so this is only a
+ * structural/cleanliness improvement for later.
+ */
+
+
     SqliteDatabaseMigration::SqliteDatabaseMigration()
     {
         //Not meant to be instantiated
@@ -686,6 +713,12 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                     }
 
                     const string& sql = migration_scripts_ptr->get_sql(version);
+
+                    bool disableFK = (
+                        sql.find("/* FK_OFF */") != string::npos ||
+                        sql.find("-- FK_OFF") != string::npos
+                    );
+
                     auto start = std::chrono::high_resolution_clock::now();
                     bool migrated = false;
 
@@ -696,6 +729,12 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
 
                     try
                     {
+                        if (disableFK)
+                        {
+                            info << "Temporarily disabling foreign key checks for migration " << version << commit;
+                            db.exec("PRAGMA foreign_keys=OFF;");
+                        }
+
                         db.exec("BEGIN;");
                         // 1️⃣ execute the migration
                         db.exec(sql);
@@ -722,6 +761,20 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                         }
 
                         db.exec("COMMIT;");
+                        SQLite::Statement chk(db, "PRAGMA foreign_key_check;");
+                        while (chk.executeStep()) {
+                            warn << "Foreign key violation: table=" << chk.getColumn(0).getString()
+                                 << " rowid=" << chk.getColumn(1).getInt()
+                                 << " ref-table=" << chk.getColumn(2).getString()
+                                 << commit;
+                        }
+
+                        if (disableFK)
+                        {
+                            info << "Re-enabling foreign key checks after migration " << version << commit;
+                            db.exec("PRAGMA foreign_keys=ON;");
+                        }
+
                         info << "Migration " << version << " applied successfully." << commit;
                     }
                     catch (const std::exception& e)
@@ -735,6 +788,11 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                         catch (...)
                         {
                         }
+                        if (disableFK)
+                        {
+                            try { db.exec("PRAGMA foreign_keys=ON;"); } catch(...) {}
+                        }
+
                         err << "Migration " << version << " failed and was rolled back: " << e.what() << commit;
                         return false;
                     }

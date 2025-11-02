@@ -11,6 +11,8 @@
 #include "mindnet/plugins/slipbox/validators/ContentValidator.h"
 #include "mindnet/plugins/slipbox/validators/UrlValidator.h"
 #include "mindnet/plugins/slipbox/validators/MapValidator.h"
+#include "mindnet/plugins/slipbox/validators/MapCollectionValidator.h"
+#include "mindnet/plugins/slipbox/validators/MapCollectionItemValidator.h"
 #include "mindnet/plugins/slipbox/validators/NoteValidator.h"
 #include "mindnet/plugins/slipbox/validators/PropertyValidator.h"
 #include "mindnet/plugins/slipbox/validators/QuestionValidator.h"
@@ -72,6 +74,8 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(project, Project, PROJECT)
         REGISTER_MODEL(task, Task, TASK)
         REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
+        REGISTER_MODEL(map_collection, MapCollection, MAP_COLLECTION)
+        REGISTER_MODEL(map_collection_item, MapCollectionItem, MAP_COLLECTION_ITEM)
 
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());

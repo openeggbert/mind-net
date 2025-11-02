@@ -17,6 +17,7 @@ namespace mindnet::plugins::repetition::columns
         // Required foreign keys and relationships
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* MAP_ID = "map_id";
+        static constexpr const char* MAP_COLLECTION_ID = "map_collection_id";
         static constexpr const char* CLONED_FROM_SESSION_ID = "cloned_from_session_id";
 
         // Core session settings

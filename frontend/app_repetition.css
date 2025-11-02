@@ -24,6 +24,7 @@ body {
 .back {
     display: none;
     color: #a0ffa0;
+    text-align: left
 }
 button {
     padding: 0.6em 1.2em;

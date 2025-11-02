@@ -144,7 +144,7 @@ trigger_constraint__{table}__{constraint_type}__{column(s)}[__{ref_table}__{ref_
 #include <stdexcept>
 #include <algorithm>
 
-// pomocná utilita – split podle delimiteru
+// utility - split by delimiter
 std::vector<std::string> split(const std::string& s, const std::string& delim = "__") {
     std::vector<std::string> parts;
     size_t start = 0, end;
@@ -163,7 +163,7 @@ std::string decode_hex(const std::string& hex) {
     return "[DECODED_CHECK_EXPR:" + hex + "]";
 }
 
-// hlavní funkce
+// main function
 std::string parseTriggerConstraint(const std::string& triggerName) {
     auto parts = split(triggerName);
 

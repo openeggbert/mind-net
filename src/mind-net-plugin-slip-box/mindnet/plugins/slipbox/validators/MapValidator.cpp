@@ -166,7 +166,6 @@ namespace mindnet::plugins::slipbox::validators
     string MapValidator::get_model_name() const
     {
         experiment << STRINGIFY(model) << commit;
-        err << "ERROR: " << STRINGIFY(model) << commit;
         return STRINGIFY(model);
     }
 }

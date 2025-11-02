@@ -301,6 +301,107 @@ CREATE INDEX IF NOT EXISTS idx_r18_state_note
     ON r18_state (note_id);
 
 )");
+
+
+
+    	add_migration("V12__alter_r_session_add_map_collection_id.sql", R"(
+-- FK_OFF
+
+-- 1) Prepare new table with correct schema
+CREATE TABLE r_session_new (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+
+	user_id INTEGER NOT NULL,
+	map_id INTEGER,				  -- no longer NOT NULL
+	map_collection_id INTEGER,	   -- new field
+	cloned_from_session_id INTEGER,
+
+	algorithm INTEGER NOT NULL,
+	schedule INTEGER NOT NULL,
+	scope INTEGER NOT NULL,
+
+	description TEXT,
+
+	filter_under_note INTEGER,
+	filter_date_from DATETIME,
+	filter_date_to DATETIME,
+	filter_tag INTEGER,
+	filter_collection INTEGER,
+
+	selected_items TEXT NOT NULL DEFAULT '{}',
+	pinned BOOL DEFAULT 0,
+
+	FOREIGN KEY (user_id) REFERENCES user(id),
+	FOREIGN KEY (map_id) REFERENCES map(id),
+	FOREIGN KEY (map_collection_id) REFERENCES map_collection(id),
+	FOREIGN KEY (cloned_from_session_id) REFERENCES r_session(id), -- self-FK will match after renaming
+	FOREIGN KEY (filter_under_note) REFERENCES note(id),
+	FOREIGN KEY (filter_tag) REFERENCES tag_type(id),
+	FOREIGN KEY (filter_collection) REFERENCES collection(id)
+);
+
+-- 2) Transfer data (preserving IDs!)
+INSERT INTO r_session_new (
+	id, created_at, updated_at,
+	user_id, map_id, map_collection_id, cloned_from_session_id,
+	algorithm, schedule, scope,
+	description,
+	filter_under_note, filter_date_from, filter_date_to,
+	filter_tag, filter_collection,
+	selected_items, pinned
+)
+SELECT
+	id, created_at, updated_at,
+	user_id, map_id, NULL AS map_collection_id, cloned_from_session_id,
+	algorithm, schedule, scope,
+	description,
+	filter_under_note, filter_date_from, filter_date_to,
+	filter_tag, filter_collection,
+	selected_items, pinned
+FROM r_session;
+
+-- 3) Drop old table and rename new one
+DROP TABLE r_session;
+ALTER TABLE r_session_new RENAME TO r_session;
+
+)");
+
+    	add_migration("V13__add_indexes_to_r_session.sql", R"(
+-- Extra indexes for fast filtering in UI and queries
+
+-- Already created in V12, but repeat safely in case some DBs missed it
+CREATE INDEX IF NOT EXISTS idx_r_session_user_id
+    ON r_session(user_id);
+
+-- Lookup by map
+CREATE INDEX IF NOT EXISTS idx_r_session_map_id
+    ON r_session(map_id);
+
+-- Lookup by collection
+CREATE INDEX IF NOT EXISTS idx_r_session_map_collection_id
+    ON r_session(map_collection_id);
+
+-- Combined filters used in API / UI
+CREATE INDEX IF NOT EXISTS idx_r_session_user_map
+    ON r_session(user_id, map_id);
+
+CREATE INDEX IF NOT EXISTS idx_r_session_user_collection
+    ON r_session(user_id, map_collection_id);
+
+-- Find pinned sessions for user quickly
+CREATE INDEX IF NOT EXISTS idx_r_session_user_pinned
+    ON r_session(user_id, pinned);
+
+-- If you ever query clone history
+CREATE INDEX IF NOT EXISTS idx_r_session_cloned_from
+    ON r_session(cloned_from_session_id);
+)");
+
+
+
+
     }
 }
 

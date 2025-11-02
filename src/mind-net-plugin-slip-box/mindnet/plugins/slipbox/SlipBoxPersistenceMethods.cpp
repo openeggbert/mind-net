@@ -10,6 +10,7 @@
 #include "mindnet/api/ValidatorBase.h"
 #include "mindnet/plugins/core/models/Team.h"
 #include "mindnet/plugins/core/models/User.h"
+#include "mindnet/plugins/slipbox/models/MapCollection.h"
 #include "mindnet/plugins/slipbox/models/Url.h"
 
 namespace mindnet::plugins::slipbox
@@ -85,4 +86,5 @@ namespace mindnet::plugins::slipbox
     gen_find_cpp(slipbox, Question, question, QUESTION)
     gen_find_cpp(slipbox, Link, link, LINK)
     gen_find_cpp(slipbox, Url, url, URL)
+    gen_find_cpp(slipbox, MapCollection, map_collection, MAP_COLLECTION)
 }

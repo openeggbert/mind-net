@@ -198,4 +198,3 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Ignore empty notes in repetition
 - [x] Bug - window jumps and then can't be closed on mobile
 - [x] Links will allow labels using |
-- 

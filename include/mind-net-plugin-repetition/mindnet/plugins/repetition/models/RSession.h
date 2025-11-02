@@ -27,7 +27,8 @@ namespace mindnet::plugins::repetition::models
         .allow_reader_write()
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
+            coldef(COLS::MAP_ID, FOREIGN_KEY | READONLY),
+            coldef(COLS::MAP_COLLECTION_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::CLONED_FROM_SESSION_ID, READONLY).set_foreign_key("r_session"),
 
             coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(
@@ -50,18 +51,19 @@ namespace mindnet::plugins::repetition::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
-        int map_id{};
-        int cloned_from_session_id{};
+        i64 user_id{};
+        i64 map_id{};
+        i64 map_collection_id{};
+        i64 cloned_from_session_id{};
         enums::RepetitionAlgorithm algorithm{};
         enums::RepetitionSchedule schedule{};
         enums::RepetitionScope scope{};
         std::string description;
-        int filter_under_note{};
+        i64 filter_under_note{};
         unixtime filter_date_from{};
         unixtime filter_date_to{};
-        int filter_tag{};
-        int filter_collection{};
+        i64 filter_tag{};
+        i64 filter_collection{};
         //example: {"note_ids":[3,4,5,6,7]}
         string selected_items{"{}"};
         bool pinned{false};
@@ -75,6 +77,7 @@ namespace mindnet::plugins::repetition::models
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
                 map_id == other.map_id &&
+                map_collection_id == other.map_collection_id &&
                 cloned_from_session_id == other.cloned_from_session_id &&
                 algorithm == other.algorithm &&
                 schedule == other.schedule &&

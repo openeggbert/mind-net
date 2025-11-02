@@ -24,6 +24,7 @@
 // #include "mindnet/plugins/suggestion/models/SuggestionReview.h"
 // #include "mindnet/plugins/core/models/History.h"
 #include "mindnet/plugins/slipbox/models/Map.h"
+#include "mindnet/plugins/slipbox/models/MapCollection.h"
 #include "mindnet/plugins/slipbox/models/Content.h"
 #include "mindnet/plugins/slipbox/models/Note.h"
 #include "mindnet/plugins/slipbox/models/Property.h"
@@ -67,6 +68,7 @@ namespace mindnet::plugins::slipbox
 
     gen_find_h(slipbox, Tag, tag)
     gen_find_h(slipbox, TagType, tag_type)
+    gen_find_h(slipbox, MapCollection, map_collection)
 }
 
 #endif // SLIPBOXPERSISTENCEMETHODS_H

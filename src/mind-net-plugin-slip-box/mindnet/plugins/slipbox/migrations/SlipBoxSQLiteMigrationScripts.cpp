@@ -613,6 +613,47 @@ UPDATE wanted_note SET label = '' WHERE label IS NULL;
 )");
 
 
+    	add_migration("V24__create_map_collection.sql", R"(
+CREATE TABLE map_collection (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    name TEXT NOT NULL,
+    description TEXT,
+    created_by INTEGER,
+    is_public BOOLEAN DEFAULT 0,
+
+    UNIQUE(name, created_by),
+    FOREIGN KEY (created_by) REFERENCES user(id)
+);
+
+CREATE INDEX idx_map_collection_created_by ON map_collection(created_by);
+)");
+
+    	add_migration("V25__create_map_collection_item.sql", R"(
+CREATE TABLE map_collection_item (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    map_collection_id INTEGER NOT NULL,
+    map_id INTEGER NOT NULL,
+    position INTEGER,
+
+    UNIQUE (map_collection_id, map_id),
+
+    FOREIGN KEY (map_collection_id) REFERENCES map_collection(id),
+    FOREIGN KEY (map_id) REFERENCES map(id)
+);
+
+CREATE INDEX idx_map_collection_item_collection ON map_collection_item(map_collection_id);
+CREATE INDEX idx_map_collection_item_map ON map_collection_item(map_id);
+)");
+
+
+
+
 
     }
 }

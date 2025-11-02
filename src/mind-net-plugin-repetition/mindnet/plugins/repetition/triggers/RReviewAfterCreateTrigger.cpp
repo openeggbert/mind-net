@@ -701,9 +701,8 @@ namespace mindnet::plugins::repetition::triggers
                                 * std::pow((1.0 - R_now), beta)
                                 * g_over;
 
-                    // ↓↓↓ přidej:
-                    const double S_DAMP = get_param(user_id, "s_damp", 200.0, token, stack_depth); // ~dny „optimálního“ intervalu
-                    double damp = 1.0 / (1.0 + (S_before / std::max(1e-9, S_DAMP))); // 1→0 se zvyšujícím se S
+                    const double S_DAMP = get_param(user_id, "s_damp", 200.0, token, stack_depth);
+                    double damp = 1.0 / (1.0 + (S_before / std::max(1e-9, S_DAMP)));
                     gain *= damp;
 
                     const double MAX_GAIN = get_param(user_id, "max_gain", 0.35, token, stack_depth);
