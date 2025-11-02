@@ -776,6 +776,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         const usedNotes = getUsedNotesForSession(sessionId);
         return usedNotes.includes(noteId);
     }
+    function countOfUsedNotes(sessionId) {
+        const usedNotes = getUsedNotesForSession(sessionId);
+        return usedNotes.length;
+    }
 
     function showOrHideAnswer() {
         let back = document.querySelector('.back');
@@ -838,14 +842,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         let r0 = r_session_for_reviews.algorithm === 0
 
+        const note_id_count = note_ids.length - countOfUsedNotes(r_session_for_reviews.id);
+        let note_id_index = 0;
         console.debug(JSON.stringify(note_ids));
         for await (let note_id of note_ids) {
             if (wasNoteUsed(r_session_for_reviews.id, note_id)) {
                 console.log("Skipping note with ID " + note_id);
                 continue;
             }
+            note_id_index++;
             let note = await read_entity("note", note_id)
             main_content.innerHTML = "";
+
+            let progress = document.createElement("div");
+            progress.style.fontSize = "1.2em";
+            progress.style.marginBottom = "8px";
+            progress.innerHTML = `Item ${note_id_index} / ${note_id_count}`;
+            main_content.appendChild(progress);
 
             let content = note.content_id === 0 ? null : await read_entity("content", note.content_id)
 
