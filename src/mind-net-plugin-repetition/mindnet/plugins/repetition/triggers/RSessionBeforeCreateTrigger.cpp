@@ -41,7 +41,7 @@ namespace mindnet::plugins::repetition::triggers
         models::RSession r_session;
         r_session.from_values(fields);
 
-        auto token = api::AccessTokenContext(user_id, "", 200);;
+        auto token = api::AccessTokenContext(user_id, "", 200);
         std::vector<int> ids;
 
         switch (r_session.algorithm)

@@ -97,6 +97,10 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult MapCollectionValidator::validate_create_integrity(const RequestContext& ctx,
                                                                       const Model& entity) const
     {
+        return_if(entity.created_by != ctx.token.user_id,
+          400, "Owner must be the logged in user.")
+
+
         return ok_result;
     }
 

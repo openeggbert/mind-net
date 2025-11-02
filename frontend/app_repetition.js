@@ -13,7 +13,7 @@ import {
     get_element,
     getOrFetchFromLocalStorage,
     minutes_to_ms, showError, showInfo,
-    saveToLocalStorage, loadFromLocalStorage
+    saveToLocalStorage, loadFromLocalStorage, hide_element
 } from "./dom.js";
 
 let user_id = null
@@ -345,6 +345,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         r_sessions.forEach(json => {
             let card = document.createElement("div");
             card.className = "session-card";
+            container.appendChild(card);
 
             // Header
             let title = document.createElement("div");
@@ -355,10 +356,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Meta info
             let meta = document.createElement("div");
             meta.className = "session-meta";
+
+            const map_id_ = crypto.randomUUID();
+            const map_collection_id_ = crypto.randomUUID();
             meta.innerHTML = `
             🕓 Created: ${formatDateTimeHM(json.created_at)}<br>
             🔄 Updated: ${formatDateTimeHM(json.updated_at)}<br>
-            🧩 Map ID: ${json.map_id}<br>
+            <span id="${map_id_}">🧩  Map ID: ${json.map_id}<br></span>
+            <span id="${map_collection_id_}">🧩 Map Collection ID: ${json.map_collection_id}<br></span>
             🧮 Algorithm: ${algoName(json.algorithm)}<br>
             📚 Schedule: ${scheduleName(json.schedule)}<br>
             🎯 Scope: ${scopeName(json.scope)}<br>
@@ -366,6 +371,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             📝 Description: ${json.description}
         `;
             card.appendChild(meta);
+            console.log("get_element(" + map_collection_id_+ ")=" + get_element(map_collection_id_))
+            if(json.map_id === 0) get_element(map_id_).remove();
+            if(json.map_collection_id === 0) get_element(map_collection_id_).remove();
 
             // Details toggle
             let detailsBtn = document.createElement("button");
@@ -442,7 +450,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             actions.appendChild(btnPinUnpin);
 
             card.appendChild(actions);
-            container.appendChild(card);
         });
 
         // Pagination controls
@@ -620,6 +627,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         let clone_scope = cloned ? clone_from_r_session.scope : null
         make_input("Map ID", "new_session_map_id", "number")
         if (cloned) get_element("new_session_map_id").value = clone_from_r_session.map_id
+        make_input("Map Collection ID", "new_session_map_collection_id", "number")
+        if (cloned) get_element("new_session_map_collection_id").value = clone_from_r_session.map_collection_id
 
         make_input("Cloned from session", "new_session_cloned_from_session_id", "text")
         get_element("new_session_cloned_from_session_id").readOnly = true
@@ -689,6 +698,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let new_session = {};
             new_session["user_id"] = user_id
             new_session["map_id"] = get_element("new_session_map_id").value;
+            new_session["map_collection_id"] = get_element("new_session_map_collection_id").value;
             new_session["cloned_from_session_id"] = get_element("new_session_cloned_from_session_id").value;
             if (new_session["cloned_from_session_id"] === "") new_session["cloned_from_session_id"] = 0
             new_session["algorithm"] = get_element("new_session_algorithm").value;

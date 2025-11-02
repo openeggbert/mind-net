@@ -13,6 +13,7 @@ namespace mindnet::db::sqlite::queries
 SELECT n.id AS note_id
 FROM note n
 JOIN r{algorithm}_state s ON s.note_id = n.id
+{map_join}
 WHERE s.user_id = {user_id}
   AND s.next_review <= {now_ms}
 
@@ -25,17 +26,20 @@ WHERE s.user_id = {user_id}
   AND (
     {filter_under_note} = 0
     OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
-)
+  )
+
+  {map_where}
 
 {order_by}
 LIMIT {limit};
-
 )";
+
     const std::string SQL_NEW_ONLY = R"(
 SELECT n.id AS note_id
 FROM note n
 LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
+{map_join}
 WHERE s.note_id IS NULL
 
   AND n.content_id IS NOT NULL
@@ -47,11 +51,15 @@ WHERE s.note_id IS NULL
   AND (
     {filter_under_note} = 0
     OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
-)
+  )
+
+  {map_where}
 
 {order_by}
 LIMIT {limit};
 )";
+
+
     const std::string SQL_DUE_AND_NEW = R"(
 WITH due AS (
     SELECT n.id AS note_id
@@ -74,6 +82,7 @@ JOIN (
     UNION
     SELECT note_id FROM new
 ) x ON x.note_id = n.id
+{map_join}
 
 WHERE
       n.content_id IS NOT NULL
@@ -84,15 +93,20 @@ WHERE
   AND (
        {filter_under_note} = 0
        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
-)
+  )
+
+  {map_where}
+
 {order_by}
 LIMIT {limit};
-
 )";
+
+
 
     const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
 FROM note n
+{map_join}
 WHERE
       n.content_id IS NOT NULL
   AND EXISTS (
@@ -102,11 +116,14 @@ WHERE
   AND (
        {filter_under_note} = 0
        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
-)
+  )
+
+  {map_where}
+
 {order_by}
 LIMIT {limit};
-
 )";
+
 
     GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
         : Query(QUERY_GetRSessionSelectedItemsQuery, "Returns new note ids for repetition session",
@@ -124,6 +141,8 @@ LIMIT {limit};
         }
         nlohmann::json session = request["r_session"];
 
+        int map_id = session["map_id"];
+        int map_collection_id = session["map_collection_id"];
         int algorithm = session["algorithm"];
         int filter_under_note = session["filter_under_note"];
         int schedule = session["schedule"];
@@ -177,14 +196,35 @@ LIMIT {limit};
             throw std::invalid_argument("Invalid schedule value");
         }
 
+        std::string map_join_sql;
+        std::string map_where_sql;
+
+        if (map_id != 0)
+        {
+            map_join_sql = "";
+            map_where_sql = "AND n.map_id = " + std::to_string(map_id);
+        }
+        else
+        {
+            map_join_sql =
+                "JOIN map_collection_item mci ON mci.map_id = n.map_id AND mci.map_collection_id = " +
+                std::to_string(map_collection_id);
+
+            map_where_sql = "";
+        }
         // --- Replace placeholders ---
         std::unordered_map<std::string, std::string> vars = {
+            {"map_id", std::to_string(map_id)},
+            {"map_collection_id", std::to_string(map_collection_id)},
             {"algorithm", std::to_string(algorithm)},
             {"user_id", std::to_string(user_id)},
             {"filter_under_note", std::to_string(filter_under_note)},
             {"now_ms", std::to_string(now_ms)},
             {"limit", std::to_string(limit)},
-            {"order_by", order_sql_part}
+            {"order_by", order_sql_part},
+            {"map_join", map_join_sql},
+            {"map_where", map_where_sql},
+
         };
 
         std::string sql = *sql_template;
