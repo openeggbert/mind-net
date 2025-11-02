@@ -10,6 +10,13 @@
 
 namespace mindnet::plugins::repetition::triggers
 {
+    struct Params {
+        double b, R_target, R_opt, alpha, beta, gamma, delta, k_over, S_min,
+               short_retry, t0, R_inf, fatigue_lambda, theta, g_over_max,
+               s_damp, max_gain, interval_scale, growth_cap, min_interval_days, ef_max;
+        int max_interval_days;
+    };
+
     class RReviewAfterCreateTrigger : public api::Trigger
     {
     public:
@@ -47,6 +54,7 @@ namespace mindnet::plugins::repetition::triggers
             double def,
             api::AccessTokenContext& token,
             int stack_depth);
+        Params load_params_once(int user_id, api::AccessTokenContext& token, int stack_depth);
     };
 }
 

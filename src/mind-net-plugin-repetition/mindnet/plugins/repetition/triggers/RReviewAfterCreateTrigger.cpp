@@ -53,6 +53,12 @@ namespace
     static std::unordered_map<std::string, double> g_global_param_cache;
     static std::shared_mutex g_user_param_mutex;
     static std::shared_mutex g_global_param_mutex;
+
+    static std::unordered_set<ParamKey, ParamKeyHash, ParamKeyEq> g_user_param_not_found;
+    static std::unordered_set<std::string> g_global_param_not_found;
+    static std::shared_mutex g_user_param_not_found_mutex;
+    static std::shared_mutex g_global_param_not_found_mutex;
+
 } // namespace
 
 namespace mindnet::plugins::repetition::triggers
@@ -105,84 +111,82 @@ namespace mindnet::plugins::repetition::triggers
         return SM0_INTERVALS[next_index];
     }
 
+    static inline bool user_param_was_not_found(int user_id, const std::string& key) {
+        std::shared_lock lk(g_user_param_not_found_mutex);
+        return g_user_param_not_found.count(ParamKey{user_id, key}) > 0;
+    }
+    static inline void mark_user_param_not_found(int user_id, const std::string& key) {
+        std::unique_lock lk(g_user_param_not_found_mutex);
+        g_user_param_not_found.emplace(ParamKey{user_id, key});
+    }
+
+    static inline bool global_param_was_not_found(const std::string& key) {
+        std::shared_lock lk(g_global_param_not_found_mutex);
+        return g_global_param_not_found.count(key) > 0;
+    }
+    static inline void mark_global_param_not_found(const std::string& key) {
+        std::unique_lock lk(g_global_param_not_found_mutex);
+        g_global_param_not_found.emplace(key);
+    }
+
     std::optional<double> RReviewAfterCreateTrigger::fetch_user_param(
-        int user_id,
-        const std::string& key,
-        mindnet::api::AccessTokenContext& token,
-        int stack_depth)
+     int user_id, const std::string& key, mindnet::api::AccessTokenContext& token, int stack_depth)
     {
         ParamKey pk{user_id, key};
         {
-            // 🔒 read lock
             std::shared_lock lock(g_user_param_mutex);
             if (auto it = g_user_param_cache.find(pk); it != g_user_param_cache.end())
                 return it->second;
         }
 
-        mindnet::orm::QueryParams qp;
-        qp.add_filter("user_id", user_id);
-        qp.add_filter("key", key);
-        auto res = run_list(models::R_USER_SETTING_DEFINITION, token, qp, stack_depth);
-        if (res.second.ok() && !res.first.empty())
-        {
-            const auto& row = res.first.front();
-            models::RUserSetting setting;
-            setting.from_values(row);
+        if (user_param_was_not_found(user_id, key))
+            return std::nullopt;
 
-            double val{};
-            try { val = std::stod(setting.value); }
-            catch (...)
-            {
+        orm::QueryParams qp; qp.add_filter("user_id", user_id); qp.add_filter("key", key);
+        auto res = run_list(models::R_USER_SETTING_DEFINITION, token, qp, stack_depth);
+        if (res.second.ok() && !res.first.empty()) {
+            models::RUserSetting setting; setting.from_values(res.first.front());
+            try {
+                double val = std::stod(setting.value);
+                { std::unique_lock lock(g_user_param_mutex); g_user_param_cache.emplace(pk, val); }
+                return val;
+            } catch (...) {
+
+                mark_user_param_not_found(user_id, key);
                 return std::nullopt;
             }
-            {
-                // 🔒 write lock
-                std::unique_lock lock(g_user_param_mutex);
-                g_user_param_cache.emplace(pk, val);
-            }
-            return val;
         }
+
+        mark_user_param_not_found(user_id, key);
         return std::nullopt;
     }
+
 
     std::optional<double> RReviewAfterCreateTrigger::fetch_global_param(
-        const std::string& key,
-        api::AccessTokenContext& token,
-        int stack_depth)
+     const std::string& key, api::AccessTokenContext& token, int stack_depth)
     {
-        {
-            // 🔒 read lock
-            std::shared_lock lock(g_global_param_mutex);
+        { std::shared_lock lock(g_global_param_mutex);
             if (auto it = g_global_param_cache.find(key); it != g_global_param_cache.end())
-                return it->second;
-        }
+                return it->second; }
+        if (global_param_was_not_found(key))
+            return std::nullopt;
 
-        orm::QueryParams qp;
-        qp.add_filter("key", key);
+        orm::QueryParams qp; qp.add_filter("key", key);
         auto res = run_list(models::R_GLOBAL_SETTING_DEFINITION, token, qp, stack_depth);
-        if (res.second.ok() && !res.first.empty())
-        {
-            const auto& row = res.first.front();
-            models::RGlobalSetting setting;
-            setting.from_values(row);
-
-
-            double val{};
-
-            try { val = std::stod(setting.value); }
-            catch (...)
-            {
-                return std::nullopt;
+        if (res.second.ok() && !res.first.empty()) {
+            models::RGlobalSetting setting; setting.from_values(res.first.front());
+            try {
+                double val = std::stod(setting.value);
+                { std::unique_lock lock(g_global_param_mutex); g_global_param_cache.emplace(key, val); }
+                return val;
+            } catch (...) {
+                mark_global_param_not_found(key); return std::nullopt;
             }
-            {
-                // 🔒 write lock
-                std::unique_lock lock(g_global_param_mutex);
-                g_global_param_cache.emplace(key, val);
-            }
-            return val;
         }
+        mark_global_param_not_found(key);
         return std::nullopt;
     }
+
 
     double RReviewAfterCreateTrigger::get_param(
         int user_id,
@@ -194,6 +198,31 @@ namespace mindnet::plugins::repetition::triggers
         if (auto u = fetch_user_param(user_id, key, token, stack_depth)) return *u;
         if (auto g = fetch_global_param(key, token, stack_depth)) return *g;
         return def;
+    }
+
+    Params RReviewAfterCreateTrigger::load_params_once(int user_id, api::AccessTokenContext& token, int stack_depth) {
+        auto P = [&](const char* k, double d){ return get_param(user_id, k, d, token, stack_depth); };
+        Params p {
+            P("b",1.1), P("R_target",0.8), P("R_opt",0.8), P("alpha",0.3), P("beta",0.6),
+            P("gamma",0.2), P("delta",0.4), P("k_over",0.15), P("S_min",0.5),
+            P("short_retry",0.02), P("t0",0.2), P("R_infty",0.02), P("fatigue_lambda",0.1), P("theta",1.0),
+            P("g_over_max",1.5), P("s_damp",200.0), P("max_gain",0.35), P("interval_scale",1.2),
+            P("growth_cap",3.0), P("min_interval_days",0.01), P("ef_max",2.6),
+            (int)std::round(P("max_interval_days",1825.0))
+        };
+        return p;
+    }
+//todo add trigger, which will call this
+    void clear_user_param_cache() {
+        std::unique_lock lock(g_user_param_mutex);
+        g_user_param_cache.clear();
+        g_user_param_not_found.clear();
+    }
+//todo add trigger, which will call this
+    void clear_global_param_cache() {
+        std::unique_lock lock(g_global_param_mutex);
+        g_global_param_cache.clear();
+        g_global_param_not_found.clear();
     }
 
     void RReviewAfterCreateTrigger::run(
@@ -386,9 +415,13 @@ namespace mindnet::plugins::repetition::triggers
         // Updating state record.
         // ============================================================
         // --- tunable safety caps (user/global settings) ---
-        const double EF_MAX = get_param(user_id, "ef_max", 2.6, token, stack_depth); // upper limit of EF
-        const int MAX_INTERVAL_DAYS = (int)std::round(
-            get_param(user_id, "max_interval_days", 1825.0, token, stack_depth)); // max 5 years
+
+        const auto par = load_params_once(user_id, token, stack_depth);
+
+        const double EF_MAX = par.ef_max; // upper limit of EF
+        const int MAX_INTERVAL_DAYS = par.max_interval_days;
+
+
 
         switch (r_review.algorithm)
         {
@@ -527,7 +560,7 @@ namespace mindnet::plugins::repetition::triggers
 
                 // Correction Factor tuning
                 const double CF_GAIN = get_param(user_id, "cf_gain", 0.025, token, stack_depth);
-                // default jemnější než 0.05
+                // default gentler than 0.05
                 const double CF_MIN = get_param(user_id, "cf_min", 0.9, token, stack_depth);
                 const double CF_MAX = get_param(user_id, "cf_max", 1.1, token, stack_depth);
 
@@ -624,20 +657,27 @@ namespace mindnet::plugins::repetition::triggers
                 // =======================
                 // Model parameters (SM-18)
                 // =======================
-                const double b = get_param(user_id, "b", 1.1, token, stack_depth);
-                const double R_target = get_param(user_id, "R_target", 0.8, token, stack_depth);
-                const double R_opt = get_param(user_id, "R_opt", 0.8, token, stack_depth);
-                const double alpha = get_param(user_id, "alpha", 0.3, token, stack_depth);
-                const double beta = get_param(user_id, "beta", 0.6, token, stack_depth);
-                const double gamma = get_param(user_id, "gamma", 0.2, token, stack_depth);
-                const double delta = get_param(user_id, "delta", 0.4, token, stack_depth);
-                const double k_over = get_param(user_id, "k_over", 0.15, token, stack_depth);
-                const double S_min = get_param(user_id, "S_min", 0.5, token, stack_depth);
-                const double short_retry = get_param(user_id, "short_retry", 0.02, token, stack_depth);
-                const double t0 = get_param(user_id, "t0", 0.2, token, stack_depth);
-                const double R_inf = get_param(user_id, "R_infty", 0.02, token, stack_depth);
-                const double fatigue_lambda = get_param(user_id, "fatigue_lambda", 0.1, token, stack_depth);
-                const double theta = get_param(user_id, "theta", 1.0, token, stack_depth);
+
+                const double b = par.b;
+                const double R_target = par.R_target;
+                const double R_opt = par.R_opt;
+                const double alpha = par.alpha;
+                const double beta = par.beta;
+                const double gamma = par.gamma;
+                const double delta = par.delta;
+                const double k_over = par.k_over;
+                const double S_min = par.S_min;
+                const double short_retry = par.short_retry;
+                const double t0 = par.t0;
+                const double R_inf = par.R_inf;
+                const double fatigue_lambda = par.fatigue_lambda;
+                const double theta = par.theta;
+                const double G_OVER_MAX = par.g_over_max;
+                const double S_DAMP = par.s_damp;
+                const double MAX_GAIN = par.max_gain;
+                double interval_scale = par.interval_scale;
+                const double min_interval_days = par.min_interval_days;
+
 
                 double S = r18_state.stability_times_100 / 100.0;
                 int reps = r18_state.repetitions;
@@ -688,7 +728,7 @@ namespace mindnet::plugins::repetition::triggers
                 double overdue = std::max(0.0, elapsed_days / std::max(1e-9, I_opt) - 1.0);
 
                 double g_over = 1.0 + k_over * overdue;
-                const double G_OVER_MAX = get_param(user_id, "g_over_max", 1.5, token, stack_depth); // +50 % max
+
                 g_over = std::clamp(g_over, 0.0, G_OVER_MAX);
                 // =======================
                 // Stability (with user sensitivity)
@@ -701,11 +741,9 @@ namespace mindnet::plugins::repetition::triggers
                                 * std::pow((1.0 - R_now), beta)
                                 * g_over;
 
-                    const double S_DAMP = get_param(user_id, "s_damp", 200.0, token, stack_depth);
                     double damp = 1.0 / (1.0 + (S_before / std::max(1e-9, S_DAMP)));
                     gain *= damp;
 
-                    const double MAX_GAIN = get_param(user_id, "max_gain", 0.35, token, stack_depth);
                     gain = std::clamp(gain, 0.0, MAX_GAIN);
 
                     double user_factor = std::pow(theta, 0.5);
@@ -736,15 +774,14 @@ namespace mindnet::plugins::repetition::triggers
                     ? base_interval * fatigue_multiplier
                     : short_retry;
 
-
-                double interval_scale = get_param(user_id, "interval_scale", 1.2, token, stack_depth);
                 next_interval_days *= interval_scale;
 
                 if (q >= 3 && r18_state.last_interval_times_100 > 0) {
-                    const double GROWTH_CAP = get_param(user_id, "growth_cap", 3.0, token, stack_depth); // max 3× jump
+                    const double GROWTH_CAP = par.growth_cap; // OK
                     double last_days = r18_state.last_interval_times_100 / 100.0;
                     next_interval_days = std::min(next_interval_days, last_days * GROWTH_CAP);
                 }
+
 
                 // =======================
                 // Update state
@@ -752,7 +789,7 @@ namespace mindnet::plugins::repetition::triggers
 
                 if (!std::isfinite(S_after)) S_after = std::max(S_min, 1.0);
                 S_after = std::clamp(S_after, S_min, 1e6);
-                const double min_interval_days = get_param(user_id, "min_interval_days", 0.01, token, stack_depth);
+
                 next_interval_days = std::clamp(next_interval_days, min_interval_days, 3650.0);
 
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);

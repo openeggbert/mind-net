@@ -135,3 +135,6 @@ namespace mindnet::plugins::slipbox::validators
         return STRINGIFY(model);
     }
 }
+#undef Model
+#undef MODEL
+#undef model
