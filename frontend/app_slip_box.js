@@ -781,9 +781,12 @@ async function render() {
             let content = note.content_id === 0 ? null : await read_entity("content", note.content_id);
             //alert("content" + JSON.stringify(content))
             let content_id = content === null ? 0 : content.id;
+            let new_content_created = false;
             if (content === null) {
                 const new_content = JSON.parse("{\"value\":\"\",\"format\":\"md\",\"version\":1,\"created_at\":0,\"updated_at\":0}")
                 let content_created = await post_entity("content", new_content);
+                new_content_created = true;
+                original_content_value = ""
                 //alert("content_id=" + content_created.id)
                 note.content_id = content_created.id;
             }
