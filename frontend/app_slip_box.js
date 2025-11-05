@@ -801,6 +801,7 @@ async function render() {
             if (content === null) content = await read_entity("content", note.content_id);
             content.value = get_element("current_textarea").value;
             if (original_content_value !== content.value) {
+                content.version = content.version + 1
                 let put_content_response = await put_entity("content", content.id, content);
                 show_toast("Content changes were saved");
                 original_content_value = content.value;

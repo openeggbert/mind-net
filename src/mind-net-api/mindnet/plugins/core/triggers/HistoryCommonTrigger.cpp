@@ -79,7 +79,7 @@ namespace mindnet::plugins::core::triggers
         history.operation = operation;
         if (operation == mindnet::essential::Crudl::Create || operation == mindnet::essential::Crudl::Update)
         {
-            history.data_json = model_to_json(fields, def).dump(4);
+            history.data_json = model_to_json(fields, def).dump();
         }
         else
         {

@@ -35,6 +35,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Plugin Slipbox: fulltext search
 
 ### Extending
+- [ ] Plugin Slipbox: onclick textarea starts editing
 - [ ] Keyboard shortcuts for plugins: Slipbox and Repetition
 - [ ] r_session - new column description - optional
 - [ ] Path in slipbox plugin

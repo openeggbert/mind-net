@@ -93,6 +93,8 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult ContentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                 const Model& new_entity) const
     {
+        return_if(new_entity.version != old_entity.version + 1, 400,
+                  "The version must be incremented by exactly 1 during an update.")
         return ok_result;
     }
 

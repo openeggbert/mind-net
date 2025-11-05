@@ -804,6 +804,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             function onSend() {
+                document.activeElement?.blur();
                 if (selected_grade_ref.current === -1) {
                     showInfo("⚠️ Please select a grade (0–5) before sending.");
                     return;
@@ -881,11 +882,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 span.innerText = "This note is missing the answer";
                 div_back.appendChild(span)
             } else {
-                div_back.innerText = "✅ " + content.value;
                 function hasMultipleLines(text) {
                     return text.includes('\n');
                 }
-                if(!hasMultipleLines(content.value)) {
+                let multiple_lines = hasMultipleLines(content.value)
+                div_back.innerText = "✅ " + (multiple_lines ? "\n" : "") + content.value;
+
+                if(!multiple_lines) {
                     div_back.style.textAlign = "center";
                 }
             }
