@@ -36,9 +36,9 @@ namespace mindnet::plugins::repetition::models
 
         auto number = [&values, &i]
         {
-            std::cout << "values[" << i << "]" << std::endl;
+            // std::cout << "values[" << i << "]" << std::endl;
             std::int64_t result = std::get<std::int64_t>(values[i++]);
-            std::cout << "result[" << i << "]" << result << std::endl;
+            // std::cout << "result[" << i << "]" << result << std::endl;
             return result;
         };
         auto boolean = [&number] { return number() != 0; };

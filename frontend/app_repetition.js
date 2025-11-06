@@ -1079,8 +1079,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             📅 Next review : ${state === null ? "?" : formatDateTimeHM(state.next_review)}<br>
             🔢 Repetitions: ${state === null ? "?" : state.repetitions}
             </div>
-            <button id="btn_next_note">Next Note</button>
             <button id="btn_test_note">Test</button>
+            <button id="btn_next_note">Next Note</button>
+            
             
         `;
 

@@ -203,11 +203,11 @@ namespace mindnet::plugins::repetition::triggers
     Params RReviewAfterCreateTrigger::load_params_once(int user_id, api::AccessTokenContext& token, int stack_depth) {
         auto P = [&](const char* k, double d){ return get_param(user_id, k, d, token, stack_depth); };
         Params p {
-            P("b",1.1), P("R_target",0.8), P("R_opt",0.8), P("alpha",0.3), P("beta",0.6),
-            P("gamma",0.2), P("delta",0.4), P("k_over",0.15), P("S_min",0.5),
+            P("b",1.1), P("R_target",0.82), P("R_opt",0.75), P("alpha",0.5), P("beta",1.05),
+            P("gamma",0.2), P("delta",0.4), P("k_over",0.55), P("S_min",8.0),
             P("short_retry",0.02), P("t0",0.2), P("R_infty",0.02), P("fatigue_lambda",0.1), P("theta",1.0),
-            P("g_over_max",1.5), P("s_damp",200.0), P("max_gain",0.35), P("interval_scale",1.2),
-            P("growth_cap",3.0), P("min_interval_days",0.01), P("ef_max",2.6),
+            P("g_over_max",4.0), P("s_damp",8000.0), P("max_gain",2.0), P("interval_scale",2.2),
+            P("growth_cap",5.0), P("min_interval_days",1.0), P("ef_max",2.6),
             (int)std::round(P("max_interval_days",1825.0))
         };
         return p;
@@ -737,11 +737,11 @@ namespace mindnet::plugins::repetition::triggers
                 double S_after = S_before;
 
                 if (q >= 3) {
-                    double gain = alpha * (q == 3 ? 0.9 : q == 4 ? 1.0 : 1.1)
+                    double gain = alpha * 1.1
                                 * std::pow((1.0 - R_now), beta)
                                 * g_over;
 
-                    double damp = 1.0 / (1.0 + (S_before / std::max(1e-9, S_DAMP)));
+                    double damp = 1.0 / (1.0 + std::pow(S_before / std::max(1e-9, S_DAMP), 0.5));
                     gain *= damp;
 
                     gain = std::clamp(gain, 0.0, MAX_GAIN);
