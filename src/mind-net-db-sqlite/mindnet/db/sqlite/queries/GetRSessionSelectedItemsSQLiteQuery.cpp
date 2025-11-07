@@ -263,6 +263,7 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
 )
 SELECT n.id AS note_id
 FROM note n
+LEFT JOIN note p ON p.id = n.parent_note_id
 JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
