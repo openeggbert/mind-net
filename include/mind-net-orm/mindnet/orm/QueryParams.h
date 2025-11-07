@@ -30,7 +30,6 @@ namespace mindnet::orm
             filters[key] = value;
         }
 
-
         // helper: add filter
         void add_filter(const std::string& key, const i64 value)
         {
@@ -40,6 +39,64 @@ namespace mindnet::orm
         void remove_filter(const std::string& key)
         {
             filters.erase(key);
+        }
+
+        [[nodiscard]] std::string to_json() const
+        {
+            std::string json = "{";
+
+            // Add pagination
+            json += "\"page_number\":" + std::to_string(page_number) + ",";
+            json += "\"page_size\":" + std::to_string(page_size) + ",";
+            json += "\"total_items\":" + std::to_string(total_items) + ",";
+
+            // Add sorting
+            json += "\"sort\":";
+            if (sort.has_value())
+            {
+                json += "\"" + sort.value() + "\"";
+            }
+            else
+            {
+                json += "null";
+            }
+            json += ",";
+
+            json += "\"order\":";
+            if (order.has_value())
+            {
+                json += "\"" + std::string(order.value() == Order::Asc ? "asc" : "desc") + "\"";
+            }
+            else
+            {
+                json += "null";
+            }
+            json += ",";
+
+            // Add filters
+            json += "\"filters\":{";
+            bool first = true;
+            for (const auto& [key, value] : filters)
+            {
+                if (!first) json += ",";
+                json += "\"" + key + "\":\"" + value + "\"";
+                first = false;
+            }
+            json += "},";
+
+            // Add fields
+            json += "\"fields\":[";
+            first = true;
+            for (const auto& field : fields)
+            {
+                if (!first) json += ",";
+                json += "\"" + field + "\"";
+                first = false;
+            }
+            json += "]";
+
+            json += "}";
+            return json;
         }
     };
 }
