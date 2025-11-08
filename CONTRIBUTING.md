@@ -35,12 +35,11 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Plugin Slipbox: fulltext search
 
 ### Extending
+- [ ] Plugin Repetition: rewrite app_repetition.js to OOP and classes
 - [ ] Plugin Slipbox: onclick textarea starts editing
 - [ ] Keyboard shortcuts for plugins: Slipbox and Repetition
-- [ ] r_session - new column description - optional
 - [ ] Path in slipbox plugin
 - [ ] Previous next in slipbox plugin
-- [ ] Repetition plugin - show next review
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
