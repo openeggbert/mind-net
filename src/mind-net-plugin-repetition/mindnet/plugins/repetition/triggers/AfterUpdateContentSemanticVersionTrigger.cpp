@@ -228,7 +228,7 @@ namespace mindnet::plugins::repetition::triggers
                 }
                 if (r_version == 18)
                 {
-                    if (change_20_50) {
+                    if (change_20_50 && r18_state.last_interval_times_100 != 0) {
                         double S_old = r18_state.stability_times_100 / 100.0;
                         double S_new = adjust_stability(change_ratio, S_old);
                         r18_state.stability_times_100 = (int)std::round(S_new * 100.0);
@@ -261,5 +261,7 @@ namespace mindnet::plugins::repetition::triggers
                 }
             }
         }
+        info << "Semantic version updated → spaced repetition adjusted (ratio="
+     << change_ratio << "%, sem_v=" << new_semantic_version << ")" << commit;
     }
 }
