@@ -141,7 +141,7 @@ export function setWindowContentByUrl(url) {
     clearWindow();
     let iframe = document.createElement("iframe");
     iframe.src = url;
-    iframe.scroling = "no"
+    iframe.scrolling = "no"
     iframe.style.display = "block";
     iframe.style.width = "100%";
     iframe.style.height = "100%";
@@ -301,8 +301,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     function render_screen_home() {
         refresh_param_screen()
         main_content.innerHTML = "";
-        let button_new_session = document.createElement("button");
-        let button_sessions = document.createElement("button");
 
         function make_button(text, screen) {
             let button = document.createElement("button");
@@ -1106,7 +1104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 };
 
                 let r_review_post_response = await post_entity("r_review", new_r_review);
-                alert(JSON.stringify(r_review_post_response))
+
                 showInfo(`Note was reviewed s: #${note_id} ${note.title}`);
                 addNoteIdToSession(r_session_for_reviews.id, note_id);
 
@@ -1114,11 +1112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 let state = states.items[0]
 
                 let r_review_get_response = await read_entity("r_review", r_review_post_response.id);
-                alert(JSON.stringify(r_review_get_response))
+
                 if(r_review_get_response !== null && r_review_get_response !== undefined) {
                     let details_json = JSON.parse(r_review_get_response.details_json);
                     if(details_json !== null && details_json !== undefined) {
-alert(JSON.stringify(details_json))
+
                         if(details_json.content_modified_since_last_review !== null && details_json.content_modified_since_last_review !== undefined) {
                             showWarn("Content of this note was changed since the last review.");
                         }
