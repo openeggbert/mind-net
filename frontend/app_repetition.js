@@ -387,12 +387,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             📚 Schedule: ${scheduleName(json.schedule)}<br>
             🎯 Scope: ${scopeName(json.scope)}<br>
             📑 Cloned from: ${json.cloned_from_session_id || "-"}<br>
-            📝 Description: <span id="${"description_value_"+json.id}">${json.description}</span>
+            📝 Description: <span id="${"description_value_" + json.id}">${json.description}</span>
             <button id="button_edit_description_${json.id}" class="show-btn" style="font-size:0.75em;padding:4px;padding-left:8px;padding-right:8px;">Edit</button>
         `;
             card.appendChild(meta);
-            if(json.map_id === 0) get_element(map_id_).remove();
-            if(json.map_collection_id === 0) get_element(map_collection_id_).remove();
+            if (json.map_id === 0) get_element(map_id_).remove();
+            if (json.map_collection_id === 0) get_element(map_collection_id_).remove();
 
             // Details toggle
             let detailsBtn = document.createElement("button");
@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 json.description = input;
                 let response = await put_entity("r_session", json.id, json)
-                if(response !== null) get_element("description_value_" + json.id).innerText = json.description
+                if (response !== null) get_element("description_value_" + json.id).innerText = json.description
 
             }
 
@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     function formatJson(str, compressed = true) {
         try {
             let obj = typeof str === "string" ? JSON.parse(str) : str;
-            return JSON.stringify(obj, null, compressed ? 0 :2);
+            return JSON.stringify(obj, null, compressed ? 0 : 2);
         } catch {
             return str;
         }
@@ -804,6 +804,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const usedNotes = getUsedNotesForSession(sessionId);
         return usedNotes.includes(noteId);
     }
+
     function countOfUsedNotes(sessionId) {
         const usedNotes = getUsedNotesForSession(sessionId);
         return usedNotes.length;
@@ -817,10 +818,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('.back').style.display = shown ? 'none' : 'block';
         showbtn.innerText = shown ? "Show answer" : "Hide answer";
 
-        get_element("go_to_note").style.display = shown ? "none":"inline-block";
+        get_element("go_to_note").style.display = shown ? "none" : "inline-block";
 
     }
-    window.showOrHideAnswer=showOrHideAnswer
+
+    window.showOrHideAnswer = showOrHideAnswer
 
     async function waitForSendOrSkip(selected_grade_ref) {
         return new Promise(resolve => {
@@ -828,7 +830,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const skipBtn = document.getElementById("skip-btn");
 
             function cleanup(result) {
-                if(sendBtn != null) sendBtn.removeEventListener("click", onSend);
+                if (sendBtn != null) sendBtn.removeEventListener("click", onSend);
                 skipBtn.removeEventListener("click", onSkip);
                 resolve(result);
             }
@@ -847,7 +849,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 cleanup("skip");
             }
 
-            if(sendBtn != null) sendBtn.addEventListener("click", onSend);
+            if (sendBtn != null) sendBtn.addEventListener("click", onSend);
             skipBtn.addEventListener("click", onSkip);
         });
     }
@@ -869,7 +871,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
         const session_scope_is_all = r_session_for_reviews.scope === 3;
-        if(session_scope_is_all) showWarn("The session scope is \"All\". Next review dates will not be updated.")
+        if (session_scope_is_all) showWarn("The session scope is \"All\". Next review dates will not be updated.")
 
         let r0 = r_session_for_reviews.algorithm === 0
 
@@ -916,7 +918,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const multiple_lines = raw.includes("\n");
                 div_back.innerHTML = /*"✅ " +*/ md.render(raw)
 
-                if(!multiple_lines) div_back.style.textAlign = "center";
+                if (!multiple_lines) div_back.style.textAlign = "center";
             }
             div_card.appendChild(div_back);
 
@@ -932,10 +934,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             button_go_to_note.innerText = "Visit";
             button_go_to_note.style.display = "none";
             button_go_to_note.onclick = () => {
-                window.open('app_slip_box.html?note_id='+note_id, '_blank')
+                window.open('app_slip_box.html?note_id=' + note_id, '_blank')
             }
             div_card.appendChild(button_go_to_note);
-
 
 
             let div_rating = document.createElement("div");
@@ -947,7 +948,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 p_rating.innerText = r0 ? "Did you remember?" : "How well did you recall the note?";
                 div_card.appendChild(p_rating);
             }
-
 
             let answer_change_count = 0
 
@@ -969,7 +969,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     selected_grade_ref.current = grade;
 
                     for (let i = 0; i <= 5; i++) {
-                        if(r0 && i >0 && i < 5) continue
+                        if (r0 && i > 0 && i < 5) continue
                         get_element("rating-btn-" + i).className = "rating-btn";
                     }
                     rating_btn.className = "rating-btn rating-btn-selected";
@@ -979,16 +979,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             if (!session_scope_is_all) {
-            if(r0) make_rating_button(5)
-            let rating_btn_0 = make_rating_button(0)
-            if (!r0) {
-                let rating_btn_1 = make_rating_button(1)
-                let rating_btn_2 = make_rating_button(2)
-                let rating_btn_3 = make_rating_button(3)
-                let rating_btn_4 = make_rating_button(4)
+                if (r0) make_rating_button(5)
+                let rating_btn_0 = make_rating_button(0)
+                if (!r0) {
+                    let rating_btn_1 = make_rating_button(1)
+                    let rating_btn_2 = make_rating_button(2)
+                    let rating_btn_3 = make_rating_button(3)
+                    let rating_btn_4 = make_rating_button(4)
+                }
+                if (!r0) make_rating_button(5)
             }
-            if(!r0) make_rating_button(5)
-        }
 
             // Create collapsible legend for rating scale
             let div_legend_container = document.createElement("div");
@@ -998,7 +998,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Show/hide button 
             let btn_toggle_legend = session_scope_is_all ? null : document.createElement("button");
-            if(!session_scope_is_all && !r0) {
+            if (!session_scope_is_all && !r0) {
                 btn_toggle_legend.classList.add("show-btn");
                 btn_toggle_legend.innerText = "Show legend";
                 div_legend_container.appendChild(btn_toggle_legend);
@@ -1007,41 +1007,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Legend content
             let div_legend = session_scope_is_all ? null : document.createElement("div");
-            if(!session_scope_is_all) {
-            div_legend.classList.add("rating-legend");
-            div_legend.style.display = "none";
-            div_legend.style.textAlign = "left";
-            div_legend.style.fontSize = "0.9em";
-            div_legend.style.maxWidth = "600px";
-            div_legend.style.margin = "10px auto";
-            div_legend.style.lineHeight = "1.4em";
-            div_legend.style.padding = "8px 12px";
-            div_legend.style.border = "1px solid rgba(0,0,0,0.1)";
-            div_legend.style.borderRadius = "8px";
-            div_legend.style.background = "rgba(0,0,0,0.03)";
+            if (!session_scope_is_all) {
+                div_legend.classList.add("rating-legend");
+                div_legend.style.display = "none";
+                div_legend.style.textAlign = "left";
+                div_legend.style.fontSize = "0.9em";
+                div_legend.style.maxWidth = "600px";
+                div_legend.style.margin = "10px auto";
+                div_legend.style.lineHeight = "1.4em";
+                div_legend.style.padding = "8px 12px";
+                div_legend.style.border = "1px solid rgba(0,0,0,0.1)";
+                div_legend.style.borderRadius = "8px";
+                div_legend.style.background = "rgba(0,0,0,0.03)";
 
-            function makeLegendLine(num, text) {
-                let p = document.createElement("p");
-                p.style.margin = "2px 0";
-                let b = document.createElement("b");
-                b.innerText = num + ": ";
-                p.appendChild(b);
-                p.append(text);
-                return p;
-            }
+                function makeLegendLine(num, text) {
+                    let p = document.createElement("p");
+                    p.style.margin = "2px 0";
+                    let b = document.createElement("b");
+                    b.innerText = num + ": ";
+                    p.appendChild(b);
+                    p.append(text);
+                    return p;
+                }
 
-            div_legend.appendChild(makeLegendLine(0, "Total blackout — complete failure to recall the information."));
-            div_legend.appendChild(makeLegendLine(1, "Incorrect response, but upon seeing the correct answer it felt familiar."));
-            div_legend.appendChild(makeLegendLine(2, "Incorrect response, but upon seeing the correct answer it seemed easy to remember."));
-            div_legend.appendChild(makeLegendLine(3, "Correct response, but required significant effort to recall."));
-            div_legend.appendChild(makeLegendLine(4, "Correct response, after some hesitation."));
-            div_legend.appendChild(makeLegendLine(5, "Correct response with perfect recall."));
+                div_legend.appendChild(makeLegendLine(0, "Total blackout — complete failure to recall the information."));
+                div_legend.appendChild(makeLegendLine(1, "Incorrect response, but upon seeing the correct answer it felt familiar."));
+                div_legend.appendChild(makeLegendLine(2, "Incorrect response, but upon seeing the correct answer it seemed easy to remember."));
+                div_legend.appendChild(makeLegendLine(3, "Correct response, but required significant effort to recall."));
+                div_legend.appendChild(makeLegendLine(4, "Correct response, after some hesitation."));
+                div_legend.appendChild(makeLegendLine(5, "Correct response with perfect recall."));
 
-            div_legend_container.appendChild(div_legend);
+                div_legend_container.appendChild(div_legend);
             }
 
 // Toggle display event listener
-            if(!session_scope_is_all) btn_toggle_legend.addEventListener("click", () => {
+            if (!session_scope_is_all) btn_toggle_legend.addEventListener("click", () => {
                 const isVisible = div_legend.style.display === "block";
                 div_legend.style.display = isVisible ? "none" : "block";
                 btn_toggle_legend.innerText = isVisible ? "Show legend" : "Hide legend";
@@ -1050,10 +1050,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             let div_actions = document.createElement("div");
             div_card.appendChild(div_actions);
-            if(!session_scope_is_all) {
-            let p_actions = document.createElement("p");
-            p_actions.innerHTML = "Next action"
-            div_actions.appendChild(p_actions);
+            if (!session_scope_is_all) {
+                let p_actions = document.createElement("p");
+                p_actions.innerHTML = "Next action"
+                div_actions.appendChild(p_actions);
             }
 
             let div_next_action = document.createElement("div");
@@ -1108,16 +1108,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 showInfo(`Note was reviewed s: #${note_id} ${note.title}`);
                 addNoteIdToSession(r_session_for_reviews.id, note_id);
 
-                let states = await list_entities("r" + r_session_for_reviews.algorithm+ "_state","&user_id=" + user_id + "&note_id=" + note_id);
+                let states = await list_entities("r" + r_session_for_reviews.algorithm + "_state", "&user_id=" + user_id + "&note_id=" + note_id);
                 let state = states.items[0]
 
                 let r_review_get_response = await read_entity("r_review", r_review_post_response.id);
 
-                if(r_review_get_response !== null && r_review_get_response !== undefined) {
+                if (r_review_get_response !== null && r_review_get_response !== undefined) {
                     let details_json = JSON.parse(r_review_get_response.details_json);
-                    if(details_json !== null && details_json !== undefined) {
+                    if (details_json !== null && details_json !== undefined) {
 
-                        if(details_json.content_modified_since_last_review !== null && details_json.content_modified_since_last_review !== undefined) {
+                        if (details_json.content_modified_since_last_review !== null && details_json.content_modified_since_last_review !== undefined) {
                             showWarn("Content of this note was changed since the last review.");
                         }
                     }
@@ -1142,10 +1142,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     };
 
                 });
-            }
-            else if (action === "skip") {
+            } else if (action === "skip") {
                 // skipped - don't store anything
-                if(!session_scope_is_all) showInfo("Note was skipped: #" + note_id + " " + note.title)
+                if (!session_scope_is_all) showInfo("Note was skipped: #" + note_id + " " + note.title)
             }
 
         }
@@ -1167,7 +1166,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const questions = response.items || response;
         if (!questions || questions.length === 0) {
             showInfo("No questions for this note.");
-            return { correctCount: 0, attemptedCount: 0, percent: 0 };
+            return {correctCount: 0, attemptedCount: 0, percent: 0};
         }
 
         let correctCount = 0;
@@ -1201,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         return new Promise(resolve => {
             get_element("btn_back_to_notes").onclick = () =>
-                resolve({ correctCount, attemptedCount, percent });
+                resolve({correctCount, attemptedCount, percent});
         });
     }
 
