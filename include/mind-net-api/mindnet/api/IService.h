@@ -42,6 +42,31 @@ namespace mindnet::api
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
             int stack_depth = 0) = 0;
+
+        std::pair<int, OperationResult> count(
+            const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
+            int stack_depth = 0)
+        {
+            auto result = list(def, token, query_params, stack_depth);
+            return {result.second.ko() ? 0 : result.first.size(), result.second};
+        }
+
+        std::pair<bool, OperationResult> exists(
+            const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
+            int stack_depth = 0)
+        {
+            auto result = count(def, token, query_params, stack_depth);
+            return {result.second.ko() ? false : result.first > 0, result.second};
+        }
+
+        std::pair<bool, OperationResult> empty(
+            const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
+            int stack_depth = 0)
+        {
+            auto result = count(def, token, query_params, stack_depth);
+            return {result.second.ko() ? false : result.first == 0, result.second};
+        }
+
         //
         virtual std::optional<ModelDefinition> get_model_definition(const string& model_name) = 0;
         //

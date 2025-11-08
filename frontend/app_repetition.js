@@ -2,18 +2,17 @@
 // Imports & Globals
 // ========================================
 
+import {getUserId, list_all_entities, list_entities, post_entity, put_entity, read_entity} from "./api.js";
 import {
-    getUserId, list_all_entities, post_entity,
-    list_entities, put_entity, read_entity
-} from "./api.js";
-import {
-    chooseOption,
-    formatDate,
-    formatDateTime, formatDateTimeHM,
+    formatDateTimeHM,
     get_element,
     getOrFetchFromLocalStorage,
-    minutes_to_ms, showError, showInfo,
-    saveToLocalStorage, loadFromLocalStorage, hide_element, showWarn
+    loadFromLocalStorage,
+    minutes_to_ms,
+    saveToLocalStorage,
+    showError,
+    showInfo,
+    showWarn
 } from "./dom.js";
 
 let user_id = null
@@ -36,6 +35,28 @@ let r18_perfagg = null;
 let wasDragged = false;
 
 let clone_from_r_session = null
+
+// Markdown renderer for repetition
+const md = window.markdownit({
+    html: false,
+    linkify: true,
+    typographer: true
+});
+
+// plugin to convert [[wikilink]] → <span class="wikilink">text</span>
+md.use(function (md) {
+    const regex = /\[\[\s*([^\|\]]+?)(?:\|([^\]]+?))?\s*\]\]/g;
+
+    md.renderer.rules.text = function (tokens, idx) {
+        let text = tokens[idx].content;
+        return text.replace(regex, (match, title, display) => {
+            title = title.trim();
+            display = display ? display.trim() : title;
+            return `<span class="wikilink">${md.utils.escapeHtml(display)}</span>`;
+        });
+    };
+});
+
 
 // ========================================
 // Window
@@ -368,7 +389,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             📚 Schedule: ${scheduleName(json.schedule)}<br>
             🎯 Scope: ${scopeName(json.scope)}<br>
             📑 Cloned from: ${json.cloned_from_session_id || "-"}<br>
-            📝 Description: ${json.description}
+            📝 Description: <span id="${"description_value_"+json.id}">${json.description}</span>
+            <button id="button_edit_description_${json.id}" class="show-btn" style="font-size:0.75em;padding:4px;padding-left:8px;padding-right:8px;">Edit</button>
         `;
             card.appendChild(meta);
             if(json.map_id === 0) get_element(map_id_).remove();
@@ -397,7 +419,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <tr><th>Filter date to</th><td>${formatDateTimeHM(json.filter_date_to)}</td></tr>
                 <tr><th>Filter tag</th><td>${json.filter_tag || "-"}</td></tr>
                 <tr><th>Filter collection</th><td>${json.filter_collection || "-"}</td></tr>
-                <tr><th>Selected items</th><td><pre>${formatJson(json.selected_items)}</pre></td></tr>
+                <tr><th>Selected items</th><td><pre>${formatJson(json.selected_items, false)}</pre></td></tr>
                 <tr><th>Pinned</th><td><span id="Pinned">${json.pinned ? "Yes" : "No"}</span></td></tr>
                 
             </table>
@@ -425,6 +447,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 actions.appendChild(btnRun);
             }
 
+            get_element("button_edit_description_" + json.id).onclick = async () => {
+                const input = prompt("Enter new description", json.description);
+                if (input === null) return; // canceled
+
+                json.description = input;
+                let response = await put_entity("r_session", json.id, json)
+                if(response !== null) get_element("description_value_" + json.id).innerText = json.description
+
+            }
+
             let btnClone = document.createElement("button");
             btnClone.className = "session-btn danger";
             btnClone.textContent = "Clone";
@@ -443,8 +475,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 btnPinUnpin.textContent = json.pinned ? "Unpin" : "Pin";
                 get_element("Pinned").innerText = json.pinned ? "Yes" : "No";
-
-                //render(screen_sessions);
             };
             actions.appendChild(btnPinUnpin);
 
@@ -546,10 +576,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function formatJson(str) {
+    function formatJson(str, compressed = true) {
         try {
             let obj = typeof str === "string" ? JSON.parse(str) : str;
-            return JSON.stringify(obj, null, 2);
+            return JSON.stringify(obj, null, compressed ? 0 :2);
         } catch {
             return str;
         }
@@ -789,6 +819,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.querySelector('.back').style.display = shown ? 'none' : 'block';
         showbtn.innerText = shown ? "Show answer" : "Hide answer";
 
+        get_element("go_to_note").style.display = shown ? "none":"inline-block";
+
     }
     window.showOrHideAnswer=showOrHideAnswer
 
@@ -878,19 +910,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             if (content === null || content.value === null) {
                 let span = document.createElement("span");
-                div_back.innerText = "✅ ";
+                div_back.innerText = "" //"✅ ";
                 span.innerText = "This note is missing the answer";
                 div_back.appendChild(span)
             } else {
-                function hasMultipleLines(text) {
-                    return text.includes('\n');
-                }
-                let multiple_lines = hasMultipleLines(content.value)
-                div_back.innerText = "✅ " + (multiple_lines ? "\n" : "") + content.value;
+                let raw = content.value || "";
+                const multiple_lines = raw.includes("\n");
+                div_back.innerHTML = /*"✅ " +*/ md.render(raw)
 
-                if(!multiple_lines) {
-                    div_back.style.textAlign = "center";
-                }
+                if(!multiple_lines) div_back.style.textAlign = "center";
             }
             div_card.appendChild(div_back);
 
@@ -899,6 +927,18 @@ document.addEventListener('DOMContentLoaded', async () => {
             button_show_btn.innerText = "Show answer";
             button_show_btn.addEventListener("click", showOrHideAnswer);
             div_card.appendChild(button_show_btn);
+
+            let button_go_to_note = document.createElement("button");
+            button_go_to_note.classList.add("show-btn");
+            button_go_to_note.id = "go_to_note";
+            button_go_to_note.innerText = "Visit";
+            button_go_to_note.style.display = "none";
+            button_go_to_note.onclick = () => {
+                window.open('app_slip_box.html?note_id='+note_id, '_blank')
+            }
+            div_card.appendChild(button_go_to_note);
+
+
 
             let div_rating = document.createElement("div");
             div_rating.classList.add("rating");

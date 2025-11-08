@@ -36,10 +36,10 @@ namespace mindnet::api
             if (tableIt == registry_.end()) continue;
 
             auto phaseIt = tableIt->second.find(phase);
-            if (phaseIt == tableIt->second.end()) return;
+            if (phaseIt == tableIt->second.end()) continue;
 
             auto crudIt = phaseIt->second.find(operation);
-            if (crudIt == phaseIt->second.end()) return;
+            if (crudIt == phaseIt->second.end()) continue;
 
             for (auto& trigger : crudIt->second)
             {

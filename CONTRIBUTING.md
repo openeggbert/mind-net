@@ -64,6 +64,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
 - [ ] Plugin slipbox : import note as JSON and via the web interface
+- [ ] ORM framework: add count, exists, empty
 
 ### Experimental
 - [ ] Chat plugin - Slack-like

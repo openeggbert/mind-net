@@ -37,7 +37,7 @@ namespace mindnet::plugins::repetition::models
                 enums::repetition_schedule_to_enum_definition()),
 
             coldef(COLS::SCOPE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
-            coldef(COLS::DESCRIPTION, READONLY),
+            coldef(COLS::DESCRIPTION),
 
             coldef(COLS::FILTER_UNDER_NOTE, READONLY).set_foreign_key("note"),
             coldef(COLS::FILTER_DATE_FROM, DATETIME | READONLY),

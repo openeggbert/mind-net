@@ -42,6 +42,7 @@ input[type="checkbox"] {
 .show-btn {
     background: #444;
     color: #fff;
+    font-size: 1.0em;
 }
 
 .show-btn:hover {
@@ -272,6 +273,13 @@ input[readonly] {
         font-size: 0.95em;
     }
 }
+
+.wikilink {
+    text-decoration: underline;
+    color: #0066cc;
+    cursor: default;
+}
+
 
 
 
