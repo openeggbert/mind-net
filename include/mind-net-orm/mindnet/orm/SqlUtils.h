@@ -19,7 +19,7 @@ namespace mindnet::orm
     class SqlUtils
     {
     public:
-        static string generate_select_one_sql(const std::string& table_name);
+        static string generate_select_one_sql(const std::string& table_name, const model::ModelDefinition& definition);
         static string generate_select_all_sql(
             const std::string& table_name,
             const orm::QueryParams& query_params,

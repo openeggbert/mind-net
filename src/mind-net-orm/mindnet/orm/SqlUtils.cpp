@@ -78,9 +78,20 @@ namespace mindnet::orm
         return "DELETE FROM " + definition.get_model_name() + " WHERE id = ?";
     }
 
-    string SqlUtils::generate_select_one_sql(const std::string& table_name)
+    string SqlUtils::generate_select_one_sql(const std::string& table_name, const model::ModelDefinition& definition)
     {
-        return "SELECT * FROM " + table_name + " WHERE id = ?";
+        std::string sql = "SELECT ";
+        auto& columns = definition.get_columns();
+        int column_index = 0;
+        int last_column = columns.size() - 1;
+        for (auto& col:columns)
+        {
+            sql+= col.get_column_name();
+            sql += column_index < last_column ? ", " : " ";
+            column_index++;
+        }
+        sql+=  "FROM " + table_name + " WHERE id = ?";
+        return sql;
     }
 
     /**

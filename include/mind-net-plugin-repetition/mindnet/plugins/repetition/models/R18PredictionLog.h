@@ -31,7 +31,7 @@ namespace mindnet::plugins::repetition::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def R18_PREDICTION_LOG_DEFINITION =
+    inline const def R18_PREDICTION_LOG_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Repetition", 210)

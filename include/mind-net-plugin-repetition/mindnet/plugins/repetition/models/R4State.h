@@ -17,7 +17,7 @@ namespace mindnet::plugins::repetition::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def R4_STATE_DEFINITION =
+    inline const def R4_STATE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_group("Repetition", 200).set_title_column(COLS::INTERVAL).allow_reader_write()
         .set_rest_operations("rl")
@@ -33,6 +33,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::NEXT_REVIEW, DATETIME),
             coldef(COLS::LAST_REVIEW, DATETIME),
             coldef(COLS::LAST_QUALITY, INTEGER).set_default_value(0),
+            coldef(COLS::LAST_SEEN_SEMANTIC_VERSION, INTEGER).set_default_value(1),
         });
 
     struct Model : mindnet::model::BaseModel
@@ -46,6 +47,7 @@ namespace mindnet::plugins::repetition::models
         unixtime next_review;
         unixtime last_review;
         int last_quality{};
+        int last_seen_semantic_version{};
 
         create_model_h_methods(Model, MODEL)
 
@@ -62,7 +64,8 @@ namespace mindnet::plugins::repetition::models
                 correction_factor_times_100 == other.correction_factor_times_100 &&
                 next_review == other.next_review &&
                 last_review == other.last_review &&
-                last_quality == other.last_quality;
+                last_quality == other.last_quality &&
+                last_seen_semantic_version == other.last_seen_semantic_version;;
         }
     };
 }

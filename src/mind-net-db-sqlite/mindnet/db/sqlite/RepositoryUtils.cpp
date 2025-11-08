@@ -156,7 +156,10 @@ namespace mindnet::db::sqlite
     {
         std::string sql = orm::SqlUtils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
-
+if (definition.get_model_name() == "content")
+{
+    std::cout << 123 << std::endl;
+}
         SQLite::Database db(
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
@@ -195,7 +198,7 @@ namespace mindnet::db::sqlite
 
     entity_fields read_model(model::ModelDefinition& def, const int id, string& error)
     {
-        std::string sql = orm::SqlUtils::generate_select_one_sql(def.get_model_name());
+        std::string sql = orm::SqlUtils::generate_select_one_sql(def.get_model_name(), def);
         debug << "Going to execute select one SQL: " << sql << commit;
 
         SQLite::Database db(

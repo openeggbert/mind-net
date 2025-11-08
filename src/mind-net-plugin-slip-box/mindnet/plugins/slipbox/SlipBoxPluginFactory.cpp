@@ -32,6 +32,7 @@
 #include "mindnet/plugins/slipbox/triggers/AfterCreateUpdateNoteTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/BeforeCreateNoteTrigger.h"
+#include "mindnet/plugins/slipbox/triggers/BeforeUpdateContentTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.h"
 
 namespace mindnet::plugins::slipbox
@@ -81,6 +82,7 @@ namespace mindnet::plugins::slipbox
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateUpdateNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateNoteTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::BeforeUpdateContentTrigger>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());

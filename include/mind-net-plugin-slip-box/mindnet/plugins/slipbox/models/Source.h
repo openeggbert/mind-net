@@ -40,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
-    inline def SOURCE_DEFINITION =
+    inline const def SOURCE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_group("Slip Box", 100)

@@ -15,6 +15,8 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(value);
         result.push_back(cast64(format));
         result.push_back(version);
+        result.push_back(semantic_version);
+        result.push_back(change_ratio);
         result.push_back(cast64(last_parsed_success_at));
         result.push_back(cast64(last_parsed_fail_at));
         return result;
@@ -33,6 +35,8 @@ namespace mindnet::plugins::slipbox::models
         value = text();
         format = static_cast<enums::ContentFormat>(number());
         version = number();
+        semantic_version = number();
+        change_ratio = number();
         last_parsed_success_at = number();
         last_parsed_fail_at = number();
     }
@@ -42,6 +46,7 @@ namespace mindnet::plugins::slipbox::models
         using columns::ContentColumns;
 
         validator_chain_vector list{
+            [this] { return test_between(change_ratio, 0, 100, ContentColumns::CHANGE_RATIO);},
         };
         return util::ValidatorChain::run(list);
     }

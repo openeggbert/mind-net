@@ -31,7 +31,7 @@ namespace mindnet::plugins::repetition::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def R18_PERF_AGG_DEFINITION =
+    inline const def R18_PERF_AGG_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Repetition", 200)

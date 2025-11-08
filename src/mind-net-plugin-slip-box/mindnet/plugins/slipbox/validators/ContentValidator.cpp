@@ -80,7 +80,11 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult ContentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.version != 1,
-                  404, "version must be 1 during message creation.");
+                  404, "version must be 1 during content creation.");
+        return_if(entity.semantic_version != 1,
+          404, "semantic_version must be 1 during content creation.");
+        return_if(entity.change_ratio != 0,
+          404, "change_ratio_times_100 must be 0 during content creation.");
 
         return ok_result;
     }
@@ -89,12 +93,18 @@ namespace mindnet::plugins::slipbox::validators
     {
         return ok_result;
     }
-
     OperationResult ContentValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                 const Model& new_entity) const
     {
-        return_if(new_entity.version != old_entity.version + 1, 400,
+        bool last_parse_success_at_changed = old_entity.last_parsed_success_at != new_entity.last_parsed_success_at;
+        bool last_parsed_fail_at_at_changed = old_entity.last_parsed_fail_at != new_entity.last_parsed_fail_at;
+        return_if(!last_parse_success_at_changed && !last_parsed_fail_at_at_changed && new_entity.version != old_entity.version + 1, 400,
                   "The version must be incremented by exactly 1 during an update.")
+        auto& old_semantic_version = old_entity.semantic_version;
+        auto& new_semantic_version = new_entity.semantic_version;
+        return_if(new_semantic_version != old_semantic_version && new_semantic_version != old_semantic_version + 1, 400,
+                  "The semantic_version must be the same or incremented by exactly 1 during an update.")
+        return_if(new_semantic_version > old_semantic_version && new_entity.change_ratio == 0, 400, "The change_ratio_times_100 must be more than 0, if the semantic_version was incremented.")
         return ok_result;
     }
 

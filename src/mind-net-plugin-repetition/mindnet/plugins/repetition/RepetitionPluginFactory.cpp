@@ -13,6 +13,7 @@
 
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
+#include "mindnet/plugins/repetition/triggers/AfterUpdateContentSemanticVersionTrigger.h"
 #include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.h"
 #include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.h"
 
@@ -44,6 +45,7 @@ namespace mindnet::plugins::repetition
 
         plugin->register_trigger(std::make_shared<triggers::RSessionBeforeCreateTrigger>());
         plugin->register_trigger(std::make_shared<triggers::RReviewAfterCreateTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentSemanticVersionTrigger>());
 
         plugin->register_query(std::make_shared<db::sqlite::queries::GetRSessionSelectedItemsSQLiteQuery>());
         plugin->close_for_changes();

@@ -84,6 +84,8 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R4StateValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                 const Model& new_entity) const
     {
+        return_if(new_entity.last_seen_semantic_version < old_entity.last_seen_semantic_version, 400,
+                  "last_seen_semantic_version cannot decrease")
         return ok_result;
     }
 

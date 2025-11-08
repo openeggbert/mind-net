@@ -36,7 +36,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def WANTED_NOTE_DEFINITION =
+    inline const def WANTED_NOTE_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Slip Box", 100)

@@ -36,7 +36,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def LOGIN_SESSION_DEFINITION =
+    inline const def LOGIN_SESSION_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Core", 300)

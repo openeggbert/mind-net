@@ -38,7 +38,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def LINK_DEFINITION =
+    inline const def LINK_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Slip Box", 100)

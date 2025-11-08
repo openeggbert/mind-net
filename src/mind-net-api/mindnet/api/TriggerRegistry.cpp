@@ -29,10 +29,11 @@ namespace mindnet::api
         entity_fields& old_fields,
         const orm::QueryParams& query_params)
     {
-        std::vector<std::string> v{def.get_model_name(), "*"};
-        for (auto& s : v)
+        std::vector<TriggerPtr> runlist;
+        std::vector<std::string> tables{def.get_model_name(), "*"};
+        for (auto& table : tables)
         {
-            auto tableIt = registry_.find(s);
+            auto tableIt = registry_.find(table);
             if (tableIt == registry_.end()) continue;
 
             auto phaseIt = tableIt->second.find(phase);
@@ -41,11 +42,19 @@ namespace mindnet::api
             auto crudIt = phaseIt->second.find(operation);
             if (crudIt == phaseIt->second.end()) continue;
 
-            for (auto& trigger : crudIt->second)
-            {
-                trigger->run(operation, ++stack_depth, validation_result, action_result,
-                             def, user_id, id, fields, old_fields, query_params);
-            }
+            const auto& vec = crudIt->second;
+            runlist.insert(runlist.end(), vec.begin(), vec.end());
+        }
+
+        std::stable_sort(runlist.begin(), runlist.end(),
+    [](const TriggerPtr& a, const TriggerPtr& b){
+        return a->get_priority() > b->get_priority();
+    });
+
+        for (auto& trigger : runlist)
+        {
+            trigger->run(operation, stack_depth + 1, validation_result, action_result,
+                         def, user_id, id, fields, old_fields, query_params);
         }
     }
 }

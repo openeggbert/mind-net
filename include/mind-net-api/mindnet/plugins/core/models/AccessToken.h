@@ -34,7 +34,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def ACCESS_TOKEN_DEFINITION =
+    inline const def ACCESS_TOKEN_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("crl")
         .set_group("Core", 300)

@@ -9,6 +9,7 @@ add_library(mind_net_plugin_repetition STATIC ${PLUGIN_REPETITION_SOURCES})
 target_include_directories(mind_net_plugin_repetition
         PUBLIC
         ${CMAKE_SOURCE_DIR}/include/mind-net-plugin-repetition
+        ${CMAKE_SOURCE_DIR}/include/mind-net-plugin-slip-box
         PRIVATE
         ${CMAKE_SOURCE_DIR}/include/mind-net-essential
         ${CMAKE_SOURCE_DIR}/include/mind-net-model
@@ -18,6 +19,7 @@ target_include_directories(mind_net_plugin_repetition
 
 target_link_libraries(mind_net_plugin_repetition
         PUBLIC
+        mind_net_plugin_slip_box
         mind_net_essential
         mind_net_model
         mind_net_api

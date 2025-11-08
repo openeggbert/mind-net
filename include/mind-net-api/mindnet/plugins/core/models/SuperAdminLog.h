@@ -32,7 +32,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
-    inline def SUPER_ADMIN_LOG_DEFINITION =
+    inline const def SUPER_ADMIN_LOG_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_title_column(COLS::ENDPOINT)

@@ -40,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def CONTENT_DEFINITION =
+    inline const def CONTENT_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Other", 500)
@@ -51,8 +51,10 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::FORMAT).set_default_value(0).set_enum_definition(
                 enums::content_format_to_enum_definition()).set_description("Content format type"),
             coldef(COLS::VERSION, INTEGER).set_default_value("1").set_description("Content version number"),
-            coldef(COLS::LAST_PARSED_SUCCESS_AT, DATETIME).set_default_value("0"),
-            coldef(COLS::LAST_PARSED_FAIL_AT, DATETIME).set_default_value("0"),
+            coldef(COLS::SEMANTIC_VERSION, INTEGER).set_default_value(1),
+            coldef(COLS::CHANGE_RATIO, INTEGER).set_default_value(0),
+            coldef(COLS::LAST_PARSED_SUCCESS_AT, DATETIME).set_default_value(0),
+            coldef(COLS::LAST_PARSED_FAIL_AT, DATETIME).set_default_value(0),
             //
         })
         .add_custom_list_action("note", "Get note", {"content_id", "{id}"});
@@ -63,6 +65,8 @@ namespace mindnet::plugins::slipbox::models
         string value;
         enums::ContentFormat format{};
         int version{1};
+        int semantic_version{1};
+        int change_ratio{0};
         unixtime last_parsed_success_at{};
         unixtime last_parsed_fail_at{};
 
@@ -76,6 +80,8 @@ namespace mindnet::plugins::slipbox::models
                 value == other.value &&
                 format == other.format &&
                 version == other.version &&
+                semantic_version == other.semantic_version &&
+                change_ratio == other.change_ratio &&
                 last_parsed_success_at == other.last_parsed_success_at &&
                 last_parsed_fail_at == other.last_parsed_fail_at;
         }

@@ -19,6 +19,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(next_review));
         result.push_back(cast64(last_review));
         result.push_back(last_quality);
+        result.push_back(last_seen_semantic_version);
         return result;
     }
 
@@ -38,6 +39,7 @@ namespace mindnet::plugins::repetition::models
         next_review = number();
         last_review = number();
         last_quality = number();
+        last_seen_semantic_version = number();
     };
 
     string R0State::validate()
@@ -48,6 +50,7 @@ namespace mindnet::plugins::repetition::models
             [this] { return test_at_least(repetitions, 0, R0StateColumns::REPETITIONS); },
             [this] { return test_at_least(interval, 1, R0StateColumns::INTERVAL); },
             [this] { return test_between(last_quality, 0, 5, R0StateColumns::LAST_QUALITY); },
+            [this] { return test_at_least(last_seen_semantic_version, 1, R0StateColumns::LAST_SEEN_SEMANTIC_VERSION); },
         };
         return util::ValidatorChain::run(list);
     }

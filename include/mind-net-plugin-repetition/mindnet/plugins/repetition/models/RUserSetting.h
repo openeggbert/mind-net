@@ -36,7 +36,7 @@ namespace mindnet::plugins::repetition::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def R_USER_SETTING_DEFINITION =
+    inline const def R_USER_SETTING_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_group("Repetition", 200)

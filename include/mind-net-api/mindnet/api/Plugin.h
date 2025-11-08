@@ -40,7 +40,7 @@ namespace mindnet::api
         void close_for_changes();
         [[nodiscard]] bool is_closed_for_changes() const;
         void register_model(
-            model::ModelDefinition& model_definition,
+            const model::ModelDefinition& model_definition,
             const std::shared_ptr<IValidator>& validator,
             std::shared_ptr<RepositoryFactory>& repository_factory);
         void register_trigger(const TriggerPtr& trigger);

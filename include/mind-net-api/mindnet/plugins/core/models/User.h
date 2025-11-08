@@ -38,7 +38,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def USER_DEFINITION =
+    inline const def USER_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("crul")
         .set_group("Core", 300)

@@ -60,11 +60,6 @@ namespace mindnet::api
                     }
                     triggers.push_back(t);
                 };
-                std::sort(triggers.begin(), triggers.end(),
-                          [](const mindnet::api::TriggerPtr& a, const mindnet::api::TriggerPtr& b)
-                          {
-                              return a->get_priority() > b->get_priority();
-                          });
 
                 for (auto& trigger : triggers)
                 {

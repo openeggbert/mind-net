@@ -80,7 +80,7 @@ namespace mindnet::plugins::repetition::triggers
     }
 
     bool is_algorithm_supported(api::OperationResult& validation_result, const models::RReview& r_review,
-                                model::ModelDefinition*& model_definition)
+                                const model::ModelDefinition*& model_definition)
     {
         switch (r_review.algorithm)
         {
@@ -274,7 +274,7 @@ namespace mindnet::plugins::repetition::triggers
             }
         }
 
-        model::ModelDefinition* model_definition = nullptr;
+        const model::ModelDefinition* model_definition = nullptr;
 
         if (!is_algorithm_supported(validation_result, r_review, model_definition)) return;
 

@@ -80,7 +80,7 @@ namespace mindnet::api
     std::set<string> registered_models;
 
     void Plugin::register_model(
-        model::ModelDefinition& model_definition,
+        const model::ModelDefinition& model_definition,
         const std::shared_ptr<IValidator>& validator,
         std::shared_ptr<RepositoryFactory>& repository_factory
     )

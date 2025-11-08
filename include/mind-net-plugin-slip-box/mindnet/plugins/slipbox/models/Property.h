@@ -37,7 +37,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def PROPERTY_DEFINITION =
+    inline const def PROPERTY_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_group("Slip Box", 100)
         .set_rest_operations("rl").set_title_column(COLS::KEY)

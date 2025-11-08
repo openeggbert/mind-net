@@ -399,6 +399,18 @@ CREATE INDEX IF NOT EXISTS idx_r_session_cloned_from
     ON r_session(cloned_from_session_id);
 )");
 
+    	add_migration("V14__alter_r0_state_table_add_column_last_seen_semantic_version.sql", R"(
+ALTER TABLE r0_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
+)");
+    	add_migration("V15__alter_r2_state_table_add_column_last_seen_semantic_version.sql", R"(
+ALTER TABLE r2_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
+)");
+    	add_migration("V16__alter_r4_state_table_add_column_last_seen_semantic_version.sql", R"(
+ALTER TABLE r4_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
+)");
+    	add_migration("V17__alter_r18_state_table_add_column_last_seen_semantic_version.sql", R"(
+ALTER TABLE r18_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
+)");
 
 
 

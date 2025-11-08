@@ -31,7 +31,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def IDEA_DEFINITION =
+    inline const def IDEA_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_all_rest_operations()
         .set_title_column(COLS::TITLE)

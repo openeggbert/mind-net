@@ -139,10 +139,6 @@ namespace mindnet::db::sqlite
             crow::json::type crow_json_type = has_value ? rvalue.t() : crow::json::type::Null;
             bool auto_value = col.is_auto();
             bool internal_value = col.is_internal();
-            if (internal_value)
-            {
-                int abc = 4;
-            }
 
             auto column_type = col.get_column_type();
             auto primitive_column_type = column_type_to_primitive_column_type(column_type);

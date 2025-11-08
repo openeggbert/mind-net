@@ -24,9 +24,7 @@
  */
 #ifndef CONTENTCOLUMNS_H
 #define CONTENTCOLUMNS_H
-#include "../../../models/columns/BaseColumns.h"
-#include "mindnet/Helper.h"
-#include "mindnet/enums/ColumnType.h"
+#include "mindnet/model/BaseColumns.h"
 
 namespace mindnet::plugins::slipbox::columns
 {

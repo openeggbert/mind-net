@@ -47,6 +47,8 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* NEXT_REVIEW = "next_review";
         static constexpr const char* LAST_REVIEW = "last_review";
         static constexpr const char* LAST_QUALITY = "last_quality";
+        static constexpr const char* LAST_SEEN_SEMANTIC_VERSION = "last_seen_semantic_version";
+
     };
 }
 #endif // R0STATECOLUMNS_H

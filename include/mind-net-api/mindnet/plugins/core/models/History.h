@@ -36,7 +36,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
-    inline def HISTORY_DEFINITION =
+    inline const def HISTORY_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Core", 500).allow_reader_write()

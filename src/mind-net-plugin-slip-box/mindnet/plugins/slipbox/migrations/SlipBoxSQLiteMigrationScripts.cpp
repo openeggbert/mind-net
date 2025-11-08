@@ -658,6 +658,14 @@ CREATE INDEX idx_note_depth_sibling_id ON note(depth, sibling_order, id);
 )");
 
 
+    	add_migration("V27__alter_table_content_add_columns_semantic_version_and_change_ratio.sql", R"(
+ALTER TABLE content ADD semantic_version INTEGER DEFAULT 1;
+ALTER TABLE content ADD change_ratio INTEGER DEFAULT 0;
+)");
+
+
+
+
 
 
 

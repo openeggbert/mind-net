@@ -38,7 +38,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def MAP_DEFINITION =
+    inline const def MAP_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_group("Slip Box", 100)
         .set_all_rest_operations().set_title_column(COLS::NAME)

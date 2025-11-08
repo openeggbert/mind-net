@@ -18,7 +18,7 @@ namespace mindnet::plugins::repetition::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline def R_REVIEW_DEFINITION =
+    inline const def R_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("crl")
         .set_group("Repetition", 200).set_title_column(COLS::NOTE_ID).allow_reader_write()

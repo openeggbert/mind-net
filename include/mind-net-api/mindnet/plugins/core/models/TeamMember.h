@@ -38,7 +38,7 @@ namespace mindnet::plugins::core::models
     using model::coldef;
     using_flags();
 
-    inline def TEAM_MEMBER_DEFINITION =
+    inline const def TEAM_MEMBER_DEFINITION =
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_group("Core", 300)
