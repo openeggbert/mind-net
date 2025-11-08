@@ -44,7 +44,7 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RReviewValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                     const Model& new_entity) const
     {
-        return {405, "Unsupported operation."};
+        return ok_result;
     }
 
     OperationResult RReviewValidator::validate_delete_authorization(const RequestContext& ctx,
@@ -92,7 +92,7 @@ namespace mindnet::plugins::repetition::validators
     OperationResult RReviewValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                                 const Model& new_entity) const
     {
-        return {405, "Unsupported operation."};
+        return ok_result;
     }
 
     OperationResult RReviewValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const

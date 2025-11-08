@@ -38,7 +38,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::ENDED_AT, DATETIME | READONLY),
             coldef(COLS::LATENCY_MS, INTEGER | READONLY),
             coldef(COLS::ANSWER_CHANGE_COUNT, INTEGER | READONLY).set_default_value(0),
-            coldef(COLS::DETAILS_JSON, MANDATORY | READONLY)
+            coldef(COLS::DETAILS_JSON, MANDATORY)
         });
 
     struct Model : mindnet::model::BaseModel

@@ -110,6 +110,7 @@ namespace mindnet::plugins::repetition::triggers
         models::R18State r18_state;
 
         constexpr static int64_t MILLISECONDS_PER_DAY = 86400L * 1000;
+        constexpr int64_t ONE_HOUR_MS = 3600LL * 1000;
 
         for (int r_version : {0, 2, 4, 18})
         {
@@ -167,10 +168,11 @@ namespace mindnet::plugins::repetition::triggers
                         r0_state.next_review = r0_state.last_review + r0_state.interval * MILLISECONDS_PER_DAY;
                         r0_state.last_quality = 0;
                     }
-                    if (r0_state.next_review < now) r0_state.next_review = now + 3600LL * 1000;
+                    if (r0_state.next_review < now) r0_state.next_review = now + ONE_HOUR_MS;
 
-                        r0_state.last_seen_semantic_version = new_semantic_version;
-                        auto v = r0_state.to_values();
+                    r0_state.last_seen_semantic_version = new_semantic_version;
+                    r0_state.content_modified_since_last_review = true;
+                    auto v = r0_state.to_values();
 
                     debug << "Updating table " << model_definition->get_model_name()
       << " id=" << r0_state.get_id()
@@ -191,9 +193,10 @@ namespace mindnet::plugins::repetition::triggers
                         r2_state.last_quality = 0;
                         r2_state.next_review = r2_state.last_review + MILLISECONDS_PER_DAY;
                     }
-                    if (r2_state.next_review < now) r2_state.next_review = now + 3600LL * 1000;
+                    if (r2_state.next_review < now) r2_state.next_review = now + ONE_HOUR_MS;
 
                         r2_state.last_seen_semantic_version = new_semantic_version;
+                        r2_state.content_modified_since_last_review = true;
                         auto v = r2_state.to_values();
                     debug << "Updating table " << model_definition->get_model_name()
 << " id=" << r2_state.get_id()
@@ -215,9 +218,10 @@ namespace mindnet::plugins::repetition::triggers
                         r4_state.last_quality = 0;
                         r4_state.next_review = r4_state.last_review + MILLISECONDS_PER_DAY;
                     }
-                    if (r4_state.next_review < now) r4_state.next_review = now + 3600LL * 1000;
+                    if (r4_state.next_review < now) r4_state.next_review = now + ONE_HOUR_MS;
 
                     r4_state.last_seen_semantic_version = new_semantic_version;
+                    r4_state.content_modified_since_last_review = true;
                     auto v = r4_state.to_values();
                     debug << "Updating table " << model_definition->get_model_name()
 << " id=" << r4_state.get_id()
@@ -230,7 +234,7 @@ namespace mindnet::plugins::repetition::triggers
                 {
                     if (change_20_50 && r18_state.last_interval_times_100 != 0) {
                         double S_old = r18_state.stability_times_100 / 100.0;
-                        double S_new = adjust_stability(change_ratio, S_old);
+                        double S_new = adjust_stability(change_ratio, S_old, 8.0);
                         r18_state.stability_times_100 = (int)std::round(S_new * 100.0);
 
                         int64_t last_interval_ms = now - r18_state.last_review;
@@ -242,15 +246,17 @@ namespace mindnet::plugins::repetition::triggers
                         r18_state.last_interval_times_100 = (int)std::round(elapsed_days * 100.0);
                         r18_state.next_review = now + (int64_t)std::llround(new_interval_days * MILLISECONDS_PER_DAY);
                     } else {
-                        r18_state.stability_times_100 = 800;   // S = 8.0
+                        r18_state.stability_times_100 = 800;
                         r18_state.last_interval_times_100 = 0;
                         r18_state.repetitions = 0;
                         r18_state.lapses = 0;
                         r18_state.last_quality = 0;
-                        r18_state.next_review = now + 3600LL * 1000;
+                        r18_state.next_review = now + ONE_HOUR_MS;
+                        r18_state.last_review = now;
                     }
 
                     r18_state.last_seen_semantic_version = new_semantic_version;
+                    r18_state.content_modified_since_last_review = true;
                     auto v = r18_state.to_values();
                     debug << "Updating table " << model_definition->get_model_name()
 << " id=" << r18_state.get_id()

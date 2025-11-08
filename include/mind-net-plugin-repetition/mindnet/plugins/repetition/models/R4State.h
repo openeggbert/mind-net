@@ -34,6 +34,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::LAST_REVIEW, DATETIME),
             coldef(COLS::LAST_QUALITY, INTEGER).set_default_value(0),
             coldef(COLS::LAST_SEEN_SEMANTIC_VERSION, INTEGER).set_default_value(1),
+            coldef(COLS::CONTENT_MODIFIED_SINCE_LAST_REVIEW, BOOL).set_default_value(false),
         });
 
     struct Model : mindnet::model::BaseModel
@@ -48,6 +49,7 @@ namespace mindnet::plugins::repetition::models
         unixtime last_review;
         int last_quality{};
         int last_seen_semantic_version{};
+        bool content_modified_since_last_review{false};
 
         create_model_h_methods(Model, MODEL)
 
@@ -65,7 +67,8 @@ namespace mindnet::plugins::repetition::models
                 next_review == other.next_review &&
                 last_review == other.last_review &&
                 last_quality == other.last_quality &&
-                last_seen_semantic_version == other.last_seen_semantic_version;;
+                last_seen_semantic_version == other.last_seen_semantic_version &&
+                content_modified_since_last_review == other.content_modified_since_last_review;
         }
     };
 }

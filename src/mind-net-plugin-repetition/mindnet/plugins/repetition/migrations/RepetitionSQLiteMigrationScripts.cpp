@@ -412,6 +412,20 @@ ALTER TABLE r4_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
 ALTER TABLE r18_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
 )");
 
+    	add_migration("V18__alter_r0_state_table_add_column_content_modified_since_last_review.sql", R"(
+ALTER TABLE r0_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
+)");
+    	add_migration("V19__alter_r2_state_table_add_column_content_modified_since_last_review.sql", R"(
+ALTER TABLE r2_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
+)");
+    	add_migration("V20__alter_r4_state_table_add_column_content_modified_since_last_review.sql", R"(
+ALTER TABLE r4_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
+)");
+    	add_migration("V21__alter_r18_state_table_add_column_content_modified_since_last_review.sql", R"(
+ALTER TABLE r18_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
+)");
+
+
 
 
     }

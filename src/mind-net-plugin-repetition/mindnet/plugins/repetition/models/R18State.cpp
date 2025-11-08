@@ -22,6 +22,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(last_review));
         result.push_back(last_quality);
         result.push_back(last_seen_semantic_version);
+        result.push_back(content_modified_since_last_review);
         return result;
     }
 
@@ -44,6 +45,7 @@ namespace mindnet::plugins::repetition::models
         last_review = number();
         last_quality = number();
         last_seen_semantic_version = number();
+        content_modified_since_last_review = boolean();
     };
 
     string R18State::validate()
