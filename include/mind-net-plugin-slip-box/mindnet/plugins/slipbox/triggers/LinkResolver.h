@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include "nlohmann/json.hpp"
+#include "mindnet/plugins/slipbox/triggers/ContentLinkParser.h"
 
 #include "mindnet/essential/Helper.h"
 

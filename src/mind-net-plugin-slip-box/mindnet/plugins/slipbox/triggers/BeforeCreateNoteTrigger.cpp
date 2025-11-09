@@ -28,7 +28,7 @@ namespace mindnet::plugins::slipbox::triggers
     }
 
 
-    void BeforeCreateNoteTrigger::run(
+    void BeforeCreateNoteTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

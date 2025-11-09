@@ -235,7 +235,7 @@ namespace mindnet::plugins::repetition::triggers
         g_global_param_not_found.clear();
     }
 
-    void RReviewAfterCreateTrigger::run(
+    void RReviewAfterCreateTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

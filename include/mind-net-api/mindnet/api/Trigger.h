@@ -70,7 +70,6 @@ namespace mindnet::api
 
         virtual ~Trigger() = default;
 
-
         void set_service_ptr(Service* svc) { service_ptr = svc; }
         void set_create_fn(CreateFn fn) { create_fn = fn; }
         void set_read_fn(ReadFn fn) { read_fn = fn; }
@@ -78,37 +77,37 @@ namespace mindnet::api
         void set_delete_fn(DeleteFn fn) { delete_fn = fn; }
         void set_list_fn(ListFn fn) { list_fn = fn; }
 
-        std::pair<int, OperationResult> run_create(const model::ModelDefinition& def, api::AccessTokenContext& token,
+        virtual std::pair<int, OperationResult> run_create(const model::ModelDefinition& def, api::AccessTokenContext& token,
                                                    entity_fields& fields, int depth)
         {
             return (service_ptr->*create_fn)(def, token, fields, depth);
         }
 
-        std::pair<entity_fields, OperationResult> run_read(const model::ModelDefinition& def,
+        virtual std::pair<entity_fields, OperationResult> run_read(const model::ModelDefinition& def,
                                                            api::AccessTokenContext& token, int id, int depth)
         {
             return (service_ptr->*read_fn)(def, token, id, depth);
         }
 
-        OperationResult run_update(const model::ModelDefinition& def, api::AccessTokenContext& token, int id,
+        virtual OperationResult run_update(const model::ModelDefinition& def, api::AccessTokenContext& token, int id,
                                    entity_fields& fields, int depth)
         {
             return (service_ptr->*update_fn)(def, token, id, fields, depth);
         }
 
-        OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, int id, int depth)
+        virtual OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, int id, int depth)
         {
             return (service_ptr->*delete_fn)(def, token, id, depth);
         }
 
-        std::pair<std::vector<entity_fields>, OperationResult> run_list(const model::ModelDefinition& def,
+        virtual std::pair<std::vector<entity_fields>, OperationResult> run_list(const model::ModelDefinition& def,
                                                                         api::AccessTokenContext& token,
                                                                         orm::QueryParams& query_params, int depth)
         {
             return (service_ptr->*list_fn)(def, token, query_params, depth);
         }
 
-        virtual void run(
+        virtual void run_before_or_after(
             mindnet::essential::Crudl operation,
             int stack_depth,
             OperationResult& validation_result,
@@ -119,7 +118,45 @@ namespace mindnet::api
             entity_fields& fields,
             entity_fields& old_fields,
             orm::QueryParams query_params
-        ) = 0;
+        );
+
+        std::optional<std::pair<int, OperationResult>> run_instead_of_create(
+    int stack_depth,
+    OperationResult& validation_result,
+    const model::ModelDefinition& def,
+    int user_id,
+    int id,
+    entity_fields& fields);
+
+        virtual std::optional<std::pair<entity_fields, OperationResult>> run_instead_of_read(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id);
+
+        virtual std::optional<OperationResult> run_instead_of_update(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id,
+            entity_fields& fields,
+            entity_fields& old_fields);
+
+        virtual std::optional<OperationResult> run_instead_of_delete(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id);
+        virtual std::optional<std::pair<std::vector<entity_fields>, OperationResult>> run_instead_of_list(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            const orm::QueryParams& query_params);
+
         //
         inline const std::string& get_name() const { return name; }
         inline const std::string& get_description() const { return description; }

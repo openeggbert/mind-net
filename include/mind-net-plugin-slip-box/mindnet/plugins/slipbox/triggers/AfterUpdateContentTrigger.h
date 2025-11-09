@@ -15,7 +15,7 @@ namespace mindnet::plugins::slipbox::triggers
         AfterUpdateContentTrigger();
 
         ~AfterUpdateContentTrigger() override = default;
-        void run(
+        void run_before_or_after(
             mindnet::essential::Crudl operation,
             int stack_depth,
             api::OperationResult& validation_result,

@@ -4,13 +4,11 @@
 
 #include "mindnet/plugins/slipbox/triggers/LinkResolver.h"
 
-#include <set>
 #include <unordered_set>
 
 #include "mindnet/essential/ConsolePrinter.h"
 #include "mindnet/essential/Global.h"
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.h"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

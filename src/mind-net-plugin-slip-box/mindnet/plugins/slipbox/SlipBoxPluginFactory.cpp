@@ -2,7 +2,7 @@
 
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.h"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.h"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.h"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.h"
 #include "mindnet/api/Plugin.h"
 #include "mindnet/api/PluginFactory.h"
@@ -14,6 +14,7 @@
 #include "mindnet/plugins/slipbox/validators/MapCollectionValidator.h"
 #include "mindnet/plugins/slipbox/validators/MapCollectionItemValidator.h"
 #include "mindnet/plugins/slipbox/validators/NoteValidator.h"
+#include "mindnet/plugins/slipbox/validators/NoteNavigationValidator.h"
 #include "mindnet/plugins/slipbox/validators/PropertyValidator.h"
 #include "mindnet/plugins/slipbox/validators/QuestionValidator.h"
 #include "mindnet/plugins/slipbox/validators/LinkValidator.h"
@@ -34,6 +35,7 @@
 #include "mindnet/plugins/slipbox/triggers/BeforeCreateNoteTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/BeforeUpdateContentTrigger.h"
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.h"
+#include "mindnet/plugins/slipbox/triggers/InsteadOfReadNoteNavigationTrigger.h"
 
 namespace mindnet::plugins::slipbox
 {
@@ -77,15 +79,18 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
         REGISTER_MODEL(map_collection, MapCollection, MAP_COLLECTION)
         REGISTER_MODEL(map_collection_item, MapCollectionItem, MAP_COLLECTION_ITEM)
+        REGISTER_MODEL(note_navigation, NoteNavigation, NOTE_NAVIGATION)
 
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateUpdateNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::BeforeUpdateContentTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfReadNoteNavigationTrigger>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindPreviousAndNextNoteSQLiteQuery>());
         plugin->register_library_file("markdown-it.min.js");
         plugin->register_library_file("highlight.min.js");
         plugin->register_library_file("markdown-it-emoji.min.js");

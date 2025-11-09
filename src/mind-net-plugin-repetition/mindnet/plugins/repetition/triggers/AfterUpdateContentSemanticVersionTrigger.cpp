@@ -51,7 +51,7 @@ namespace mindnet::plugins::repetition::triggers
         return S_new;
     }
 
-    void AfterUpdateContentSemanticVersionTrigger::run(
+    void AfterUpdateContentSemanticVersionTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

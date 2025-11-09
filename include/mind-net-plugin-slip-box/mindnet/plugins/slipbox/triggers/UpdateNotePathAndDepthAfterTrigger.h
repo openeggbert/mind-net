@@ -15,7 +15,7 @@ namespace mindnet::plugins::slipbox::triggers
         UpdateNotePathAndDepthAfterTrigger();
 
         ~UpdateNotePathAndDepthAfterTrigger() override = default;
-        void run(
+        void run_before_or_after(
             mindnet::essential::Crudl operation,
             int stack_depth,
             api::OperationResult& validation_result,
@@ -26,7 +26,7 @@ namespace mindnet::plugins::slipbox::triggers
             entity_fields& fields,
             entity_fields& old_fields,
             const orm::QueryParams query_params
-        );
+        ) override;
     };
 }
 #endif // UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H

@@ -53,11 +53,7 @@ namespace mindnet::api
                         throw std::runtime_error(
                             std::string("TriggerPhase Around is not yet supported: ") + t->get_name());
                     }
-                    if (t->get_phase() == TriggerPhase::InsteadOf)
-                    {
-                        throw std::runtime_error(
-                            std::string("TriggerPhase InsteadOf is not yet supported: ") + t->get_name());
-                    }
+
                     triggers.push_back(t);
                 };
 
@@ -151,14 +147,15 @@ namespace mindnet::api
 
         auto action = Crudl::Create;
         auto validation_result = can_create(def.get_model_name(), token, fields);
-        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
                                       token.user_id, 0, fields);
         if (validation_result.ko())
         {
             return {-1, validation_result};
         }
-        auto action_result = db_ptr->create(def, token, fields);
-        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
+        auto handled = trigger_registry_ptr->execute_instead_of_create(stack_depth, validation_result, def, token.user_id, 0, fields);
+        auto action_result = handled.value_or(db_ptr->create(def, token, fields));
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
                                       def, token.user_id, action_result.first, fields);
         if (validation_result.ko())
         {
@@ -208,14 +205,17 @@ namespace mindnet::api
         debug << "Calling read for " << def.get_model_name() << commit;
         auto validation_result = can_read(def.get_model_name(), token, id);
 
-        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
                                       token.user_id, id);
         if (validation_result.ko())
         {
             return {{}, validation_result};
         }
-        auto action_result = db_ptr->read(def, token, id);
-        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
+
+        auto handled = trigger_registry_ptr->execute_instead_of_read(stack_depth, validation_result, def, token.user_id, id);
+
+        auto action_result = handled.value_or(db_ptr->read(def, token, id));
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
                                       def, token.user_id, id, action_result.first);
         if (validation_result.ko())
         {
@@ -234,14 +234,15 @@ namespace mindnet::api
         auto action = Crudl::Update;
         entity_fields old_fields{};
         auto validation_result = can_update(def.get_model_name(), token, fields, old_fields);
-        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
                                       token.user_id, id, fields, old_fields);
         if (validation_result.ko())
         {
             return validation_result;
         }
-        auto action_result = db_ptr->update(def, token, id, fields);
-        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result, def,
+        auto handled = trigger_registry_ptr->execute_instead_of_update(stack_depth, validation_result, def, token.user_id, id, fields, old_fields);
+        auto action_result = handled.value_or(db_ptr->update(def, token, id, fields));
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::After, action, stack_depth, validation_result, action_result, def,
                                       token.user_id, id, fields, old_fields);
         if (validation_result.ko())
         {
@@ -255,15 +256,16 @@ namespace mindnet::api
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
         auto action = Crudl::Delete;
         auto validation_result = can_delete(def.get_model_name(), token, id);
-        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
                                       token.user_id, id);
 
         if (validation_result.ko())
         {
             return validation_result;
         }
-        auto action_result = db_ptr->remove(def, token, id);
-        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result, def,
+        auto handled = trigger_registry_ptr->execute_instead_of_delete(stack_depth, validation_result, def, token.user_id, id);
+        auto action_result = handled.value_or(db_ptr->remove(def, token, id));
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::After, action, stack_depth, validation_result, action_result, def,
                                       token.user_id,
                                       id);
         if (validation_result.ko())
@@ -279,15 +281,16 @@ namespace mindnet::api
         if (stack_depth > MAX_TRIGGER_DEPTH) return {{}, {500, "Max trigger depth exceeded"}};
         auto action = Crudl::List;
         auto validation_result = can_list(def.get_model_name(), token, query_params.filters);
-        trigger_registry_ptr->execute(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::Before, action, stack_depth, validation_result, empty_result, def,
                                       token.user_id, 0, api::empty_entity_fields, empty_entity_fields, query_params);
 
         if (validation_result.ko())
         {
             return {{}, validation_result};
         }
-        auto action_result = db_ptr->list(def, token, query_params);
-        trigger_registry_ptr->execute(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
+        auto handled = trigger_registry_ptr->execute_instead_of_list(stack_depth, validation_result, def, token.user_id, query_params);
+        auto action_result = handled.value_or(db_ptr->list(def, token, query_params));
+        trigger_registry_ptr->execute_before_or_after(TriggerPhase::After, action, stack_depth, validation_result, action_result.second,
                                       def, token.user_id, 0, api::empty_entity_fields, empty_entity_fields,
                                       query_params);
         if (validation_result.ko())

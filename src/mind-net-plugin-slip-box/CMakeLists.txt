@@ -23,6 +23,7 @@ target_link_libraries(mind_net_plugin_slip_box
         mind_net_model
         mind_net_api
         mind_net_util
+        mind_net_db_sqlite
 )
 
 target_precompile_headers(mind_net_plugin_slip_box PRIVATE

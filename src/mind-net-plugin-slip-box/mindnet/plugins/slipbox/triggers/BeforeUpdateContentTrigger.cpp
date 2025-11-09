@@ -98,7 +98,7 @@ namespace mindnet::plugins::slipbox::triggers
         return {wer, sim, d, A.size(), B.size()};
     }
 
-    void BeforeUpdateContentTrigger::run(
+    void BeforeUpdateContentTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

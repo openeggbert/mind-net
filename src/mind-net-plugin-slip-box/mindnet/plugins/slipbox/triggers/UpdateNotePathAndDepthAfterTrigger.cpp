@@ -26,7 +26,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-    void UpdateNotePathAndDepthAfterTrigger::run(
+    void UpdateNotePathAndDepthAfterTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

@@ -168,18 +168,19 @@ namespace mindnet::api
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
+            auto def = db->get_model_definition(get_model_name());
+            Model entity;
+            if (!def.value().is_no_table()) {
             auto [values, read_err] = db->read(
                 //todo
                 db->get_model_definition(derived().get_model_name()).value(), token, id
             );
             if (read_err.ko()) return read_err;
-            //
-            Model entity;
             entity.from_values(values);
+            }
             ////
             if (is_authorization_enabled(context))
             {
-                auto def = db->get_model_definition(get_model_name());
                 auto authorized_to = token.is_system() || is_authorized_to(
                     logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
                 if (!authorized_to) return {

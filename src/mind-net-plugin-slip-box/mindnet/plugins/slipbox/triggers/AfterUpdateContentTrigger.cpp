@@ -76,7 +76,7 @@ namespace mindnet::plugins::slipbox::triggers
     //   '[[Nested [[bad]]' -> inner: 'Nested [[bad' at pos 220
 
 
-    void AfterUpdateContentTrigger::run(
+    void AfterUpdateContentTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

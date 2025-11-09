@@ -26,7 +26,7 @@ namespace mindnet::plugins::repetition::triggers
     {
     }
 
-    void RSessionBeforeCreateTrigger::run(
+    void RSessionBeforeCreateTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

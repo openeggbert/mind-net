@@ -19,6 +19,10 @@
 
 namespace mindnet::api
 {
+    using CrudLMap = std::unordered_map<mindnet::essential::Crudl, std::vector<TriggerPtr>>;
+    using PhaseMap = std::unordered_map<TriggerPhase, CrudLMap>;
+    using TableMap = std::unordered_map<std::string, PhaseMap>;
+
     static entity_fields empty_entity_fields;
     const orm::QueryParams empty_query_params;
 
@@ -31,7 +35,7 @@ namespace mindnet::api
             mindnet::essential::Crudl op,
             TriggerPtr& trigger);
 
-        void execute(
+        void execute_before_or_after(
             TriggerPhase phase,
             const mindnet::essential::Crudl& operation,
             int stack_depth,
@@ -44,10 +48,44 @@ namespace mindnet::api
             entity_fields& old_fields = empty_entity_fields,
             const orm::QueryParams& query_params = empty_query_params);
 
+        std::optional<std::pair<int, OperationResult>> execute_instead_of_create(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id,
+            entity_fields& fields);
+
+        std::optional<std::pair<entity_fields, OperationResult>> execute_instead_of_read(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id);
+
+        std::optional<OperationResult> execute_instead_of_update(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id,
+            entity_fields& fields,
+            entity_fields& old_fields);
+
+        std::optional<OperationResult> execute_instead_of_delete(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            int id);
+        std::optional<std::pair<std::vector<entity_fields>, OperationResult>> execute_instead_of_list(
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            int user_id,
+            const orm::QueryParams& query_params);
+
     private:
-        using CrudLMap = std::unordered_map<mindnet::essential::Crudl, std::vector<TriggerPtr>>;
-        using PhaseMap = std::unordered_map<TriggerPhase, CrudLMap>;
-        using TableMap = std::unordered_map<std::string, PhaseMap>;
 
         TableMap registry_;
     };

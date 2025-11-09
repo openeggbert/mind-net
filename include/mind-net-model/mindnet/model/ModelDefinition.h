@@ -47,6 +47,7 @@ namespace mindnet::model
         column_definitions columns; ///< Column definitions for the model
         std::set<mindnet::essential::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
+        bool no_table = false;
         std::vector<CustomAction> custom_actions{};
         std::string title_column;
         bool reader_can_write{false};
@@ -94,6 +95,11 @@ namespace mindnet::model
         [[nodiscard]] const bool is_virtual_table() const
         {
             return virtual_table;
+        }
+        /** @return True if the model is no table otherwise false. */
+        [[nodiscard]] const bool is_no_table() const
+        {
+            return no_table;
         }
 
         [[nodiscard]] const std::vector<CustomAction> get_custom_actions() const
@@ -200,6 +206,11 @@ namespace mindnet::model
         ModelDefinition& set_virtual_table(bool value)
         {
             virtual_table = value;
+            return *this;
+        }
+        ModelDefinition& set_no_table(bool value)
+        {
+            no_table = value;
             return *this;
         }
 

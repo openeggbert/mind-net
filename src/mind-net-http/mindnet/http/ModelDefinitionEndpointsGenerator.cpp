@@ -126,6 +126,10 @@ namespace mindnet::http
             {
                 res["virtual_table"] = model_definition->is_virtual_table();
             }
+            if (fields_set_empty || fields_set.contains("no_table"))
+            {
+                res["no_table"] = model_definition->is_no_table();
+            }
 
             if (fields_set_empty || fields_set.contains("title_column") && !model_definition->get_title_column().
                 empty())

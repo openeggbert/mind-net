@@ -31,8 +31,7 @@ namespace mindnet::plugins::slipbox::models
     {
         int i = 0;
 
-        auto number = [&values, &i] { return std::get<std::int64_t>(values[i++]); };
-        auto text = [&values, &i] { return std::get<std::string>(values[i++]); };
+        def_helper_lambdas()
 
         set_id(number());
         created_at = number();
