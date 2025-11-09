@@ -38,14 +38,14 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT n0.id,
            printf('/%06d', n0.sibling_order)
     FROM note n0
-    WHERE n0.parent_note_id IS NULL
+    WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
     UNION ALL
 
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id
+    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
 ),
 due AS (
     SELECT n.id AS note_id
@@ -57,7 +57,7 @@ due AS (
 SELECT n.id AS note_id
 FROM note n
 JOIN due d ON d.note_id = n.id
-JOIN ord o ON o.note_id = n.id
+LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
       n.content_id IS NOT NULL
@@ -101,14 +101,14 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT n0.id,
            printf('/%06d', n0.sibling_order)
     FROM note n0
-    WHERE n0.parent_note_id IS NULL
+    WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
     UNION ALL
 
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id
+    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
 ),
 new AS (
     SELECT n.id AS note_id
@@ -120,7 +120,7 @@ new AS (
 SELECT n.id AS note_id
 FROM note n
 JOIN new ne ON ne.note_id = n.id
-JOIN ord o ON o.note_id = n.id
+LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
       n.content_id IS NOT NULL
@@ -180,14 +180,14 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT n0.id,
            printf('/%06d', n0.sibling_order)
     FROM note n0
-    WHERE n0.parent_note_id IS NULL
+    WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
     UNION ALL
 
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id
+    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
 ),
 due AS (
     SELECT n.id AS note_id
@@ -211,7 +211,7 @@ all_set AS (
 SELECT n.id AS note_id
 FROM note n
 JOIN all_set x ON x.note_id = n.id
-JOIN ord o ON o.note_id = n.id
+LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
       n.content_id IS NOT NULL
@@ -252,19 +252,19 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT n0.id,
            printf('/%06d', n0.sibling_order)
     FROM note n0
-    WHERE n0.parent_note_id IS NULL
+    WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
     UNION ALL
 
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id
+    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
 )
 SELECT n.id AS note_id
 FROM note n
 LEFT JOIN note p ON p.id = n.parent_note_id
-JOIN ord o ON o.note_id = n.id
+LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
       n.content_id IS NOT NULL
