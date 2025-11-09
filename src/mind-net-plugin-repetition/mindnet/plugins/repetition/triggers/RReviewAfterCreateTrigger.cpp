@@ -332,6 +332,7 @@ namespace mindnet::plugins::repetition::triggers
                     state.next_review = 0;
                     state.last_review = 0;
                     state.last_quality = 0;
+                    state.last_seen_semantic_version = 1;
 
                     new_state_fields = state.to_values();
                 };
@@ -349,6 +350,7 @@ namespace mindnet::plugins::repetition::triggers
                     state.next_review = 0;
                     state.last_review = 0;
                     state.last_quality = 0;
+                    state.last_seen_semantic_version = 1;
 
                     new_state_fields = state.to_values();
                 };
@@ -367,6 +369,7 @@ namespace mindnet::plugins::repetition::triggers
                     state.next_review = 0;
                     state.last_review = 0;
                     state.last_quality = 0;
+                    state.last_seen_semantic_version = 1;
 
                     new_state_fields = state.to_values();
                 };
@@ -385,6 +388,7 @@ namespace mindnet::plugins::repetition::triggers
                     state.next_review = 0;
                     state.last_review = 0;
                     state.last_quality = 0;
+                    state.last_seen_semantic_version = 1;
 
                     new_state_fields = state.to_values();
                 };
@@ -401,7 +405,7 @@ namespace mindnet::plugins::repetition::triggers
                 action_result.status = 500;
                 action_result.error = create_result.second.error;
                 err << "Creating new state table " << model_definition->get_model_name() << " failed for user_id " <<
-                    r_review.user_id << " and note_id " << r_review.note_id << create_result.second.error << commit;
+                    r_review.user_id << " and note_id " << r_review.note_id << " " << create_result.second.error << commit;
                 return;
             }
             else
@@ -431,9 +435,8 @@ namespace mindnet::plugins::repetition::triggers
         const double EF_MAX = par.ef_max; // upper limit of EF
         const int MAX_INTERVAL_DAYS = par.max_interval_days;
 
+        model::JSON details_json;
 
-
-        bool content_modified_since_last_review = false;
         switch (r_review.algorithm)
         {
         case enums::RepetitionAlgorithm::Repetition0:
@@ -461,7 +464,7 @@ namespace mindnet::plugins::repetition::triggers
                     MILLISECONDS_PER_DAY;
                 r0_state.last_review = r_review.review_date;
                 r0_state.last_quality = r_review.grade;
-                content_modified_since_last_review = r0_state.content_modified_since_last_review;
+                details_json["content_modified_since_last_review"] = true;
                 r0_state.content_modified_since_last_review = false;
                 auto new_values = r0_state.to_values();
                 auto r0_state_update = run_update(*model_definition, token, state_record_id, new_values, stack_depth);
@@ -532,7 +535,7 @@ namespace mindnet::plugins::repetition::triggers
                 r2_state.interval = interval;
                 r2_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
                 r2_state.last_quality = q;
-                content_modified_since_last_review = r2_state.content_modified_since_last_review;
+                details_json["content_modified_since_last_review"] = true;
                 r2_state.content_modified_since_last_review = false;
                 r2_state.last_review = r_review.review_date;
                 r2_state.next_review = util::Utils::current_unix_timestamp_ms() + interval * MILLISECONDS_PER_DAY;
@@ -626,7 +629,7 @@ namespace mindnet::plugins::repetition::triggers
                 r4_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
                 r4_state.correction_factor_times_100 = static_cast<int>(std::round(cf * 100.0));
                 r4_state.last_quality = q;
-                content_modified_since_last_review = r4_state.content_modified_since_last_review;
+                details_json["content_modified_since_last_review"] = true;
                 r4_state.content_modified_since_last_review = false;
                 r4_state.last_review = r_review.review_date;
                 r4_state.next_review = util::Utils::current_unix_timestamp_ms() + interval * MILLISECONDS_PER_DAY;
@@ -744,6 +747,7 @@ namespace mindnet::plugins::repetition::triggers
                 // Compute retrievability and overdue
                 // =======================
                 double R_now = retrievability(elapsed_days, S);
+                details_json["R_now"] = R_now;
                 double I_opt = interval_for_target(S, R_opt);
                 double overdue = std::max(0.0, elapsed_days / std::max(1e-9, I_opt) - 1.0);
 
@@ -815,7 +819,7 @@ namespace mindnet::plugins::repetition::triggers
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
                 r18_state.last_quality = q;
-                content_modified_since_last_review = r18_state.content_modified_since_last_review;
+                details_json["content_modified_since_last_review"] = true;
                 r18_state.content_modified_since_last_review = false;
                 r18_state.last_review = (int64_t)now_ms;
                 r18_state.stability_times_100 = (int)std::round(S_after * 100.0);
@@ -906,17 +910,17 @@ namespace mindnet::plugins::repetition::triggers
             break;
         }
 
-if (content_modified_since_last_review)
-{
-    r_review.details_json = "{\"content_modified_since_last_review\": true}";
-    auto v = r_review.to_values();
-    v[0] = id;
-    auto r_review_updated = run_update(models::R_REVIEW_DEFINITION, token, id, v, stack_depth);
-    if (r_review_updated.ko())
-    {
-        err << "Update of r_review  with id " << r_review.get_id() << " failed: " << r_review_updated.error << std::endl;
-    }
-}
+        if (!details_json.empty())
+        {
+            r_review.details_json = details_json.dump();
+            auto v = r_review.to_values();
+            v[0] = id;
+            auto r_review_updated = run_update(models::R_REVIEW_DEFINITION, token, id, v, stack_depth);
+            if (r_review_updated.ko())
+            {
+                err << "Update of r_review with id " << r_review.get_id() << " failed: " << r_review_updated.error << commit;
+            }
+        }
 
 
     }

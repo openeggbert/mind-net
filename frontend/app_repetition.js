@@ -874,6 +874,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (session_scope_is_all) showWarn("The session scope is \"All\". Next review dates will not be updated.")
 
         let r0 = r_session_for_reviews.algorithm === 0
+        let r18 = r_session_for_reviews.algorithm === 18
 
         const note_id_count = note_ids.length - countOfUsedNotes(r_session_for_reviews.id);
         let note_id_index = 0;
@@ -1113,8 +1114,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 let r_review_get_response = await read_entity("r_review", r_review_post_response.id);
 
+                let details_json = JSON.parse(r_review_get_response.details_json);
                 if (r_review_get_response !== null && r_review_get_response !== undefined) {
-                    let details_json = JSON.parse(r_review_get_response.details_json);
+
                     if (details_json !== null && details_json !== undefined) {
 
                         if (details_json.content_modified_since_last_review !== null && details_json.content_modified_since_last_review !== undefined) {
@@ -1122,18 +1124,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     }
                 }
+                let retrievibility = null
+                if(r18 && details_json !== null && details_json !== undefined) {
+                    if(details_json.R_now !== null && details_json.R_now !== undefined) {
+                        retrievibility = details_json.R_now
+                    }
+                }
+
                 await new Promise(resolve => {
                     main_content.innerHTML = `
             <h3>✅ Note reviewed: ${note.title}</h3>
             <div class="info" id="result">
             📅 Next review : ${state === null ? "?" : formatDateTimeHM(state.next_review)}<br>
-            🔢 Repetitions: ${state === null ? "?" : state.repetitions}
+            🔢 Repetitions: ${state === null ? "?" : state.repetitions}<br>
+            <span id="result_stability" style="display:none">📈 Stability: ${state === null || !r18 ? "?" : (state.stability_times_100 /100).toFixed(2)}</span>
+            <span id="result_retrievibility" style="display:none">📈 Retrievibility: ${state === null || !r18 ? "?" : (retrievibility).toFixed(2)}</span>
             </div>
             <button id="btn_next_note">Next Note</button>
             <button id="btn_test_note">Test</button>
             
             
         `;
+                    if(r18) get_element("result_stability").style.display = "block";
+                    if(r18 && retrievibility !== null) get_element("result_retrievibility").style.display = "block";
 
                     get_element("btn_next_note").onclick = () => resolve();
                     get_element("btn_test_note").onclick = async () => {
