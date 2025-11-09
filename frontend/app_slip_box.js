@@ -467,6 +467,20 @@ async function render() {
 
     let mode_root_or_notes = mode_root || mode_notes;
 
+    let note_navigation = mode_notes ? await read_entity("note_navigation", local_note_id) : null;
+    //if(mode_notes) alert(JSON.stringify(note_navigation));
+
+    get_element("button_previous").onclick = async () => {
+        if(!mode_notes) return
+        if(note_navigation === null || note_navigation === undefined) return;
+        await navigate_to({note_id: note_navigation.prev_note_id});
+    }
+    get_element("button_next").onclick = async () => {
+        if(!mode_notes) return
+        if(note_navigation === null || note_navigation === undefined) return;
+        await navigate_to({note_id: note_navigation.next_note_id});
+    }
+
     // Header
     show_or_hide_elements(mode_root_or_notes, "button_previous", "button_next", "button_focus")
 
