@@ -1,5 +1,5 @@
 import {HOST, PORT} from "./conf.js";
-import {showError, showWarn} from "./dom.js";
+import {formatDateTime, formatDateTimeHM, showError, showWarn} from "./dom.js";
 import {getEntitySchemas} from "./state.js";
 import {refreshToken} from "./auth.js";
 
@@ -159,6 +159,7 @@ function maybeCleanupLocalStorage() {
             // ignore invalid JSON
         }
     }
+    localStorage.setItem("last_maybeCleanupLocalStorage", formatDateTime(Date.now(), true, true, true, true));
 }
 
 
