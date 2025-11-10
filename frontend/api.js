@@ -298,7 +298,7 @@ export async function post_entity(model_name, json) {
     });
 }
 
-function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 * 1000) { // cache for 24 hours
+export function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 * 1000) { // cache for 24 hours
     const key = `titlecache:${entityName}:${entityId}`;
     localStorage.setItem(key, JSON.stringify({
         value,
@@ -306,7 +306,7 @@ function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 * 1000)
     }));
 }
 
-function getTitleCache(entityName, entityId) {
+export function getTitleCache(entityName, entityId) {
     const key = `titlecache:${entityName}:${entityId}`;
     const raw = localStorage.getItem(key);
     if (!raw) return null;

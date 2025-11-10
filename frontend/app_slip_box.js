@@ -1,7 +1,15 @@
 // ========================================
 // Imports & Globals
 // ========================================
-import {delete_entity, list_all_entities, post_entity, put_entity, read_entity} from "./api.js";
+import {
+    delete_entity,
+    getTitleCache,
+    list_all_entities,
+    post_entity,
+    put_entity,
+    read_entity,
+    setTitleCache
+} from "./api.js";
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
     chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element
@@ -471,18 +479,51 @@ async function render() {
     //if(mode_notes) alert(JSON.stringify(note_navigation));
 
     get_element("button_previous").onclick = async () => {
-        if(!mode_notes) return
-        if(note_navigation === null || note_navigation === undefined) return;
+        if (!mode_notes) return
+        if (note_navigation === null || note_navigation === undefined) return;
+
+        if (note_navigation.prev_note_id === 0) {
+            show_warn("There is no previous note in the map.")
+            return;
+        }
+
         await navigate_to({note_id: note_navigation.prev_note_id});
     }
     get_element("button_next").onclick = async () => {
         if(!mode_notes) return
         if(note_navigation === null || note_navigation === undefined) return;
+
+        if (note_navigation.next_note_id === 0) {
+            show_warn("There is no next note in the map.")
+            return;
+        }
+
         await navigate_to({note_id: note_navigation.next_note_id});
     }
 
     // Header
     show_or_hide_elements(mode_root_or_notes, "button_previous", "button_next", "button_focus")
+
+    // Breadcrumb
+        let breadcrumb = get_element("breadcrumb")
+    breadcrumb.innerHTML = ""
+    let dir = document.createElement("span");
+    dir.innerText = "📂 ";
+    breadcrumb.appendChild(dir);
+
+    let home = document.createElement("a");
+    home.href = "?";
+    home.innerText = "Home";
+    breadcrumb.appendChild(home);
+    home.onclick = async () => {
+        event.preventDefault();
+        await navigate_to({});
+    }
+
+
+//     <div class="breadcrumb">
+//             📂 <a href="?">Home</a> › <a href="#">C++</a> › <a href="#">Constructors</a> › <strong>Note #43453</strong>
+// </div>
 
     // Parent
     show_or_hide_element(mode_root_or_notes, "parent")
@@ -564,6 +605,55 @@ async function render() {
         let current_title = document.getElementById("current_title");
         current_title.style.display = "inline-block";
         current_title.style.minWidth = "50px";
+
+        //breadcrumb
+        {
+        let separator = document.createElement("span");
+        separator.innerText = " › "
+        breadcrumb.appendChild(separator);
+
+        let breadcrumb_map = document.createElement("a");
+        breadcrumb_map.innerText = map.name;
+        breadcrumb_map.href = "?";
+        breadcrumb.appendChild(breadcrumb_map);
+        breadcrumb_map.onclick = async function () {
+            event.preventDefault();
+            await navigate_to({map_id: map.id});
+        }
+        }
+        if (mode_notes) {
+            const path_as_ids = note.path
+                .split('/')
+                .filter(x => x.trim() !== "")
+                .map(x => Number(x));
+
+            for (const x of path_as_ids) {
+                let title = getTitleCache("note", x)
+                if (title === null || title === undefined) {
+
+                    let note_ = await read_entity("note", x)
+                    if(note_ === null) {
+                        show_warn("Loading note with id " + x + " failed.");
+                        break;
+                    }
+                    title = note_.title
+                    setTitleCache("note", x, title);
+                }
+
+                let separator = document.createElement("span");
+                separator.innerText = " › "
+                breadcrumb.appendChild(separator);
+
+                let breadcrumb_note = document.createElement("a");
+                breadcrumb_note.innerText = title;
+                breadcrumb_note.href = "?";
+                breadcrumb.appendChild(breadcrumb_note);
+                breadcrumb_note.onclick = async function () {
+                    event.preventDefault();
+                    await navigate_to({note_id: x});
+                }
+            }
+        }
 
         get_element("current_button_rename").onclick = function () {
             if (mode_root) {
@@ -754,9 +844,25 @@ async function render() {
         let content = mode_notes ? (note.content_id === 0 ? null : await read_entity("content", note.content_id)) : null;
         original_content_value = mode_notes ? (content === null ? null : content.value) : null;
 
-        if (mode_notes) set_value("current_textarea", content === null ? "" : content.value);
+        if (mode_notes) {
+            set_value("current_textarea", content === null ? "" : content.value);
+            textarea.style.display = "none";
+            hide_element("markdown_toolbar");
+            hide_element("current_button_read");
+            show_element("current_button_edit");
 
-        if(mode_notes) await render_markdown()
+            markdownPreviewDiv = document.createElement("div");
+            markdownPreviewDiv.id = "markdown_preview";
+            markdownPreviewDiv.innerHTML = "<em>Loading…</em>";
+            textarea.parentNode.insertBefore(markdownPreviewDiv, textarea);
+
+            (async () => {
+                const markdownText = await convert_wikilinks_to_markdown(textarea.value);
+                const html = md.render(markdownText);
+                markdownPreviewDiv.innerHTML = html;
+            })();
+        }
+
 
         let has_parent = mode_root ? false : note.parent_note_id !== "0";
 

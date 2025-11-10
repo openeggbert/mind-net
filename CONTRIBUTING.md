@@ -38,7 +38,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Plugin Repetition: rewrite app_repetition.js to OOP and classes
 - [ ] Plugin Slipbox: onclick textarea starts editing
 - [ ] Keyboard shortcuts for plugins: Slipbox and Repetition
-- [ ] Path in slipbox plugin
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
@@ -200,3 +199,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Bug - window jumps and then can't be closed on mobile
 - [x] Links will allow labels using |
 - [x] Previous next in slipbox plugin
+- [x] Path in slipbox plugin
