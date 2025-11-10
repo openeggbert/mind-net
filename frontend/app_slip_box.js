@@ -632,12 +632,13 @@ async function render() {
                 if (title === null || title === undefined) {
 
                     let note_ = await read_entity("note", x)
-                    if(note_ === null) {
+                    if (note_ === null) {
                         show_warn("Loading note with id " + x + " failed.");
-                        break;
+                        title = "Unknown (#" + x + ")"
+                    } else {
+                        title = note_.title
+                        setTitleCache("note", x, title);
                     }
-                    title = note_.title
-                    setTitleCache("note", x, title);
                 }
 
                 let separator = document.createElement("span");
