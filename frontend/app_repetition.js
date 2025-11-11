@@ -2,7 +2,15 @@
 // Imports & Globals
 // ========================================
 
-import {getUserId, list_all_entities, list_entities, post_entity, put_entity, read_entity} from "./api.js";
+import {
+    getTitleCache,
+    getUserId,
+    list_all_entities,
+    list_entities,
+    post_entity,
+    put_entity,
+    read_entity, setTitleCache
+} from "./api.js";
 import {
     formatDateTimeHM,
     get_element,
@@ -819,6 +827,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         showbtn.innerText = shown ? "Show answer" : "Hide answer";
 
         get_element("go_to_note").style.display = shown ? "none" : "inline-block";
+        get_element("show_parent").style.display = shown ? "none" : "inline-block";
 
     }
 
@@ -938,6 +947,34 @@ document.addEventListener('DOMContentLoaded', async () => {
                 window.open('app_slip_box.html?note_id=' + note_id, '_blank')
             }
             div_card.appendChild(button_go_to_note);
+
+            let button_show_parent = document.createElement("button");
+            button_show_parent.classList.add("show-btn");
+            button_show_parent.id = "show_parent";
+            button_show_parent.innerText = "Show parent";
+            button_show_parent.style.display = "none";
+            button_show_parent.onclick = async () => {
+                if (note.parent_note_id === 0) {
+                    showWarn("Note has no parent.")
+                    return;
+                }
+                let title = getTitleCache("note", note.parent_note_id);
+
+                if (title === null || title === undefined) {
+
+                    let note_ = await read_entity("note", x)
+                    if (note_ === null) {
+                        show_warn("Loading note with id " + x + " failed.");
+                        title = "Unknown (#" + x + ")"
+                    } else {
+                        title = note_.title
+                        setTitleCache("note", x, title);
+                    }
+                }
+                showInfo("Parent note: " + title)
+
+            }
+            div_card.appendChild(button_show_parent);
 
 
             let div_rating = document.createElement("div");
