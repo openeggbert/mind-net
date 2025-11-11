@@ -464,7 +464,7 @@ namespace mindnet::plugins::repetition::triggers
                     MILLISECONDS_PER_DAY;
                 r0_state.last_review = r_review.review_date;
                 r0_state.last_quality = r_review.grade;
-                details_json["content_modified_since_last_review"] = true;
+                details_json["content_modified_since_last_review"] = r0_state.content_modified_since_last_review;
                 r0_state.content_modified_since_last_review = false;
                 auto new_values = r0_state.to_values();
                 auto r0_state_update = run_update(*model_definition, token, state_record_id, new_values, stack_depth);
@@ -535,7 +535,7 @@ namespace mindnet::plugins::repetition::triggers
                 r2_state.interval = interval;
                 r2_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
                 r2_state.last_quality = q;
-                details_json["content_modified_since_last_review"] = true;
+                details_json["content_modified_since_last_review"] = r2_state.content_modified_since_last_review;
                 r2_state.content_modified_since_last_review = false;
                 r2_state.last_review = r_review.review_date;
                 r2_state.next_review = util::Utils::current_unix_timestamp_ms() + interval * MILLISECONDS_PER_DAY;
@@ -629,7 +629,7 @@ namespace mindnet::plugins::repetition::triggers
                 r4_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
                 r4_state.correction_factor_times_100 = static_cast<int>(std::round(cf * 100.0));
                 r4_state.last_quality = q;
-                details_json["content_modified_since_last_review"] = true;
+                details_json["content_modified_since_last_review"] = r4_state.content_modified_since_last_review;
                 r4_state.content_modified_since_last_review = false;
                 r4_state.last_review = r_review.review_date;
                 r4_state.next_review = util::Utils::current_unix_timestamp_ms() + interval * MILLISECONDS_PER_DAY;
@@ -819,7 +819,7 @@ namespace mindnet::plugins::repetition::triggers
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
                 r18_state.last_quality = q;
-                details_json["content_modified_since_last_review"] = true;
+                details_json["content_modified_since_last_review"] = r18_state.content_modified_since_last_review;
                 r18_state.content_modified_since_last_review = false;
                 r18_state.last_review = (int64_t)now_ms;
                 r18_state.stability_times_100 = (int)std::round(S_after * 100.0);

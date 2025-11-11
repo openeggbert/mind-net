@@ -1119,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     if (details_json !== null && details_json !== undefined) {
 
-                        if (details_json.content_modified_since_last_review !== null && details_json.content_modified_since_last_review !== undefined) {
+                        if (details_json.content_modified_since_last_review !== null && details_json.content_modified_since_last_review !== undefined && details_json.content_modified_since_last_review === true) {
                             showWarn("Content of this note was changed since the last review.");
                         }
                     }

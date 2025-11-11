@@ -666,6 +666,7 @@ async function render() {
             if (new_name !== undefined && new_name !== null) {
                 note.title = new_name;
                 set_value("current_title", note.title);
+                setTitleCache("note", note.id, note.title);
             }
         }
 
