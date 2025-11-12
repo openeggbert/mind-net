@@ -319,7 +319,6 @@ namespace mindnet::http
             query_params.sort = sort;
             query_params.order = order.empty() ? orm::Order::Asc : orm::string_to_order(order);
 
-
             split_string_by_commas(fields, query_params.fields);
 
             for (auto& f : query_params.fields)

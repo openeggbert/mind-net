@@ -260,6 +260,13 @@ li {
     max-height: 1200px;
 }
 
+#current_hint_block {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
 #current_content textarea {
     width: 100%;
     height: auto;

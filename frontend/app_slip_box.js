@@ -677,6 +677,22 @@ async function render() {
         show_or_hide_element(mode_notes, "current_button_edit")
         hide_element("current_button_read")
 
+        show_or_hide_element(mode_notes, "current_hint_label")
+        show_or_hide_element(mode_notes, "current_hint")
+        show_or_hide_element(mode_notes, "current_button_edit_hint")
+        if(mode_notes) {
+            get_element("current_hint").innerText = note.hint
+        }
+        get_element("current_button_edit_hint").onclick = function () {
+            if(!mode_notes) return;
+
+            let new_hint = prompt("Enter new hint", note.hint);
+            if (new_hint !== undefined && new_hint !== null) {
+                note.hint = new_hint;
+                set_value("current_hint", note.hint);
+            }
+        }
+
 
         // Always recreate a fresh <textarea> to avoid value persistence between notes
         {

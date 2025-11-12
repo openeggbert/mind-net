@@ -18,6 +18,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(source_id);
         result.push_back(alias_for_note_id);
         result.push_back(title);
+        result.push_back(hint);
         result.push_back(sibling_order);
         result.push_back(cast64(importance));
         result.push_back(cast64(difficulty));
@@ -42,6 +43,7 @@ namespace mindnet::plugins::slipbox::models
         source_id = number();
         alias_for_note_id = number();
         title = text();
+        hint = text();
         sibling_order = number();
         importance = static_cast<enums::Importance>(number());
         difficulty = static_cast<enums::Difficulty>(number());
@@ -57,6 +59,7 @@ namespace mindnet::plugins::slipbox::models
             [this] { return id == 0 ? test_ok() : test_ne(id, parent_note_id, NoteColumns::ID); },
             [this] { return test_ne(map_id, 0, NoteColumns::MAP_ID); },
             [this] { return testt_between(title, 1, 256, NoteColumns::TITLE); },
+            [this] { return testt_at_most(hint, 128, NoteColumns::HINT); },
         };
         return util::ValidatorChain::run(list);
     }

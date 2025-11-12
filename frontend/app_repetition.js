@@ -827,7 +827,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         showbtn.innerText = shown ? "Show answer" : "Hide answer";
 
         get_element("go_to_note").style.display = shown ? "none" : "inline-block";
-        get_element("show_parent").style.display = shown ? "none" : "inline-block";
+        get_element("show_parent").style.display = shown ? "inline-block" : "none";
+
+        let button_hint_btn = get_element("button_hint_btn");
+        if(button_hint_btn !== null) button_hint_btn.style.display = shown ? "inline-block" : "none";
+
 
     }
 
@@ -925,8 +929,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 div_back.appendChild(span)
             } else {
                 let raw = content.value || "";
+
                 const multiple_lines = raw.includes("\n");
-                div_back.innerHTML = /*"✅ " +*/ md.render(raw)
+                let rendered = md.render(raw);
+
+                div_back.innerHTML = rendered;
 
                 if (!multiple_lines) div_back.style.textAlign = "center";
             }
@@ -951,8 +958,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             let button_show_parent = document.createElement("button");
             button_show_parent.classList.add("show-btn");
             button_show_parent.id = "show_parent";
-            button_show_parent.innerText = "Show parent";
-            button_show_parent.style.display = "none";
+            button_show_parent.innerText = "Parent";
             button_show_parent.onclick = async () => {
                 if (note.parent_note_id === 0) {
                     showWarn("Note has no parent.")
@@ -971,11 +977,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                         setTitleCache("note", x, title);
                     }
                 }
-                showInfo("Parent note: " + title)
+                showInfo("Parent: " + title)
 
             }
             div_card.appendChild(button_show_parent);
 
+
+            if (note.hint.length !== 0) {
+                let button_hint_btn = document.createElement("button");
+                button_hint_btn.classList.add("show-btn");
+                button_hint_btn.id = "button_hint_btn";
+                button_hint_btn.innerText = "Hint";
+                button_hint_btn.onclick = () => {
+                    showInfo("Hint: " + note.hint);
+                }
+                div_card.appendChild(button_hint_btn);
+            }
 
             let div_rating = document.createElement("div");
             div_rating.classList.add("rating");

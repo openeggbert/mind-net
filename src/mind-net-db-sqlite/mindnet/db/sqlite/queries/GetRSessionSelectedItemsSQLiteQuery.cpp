@@ -303,7 +303,7 @@ LIMIT {limit};
         int schedule = session["schedule"];
         int scope = session["scope"];
         int user_id = session["user_id"];
-        int limit = session.value("limit", 100);
+        int limit = session.value("limit", 250);
         long long now_ms = std::time(nullptr) * 1000LL;
 
         // --- Select SQL template based on scope ---

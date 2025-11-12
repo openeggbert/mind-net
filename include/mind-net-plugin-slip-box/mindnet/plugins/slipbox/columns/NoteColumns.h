@@ -44,6 +44,7 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* SOURCE_ID = "source_id";
         static constexpr const char* ALIAS_FOR_NOTE_ID = "alias_for_note_id";
         static constexpr const char* TITLE = "title";
+        static constexpr const char* HINT = "hint";
         static constexpr const char* SIBLING_ORDER = "sibling_order";
         static constexpr const char* IMPORTANCE = "importance";
         static constexpr const char* DIFFICULTY = "difficulty";

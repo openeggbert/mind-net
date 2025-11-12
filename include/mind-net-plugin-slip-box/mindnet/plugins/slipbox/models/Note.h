@@ -34,6 +34,46 @@
 #include "../enums/Difficulty.h"
 #include "../enums/Importance.h"
 
+/**
+ * @file Note.h
+ * @brief Definition of the SlipBox Note model within Mind Net ORM framework.
+ *
+ * The Note entity represents a single atomic note in the SlipBox (Zettelkasten) system.
+ * Each note may have hierarchical relationships, metadata, and references to content.
+ *
+ * ### Core characteristics
+ * - Belongs to a map (`map_id`)
+ * - May have a parent note (`parent_note_id`)
+ * - References one content record (`content_id`)
+ * - May reference a source (`source_id`) or be an alias for another note (`alias_for_note_id`)
+ *
+ * ### Semantic fields
+ * - `title` — Human-readable title of the note.
+ * - `hint` — Short recall question or guidance text (used for spaced repetition / review sessions).
+ *             Limited to ~128 characters by the ORM validation layer.
+ * - `importance` — Enum defining note's significance in the knowledge structure.
+ * - `difficulty` — Enum defining how difficult the note is to recall or understand.
+ *
+ * ### Structural fields
+ * - `sibling_order` — Relative order among siblings within the same parent.
+ * - `path` — Internal materialized path for hierarchical queries.
+ * - `depth` — Depth level of the note within the hierarchy.
+ *
+ * ### Related entities
+ * The model automatically exposes custom REST actions to interact with related entities:
+ * - `tag`, `property`, `url`, `link`
+ *
+ * ### Example usage
+ * ```cpp
+ * mindnet::plugins::slipbox::models::Note note;
+ * note.title = "Type conversions in C++";
+ * note.hint = "What kinds of type conversions does C++ have?";
+ * note.importance = enums::Importance::Medium;
+ * note.difficulty = enums::Difficulty::Easy;
+ * orm.save(note);
+ * ```
+ */
+
 namespace mindnet::plugins::slipbox::models
 {
     using mindnet::model::def;
@@ -53,6 +93,7 @@ namespace mindnet::plugins::slipbox::models
             coldef(COLS::ALIAS_FOR_NOTE_ID).set_foreign_key("note").
                                             set_description("Source associated with this note."),
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the note."),
+            coldef(COLS::HINT).set_description("short recall question or guidance text (max ~128 chars)"),
             coldef(COLS::SIBLING_ORDER, INTEGER | AUTO).set_description("Order among sibling notes."),
             coldef(COLS::IMPORTANCE).set_default_value(0).set_enum_definition(enums::importance_to_enum_definition()).
                                      set_description("Importance level of the note."),
@@ -74,12 +115,13 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int map_id{};
-        int parent_note_id{};
-        int content_id{};
-        int source_id{};
-        int alias_for_note_id{};
+        i64 map_id{};
+        i64 parent_note_id{};
+        i64 content_id{};
+        i64 source_id{};
+        i64 alias_for_note_id{};
         string title;
+        string hint;
         int sibling_order{};
         enums::Importance importance{enums::Importance::Undefined};
         enums::Difficulty difficulty{enums::Difficulty::Undefined};
@@ -92,6 +134,7 @@ namespace mindnet::plugins::slipbox::models
         {
             return id == other.id && map_id == other.map_id &&
                 sibling_order == other.sibling_order && title == other.title &&
+                hint == other.hint &&
                 content_id == other.content_id && source_id == other.source_id &&
                 alias_for_note_id == other.alias_for_note_id &&
                 parent_note_id == other.parent_note_id &&

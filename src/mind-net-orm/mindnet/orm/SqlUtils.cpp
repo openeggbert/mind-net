@@ -78,7 +78,7 @@ namespace mindnet::orm
         return "DELETE FROM " + definition.get_model_name() + " WHERE id = ?";
     }
 
-    string SqlUtils::generate_select_one_sql(const std::string& table_name, const model::ModelDefinition& definition)
+    string generate_select_columns(const model::ModelDefinition& definition)
     {
         std::string sql = "SELECT ";
         auto& columns = definition.get_columns();
@@ -90,6 +90,11 @@ namespace mindnet::orm
             sql += column_index < last_column ? ", " : " ";
             column_index++;
         }
+        return sql;
+    }
+    string SqlUtils::generate_select_one_sql(const std::string& table_name, const model::ModelDefinition& definition)
+    {
+        std::string sql = generate_select_columns(definition);
         sql+=  "FROM " + table_name + " WHERE id = ?";
         return sql;
     }
@@ -111,7 +116,8 @@ namespace mindnet::orm
         model::ModelDefinition& def,
         bool count)
     {
-        auto sql = count ? ("SELECT count(*) as c FROM " + table_name) : ("SELECT * FROM " + table_name);
+        auto sql = count ? "SELECT count(*) as c" : generate_select_columns(def);
+        sql +=  " FROM " + table_name;
         if (!query_params.filters.empty())
         {
             auto filter = query_params.filters;
