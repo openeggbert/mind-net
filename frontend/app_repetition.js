@@ -968,6 +968,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 if (title === null || title === undefined) {
 
+                    let x = note.parent_note_id
                     let note_ = await read_entity("note", x)
                     if (note_ === null) {
                         show_warn("Loading note with id " + x + " failed.");
