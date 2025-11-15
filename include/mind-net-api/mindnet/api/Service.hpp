@@ -7,6 +7,7 @@
 #include "IService.hpp"
 #include "PluginRegistry.hpp"
 #include "TriggerRegistry.hpp"
+#include "cronq/CronScheduler.hpp"
 
 namespace mindnet::api
 {
@@ -22,6 +23,8 @@ namespace mindnet::api
         api::PluginRegistryPtr plugin_registry_ptr;
         api::TriggerRegistryPtr trigger_registry_ptr;
         std::map<string, QueryPtr> query_map;
+        std::map<string, JobPtr> job_map;
+        CronSchedulerPtr cron_scheduler;
 
     public:
         Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);
@@ -33,13 +36,13 @@ namespace mindnet::api
 
         nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) override;
 
-        std::pair<int, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
+        std::pair<i64, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                entity_fields& fields, int stack_depth = 0);
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0);
-        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
+        read(const ModelDefinition& def, api::AccessTokenContext& token, i64 id, int stack_depth = 0);
+        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
                                entity_fields& fields, int stack_depth = 0);
-        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth = 0);
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id, int stack_depth = 0);
         std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
                                                                     api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params,
@@ -51,7 +54,7 @@ namespace mindnet::api
             crow::json::rvalue& body, mindnet::essential::Crudl crudl, ModelDefinition& def
         ) override;
         const api::PluginRegistryPtr get_plugin_registry() const override;
-
+        void stop_service();
     private:
         std::shared_ptr<IValidator> get_validator(const std::string& name);
         OperationResult can_create(const ModelDefinition& model_definition, api::AccessTokenContext& token,

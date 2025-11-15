@@ -6,11 +6,27 @@
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
+#define lock_if_needed()                                            \
+std::unique_lock<std::mutex> sqlite_lock;                       \
+if (database_type_is_sqlite())                                  \
+{                                                               \
+sqlite_lock = std::unique_lock<std::mutex>(                 \
+mindnet::api::Persistence::sqlite_mutex                 \
+);                                                          \
+}
 
 
+namespace {
+    bool database_type_is_sqlite()
+    {
+        return mindnet::essential::g_configuration.database_type == mindnet::essential::DatabaseType::SQLite;
+    }
+}
 namespace mindnet::api
 {
     using_loggers()
+
+    std::mutex Persistence::sqlite_mutex;
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {
@@ -51,6 +67,7 @@ namespace mindnet::api
         api::AccessTokenContext& token,
         entity_fields& fields)
     {
+        lock_if_needed()
         string error;
         int last_id = get_repository(def.get_model_name())->create(fields, error);
         return {last_id, {last_id < 0 ? 500 : 0, error}};
@@ -59,6 +76,7 @@ namespace mindnet::api
     std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,
                                                                 api::AccessTokenContext& token, const int id)
     {
+        lock_if_needed()
         string error;
         entity_fields ef = get_repository(def.get_model_name())->read(id, error);
         if (error.empty())
@@ -73,6 +91,7 @@ namespace mindnet::api
         int id, entity_fields& fields
     )
     {
+        lock_if_needed()
         string error;
         get_repository(def.get_model_name())->update(id, fields, error);
         if (error.empty()) { return ok_result; }
@@ -81,6 +100,7 @@ namespace mindnet::api
 
     OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, int id)
     {
+        lock_if_needed()
         string_map empty_map;
 
         string error;
@@ -94,6 +114,7 @@ namespace mindnet::api
         api::AccessTokenContext& token,
         orm::QueryParams& query_params)
     {
+        lock_if_needed()
         string error;
         auto l = get_repository(def.get_model_name())->list(query_params, error);
         if (error.empty())

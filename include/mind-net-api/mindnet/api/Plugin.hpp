@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include "Job.hpp"
 #include "MigrationScripts.hpp"
 #include "ModelRegistration.hpp"
 #include "Query.hpp"
@@ -45,11 +46,13 @@ namespace mindnet::api
             std::shared_ptr<RepositoryFactory>& repository_factory);
         void register_trigger(const TriggerPtr& trigger);
         void register_query(const QueryPtr& query);
+        void register_job(const JobPtr& job);
         void register_migrations(const MigrationScriptsPtr& migration_scripts);
         [[nodiscard]] MigrationScriptsPtr get_migration_scripts() const;
         void destroy_migration_scripts();
         [[nodiscard]] const std::vector<TriggerPtr>& get_triggers() const;
         [[nodiscard]] const std::vector<QueryPtr>& get_queries() const;
+        [[nodiscard]] const std::vector<JobPtr>& get_jobs() const;
         [[nodiscard]] const std::vector<std::shared_ptr<ModelRegistration>>& get_model_registrations() const;
 
     private:
@@ -62,6 +65,7 @@ namespace mindnet::api
         std::vector<std::shared_ptr<ModelRegistration>> model_registrations;
         std::vector<TriggerPtr> triggers;
         std::vector<QueryPtr> queries;
+        std::vector<JobPtr> jobs;
         MigrationScriptsPtr migration_scripts_ = nullptr;
     };
 

@@ -5,7 +5,7 @@
 #include "mindnet/api/Service.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/RefreshToken.hpp"
-//
+#include "mindnet/api/cronq/cron_quartz.hpp"
 
 namespace mindnet::api
 {
@@ -28,7 +28,8 @@ namespace mindnet::api
         IService(db_),
         db_ptr(db_),
         plugin_registry_ptr(plugin_registry_ptr_),
-        trigger_registry_ptr(std::make_shared<api::TriggerRegistry>())
+        trigger_registry_ptr(std::make_shared<api::TriggerRegistry>()),
+        cron_scheduler(std::make_shared<api::CronScheduler>())
     {
         for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
         {
@@ -99,6 +100,22 @@ namespace mindnet::api
                     }
                     query_map[query->get_name()] = query;
                 };
+                for (auto& job : plugin->get_jobs())
+                {
+                    if (job_map.contains(job->get_name()))
+                    {
+                        throw std::runtime_error(
+                            "Cannot use job. Another job with the same name already exists: " + job->get_name());
+                    }
+                    job->set_service_ptr(this);
+                    job->set_create_fn(&Service::create);
+                    job->set_read_fn(&Service::read);
+                    job->set_update_fn(&Service::update);
+                    job->set_delete_fn(&Service::remove);
+                    job->set_list_fn(&Service::list);
+                    job->set_plugin_name(plugin_name);
+                    job_map[job->get_name()] = job;
+                };
             }
         }
 
@@ -112,6 +129,22 @@ namespace mindnet::api
                 }
             );
         }
+
+        if (!job_map.empty()){
+        cron_scheduler->set_service_ptr(this);
+        cron_scheduler->set_create_fn(&Service::create);
+        cron_scheduler->set_read_fn(&Service::read);
+        cron_scheduler->set_update_fn(&Service::update);
+        cron_scheduler->set_delete_fn(&Service::remove);
+        cron_scheduler->set_list_fn(&Service::list);
+        for (auto& e: job_map)
+        {
+            cron_scheduler->add_job(e.second);
+        }
+
+        cron_scheduler->start();
+        }
+
     }
 
     Service::~Service()
@@ -140,7 +173,7 @@ namespace mindnet::api
 
     static constexpr int MAX_TRIGGER_DEPTH = 32;
 
-    std::pair<int, OperationResult> Service::create(const ModelDefinition& def, api::AccessTokenContext& token,
+    std::pair<i64, OperationResult> Service::create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                     entity_fields& fields, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {-1, {500, "Max trigger depth exceeded"}};
@@ -193,7 +226,7 @@ namespace mindnet::api
     }
 
     std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, api::AccessTokenContext& token,
-                                                            int id, int stack_depth)
+                                                            i64 id, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {api::empty_entity_fields, {500, "Max trigger depth exceeded"}};
 
@@ -227,7 +260,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    OperationResult Service::update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
+    OperationResult Service::update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
                                     entity_fields& fields, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
@@ -251,7 +284,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    OperationResult Service::remove(const ModelDefinition& def, api::AccessTokenContext& token, int id, int stack_depth)
+    OperationResult Service::remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
         auto action = Crudl::Delete;
@@ -404,5 +437,10 @@ namespace mindnet::api
     const api::PluginRegistryPtr Service::get_plugin_registry() const
     {
         return plugin_registry_ptr;
+    }
+
+    void Service::stop_service()
+    {
+        cron_scheduler->stop();
     }
 }

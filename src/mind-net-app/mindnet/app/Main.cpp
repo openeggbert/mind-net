@@ -287,6 +287,7 @@ bool commands_function_start(
     static mindnet::http::CrowLoggerAdapter adapter;
     crow::logger::setHandler(&adapter);
     server.run(host, port, frontend_port);
+    service_ptr->stop_service();
     return false;
 }
 

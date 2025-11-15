@@ -3,6 +3,7 @@
 #include "mindnet/plugins/core/migrations/CoreSQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/core/migrations/CorePostgreSQLMigrationScripts.hpp"
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.hpp"
+#include "mindnet/plugins/core/jobs/TestJob.hpp"
 #include "mindnet/plugins/core/validators/HistoryValidator.hpp"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.hpp"
 #include "mindnet/plugins/core/validators/TeamValidator.hpp"
@@ -13,6 +14,8 @@
 #include "mindnet/plugins/core/validators/LoginSessionValidator.hpp"
 #include "mindnet/plugins/core/validators/AuthLogValidator.hpp"
 #include "mindnet/plugins/core/validators/SuperAdminLogValidator.hpp"
+#include "mindnet/plugins/core/validators/JobEntryValidator.hpp"
+#include "mindnet/plugins/core/validators/JobRunValidator.hpp"
 
 namespace mindnet::plugins::core
 {
@@ -37,7 +40,10 @@ namespace mindnet::plugins::core
         REGISTER_MODEL(login_session, LoginSession, LOGIN_SESSION)
         REGISTER_MODEL(auth_log, AuthLog, AUTH_LOG)
         REGISTER_MODEL(super_admin_log, SuperAdminLog, SUPER_ADMIN_LOG)
+        REGISTER_MODEL(job_entry, JobEntry, JOB_ENTRY)
+        REGISTER_MODEL(job_run, JobRun, JOB_RUN)
         plugin->register_trigger(std::make_shared<triggers::HistoryCommonTrigger>());
+        plugin->register_job(std::make_shared<jobs::TestJob>());
 
         plugin->close_for_changes();
         return plugin;

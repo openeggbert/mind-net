@@ -41,7 +41,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
-- [ ] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
@@ -200,3 +199,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Links will allow labels using |
 - [x] Previous next in slipbox plugin
 - [x] Path in slipbox plugin
+- [x] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)

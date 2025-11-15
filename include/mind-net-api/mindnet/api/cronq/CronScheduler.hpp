@@ -1,0 +1,85 @@
+#pragma once
+#include <chrono>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <vector>
+#include <functional>
+#include <queue>
+#include <future>
+
+#include "cron_quartz.hpp"
+#include "mindnet/api/AbstractTriggerJob.hpp"
+#include "mindnet/api/Job.hpp"
+
+namespace mindnet::api
+{
+    class CronScheduler : public AbstractTriggerJob
+    {
+    public:
+        CronScheduler();
+        ~CronScheduler();
+
+        void start();
+        void stop();
+        void add_job(JobPtr& job);
+
+    private:
+        struct ScheduledJobEntry
+        {
+            JobPtr job;
+            cronq::CronExpr cron;
+            std::chrono::system_clock::time_point next_run;
+            i64 job_id;
+            std::string job_name;
+            bool enabled = true;
+            std::chrono::system_clock::time_point last_started_at;
+            bool running = false;
+        };
+
+        std::vector<JobPtr> all_job_ptrs;
+        std::thread scheduler_thread_;
+        std::atomic<bool> running_{false};
+
+        std::mutex mtx_;
+        std::condition_variable cv_;
+
+        std::vector<ScheduledJobEntry> jobs_;
+
+        // --- threadpool (simple fixed pool 4 threads) ---
+        std::vector<std::thread> workers_;
+        std::queue<std::function<void()>> task_queue_;
+        std::mutex queue_mtx_;
+        std::condition_variable queue_cv_;
+        std::atomic<bool> pool_running_{false};
+
+        // ---
+        void scheduler_loop();
+        void load_jobs_from_db();
+        void compute_initial_next_runs();
+        void sleep_until_next_job();
+        ScheduledJobEntry* find_next_job();
+
+        // threadpool
+        void start_threadpool(int threads = 4);
+        void stop_threadpool();
+        void enqueue_task(std::function<void()> fn);
+
+        void run_job(ScheduledJobEntry& entry);
+
+        // SQLite helpers
+        i64 insert_job_run(const i64 job_id,
+                                   unixtime start_time);
+
+        void update_job_run(const i64 run_id,
+                            unixtime finish_time,
+                            bool success,
+                            const std::string& message);
+
+        void update_next_run_in_db(i64 job_id,
+                                   unixtime tp);
+    };
+    typedef std::shared_ptr<CronScheduler> CronSchedulerPtr;
+
+}

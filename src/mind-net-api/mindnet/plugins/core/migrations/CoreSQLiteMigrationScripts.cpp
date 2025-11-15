@@ -296,5 +296,38 @@ CREATE TABLE super_admin_log (
 	FOREIGN KEY(user_id) REFERENCES user(id)
 );
 )");
+
+    	add_migration("V11__create_job_entry.sql", R"(
+CREATE TABLE job_entry (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+	
+	name TEXT NOT NULL UNIQUE,
+	description TEXT,
+	plugin_name TEXT NOT_NULL,
+	cron_expression TEXT NOT NULL,
+	run_once_when_missed BOOLEAN NOT NULL DEFAULT 1,
+	enabled BOOLEAN NOT NULL DEFAULT 1,
+	last_run DATETIME,
+	next_run DATETIME
+);
+)");
+    	add_migration("V12__create_job_run.sql", R"(
+CREATE TABLE job_run (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	created_at DATETIME,
+	updated_at DATETIME,
+
+    job_entry_id INTEGER,
+    started_at DATETIME,
+    finished_at DATETIME,
+    success BOOLEAN DEFAULT 0,
+    message TEXT,
+
+	FOREIGN KEY(job_entry_id) REFERENCES job_entry(id)
+
+);
+)");
     }
 }

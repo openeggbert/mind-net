@@ -124,6 +124,11 @@ namespace mindnet::api
         return queries.push_back(query);
     }
 
+    void Plugin::register_job(const JobPtr& job)
+    {
+        return jobs.push_back(job);
+    }
+
     void Plugin::register_migrations(const MigrationScriptsPtr& migration_scripts)
     {
         essential::DatabaseType current_database_type = essential::g_configuration.database_type;
@@ -152,6 +157,11 @@ namespace mindnet::api
     const std::vector<QueryPtr>& Plugin::get_queries() const
     {
         return queries;
+    }
+
+    const std::vector<JobPtr>& Plugin::get_jobs() const
+    {
+        return jobs;
     }
 
     const std::vector<std::shared_ptr<ModelRegistration>>& Plugin::get_model_registrations() const
