@@ -2,13 +2,13 @@
 // Created by robertvokac on 10/23/25.
 //
 
-#include "mindnet/plugins/slipbox/triggers/LinkResolver.h"
+#include "mindnet/plugins/slipbox/triggers/LinkResolver.hpp"
 
 #include <unordered_set>
 
-#include "mindnet/essential/ConsolePrinter.h"
-#include "mindnet/essential/Global.h"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.h"
+#include "mindnet/essential/ConsolePrinter.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {

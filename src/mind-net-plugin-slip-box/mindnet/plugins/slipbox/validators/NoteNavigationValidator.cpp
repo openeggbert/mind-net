@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/NoteNavigationValidator.h"
+#include "mindnet/plugins/slipbox/validators/NoteNavigationValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/NoteNavigation.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/NoteNavigation.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 
 #define Model NoteNavigation
 #define MODEL NOTE_NAVIGATION

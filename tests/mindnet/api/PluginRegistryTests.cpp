@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../../../include/mind-net-api/mindnet/api/PluginRegistry.h"
-#include "../../../include/mind-net-api/mindnet/api/Plugin.h"
+#include "../../../include/mind-net-api/mindnet/api/PluginRegistry.hpp"
+#include "../../../include/mind-net-api/mindnet/api/Plugin.hpp"
 
 using namespace mindnet::api;
 

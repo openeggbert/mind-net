@@ -2,11 +2,11 @@
 // Created by robertvokac on 9/21/25.
 //
 
-#include "mindnet/plugins/core/validators/SuperAdminLogValidator.h"
+#include "mindnet/plugins/core/validators/SuperAdminLogValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/models/SuperAdminLog.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/models/SuperAdminLog.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model SuperAdminLog
 #define MODEL SUPER_ADMIN_LOG

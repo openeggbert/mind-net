@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/repetition/models/R18PerfAgg.h"
+#include "mindnet/plugins/repetition/models/R18PerfAgg.hpp"
 
 namespace mindnet::plugins::repetition::models
 {

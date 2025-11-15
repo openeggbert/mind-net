@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/repetition/models/R18PredictionLog.h"
+#include "mindnet/plugins/repetition/models/R18PredictionLog.hpp"
 
 namespace mindnet::plugins::repetition::models
 {

@@ -1,7 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#include "mindnet/util/TestUtils.h"
+#include "mindnet/util/TestUtils.hpp"
 
 #include <algorithm>
 

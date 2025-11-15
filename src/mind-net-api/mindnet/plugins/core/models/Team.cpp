@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/core/models/Team.h"
+#include "mindnet/plugins/core/models/Team.hpp"
 
 namespace mindnet::plugins::core::models
 {

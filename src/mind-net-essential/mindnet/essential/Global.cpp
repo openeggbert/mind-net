@@ -2,7 +2,7 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#include "mindnet/essential/Global.h"
+#include "mindnet/essential/Global.hpp"
 
 namespace mindnet::essential
 {

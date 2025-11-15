@@ -2,14 +2,14 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "mindnet/http/SuperAdminEndpointsGenerator.h"
+#include "mindnet/http/SuperAdminEndpointsGenerator.hpp"
 
-#include "mindnet/api/IService.h"
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/plugins/core/models/SuperAdminLog.h"
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/api/IService.hpp"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/plugins/core/models/SuperAdminLog.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/util/Utils.hpp"
 #include <jemalloc/jemalloc.h>
 
 namespace mindnet::http

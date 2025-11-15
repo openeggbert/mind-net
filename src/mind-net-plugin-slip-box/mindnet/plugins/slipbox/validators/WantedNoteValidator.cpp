@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/WantedNoteValidator.h"
+#include "mindnet/plugins/slipbox/validators/WantedNoteValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/WantedNote.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/WantedNote.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 
 #define Model WantedNote
 #define MODEL WANTED_NOTE

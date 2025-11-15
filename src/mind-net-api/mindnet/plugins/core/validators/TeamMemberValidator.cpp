@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/core/validators/TeamMemberValidator.h"
+#include "mindnet/plugins/core/validators/TeamMemberValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/models/TeamMember.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/core/CorePersistenceMethods.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/models/TeamMember.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/core/CorePersistenceMethods.hpp"
 
 #define Model TeamMember
 #define MODEL TEAM_MEMBER

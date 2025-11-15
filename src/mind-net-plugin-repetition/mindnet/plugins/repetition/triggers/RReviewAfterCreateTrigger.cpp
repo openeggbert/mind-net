@@ -2,24 +2,24 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.h"
+#include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.hpp"
 
 #include <shared_mutex>
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/plugins/core/models/AuthLog.h"
-#include "mindnet/plugins/repetition/models/R0State.h"
-#include "mindnet/plugins/repetition/models/R18PerfAgg.h"
-#include "mindnet/plugins/repetition/models/R18PredictionLog.h"
-#include "mindnet/plugins/repetition/models/R18State.h"
-#include "mindnet/plugins/repetition/models/R2State.h"
-#include "mindnet/plugins/repetition/models/R4State.h"
-#include "mindnet/plugins/repetition/models/RGlobalSetting.h"
-#include "mindnet/plugins/repetition/models/RUserSetting.h"
-#include "mindnet/plugins/repetition/models/RReview.h"
-#include "mindnet/plugins/repetition/models/RSession.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/plugins/core/models/AuthLog.hpp"
+#include "mindnet/plugins/repetition/models/R0State.hpp"
+#include "mindnet/plugins/repetition/models/R18PerfAgg.hpp"
+#include "mindnet/plugins/repetition/models/R18PredictionLog.hpp"
+#include "mindnet/plugins/repetition/models/R18State.hpp"
+#include "mindnet/plugins/repetition/models/R2State.hpp"
+#include "mindnet/plugins/repetition/models/R4State.hpp"
+#include "mindnet/plugins/repetition/models/RGlobalSetting.hpp"
+#include "mindnet/plugins/repetition/models/RUserSetting.hpp"
+#include "mindnet/plugins/repetition/models/RReview.hpp"
+#include "mindnet/plugins/repetition/models/RSession.hpp"
+#include "mindnet/util/Utils.hpp"
 
 // ============================================================
 // PARAMETER RESOLUTION (r_user_setting -> r_global_setting -> default)

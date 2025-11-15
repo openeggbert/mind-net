@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/slipbox/models/Link.h"
+#include "mindnet/plugins/slipbox/models/Link.hpp"
 
 namespace mindnet::plugins::slipbox::models
 {

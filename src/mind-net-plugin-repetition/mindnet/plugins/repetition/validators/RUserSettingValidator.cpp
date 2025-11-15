@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/repetition/validators/RUserSettingValidator.h"
+#include "mindnet/plugins/repetition/validators/RUserSettingValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/repetition/models/RUserSetting.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/repetition/models/RUserSetting.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model RUserSetting
 #define MODEL R_USER_SETTING

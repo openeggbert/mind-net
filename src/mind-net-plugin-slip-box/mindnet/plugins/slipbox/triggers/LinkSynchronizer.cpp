@@ -1,14 +1,14 @@
-#include "mindnet/plugins/slipbox/triggers/LinkSynchronizer.h"
+#include "mindnet/plugins/slipbox/triggers/LinkSynchronizer.hpp"
 
 #include <unordered_set>
 #include <unordered_map>
 
-#include "mindnet/api/IService.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/Link.h"
-#include "mindnet/plugins/slipbox/models/Url.h"
-#include "mindnet/plugins/slipbox/models/WantedNote.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/api/IService.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/Link.hpp"
+#include "mindnet/plugins/slipbox/models/Url.hpp"
+#include "mindnet/plugins/slipbox/models/WantedNote.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {

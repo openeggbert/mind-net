@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/core/models/User.h"
+#include "mindnet/plugins/core/models/User.hpp"
 
 #include <regex>
 
-#include "mindnet/essential/Configuration.h"
+#include "mindnet/essential/Configuration.hpp"
 
 namespace mindnet::plugins::core::models
 {

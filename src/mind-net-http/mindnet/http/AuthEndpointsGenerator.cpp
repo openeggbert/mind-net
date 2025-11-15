@@ -2,22 +2,22 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "mindnet/http/AuthEndpointsGenerator.h"
+#include "mindnet/http/AuthEndpointsGenerator.hpp"
 
 #include <string>
 
-#include "mindnet/api/IService.h"
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/http/HttpUtils.h"
-#include "mindnet/http/UserCredentials.h"
-#include "mindnet/plugins/core/models/AccessToken.h"
-#include "mindnet/plugins/core/models/AuthLog.h"
-#include "mindnet/plugins/core/models/LoginSession.h"
-#include "mindnet/plugins/core/models/RefreshToken.h"
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/plugins/core/validators/AccessTokenValidator.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/api/IService.hpp"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/http/HttpUtils.hpp"
+#include "mindnet/http/UserCredentials.hpp"
+#include "mindnet/plugins/core/models/AccessToken.hpp"
+#include "mindnet/plugins/core/models/AuthLog.hpp"
+#include "mindnet/plugins/core/models/LoginSession.hpp"
+#include "mindnet/plugins/core/models/RefreshToken.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
+#include "mindnet/plugins/core/validators/AccessTokenValidator.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::http
 {

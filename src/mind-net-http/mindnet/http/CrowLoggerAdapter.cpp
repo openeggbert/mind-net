@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "mindnet/http/CrowLoggerAdapter.h"
+#include "mindnet/http/CrowLoggerAdapter.hpp"
 
 namespace mindnet::http
 {

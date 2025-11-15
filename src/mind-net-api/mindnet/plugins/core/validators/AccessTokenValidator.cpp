@@ -2,13 +2,13 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/core/validators/AccessTokenValidator.h"
+#include "mindnet/plugins/core/validators/AccessTokenValidator.hpp"
 
 #include <regex>
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/models/AccessToken.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/models/AccessToken.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model AccessToken
 #define MODEL ACCESS_TOKEN

@@ -2,13 +2,13 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/core/validators/UserValidator.h"
+#include "mindnet/plugins/core/validators/UserValidator.hpp"
 
 #include <regex>
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model User
 #define MODEL USER

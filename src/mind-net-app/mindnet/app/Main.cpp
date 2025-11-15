@@ -7,26 +7,26 @@
 #include <iostream>
 #include <filesystem>
 
-#include "mindnet/util/Utils.h"
+#include "mindnet/util/Utils.hpp"
 #include <memory>
 
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/essential/ExitStatus.h"
-#include "mindnet/http/HttpServer.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/http/ModelEndpointGenerator.h"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/essential/ExitStatus.hpp"
+#include "mindnet/http/HttpServer.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/http/ModelEndpointGenerator.hpp"
 
-#include "mindnet/api/IService.h"
-#include "mindnet/api/Service.h"
-#include "mindnet/api/PluginRegistry.h"
-#include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
-#include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
-#include "mindnet/http/CrowLoggerAdapter.h"
-#include "mindnet/plugins/core/CorePluginFactory.h"
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.h"
-#include "mindnet/plugins/repetition/RepetitionPluginFactory.h"
+#include "mindnet/api/IService.hpp"
+#include "mindnet/api/Service.hpp"
+#include "mindnet/api/PluginRegistry.hpp"
+#include "mindnet/db/sqlite/SqliteDatabaseMigration.hpp"
+#include "mindnet/db/sqlite/SqliteRepositoryFactory.hpp"
+#include "mindnet/http/CrowLoggerAdapter.hpp"
+#include "mindnet/plugins/core/CorePluginFactory.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
+#include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;

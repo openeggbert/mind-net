@@ -20,13 +20,13 @@
 
 #include <vector>
 
-#include "mindnet/util/Utils.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/orm/QueryParams.h"
-#include "mindnet/db/sqlite/SqliteFileName.h"
+#include "mindnet/util/Utils.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/orm/QueryParams.hpp"
+#include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "SQLiteCpp/Database.h"
-#include "mindnet/model/ModelDefinition.h"
-#include "mindnet/orm/SqlUtils.h"
+#include "mindnet/model/ModelDefinition.hpp"
+#include "mindnet/orm/SqlUtils.hpp"
 
 namespace mindnet::db::sqlite
 {

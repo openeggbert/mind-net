@@ -2,14 +2,14 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "mindnet/http/InfoHealthEndpointsGenerator.h"
+#include "mindnet/http/InfoHealthEndpointsGenerator.hpp"
 
-#include "mindnet/api/IService.h"
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/essential/Version.h"
-#include "mindnet/http/HttpUtils.h"
-#include "mindnet/plugins/core/models/User.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/api/IService.hpp"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/essential/Version.hpp"
+#include "mindnet/http/HttpUtils.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::http
 {

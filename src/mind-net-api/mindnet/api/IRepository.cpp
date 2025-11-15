@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/30/25.
 //
 // IRepository.cpp
-#include "mindnet/api/IRepository.h"
+#include "mindnet/api/IRepository.hpp"
 
 namespace mindnet::api
 {

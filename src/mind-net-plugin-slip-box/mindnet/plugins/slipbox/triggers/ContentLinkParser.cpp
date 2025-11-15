@@ -2,7 +2,7 @@
 // Created by robertvokac on 10/23/25.
 //
 
-#include "mindnet/plugins/slipbox/triggers/ContentLinkParser.h"
+#include "mindnet/plugins/slipbox/triggers/ContentLinkParser.hpp"
 #include <regex>
 
 namespace mindnet::plugins::slipbox::triggers

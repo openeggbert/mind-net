@@ -2,14 +2,14 @@
 // Created by robertvokac on 9/6/25.
 //
 
-#include "mindnet/plugins/core/CorePersistenceMethods.h"
+#include "mindnet/plugins/core/CorePersistenceMethods.hpp"
 
-#include "mindnet/api/IService.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/orm/QueryParams.h"
-#include "mindnet/api/ValidatorBase.h"
-#include "mindnet/plugins/core/models/Team.h"
-#include "mindnet/plugins/core/models/User.h"
+#include "mindnet/api/IService.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/orm/QueryParams.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/core/models/Team.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
 
 namespace mindnet::plugins::core
 {

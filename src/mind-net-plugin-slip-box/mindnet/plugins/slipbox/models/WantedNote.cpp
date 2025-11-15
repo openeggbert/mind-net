@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/slipbox/models/WantedNote.h"
+#include "mindnet/plugins/slipbox/models/WantedNote.hpp"
 
 namespace mindnet::plugins::slipbox::models
 {

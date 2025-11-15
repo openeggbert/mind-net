@@ -2,19 +2,19 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/slipbox/triggers/BeforeUpdateContentTrigger.h"
+#include "mindnet/plugins/slipbox/triggers/BeforeUpdateContentTrigger.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/plugins/slipbox/models/Content.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/plugins/slipbox/models/Content.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <regex>
 #include <unordered_set>
 
-#include "mindnet/plugins/slipbox/models/Note.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/plugins/slipbox/models/Note.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {

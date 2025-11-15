@@ -2,15 +2,15 @@
 // Created by robertvokac on 9/5/25.
 //
 
-#include "mindnet/api/AccessTokenContext.h"
+#include "mindnet/api/AccessTokenContext.hpp"
 
 #include "crow/http_request.h"
-#include "mindnet/api/IService.h"
+#include "mindnet/api/IService.hpp"
 
-#include "mindnet/orm/QueryParams.h"
-#include "mindnet/plugins/core/columns/AccessTokenColumns.h"
-#include "mindnet/plugins/core/models/AccessToken.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/orm/QueryParams.hpp"
+#include "mindnet/plugins/core/columns/AccessTokenColumns.hpp"
+#include "mindnet/plugins/core/models/AccessToken.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::api
 {

@@ -2,10 +2,10 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.h"
+#include "mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
-#include "mindnet/db/sqlite/SqliteFileName.h"
-#include "mindnet/essential/DatabaseType.h"
+#include "mindnet/db/sqlite/SqliteFileName.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
 
 namespace mindnet::db::sqlite::queries
 {

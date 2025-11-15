@@ -2,8 +2,8 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/core/models/LoginSession.h"
-#include "mindnet/plugins/core/columns/LoginSessionColumns.h"
+#include "mindnet/plugins/core/models/LoginSession.hpp"
+#include "mindnet/plugins/core/columns/LoginSessionColumns.hpp"
 
 namespace mindnet::plugins::core::models
 {

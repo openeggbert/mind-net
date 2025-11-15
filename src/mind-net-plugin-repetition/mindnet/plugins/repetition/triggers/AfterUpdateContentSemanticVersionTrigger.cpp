@@ -2,19 +2,19 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/repetition/triggers/AfterUpdateContentSemanticVersionTrigger.h"
+#include "mindnet/plugins/repetition/triggers/AfterUpdateContentSemanticVersionTrigger.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/api/IPersistence.h"
-#include "mindnet/plugins/repetition/models/R0State.h"
-#include "mindnet/plugins/repetition/models/R18State.h"
-#include "mindnet/plugins/repetition/models/R2State.h"
-#include "mindnet/plugins/repetition/models/R4State.h"
-#include "mindnet/plugins/repetition/validators/R0StateValidator.h"
-#include "mindnet/plugins/slipbox/models/Content.h"
-#include "mindnet/plugins/slipbox/models/Note.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/api/IPersistence.hpp"
+#include "mindnet/plugins/repetition/models/R0State.hpp"
+#include "mindnet/plugins/repetition/models/R18State.hpp"
+#include "mindnet/plugins/repetition/models/R2State.hpp"
+#include "mindnet/plugins/repetition/models/R4State.hpp"
+#include "mindnet/plugins/repetition/validators/R0StateValidator.hpp"
+#include "mindnet/plugins/slipbox/models/Content.hpp"
+#include "mindnet/plugins/slipbox/models/Note.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::repetition::triggers
 {

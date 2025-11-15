@@ -1,4 +1,4 @@
-#include "mindnet/http/HttpServer.h"
+#include "mindnet/http/HttpServer.hpp"
 
 #include <unordered_set>
 #include <utility>
@@ -6,15 +6,15 @@
 #include <fstream>
 #include <filesystem>
 
-#include "mindnet/http/SuperAdminEndpointsGenerator.h"
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/api/Service.h"
-#include "mindnet/http/AuthEndpointsGenerator.h"
-#include "mindnet/http/InfoHealthEndpointsGenerator.h"
-#include "mindnet/http/ModelDefinitionEndpointsGenerator.h"
-#include "mindnet/http/WebEndpointsGenerator.h"
-#include "mindnet/plugins/core/CorePersistenceMethods.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/http/SuperAdminEndpointsGenerator.hpp"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/api/Service.hpp"
+#include "mindnet/http/AuthEndpointsGenerator.hpp"
+#include "mindnet/http/InfoHealthEndpointsGenerator.hpp"
+#include "mindnet/http/ModelDefinitionEndpointsGenerator.hpp"
+#include "mindnet/http/WebEndpointsGenerator.hpp"
+#include "mindnet/plugins/core/CorePersistenceMethods.hpp"
+#include "mindnet/util/Utils.hpp"
 
 
 namespace mindnet::http

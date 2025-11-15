@@ -2,13 +2,13 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.h"
+#include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/plugins/repetition/models/RSession.h"
-#include "mindnet/util/Utils.h"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/plugins/repetition/models/RSession.hpp"
+#include "mindnet/util/Utils.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.hpp"
 
 namespace mindnet::plugins::repetition::triggers
 {

@@ -2,9 +2,9 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/repetition/models/RGlobalSetting.h"
+#include "mindnet/plugins/repetition/models/RGlobalSetting.hpp"
 
-#include "mindnet/plugins/repetition/RSetting.h"
+#include "mindnet/plugins/repetition/RSetting.hpp"
 
 namespace mindnet::plugins::repetition::models
 {

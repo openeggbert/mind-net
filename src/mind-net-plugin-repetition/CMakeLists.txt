@@ -26,7 +26,7 @@ target_link_libraries(mind_net_plugin_repetition
 )
 
 target_precompile_headers(mind_net_plugin_repetition PRIVATE
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.hpp"
 )
 
 # Enable Unity build for all targets (faster builds)

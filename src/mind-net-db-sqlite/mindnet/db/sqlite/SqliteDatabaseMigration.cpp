@@ -21,21 +21,21 @@
 #include <iostream>
 #include <string>
 
-#include "mindnet/db/sqlite/SqliteDatabaseMigration.h"
+#include "mindnet/db/sqlite/SqliteDatabaseMigration.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 
-#include "mindnet/util/Utils.h"
-#include "mindnet/orm/SchemaHistoryColumns.h"
+#include "mindnet/util/Utils.hpp"
+#include "mindnet/orm/SchemaHistoryColumns.hpp"
 #include <openssl/sha.h>
 #include <iomanip>
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/MigrationScripts.h"
-#include "mindnet/db/sqlite/SqliteFileName.h"
-#include "mindnet/orm/SchemaHistory.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/MigrationScripts.hpp"
+#include "mindnet/db/sqlite/SqliteFileName.hpp"
+#include "mindnet/orm/SchemaHistory.hpp"
 #include <chrono>
 
-#include "mindnet/orm/SchemaHistoryMetaColumns.h"
+#include "mindnet/orm/SchemaHistoryMetaColumns.hpp"
 #include "nlohmann/detail/exceptions.hpp"
 
 namespace mindnet::db::sqlite

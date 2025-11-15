@@ -1,4 +1,4 @@
-#include "mindnet/essential/ConsolePrinter.h"
+#include "mindnet/essential/ConsolePrinter.hpp"
 
 namespace mindnet::essential
 {

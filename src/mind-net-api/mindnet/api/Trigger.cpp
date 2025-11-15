@@ -2,8 +2,8 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#include "mindnet/api/Trigger.h"
-#include "mindnet/api/Service.h"
+#include "mindnet/api/Trigger.hpp"
+#include "mindnet/api/Service.hpp"
 //
 
 namespace mindnet::api

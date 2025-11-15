@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.h"
+#include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/slipbox/models/PinnedNote.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/slipbox/models/PinnedNote.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model PinnedNote
 #define MODEL PINNED_NOTE

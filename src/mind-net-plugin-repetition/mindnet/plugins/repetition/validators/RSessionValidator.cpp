@@ -1,9 +1,9 @@
-#include "mindnet/plugins/repetition/validators/RSessionValidator.h"
+#include "mindnet/plugins/repetition/validators/RSessionValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/repetition/models/RSession.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/repetition/models/RSession.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model RSession
 #define MODEL R_SESSION

@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.h"
+#include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.hpp"
 
 namespace mindnet::plugins::repetition::migrations
 {

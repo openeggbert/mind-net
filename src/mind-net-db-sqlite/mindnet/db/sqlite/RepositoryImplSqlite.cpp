@@ -23,12 +23,12 @@
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 
-#include "mindnet/db/sqlite/RepositoryImplSqlite.h"
+#include "mindnet/db/sqlite/RepositoryImplSqlite.hpp"
 
-#include "mindnet/api/IRepository.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/db/sqlite/RepositoryUtils.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/api/IRepository.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/db/sqlite/RepositoryUtils.hpp"
+#include "mindnet/util/Utils.hpp"
 #include "SQLiteCpp/Database.h"
 
 namespace mindnet::api

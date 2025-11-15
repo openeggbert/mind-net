@@ -2,11 +2,11 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.h"
+#include "mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
-#include "mindnet/db/sqlite/SqliteFileName.h"
-#include "mindnet/essential/DatabaseType.h"
-#include "mindnet/essential/Global.h"
+#include "mindnet/db/sqlite/SqliteFileName.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/essential/Global.hpp"
 
 namespace mindnet::db::sqlite::queries
 {

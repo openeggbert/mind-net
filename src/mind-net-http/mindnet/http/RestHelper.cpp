@@ -2,15 +2,15 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#include "mindnet/http/RestHelper.h"
+#include "mindnet/http/RestHelper.hpp"
 
 #include <string>
 #include <crow.h>
 #include <nlohmann/json.hpp>
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/essential/Helper.h"
-#include "mindnet/model/ModelDefinition.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/model/ModelDefinition.hpp"
 
 namespace mindnet::http
 {

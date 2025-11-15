@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/MapCollectionValidator.h"
+#include "mindnet/plugins/slipbox/validators/MapCollectionValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/MapCollection.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/MapCollection.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 
 #define Model MapCollection
 #define MODEL MAP_COLLECTION

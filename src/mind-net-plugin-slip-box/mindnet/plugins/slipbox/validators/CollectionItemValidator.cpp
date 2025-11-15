@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/CollectionItemValidator.h"
+#include "mindnet/plugins/slipbox/validators/CollectionItemValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/CollectionItem.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/CollectionItem.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model CollectionItem
 #define MODEL COLLECTION_ITEM

@@ -2,12 +2,12 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/core/triggers/HistoryCommonTrigger.h"
+#include "mindnet/plugins/core/triggers/HistoryCommonTrigger.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/plugins/core/models/History.h"
-#include "mindnet/util/Utils.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/plugins/core/models/History.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::core::triggers
 {

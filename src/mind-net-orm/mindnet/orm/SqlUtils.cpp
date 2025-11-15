@@ -2,11 +2,11 @@
 // Created by robertvokac on 9/23/25.
 //
 
-#include "mindnet/orm/SqlUtils.h"
+#include "mindnet/orm/SqlUtils.hpp"
 
-#include "mindnet/model/ModelDefinition.h"
-#include "mindnet/orm/Order.h"
-#include "mindnet/orm/QueryParams.h"
+#include "mindnet/model/ModelDefinition.hpp"
+#include "mindnet/orm/Order.hpp"
+#include "mindnet/orm/QueryParams.hpp"
 
 namespace mindnet::orm
 {

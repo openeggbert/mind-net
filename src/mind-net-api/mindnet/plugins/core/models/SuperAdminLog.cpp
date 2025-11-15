@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/21/25.
 //
 
-#include "mindnet/plugins/core/models/SuperAdminLog.h"
+#include "mindnet/plugins/core/models/SuperAdminLog.hpp"
 
 namespace mindnet::plugins::core::models
 {

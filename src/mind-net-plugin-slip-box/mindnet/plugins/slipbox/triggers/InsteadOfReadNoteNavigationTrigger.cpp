@@ -2,14 +2,14 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/slipbox/triggers/InsteadOfReadNoteNavigationTrigger.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
+#include "mindnet/plugins/slipbox/triggers/InsteadOfReadNoteNavigationTrigger.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.h"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
 
-#include "mindnet/util/Utils.h"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {

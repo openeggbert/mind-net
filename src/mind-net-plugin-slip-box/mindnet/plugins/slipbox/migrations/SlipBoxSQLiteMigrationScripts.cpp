@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.h"
+#include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.hpp"
 
 namespace mindnet::plugins::slipbox::migrations
 {

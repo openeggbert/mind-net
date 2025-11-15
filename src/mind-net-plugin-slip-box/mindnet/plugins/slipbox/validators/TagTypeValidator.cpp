@@ -2,13 +2,13 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/TagTypeValidator.h"
+#include "mindnet/plugins/slipbox/validators/TagTypeValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/slipbox/models/TagType.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/slipbox/models/TagType.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 
 #define Model TagType
 #define MODEL TAG_TYPE

@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/slipbox/models/Tag.h"
+#include "mindnet/plugins/slipbox/models/Tag.hpp"
 
 namespace mindnet::plugins::slipbox::models
 {

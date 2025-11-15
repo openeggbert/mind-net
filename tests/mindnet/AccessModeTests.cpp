@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "mindnet/essential/AccessMode.h"
-#include "mindnet/api/RequestContext.h"
-#include "mindnet/api/ValidatorBase.h"
+#include "mindnet/essential/AccessMode.hpp"
+#include "mindnet/api/RequestContext.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
 
 using namespace mindnet;
 

@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/api/TriggerRegistry.h"
+#include "mindnet/api/TriggerRegistry.hpp"
 #include <iostream>
 
 namespace mindnet::api

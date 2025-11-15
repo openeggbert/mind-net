@@ -18,13 +18,13 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-#include "mindnet/db/sqlite/SqliteRepositoryFactory.h"
+#include "mindnet/db/sqlite/SqliteRepositoryFactory.hpp"
 
 #include <memory>
 
-#include "mindnet/api/IRepository.h"
-#include "mindnet/api/RepositoryFactory.h"
-#include "mindnet/db/sqlite/RepositoryImplSqlite.h"
+#include "mindnet/api/IRepository.hpp"
+#include "mindnet/api/RepositoryFactory.hpp"
+#include "mindnet/db/sqlite/RepositoryImplSqlite.hpp"
 
 namespace mindnet::db::sqlite
 {

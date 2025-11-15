@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/PropertyValidator.h"
+#include "mindnet/plugins/slipbox/validators/PropertyValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/Property.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/Property.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 
 #define Model Property
 #define MODEL PROPERTY

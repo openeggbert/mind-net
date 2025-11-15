@@ -2,11 +2,11 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/api/PluginRegistry.h"
+#include "mindnet/api/PluginRegistry.hpp"
 #include <string>
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/Plugin.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/Plugin.hpp"
 
 namespace mindnet::api
 {

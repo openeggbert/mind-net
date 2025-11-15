@@ -2,9 +2,9 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#include "mindnet/api/Service.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/models/RefreshToken.h"
+#include "mindnet/api/Service.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/models/RefreshToken.hpp"
 //
 
 namespace mindnet::api

@@ -2,13 +2,13 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/slipbox/triggers/BeforeCreateNoteTrigger.h"
+#include "mindnet/plugins/slipbox/triggers/BeforeCreateNoteTrigger.hpp"
 
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/Link.h"
-#include "mindnet/plugins/slipbox/models/Note.h"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.h"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/Link.hpp"
+#include "mindnet/plugins/slipbox/models/Note.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
 
 
 namespace mindnet::plugins::slipbox::triggers

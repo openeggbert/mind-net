@@ -2,13 +2,13 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.h"
+#include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.hpp"
 
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
-#include "mindnet/plugins/slipbox/models/Note.h"
-#include "mindnet/util/Utils.h"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include "mindnet/plugins/slipbox/models/Note.hpp"
+#include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {

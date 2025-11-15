@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#include "mindnet/plugins/core/migrations/CoreSQLiteMigrationScripts.h"
+#include "mindnet/plugins/core/migrations/CoreSQLiteMigrationScripts.hpp"
 
 namespace mindnet::plugins::core::migrations
 {

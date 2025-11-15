@@ -1,0 +1,38 @@
+//
+// Created by robertvokac on 7/31/25.
+//
+#ifndef RESTHELPER_H
+#define RESTHELPER_H
+
+#include <string>
+#include <crow.h>
+#include <nlohmann/json.hpp>
+
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/model/ModelDefinition.hpp"
+
+namespace mindnet::http
+{
+    class RestHelper
+    {
+    private:
+        RestHelper() = delete;
+        RestHelper(const RestHelper&) = delete;
+        RestHelper& operator=(const RestHelper&) = delete;
+
+    public:
+        static crow::json::wvalue model_to_wvalue(
+            const entity_fields& values,
+            const model::ModelDefinition& def,
+            const std::set<std::string>& fields_vector_filter);
+
+        static string check_body_is_valid(const crow::json::rvalue& body, const model::ModelDefinition& def,
+                                          bool id_wanted = true);
+
+        static nlohmann::json crow_json_to_nlohmann_json(const crow::json::rvalue& crow_json);
+
+        static crow::json::wvalue rjson_to_wjson(const crow::json::rvalue& rjson);
+    };
+}
+
+#endif // RESTHELPER_H

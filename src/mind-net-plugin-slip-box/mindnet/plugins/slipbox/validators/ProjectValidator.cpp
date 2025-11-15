@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/ProjectValidator.h"
+#include "mindnet/plugins/slipbox/validators/ProjectValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/slipbox/models/Project.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/slipbox/models/Project.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model Project
 #define MODEL PROJECT

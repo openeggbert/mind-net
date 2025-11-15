@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/slipbox/models/TagType.h"
+#include "mindnet/plugins/slipbox/models/TagType.hpp"
 
 namespace mindnet::plugins::slipbox::models
 {

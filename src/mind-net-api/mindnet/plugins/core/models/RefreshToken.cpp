@@ -1,5 +1,5 @@
-#include "mindnet/plugins/core/models/RefreshToken.h"
-#include "mindnet/plugins/core/columns/RefreshTokenColumns.h"
+#include "mindnet/plugins/core/models/RefreshToken.hpp"
+#include "mindnet/plugins/core/columns/RefreshTokenColumns.hpp"
 
 namespace mindnet::plugins::core::models
 {

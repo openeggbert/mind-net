@@ -31,9 +31,9 @@ target_link_libraries(mind_net_http
 )
 
 target_precompile_headers(mind_net_http PRIVATE
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_json.h"
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_crow.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.hpp"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_json.hpp"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_crow.hpp"
         <asio.hpp>
         <fmt/format.h>
 )

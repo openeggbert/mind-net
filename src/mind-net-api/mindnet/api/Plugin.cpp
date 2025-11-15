@@ -2,10 +2,10 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#include "mindnet/api/Plugin.h"
+#include "mindnet/api/Plugin.hpp"
 
-#include "mindnet/api/RepositoryFactory.h"
-#include "mindnet/essential/Global.h"
+#include "mindnet/api/RepositoryFactory.hpp"
+#include "mindnet/essential/Global.hpp"
 
 namespace mindnet::api
 {

@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/slipbox/models/Property.h"
+#include "mindnet/plugins/slipbox/models/Property.hpp"
 
 namespace mindnet::plugins::slipbox::models
 {

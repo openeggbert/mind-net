@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#include "mindnet/plugins/core/migrations/CorePostgreSQLMigrationScripts.h"
+#include "mindnet/plugins/core/migrations/CorePostgreSQLMigrationScripts.hpp"
 
 namespace mindnet::plugins::core::migrations
 {

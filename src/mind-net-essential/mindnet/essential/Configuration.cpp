@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/5/25.
 //
 
-#include "mindnet/essential/Configuration.h"
+#include "mindnet/essential/Configuration.hpp"
 
 #include <filesystem>
 #include <iostream>

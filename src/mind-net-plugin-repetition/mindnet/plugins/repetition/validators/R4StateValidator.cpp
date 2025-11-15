@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/repetition/validators/R4StateValidator.h"
+#include "mindnet/plugins/repetition/validators/R4StateValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/repetition/models/R4State.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/repetition/models/R4State.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model R4State
 #define MODEL R4_STATE

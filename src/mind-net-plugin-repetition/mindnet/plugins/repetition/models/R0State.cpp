@@ -2,7 +2,7 @@
 // Created by robertvokac on 8/4/25.
 //
 
-#include "mindnet/plugins/repetition/models/R0State.h"
+#include "mindnet/plugins/repetition/models/R0State.hpp"
 
 namespace mindnet::plugins::repetition::models
 {

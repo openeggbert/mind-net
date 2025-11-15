@@ -2,13 +2,13 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#include "mindnet/http/WebEndpointsGenerator.h"
+#include "mindnet/http/WebEndpointsGenerator.hpp"
 
 #include <unordered_set>
 
-#include "mindnet/http/ModelDefinitionEndpointsGenerator.h"
+#include "mindnet/http/ModelDefinitionEndpointsGenerator.hpp"
 
-#include "mindnet/api/IService.h"
+#include "mindnet/api/IService.hpp"
 
 namespace mindnet::http
 {

@@ -2,12 +2,12 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/repetition/validators/R0StateValidator.h"
+#include "mindnet/plugins/repetition/validators/R0StateValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/repetition/models/R0State.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/repetition/models/R0State.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model R0State
 #define MODEL R0_STATE

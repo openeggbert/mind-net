@@ -28,8 +28,8 @@ target_link_libraries(mind_net_api
 )
 
 target_precompile_headers(mind_net_api PRIVATE
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_json.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.hpp"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_json.hpp"
 )
 
 # Enable Unity build for all targets (faster builds)

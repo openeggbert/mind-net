@@ -2,11 +2,11 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/slipbox/validators/IdeaValidator.h"
+#include "mindnet/plugins/slipbox/validators/IdeaValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/slipbox/models/Idea.h"
-#include "mindnet/api/Persistence.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/slipbox/models/Idea.hpp"
+#include "mindnet/api/Persistence.hpp"
 
 #define Model Idea
 #define MODEL IDEA

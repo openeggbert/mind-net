@@ -2,10 +2,10 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/api/Persistence.h"
+#include "mindnet/api/Persistence.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/api/AccessTokenContext.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
 
 
 namespace mindnet::api

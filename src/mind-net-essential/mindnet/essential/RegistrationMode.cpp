@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/8/25.
 //
 
-#include "mindnet/essential/RegistrationMode.h"
+#include "mindnet/essential/RegistrationMode.hpp"
 
 #include <stdexcept>
 #include <string>

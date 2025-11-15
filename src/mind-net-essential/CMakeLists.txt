@@ -18,7 +18,7 @@ target_link_libraries(mind_net_essential PUBLIC
 )
 
 target_precompile_headers(mind_net_essential PRIVATE
-        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.h"
+        "${CMAKE_SOURCE_DIR}/include/pch/pch_std.hpp"
         <fmt/format.h>
 
 )

@@ -2,7 +2,7 @@
 // Created by robertvokac on 9/21/25.
 //
 
-#include "mindnet/plugins/core/models/AuthLog.h"
+#include "mindnet/plugins/core/models/AuthLog.hpp"
 
 namespace mindnet::plugins::core::models
 {

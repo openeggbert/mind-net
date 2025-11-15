@@ -2,14 +2,14 @@
 // Created by robertvokac on 8/16/25.
 //
 
-#include "mindnet/http/ModelEndpointGenerator.h"
+#include "mindnet/http/ModelEndpointGenerator.hpp"
 #include "crow.h"
-#include "mindnet/essential/Configuration.h"
-#include "mindnet/util/Utils.h"
-#include "mindnet/essential/Global.h"
-#include "mindnet/http/RestHelper.h"
-#include "mindnet/plugins/core/models/ApiLog.h"
-#include "mindnet/http/HttpUtils.h"
+#include "mindnet/essential/Configuration.hpp"
+#include "mindnet/util/Utils.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/http/RestHelper.hpp"
+#include "mindnet/plugins/core/models/ApiLog.hpp"
+#include "mindnet/http/HttpUtils.hpp"
 
 using mindnet::essential::g_configuration;
 

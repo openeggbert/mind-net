@@ -2,13 +2,13 @@
 // Created by robertvokac on 8/6/25.
 //
 
-#include "mindnet/plugins/repetition/validators/RReviewValidator.h"
+#include "mindnet/plugins/repetition/validators/RReviewValidator.hpp"
 
-#include "mindnet/essential/Global.h"
-#include "mindnet/plugins/core/enums/SingleRight.h"
-#include "mindnet/plugins/repetition/models/RReview.h"
-#include "mindnet/api/Persistence.h"
-#include "mindnet/plugins/repetition/models/RSession.h"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/plugins/repetition/models/RReview.hpp"
+#include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/repetition/models/RSession.hpp"
 
 #define Model RReview
 #define MODEL R_REVIEW
