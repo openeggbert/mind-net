@@ -42,7 +42,7 @@ namespace mindnet::plugins::slipbox::models
         .set_group("Slip Box", 100)
         .set_title_column(COLS::TO_NOTE_TITLE)
         .set_columns({
-            coldef(COLS::FROM_NOTE_ID, MANDATORY | FOREIGN_KEY)
+            coldef(COLS::FROM_NOTE_ID, MANDATORY | FOREIGN_KEY).set_foreign_key("note")
             .set_description("Reference to the source note"),
             coldef(COLS::TO_NOTE_TITLE, MANDATORY)
             .set_description("Title of the target note"),
