@@ -8,6 +8,7 @@
 #include "mindnet/plugins/core/models/JobRun.hpp"
 #include "mindnet/plugins/core/validators/JobEntryValidator.hpp"
 #include "mindnet/util/Utils.hpp"
+#include "mindnet/api/Service.hpp"
 
 namespace mindnet::api::cronq
 {
@@ -367,6 +368,29 @@ namespace mindnet::api::cronq
                         << " next_run=" << util::Utils::unixtime_to_string(system_clock_to_unixtime(j.next_run))
                         << essential::commit;
                 }
+
+                //
+                // --- GLOBAL BLOCKER: maintenance / shutdown / restart ---
+                //
+                if (essential::g_configuration.access_mode == essential::AccessMode::MaintenanceMode ||
+                    service_ptr->is_shutdown_scheduled() ||
+                    service_ptr->is_restart_scheduled())
+                {
+                    essential::info
+                        << "[CRON-BLOCK] Scheduler paused for 1 minute due to system state (maintenance/shutdown/restart)"
+                        << essential::commit;
+
+                    // Sleep with periodic wake for shutdown safety
+                    for (int i = 0; i < 60 && running_; i++)
+                    {
+                        std::unique_lock lk(mtx_);
+                        cv_.wait_for(lk, std::chrono::seconds(1L), [this] { return !running_; });
+                    }
+
+                    // Go to next iteration - DO NOT evaluate jobs now
+                    continue;
+                }
+
 
                 // 2) FIND NEXT JOB TO RUN
                 auto* next = find_next_job();
