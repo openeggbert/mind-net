@@ -284,25 +284,29 @@ namespace mindnet::api::cronq
         try
         {
             essential::info << "[CRON-LOOP] THREAD ENTERED" << essential::commit;
+            auto last_refresh = std::chrono::steady_clock::now();
             while (running_)
             {
                 essential::info << "[CRON-LOOP] top of while" << essential::commit;
-                // 1) REFRESH ENABLED FLAG FOR ALL JOBS
-                auto now_ms = util::Utils::current_unix_timestamp_ms();
+                // 1) LOAD ENABLED + CONFIG ONLY ONCE PER MINUTE
+                auto now_sc = std::chrono::steady_clock::now();
+                bool do_refresh = (now_sc - last_refresh) >= std::chrono::minutes(1L);
 
-                for (auto& j : jobs_)
+                if (do_refresh)
                 {
-                    if (true)
-                    {
-                        j.last_enabled_check = now_ms;
+                    last_refresh = now_sc;
 
+                    auto now_ms = util::Utils::current_unix_timestamp_ms();
+
+                    for (auto& j : jobs_)
+                    {
                         bool new_enabled;
                         std::string new_cfg;
 
                         if (!load_enabled_and_configuration(j.job_id, new_enabled, new_cfg))
                         {
                             essential::err
-                                << "[CRON-CHECK] FAILED load_enabled_and_configuration for job_id="
+                                << "[CRON-CHECK] FAILED load_enabled_and_configuration job_id="
                                 << j.job_id
                                 << essential::commit;
                             continue;
@@ -316,72 +320,39 @@ namespace mindnet::api::cronq
                                 << " db_enabled=" << new_enabled
                                 << essential::commit;
                         }
-                        // Wake up scheduler whenever enabled state changes
-                        cv_.notify_all();
 
                         j.enabled = new_enabled;
 
-                        // === DISABLE: enabled -> 0 ===
+                        // Disable → next_run=max()
                         if (!j.enabled)
                         {
-                            if (j.running)
-                            {
-                                essential::warn
-                                    << "[CRON-DISABLE] job=" << j.job_name
-                                    << " was running; forcing running=false"
-                                    << essential::commit;
-                            }
                             j.running = false;
-
-                            // ❗ disabled → next_run = max()
-                            if (j.next_run != std::chrono::system_clock::time_point::max())
-                            {
-                                j.next_run = std::chrono::system_clock::time_point::max();
-                                update_next_run_in_db(j.job_id, 0);
-                                cv_.notify_all();
-                            }
-
+                            j.next_run = std::chrono::system_clock::time_point::max();
+                            update_next_run_in_db(j.job_id, 0);
                             continue;
                         }
 
-
-                        // === ENABLE: next_run == max() → recompute ===
+                        // Enable → next_run==max() → recompute
                         if (j.next_run == std::chrono::system_clock::time_point::max())
                         {
-                            essential::info
-                                << "[CRON-ENABLE] job=" << j.job_name
-                                << " enabled && next_run==max → recompute"
-                                << essential::commit;
-
                             j.running = false;
-
-                            auto recomputed = j.cron.next_after(system_clock::now());
-                            j.next_run = recomputed;
+                            j.next_run = j.cron.next_after(std::chrono::system_clock::now());
                             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
-                            cv_.notify_all();
-
                             continue;
                         }
 
-
-
-                        // ===== CONFIG CHANGE =====
+                        // Configuration change
                         if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())
                         {
-                            JobConfig new_config(new_cfg);
-
-                            if (new_config.get_sha256() != j.job_config.get_sha256())
-                            {
-                                j.job_config = new_config;
-
-                                essential::info
-                                    << "[CRON-CONFIG] job=" << j.job_name
-                                    << " configuration changed and reloaded"
-                                    << essential::commit;
-                            }
+                            j.job_config = JobConfig(new_cfg);
+                            essential::info
+                                << "[CRON-CONFIG] job=" << j.job_name
+                                << " configuration reloaded"
+                                << essential::commit;
                         }
                     }
                 }
+
 
 
                 essential::info
