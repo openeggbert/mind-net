@@ -51,7 +51,7 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 jon_entry_id;
+        i64 job_entry_id;
         unixtime started_at;
         unixtime finished_at;
         bool success{};
@@ -64,7 +64,7 @@ namespace mindnet::plugins::core::models
             return id == other.id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at &&
-                jon_entry_id == other.jon_entry_id &&
+                job_entry_id == other.job_entry_id &&
                 started_at == other.started_at &&
                 finished_at == other.finished_at &&
                 success == other.success &&

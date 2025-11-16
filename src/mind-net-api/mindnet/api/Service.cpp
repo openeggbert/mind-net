@@ -165,6 +165,7 @@ namespace mindnet::api
     {
         if (!query_map.contains(query_name))
         {
+            err << "There is no query with name: " << query_name << commit;
             throw std::runtime_error("There is no query with name: " + query_name);
         }
         SQLITE_LOCK_GUARD();

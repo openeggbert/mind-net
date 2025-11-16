@@ -35,10 +35,45 @@ namespace mindnet::api::cronq
             std::string job_name;
             bool enabled = true;
             std::chrono::system_clock::time_point last_started_at;
-            bool running = false;
+            bool running{false};
             unixtime last_enabled_check = 0;
             JobConfig job_config = JobConfig("");
+
+            // --- COPY CONSTRUCTOR (OK) ---
+            ScheduledJobEntry(const ScheduledJobEntry&) = default;
+
+            // --- COPY ASSIGNMENT (ZAKÁZAT!) ---
+            ScheduledJobEntry& operator=(const ScheduledJobEntry&) = delete;
+
+            // --- MOVE CONSTRUCTOR / ASSIGNMENT ---
+            ScheduledJobEntry(ScheduledJobEntry&&) noexcept = default;
+            ScheduledJobEntry& operator=(ScheduledJobEntry&&) noexcept = default;
+
+            ScheduledJobEntry(
+                JobPtr job_,
+                const cronq::CronExpr& cron_,
+                std::chrono::system_clock::time_point last_started_at_,
+                i64 job_id_,
+                const std::string& job_name_,
+                bool enabled_,
+                std::chrono::system_clock::time_point next_run_,
+                i64 last_enabled_check_,
+                JobConfig cfg_
+            )
+                : job(std::move(job_))
+                  , cron(cron_)
+                  , next_run(next_run_)
+                  , job_id(job_id_)
+                  , job_name(job_name_)
+                  , enabled(enabled_)
+                  , last_started_at(last_started_at_)
+                  , running(false)
+                  , last_enabled_check(last_enabled_check_)
+                  , job_config(std::move(cfg_))
+            {
+            }
         };
+
 
         std::vector<JobPtr> all_job_ptrs;
         std::thread scheduler_thread_;
@@ -74,7 +109,7 @@ namespace mindnet::api::cronq
 
         // SQLite helpers
         i64 insert_job_run(const i64 job_id,
-                                   unixtime start_time);
+                           unixtime start_time);
 
         void update_job_run(const i64 run_id,
                             unixtime finish_time,
@@ -84,6 +119,6 @@ namespace mindnet::api::cronq
         void update_next_run_in_db(i64 job_id,
                                    unixtime tp);
     };
-    typedef std::shared_ptr<CronScheduler> CronSchedulerPtr;
 
+    typedef std::shared_ptr<CronScheduler> CronSchedulerPtr;
 }

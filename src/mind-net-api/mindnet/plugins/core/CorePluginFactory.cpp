@@ -5,6 +5,8 @@
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.hpp"
 #include "mindnet/plugins/core/jobs/TestJob.hpp"
 #include "mindnet/plugins/core/jobs/CleanupJob.hpp"
+#include "mindnet/plugins/core/jobs/CleanupHistoryOrphansJob.hpp"
+#include "mindnet/plugins/core/jobs/VacuumJob.hpp"
 #include "mindnet/plugins/core/validators/HistoryValidator.hpp"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.hpp"
 #include "mindnet/plugins/core/validators/TeamValidator.hpp"
@@ -17,6 +19,9 @@
 #include "mindnet/plugins/core/validators/SuperAdminLogValidator.hpp"
 #include "mindnet/plugins/core/validators/JobEntryValidator.hpp"
 #include "mindnet/plugins/core/validators/JobRunValidator.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/CleanupSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/CleanupHistoryOrphansSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/VacuumSQLiteQuery.hpp"
 
 namespace mindnet::plugins::core
 {
@@ -46,6 +51,11 @@ namespace mindnet::plugins::core
         plugin->register_trigger(std::make_shared<triggers::HistoryCommonTrigger>());
         plugin->register_job(std::make_shared<jobs::TestJob>());
         plugin->register_job(std::make_shared<jobs::CleanupJob>());
+        plugin->register_job(std::make_shared<jobs::CleanupHistoryOrphansJob>());
+        plugin->register_job(std::make_shared<jobs::VacuumJob>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::CleanupSQLiteQuery>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::CleanupHistoryOrphansSQLiteQuery>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::VacuumSQLiteQuery>());
 
         plugin->close_for_changes();
         return plugin;

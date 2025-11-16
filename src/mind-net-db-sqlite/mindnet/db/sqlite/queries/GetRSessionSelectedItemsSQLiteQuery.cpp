@@ -427,8 +427,8 @@ LIMIT {limit};
             db.exec("PRAGMA foreign_keys = ON;");
             db.exec("PRAGMA journal_mode=WAL;");
 
-            debug << sql << commit;
-            debug << "Executing scope=" << scope << " schedule=" << schedule << " algorithm=" << algorithm << commit;
+            essential::debug << sql << essential::commit;
+            essential::debug << "Executing scope=" << scope << " schedule=" << schedule << " algorithm=" << algorithm << essential::commit;
             SQLite::Statement query(db, sql);
             std::vector<int64_t> note_ids;
 

@@ -10,144 +10,165 @@
 // Helpers
 // =======================================
 
-namespace mindnet::api::cronq {
+namespace mindnet::api::cronq
+{
+    // =======================================
+    // Structures for cron expression fields
+    // =======================================
 
-// =======================================
-// Structures for cron expression fields
-// =======================================
+    struct GenericField
+    {
+        bool any = false; // "*"
+        bool has_values = false; // if we have an explicit set
+        // Values are indexed from min_value to max_value; index = value - offset
+        int min_value = 0;
+        int max_value = 0;
+        int offset = 0; // typically = min_value
+        std::vector<bool> allowed; // allowed[value - offset] == true
 
-struct GenericField {
-    bool any = false;              // "*"
-    bool has_values = false;       // if we have an explicit set
-    // Values are indexed from min_value to max_value; index = value - offset
-    int min_value = 0;
-    int max_value = 0;
-    int offset = 0;                // typically = min_value
-    std::vector<bool> allowed;     // allowed[value - offset] == true
+        GenericField() = default;
 
-    GenericField() = default;
+        GenericField(int minv, int maxv)
+            : any(false), has_values(false),
+              min_value(minv), max_value(maxv),
+              offset(minv), allowed(size_t(maxv - minv + 1), false)
+        {
+        }
 
-    GenericField(int minv, int maxv)
-        : any(false), has_values(false),
-          min_value(minv), max_value(maxv),
-          offset(minv), allowed(size_t(maxv - minv + 1), false) {}
+        bool matches(int v) const
+        {
+            if (any)
+                return true;
 
-    bool matches(int v) const {
-        if (any)
-            return true;
-        if (!has_values)
-            return false;
-        if (v < min_value || v > max_value)
-            return false;
-        return allowed[size_t(v - offset)];
-    }
+            // If no explicit values were added, treat field as "ANY".
+            // This is required because Quartz & cron use special flags
+            // (like '?' or complex DOM/DOW logic) that intentionally
+            // leave the field without explicit values.
+            if (!has_values)
+                return true;
 
-    void add_value(int v) {
-        if (v < min_value || v > max_value)
-            throw std::runtime_error("Value out of range in GenericField");
-        has_values = true;
-        allowed[size_t(v - offset)] = true;
-    }
-};
+            if (v < min_value || v > max_value)
+                return false;
 
-// Day-of-month (DOM)
-struct DayOfMonthField {
-    enum class Mode {
-        ANY,          // "*"
-        UNSPECIFIED,  // "?"
-        VALUES,       // classic values / ranges / steps: "1", "1,10-15/2", ...
-        LAST_DAY,     // "L"
-        LAST_DAY_OFFSET, // "L-n"
-        NEAREST_WEEKDAY  // "xW"
+            return allowed[size_t(v - offset)];
+        }
+
+        void add_value(int v)
+        {
+            if (v < min_value || v > max_value)
+                throw std::runtime_error("Value out of range in GenericField");
+            has_values = true;
+            allowed[size_t(v - offset)] = true;
+        }
     };
 
-    Mode mode = Mode::ANY;
+    // Day-of-month (DOM)
+    struct DayOfMonthField
+    {
+        enum class Mode
+        {
+            ANY, // "*"
+            UNSPECIFIED, // "?"
+            VALUES, // classic values / ranges / steps: "1", "1,10-15/2", ...
+            LAST_DAY, // "L"
+            LAST_DAY_OFFSET, // "L-n"
+            NEAREST_WEEKDAY // "xW"
+        };
 
-    GenericField values;   // used when mode == VALUES
+        Mode mode = Mode::ANY;
 
-    int offset = 0;        // for LAST_DAY_OFFSET: L-n
-    int weekday_base = 0;  // for NEAREST_WEEKDAY: xW → x
+        GenericField values; // used when mode == VALUES
 
-    DayOfMonthField() : values(1, 31) {}
+        int offset = 0; // for LAST_DAY_OFFSET: L-n
+        int weekday_base = 0; // for NEAREST_WEEKDAY: xW → x
 
-    bool is_any() const { return mode == Mode::ANY; }
-    bool is_unspecified() const { return mode == Mode::UNSPECIFIED; }
+        DayOfMonthField() : values(1, 31)
+        {
+        }
 
-    // evaluation against a specific date
-    bool matches(int year, int month, int day, int dow_quartz) const;
-};
+        bool is_any() const { return mode == Mode::ANY; }
+        bool is_unspecified() const { return mode == Mode::UNSPECIFIED; }
 
-// Day-of-week (DOW)
-struct DayOfWeekField {
-    enum class Mode {
-        ANY,
-        UNSPECIFIED,
-        VALUES,            // list / range / steps: "MON", "MON-FRI", "2,4"
-        LAST_WEEKDAY,      // "5L" => last Thursday in month (5=THU)
-        NTH_WEEKDAY        // "5#3" => third Thursday in month
+        // evaluation against a specific date
+        bool matches(int year, int month, int day, int dow_quartz) const;
     };
 
-    Mode mode = Mode::ANY;
+    // Day-of-week (DOW)
+    struct DayOfWeekField
+    {
+        enum class Mode
+        {
+            ANY,
+            UNSPECIFIED,
+            VALUES, // list / range / steps: "MON", "MON-FRI", "2,4"
+            LAST_WEEKDAY, // "5L" => last Thursday in month (5=THU)
+            NTH_WEEKDAY // "5#3" => third Thursday in month
+        };
 
-    GenericField values;   // 1..7 for SUN..SAT
-    int weekday = 0;       // for LAST_WEEKDAY, NTH_WEEKDAY (1..7)
-    int nth = 0;           // for NTH_WEEKDAY (1..5)
+        Mode mode = Mode::ANY;
 
-    DayOfWeekField() : values(1, 7) {}
+        GenericField values; // 1..7 for SUN..SAT
+        int weekday = 0; // for LAST_WEEKDAY, NTH_WEEKDAY (1..7)
+        int nth = 0; // for NTH_WEEKDAY (1..5)
 
-    bool is_any() const { return mode == Mode::ANY; }
-    bool is_unspecified() const { return mode == Mode::UNSPECIFIED; }
+        DayOfWeekField() : values(1, 7)
+        {
+        }
 
-    bool matches_simple(int dow_quartz) const {
-        if (mode == Mode::ANY) return true;
-        if (mode == Mode::UNSPECIFIED) return true;
-        if (mode == Mode::VALUES) return values.matches(dow_quartz);
-        return false;
-    }
+        bool is_any() const { return mode == Mode::ANY; }
+        bool is_unspecified() const { return mode == Mode::UNSPECIFIED; }
 
-    bool matches(int year, int month, int day, int dow_quartz) const;
-};
+        bool matches_simple(int dow_quartz) const
+        {
+            if (mode == Mode::ANY) return true;
+            if (mode == Mode::UNSPECIFIED) return true;
+            if (mode == Mode::VALUES) return values.matches(dow_quartz);
+            return false;
+        }
 
-// Full expression (without year field; can be added later)
-struct CronExpr {
-    GenericField seconds;    // 0-59
-    GenericField minutes;    // 0-59
-    GenericField hours;      // 0-23
-    DayOfMonthField dom;     // 1-31, L, L-n, W, ?, ...
-    GenericField months;     // 1-12 or JAN-DEC
-    DayOfWeekField dow;      // 1-7, MON-FRI, 5L, 5#3, ?, ...
-    bool run_at_start;
+        bool matches(int year, int month, int day, int dow_quartz) const;
+    };
 
-    CronExpr()
-        : seconds(0, 59),
-          minutes(0, 59),
-          hours(0, 23),
-          dom(),
-          months(1, 12),
-          dow(),
-          run_at_start(false)
-    {}
+    // Full expression (without year field; can be added later)
+    struct CronExpr
+    {
+        GenericField seconds; // 0-59
+        GenericField minutes; // 0-59
+        GenericField hours; // 0-23
+        DayOfMonthField dom; // 1-31, L, L-n, W, ?, ...
+        GenericField months; // 1-12 or JAN-DEC
+        DayOfWeekField dow; // 1-7, MON-FRI, 5L, 5#3, ?, ...
+        bool run_at_start;
 
-    bool matches(const std::chrono::system_clock::time_point& tp) const;
+        CronExpr()
+            : seconds(0, 59),
+              minutes(0, 59),
+              hours(0, 23),
+              dom(),
+              months(1, 12),
+              dow(),
+              run_at_start(false)
+        {
+        }
 
-    // naive but simple resolver – moves second by second
-    std::chrono::system_clock::time_point
-    next_after(const std::chrono::system_clock::time_point& from) const;
-    std::chrono::system_clock::time_point previous_before(const std::chrono::system_clock::time_point& from) const;
-};
+        bool matches(const std::chrono::system_clock::time_point& tp) const;
 
-// =======================================
-// parse_cron_quartz
-// =======================================
+        // naive but simple resolver – moves second by second
+        std::chrono::system_clock::time_point
+        next_after(const std::chrono::system_clock::time_point& from) const;
+    };
 
-inline CronExpr parse_cron_quartz(const std::string& expr_raw);
+    // =======================================
+    // parse_cron_quartz
+    // =======================================
 
-// =======================================
-// matches()
-// =======================================
+    inline CronExpr parse_cron_quartz(const std::string& expr_raw);
 
-// =======================================
-// next_after() – simple, second-by-second
-// =======================================
+    // =======================================
+    // matches()
+    // =======================================
 
+    // =======================================
+    // next_after() – simple, second-by-second
+    // =======================================
 } // namespace cronq

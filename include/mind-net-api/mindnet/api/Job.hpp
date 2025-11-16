@@ -36,7 +36,7 @@ namespace mindnet::api
         void set_plugin_name(const std::string& plugin_name_) {plugin_name = plugin_name_;};
         [[nodiscard]] std::string get_plugin_name() const {return plugin_name;}
         [[nodiscard]] bool get_enabled_by_default() const {return enabled_by_default;}
-
+        nlohmann::json call_query(const std::string& query_name, nlohmann::json& request);
     private:
         std::string cron_expression;
         bool run_once_when_missed = true;
