@@ -10,9 +10,9 @@ namespace mindnet::plugins::core::jobs
 {
     TestJob::TestJob()
         : Job(
-            "TestJob7",
+            "TestJob",
             "For tests",
-            "@every_seconds(1)",
+            "@every_seconds(15)",
             false,
             true
         )

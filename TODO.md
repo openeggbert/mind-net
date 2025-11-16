@@ -665,4 +665,26 @@ keyboard shortcuts, clickable tags, searchable field to the header
 - [ ] Highlight invalid or incomplete key-value entries.
 - [ ] Add confirmation dialogs for destructive actions (e.g. delete).
 
+## TODO: UI Review – Cleanup & Modernization
+
+The current UI is functional but visually overloaded and outdated.  
+Key issues to address:
+
+### ❗ Problems
+- Too many buttons and icons visible at once → creates visual noise.
+- Large uniform boxes with weak visual hierarchy.
+- Metadata panel looks like a debug/admin block and takes too much attention.
+- Subnotes list feels chaotic (IDs, Copy buttons everywhere, no grouping).
+- Inconsistent spacing, typography, and component styling.
+- Overall impression: powerful backend, but raw and cluttered frontend.
+
+### ⭐ Improvements to implement
+- Separate **primary** vs **secondary** actions (e.g., move “Copy”, “Rename” into menus).
+- Reduce prominence of Metadata or collapse it by default.
+- Redesign Subnotes into a cleaner list/table layout.
+- Adopt a simpler, more minimalistic visual language (fewer borders, more whitespace).
+- Standardize spacing, typography, and icons.
+
+### 🎯 Goal
+Keep all functionality, but reduce visual complexity to achieve a more modern, clean, and professional UI.
 

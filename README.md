@@ -19,6 +19,21 @@ With its flexible design, Mind-Net can be extended beyond note-taking—adapting
 - ⚡ Modern **C++20/23 backend** (no heavy frameworks)  
 - 🗃️ SQLite database with automatic migrations  
 
+## Technical details
+
+MindNet is  a modular C++ platform that includes:
+- custom ORM and REST API generator
+- validation & trigger engines
+- authentication/authorization
+- job scheduler with Cron expressions
+- custom SQL query layer
+- generic UI frontend
+- plugin-based architecture for extensibility
+- Zettelkasten plugin — advanced note-taking
+- Repetition plugin — inspired by SuperMemo 18
+
+Upcoming features include PostgreSQL support.
+
 ## Components:
 
  1. C++ Crow backend
