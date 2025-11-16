@@ -31,6 +31,9 @@ namespace mindnet::api
         trigger_registry_ptr(std::make_shared<api::TriggerRegistry>()),
         cron_scheduler(std::make_shared<api::cronq::CronScheduler>())
     {
+        info << "[SERVICE] Ctor this=" << (void*)this
+     << " cron_scheduler=" << (void*)cron_scheduler.get()
+     << commit;
         for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
         {
             auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
@@ -149,6 +152,9 @@ namespace mindnet::api
 
     Service::~Service()
     {
+        info << "[SERVICE] Dtor this=" << (void*)this
+     << " cron_scheduler=" << (void*)cron_scheduler.get()
+     << commit;
     };
 
     bool Service::has_model(const std::string& model_name)
@@ -443,6 +449,9 @@ namespace mindnet::api
 
     void Service::stop_service()
     {
+        info << "[SERVICE] stop_service this=" << (void*)this
+            << " cron_scheduler=" << (void*)cron_scheduler.get()
+            << commit;
         cron_scheduler->stop();
     }
 }

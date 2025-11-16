@@ -16,16 +16,30 @@ namespace mindnet::api::cronq
     CronScheduler::CronScheduler()
         : AbstractTriggerJob("CronScheduler", "CronScheduler")
     {
+        essential::info
+    << "[CRON] CronScheduler::Ctor this=" << (void*)this
+    << " thread_id=" << std::this_thread::get_id()
+    << essential::commit;
     }
 
     CronScheduler::~CronScheduler()
     {
+        essential::info
+    << "[CRON] CronScheduler::Dtor this=" << (void*)this
+    << " thread_id=" << std::this_thread::get_id()
+    << essential::commit;
         stop();
     }
 
     void CronScheduler::start()
     {
-        if (all_job_ptrs.empty()) {
+        essential::info
+    << "[CRON] CronScheduler::start this=" << (void*)this
+    << " running_=" << running_.load()
+    << " thread_id=" << std::this_thread::get_id()
+    << essential::commit;
+        if (all_job_ptrs.empty())
+        {
             essential::warn << "CronScheduler: no jobs registered, but starting anyway" << essential::commit;
         }
         essential::info << "Starting CronScheduler" << essential::commit;
@@ -42,6 +56,12 @@ namespace mindnet::api::cronq
 
     void CronScheduler::stop()
     {
+        essential::warn
+    << "[CRON] CronScheduler::stop this=" << (void*)this
+    << " running_=" << running_.load()
+    << " pool_running_=" << pool_running_.load()
+    << " thread_id=" << std::this_thread::get_id()
+    << essential::commit;
         running_ = false;
         pool_running_ = false;
 
@@ -261,179 +281,202 @@ namespace mindnet::api::cronq
 
     void CronScheduler::scheduler_loop()
     {
-        try {
-            essential::info << "[CRON-LOOP] THREAD ENTERED" << essential::commit;
-        while (running_)
+        try
         {
-            essential::info << "[CRON-LOOP] top of while" << essential::commit;
-            // 1) REFRESH ENABLED FLAG FOR ALL JOBS
-            auto now_ms = util::Utils::current_unix_timestamp_ms();
-
-            for (auto& j : jobs_)
+            essential::info << "[CRON-LOOP] THREAD ENTERED" << essential::commit;
+            while (running_)
             {
-                if (true)
+                essential::info << "[CRON-LOOP] top of while" << essential::commit;
+                // 1) REFRESH ENABLED FLAG FOR ALL JOBS
+                auto now_ms = util::Utils::current_unix_timestamp_ms();
+
+                for (auto& j : jobs_)
                 {
-                    j.last_enabled_check = now_ms;
-
-                    bool new_enabled;
-                    std::string new_cfg;
-
-                    if (!load_enabled_and_configuration(j.job_id, new_enabled, new_cfg))
+                    if (true)
                     {
-                        essential::err
-                            << "[CRON-CHECK] FAILED load_enabled_and_configuration for job_id="
-                            << j.job_id
-                            << essential::commit;
-                        continue;
-                    }
+                        j.last_enabled_check = now_ms;
 
-                    if (new_enabled != j.enabled)
-                    {
-                        essential::info
-                            << "[CRON-CHECK] job=" << j.job_name
-                            << " state change: local_enabled=" << j.enabled
-                            << " db_enabled=" << new_enabled
-                            << essential::commit;
-                    }
+                        bool new_enabled;
+                        std::string new_cfg;
 
-                    j.enabled = new_enabled;
-
-                    // === DISABLE: enabled -> 0 ===
-                    if (!j.enabled)
-                    {
-                        if (j.next_run.time_since_epoch().count() != 0)
+                        if (!load_enabled_and_configuration(j.job_id, new_enabled, new_cfg))
                         {
-                            j.next_run = std::chrono::system_clock::time_point{};
-                            update_next_run_in_db(j.job_id, 0);
-                            cv_.notify_all();
+                            essential::err
+                                << "[CRON-CHECK] FAILED load_enabled_and_configuration for job_id="
+                                << j.job_id
+                                << essential::commit;
+                            continue;
+                        }
 
+                        if (new_enabled != j.enabled)
+                        {
                             essential::info
-                                << "[CRON-DISABLE] job=" << j.job_name
-                                << " next_run reset to 0"
+                                << "[CRON-CHECK] job=" << j.job_name
+                                << " state change: local_enabled=" << j.enabled
+                                << " db_enabled=" << new_enabled
                                 << essential::commit;
                         }
-                    }
-                    // === ENABLE: enabled == 1 ===
-                    else
-                    {
-                        if (j.next_run.time_since_epoch().count() == 0)
+                        // Wake up scheduler whenever enabled state changes
+                        cv_.notify_all();
+
+                        j.enabled = new_enabled;
+
+                        // === DISABLE: enabled -> 0 ===
+                        if (!j.enabled)
+                        {
+                            if (j.running)
+                            {
+                                essential::warn
+                                    << "[CRON-DISABLE] job=" << j.job_name
+                                    << " was running; forcing running=false"
+                                    << essential::commit;
+                            }
+                            j.running = false;
+
+                            // ❗ disabled → next_run = max()
+                            if (j.next_run != std::chrono::system_clock::time_point::max())
+                            {
+                                j.next_run = std::chrono::system_clock::time_point::max();
+                                update_next_run_in_db(j.job_id, 0);
+                                cv_.notify_all();
+                            }
+
+                            continue;
+                        }
+
+
+                        // === ENABLE: next_run == max() → recompute ===
+                        if (j.next_run == std::chrono::system_clock::time_point::max())
                         {
                             essential::info
                                 << "[CRON-ENABLE] job=" << j.job_name
-                                << " detected enabled=1 && next_run==0 → recompute"
+                                << " enabled && next_run==max → recompute"
                                 << essential::commit;
 
                             j.running = false;
 
-                            j.next_run = j.cron.next_after(std::chrono::system_clock::now());
+                            auto recomputed = j.cron.next_after(system_clock::now());
+                            j.next_run = recomputed;
                             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
                             cv_.notify_all();
 
-                            essential::info
-                                << "[CRON-ENABLE] job=" << j.job_name
-                                << " new next_run="
-                                << util::Utils::unixtime_to_string(system_clock_to_unixtime(j.next_run))
-                                << essential::commit;
+                            continue;
                         }
-                    }
 
-                    // ===== CONFIG CHANGE =====
-                    if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())
-                    {
-                        JobConfig new_config(new_cfg);
 
-                        if (new_config.get_sha256() != j.job_config.get_sha256())
+
+                        // ===== CONFIG CHANGE =====
+                        if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())
                         {
-                            j.job_config = new_config;
+                            JobConfig new_config(new_cfg);
 
-                            essential::info
-                                << "[CRON-CONFIG] job=" << j.job_name
-                                << " configuration changed and reloaded"
-                                << essential::commit;
+                            if (new_config.get_sha256() != j.job_config.get_sha256())
+                            {
+                                j.job_config = new_config;
+
+                                essential::info
+                                    << "[CRON-CONFIG] job=" << j.job_name
+                                    << " configuration changed and reloaded"
+                                    << essential::commit;
+                            }
                         }
                     }
                 }
+
+
+                essential::info
+                    << "[CRON-LOOP] listing jobs:"
+                    << essential::commit;
+
+                for (auto& j : jobs_)
+                {
+                    essential::info
+                        << "[CRON-LOOP] job=" << j.job_name
+                        << " enabled=" << j.enabled
+                        << " next_run=" << util::Utils::unixtime_to_string(system_clock_to_unixtime(j.next_run))
+                        << essential::commit;
+                }
+
+                // 2) FIND NEXT JOB TO RUN
+                auto* next = find_next_job();
+                if (next == nullptr)
+                {
+                    essential::info
+                        << "[CRON-LOOP] next=nullptr"
+                        << essential::commit;
+                }
+                else
+                {
+                    essential::info
+                        << "[CRON-LOOP] selected=" << next->job_name
+                        << " next_run=" << util::Utils::unixtime_to_string(system_clock_to_unixtime(next->next_run))
+                        << essential::commit;
+                }
+
+                if (!next) {
+                    essential::info << "[CRON-LOOP] no next job, sleeping" << essential::commit;
+                }
+                if (!next || next->next_run == std::chrono::system_clock::time_point::max())
+                {
+                    // no active job scheduled
+                    std::this_thread::sleep_for(std::chrono::seconds(1L));
+                    continue;
+                }
+                if (!next->enabled)
+                {
+                    continue;
+                }
+
+                auto scheduled = next->next_run;
+                auto now = system_clock::now();
+
+                // 3) WAIT UNTIL EXECUTION TIME
+                if (scheduled > now)
+                {
+                    // Wake once per second so ENABLE/DISABLE and config changes propagate
+                    std::unique_lock lk(mtx_);
+                    auto pred = [this]() -> bool { return !running_; };
+
+                    cv_.wait_for(lk, std::chrono::seconds(1L), pred);
+                    continue;
+                }
+
+
+                if (!running_) return;
+
+                // 4) PREVENT PARALLEL EXECUTION OF THE SAME JOB
+                if (next->running)
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10L));
+                    continue;
+                }
+
+                next->running = true;
+
+                // 5) LAUNCH JOB IN THREADPOOL
+                enqueue_task([this, next]
+                {
+                    run_job(*next);
+                    next->running = false;
+                });
+
+                // 6) SCHEDULE NEXT RUN
+                auto now_tp = std::chrono::system_clock::now();
+                next->next_run = next->cron.next_after(now_tp);
+
+                update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
             }
 
-            essential::info
-                << "[CRON-LOOP] listing jobs:"
+            essential::warn
+                << "[CRON-LOOP] thread EXITING normal while(running_) loop this=" << (void*)this
                 << essential::commit;
-
-            for (auto& j : jobs_)
-            {
-                essential::info
-                    << "[CRON-LOOP] job=" << j.job_name
-                    << " enabled=" << j.enabled
-                    << " next_run=" << util::Utils::unixtime_to_string(system_clock_to_unixtime(j.next_run))
-                    << essential::commit;
-            }
-
-            // 2) FIND NEXT JOB TO RUN
-            auto* next = find_next_job();
-            if (next == nullptr)
-            {
-                essential::info
-                    << "[CRON-LOOP] next=nullptr"
-                    << essential::commit;
-            }
-            else
-            {
-                essential::info
-                    << "[CRON-LOOP] selected=" << next->job_name
-                    << " next_run=" << util::Utils::unixtime_to_string(system_clock_to_unixtime(next->next_run))
-                    << essential::commit;
-            }
-
-            if (!next || next->next_run == std::chrono::system_clock::time_point::max())
-            {
-                // no active job scheduled
-                std::this_thread::sleep_for(std::chrono::seconds(1L));
-                continue;
-            }
-            if (!next->enabled)
-            {
-                continue;
-            }
-
-            auto scheduled = next->next_run;
-            auto now = system_clock::now();
-
-            // 3) WAIT UNTIL EXECUTION TIME
-            if (scheduled > now)
-            {
-                std::unique_lock lk(mtx_);
-                cv_.wait_until(lk, scheduled, [this] { return !running_; });
-            }
-
-            if (!running_) return;
-
-            // 4) PREVENT PARALLEL EXECUTION OF THE SAME JOB
-            if (next->running)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(10L));
-                continue;
-            }
-
-            next->running = true;
-
-            // 5) LAUNCH JOB IN THREADPOOL
-            enqueue_task([this, next]
-            {
-                run_job(*next);
-                next->running = false;
-            });
-
-            // 6) SCHEDULE NEXT RUN
-            auto now_tp = std::chrono::system_clock::now();
-            next->next_run = next->cron.next_after(now_tp);
-
-            update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
         }
-        }
-        catch(const std::exception& ex){
+        catch (const std::exception& ex)
+        {
             essential::err << "[CRON-LOOP] THREAD EXCEPTION: " << ex.what() << essential::commit;
         }
-        catch(...) {
+        catch (...)
+        {
             essential::err << "[CRON-LOOP] THREAD EXCEPTION UNKNOWN" << essential::commit;
         }
     }
