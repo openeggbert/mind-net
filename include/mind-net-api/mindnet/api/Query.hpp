@@ -9,6 +9,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/SqliteGlobal.hpp"
 
 namespace mindnet::api
 {

@@ -167,6 +167,7 @@ namespace mindnet::api
         {
             throw std::runtime_error("There is no query with name: " + query_name);
         }
+        SQLITE_LOCK_GUARD();
         auto& query = query_map[query_name];
         return query->call(request);
     }
