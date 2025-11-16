@@ -9,7 +9,7 @@
 #include "mindnet/plugins/core/validators/JobEntryValidator.hpp"
 #include "mindnet/util/Utils.hpp"
 
-namespace mindnet::api
+namespace mindnet::api::cronq
 {
     using namespace std::chrono;
 
@@ -82,7 +82,7 @@ namespace mindnet::api
 
         for (auto& job_ptr : all_job_ptrs)
         {
-            bool enabled = true;
+            bool enabled = job_ptr->get_enabled_by_default();
             i64 id = 0;
 
             // Synchronize software and database
@@ -143,13 +143,19 @@ namespace mindnet::api
             }
             cronq::CronExpr expr = cronq::parse_cron_quartz(job_ptr->get_cron_expression());
 
+            std::string cfg_text = jobs_in_db_map[job_ptr->get_name()].configuration;
+            JobConfig cfg(cfg_text);
+
             jobs_.push_back({
                 job_ptr,
                 expr,
                 system_clock::now(), // placeholder
                 id,
                 job_ptr->get_name(),
-                enabled
+                enabled,
+                std::chrono::system_clock::time_point{},
+                false,
+                0, cfg
             });
         }
     }
@@ -162,6 +168,49 @@ namespace mindnet::api
             ).count();
         return unix_milliseconds;
     }
+
+    bool CronScheduler::load_enabled_from_db(i64 job_id)
+    {
+        api::AccessTokenContext ctx(0, "system", 403);
+
+        auto read_job_entry = run_read(
+            plugins::core::models::JOB_ENTRY_DEFINITION,
+            ctx,
+            job_id,
+            0
+        );
+
+        if (read_job_entry.second.ko())
+            return false;
+
+        plugins::core::models::JobEntry entry;
+        entry.from_values(read_job_entry.first);
+
+        return entry.enabled;
+    }
+
+    bool CronScheduler::load_enabled_and_configuration(i64 job_id, bool& enabled_out, std::string& cfg_out)
+    {
+        api::AccessTokenContext ctx(0, "system", 403);
+
+        auto read_job_entry = run_read(
+            plugins::core::models::JOB_ENTRY_DEFINITION,
+            ctx,
+            job_id,
+            0
+        );
+
+        if (read_job_entry.second.ko())
+            return false;
+
+        plugins::core::models::JobEntry entry;
+        entry.from_values(read_job_entry.first);
+
+        enabled_out = entry.enabled;
+        cfg_out = entry.configuration;
+        return true;
+    }
+
 
     void CronScheduler::compute_initial_next_runs()
     {
@@ -209,7 +258,9 @@ namespace mindnet::api
 
             bool missed =
                 j.job->get_run_once_when_missed() &&
+                last_run_ts != 0 &&
                 prev_scheduled > std::chrono::system_clock::time_point(std::chrono::milliseconds(last_run_ts));
+
 
             if (missed)
             {
@@ -232,66 +283,111 @@ namespace mindnet::api
         }
     }
 
-    void CronScheduler::scheduler_loop()
+void CronScheduler::scheduler_loop()
+{
+    while (running_)
     {
-        while (running_)
+        // 1) REFRESH ENABLED FLAG FOR ALL JOBS
+        auto now_ms = util::Utils::current_unix_timestamp_ms();
+
+        for (auto& j : jobs_)
         {
-            auto* next = find_next_job();
-            if (!next)
+            if (now_ms - j.last_enabled_check > 5000)
             {
-                std::this_thread::sleep_for(std::chrono::seconds(1L));
-                continue;
+
+                bool prev_enabled = j.enabled;
+                bool new_enabled;
+                std::string new_cfg;
+
+                if (!load_enabled_and_configuration(j.job_id, new_enabled, new_cfg))
+                {
+                    j.last_enabled_check = now_ms;
+                    continue;
+                }
+
+                j.last_enabled_check = now_ms;
+
+                if (prev_enabled != new_enabled)
+                {
+                    j.enabled = new_enabled;
+                    essential::info << "Job " << j.job_name << " enabled=" << j.enabled << essential::commit;
+
+                    if (j.enabled)
+                        j.next_run = j.cron.next_after(std::chrono::system_clock::now());
+                    else
+                        j.next_run = std::chrono::system_clock::time_point::max();
+
+                    update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
+                }
+
+                if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())
+                {
+                    JobConfig new_config(new_cfg);
+
+                    if (new_config.get_sha256() != j.job_config.get_sha256())
+                    {
+                        // CONFIG REALLY CHANGED
+                        j.job_config = new_config;
+
+                        essential::info 
+                           << "Job " << j.job_name 
+                           << " configuration changed and reloaded" 
+                           << essential::commit;
+                    }
+                }
+
             }
+        }
 
-            auto scheduled = next->next_run;
-            auto now = system_clock::now();
+        // 2) FIND NEXT JOB TO RUN
+        auto* next = find_next_job();
+        if (!next || next->next_run == std::chrono::system_clock::time_point::max())
+        {
+            // no active job scheduled
+            std::this_thread::sleep_for(std::chrono::seconds(1L));
+            continue;
+        }
+        if (!next->enabled)
+        {
+            continue;
+        }
 
-            // Wait until scheduled time
-            if (scheduled > now)
-            {
-                std::unique_lock lk(mtx_);
-                cv_.wait_until(lk, scheduled, [this] { return !running_; });
-            }
+        auto scheduled = next->next_run;
+        auto now = system_clock::now();
 
-            if (!running_) return;
+        // 3) WAIT UNTIL EXECUTION TIME
+        if (scheduled > now)
+        {
+            std::unique_lock lk(mtx_);
+            cv_.wait_until(lk, scheduled, [this] { return !running_; });
+        }
 
-            // ------------------------------------------
-            // 🚫 Prevent parallel execution of same job
-            // ------------------------------------------
-            if (next->running)
-            {
-                // Job is still executing -> skip this occurrence
-                // Plan next run
-                next->next_run = next->cron.next_after(scheduled);
-                update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
-                continue;
-            }
+        if (!running_) return;
 
-            // ------------------------------------------
-            // Mark as running
-            // ------------------------------------------
-            next->running = true;
-
-            // ------------------------------------------
-            // Execute job (in thread pool)
-            // ------------------------------------------
-            enqueue_task([this, next]
-            {
-                run_job(*next);
-
-                // clear running flag AFTER job fully finished
-                next->running = false;
-            });
-
-            // ------------------------------------------
-            // Plan next run
-            // ------------------------------------------
+        // 4) PREVENT PARALLEL EXECUTION OF THE SAME JOB
+        if (next->running)
+        {
             next->next_run = next->cron.next_after(scheduled);
             update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
+            continue;
         }
-    }
 
-    CronScheduler::ScheduledJobEntry* CronScheduler::find_next_job()
+        next->running = true;
+
+        // 5) LAUNCH JOB IN THREADPOOL
+        enqueue_task([this, next]
+        {
+            run_job(*next);
+            next->running = false;
+        });
+
+        // 6) SCHEDULE NEXT RUN
+        next->next_run = next->cron.next_after(scheduled);
+        update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
+    }
+}
+
+CronScheduler::ScheduledJobEntry* CronScheduler::find_next_job()
     {
         if (jobs_.empty()) return nullptr;
 
@@ -379,7 +475,7 @@ namespace mindnet::api
         try
         {
             entry.last_started_at = std::chrono::system_clock::now();
-            entry.job->run(); // *** actual job code ***
+            entry.job->run(entry.job_config); // *** actual job code ***
         }
         catch (const std::exception& ex)
         {

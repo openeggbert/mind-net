@@ -12,30 +12,6 @@
 
 namespace mindnet::util
 {
-    /**
- * @brief Result structure for SuperMemo 2 (SM-2) algorithm calculations
- *
- * This structure holds the calculated values for next review scheduling:
- * - new_interval: Number of days until next review
- * - new_ef: New easiness factor (minimum 1.3)
- * - new_repetition: Number of successful reviews + 1 (reset to 0 on quality < 3)
- *
- * The values are used to update question_sm2_state:
- * question_sm2_state.repetitions = result.new_repetition;
- * question_sm2_state.interval = result.new_interval;
- * question_sm2_state.ef_times_100 = result.new_ef * 100.0;
- * question_sm2_state.next_review = now + result.new_interval * 86400; // in seconds
- * question_sm2_state.last_review = now;
- * question_sm2_state.last_quality = quality;
- */
-
-    struct SM2Result
-    {
-        int new_interval;
-        double new_ef;
-        int new_repetition;
-    };
-
     class Utils
     {
     private:
@@ -44,7 +20,6 @@ namespace mindnet::util
         Utils& operator=(const Utils&) = delete;
 
     public:
-        static SM2Result calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef);
         static long long current_unix_timestamp_seconds();
         static long long current_unix_timestamp_ms();
         static string unixtime_to_string(unixtime unixTimestamp);
@@ -55,19 +30,19 @@ namespace mindnet::util
         static int letterToDecimal(char letter);
 
         // Convert number 0-25 to single letter 'a'-'z'
-        static char decimalToLetter(int number);
+        static char decimal_to_letter(int number);
 
         // Convert base-26 string (a-z) to decimal integer
         // "a" -> 0, "b" -> 1, ..., "z" -> 25, "aa" -> 26, etc.
-        static int base26ToDecimal(const std::string& text);
+        static int base26_to_decimal(const std::string& text);
 
         // Convert decimal integer to base-26 string (a-z)
-        static std::string decimalToBase26(int number);
+        static std::string decimal_to_base26(int number);
 
         static std::vector<std::string> split_with_quotes(const std::string& input);
         static std::set<string> split_string_by_commas(const string& string_,
                                                        std::set<std::string>& result);
-        static std::string hash_sha_256(const std::string& text);
+        static std::string compute_sha256(const std::string& text);
         //openssl rand -base64 32
         static std::string generate_secret_key(
             size_t length = 32,

@@ -329,5 +329,9 @@ CREATE TABLE job_run (
 
 );
 )");
+
+    	add_migration("V13__alter_table_job_entry_add_column_configuration.sql", R"(
+ALTER TABLE job_entry ADD configuration TEXT;
+)");
     }
 }

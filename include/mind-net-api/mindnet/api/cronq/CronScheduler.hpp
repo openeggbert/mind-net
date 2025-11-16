@@ -13,7 +13,7 @@
 #include "mindnet/api/AbstractTriggerJob.hpp"
 #include "mindnet/api/Job.hpp"
 
-namespace mindnet::api
+namespace mindnet::api::cronq
 {
     class CronScheduler : public AbstractTriggerJob
     {
@@ -36,6 +36,8 @@ namespace mindnet::api
             bool enabled = true;
             std::chrono::system_clock::time_point last_started_at;
             bool running = false;
+            unixtime last_enabled_check = 0;
+            JobConfig job_config = JobConfig("");
         };
 
         std::vector<JobPtr> all_job_ptrs;
@@ -57,6 +59,8 @@ namespace mindnet::api
         // ---
         void scheduler_loop();
         void load_jobs_from_db();
+        bool load_enabled_from_db(i64 job_id);
+        bool load_enabled_and_configuration(i64 job_id, bool& enabled_out, std::string& cfg_out);
         void compute_initial_next_runs();
         void sleep_until_next_job();
         ScheduledJobEntry* find_next_job();

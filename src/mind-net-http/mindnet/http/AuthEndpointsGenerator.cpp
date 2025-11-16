@@ -146,7 +146,7 @@ namespace mindnet::http
                 user.from_values(users.first[0]);
 
                 string expected_password_hash = user.password_hash;
-                string returned_password_hash = util::Utils::hash_sha_256(password);
+                string returned_password_hash = util::Utils::compute_sha256(password);
                 bool verified = expected_password_hash == returned_password_hash;
                 if (!verified)
                 {
@@ -165,8 +165,8 @@ namespace mindnet::http
                 std::string raw_access = util::Utils::generate_secret_key(32);
                 std::string raw_refresh = util::Utils::generate_secret_key(64);
 
-                std::string access_hash = util::Utils::hash_sha_256(raw_access); // or SHA256
-                std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh); // or SHA256
+                std::string access_hash = util::Utils::compute_sha256(raw_access); // or SHA256
+                std::string refresh_hash = util::Utils::compute_sha256(raw_refresh); // or SHA256
 
 
                 // -------------------------------
@@ -300,7 +300,7 @@ namespace mindnet::http
                 }
 
                 std::string raw_refresh = body["refresh_token"].s();
-                std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
+                std::string refresh_hash = util::Utils::compute_sha256(raw_refresh);
 
                 auto now = util::Utils::current_unix_timestamp_ms();
 
@@ -416,7 +416,7 @@ namespace mindnet::http
                 }
 
                 std::string raw_refresh = body["refresh_token"].s();
-                std::string refresh_hash = util::Utils::hash_sha_256(raw_refresh);
+                std::string refresh_hash = util::Utils::compute_sha256(raw_refresh);
 
                 auto now = util::Utils::current_unix_timestamp_ms();
 
@@ -448,7 +448,7 @@ namespace mindnet::http
                 // 3. Generate new access token
                 auto access_exp = now + minutes_to_milliseconds(15); // 15 minutes
                 std::string raw_access = util::Utils::generate_secret_key(32);
-                std::string access_hash = util::Utils::hash_sha_256(raw_access);
+                std::string access_hash = util::Utils::compute_sha256(raw_access);
 
                 plugins::core::models::AccessToken access_token;
                 access_token.user_id = refresh.user_id;
@@ -513,7 +513,7 @@ namespace mindnet::http
 
                     // create new refresh
                     std::string raw_refresh = util::Utils::generate_secret_key(64);
-                    std::string refresh_hash_new = util::Utils::hash_sha_256(raw_refresh);
+                    std::string refresh_hash_new = util::Utils::compute_sha256(raw_refresh);
 
                     plugins::core::models::RefreshToken new_refresh;
                     new_refresh.user_id = refresh.user_id;
@@ -629,7 +629,7 @@ namespace mindnet::http
                 }
                 //
 
-                std::string hashed = util::Utils::hash_sha_256(password);
+                std::string hashed = util::Utils::compute_sha256(password);
                 plugins::core::models::User user;
                 user.username = username;
                 user.password_hash = hashed;
@@ -705,7 +705,7 @@ namespace mindnet::http
                 }
 
                 // 2. Verify old password
-                std::string old_hash = util::Utils::hash_sha_256(old_password);
+                std::string old_hash = util::Utils::compute_sha256(old_password);
                 if (user.password_hash != old_hash)
                 {
                     log_request(service_ptr, req, ctx, 401, 0, "Old password is incorrect");
@@ -713,7 +713,7 @@ namespace mindnet::http
                 }
 
                 // 3. Save new password
-                std::string new_hash = util::Utils::hash_sha_256(new_password);
+                std::string new_hash = util::Utils::compute_sha256(new_password);
                 user.password_hash = new_hash;
                 auto v = user.to_values();
                 ctx.system = true;

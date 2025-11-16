@@ -290,7 +290,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
             try
             {
                 query.bind(1, new_version);
-                query.bind(2, util::Utils::hash_sha_256(meta_migrations[new_version]));
+                query.bind(2, util::Utils::compute_sha256(meta_migrations[new_version]));
                 query.exec();
                 return true;
             }
@@ -455,7 +455,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                 {
                     expected_sql = meta_migrations[i];
                 }
-                std::string expected_checksum = util::Utils::hash_sha_256(expected_sql);
+                std::string expected_checksum = util::Utils::compute_sha256(expected_sql);
 
                 if (found_checksum != expected_checksum)
                 {
@@ -531,7 +531,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                     //
                     auto& sql = migration_scripts_ptr->get_sql(version);
                     //
-                    string expected_checksum = util::Utils::hash_sha_256(sql);
+                    string expected_checksum = util::Utils::compute_sha256(sql);
                     string found_checksum = migration.checksum;
                     if (expected_checksum != found_checksum)
                     {
@@ -544,7 +544,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                     //
 
                     string chain_hash_for_previous_migration = version == 1 ? "" : sql_chain_hashes[version - 1];
-                    string expected_chain_hash = util::Utils::hash_sha_256(
+                    string expected_chain_hash = util::Utils::compute_sha256(
                         chain_hash_for_previous_migration + expected_checksum);
                     string found_chain_hash = migration.chain_hash;
                     if (expected_chain_hash != found_chain_hash)
@@ -745,8 +745,8 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                         duration = duration_cast<std::chrono::microseconds>(end - start).count();
 
                         string prev_chain = version == 1 ? "" : sql_chain_hashes[version - 1];
-                        checksum = util::Utils::hash_sha_256(sql);
-                        chain_hash = util::Utils::hash_sha_256(prev_chain + checksum);
+                        checksum = util::Utils::compute_sha256(sql);
+                        chain_hash = util::Utils::compute_sha256(prev_chain + checksum);
                         sql_chain_hashes[version] = chain_hash;
 
                         installed_on = get_current_datetime();

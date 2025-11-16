@@ -29,7 +29,7 @@ namespace mindnet::api
         db_ptr(db_),
         plugin_registry_ptr(plugin_registry_ptr_),
         trigger_registry_ptr(std::make_shared<api::TriggerRegistry>()),
-        cron_scheduler(std::make_shared<api::CronScheduler>())
+        cron_scheduler(std::make_shared<api::cronq::CronScheduler>())
     {
         for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
         {

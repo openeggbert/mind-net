@@ -49,6 +49,7 @@ namespace mindnet::plugins::core::models
             coldef(COLS::CRON_EXPRESSION, MANDATORY),
             coldef(COLS::RUN_ONCE_WHEN_MISSED, BOOL | MANDATORY),
             coldef(COLS::ENABLED, BOOL | MANDATORY).set_default_value(true),
+            coldef(COLS::CONFIGURATION).set_default_value(""),
             coldef(COLS::LAST_RUN, DATETIME | MANDATORY).set_default_value(0),
             coldef(COLS::NEXT_RUN, DATETIME | MANDATORY).set_default_value(0),
         });
@@ -61,6 +62,7 @@ namespace mindnet::plugins::core::models
         std::string cron_expression;
         bool run_once_when_missed{};
         bool enabled{true};
+        string configuration;
         unixtime last_run{0};
         unixtime next_run{0};
         create_model_h_methods(Model, MODEL)
@@ -76,21 +78,19 @@ namespace mindnet::plugins::core::models
                 cron_expression == other.cron_expression &&
                 run_once_when_missed == other.run_once_when_missed &&
                 enabled == other.enabled &&
+                configuration == other.configuration &&
                 last_run == other.last_run &&
                 next_run == other.next_run;
         }
 
-        bool differs_only_in_enabled(const Model& other) const
+        [[nodiscard]]
+        bool equals_or_differs_only_in_enabled_or_configuration(const Model& other) const
         {
-            // enabled MUST be different
-            if (enabled == other.enabled)
-                return false;
-
-            // use only one copy
             Model tmp = *this;
-            tmp.enabled = other.enabled; // unify enabled field
+            tmp.enabled = other.enabled;
+            tmp.configuration = other.configuration;
 
-            return tmp == other; // == ignores enabled since it's the same
+            return tmp == other;
         }
     };
 }

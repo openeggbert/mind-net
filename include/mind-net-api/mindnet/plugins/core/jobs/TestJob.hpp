@@ -16,7 +16,7 @@ namespace mindnet::plugins::core::jobs
 
         ~TestJob() = default;
 
-        std::string run() override;
+        std::string run(api::cronq::JobConfig& job_config) override;
 
     private:
     };

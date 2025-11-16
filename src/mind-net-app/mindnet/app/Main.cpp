@@ -133,7 +133,7 @@ bool commands_function_start(
             mindnet::util::Utils::generate_secret_key(15, true, true, true, false);
 
         const auto& super_admin_password = mindnet::util::Utils::generate_secret_key(64);
-        user.password_hash = mindnet::util::Utils::hash_sha_256(super_admin_password);
+        user.password_hash = mindnet::util::Utils::compute_sha256(super_admin_password);
         user.display_name = "Superadmin";
         user.profile_text = "Default administrator account created during system initialization";
         user.role = mindnet::essential::UserRole::SuperAdmin;

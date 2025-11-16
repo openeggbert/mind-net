@@ -45,6 +45,7 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* CRON_EXPRESSION = "cron_expression";
         static constexpr const char* RUN_ONCE_WHEN_MISSED = "run_once_when_missed";
         static constexpr const char* ENABLED = "enabled";
+        static constexpr const char* CONFIGURATION = "configuration";
         static constexpr const char* LAST_RUN = "last_run";
         static constexpr const char* NEXT_RUN = "next_run";
     };

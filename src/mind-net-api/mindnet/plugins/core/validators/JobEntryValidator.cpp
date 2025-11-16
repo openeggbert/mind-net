@@ -37,8 +37,8 @@ namespace mindnet::plugins::core::validators
         //admin or super admin
         if (ctx.role < mindnet::essential::UserRole::System)
         {
-            if (old_entity.differs_only_in_enabled(new_entity)) { return ok_result; }
-            return {400, "You can modify only the column enabled."};
+            if (old_entity.equals_or_differs_only_in_enabled_or_configuration(new_entity)) { return ok_result; }
+            return {400, "You can modify only the columns enabled and configuration."};
         }
         // system
         return ok_result;

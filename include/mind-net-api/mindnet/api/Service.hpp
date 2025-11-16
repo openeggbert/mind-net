@@ -24,7 +24,7 @@ namespace mindnet::api
         api::TriggerRegistryPtr trigger_registry_ptr;
         std::map<string, QueryPtr> query_map;
         std::map<string, JobPtr> job_map;
-        CronSchedulerPtr cron_scheduler;
+        cronq::CronSchedulerPtr cron_scheduler;
 
     public:
         Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);

@@ -20,45 +20,6 @@ namespace mindnet::util
 {
     using namespace mindnet::essential;
 
-    SM2Result Utils::calculate_sm2(int quality, int current_repetition, int current_interval, double current_ef)
-    {
-        SM2Result updated{};
-
-        if (quality < 3)
-        {
-            updated.new_repetition = 0;
-            updated.new_interval = 1;
-        }
-        else
-        {
-            updated.new_repetition = current_repetition + 1;
-            if (current_repetition == 0)
-            {
-                updated.new_interval = 1;
-            }
-            else if (current_repetition == 1)
-            {
-                updated.new_interval = 6;
-            }
-            else
-            {
-                updated.new_interval = static_cast<int>(current_interval * current_ef);
-            }
-        }
-
-        // Update of EF based on the quality
-        double new_ef = current_ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-        if (new_ef < 1.3) new_ef = 1.3;
-
-        updated.new_ef = new_ef;
-        return updated;
-
-        //example auto result = calculate_sm2(4, 2, 10, 2.5);
-        // result.new_interval = 25
-        // result.next_ef = 2.46
-        // result.new_repetition = 3
-    }
-
     long long Utils::current_unix_timestamp_seconds()
     {
         return static_cast<long long>(std::time(nullptr));
@@ -110,7 +71,7 @@ namespace mindnet::util
     }
 
     // Convert number 0-25 to single letter 'a'-'z'
-    char Utils::decimalToLetter(int number)
+    char Utils::decimal_to_letter(int number)
     {
         if (number < 0 || number > 25)
         {
@@ -121,7 +82,7 @@ namespace mindnet::util
 
     // Convert base-26 string (a-z) to decimal integer
     // "a" -> 0, "b" -> 1, ..., "z" -> 25, "aa" -> 26, etc.
-    int Utils::base26ToDecimal(const std::string& text)
+    int Utils::base26_to_decimal(const std::string& text)
     {
         if (text.empty())
             throw std::invalid_argument("Empty string not allowed");
@@ -154,7 +115,7 @@ namespace mindnet::util
     }
 
     // Convert decimal integer to base-26 string (a=0, b=1, ..., z=25, aa=26, etc.)
-    std::string Utils::decimalToBase26(int number)
+    std::string Utils::decimal_to_base26(int number)
     {
         if (number < 0)
             throw std::invalid_argument("Negative numbers not allowed");
@@ -177,7 +138,7 @@ namespace mindnet::util
         {
             int power = length - i - 1;
             int idx = remaining / static_cast<int>(std::pow(26, power));
-            result.push_back(decimalToLetter(idx));
+            result.push_back(decimal_to_letter(idx));
             remaining %= static_cast<int>(std::pow(26, power));
         }
 
@@ -241,7 +202,7 @@ namespace mindnet::util
         return result;
     }
 
-    std::string Utils::hash_sha_256(const std::string& text)
+    std::string Utils::compute_sha256(const std::string& text)
     {
         unsigned char hash[SHA256_DIGEST_LENGTH];
         SHA256(reinterpret_cast<const unsigned char*>(text.c_str()), text.size(), hash);

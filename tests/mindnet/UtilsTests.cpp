@@ -24,45 +24,45 @@ namespace mindnet::util
 
     TEST(UtilsTest, DecimalToLetter_Valid)
     {
-        EXPECT_EQ(Utils::decimalToLetter(0), 'a');
-        EXPECT_EQ(Utils::decimalToLetter(25), 'z');
-        EXPECT_EQ(Utils::decimalToLetter(2), 'c');
+        EXPECT_EQ(Utils::decimal_to_letter(0), 'a');
+        EXPECT_EQ(Utils::decimal_to_letter(25), 'z');
+        EXPECT_EQ(Utils::decimal_to_letter(2), 'c');
     }
 
     TEST(UtilsTest, DecimalToLetter_Invalid)
     {
-        EXPECT_THROW(Utils::decimalToLetter(-1), std::out_of_range);
-        EXPECT_THROW(Utils::decimalToLetter(26), std::out_of_range);
+        EXPECT_THROW(Utils::decimal_to_letter(-1), std::out_of_range);
+        EXPECT_THROW(Utils::decimal_to_letter(26), std::out_of_range);
     }
 
     TEST(UtilsTest, Base26ToDecimal_Valid)
     {
-        EXPECT_EQ(Utils::base26ToDecimal("a"), 0);
-        EXPECT_EQ(Utils::base26ToDecimal("z"), 25);
-        EXPECT_EQ(Utils::base26ToDecimal("aa"), 26);
-        EXPECT_EQ(Utils::base26ToDecimal("ab"), 27);
-        EXPECT_EQ(Utils::base26ToDecimal("ba"), 52);
+        EXPECT_EQ(Utils::base26_to_decimal("a"), 0);
+        EXPECT_EQ(Utils::base26_to_decimal("z"), 25);
+        EXPECT_EQ(Utils::base26_to_decimal("aa"), 26);
+        EXPECT_EQ(Utils::base26_to_decimal("ab"), 27);
+        EXPECT_EQ(Utils::base26_to_decimal("ba"), 52);
     }
 
     TEST(UtilsTest, Base26ToDecimal_Invalid)
     {
-        EXPECT_THROW(Utils::base26ToDecimal(""), std::invalid_argument);
-        EXPECT_THROW(Utils::base26ToDecimal("A"), std::invalid_argument);
-        EXPECT_THROW(Utils::base26ToDecimal("a1"), std::invalid_argument);
+        EXPECT_THROW(Utils::base26_to_decimal(""), std::invalid_argument);
+        EXPECT_THROW(Utils::base26_to_decimal("A"), std::invalid_argument);
+        EXPECT_THROW(Utils::base26_to_decimal("a1"), std::invalid_argument);
     }
 
     TEST(UtilsTest, DecimalToBase26_Valid)
     {
-        EXPECT_EQ(Utils::decimalToBase26(0), "a");
-        EXPECT_EQ(Utils::decimalToBase26(25), "z");
-        EXPECT_EQ(Utils::decimalToBase26(26), "aa");
-        EXPECT_EQ(Utils::decimalToBase26(27), "ab");
-        EXPECT_EQ(Utils::decimalToBase26(52), "ba");
+        EXPECT_EQ(Utils::decimal_to_base26(0), "a");
+        EXPECT_EQ(Utils::decimal_to_base26(25), "z");
+        EXPECT_EQ(Utils::decimal_to_base26(26), "aa");
+        EXPECT_EQ(Utils::decimal_to_base26(27), "ab");
+        EXPECT_EQ(Utils::decimal_to_base26(52), "ba");
     }
 
     TEST(UtilsTest, DecimalToBase26_Invalid)
     {
-        EXPECT_THROW(Utils::decimalToBase26(-1), std::invalid_argument);
+        EXPECT_THROW(Utils::decimal_to_base26(-1), std::invalid_argument);
     }
 
     ////

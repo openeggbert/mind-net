@@ -32,7 +32,7 @@ namespace mindnet::api
             return;
         }
         std::string raw_token = auth.substr(7);
-        std::string token_hash = util::Utils::hash_sha_256(raw_token);
+        std::string token_hash = util::Utils::compute_sha256(raw_token);
 
         orm::QueryParams q;
         q.add_filter(plugins::core::columns::AccessTokenColumns::TOKEN_HASH, token_hash);
