@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/8/25.
 //
-#ifndef TRIGGERPHASE_H
-#define TRIGGERPHASE_H
+#pragma once
 
 #include <stdexcept>
 #include <string>
@@ -58,4 +57,3 @@ namespace mindnet::api
     }
 }
 
-#endif // TRIGGERPHASE_H

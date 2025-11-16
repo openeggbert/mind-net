@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef SQLITEDATABASEMIGRATION_H
-#define SQLITEDATABASEMIGRATION_H
+#pragma once
+
 
 #include <string>
 
@@ -46,4 +46,3 @@ namespace mindnet::db::sqlite
         bool migrate(const string& plugin_name, api::MigrationScriptsPtr& migration_scripts);
     };
 }
-#endif // SQLITEDATABASEMIGRATION_H

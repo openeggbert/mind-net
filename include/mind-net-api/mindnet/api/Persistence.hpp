@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 8/6/25.
 //
-#ifndef PERSISTENCE_H
-#define PERSISTENCE_H
+#pragma once
 
 #include "IPersistence.hpp"
 #include "IRepository.hpp"
@@ -49,4 +48,4 @@ namespace mindnet::api
                                                ModelDefinition& def) override;
     };
 }
-#endif // PERSISTENCE_H
+

@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef JOB_HPP
-#define JOB_HPP
+#pragma once
 
 #include <memory>
 #include <nlohmann/json.hpp>
@@ -50,4 +49,3 @@ namespace mindnet::api
     typedef std::shared_ptr<Job> JobPtr;
 }
 
-#endif // JOB_HPP

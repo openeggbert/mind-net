@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/17/25.
 //
-#ifndef SLIPBOXSQLITEMIGRATIONSCRIPTS_H
-#define SLIPBOXSQLITEMIGRATIONSCRIPTS_H
+#pragma once
+
 
 
 #include "mindnet/api/MigrationScripts.hpp"
@@ -19,4 +19,3 @@ namespace mindnet::plugins::slipbox::migrations
     };
 }
 
-#endif // SLIPBOXSQLITEMIGRATIONSCRIPTS_H

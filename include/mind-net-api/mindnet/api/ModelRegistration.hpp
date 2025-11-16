@@ -2,8 +2,8 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#ifndef MIND_NET_MODELREGISTRATION_H
-#define MIND_NET_MODELREGISTRATION_H
+#pragma once
+
 #include <utility>
 #include <memory>
 #include "IValidator.hpp"
@@ -31,4 +31,3 @@ namespace mindnet::api
         std::shared_ptr<IRepository> repository;
     };
 }
-#endif //MIND_NET_MODELREGISTRATION_H

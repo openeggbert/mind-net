@@ -2,8 +2,8 @@
 // Created by robertvokac on 9/7/25.
 //
 
-#ifndef MIND_NET_TESTUTILS_H
-#define MIND_NET_TESTUTILS_H
+#pragma once
+
 #include <expected>
 #include <functional>
 #include <string>
@@ -47,4 +47,3 @@ namespace mindnet::util
     test_result testt_is_alpha_or_digit(string& text, const char* field);
     //
 }
-#endif //MIND_NET_TESTUTILS_H

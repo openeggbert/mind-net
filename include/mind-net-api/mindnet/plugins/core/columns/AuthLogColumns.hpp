@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef AUTHLOGCOLUMNS_H
-#define AUTHLOGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -60,4 +60,3 @@ namespace mindnet::plugins::core::columns
     };
 }
 
-#endif // AUTHLOGCOLUMNS_H

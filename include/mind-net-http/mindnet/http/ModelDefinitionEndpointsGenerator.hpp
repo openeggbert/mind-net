@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/24/25.
 //
-#ifndef MODELDEFINITIONENDPOINTSGENERATOR_H
-#define MODELDEFINITIONENDPOINTSGENERATOR_H
+#pragma once
+
 
 
 #include "crow.h"
@@ -20,4 +20,3 @@ namespace mindnet::http
     };
 }
 
-#endif // MODELDEFINITIONENDPOINTSGENERATOR_H

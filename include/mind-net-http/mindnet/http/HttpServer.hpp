@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/16/25.
 //
-#ifndef HTTPSERVER_H
-#define HTTPSERVER_H
+#pragma once
+
 
 #include "crow.h"
 #include "HttpUtils.hpp"
@@ -48,4 +48,3 @@ namespace mindnet::http
     };
 }
 
-#endif // HTTPSERVER_H

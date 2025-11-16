@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef VALIDATORBASE_H
-#define VALIDATORBASE_H
+#pragma once
 
 #include "expected"
 #include <concepts>
@@ -392,4 +391,3 @@ namespace mindnet::api
         const Derived& derived() const { return static_cast<const Derived&>(*this); }
     };
 }
-#endif // VALIDATORBASE_H

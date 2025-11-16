@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NOTENAVIGATIONCOLUMNS_H
-#define NOTENAVIGATIONCOLUMNS_H
+#pragma once
+
 
 
 #include "mindnet/model/BaseColumns.hpp"
@@ -43,4 +43,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* NEXT_NOTE_ID = "next_note_id";
     };
 }
-#endif // NOTENAVIGATIONCOLUMNS_H

@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/23/25.
 //
-#ifndef SQLUTILS_H
-#define SQLUTILS_H
+#pragma once
+
 
 #include <string>
 
@@ -33,4 +33,3 @@ namespace mindnet::orm
         static string generate_delete_sql(const model::ModelDefinition& definition);
     };
 }
-#endif // SQLUTILS_H

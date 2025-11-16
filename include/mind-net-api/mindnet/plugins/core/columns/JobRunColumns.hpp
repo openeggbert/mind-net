@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef JOBRUNCOLUMNS_HPP
-#define JOBRUNCOLUMNS_HPP
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -45,4 +45,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* MESSAGE = "message";
     };
 }
-#endif // JOBRUNCOLUMNS_HPP

@@ -17,9 +17,7 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPOSITORYFACTORY_H
-#define REPOSITORYFACTORY_H
-
+#pragma once
 #include <memory>
 
 namespace mindnet::model
@@ -40,4 +38,3 @@ namespace mindnet::api
     };
 }
 
-#endif // REPOSITORYFACTORY_H

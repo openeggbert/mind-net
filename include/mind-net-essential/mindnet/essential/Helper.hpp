@@ -2,8 +2,8 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#ifndef HELPER_H
-#define HELPER_H
+#pragma once
+
 #include <map>
 #include <string>
 #include <variant>
@@ -30,4 +30,3 @@ typedef std::map<std::string, std::string> string_map;
 
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";
 
-#endif //HELPER_H

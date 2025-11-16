@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef FLAGVALIDATOR_H
-#define FLAGVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -26,4 +26,3 @@ namespace mindnet::plugins::slipbox::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // FLAGVALIDATOR_H

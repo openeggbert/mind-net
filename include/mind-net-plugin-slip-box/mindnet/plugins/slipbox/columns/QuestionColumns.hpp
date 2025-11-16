@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef QUESTIONCOLUMNS_H
-#define QUESTIONCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -43,4 +43,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* ANSWERS_JSON = "answers_json";
     };
 }
-#endif // QUESTIONCOLUMNS_H

@@ -1,5 +1,5 @@
-#ifndef RSESSION_H
-#define RSESSION_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -96,4 +96,3 @@ namespace mindnet::plugins::repetition::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // RSESSION_H

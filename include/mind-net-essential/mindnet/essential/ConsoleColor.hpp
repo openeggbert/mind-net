@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/8/25.
 //
-#ifndef CONSOLECOLOR_H
-#define CONSOLECOLOR_H
+#pragma once
+
 
 #include <string>
 
@@ -21,4 +21,3 @@ namespace mindnet::essential
         WHITE = 37
     };
 }
-#endif // CONSOLECOLOR_H

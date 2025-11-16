@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef REFRESHTOKENVALIDATOR_H
-#define REFRESHTOKENVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -25,4 +25,3 @@ namespace mindnet::plugins::core::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // REFRESHTOKENVALIDATOR_H

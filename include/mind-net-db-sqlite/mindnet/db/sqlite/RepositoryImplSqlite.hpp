@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef REPOSITORYIMPLSQLITE_H
-#define REPOSITORYIMPLSQLITE_H
+#pragma once
+
 
 #include <vector>
 
@@ -50,4 +50,3 @@ namespace mindnet::db::sqlite
         entity_fields request_to_entity_fields(crow::json::rvalue& body, mindnet::essential::Crudl crudl) override;
     };
 }
-#endif // REPOSITORYIMPLSQLITE_H

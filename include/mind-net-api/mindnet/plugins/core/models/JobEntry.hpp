@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef JOBENTRY_HPP
-#define JOBENTRY_HPP
+#pragma once
+
 
 
 #include <string>
@@ -97,4 +97,3 @@ namespace mindnet::plugins::core::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // JOBENTRY_HPP

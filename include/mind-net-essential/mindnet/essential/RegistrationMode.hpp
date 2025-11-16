@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/8/25.
 //
-#ifndef REGISTRATIONMODE_H
-#define REGISTRATIONMODE_H
+#pragma once
+
 
 #include <string>
 
@@ -36,4 +36,3 @@ namespace mindnet::essential
 
     //model::EnumDefinition registration_mode_to_enum_definition();
 }
-#endif // REGISTRATIONMODE_H

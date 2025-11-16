@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/24/25.
 //
-#ifndef MIND_NET_ENUMUTILS_H
-#define MIND_NET_ENUMUTILS_H
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -67,4 +67,3 @@ inline model::EnumDefinition PREFIX##_to_enum_definition() {                 \
 #define DECLARE_ENUM_TO_INT_ARGS(name, value, ENUM_NAME) value,
 #define DECLARE_INT_TO_ENUM_CASE(name, value, ENUM_NAME) case value: return ENUM_NAME::name;
 
-#endif // MIND_NET_ENUMUTILS_H

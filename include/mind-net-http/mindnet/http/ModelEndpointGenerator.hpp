@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/16/25.
 //
-#ifndef MAPCONTROLLER_H
-#define MAPCONTROLLER_H
+#pragma once
+
 
 #include "crow.h"
 #include "mindnet/api/IService.hpp"
@@ -16,4 +16,3 @@ namespace mindnet::http
                                    model::ModelDefinition& def);
     };
 }
-#endif // MAPCONTROLLER_H

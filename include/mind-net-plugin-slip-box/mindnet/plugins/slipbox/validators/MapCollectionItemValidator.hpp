@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef MAPCOLLECTINITEMVALIDATOR_H
-#define MAPCOLLECTINITEMVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -26,4 +26,3 @@ namespace mindnet::plugins::slipbox::validators
     };
 }
 
-#endif // MAPCOLLECTINITEMVALIDATOR_H

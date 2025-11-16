@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef APILOGCOLUMNS_H
-#define APILOGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -55,4 +55,3 @@ namespace mindnet::plugins::core::columns
     };
 }
 
-#endif // APILOGCOLUMNS_H

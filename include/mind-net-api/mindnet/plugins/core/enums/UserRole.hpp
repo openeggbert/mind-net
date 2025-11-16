@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef USERROLE_H_PLUGIN_CORE
-#define USERROLE_H_PLUGIN_CORE
+#pragma once
+
 
 #include <string>
 
@@ -35,4 +35,3 @@ namespace mindnet::plugins::core::enums
     }
 } // namespace mindnet::enums
 
-#endif // USERROLE_H_PLUGIN_CORE

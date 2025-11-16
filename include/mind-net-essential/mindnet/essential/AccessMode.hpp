@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/8/25.
 //
-#ifndef ACCESSMODE_H
-#define ACCESSMODE_H
+#pragma once
+
 #include <algorithm>
 #include <vector>
 
@@ -134,4 +134,3 @@ namespace mindnet::essential
         bool reader_can_write
     );
 }
-#endif // ACCESSMODE_H

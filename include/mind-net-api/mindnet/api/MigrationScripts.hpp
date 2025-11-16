@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef MIGRATIONSCRIPTS_H
-#define MIGRATIONSCRIPTS_H
+#pragma once
+
 #include <regex>
 #include <string>
 #include <vector>
@@ -117,4 +117,3 @@ namespace mindnet::api
 
     typedef std::shared_ptr<MigrationScripts> MigrationScriptsPtr;
 }
-#endif // MIGRATIONSCRIPTS_H

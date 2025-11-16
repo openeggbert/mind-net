@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef RREVIEWAFTERCREATETRIGGER_H
-#define RREVIEWAFTERCREATETRIGGER_H
+#pragma once
+
 
 
 #include "mindnet/api/Trigger.hpp"
@@ -57,5 +57,3 @@ namespace mindnet::plugins::repetition::triggers
         Params load_params_once(int user_id, api::AccessTokenContext& token, int stack_depth);
     };
 }
-
-#endif // RREVIEWAFTERCREATETRIGGER_H

@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef TAG_H
-#define TAG_H
+#pragma once
+
 
 #include <string>
 
@@ -62,4 +62,3 @@ namespace mindnet::plugins::slipbox::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // TAG_H

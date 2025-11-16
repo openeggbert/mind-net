@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SQLITEFILENAME_H
-#define SQLITEFILENAME_H
+#pragma once
+
 
 #include <string>
 
@@ -32,4 +32,3 @@ namespace mindnet::db::sqlite
     inline std::string SQLITE_FILE_NAME = "./mindnet.sqlite3";
 }
 
-#endif // SQLITEFILENAME_H

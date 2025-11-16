@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/16/25.
 //
-#ifndef ORDER_H
-#define ORDER_H
+#pragma once
+
 #include <stdexcept>
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Helper.hpp"
@@ -38,5 +38,3 @@ namespace mindnet::orm
         throw std::runtime_error(std::string("Unknown order: ") + string);
     }
 }
-
-#endif // ORDER_H

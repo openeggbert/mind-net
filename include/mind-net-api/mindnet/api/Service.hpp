@@ -2,8 +2,7 @@
 // Created by robertvokac on 9/13/25.
 //
 
-#ifndef MIND_NET_SERVICE_H
-#define MIND_NET_SERVICE_H
+#pragma once
 #include "IService.hpp"
 #include "PluginRegistry.hpp"
 #include "TriggerRegistry.hpp"
@@ -71,5 +70,3 @@ namespace mindnet::api
         //
     };
 }
-
-#endif //MIND_NET_SERVICE_H

@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef TEAMMEMBERCOLUMNS_H
-#define TEAMMEMBERCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -46,4 +46,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* LEFT_AT = "left_at";
     };
 }
-#endif // TEAMMEMBERCOLUMNS_H

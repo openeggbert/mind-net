@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/21/25.
 //
-#ifndef AUTHLOGVALIDATOR_H
-#define AUTHLOGVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -25,4 +25,3 @@ namespace mindnet::plugins::core::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // AUTHLOGVALIDATOR_H

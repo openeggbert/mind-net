@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef INSTEADOFREADNOTENAVIGATIONTRIGGER_H
-#define INSTEADOFREADNOTENAVIGATIONTRIGGER_H
+#pragma once
+
 
 
 #include "mindnet/api/Trigger.hpp"
@@ -24,4 +24,3 @@ namespace mindnet::plugins::slipbox::triggers
             int id) override;
     };
 }
-#endif // INSTEADOFREADNOTENAVIGATIONTRIGGER_H

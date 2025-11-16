@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef RGLOBALSETTINGVALIDATOR_H
-#define RGLOBALSETTINGVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -25,4 +25,3 @@ namespace mindnet::plugins::repetition::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // RGLOBALSETTINGVALIDATOR_H

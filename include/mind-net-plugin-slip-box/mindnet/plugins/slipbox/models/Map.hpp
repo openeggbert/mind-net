@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MAP_H
-#define MAP_H
+#pragma once
+
 
 #include <string>
 #include <utility>
@@ -88,4 +88,3 @@ namespace mindnet::plugins::slipbox::models
 #undef MODEL
 #undef COLS
 
-#endif // MAP_H

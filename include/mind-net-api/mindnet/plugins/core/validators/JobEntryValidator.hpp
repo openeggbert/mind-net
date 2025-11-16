@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef JOBENTRYVALIDATOR_HPP
-#define JOBENTRYVALIDATOR_HPP
+#pragma once
+
 
 #include <memory>
 
@@ -24,4 +24,3 @@ namespace mindnet::plugins::core::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // JOBENTRYVALIDATOR_HPP

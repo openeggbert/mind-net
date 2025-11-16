@@ -14,8 +14,8 @@
 // If not, see <https://www.gnu.org/licenses/> or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPETITIONALGORITHM_H
-#define REPETITIONALGORITHM_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
@@ -35,4 +35,3 @@ X(Repetition18, 18, ENUM_NAME)
 
     DECLARE_ENUM(RepetitionAlgorithm, repetition_algorithm, REPETITION_ALGORITHM_LIST)
 } // namespace mindnet::plugins::repetition::enums
-#endif // REPETITIONALGORITHM_H

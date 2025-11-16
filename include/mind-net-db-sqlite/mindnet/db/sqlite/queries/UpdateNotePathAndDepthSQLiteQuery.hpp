@@ -1,8 +1,9 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef UPDATENOTEPATHANDDEPTHSQLITEQUERY_H
-#define UPDATENOTEPATHANDDEPTHSQLITEQUERY_H
+#pragma once
+
+
 
 #include "mindnet/api/Query.hpp"
 
@@ -22,4 +23,3 @@ namespace mindnet::db::sqlite::queries
     private:
     };
 }
-#endif // UPDATENOTEPATHANDDEPTHSQLITEQUERY_H

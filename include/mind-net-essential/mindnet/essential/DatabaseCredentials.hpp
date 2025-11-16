@@ -2,8 +2,8 @@
 // Created by robertvokac on 9/28/25.
 //
 
-#ifndef MIND_NET_DATABASECREDENTIALS_H
-#define MIND_NET_DATABASECREDENTIALS_H
+#pragma once
+
 #include <string>
 
 namespace mindnet::essential
@@ -17,4 +17,3 @@ namespace mindnet::essential
         std::string password;
     };
 }
-#endif //MIND_NET_DATABASECREDENTIALS_H

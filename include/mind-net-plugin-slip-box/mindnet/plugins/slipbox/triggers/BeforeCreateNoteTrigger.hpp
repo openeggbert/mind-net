@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef BEFORECREATENOTETRIGGER_H
-#define BEFORECREATENOTETRIGGER_H
+#pragma once
+
 
 #include "mindnet/api/Trigger.hpp"
 
@@ -28,4 +28,3 @@ namespace mindnet::plugins::slipbox::triggers
         );
     };
 }
-#endif // BEFORECREATENOTETRIGGER_H

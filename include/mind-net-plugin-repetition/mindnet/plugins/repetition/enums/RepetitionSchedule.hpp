@@ -14,8 +14,8 @@
 // If not, see <https://www.gnu.org/licenses/> or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPETITIONSCHEDULE_H
-#define REPETITIONSCHEDULE_H
+
+#pragma once
 
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
@@ -83,5 +83,3 @@ namespace mindnet::plugins::repetition::enums
 
     DECLARE_ENUM(RepetitionSchedule, repetition_schedule, REPETITION_SCHEDULE_LIST)
 } // namespace mindnet::plugins::repetition::enums
-
-#endif // REPETITIONSCHEDULE_H

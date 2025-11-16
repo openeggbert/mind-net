@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MAPCOLLECTIONITEMCOLUMNS_H
-#define MAPCOLLECTIONITEMCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -45,4 +45,4 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* POSITION = "position";
     };
 }
-#endif // MAPCOLLECTIONITEMCOLUMNS_H
+

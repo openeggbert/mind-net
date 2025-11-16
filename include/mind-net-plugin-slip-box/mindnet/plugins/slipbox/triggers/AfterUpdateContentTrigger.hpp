@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef AFTERUPDATECONTENTTRIGGER_H
-#define AFTERUPDATECONTENTTRIGGER_H
+#pragma once
+
 
 
 #include "mindnet/api/Trigger.hpp"
@@ -29,4 +29,4 @@ namespace mindnet::plugins::slipbox::triggers
         );
     };
 }
-#endif // AFTERUPDATECONTENTTRIGGER_H
+

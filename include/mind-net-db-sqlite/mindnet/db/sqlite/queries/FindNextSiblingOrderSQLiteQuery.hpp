@@ -1,8 +1,9 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef FINDNEXTSIBLINGORDERSQLITEQUERY_H
-#define FINDNEXTSIBLINGORDERSQLITEQUERY_H
+#pragma once
+
+
 
 #include "mindnet/api/Query.hpp"
 
@@ -22,4 +23,3 @@ namespace mindnet::db::sqlite::queries
     private:
     };
 }
-#endif // FINDNEXTSIBLINGORDERSQLITEQUERY_H

@@ -2,8 +2,8 @@
 // Created by robertvokac on 10/23/25.
 //
 
-#ifndef MIND_NET_CONTENTLINKPARSER_H
-#define MIND_NET_CONTENTLINKPARSER_H
+#pragma once
+
 #include <string>
 #include <vector>
 
@@ -37,4 +37,3 @@ namespace mindnet::plugins::slipbox::triggers
         static ParsedLinks parse_links(const std::string& content);
     };
 }
-#endif //MIND_NET_CONTENTLINKPARSER_H

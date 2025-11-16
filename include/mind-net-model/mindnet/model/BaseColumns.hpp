@@ -1,5 +1,6 @@
-#ifndef BASECOLUMNS_H
-#define BASECOLUMNS_H
+#pragma once
+
+
 
 namespace mindnet::model
 {
@@ -15,5 +16,3 @@ namespace mindnet::model
         static constexpr const char* UPDATED_AT = "updated_at";
     };
 }
-
-#endif // BASECOLUMNS_H

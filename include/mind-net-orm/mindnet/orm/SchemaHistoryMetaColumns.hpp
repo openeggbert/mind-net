@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SCHEMAHISTORYMETACOLUMNS_H
-#define SCHEMAHISTORYMETACOLUMNS_H
+#pragma once
+
 
 
 namespace mindnet::orm
@@ -42,4 +42,3 @@ namespace mindnet::orm
         static constexpr const char* CHECKSUM = "checksum";
     };
 }
-#endif // SCHEMAHISTORYMETACOLUMNS_H

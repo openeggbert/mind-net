@@ -2,8 +2,8 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
+
 #include <string>
 #include <vector>
 
@@ -157,4 +157,3 @@ namespace mindnet::util
     }
 }
 
-#endif //UTILS_H

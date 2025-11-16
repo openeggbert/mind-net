@@ -1,8 +1,9 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef FINDPREVIOUSANDNEXTNOTESQLITEQUERY_H
-#define FINDPREVIOUSANDNEXTNOTESQLITEQUERY_H
+#pragma once
+
+
 
 
 #include "mindnet/api/Query.hpp"
@@ -23,4 +24,3 @@ namespace mindnet::db::sqlite::queries
     private:
     };
 }
-#endif // FINDPREVIOUSANDNEXTNOTESQLITEQUERY_H

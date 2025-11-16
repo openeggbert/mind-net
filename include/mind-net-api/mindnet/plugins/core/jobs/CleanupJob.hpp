@@ -3,19 +3,16 @@
 //
 #pragma once
 
-
-
 #include "mindnet/api/Job.hpp"
-#include "mindnet/essential/Global.hpp"
 
 namespace mindnet::plugins::core::jobs
 {
-    class TestJob : public api::Job
+    class CleanupJob : public api::Job
     {
     public:
-        TestJob();
+        CleanupJob();
 
-        ~TestJob() = default;
+        ~CleanupJob() = default;
 
         std::string run(api::cronq::JobConfig& job_config) override;
 

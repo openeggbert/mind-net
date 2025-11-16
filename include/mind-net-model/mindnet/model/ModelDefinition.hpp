@@ -17,8 +17,9 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef MODELDEFINITION_H
-#define MODELDEFINITION_H
+#pragma once
+
+
 
 #include <set>
 
@@ -268,4 +269,3 @@ namespace mindnet::model
     };
 }
 
-#endif // MODELDEFINITION_H

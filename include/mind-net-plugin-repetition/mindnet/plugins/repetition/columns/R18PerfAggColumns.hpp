@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef R18PERFAGGCOLUMNS_H
-#define R18PERFAGGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -46,4 +46,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* CORRECT = "correct";
     };
 }
-#endif // R18PERFAGGCOLUMNS_H

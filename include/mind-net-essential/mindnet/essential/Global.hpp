@@ -2,8 +2,8 @@
 // Created by robertvokac on 7/31/25.
 //
 
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#pragma once
+
 
 #include "Helper.hpp"
 #include "Logger.hpp"
@@ -32,4 +32,3 @@ namespace mindnet::essential
     extern Logger& log;
 }
 
-#endif //GLOBAL_H

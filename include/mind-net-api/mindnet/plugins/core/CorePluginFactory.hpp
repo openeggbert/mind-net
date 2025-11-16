@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/13/25.
 //
-#ifndef COREPLUGINFACTORY_H
-#define COREPLUGINFACTORY_H
+#pragma once
+
 
 #include "mindnet/api/PluginFactory.hpp"
 
@@ -17,4 +17,3 @@ namespace mindnet::plugins::core
     };
 }
 
-#endif // COREPLUGINFACTORY_H

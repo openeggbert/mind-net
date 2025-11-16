@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef R18PREDICTIONLOGCOLUMNS_H
-#define R18PREDICTIONLOGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -47,4 +47,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* WAS_CORRECT = "was_correct";
     };
 }
-#endif // R18PREDICTIONLOGCOLUMNS_H

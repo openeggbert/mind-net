@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef FLAGCOLUMNS_H
-#define FLAGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -47,4 +47,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* TITLE = "title";
     };
 }
-#endif // FLAGCOLUMNS_H

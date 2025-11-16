@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef TEAMMEMBER_H
-#define TEAMMEMBER_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -82,4 +82,3 @@ namespace mindnet::plugins::core::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // TEAMMEMBER_H

@@ -1,5 +1,5 @@
-#ifndef RSESSIONCOLUMNS_H
-#define RSESSIONCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -39,4 +39,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* PINNED = "pinned";
     };
 }
-#endif // RSESSIONCOLUMNS_H

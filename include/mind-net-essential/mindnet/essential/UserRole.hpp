@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef USERROLE_H
-#define USERROLE_H
+#pragma once
+
 
 #include <stdexcept>
 #include <string>
@@ -109,4 +109,3 @@ namespace mindnet::essential
     }
 }
 
-#endif // USERROLE_H

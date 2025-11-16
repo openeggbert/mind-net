@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef NOTENAVIGATION_H
-#define NOTENAVIGATION_H
+#pragma once
+
 
 
 #include <string>
@@ -67,4 +67,3 @@ namespace mindnet::plugins::slipbox::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // NOTENAVIGATION_H

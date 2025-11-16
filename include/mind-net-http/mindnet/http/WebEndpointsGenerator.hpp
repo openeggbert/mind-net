@@ -1,8 +1,9 @@
 //
 // Created by robertvokac on 9/24/25.
 //
-#ifndef WEBENDPOINTSGENERATOR_H
-#define WEBENDPOINTSGENERATOR_H
+#pragma once
+
+
 
 
 #include "crow.h"
@@ -31,4 +32,3 @@ namespace mindnet::http
     };
 }
 
-#endif // WEBENDPOINTSGENERATOR_H

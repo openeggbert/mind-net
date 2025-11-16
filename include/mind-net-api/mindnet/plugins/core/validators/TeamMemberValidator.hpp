@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef TEAMMEMBERVALIDATOR_H
-#define TEAMMEMBERVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -26,4 +26,3 @@ namespace mindnet::plugins::core::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // TEAMMEMBERVALIDATOR_H

@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef TERM_H
-#define TERM_H
+#pragma once
+
 
 
 #include <string>
@@ -74,4 +74,3 @@ namespace mindnet::plugins::slipbox::models
 #undef MODEL
 #undef COLS
 
-#endif // TERM_H

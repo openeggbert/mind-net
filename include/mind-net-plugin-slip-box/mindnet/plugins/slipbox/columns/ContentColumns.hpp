@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef CONTENTCOLUMNS_H
-#define CONTENTCOLUMNS_H
+#pragma once
+
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/model/ColumnType.hpp"
@@ -48,4 +48,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* LAST_PARSED_FAIL_AT = "last_parsed_fail_at";
     };
 }
-#endif // CONTENTCOLUMNS_H

@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef SQLITEREPOSITORYFACTORY_H
-#define SQLITEREPOSITORYFACTORY_H
+#pragma once
+
 
 
 #include <memory>
@@ -36,5 +36,3 @@ namespace mindnet::db::sqlite
         std::shared_ptr<api::IRepository> create(const model::ModelDefinition& model_definition) override;
     };
 }
-
-#endif // SQLITEREPOSITORYFACTORY_H

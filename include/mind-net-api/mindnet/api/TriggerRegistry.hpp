@@ -1,8 +1,6 @@
 //
 // Created by robertvokac on 9/7/25.
-//
-#ifndef TRIGGERREGISTRY_H
-#define TRIGGERREGISTRY_H
+#pragma once
 
 
 #include <memory>
@@ -93,4 +91,3 @@ namespace mindnet::api
     typedef std::shared_ptr<TriggerRegistry> TriggerRegistryPtr;
 }
 
-#endif // TRIGGERREGISTRY_H

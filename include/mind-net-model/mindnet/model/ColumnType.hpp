@@ -1,8 +1,9 @@
 //
 // Created by robertvokac on 8/16/25.
 //
-#ifndef COLUMNTYPE_H
-#define COLUMNTYPE_H
+#pragma once
+
+
 
 #include <string>
 
@@ -69,4 +70,3 @@ namespace mindnet::model
     }
 }
 
-#endif // COLUMNTYPE_H

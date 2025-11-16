@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/17/25.
 //
-#ifndef COREPOSTGRESQLMIGRATIONSCRIPTS_H
-#define COREPOSTGRESQLMIGRATIONSCRIPTS_H
+#pragma once
+
 
 
 #include "mindnet/api/MigrationScripts.hpp"
@@ -20,4 +20,3 @@ namespace mindnet::plugins::core::migrations
 }
 
 
-#endif // COREPOSTGRESQLMIGRATIONSCRIPTS_H

@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef IMPORTANCE_H
-#define IMPORTANCE_H
+#pragma once
+
 
 #include <string>
 
@@ -62,4 +62,3 @@ namespace mindnet::plugins::slipbox::enums
         };
     }
 } // namespace mindnet::enums
-#endif

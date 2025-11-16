@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef R4STATEVALIDATOR_H
-#define R4STATEVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -48,4 +48,3 @@ namespace mindnet::plugins::repetition::validators
         //     }
     };
 }
-#endif // R4STATEVALIDATOR_H

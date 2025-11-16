@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef PROJECTVALIDATOR_H
-#define PROJECTVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -33,4 +33,3 @@ namespace mindnet::plugins::slipbox::validators
         // - Validate unique constraints (note_id + title combination)
     };
 }
-#endif // PROJECTVALIDATOR_H

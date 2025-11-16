@@ -2,8 +2,8 @@
 // Created by robertvokac on 9/28/25.
 //
 
-#ifndef MIND_NET_MIGRATION_H
-#define MIND_NET_MIGRATION_H
+#pragma once
+
 #include <string>
 
 namespace mindnet::orm
@@ -26,4 +26,3 @@ namespace mindnet::orm
         bool success;
     };
 }
-#endif //MIND_NET_MIGRATION_H

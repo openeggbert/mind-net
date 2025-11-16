@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef COLLECTIONITEM_H
-#define COLLECTIONITEM_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -72,4 +72,3 @@ namespace mindnet::plugins::slipbox::models
 #undef MODEL
 #undef COLS
 
-#endif // COLLECTIONITEM_H

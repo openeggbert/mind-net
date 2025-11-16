@@ -2,8 +2,8 @@
 // Created by robertvokac on 9/17/25.
 //
 
-#ifndef MIND_NET_DATABASETYPE_H
-#define MIND_NET_DATABASETYPE_H
+#pragma once
+
 #include <string>
 
 namespace mindnet::essential
@@ -79,4 +79,3 @@ namespace mindnet::essential
     //     };
     // }
 }
-#endif //MIND_NET_DATABASETYPE_H

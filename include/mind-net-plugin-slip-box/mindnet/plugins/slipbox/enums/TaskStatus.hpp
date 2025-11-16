@@ -1,5 +1,5 @@
-#ifndef TASKSTATUS_H
-#define TASKSTATUS_H
+#pragma once
+
 #include <string>
 
 #include "mindnet/model/EnumDefinition.hpp"
@@ -49,4 +49,3 @@ inline mindnet::model::EnumDefinition task_status_to_enum_definition()
         task_status_to_string, 7, 0, 1, 2, 3, 4, 5, 6
     };
 }
-#endif // TASKSTATUS_H

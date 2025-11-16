@@ -1,5 +1,5 @@
-#ifndef RGLOBAL_SETTING_H
-#define RGLOBAL_SETTING_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -47,4 +47,3 @@ namespace mindnet::plugins::repetition::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // RGLOBAL_SETTING_H

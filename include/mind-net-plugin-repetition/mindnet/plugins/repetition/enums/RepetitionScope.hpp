@@ -14,8 +14,8 @@
 // If not, see <https://www.gnu.org/licenses/> or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPETITION_SCOPE_H
-#define REPETITION_SCOPE_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
@@ -34,4 +34,3 @@ X(DueAndNew, 2, ENUM_NAME)               \
 X(All, 3, ENUM_NAME)
     DECLARE_ENUM(RepetitionScope, repetition_scope, REPETITION_SCOPE_LIST)
 } // namespace mindnet::plugins::repetition::enums
-#endif

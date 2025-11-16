@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/6/25.
 //
-#ifndef COREPERSISTENCEMETHODS_H
-#define COREPERSISTENCEMETHODS_H
+#pragma once
+
 
 #include <utility>
 
@@ -46,4 +46,3 @@ namespace mindnet::plugins::core
     gen_find_h(core, User, user)
 }
 
-#endif // COREPERSISTENCEMETHODS_H

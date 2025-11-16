@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef OPERATIONRESULT_H
-#define OPERATIONRESULT_H
+#pragma once
 
 #define ok_result {}
 #define status_405_unsupported_operation {405, "Unsupported operation."};
@@ -41,5 +40,3 @@ namespace mindnet::api
 
     inline OperationResult empty_result;
 }
-
-#endif // OPERATIONRESULT_H

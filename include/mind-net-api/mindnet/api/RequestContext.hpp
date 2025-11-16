@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 8/6/25.
 //
-#ifndef REQUESTCONTEXT_H
-#define REQUESTCONTEXT_H
+#pragma once
 
 #include "IPersistence.hpp"
 #include "IRepository.hpp"
@@ -19,4 +18,3 @@ namespace mindnet::api
         essential::UserStatus status{};
     };
 }
-#endif // REQUESTCONTEXT_H

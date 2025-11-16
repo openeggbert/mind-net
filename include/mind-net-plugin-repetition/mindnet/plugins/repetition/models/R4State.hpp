@@ -1,5 +1,5 @@
-#ifndef R4STATE_H
-#define R4STATE_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -75,4 +75,3 @@ namespace mindnet::plugins::repetition::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // R4STATE_H

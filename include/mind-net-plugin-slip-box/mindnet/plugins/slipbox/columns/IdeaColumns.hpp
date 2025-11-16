@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef IDEACOLUMNS_H
-#define IDEACOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -55,4 +55,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* PINNED = "pinned";
     };
 }
-#endif // IDEACOLUMNS_H

@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef TAGCOLUMNS_H
-#define TAGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -44,4 +44,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* TAG_TYPE_ID = "tag_type_id";
     };
 }
-#endif // TAGCOLUMNS_H

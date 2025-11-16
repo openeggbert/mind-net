@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H
-#define UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H
+#pragma once
+
 
 
 #include "mindnet/api/Trigger.hpp"
@@ -29,4 +29,3 @@ namespace mindnet::plugins::slipbox::triggers
         ) override;
     };
 }
-#endif // UPDATENOTEPATHANDDEPTHAFTERTRIGGER_H

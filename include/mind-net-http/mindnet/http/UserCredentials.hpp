@@ -2,8 +2,9 @@
 // Created by robertvokac on 9/5/25.
 //
 
-#ifndef MIND_NET_USERCREDENTIALS_H
-#define MIND_NET_USERCREDENTIALS_H
+#pragma once
+
+
 #include "crow/http_request.h"
 
 namespace mindnet::http
@@ -52,4 +53,3 @@ namespace mindnet::http
     };
 }
 
-#endif //MIND_NET_USERCREDENTIALS_H

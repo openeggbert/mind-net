@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef AFTERUPDATECONTENTSEMANTICVERSIONTRIGGER_H
-#define AFTERUPDATECONTENTSEMANTICVERSIONTRIGGER_H
+#pragma once
+
 
 
 #include "mindnet/api/Trigger.hpp"
@@ -29,4 +29,3 @@ namespace mindnet::plugins::repetition::triggers
         );
     };
 }
-#endif // AFTERUPDATECONTENTSEMANTICVERSIONTRIGGER_H

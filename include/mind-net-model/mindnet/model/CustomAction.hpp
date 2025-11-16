@@ -17,8 +17,9 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CUSTOMACTION_H
-#define CUSTOMACTION_H
+#pragma once
+
+
 
 #include <map>
 
@@ -67,4 +68,3 @@ namespace mindnet::model
         }
     };
 }
-#endif // CUSTOMACTION_H

@@ -2,8 +2,7 @@
 // Created by robertvokac on 9/5/25.
 //
 
-#ifndef MIND_NET_CONFIGURATION_H
-#define MIND_NET_CONFIGURATION_H
+#pragma once
 
 #include <fstream>
 #include <map>
@@ -72,5 +71,3 @@ namespace mindnet::essential
 
     inline Configuration g_configuration(load_mind_net_properties("./mindnet.properties"));
 }
-
-#endif //MIND_NET_CONFIGURATION_H

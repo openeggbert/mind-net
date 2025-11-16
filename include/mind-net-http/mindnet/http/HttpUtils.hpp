@@ -2,8 +2,8 @@
 // Created by robertvokac on 8/16/25.
 //
 
-#ifndef MINI_WIKI_HTTPUTILS_H
-#define MINI_WIKI_HTTPUTILS_H
+#pragma once
+
 
 #define check_maintenance_mode()\
 if (\
@@ -19,4 +19,3 @@ if (\
 namespace mindnet::http
 {
 }
-#endif //MINI_WIKI_HTTPUTILS_H

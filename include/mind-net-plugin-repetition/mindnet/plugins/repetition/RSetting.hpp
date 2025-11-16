@@ -2,8 +2,8 @@
 // Created by robertvokac on 10/10/25.
 //
 
-#ifndef MIND_NET_RSETTING_H
-#define MIND_NET_RSETTING_H
+#pragma once
+
 #include <string>
 #include <set>
 
@@ -36,4 +36,3 @@ namespace mindnet::plugins::repetition
         short_retry
     };
 }
-#endif //MIND_NET_RSETTING_H

@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef TASKVALIDATOR_H
-#define TASKVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -32,4 +32,3 @@ namespace mindnet::plugins::slipbox::validators
         // - Validate task dependencies (parent_task_id, blocked_by_task_id)
     };
 }
-#endif // TASKVALIDATOR_H

@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once
+
 
 #include "mindnet/essential/ConsolePrinter.hpp"
 #include <stdexcept>
@@ -19,4 +19,4 @@ namespace mindnet::essential
         bool is_enabled();
     };
 }
-#endif // LOGGER_H
+

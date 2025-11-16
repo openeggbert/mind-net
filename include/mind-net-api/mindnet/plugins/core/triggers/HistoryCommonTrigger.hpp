@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef HISTORYCOMMONTRIGGER_H
-#define HISTORYCOMMONTRIGGER_H
+#pragma once
+
 #include "mindnet/api/Trigger.hpp"
 
 namespace mindnet::plugins::core::triggers
@@ -28,4 +28,3 @@ namespace mindnet::plugins::core::triggers
     };
 }
 
-#endif // HISTORYCOMMONTRIGGER_H

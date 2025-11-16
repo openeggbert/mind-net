@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef URLCOLUMNS_H
-#define URLCOLUMNS_H
+#pragma once
+
 
 
 #include "mindnet/model/BaseColumns.hpp"
@@ -45,4 +45,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* TO_URL = "to_url";
     };
 }
-#endif // URLCOLUMNS_H

@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef LINKCOLUMNS_H
-#define LINKCOLUMNS_H
+#pragma once
+
 
 
 #include "mindnet/model/BaseColumns.hpp"
@@ -45,4 +45,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* LABEL = "label";
     };
 }
-#endif // LINKCOLUMNS_H

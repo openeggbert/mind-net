@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef HTTP_METHOD_H
-#define HTTP_METHOD_H
+#pragma once
+
 
 #include <string>
 
@@ -86,5 +86,3 @@ namespace mindnet::plugins::core::enums
 
     static const constexpr char* HTTP_METHOD = "HTTP_METHOD";
 } // namespace mindnet::plugins::core::enums
-
-#endif // HTTP_METHOD_H

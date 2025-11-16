@@ -1,5 +1,5 @@
-#ifndef R2STATECOLUMNS_H
-#define R2STATECOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -28,4 +28,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* CONTENT_MODIFIED_SINCE_LAST_REVIEW = "content_modified_since_last_review";
     };
 }
-#endif // R2STATECOLUMNS_H

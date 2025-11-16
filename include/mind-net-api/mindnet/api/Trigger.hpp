@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef TRIGGER_H
-#define TRIGGER_H
+#pragma once
 
 #include <memory>
 #include <vector>
@@ -105,4 +104,3 @@ namespace mindnet::api
     typedef std::shared_ptr<Trigger> TriggerPtr;
 }
 
-#endif // TRIGGER_H

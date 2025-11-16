@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef PLUGINFACTORY_H
-#define PLUGINFACTORY_H
+#pragma once
 
 #define REGISTER_MODEL(model, Model, MODEL)\
 plugin->register_model(\
@@ -30,4 +29,3 @@ namespace mindnet::api
         [[nodiscard]] virtual PluginPtr create(std::shared_ptr<RepositoryFactory>& repository_factory) const = 0;
     };
 }
-#endif // PLUGINFACTORY_H

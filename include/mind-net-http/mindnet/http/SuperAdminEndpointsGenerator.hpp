@@ -2,8 +2,9 @@
 // Created by robertvokac on 9/24/25.
 //
 
-#ifndef MIND_NET_SUPERADMINENDPOINTSGENERATOR_H
-#define MIND_NET_SUPERADMINENDPOINTSGENERATOR_H
+#pragma once
+
+
 
 #include "crow.h"
 #include "mindnet/api/IService.hpp"
@@ -25,4 +26,3 @@ namespace mindnet::http
 }
 
 
-#endif //MIND_NET_SUPERADMINENDPOINTSGENERATOR_H

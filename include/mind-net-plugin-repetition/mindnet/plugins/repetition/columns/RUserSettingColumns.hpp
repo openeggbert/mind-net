@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef RUSERSETTINGCOLUMNS_H
-#define RUSERSETTINGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -43,4 +43,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* VALUE = "value";
     };
 }
-#endif // RUSERSETTINGCOLUMNS_H

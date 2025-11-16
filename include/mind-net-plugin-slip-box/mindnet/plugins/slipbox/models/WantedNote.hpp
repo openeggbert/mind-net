@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef WANTEDNOTE_H
-#define WANTEDNOTE_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -71,4 +71,3 @@ namespace mindnet::plugins::slipbox::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // WANTEDNOTE_H

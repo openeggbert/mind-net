@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/13/25.
 //
-#ifndef REPETITIONPLUGINFACTORY_H
-#define REPETITIONPLUGINFACTORY_H
+#pragma once
+
 
 /*
  * Global parameters:
@@ -20,4 +20,3 @@ namespace mindnet::plugins::repetition
     };
 }
 
-#endif // REPETITIONPLUGINFACTORY_H

@@ -258,26 +258,31 @@ namespace mindnet::api::cronq
 
             bool missed =
                 j.job->get_run_once_when_missed() &&
-                last_run_ts != 0 &&
-                prev_scheduled > std::chrono::system_clock::time_point(std::chrono::milliseconds(last_run_ts));
+                (
+                    last_run_ts == 0 ||
+                    prev_scheduled > std::chrono::system_clock::time_point(std::chrono::milliseconds(last_run_ts))
+                );
+
+            essential::info
+                << "Cron init for " << j.job_name
+                << ": last_run_ts=" << last_run_ts
+                << ", prev_scheduled=" << util::Utils::unixtime_to_string(system_clock_to_unixtime(prev_scheduled))
+                << ", missed=" << missed
+                << essential::commit;
 
 
-            if (missed)
+            if (missed && j.enabled)
             {
-                // 🚀 RUN IMMEDIATELY (WITHOUT WAITING)
-                enqueue_task([this, job_ptr = &j]
-                {
+                enqueue_task([this, job_ptr = &j] {
                     run_job(*job_ptr);
                 });
-
-                // set next_run to the next scheduled future run
                 j.next_run = next_scheduled;
             }
             else
             {
-                // nothing was missed -> regular scheduling
                 j.next_run = next_scheduled;
             }
+
 
             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
         }

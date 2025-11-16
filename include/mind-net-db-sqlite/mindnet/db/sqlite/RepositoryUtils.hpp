@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef REPOSITORYUTILS_H
-#define REPOSITORYUTILS_H
+#pragma once
+
 
 namespace mindnet::db::sqlite
 {
@@ -37,4 +37,3 @@ namespace mindnet::db::sqlite
     );
 }
 
-#endif // REPOSITORYUTILS_H

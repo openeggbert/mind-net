@@ -21,8 +21,8 @@
 /**
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef PROJECTCOLUMNS_H
-#define PROJECTCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -60,4 +60,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* IS_PUBLIC = "is_public";
     };
 }
-#endif // PROJECTCOLUMNS_H

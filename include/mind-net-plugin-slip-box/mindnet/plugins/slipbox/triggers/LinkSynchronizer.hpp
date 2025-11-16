@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 10/23/25.
 //
-#ifndef LINKSYNCHRONIZER_H
-#define LINKSYNCHRONIZER_H
+#pragma once
 
 
 #include <string>
@@ -76,4 +75,3 @@ namespace mindnet::plugins::slipbox::triggers
                            MakeFn make_entity_fn);
     };
 }
-#endif // LINKSYNCHRONIZER_H

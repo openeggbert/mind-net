@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 10/23/25.
 //
-#ifndef LINKRESOLVER_H
-#define LINKRESOLVER_H
+
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -29,4 +29,3 @@ namespace mindnet::plugins::slipbox::triggers
             std::function<nlohmann::json(const std::string&, nlohmann::json&)>& call);
     };
 }
-#endif // LINKRESOLVER_H

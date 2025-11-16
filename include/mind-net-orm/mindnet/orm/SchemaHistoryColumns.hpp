@@ -22,8 +22,7 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MIGRATIONCOLUMNS_H
-#define MIGRATIONCOLUMNS_H
+#pragma once
 
 namespace mindnet::orm
 {
@@ -50,4 +49,3 @@ namespace mindnet::orm
         static constexpr const char* SUCCESS = "success";
     };
 }
-#endif // MIGRATIONCOLUMNS_H

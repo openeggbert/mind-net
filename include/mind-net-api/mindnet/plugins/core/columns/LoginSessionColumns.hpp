@@ -22,8 +22,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef LOGINSESSIONCOLUMNS_H
-#define LOGINSESSIONCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -49,4 +49,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* USER_AGENT = "user_agent";
     };
 }
-#endif // LOGINSESSIONCOLUMNS_H

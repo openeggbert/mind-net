@@ -22,8 +22,7 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef COLLECTIONITEMCOLUMNS_H
-#define COLLECTIONITEMCOLUMNS_H
+#pragma once
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -43,4 +42,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* ORDER_INDEX = "order_index";
     };
 }
-#endif // COLLECTIONITEMCOLUMNS_H

@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef USERSTATUS_H
-#define USERSTATUS_H
+#pragma once
+
 
 #include <string>
 
@@ -72,4 +72,3 @@ namespace mindnet::essential
         return user_status_to_string(static_cast<UserStatus>(status));
     }
 }
-#endif // USERSTATUS_H

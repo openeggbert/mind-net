@@ -18,8 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef REFRESHTOKENCOLUMNS_H
-#define REFRESHTOKENCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -47,4 +47,3 @@ namespace mindnet::plugins::core::columns
     };
 }
 
-#endif // REFRESHTOKENCOLUMNS_H

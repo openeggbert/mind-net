@@ -4,6 +4,7 @@
 #include "mindnet/plugins/core/migrations/CorePostgreSQLMigrationScripts.hpp"
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.hpp"
 #include "mindnet/plugins/core/jobs/TestJob.hpp"
+#include "mindnet/plugins/core/jobs/CleanupJob.hpp"
 #include "mindnet/plugins/core/validators/HistoryValidator.hpp"
 #include "mindnet/plugins/core/validators/TeamMemberValidator.hpp"
 #include "mindnet/plugins/core/validators/TeamValidator.hpp"
@@ -44,6 +45,7 @@ namespace mindnet::plugins::core
         REGISTER_MODEL(job_run, JobRun, JOB_RUN)
         plugin->register_trigger(std::make_shared<triggers::HistoryCommonTrigger>());
         plugin->register_job(std::make_shared<jobs::TestJob>());
+        plugin->register_job(std::make_shared<jobs::CleanupJob>());
 
         plugin->close_for_changes();
         return plugin;

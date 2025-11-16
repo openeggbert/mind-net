@@ -1,5 +1,5 @@
-#ifndef QUERYPARAMS_H
-#define QUERYPARAMS_H
+#pragma once
+
 #include <string>
 #include <map>
 #include <optional>
@@ -100,4 +100,3 @@ namespace mindnet::orm
         }
     };
 }
-#endif // QUERYPARAMS_H

@@ -1,5 +1,5 @@
-#ifndef RREVIEWVALIDATOR_H
-#define RREVIEWVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -23,4 +23,4 @@ namespace mindnet::plugins::repetition::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-#endif // RREVIEWVALIDATOR_H
+

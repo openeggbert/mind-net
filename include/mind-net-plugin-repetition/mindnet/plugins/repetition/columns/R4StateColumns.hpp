@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef R4STATECOLUMNS_H
-#define R4STATECOLUMNS_H
+#pragma once
+
 
 
 #include "mindnet/model/BaseColumns.hpp"
@@ -54,4 +54,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* CONTENT_MODIFIED_SINCE_LAST_REVIEW = "content_modified_since_last_review";
     };
 }
-#endif // R4STATECOLUMNS_H

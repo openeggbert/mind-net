@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef SOURCECOLUMNS_H
-#define SOURCECOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -49,4 +49,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* TYPE = "type";
     };
 }
-#endif // SOURCECOLUMNS_H

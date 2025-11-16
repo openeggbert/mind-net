@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/8/25.
 //
-#ifndef LOGLEVEL_H
-#define LOGLEVEL_H
+#pragma once
+
 
 #include <string>
 
@@ -87,4 +87,3 @@ namespace mindnet::essential
         return values;
     }
 }
-#endif // LOGLEVEL_H

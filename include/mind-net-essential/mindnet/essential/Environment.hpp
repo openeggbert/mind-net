@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/8/25.
 //
-#ifndef ENVIRONMENT_H
-#define ENVIRONMENT_H
+#pragma once
+
 
 #include <string>
 #include <vector>
@@ -34,4 +34,3 @@ namespace mindnet::essential
 
     // model::EnumDefinition environment_to_enum_definition()
 }
-#endif // ENVIRONMENT_H

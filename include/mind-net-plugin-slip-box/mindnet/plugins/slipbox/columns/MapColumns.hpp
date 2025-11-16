@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef MAPCOLUMNS_H
-#define MAPCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -50,4 +50,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* OTHER_RIGHTS = "other_rights";
     };
 }
-#endif // MAPCOLUMNS_H

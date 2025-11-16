@@ -1,5 +1,4 @@
-#ifndef CRON_QUARTZ_HPP
-#define CRON_QUARTZ_HPP
+#pragma once
 
 #include <string>
 #include <vector>
@@ -152,4 +151,3 @@ inline CronExpr parse_cron_quartz(const std::string& expr_raw);
 // =======================================
 
 } // namespace cronq
-#endif // CRON_QUARTZ_HPP

@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/5/25.
 //
-#ifndef VERSION_H
-#define VERSION_H
+#pragma once
+
 
 #define MIND_NET_VERSION_MAYOR 0
 #define MIND_NET_VERSION_MINOR 0
@@ -11,4 +11,3 @@
 #define MIND_NET_VERSION MIND_NET_VERSION_MAYOR.MIND_NET_VERSION_MINOR.MIND_NET_VERSION_PATCH-MIND_NET_VERSION_LABEL
 #define MIND_NET_BUILD_TIME std::string(__DATE__) + " " + __TIME__
 
-#endif // VERSION_H

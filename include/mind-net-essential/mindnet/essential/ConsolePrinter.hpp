@@ -1,5 +1,4 @@
-#ifndef CONSOLEPRINTER_H
-#define CONSOLEPRINTER_H
+#pragma once
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -64,4 +63,3 @@ namespace mindnet::essential
         ~ConsolePrinter();
     };
 }
-#endif // CONSOLEPRINTER_H

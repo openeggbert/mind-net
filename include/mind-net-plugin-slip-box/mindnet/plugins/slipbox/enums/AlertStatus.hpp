@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef ALERT_STATUS_H
-#define ALERT_STATUS_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
@@ -69,4 +69,3 @@ namespace mindnet::plugins::slipbox::enums
         };
     }
 } // namespace mindnet::plugins::slipbox::enums
-#endif

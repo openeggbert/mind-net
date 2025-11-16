@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef COLUMNDEFINITION_H
-#define COLUMNDEFINITION_H
+#pragma once
+
 
 #include <cstring>
 #include <optional>
@@ -374,4 +374,3 @@ namespace mindnet::model
     };
 }
 
-#endif // COLUMNDEFINITION_H

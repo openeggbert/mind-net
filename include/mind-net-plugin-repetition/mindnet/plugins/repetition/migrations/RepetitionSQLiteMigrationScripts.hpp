@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/17/25.
 //
-#ifndef REPETITIONSQLITEMIGRATIONSCRIPTS_H
-#define REPETITIONSQLITEMIGRATIONSCRIPTS_H
+#pragma once
+
 
 
 #include "mindnet/api/MigrationScripts.hpp"
@@ -19,4 +19,3 @@ namespace mindnet::plugins::repetition::migrations
     };
 }
 
-#endif // REPETITIONSQLITEMIGRATIONSCRIPTS_H

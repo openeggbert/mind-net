@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/8/25.
 //
-#ifndef EXITSTATUS_H
-#define EXITSTATUS_H
+#pragma once
+
 
 namespace mindnet::essential
 {
@@ -12,4 +12,3 @@ namespace mindnet::essential
         MIGRATION_FAILED = 2,
     };
 }
-#endif // EXITSTATUS_H

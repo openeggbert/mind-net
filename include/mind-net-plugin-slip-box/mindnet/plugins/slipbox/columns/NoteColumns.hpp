@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NOTECOLUMNS_H
-#define NOTECOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -52,4 +52,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* DEPTH = "depth";
     };
 }
-#endif // NOTECOLUMNS_H

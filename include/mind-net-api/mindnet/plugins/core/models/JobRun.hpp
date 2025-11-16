@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef JOBRUN_HPP
-#define JOBRUN_HPP
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -75,4 +75,3 @@ namespace mindnet::plugins::core::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // JOBRUN_HPP

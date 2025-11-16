@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/6/25.
 //
-#ifndef SLIPBOXPERSISTENCEMETHODS_H
-#define SLIPBOXPERSISTENCEMETHODS_H
+#pragma once
+
 
 
 #include <utility>
@@ -71,4 +71,3 @@ namespace mindnet::plugins::slipbox
     gen_find_h(slipbox, MapCollection, map_collection)
 }
 
-#endif // SLIPBOXPERSISTENCEMETHODS_H

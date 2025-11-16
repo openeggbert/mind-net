@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/6/25.
 //
-#ifndef IPERSISTENCE_H
-#define IPERSISTENCE_H
+#pragma once
+
 
 #include "IRepository.hpp"
 #include "OperationResult.hpp"
@@ -42,4 +42,3 @@ namespace mindnet::api
 
     typedef std::shared_ptr<mindnet::api::IPersistence> DbPtr;
 }
-#endif // IPERSISTENCE_H

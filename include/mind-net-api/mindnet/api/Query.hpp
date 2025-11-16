@@ -1,9 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef QUERY_H
-#define QUERY_H
-
+#pragma once
 
 #include <memory>
 #include <string>
@@ -46,4 +44,3 @@ namespace mindnet::api
     typedef std::shared_ptr<Query> QueryPtr;
 }
 
-#endif // QUERY_H

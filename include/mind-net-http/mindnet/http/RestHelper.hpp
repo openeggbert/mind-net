@@ -1,8 +1,9 @@
 //
 // Created by robertvokac on 7/31/25.
 //
-#ifndef RESTHELPER_H
-#define RESTHELPER_H
+#pragma once
+
+
 
 #include <string>
 #include <crow.h>
@@ -35,4 +36,3 @@ namespace mindnet::http
     };
 }
 
-#endif // RESTHELPER_H

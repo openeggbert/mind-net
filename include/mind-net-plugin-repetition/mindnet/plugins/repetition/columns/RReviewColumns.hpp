@@ -24,8 +24,8 @@
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef RREVIEWCOLUMNS_H
-#define RREVIEWCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -66,4 +66,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* DETAILS_JSON = "details_json";
     };
 }
-#endif // RREVIEWCOLUMNS_H

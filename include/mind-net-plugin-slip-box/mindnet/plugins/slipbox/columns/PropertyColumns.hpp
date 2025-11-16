@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef NODEPROPERTYCOLUMNS_H
-#define NODEPROPERTYCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -44,4 +44,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* VALUE = "value";
     };
 }
-#endif // NODEPROPERTYCOLUMNS_H

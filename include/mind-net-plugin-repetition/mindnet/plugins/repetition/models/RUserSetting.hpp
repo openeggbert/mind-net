@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef R_USER_SETTING_H
-#define R_USER_SETTING_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
@@ -70,4 +70,3 @@ namespace mindnet::plugins::repetition::models
 #undef Model
 #undef MODEL
 #undef COLS
-#endif // R_USER_SETTING_H

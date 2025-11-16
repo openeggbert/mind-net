@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#pragma once
+
 #include <string>
 #include <vector>
 
@@ -71,4 +71,3 @@ namespace mindnet::api
 
     typedef std::shared_ptr<Plugin> PluginPtr;
 }
-#endif // PLUGIN_H

@@ -1,8 +1,7 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef ABSTRACTTRIGGERJOB_HPP
-#define ABSTRACTTRIGGERJOB_HPP
+#pragma once
 
 #include <memory>
 #include <string>
@@ -113,4 +112,3 @@ namespace mindnet::api
     };
 
 }
-#endif // ABSTRACTTRIGGERJOB_HPP

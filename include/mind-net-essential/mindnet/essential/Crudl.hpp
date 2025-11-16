@@ -17,8 +17,8 @@
 // <https://www.gnu.org/licenses/> or write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef CRUDL_H
-#define CRUDL_H
+#pragma once
+
 
 #include <string>
 
@@ -84,4 +84,3 @@ namespace mindnet::essential
     static const constexpr char* CRUDL = "CRUDL";
 }
 
-#endif // CRUDL_H

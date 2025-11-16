@@ -13,8 +13,8 @@
 // If not, see <https://www.gnu.org/licenses/> or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
-#ifndef TOKENPURPOSE_H
-#define TOKENPURPOSE_H
+#pragma once
+
 
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
@@ -75,4 +75,3 @@ namespace mindnet::plugins::core::enums
     }
 } // namespace mindnet::plugins::core::enums
 
-#endif // TOKENPURPOSE_H

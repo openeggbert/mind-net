@@ -54,7 +54,7 @@ namespace mindnet::api
                 if (plugin_map.find(dep) == plugin_map.end())
                 {
                     throw MissingDependencyException(
-                        "Plugin '" + name + "' depends on missing plugin: " += dep
+                        "Plugin '" + name + "' depends on missing plugin: " + dep
                     );
                 }
                 dfs(dep);

@@ -1,9 +1,8 @@
 //
 // Created by robertvokac on 9/13/25.
 //
+#pragma once
 
-#ifndef MIND_NET_ISERVICE_H
-#define MIND_NET_ISERVICE_H
 #include "crow/json.h"
 #include "mindnet/orm/QueryParams.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
@@ -102,4 +101,3 @@ namespace mindnet::api
     typedef std::shared_ptr<mindnet::api::IService> ServicePtr;
 }
 
-#endif //MIND_NET_ISERVICE_H

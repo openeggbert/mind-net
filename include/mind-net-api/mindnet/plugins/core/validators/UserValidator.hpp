@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/2/25.
 //
-#ifndef USERVALIDATOR_H
-#define USERVALIDATOR_H
+#pragma once
+
 
 #include <memory>
 
@@ -27,4 +27,3 @@ namespace mindnet::plugins::core::validators
     };
 }
 
-#endif // USERVALIDATOR_H

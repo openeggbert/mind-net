@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef R0STATECOLUMNS_H
-#define R0STATECOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
@@ -52,4 +52,3 @@ namespace mindnet::plugins::repetition::columns
 
     };
 }
-#endif // R0STATECOLUMNS_H

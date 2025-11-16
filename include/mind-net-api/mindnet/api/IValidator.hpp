@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/7/25.
 //
-#ifndef IVALIDATOR_H
-#define IVALIDATOR_H
+#pragma once
+
 
 #include <functional>
 #include <memory>
@@ -63,4 +63,3 @@ namespace mindnet::api
         }
     };
 }
-#endif // IVALIDATOR_H

@@ -1,5 +1,5 @@
-#ifndef CROWLOGGERADAPTER_H
-#define CROWLOGGERADAPTER_H
+#pragma once
+
 #include "crow.h"
 #include "mindnet/essential/Logger.hpp"
 #include "mindnet/essential/ConsolePrinter.hpp"
@@ -16,4 +16,3 @@ namespace mindnet::http
         void log(const std::string& message, CrowLogLevel level) override;
     };
 }
-#endif // CROWLOGGERADAPTER_H

@@ -1,9 +1,7 @@
 //
 // Created by robertvokac on 9/5/25.
 //
-#ifndef ACCESSTOKENCONTEXT_H
-#define ACCESSTOKENCONTEXT_H
-
+#pragma once
 
 #include "crow/http_request.h"
 
@@ -38,5 +36,3 @@ namespace mindnet::api
         }
     };
 }
-
-#endif // ACCESSTOKENCONTEXT_H

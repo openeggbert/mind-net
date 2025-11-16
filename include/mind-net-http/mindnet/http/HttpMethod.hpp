@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 8/16/25.
 //
-#ifndef HTTPMETHOD_H
-#define HTTPMETHOD_H
+#pragma once
+
 #include <string>
 
 namespace mindnet::http
@@ -70,4 +70,3 @@ namespace mindnet::http
         }
     }
 } // namespace mindnet::http
-#endif // HTTPMETHOD_H

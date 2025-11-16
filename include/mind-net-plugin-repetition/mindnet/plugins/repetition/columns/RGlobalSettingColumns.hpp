@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef RGLOBALSETTINGCOLUMNS_H
-#define RGLOBALSETTINGCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -42,4 +42,3 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* VALUE = "value";
     };
 }
-#endif // RGLOBALSETTINGCOLUMNS_H

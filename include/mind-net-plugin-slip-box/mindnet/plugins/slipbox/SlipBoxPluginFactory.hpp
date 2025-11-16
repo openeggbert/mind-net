@@ -1,8 +1,8 @@
 //
 // Created by robertvokac on 9/13/25.
 //
-#ifndef SLIPBOXPLUGINFACTORY_H
-#define SLIPBOXPLUGINFACTORY_H
+#pragma once
+
 
 
 #include "mindnet/api/PluginFactory.hpp"
@@ -16,4 +16,3 @@ namespace mindnet::plugins::slipbox
     };
 }
 
-#endif // SLIPBOXPLUGINFACTORY_H

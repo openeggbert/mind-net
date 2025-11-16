@@ -22,8 +22,8 @@
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
-#ifndef ACCESSTOKENCOLUMNS_H
-#define ACCESSTOKENCOLUMNS_H
+#pragma once
+
 
 #include "mindnet/model/BaseColumns.hpp"
 
@@ -54,4 +54,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* ALLOWED_OPERATIONS = "allowed_operations";
     };
 }
-#endif // ACCESSTOKENCOLUMNS_H
