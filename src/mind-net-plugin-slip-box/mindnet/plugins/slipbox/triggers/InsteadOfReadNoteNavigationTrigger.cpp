@@ -39,6 +39,21 @@ namespace mindnet::plugins::slipbox::triggers
         try
         {
             res = call_query(db::sqlite::queries::QUERY_FindPreviousAndNextNote, req);
+
+            if (res.contains("error") && res.contains("exists") && res["exists"] == false)
+            {
+                std::optional<std::pair<entity_fields, api::OperationResult>> result;
+                models::NoteNavigation note_navigation;
+                auto v = note_navigation.to_values();
+                result = std::make_pair<entity_fields, api::OperationResult>(std::move(v), {
+                                                                                 404,
+                                                                                 std::string(
+                                                                                     "There is no note with ID ") +
+                                                                                 std::to_string(id)
+                                                                             });
+                return result;
+            }
+
             if (res["prev_note_id"].is_number()) prev_note_id = res["prev_note_id"];
             if (res["next_note_id"].is_number()) next_note_id = res["next_note_id"];
             info << res.dump() << commit;
@@ -50,13 +65,19 @@ namespace mindnet::plugins::slipbox::triggers
             std::optional<std::pair<entity_fields, api::OperationResult>> result;
             models::NoteNavigation note_navigation;
             auto v = note_navigation.to_values();
-            result = std::make_pair<entity_fields, api::OperationResult>(std::move(v), {500, std::string("Query FindPreviousAndNextNote failed ") + e.what()});
+            result = std::make_pair<entity_fields, api::OperationResult>(std::move(v), {
+                                                                             500,
+                                                                             std::string(
+                                                                                 "Query FindPreviousAndNextNote failed ")
+                                                                             + e.what()
+                                                                         });
 
             return result;
         }
 
         models::NoteNavigation note_navigation;
         note_navigation.set_id(id);
+        note_navigation.note_id = id;
         note_navigation.prev_note_id = prev_note_id;
         note_navigation.next_note_id = next_note_id;
         auto values = note_navigation.to_values();
@@ -66,6 +87,5 @@ namespace mindnet::plugins::slipbox::triggers
         std::optional<std::pair<entity_fields, api::OperationResult>> result;
         result = std::make_pair<entity_fields, api::OperationResult>(std::move(values), ok_result);
         return result;
-
     }
 }

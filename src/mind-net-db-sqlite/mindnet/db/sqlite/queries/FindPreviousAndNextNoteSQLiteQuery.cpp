@@ -55,7 +55,8 @@ namespace mindnet::db::sqlite::queries
 
         i64 note_id = request["note_id"];
 
-        std::string sql = R"(
+        static std::string does_note_exist_sql = "SELECT 1 FROM note WHERE id = ?";
+        static std::string sql = R"(
 WITH RECURSIVE preorder AS (
     -- 1) ROOT NODES ordered by sibling_order
     SELECT
@@ -100,6 +101,41 @@ SELECT
 
 
 )";
+
+        bool exists = false;
+
+        try
+        {
+            SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
+            db.exec("PRAGMA foreign_keys = ON;");
+            db.exec("PRAGMA journal_mode=WAL;");
+
+            essential::debug << does_note_exist_sql << essential::commit;
+            essential::debug << "Executing does_note_exist_sql note_id=" << note_id << essential::commit;
+            SQLite::Statement query(db, does_note_exist_sql);
+
+            query.bind(1, note_id);
+
+            bool exists = false;
+            if (query.executeStep())
+            {
+                exists = true;
+            }
+
+            if (!exists)
+            {
+                response["error"] = "Note with this ID does not exist";
+                response["exists"] = false;
+                return response;
+            }
+
+        }
+        catch (SQLite::Exception& e)
+        {
+            response["error"] = e.what();
+            response["sql_failed"] = does_note_exist_sql;
+            return response;
+        }
 
         // --- Execute SQL query ---
         try

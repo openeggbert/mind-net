@@ -207,12 +207,14 @@ export async function renderEntityRead(entity, id) {
                 const label = action.label ?? action.action;
                 let prefix = '';
                 if (action.crudl?.toUpperCase() === 'LIST') prefix = '📋 ';
-                else if (action.crudl?.toUpperCase() === 'CREATE') prefix = '➕ ';
+                else if (action.crudl?.toUpperCase() === 'CREATE') prefix = '➕ '
+                else if (action.crudl?.toUpperCase() === 'READ') prefix = '📖 ';
 
                 // --- build URL with params ---
                 const url = new URL(window.location.origin + window.location.pathname);
                 url.searchParams.set('entity', action.model_name);
-                url.searchParams.set('action', action.crudl === "List" ? "list" : "create");
+                let action_text = action.crudl.toLowerCase();
+                url.searchParams.set('action', action_text);
                 url.searchParams.set('id', id);
                 Object.entries(action.params || {}).forEach(([k, v]) => {
                     url.searchParams.set(k, v === "{id}" ? id : v);

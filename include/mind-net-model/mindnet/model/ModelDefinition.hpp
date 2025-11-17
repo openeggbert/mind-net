@@ -266,6 +266,13 @@ namespace mindnet::model
         {
             return add_custom_action(mindnet::essential::Crudl::Create, model_name_, label_, params_);
         }
+        [[nodiscard]] ModelDefinition& add_custom_read_action(
+            std::string model_name_,
+            std::string label_,
+            const std::vector<std::string>& params_)
+        {
+            return add_custom_action(mindnet::essential::Crudl::Read, model_name_, label_, params_);
+        }
     };
 }
 

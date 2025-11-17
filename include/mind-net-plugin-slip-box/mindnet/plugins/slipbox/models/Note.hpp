@@ -111,7 +111,8 @@ namespace mindnet::plugins::slipbox::models
         .add_custom_list_action("url", "List urls", {"from_note_id", "{id}"})
         .add_custom_create_action("url", "Add url", {"from_note_id", "{id}"})
         .add_custom_list_action("link", "List links", {"from_note_id", "{id}"})
-        .add_custom_create_action("link", "Add link", {"from_note_id", "{id}"});
+        .add_custom_create_action("link", "Add link", {"from_note_id", "{id}"})
+        .add_custom_read_action("note_navigation", "Read Note Navigation", {"id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

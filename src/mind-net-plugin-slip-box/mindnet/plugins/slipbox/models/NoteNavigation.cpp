@@ -12,6 +12,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(id);
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
+        result.push_back(note_id);
         result.push_back(prev_note_id);
         result.push_back(next_note_id);
 
@@ -27,6 +28,7 @@ namespace mindnet::plugins::slipbox::models
         set_id(number());
         created_at = number();
         updated_at = number();
+        note_id = number();
         prev_note_id = number();
         next_note_id = number();
     }

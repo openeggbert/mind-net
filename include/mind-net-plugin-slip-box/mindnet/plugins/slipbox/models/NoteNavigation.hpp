@@ -45,12 +45,14 @@ namespace mindnet::plugins::slipbox::models
         .set_no_table(true)
         .set_columns({
             //
-            coldef(COLS::PREV_NOTE_ID, MANDATORY | INTEGER | READONLY | FOREIGN_KEY).set_foreign_key("note"),
-            coldef(COLS::NEXT_NOTE_ID, MANDATORY | INTEGER | READONLY | FOREIGN_KEY).set_foreign_key("note"),
+            coldef(COLS::NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::PREV_NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY).set_foreign_key("note"),
+            coldef(COLS::NEXT_NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY).set_foreign_key("note"),
         });
 
     struct Model : mindnet::model::BaseModel
     {
+        i64 note_id{};
         i64 prev_note_id{};
         i64 next_note_id{};
 
@@ -59,6 +61,7 @@ namespace mindnet::plugins::slipbox::models
         bool operator==(const Model& other) const
         {
             return id == other.id &&
+                note_id == other.note_id &&
                 prev_note_id == other.prev_note_id &&next_note_id== other.next_note_id &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }

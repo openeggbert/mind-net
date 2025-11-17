@@ -34,11 +34,12 @@ namespace mindnet::plugins::slipbox::columns
     {
         NoteNavigationColumns() = delete;
 
-        NoteNavigationColumns(const NoteColumns&) = delete;
-        NoteNavigationColumns& operator=(const NoteColumns&) = delete;
+        NoteNavigationColumns(const NoteNavigationColumns&) = delete;
+        NoteNavigationColumns& operator=(const NoteNavigationColumns&) = delete;
 
         static constexpr const char* MODEL_NAME = "note_navigation";
 
+        static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* PREV_NOTE_ID = "prev_note_id";
         static constexpr const char* NEXT_NOTE_ID = "next_note_id";
     };
