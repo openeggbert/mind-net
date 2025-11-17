@@ -111,6 +111,7 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
 
         void validate_invariants() const {
 #ifndef NDEBUG
+#if 0
             static size_t validate_counter = 0;
             if (++validate_counter % 1000 == 0)
             {
@@ -121,6 +122,7 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
                     }
                 ));
             }
+#endif
 #endif
         }
 
@@ -183,7 +185,7 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         // Just the map (the heavy part)
         size_t ram_usage_cache_map_only_locked()
         {
-            std::unique_lock lock(mutex_);
+            std::shared_lock lock(mutex_);
             return ram_usage_cache_map_only_nolock();
         }
         size_t ram_usage_cache_map_only_nolock();

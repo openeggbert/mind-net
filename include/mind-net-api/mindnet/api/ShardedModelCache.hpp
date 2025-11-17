@@ -24,12 +24,11 @@ namespace mindnet::api
 
         inline size_t shard_index(const std::string& table, int64_t id) const noexcept
         {
-            size_t h1 = std::hash<std::string>{}(table);
-            size_t h2 = std::hash<int64_t>{}(id);
-
-            // XOR + mask because NUM_SHARDS is power of 2
-            return (h1 ^ (h2 + 0x9e3779b97f4a7c15ULL)) & (NUM_SHARDS - 1);
+            CacheKey tmp{table, id};
+            CacheKeyHash hasher;
+            return hasher(tmp) & (NUM_SHARDS - 1);
         }
+
 
         inline ModelCache& pick(const std::string& table, int64_t id) noexcept
         {
