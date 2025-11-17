@@ -17,6 +17,7 @@ namespace {
 namespace mindnet::api
 {
     using_loggers()
+    static constexpr bool ENABLE_READ_CACHE = true;
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {
@@ -31,6 +32,9 @@ namespace mindnet::api
                 repository_names.emplace_back(model_name);
             }
         }
+        model_cache_.set_capacity_size(essential::g_configuration.read_cache_capacity_size);
+        model_cache_.set_capacity_size(0);
+        model_cache_.set_capacity_bytes(essential::g_configuration.read_cache_capacity_bytes);
     }
 
     Persistence::~Persistence()
@@ -59,44 +63,78 @@ namespace mindnet::api
     {
         SQLITE_LOCK_GUARD()
         string error;
-        int last_id = get_repository(def.get_model_name())->create(fields, error);
-        return {last_id, {last_id < 0 ? 500 : 0, error}};
+        int newId = get_repository(def.get_model_name())->create(fields, error);
+
+        if (newId >= 0)
+        {
+            if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.put(def.get_model_name(), newId, fields);
+            return {newId, ok_result};
+        }
+        return {newId, {500, error}};
     }
 
     std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,
-                                                                api::AccessTokenContext& token, const int id)
+                                                                api::AccessTokenContext& token, const i64 id)
     {
+        const std::string& table = def.get_model_name();
+
+        // 1) Try cache
+        entity_fields cached;
+        if (ENABLE_READ_CACHE && def.is_read_cache_enabled() && model_cache_.get(table, id, cached))
+        {
+            return {cached, ok_result};
+        }
+        // 2) DB read
         SQLITE_LOCK_GUARD()
         string error;
         entity_fields ef = get_repository(def.get_model_name())->read(id, error);
-        if (error.empty())
+        if (!error.empty())
         {
-            return {ef, {}};
+            return {{}, {500, error}};
         }
-        return {{}, {500, error}};
+
+        // 3) Save to cache
+        if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.put(table, id, ef);
+
+        return {ef, ok_result};
+    }
+    void Persistence::invalidate(const model::ModelDefinition& def, const i64 id)
+    {
+        if (ENABLE_READ_CACHE && def.is_read_cache_enabled())
+            model_cache_.invalidate(def.get_model_name(), id);
     }
 
     OperationResult Persistence::update(
         const model::ModelDefinition& def, api::AccessTokenContext& token,
-        int id, entity_fields& fields
+        i64 id, entity_fields& fields
     )
     {
         SQLITE_LOCK_GUARD()
         string error;
         get_repository(def.get_model_name())->update(id, fields, error);
-        if (error.empty()) { return ok_result; }
+        if (error.empty())
+        {
+            if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            return ok_result;
+        }
         return {500, error};
     }
 
-    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, int id)
+    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, i64 id)
     {
         SQLITE_LOCK_GUARD()
         string_map empty_map;
 
         string error;
         get_repository(def.get_model_name())->remove(id, error);
-        if (error.empty()) { return ok_result; }
-        else { return {500, error}; }
+
+        if (error.empty())
+        {
+            if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            return ok_result;
+        }
+
+        return {500, error};
     }
 
     std::pair<std::vector<entity_fields>, OperationResult> Persistence::list(

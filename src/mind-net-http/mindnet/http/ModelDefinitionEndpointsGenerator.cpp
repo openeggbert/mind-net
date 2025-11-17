@@ -141,6 +141,10 @@ namespace mindnet::http
             {
                 res["reader_can_write"] = model_definition->is_reader_can_write();
             }
+            if (fields_set_empty || fields_set.contains("read_cache_enabled"))
+            {
+                res["read_cache_enabled"] = model_definition->is_read_cache_enabled();
+            }
 
             //
             if (fields_set_empty || fields_set.contains("columns"))

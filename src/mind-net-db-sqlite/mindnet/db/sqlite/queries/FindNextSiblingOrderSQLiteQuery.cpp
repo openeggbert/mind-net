@@ -16,10 +16,14 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
+        if (!request.contains("note_id"))
+        {
+            throw std::invalid_argument("Mandatory key note_id is missing");
+        }
         if (!request.contains("parent_note_id"))
         {
             throw std::invalid_argument("Mandatory key parent_note_id is missing");
@@ -30,6 +34,7 @@ namespace mindnet::db::sqlite::queries
         }
 
         i64 parent_note_id = request["parent_note_id"];
+        i64 note_id = request["note_id"];
         i64 map_id = request["map_id"];
 
         std::string sql = parent_note_id == 0

@@ -38,7 +38,7 @@ namespace mindnet::plugins::core::models
         def(COLS::MODEL_NAME)
         .set_rest_operations("crl")
         .set_group("Core", 300)
-        .set_title_column(COLS::TOKEN_HASH).allow_reader_write()
+        .set_title_column(COLS::TOKEN_HASH).allow_reader_write().set_read_cache_enabled(false)
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY),
             coldef(COLS::TOKEN_HASH, MANDATORY | UNIQUE),

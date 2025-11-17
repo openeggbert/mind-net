@@ -27,10 +27,11 @@ namespace mindnet::api
         virtual std::pair<int, OperationResult> create(const ModelDefinition& def, AccessTokenContext& token,
                                                        entity_fields& fields) = 0;
         virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def, AccessTokenContext& token,
-                                                               int id) = 0;
-        virtual OperationResult update(const ModelDefinition& def, AccessTokenContext& token, int id,
+                                                               i64 id) = 0;
+        virtual void invalidate(const model::ModelDefinition& def, i64 id) = 0;
+        virtual OperationResult update(const ModelDefinition& def, AccessTokenContext& token, i64 id,
                                        entity_fields& fields) = 0;
-        virtual OperationResult remove(const ModelDefinition& def, AccessTokenContext& token, int id) = 0;
+        virtual OperationResult remove(const ModelDefinition& def, AccessTokenContext& token, i64 id) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
             const ModelDefinition& def, AccessTokenContext& token, orm::QueryParams& query_params) = 0;
         //

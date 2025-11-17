@@ -29,7 +29,7 @@ namespace mindnet::plugins::slipbox::triggers
 
     std::optional<std::pair<entity_fields, api::OperationResult>> InsteadOfReadNoteNavigationTrigger::
     run_instead_of_read(int stack_depth, api::OperationResult& validation_result, const model::ModelDefinition& def,
-                        int user_id, int id)
+                        i64 user_id, i64 id)
     {
         nlohmann::json req;
         req["note_id"] = cast64(id);

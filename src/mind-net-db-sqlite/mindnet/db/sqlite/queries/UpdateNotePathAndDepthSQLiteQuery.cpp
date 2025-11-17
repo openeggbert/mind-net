@@ -4,6 +4,8 @@
 
 #include "mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
+
+#include "../../../../../../include/mind-net-plugin-slip-box/mindnet/plugins/slipbox/models/Note.hpp"
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 
@@ -15,7 +17,9 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json UpdateNotePathAndDepthSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json UpdateNotePathAndDepthSQLiteQuery::call(
+        nlohmann::json request, api::InvalidateMethod& invalidate_method
+        )
     {
         if (!request.contains("note_id"))
         {
@@ -71,6 +75,8 @@ WHERE id IN (SELECT id FROM descendants);
             query.bind(1, note_id);
 
             query.exec();
+
+            invalidate_method.invalidate(plugins::slipbox::models::NOTE_DEFINITION.get_model_name(), note_id);
         }
         catch (SQLite::Exception& e)
         {

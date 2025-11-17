@@ -12,6 +12,7 @@ target_include_directories(mind_net_db_sqlite
         ${CMAKE_SOURCE_DIR}/include/mind-net-essential
         ${CMAKE_SOURCE_DIR}/include/mind-net-util
         ${CMAKE_SOURCE_DIR}/include/mind-net-api
+        ${CMAKE_SOURCE_DIR}/include/mind-net-model
 )
 
 
@@ -21,6 +22,7 @@ target_link_libraries(mind_net_db_sqlite
         mind_net_essential
         mind_net_util
         mind_net_api
+        mind_net_model
 )
 
 target_precompile_headers(mind_net_db_sqlite PRIVATE

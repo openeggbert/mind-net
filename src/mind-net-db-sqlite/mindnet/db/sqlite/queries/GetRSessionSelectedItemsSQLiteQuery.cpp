@@ -286,7 +286,7 @@ LIMIT {limit};
     {
     }
 
-    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 

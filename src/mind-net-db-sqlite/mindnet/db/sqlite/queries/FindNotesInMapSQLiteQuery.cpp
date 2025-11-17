@@ -15,7 +15,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindNotesInMapSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json FindNotesInMapSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 

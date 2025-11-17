@@ -188,6 +188,12 @@ content: " (takes effect after restart) ";
     <label for="refresh_token_rotation_threshold_in">Refresh token rotation threshold (minutes)</label>
     <input type="number" id="refresh_token_expires_in" name="refresh_token_rotation_threshold_in" value="{refresh_token_rotation_threshold_in}" min="60" max="432000">
 
+    <label for="read_cache_capacity_size">Read cache capacity count (max)label>
+    <input type="number" id="read_cache_capacity_size" name="read_cache_capacity_size" value="{read_cache_capacity_size}" min="60" max="432000">
+
+    <label for="read_cache_capacity_bytes">Read cache capacity in bytes (max)</label>
+    <input type="number" id="read_cache_capacity_bytes" name="read_cache_capacity_bytes" value="{read_cache_capacity_bytes}" min="60" max="432000">
+
     <label class="checkbox">
     <input type="checkbox" id="schedule_restart" name="schedule_restart">
     Schedule restart

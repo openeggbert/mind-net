@@ -14,6 +14,19 @@ namespace mindnet::api
     using mindnet::api::OperationResult;
     using model::ModelDefinition;
 
+    class InvalidateMethodImpl: public InvalidateMethod
+    {
+    public:
+        InvalidateMethodImpl(const DbPtr& db) : db_(db)
+        {
+
+        }
+        DbPtr db_;
+        void invalidate(const model::ModelDefinition& def, i64 id) {
+            db_->invalidate(def, id);
+        };
+    };
+
     class Service : public api::IService
     {
     private:
@@ -24,6 +37,7 @@ namespace mindnet::api
         std::map<string, QueryPtr> query_map;
         std::map<string, JobPtr> job_map;
         cronq::CronSchedulerPtr cron_scheduler;
+        InvalidateMethodImpl invalidate_method;
 
     public:
         Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);

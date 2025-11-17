@@ -41,7 +41,7 @@ namespace mindnet::plugins::core::models
         def(COLS::MODEL_NAME)
         .set_rest_operations("rl")
         .set_title_column(COLS::ENDPOINT)
-        .set_group("Core", 600).allow_reader_write()
+        .set_group("Core", 600).allow_reader_write().set_read_cache_enabled(false)
         .set_columns({
             //
             coldef(COLS::USER_ID, FOREIGN_KEY | READONLY).set_description("User ID who performed the request"),

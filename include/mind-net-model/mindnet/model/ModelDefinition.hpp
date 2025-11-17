@@ -52,6 +52,7 @@ namespace mindnet::model
         std::vector<CustomAction> custom_actions{};
         std::string title_column;
         bool reader_can_write{false};
+        bool read_cache_enabled{true};
 
     public:
         /**
@@ -116,6 +117,11 @@ namespace mindnet::model
         const bool is_reader_can_write() const
         {
             return reader_can_write;
+        }
+
+        [[nodiscard]] const bool is_read_cache_enabled() const
+        {
+            return read_cache_enabled;
         }
 
         //Setters
@@ -224,6 +230,11 @@ namespace mindnet::model
         ModelDefinition& allow_reader_write()
         {
             reader_can_write = true;
+            return *this;
+        }
+        ModelDefinition& set_read_cache_enabled(bool value)
+        {
+            read_cache_enabled = value;
             return *this;
         }
 

@@ -17,6 +17,9 @@
 #include "Helper.hpp"
 #include "LogLevel.hpp"
 
+// How to add new configuration entry:
+// - Modify also the file "SuperAdminEndpointsGenerator.cpp"
+
 namespace mindnet::essential
 {
     string_map load_mind_net_properties(const std::string& filename);
@@ -62,6 +65,8 @@ namespace mindnet::essential
         int access_token_expires_in{15}; // minutes
         int refresh_token_expires_in{43200}; // minutes (30 days)
         int refresh_token_rotation_threshold_in{10080}; // minutes (7 days)
+        int read_cache_capacity_size{10000};
+        size_t read_cache_capacity_bytes{1073741824};
 
         Configuration(const string_map& map);
         bool save_mind_net_properties();

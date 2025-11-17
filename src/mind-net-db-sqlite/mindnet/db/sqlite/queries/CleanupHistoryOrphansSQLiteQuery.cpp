@@ -18,7 +18,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json CleanupHistoryOrphansSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json CleanupHistoryOrphansSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
     {
         if (!request.contains("history_orphan_threshold_in_days"))
             throw std::runtime_error("history_orphan_threshold_in_days not found");

@@ -18,7 +18,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json CleanupSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json CleanupSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
     {
         if (!request.contains("api_log_threshold_in_days"))
             throw std::runtime_error("api_log_threshold_in_days not found");

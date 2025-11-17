@@ -33,8 +33,8 @@ namespace mindnet::plugins::slipbox::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        int user_id,
-        int id,
+        i64 user_id,
+        i64 id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)

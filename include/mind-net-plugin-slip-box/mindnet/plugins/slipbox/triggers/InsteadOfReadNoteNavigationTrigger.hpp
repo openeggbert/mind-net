@@ -20,7 +20,7 @@ namespace mindnet::plugins::slipbox::triggers
             int stack_depth,
             api::OperationResult& validation_result,
             const model::ModelDefinition& def,
-            int user_id,
-            int id) override;
+            i64 user_id,
+            i64 id) override;
     };
 }

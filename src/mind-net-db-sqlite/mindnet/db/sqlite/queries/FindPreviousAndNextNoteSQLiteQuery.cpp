@@ -44,7 +44,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindPreviousAndNextNoteSQLiteQuery::call(nlohmann::json request)
+    nlohmann::json FindPreviousAndNextNoteSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 

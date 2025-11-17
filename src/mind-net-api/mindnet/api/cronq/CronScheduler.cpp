@@ -273,6 +273,16 @@ namespace mindnet::api::cronq
                 << util::Utils::unixtime_to_string(system_clock_to_unixtime(next_scheduled))
                 << essential::commit;
 
+
+            if (next_scheduled <= now) {
+                essential::info
+                    << "[CRON-COMPUTE-ERROR] next_after returned PAST DATE!"
+                    << " cron=" << j.job->get_cron_expression()
+                    << essential::commit;
+            }
+
+
+
             // compute initial next_run — Quartz previous_before() removed (buggy)
             j.next_run = next_scheduled;
 
@@ -408,33 +418,32 @@ namespace mindnet::api::cronq
                         << essential::commit;
                 }
 
-                if (!next) {
-                    essential::info << "[CRON-LOOP] no next job, sleeping" << essential::commit;
-                }
-                if (!next || next->next_run == std::chrono::system_clock::time_point::max())
-                {
-                    // no active job scheduled
-                    std::this_thread::sleep_for(std::chrono::seconds(1L));
-                    continue;
-                }
-                if (!next->enabled)
-                {
-                    continue;
-                }
+                // --- NEW unified sleep logic (no busy loop, max 60s sleep) ---
 
-                auto scheduled = next->next_run;
-                auto now = system_clock::now();
+                auto wake_at = std::min(
+                    next ? next->next_run : std::chrono::system_clock::time_point::max(),
+                    std::chrono::system_clock::now() + std::chrono::seconds(60L)
+                );
 
-                // 3) WAIT UNTIL EXECUTION TIME
-                if (scheduled > now)
+                if (wake_at > std::chrono::system_clock::now())
                 {
-                    // Wake once per second so ENABLE/DISABLE and config changes propagate
                     std::unique_lock lk(mtx_);
-                    auto pred = [this]() -> bool { return !running_; };
+                    essential::err << "[SCHED] WAIT start" << essential::commit;
+                    cv_.wait_until(lk, wake_at, [this]{ return !running_; });
+                    essential::err << "[SCHED] WAIT done" << essential::commit;
 
-                    cv_.wait_for(lk, std::chrono::seconds(1L), pred);
+                }
+
+                if (!running_)
+                    return;
+
+                if (!next || !next->enabled || next->next_run == std::chrono::system_clock::time_point::max())
+                {
+                    essential::err << "[SCHED] CONTINUE #1: next invalid" << essential::commit;
                     continue;
                 }
+
+
 
 
                 if (!running_) return;
@@ -442,7 +451,8 @@ namespace mindnet::api::cronq
                 // 4) PREVENT PARALLEL EXECUTION OF THE SAME JOB
                 if (next->running)
                 {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10L));
+                    essential::err << "[SCHED] CONTINUE #3: JOB STILL RUNNING" << essential::commit;
+                    std::this_thread::sleep_for(10ms);
                     continue;
                 }
 
@@ -451,7 +461,9 @@ namespace mindnet::api::cronq
                 // 5) LAUNCH JOB IN THREADPOOL
                 enqueue_task([this, next]
                 {
+                    essential::err << "[JOB] START " << next->job_name << essential::commit;
                     run_job(*next);
+                    essential::err << "[JOB] END " << next->job_name << essential::commit;
                     next->running = false;
                 });
 
@@ -460,6 +472,7 @@ namespace mindnet::api::cronq
                 next->next_run = next->cron.next_after(now_tp);
 
                 update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10L));
             }
 
             essential::warn

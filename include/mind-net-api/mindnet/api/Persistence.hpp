@@ -8,8 +8,10 @@
 #include "PluginRegistry.hpp"
 #include "crow/json.h"
 #include "AccessTokenContext.hpp"
+#include "ModelCache.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
 #include "OperationResult.hpp"
+#include "ShardedModelCache.hpp"
 
 namespace mindnet::api
 {
@@ -22,6 +24,7 @@ namespace mindnet::api
         std::map<std::string, std::shared_ptr<IRepository>> repositories;
         std::vector<std::string> repository_names;
         std::shared_ptr<IRepository> get_repository(const std::string& name);
+        ShardedModelCache model_cache_;
 
     public:
         Persistence(PluginRegistryPtr& get_plugin_registry);
@@ -34,10 +37,11 @@ namespace mindnet::api
         std::pair<int, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                entity_fields& fields) override;
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, api::AccessTokenContext& token, int id) override;
-        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, int id,
+        read(const ModelDefinition& def, api::AccessTokenContext& token, i64 id) override;
+        void invalidate(const model::ModelDefinition& def, i64 id);
+        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
                                entity_fields& fields) override;
-        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, int id) override;
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id) override;
         std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
                                                                     api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params) override;

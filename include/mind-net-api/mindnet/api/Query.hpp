@@ -8,9 +8,17 @@
 #include <nlohmann/json.hpp>
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/SqliteGlobal.hpp"
+#include "mindnet/model/ModelDefinition.hpp"
 
 namespace mindnet::api
 {
+    class InvalidateMethod
+    {
+    public:
+        virtual ~InvalidateMethod() = default;
+        virtual void invalidate(const model::ModelDefinition& def, i64 id) = 0;
+    };
+
     class Query
     {
     public:
@@ -27,8 +35,7 @@ namespace mindnet::api
         virtual ~Query() = default;
 
         virtual nlohmann::json call(
-            nlohmann::json request
-
+            nlohmann::json request, InvalidateMethod& invalidate_method
         ) = 0;
         //
         virtual const std::string& get_name() const { return name; }

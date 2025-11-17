@@ -156,6 +156,8 @@ namespace mindnet::essential
         save_number(access_token_expires_in)
         save_number(refresh_token_expires_in)
         save_number(refresh_token_rotation_threshold_in)
+        save_number(read_cache_capacity_size)
+        save_number(read_cache_capacity_bytes)
     }
 
     constexpr auto mind_net_properties_template = FMT_STRING(R"(
@@ -192,6 +194,8 @@ allowed_plugins={allowed_plugins}
 access_token_expires_in={access_token_expires_in}
 refresh_token_expires_in={refresh_token_expires_in}
 refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
+read_cache_capacity_size={read_cache_capacity_size}
+read_cache_capacity_bytes={read_cache_capacity_bytes}
 
 )");
 
@@ -298,7 +302,9 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
             fmt::arg("allowed_plugins", join_strings_by_commas(allowed_plugins)),
             fmt::arg("access_token_expires_in", access_token_expires_in),
             fmt::arg("refresh_token_expires_in", refresh_token_expires_in),
-            fmt::arg("refresh_token_rotation_threshold_in", refresh_token_rotation_threshold_in)
+            fmt::arg("refresh_token_rotation_threshold_in", refresh_token_rotation_threshold_in),
+            fmt::arg("read_cache_capacity_size", read_cache_capacity_size),
+            fmt::arg("read_cache_capacity_bytes", read_cache_capacity_bytes)
         );
 
         // save to file
@@ -421,6 +427,8 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
         push_entry("access_token_expires_in", access_token_expires_in);
         push_entry("refresh_token_expires_in", refresh_token_expires_in);
         push_entry("refresh_token_rotation_threshold_in", refresh_token_rotation_threshold_in);
+        push_entry("read_cache_capacity_size", read_cache_capacity_size);\
+        push_entry("read_cache_capacity_bytes", read_cache_capacity_bytes);
 
 #undef push_enum
 
@@ -464,7 +472,8 @@ refresh_token_rotation_threshold_in={refresh_token_rotation_threshold_in}
                 std::to_string(max_threshold) + " minutes) of \"Refresh token expires in\" (" +
                 std::to_string(refresh_token_expires_in) + " minutes)";
         }
-
+        if (read_cache_capacity_size < 0) return "read_cache_capacity_size must be at least 0";
+        if (read_cache_capacity_bytes < 0) return "read_cache_capacity_bytes must be at least 0";
 
         return "";
     }

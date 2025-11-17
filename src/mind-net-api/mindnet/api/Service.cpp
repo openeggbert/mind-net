@@ -29,11 +29,12 @@ namespace mindnet::api
         db_ptr(db_),
         plugin_registry_ptr(plugin_registry_ptr_),
         trigger_registry_ptr(std::make_shared<api::TriggerRegistry>()),
-        cron_scheduler(std::make_shared<api::cronq::CronScheduler>())
+        cron_scheduler(std::make_shared<api::cronq::CronScheduler>()),
+        invalidate_method({db_})
     {
         info << "[SERVICE] Ctor this=" << (void*)this
-     << " cron_scheduler=" << (void*)cron_scheduler.get()
-     << commit;
+            << " cron_scheduler=" << (void*)cron_scheduler.get()
+            << commit;
         for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
         {
             auto plugin = plugin_registry_ptr->get_plugin(plugin_name);
@@ -133,21 +134,21 @@ namespace mindnet::api
             );
         }
 
-        if (!job_map.empty()){
-        cron_scheduler->set_service_ptr(this);
-        cron_scheduler->set_create_fn(&Service::create);
-        cron_scheduler->set_read_fn(&Service::read);
-        cron_scheduler->set_update_fn(&Service::update);
-        cron_scheduler->set_delete_fn(&Service::remove);
-        cron_scheduler->set_list_fn(&Service::list);
-        for (auto& e: job_map)
+        if (!job_map.empty())
         {
-            cron_scheduler->add_job(e.second);
-        }
+            cron_scheduler->set_service_ptr(this);
+            cron_scheduler->set_create_fn(&Service::create);
+            cron_scheduler->set_read_fn(&Service::read);
+            cron_scheduler->set_update_fn(&Service::update);
+            cron_scheduler->set_delete_fn(&Service::remove);
+            cron_scheduler->set_list_fn(&Service::list);
+            for (auto& e : job_map)
+            {
+                cron_scheduler->add_job(e.second);
+            }
 
-        cron_scheduler->start();
+            cron_scheduler->start();
         }
-
     }
 
     Service::~Service()
@@ -176,7 +177,7 @@ namespace mindnet::api
         }
         SQLITE_LOCK_GUARD();
         auto& query = query_map[query_name];
-        return query->call(request);
+        return query->call(request, invalidate_method);
     }
 
     static constexpr int MAX_TRIGGER_DEPTH = 32;
