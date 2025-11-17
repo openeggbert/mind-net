@@ -50,6 +50,7 @@ namespace mindnet::api::cronq
         load_jobs_from_db(); // loads jobs from DB including cron expressions
         compute_initial_next_runs(); // compute next_run for all jobs
 
+        essential::err << "[CRON-POOL] starting threadpool NOW" << essential::commit;
         start_threadpool(4); // 4 worker threads
 
         scheduler_thread_ = std::thread(&CronScheduler::scheduler_loop, this);
@@ -298,6 +299,7 @@ namespace mindnet::api::cronq
             auto last_refresh = std::chrono::steady_clock::now();
             while (running_)
             {
+                std::this_thread::sleep_for(std::chrono::milliseconds(20L));
                 essential::info << "[CRON-LOOP] top of while" << essential::commit;
                 // 1) LOAD ENABLED + CONFIG ONLY ONCE PER MINUTE
                 auto now_sc = std::chrono::steady_clock::now();
@@ -452,7 +454,7 @@ namespace mindnet::api::cronq
                 if (next->running)
                 {
                     essential::err << "[SCHED] CONTINUE #3: JOB STILL RUNNING" << essential::commit;
-                    std::this_thread::sleep_for(10ms);
+                    std::this_thread::sleep_for(std::chrono::seconds(1L));
                     continue;
                 }
 
@@ -508,13 +510,17 @@ namespace mindnet::api::cronq
         return best;
     }
 
-
     void CronScheduler::start_threadpool(int threads)
     {
+        essential::err << "[CRON-POOL] creating " << threads << " workers" << essential::commit;
         for (int i = 0; i < threads; i++)
         {
             workers_.emplace_back([this]
             {
+                essential::err << "[CRON-POOL] WORKER STARTED id="
+               << std::this_thread::get_id()
+               << essential::commit;
+
                 while (pool_running_)
                 {
                     std::function<void()> task;
@@ -585,7 +591,9 @@ namespace mindnet::api::cronq
         try
         {
             entry.last_started_at = std::chrono::system_clock::now();
+            essential::err << "[JOB] ENTER " << entry.job_name << essential::commit;
             std::string result = entry.job->run(entry.job_config); // *** actual job code ***
+            essential::err << "[JOB] EXIT  " << entry.job_name << essential::commit;
             if (!result.empty() && result != "OK")
             {
                 success = false;
