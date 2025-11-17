@@ -454,6 +454,7 @@ namespace mindnet::api::cronq
                 if (next->running)
                 {
                     essential::err << "[SCHED] CONTINUE #3: JOB STILL RUNNING" << essential::commit;
+                    std::this_thread::sleep_for(10ms);
                     std::this_thread::sleep_for(std::chrono::seconds(1L));
                     continue;
                 }
@@ -509,6 +510,7 @@ namespace mindnet::api::cronq
 
         return best;
     }
+
 
     void CronScheduler::start_threadpool(int threads)
     {
@@ -754,3 +756,4 @@ namespace mindnet::api::cronq
         }
     }
 }
+

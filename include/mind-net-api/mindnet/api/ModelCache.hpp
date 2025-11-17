@@ -183,21 +183,14 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         // Just the map (the heavy part)
         size_t ram_usage_cache_map_only_locked()
         {
-            std::shared_lock lock(mutex_);
-
-            size_t total = sizeof(readCache);
-            for (auto& [key, val] : readCache)
-            {
-                total += ram_usage_cache_key(key);
-                total += ram_usage_entity_fields(val.fields);
-            }
-            return total;
+            std::unique_lock lock(mutex_);
+            return ram_usage_cache_map_only_nolock();
         }
         size_t ram_usage_cache_map_only_nolock();
 
         size_t size()
         {
-            std::shared_lock lock(mutex_);
+            std::unique_lock lock(mutex_);
             return readCache.size();
         }
         std::string information_no_lock()

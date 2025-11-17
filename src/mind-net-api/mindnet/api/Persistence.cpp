@@ -17,7 +17,7 @@ namespace {
 namespace mindnet::api
 {
     using_loggers()
-    static constexpr bool ENABLE_READ_CACHE = false;
+    static constexpr bool ENABLE_READ_CACHE = true;
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {

@@ -183,7 +183,7 @@ namespace mindnet::api
 
         last_shrinked_at = now;
 
-        print_info();
+        // print_info();  // REMOVE — dangerous inside locked paths
 
         size_t used = ram_usage_cache_map_only_nolock();
         if (used <= capacity_bytes)
