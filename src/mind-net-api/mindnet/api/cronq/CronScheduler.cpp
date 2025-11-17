@@ -14,6 +14,8 @@ namespace mindnet::api::cronq
 {
     using namespace std::chrono;
 
+    static constexpr long DO_REFRESH_EACH_X_SECONDS = 5L;
+
     CronScheduler::CronScheduler()
         : AbstractTriggerJob("CronScheduler", "CronScheduler")
     {
@@ -303,7 +305,7 @@ namespace mindnet::api::cronq
                 essential::info << "[CRON-LOOP] top of while" << essential::commit;
                 // 1) LOAD ENABLED + CONFIG ONLY ONCE PER MINUTE
                 auto now_sc = std::chrono::steady_clock::now();
-                bool do_refresh = (now_sc - last_refresh) >= std::chrono::minutes(1L);
+                bool do_refresh = (now_sc - last_refresh) >= std::chrono::seconds(DO_REFRESH_EACH_X_SECONDS);
 
                 if (do_refresh)
                 {
@@ -353,6 +355,35 @@ namespace mindnet::api::cronq
                             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
                             continue;
                         }
+
+
+//avoid running jobs, which should not be running
+                        auto nowtp = std::chrono::system_clock::now();
+
+                        // Case 1: enabled after downtime, compute proper next
+                        auto next_after = j.cron.next_after(nowtp);
+
+                        // If run_once_when_missed and the scheduled time was in the past → run NOW (once)
+                        if (j.job->get_run_once_when_missed() && next_after <= nowtp)
+                        {
+                            // run job once asynchronously
+                            auto* job_ptr = &j;
+                            enqueue_task([this, job_ptr]{ run_job(*job_ptr); });
+
+                            // after running once, compute next proper future time
+                            j.next_run = j.cron.next_after(nowtp + std::chrono::seconds(1L));
+                            update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
+                            continue;
+                        }
+
+                        // normal case
+                        j.next_run = next_after;
+                        update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
+                        continue;
+
+
+
+
 
                         // Configuration change
                         if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())

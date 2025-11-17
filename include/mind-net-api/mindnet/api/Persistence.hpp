@@ -24,7 +24,7 @@ namespace mindnet::api
         std::map<std::string, std::shared_ptr<IRepository>> repositories;
         std::vector<std::string> repository_names;
         std::shared_ptr<IRepository> get_repository(const std::string& name);
-        ShardedModelCache model_cache_;
+        ModelCache model_cache_;
 
     public:
         Persistence(PluginRegistryPtr& get_plugin_registry);

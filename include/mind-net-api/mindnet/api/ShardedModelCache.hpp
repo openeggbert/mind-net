@@ -7,6 +7,7 @@
 
 namespace mindnet::api
 {
+    //TODO: Do not use ShardedModelCache now, it has bugs, which need to be fixed.
     struct ShardedModelCache
     {
         static constexpr size_t NUM_SHARDS = 32;
@@ -22,12 +23,29 @@ namespace mindnet::api
             }
         }
 
-        inline size_t shard_index(const std::string& table, int64_t id) const noexcept
+        uint64_t stable_hash(const std::string& s) const
         {
-            CacheKey tmp{table, id};
-            CacheKeyHash hasher;
-            return hasher(tmp) & (NUM_SHARDS - 1);
+            // FNV-1a 64-bit
+            uint64_t hash = 1469598103934665603ULL;
+            for (unsigned char c : s)
+            {
+                hash ^= c;
+                hash *= 1099511628211ULL;
+            }
+            return hash;
         }
+
+
+        size_t shard_index(const std::string& table, int64_t id) const noexcept
+        {
+            uint64_t h1 = stable_hash(table);
+            uint64_t h2 = (uint64_t)id;
+
+            uint64_t x = h1 ^ (h2 * 0x9e3779b97f4a7c15ULL);
+            return x & (NUM_SHARDS - 1);
+        }
+
+
 
 
         inline ModelCache& pick(const std::string& table, int64_t id) noexcept
