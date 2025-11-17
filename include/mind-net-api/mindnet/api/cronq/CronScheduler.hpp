@@ -39,13 +39,10 @@ namespace mindnet::api::cronq
             unixtime last_enabled_check = 0;
             JobConfig job_config = JobConfig("");
 
-            // --- COPY CONSTRUCTOR (OK) ---
             ScheduledJobEntry(const ScheduledJobEntry&) = default;
 
-            // --- COPY ASSIGNMENT (ZAKÁZAT!) ---
             ScheduledJobEntry& operator=(const ScheduledJobEntry&) = delete;
 
-            // --- MOVE CONSTRUCTOR / ASSIGNMENT ---
             ScheduledJobEntry(ScheduledJobEntry&&) noexcept = default;
             ScheduledJobEntry& operator=(ScheduledJobEntry&&) noexcept = default;
 

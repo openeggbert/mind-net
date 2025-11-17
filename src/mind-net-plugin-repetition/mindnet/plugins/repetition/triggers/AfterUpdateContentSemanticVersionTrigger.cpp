@@ -153,7 +153,6 @@ namespace mindnet::plugins::repetition::triggers
                     {
                         const static std::vector<int> SM0 = {1, 6, 16, 35, 62, 100, 150, 210, 300, 420};
 
-
                         auto it = std::lower_bound(SM0.begin(), SM0.end(), r0_state.interval);
                         if (it != SM0.begin()) {
                             // move back 1 step

@@ -37,6 +37,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Extending
 - [ ] Plugin Repetition: rewrite app_repetition.js to OOP and classes
 - [ ] Plugin Slipbox: onclick textarea starts editing
+- [ ] Plugin Slipbox: visit history
 - [ ] Keyboard shortcuts for plugins: Slipbox and Repetition
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
