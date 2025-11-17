@@ -32,16 +32,23 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Critical
 - [ ] TASK Check operator== implementations for all models
-- [ ] Plugin Slipbox: fulltext search
 
+### Plugin Slipbox
+- [ ] onclick textarea starts editing
+- [ ] visit history
+- [ ] fulltext search
+- [ ] Keyboard shortcuts
+- [ ] Fix Focus Mode
+- [ ] Toggle Theme
+- 
+### Plugin Repetition
+- [ ] rewrite app_repetition.js to OOP and classes
+- [ ] keyboard shortcuts
+- [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
+- 
 ### Extending
-- [ ] Plugin Repetition: rewrite app_repetition.js to OOP and classes
-- [ ] Plugin Slipbox: onclick textarea starts editing
-- [ ] Plugin Slipbox: visit history
-- [ ] Keyboard shortcuts for plugins: Slipbox and Repetition
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
-- [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')

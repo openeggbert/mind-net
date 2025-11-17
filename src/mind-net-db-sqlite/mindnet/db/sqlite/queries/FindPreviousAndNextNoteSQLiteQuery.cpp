@@ -8,6 +8,35 @@
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Global.hpp"
 
+// TODO (future enhancement):
+// Implement fast PREORDER-based navigation for notes (previous/next)
+// directly in C++ instead of using SQL recursive traversal.
+//
+// Target behavior:
+//   - Preorder traversal defined by sibling_order within each parent.
+//   - NEXT rules:
+//       1) If the note has children → return its first child.
+//       2) Else if it has a next sibling → return the next sibling.
+//       3) Else climb up the parent chain until a next sibling exists.
+//       4) If none exists at any ancestor → return null.
+//   - PREVIOUS rules:
+//       1) If the note has a previous sibling → return the deepest-right
+//          descendant of that sibling.
+//       2) Else return the parent.
+//       3) If the parent is null (root with lowest sibling_order) → return null.
+//
+// Implementation notes:
+//   - Execute lightweight, index-backed SQL queries from C++:
+//       * SELECT children by parent_id ORDER BY sibling_order
+//       * SELECT siblings by parent_id ORDER BY sibling_order
+//       * SELECT parent_id by id
+//   - Expect ~0.1–0.5 ms per navigation step even with very large note trees (1M+).
+//   - This approach avoids expensive SQL recursive CTE and scales extremely well.
+//   - Current database size (~340 notes) is small, so this optimization is not urgent.
+//
+// When ready, integrate navigation into a dedicated C++ helper class
+// (e.g., NoteNavigator) for clean and unit-testable traversal logic.
+
 namespace mindnet::db::sqlite::queries
 {
     FindPreviousAndNextNoteSQLiteQuery::FindPreviousAndNextNoteSQLiteQuery()
@@ -27,37 +56,47 @@ namespace mindnet::db::sqlite::queries
         i64 note_id = request["note_id"];
 
         std::string sql = R"(
-WITH current AS (
-    SELECT id, path
+WITH RECURSIVE preorder AS (
+    -- 1) ROOT NODES ordered by sibling_order
+    SELECT
+        id,
+        parent_note_id,
+        sibling_order,
+        1 AS depth,
+        printf('%06d', sibling_order) AS sortkey
     FROM note
-    WHERE id = :note_id
-),
+    WHERE parent_note_id IS NULL
 
+    UNION ALL
+
+    -- 2) CHILDREN of each node, ordered by sibling_order
+    SELECT
+        n.id,
+        n.parent_note_id,
+        n.sibling_order,
+        p.depth + 1 AS depth,
+        p.sortkey || '-' || printf('%06d', n.sibling_order) AS sortkey
+    FROM note n
+    JOIN preorder p ON n.parent_note_id = p.id
+)
+
+,
 ordered AS (
-    SELECT id, path
-    FROM note
-    ORDER BY path ASC
+    SELECT
+        id,
+        ROW_NUMBER() OVER (ORDER BY sortkey) AS preorder_index
+    FROM preorder
 ),
 
-prev_note AS (
-    SELECT o.id
-    FROM ordered o, current c
-    WHERE o.path < c.path
-    ORDER BY o.path DESC
-    LIMIT 1
-),
-
-next_note AS (
-    SELECT o.id
-    FROM ordered o, current c
-    WHERE o.path > c.path
-    ORDER BY o.path ASC
-    LIMIT 1
+current AS (
+    SELECT preorder_index
+    FROM ordered
+    WHERE id = :note_id
 )
 
 SELECT
-    (SELECT id FROM prev_note) AS prev_note,
-    (SELECT id FROM next_note) AS next_note;
+    (SELECT id FROM ordered o WHERE o.preorder_index = (SELECT preorder_index FROM current) - 1) AS prev_note,
+    (SELECT id FROM ordered o WHERE o.preorder_index = (SELECT preorder_index FROM current) + 1) AS next_note;
 
 
 )";
