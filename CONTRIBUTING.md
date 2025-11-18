@@ -40,13 +40,15 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Keyboard shortcuts
 - [ ] Fix Focus Mode
 - [ ] Toggle Theme
-- 
+- [ ] import note as JSON and via the web interface
+
 ### Plugin Repetition
 - [ ] rewrite app_repetition.js to OOP and classes
 - [ ] keyboard shortcuts
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
-- 
-### Extending
+
+### Backend
+
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Support for PostgresSQL storage
@@ -59,22 +61,23 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] bool custom_action.expand
 - [ ] new table file - use content addressable file system with path structure like files/ab/cdef1234... for storing
   file content
-- [ ] Frontend : sort and order is missing
-- [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 - [ ] Implement adding reason for changes (history.reason)
-- [ ] Frontend should not show actions, for which user is not authorized
 - [ ] Validators - reorder methods in cpp files
-- [ ] Add support for missing column types (JSON, BLOB, etc.)
+- [ ] Add support for missing column types (JSON, BLOB, REAL, etc.)
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
-- [ ] Plugin slipbox : import note as JSON and via the web interface
 - [ ] ORM framework: add count, exists, empty
+- 
+### Frontend
 
+- [ ] sort and order is missing
+- [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
+- [ ] Frontend should not show actions, for which user is not authorized
+- 
 ### Experimental
 - [ ] Chat plugin - Slack-like
 - [ ] Mail plugin - E-mail like
 - [ ] Suggestion plugin - E-mail like
-- [ ] Plugin can create new REST endpoints
 - [ ] FEATURE Implement complex Filtering in REST API
 - [ ] New abstract class Provider
 - [ ] Add support for Docker
