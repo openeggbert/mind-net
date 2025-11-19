@@ -185,6 +185,8 @@ namespace mindnet::api
     std::pair<i64, OperationResult> Service::create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                     entity_fields& fields, int stack_depth)
     {
+        fields[1] = mindnet::util::Utils::current_unix_timestamp_ms();
+        fields[2] = mindnet::util::Utils::current_unix_timestamp_ms();
         if (stack_depth > MAX_TRIGGER_DEPTH) return {-1, {500, "Max trigger depth exceeded"}};
 
         auto action = Crudl::Create;

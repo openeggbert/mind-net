@@ -140,6 +140,8 @@ bool commands_function_start(
         user.status = mindnet::essential::UserStatus::Active;
 
         auto user_to_values = user.to_values();
+        user_to_values[1] = mindnet::util::Utils::current_unix_timestamp_ms();
+        user_to_values[2] = mindnet::util::Utils::current_unix_timestamp_ms();
         auto create_result = service_ptr.get()->
                                          create(mindnet::plugins::core::models::USER_DEFINITION, system_token,
                                                 user_to_values);

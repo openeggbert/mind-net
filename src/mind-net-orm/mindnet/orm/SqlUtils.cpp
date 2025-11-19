@@ -4,6 +4,8 @@
 
 #include "mindnet/orm/SqlUtils.hpp"
 
+#include <ranges>
+
 #include "mindnet/model/ModelDefinition.hpp"
 #include "mindnet/orm/Order.hpp"
 #include "mindnet/orm/QueryParams.hpp"
@@ -114,11 +116,26 @@ namespace mindnet::orm
         const std::string& table_name,
         const orm::QueryParams& query_params,
         model::ModelDefinition& def,
-        bool count)
+        SelectMode select_mode,
+        int id_count)
     {
-        auto sql = count ? "SELECT count(*) as c" : generate_select_columns(def);
+        string sql;
+        static string select_count = "SELECT count(*) as c";
+        static string select_id = "SELECT id";
+        switch (select_mode)
+        {
+        case SelectMode::IN_IDS:
+        case SelectMode::STAR: sql+=generate_select_columns(def);
+            break;
+        case SelectMode::COUNT: sql += select_count;
+            break;
+        case SelectMode::IDS: sql += select_id;
+            break;
+        default: throw std::runtime_error("Unknown select_mode");
+        }
+        bool count = select_mode == SelectMode::COUNT;
         sql +=  " FROM " + table_name;
-        if (!query_params.filters.empty())
+        if (select_mode != IN_IDS && !query_params.filters.empty())
         {
             auto filter = query_params.filters;
             sql += " WHERE ";
@@ -150,6 +167,21 @@ namespace mindnet::orm
                 }
             }
         }
+        if (select_mode == IN_IDS)
+        {
+            {
+                sql += " WHERE ID in(";
+                for (int i = 0; i < id_count; i++)
+                {
+                    sql += "?";
+                    if (i != (id_count -1) )
+                    {
+                        sql += ", ";
+                    }
+                }
+                sql += ")";
+            }
+        }
 
         if (!count && query_params.sort.has_value() && !query_params.sort.value().empty())
         {
@@ -160,13 +192,24 @@ namespace mindnet::orm
             }
         }
 
-        if (!count) { sql += " LIMIT ? OFFSET ?"; };
+        if (!count && select_mode != IN_IDS) { sql += " LIMIT ? OFFSET ?"; };
         return sql;
     }
 
     string SqlUtils::generate_select_count_sql(const std::string& table_name, const orm::QueryParams& query_params,
                                                model::ModelDefinition& def)
     {
-        return generate_select_all_sql(table_name, query_params, def, true);
+        return generate_select_all_sql(table_name, query_params, def, COUNT);
+    }
+
+    string SqlUtils::generate_select_ids_sql(const std::string& table_name, const orm::QueryParams& query_params,
+        model::ModelDefinition& def)
+    {
+        return generate_select_all_sql(table_name, query_params, def, IDS);
+    }
+    string SqlUtils::generate_select_in_ids_sql(const std::string& table_name, const orm::QueryParams& query_params,
+    model::ModelDefinition& def, int id_count)
+    {
+        return generate_select_all_sql(table_name, query_params, def, IN_IDS, id_count);
     }
 }

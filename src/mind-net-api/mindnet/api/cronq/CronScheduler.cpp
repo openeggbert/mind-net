@@ -14,7 +14,7 @@ namespace mindnet::api::cronq
 {
     using namespace std::chrono;
 
-    static constexpr long DO_REFRESH_EACH_X_SECONDS = 5L;
+    static constexpr long DO_REFRESH_EACH_X_SECONDS = 60L;
 
     CronScheduler::CronScheduler()
         : AbstractTriggerJob("CronScheduler", "CronScheduler")

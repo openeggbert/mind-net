@@ -453,12 +453,22 @@ if (definition.get_model_name() == "content")
     std::vector<entity_fields> list_models(
         model::ModelDefinition& def,
         orm::QueryParams& query_params,
-        string& error
+        string& error,
+        orm::SelectMode select_mode
     )
     {
+        bool star = select_mode == orm::STAR;
+        bool in_ids = select_mode == orm::IN_IDS;
+        bool ids = select_mode == orm::IDS;
+
         trace << "list_models()" << commit;
-        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params, def);
-        std::string sql_count = orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params, def);
+        if (select_mode == orm::IDS)
+        {
+            query_params.sort = "id";
+            query_params.order = orm::Order::Asc;
+        }
+        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params, def, select_mode, select_mode == orm::IN_IDS ? query_params.ids.size() : 0);
+        std::string sql_count = select_mode == orm::IN_IDS ? "" :orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params, def);
 
         debug << "Going to execute select all SQL: " << sql << commit;
 
@@ -486,19 +496,29 @@ if (definition.get_model_name() == "content")
         debug << "Page size: " << query_params.page_size << commit;
         debug << "Page number: " << query_params.page_number << commit;
         int bind_index = 1;
-        try
+        if (select_mode != orm::IN_IDS)
         {
-            bind_query_filters(def, query_params, *query_ptr, bind_index);
-        }
-        catch (SQLite::Exception& e)
+            try
+            {
+                bind_query_filters(def, query_params, *query_ptr, bind_index);
+            }
+            catch (SQLite::Exception& e)
+            {
+                error = e.what();
+
+                query_ptr->reset();
+                delete query_ptr;
+                query_ptr = nullptr;
+
+                return {};
+            }
+        } else
         {
-            error = e.what();
+            for (auto& id: query_params.ids)
+            {
+                query_ptr ->bind(bind_index++, id);
+            }
 
-            query_ptr->reset();
-            delete query_ptr;
-            query_ptr = nullptr;
-
-            return {};
         }
         // if (query_params.sort.has_value())
         // {
@@ -508,19 +528,31 @@ if (definition.get_model_name() == "content")
         //         (*query_ptr).bind(bind_index++, order_to_string(query_params.order.value()));
         //     }
         // }
+
+        if (select_mode != orm::IN_IDS) {
         experiment << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) <<
             commit;
         (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size));
         experiment << "Binding index " << bind_index << " with value " + std::to_string(
             query_params.page_size * (query_params.page_number - 1)) << commit;
         (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size * (query_params.page_number - 1)));
+        }
 
         std::vector<entity_fields> results;
+        std::vector<i64> result_ids;
         try
         {
             while ((*query_ptr).executeStep())
             {
                 entity_fields result;
+                if (select_mode == orm::IDS)
+                {
+                    int64_t number = (*query_ptr).getColumn(0);;
+                    result.push_back(number);
+                    results.push_back(result);
+                    continue;
+                }
+
                 int i = 0;
                 for (const auto& column : def.get_columns())
                 {
@@ -555,32 +587,39 @@ if (definition.get_model_name() == "content")
             return results;
         }
 
+
         SQLite::Statement* query_count_ptr = nullptr;
-        try
+        if (select_mode != orm::IN_IDS)
         {
-            query_count_ptr = new SQLite::Statement(db, sql_count);
-            bind_index = 1;
-            bind_query_filters(def, query_params, *query_count_ptr, bind_index);
-
-            while (query_count_ptr->executeStep())
+            try
             {
-                query_params.total_items = static_cast<int>(query_count_ptr->getColumn(0));
-                break;
+                query_count_ptr = new SQLite::Statement(db, sql_count);
+                bind_index = 1;
+                bind_query_filters(def, query_params, *query_count_ptr, bind_index);
+
+                while (query_count_ptr->executeStep())
+                {
+                    query_params.total_items = static_cast<int>(query_count_ptr->getColumn(0));
+                    break;
+                }
             }
-        }
-        catch (SQLite::Exception& e)
+            catch (SQLite::Exception& e)
+            {
+                error = e.what();
+
+                query_count_ptr->reset();
+                delete query_count_ptr;
+                query_count_ptr = nullptr;
+
+                query_ptr->reset();
+                delete query_ptr;
+                query_ptr = nullptr;
+
+                return results;
+            }
+        } else
         {
-            error = e.what();
-
-            query_count_ptr->reset();
-            delete query_count_ptr;
-            query_count_ptr = nullptr;
-
-            query_ptr->reset();
-            delete query_ptr;
-            query_ptr = nullptr;
-
-            return results;
+            query_params.total_items = query_params.ids.size();
         }
 
         if (query_count_ptr)
@@ -596,6 +635,7 @@ if (definition.get_model_name() == "content")
             delete query_ptr;
             query_ptr = nullptr;
         }
+
 
         return results;
     }

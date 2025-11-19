@@ -18,6 +18,7 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
+#include "mindnet/orm/SqlUtils.hpp"
 
 
 namespace mindnet::db::sqlite
@@ -33,7 +34,9 @@ namespace mindnet::db::sqlite
     std::vector<entity_fields> list_models(
         model::ModelDefinition& def,
         mindnet::orm::QueryParams& query_params,
-        string& error
+        string& error,
+        orm::SelectMode select_mode = orm::STAR
     );
+
 }
 

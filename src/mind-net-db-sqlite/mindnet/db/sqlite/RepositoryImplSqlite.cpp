@@ -59,17 +59,17 @@ namespace mindnet::db::sqlite
         catch (std::exception& e) { return -1; }
     }
 
-    entity_fields RepositoryImplSqlite::read(const int id, string& error)
+    entity_fields RepositoryImplSqlite::read(const i64 id, string& error)
     {
         return read_model(get_model_definition(), id, error);
     }
 
-    bool RepositoryImplSqlite::update(int id, entity_fields& fields, string& error)
+    bool RepositoryImplSqlite::update(i64 id, entity_fields& fields, string& error)
     {
         return update_model(id, get_model_definition(), fields, error);
     }
 
-    bool RepositoryImplSqlite::remove(int id, string& error)
+    bool RepositoryImplSqlite::remove(i64 id, string& error)
     {
         return delete_model(get_model_definition(), id, error);
     }
@@ -77,6 +77,31 @@ namespace mindnet::db::sqlite
     std::vector<entity_fields> RepositoryImplSqlite::list(orm::QueryParams& query_params, string& error)
     {
         return list_models(get_model_definition(), query_params, error);
+    }
+
+    std::vector<entity_fields> RepositoryImplSqlite::list_in_ids(std::vector<i64>& ids, string& error)
+    {
+        orm::QueryParams query_params;
+        std::string ids_string;
+        for (auto& id: ids)
+        {
+            query_params.ids.push_back(id);
+        }
+        return list_models(get_model_definition(), query_params, error, orm::IN_IDS);
+    }
+
+    std::vector<i64> RepositoryImplSqlite::list_ids(orm::QueryParams& query_params, string& error)
+    {
+        std::vector<entity_fields> fields = list_models(get_model_definition(), query_params, error, orm::IDS);
+        std::vector<i64> result;
+        if (!error.empty()) return result;
+
+        for (auto& f : fields)
+        {
+            std::variant<string, long>& i_1 = f[0];
+            result.push_back(std::get<i64>(i_1));
+        }
+        return result;
     }
 
     model::ModelDefinition& RepositoryImplSqlite::get_model_definition()

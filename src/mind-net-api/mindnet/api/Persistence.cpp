@@ -7,6 +7,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/api/SqliteGlobal.hpp"
+#include "mindnet/api/CompilationFlags.hpp"
 
 namespace {
     bool database_type_is_sqlite()
@@ -17,7 +18,6 @@ namespace {
 namespace mindnet::api
 {
     using_loggers()
-    static constexpr bool ENABLE_READ_CACHE = true;
 
     Persistence::Persistence(PluginRegistryPtr& plugin_registry_ptr)
     {
@@ -33,7 +33,6 @@ namespace mindnet::api
             }
         }
         model_cache_.set_capacity_size(essential::g_configuration.read_cache_capacity_size);
-        model_cache_.set_capacity_size(0);
         model_cache_.set_capacity_bytes(essential::g_configuration.read_cache_capacity_bytes);
     }
 
@@ -67,7 +66,7 @@ namespace mindnet::api
 
         if (newId >= 0)
         {
-            if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.put(def.get_model_name(), newId, fields);
+            if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.put(def.get_model_name(), newId, fields);
             return {newId, ok_result};
         }
         return {newId, {500, error}};
@@ -80,7 +79,7 @@ namespace mindnet::api
 
         // 1) Try cache
         entity_fields cached;
-        if (ENABLE_READ_CACHE && def.is_read_cache_enabled() && model_cache_.get(table, id, cached))
+        if (READ_CACHE_ENABLED && def.is_read_cache_enabled() && model_cache_.get(table, id, cached))
         {
             return {cached, ok_result};
         }
@@ -94,13 +93,13 @@ namespace mindnet::api
         }
 
         // 3) Save to cache
-        if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.put(table, id, ef);
+        if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.put(table, id, ef);
 
         return {ef, ok_result};
     }
     void Persistence::invalidate(const model::ModelDefinition& def, const i64 id)
     {
-        if (ENABLE_READ_CACHE && def.is_read_cache_enabled())
+        if (READ_CACHE_ENABLED && def.is_read_cache_enabled())
             model_cache_.invalidate(def.get_model_name(), id);
     }
 
@@ -114,7 +113,7 @@ namespace mindnet::api
         get_repository(def.get_model_name())->update(id, fields, error);
         if (error.empty())
         {
-            if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
             return ok_result;
         }
         return {500, error};
@@ -130,7 +129,7 @@ namespace mindnet::api
 
         if (error.empty())
         {
-            if (ENABLE_READ_CACHE && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
             return ok_result;
         }
 
@@ -144,10 +143,41 @@ namespace mindnet::api
     {
         SQLITE_LOCK_GUARD()
         string error;
-        auto l = get_repository(def.get_model_name())->list(query_params, error);
+        std::vector<entity_fields> items;
+        const auto& model_name = def.get_model_name();
+        const auto& repo = get_repository(model_name);
+        if (READ_CACHE_ENABLED && LIST_CACHE_ENABLED && def.is_read_cache_enabled())
+        {
+            std::vector<i64> ids = repo->list_ids(query_params, error);
+            std::vector<i64> ids_not_in_cache;
+            for (auto& id : ids)
+            {
+                entity_fields cached;
+                if (model_cache_.get(model_name, id, cached))
+                {
+                    items.push_back(cached);
+                } else
+                {
+                    ids_not_in_cache.push_back(id);
+                }
+            }
+            if (!ids_not_in_cache.empty())
+            {
+                auto items_from_db = repo->list_in_ids(ids_not_in_cache, error);;
+                for (auto& item : items_from_db)
+                {
+                    items.push_back(item);
+                    int64_t number = std::get<int64_t>(item[0]);
+                    model_cache_.put(model_name, number, item);
+                }
+            }
+        } else
+        {
+            items= repo->list(query_params, error);
+        }
         if (error.empty())
         {
-            return {l, ok_result};
+            return {items, ok_result};
         }
         return {{}, {500, error}};
     }

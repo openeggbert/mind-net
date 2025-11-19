@@ -23,6 +23,7 @@ namespace mindnet::orm
         // filters: key = field, value = filter value
         string_map filters;
         std::set<std::string> fields;
+        std::vector<i64> ids;
 
         // helper: add filter
         void add_filter(const std::string& key, const std::string& value)

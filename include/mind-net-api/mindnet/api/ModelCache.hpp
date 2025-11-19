@@ -96,7 +96,8 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         // CACHE: (table, id) -> row
         size_t capacity_size{};
         size_t capacity_bytes{std::numeric_limits<size_t>::max()};
-        size_t ttl_ms = 0;
+        static constexpr long long MS_PER_WEEK = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::weeks{1L}).count();
+        size_t ttl_ms = MS_PER_WEEK;
         std::list<CacheKey> order_;
         std::unordered_map<CacheKey, CacheEntry, CacheKeyHash> readCache;
         Stats stats;
