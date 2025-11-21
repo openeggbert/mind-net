@@ -41,6 +41,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Fix Focus Mode
 - [ ] Toggle Theme
 - [ ] import note as JSON and via the web interface
+- [ ] add Tests to the web interfaces
 
 ### Plugin Repetition
 - [ ] rewrite app_repetition.js to OOP and classes
@@ -49,6 +50,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Backend
 
+- [ ] All ID fields should be migrated from integer to int64_t (i64) type for consistency and future compatibility
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Support for PostgresSQL storage
@@ -67,7 +69,10 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
 - [ ] ORM framework: add count, exists, empty
-- 
+- [ ] To avoid model name collisions, use plugin_name consistently throughout the system. When finding a model, both
+  plugin_name and model_name are required. This allows the same model_name to exist multiple times across different
+  plugins.
+
 ### Frontend
 
 - [ ] sort and order is missing

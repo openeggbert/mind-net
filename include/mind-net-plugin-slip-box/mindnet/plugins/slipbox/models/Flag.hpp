@@ -22,6 +22,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model Flag
@@ -37,7 +38,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def FLAG_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
         .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
         .set_columns({

@@ -23,6 +23,7 @@
 #define MODEL IDEA
 #define COLS columns::IdeaColumns
 #include "../columns/IdeaColumns.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -32,7 +33,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def IDEA_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
         .set_title_column(COLS::TITLE)
         .allow_reader_write()

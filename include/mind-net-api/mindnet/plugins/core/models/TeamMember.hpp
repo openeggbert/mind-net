@@ -22,6 +22,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model TeamMember
@@ -39,7 +40,7 @@ namespace mindnet::plugins::core::models
     using_flags();
 
     inline const def TEAM_MEMBER_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_group("Core", 300)
         .set_columns({

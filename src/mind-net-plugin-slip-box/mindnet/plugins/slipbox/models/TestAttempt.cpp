@@ -1,0 +1,59 @@
+// Created by robertvokac on 8/4/25.
+//
+
+#include "mindnet/plugins/slipbox/models/TestAttempt.hpp"
+
+namespace mindnet::plugins::slipbox::models
+{
+    entity_fields TestAttempt::to_values() const
+    {
+        entity_fields result;
+        result.push_back(id);
+        result.push_back(cast64(created_at));
+        result.push_back(cast64(updated_at));
+
+        result.push_back(test_id);
+        result.push_back(user_id);
+        result.push_back(attempt_number);
+        result.push_back(cast64(started_at));
+        result.push_back(cast64(finished_at));
+        result.push_back(score_times_100);
+        result.push_back(question_ids);
+
+        return result;
+    }
+
+    void TestAttempt::from_values(const entity_fields& values)
+    {
+        int i = 0;
+        def_helper_lambdas()
+
+        set_id(number());
+        created_at = number();
+        updated_at = number();
+
+        test_id = number();
+        user_id = number();
+        attempt_number = number();
+        started_at = number();
+        finished_at = number();
+        score_times_100 = number();
+        question_ids = text();
+    }
+
+    string TestAttempt::validate()
+    {
+        using columns::TestAttemptColumns;
+
+        validator_chain_vector list{
+            [this] { return test_ne(test_id, 0, TestAttemptColumns::TEST_ID); },
+            [this] { return test_ne(user_id, 0, TestAttemptColumns::USER_ID); },
+            [this] { return test_at_least(attempt_number, 1, TestAttemptColumns::ATTEMPT_NUMBER); },
+            [this] { return test_true(finished_at == 0 ? true : finished_at > started_at, "finished_at must be later than started_at"); },
+            [this] { return test_between(score_times_100, 0, 10000, TestAttemptColumns::SCORE_TIMES_100); },
+            [this] { return testt_not_empty(question_ids, TestAttemptColumns::QUESTION_IDS); }
+        };
+
+        return util::ValidatorChain::run(list);
+    }
+}

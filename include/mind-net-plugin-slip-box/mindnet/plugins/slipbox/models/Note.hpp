@@ -19,11 +19,11 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-
 #include <string>
 #include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
+// #include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : START *****
 #define Model Note
 #define MODEL NOTE
@@ -81,7 +81,8 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def NOTE_DEFINITION =
-        def(COLS::MODEL_NAME)
+        // def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
+        def(COLS::MODEL_NAME, "slip_box")
         .set_group("Slip Box", 100)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_columns({

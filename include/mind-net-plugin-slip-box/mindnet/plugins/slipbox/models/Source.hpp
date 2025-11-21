@@ -26,6 +26,7 @@
 
 #include "mindnet/model/BaseModel.hpp"
 #include "../enums/SourceType.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model Source
@@ -41,7 +42,7 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::coldef;
     using_flags();
     inline const def SOURCE_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_group("Slip Box", 100)
         .set_title_column(COLS::TITLE)

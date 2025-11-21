@@ -40,6 +40,6 @@ namespace mindnet::plugins::slipbox::columns
 
         static constexpr const char* NOTE_ID = "note_id";
         static constexpr const char* QUESTION_TEXT = "question_text";
-        static constexpr const char* ANSWERS_JSON = "answers_json";
+        static constexpr const char* ANSWERS = "answers";
     };
 }

@@ -665,7 +665,82 @@ ALTER TABLE content ADD change_ratio INTEGER DEFAULT 0;
     	add_migration("V28__alter_table_note_add_column_hint.sql", R"(
 ALTER TABLE note ADD hint TEXT DEFAULT "";
 )");
+    	add_migration("V29__alter_table_question_rename_column_answers_json_to_answer.sql", R"(
+ALTER TABLE question RENAME COLUMN answers_json TO answer;
+)");
 
+    	add_migration("V30__create_table_test.sql", R"(
+CREATE TABLE test (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    note_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+
+    time_limit_in_seconds INTEGER,
+    answer_count_limit INTEGER DEFAULT 100,
+    attempt_limit INTEGER DEFAULT 1,
+    is_public BOOLEAN DEFAULT 1,
+
+    FOREIGN KEY(note_id) REFERENCES note(id)
+);
+
+CREATE INDEX idx_test_note_id ON test(note_id);
+
+)");
+
+
+    	add_migration("V31__create_table_test_attempt.sql", R"(
+CREATE TABLE test_attempt (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    test_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    attempt_number INTEGER NOT NULL,
+
+    started_at DATETIME NOT NULL,
+    finished_at DATETIME,
+    score_times_100 INTEGER DEFAULT 0,
+    question_ids TEXT NOT NULL, -- comma separated list of question ids
+
+    FOREIGN KEY(test_id) REFERENCES test(id),
+    FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
+CREATE INDEX idx_test_attempt_test_user ON test_attempt(test_id, user_id);
+
+
+)");
+
+
+    	add_migration("V32__create_table_test_attempt_answer.sql", R"(
+CREATE TABLE test_attempt_answer (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    test_attempt_id INTEGER NOT NULL,
+    question_id INTEGER NOT NULL,
+
+    user_answer TEXT,
+    is_correct BOOLEAN,
+
+    FOREIGN KEY(test_attempt_id) REFERENCES test_attempt(id),
+    FOREIGN KEY(question_id) REFERENCES question(id)
+);
+
+CREATE INDEX idx_test_attempt_answer_attempt ON test_attempt_answer(test_attempt_id);
+CREATE INDEX idx_test_attempt_answer_question ON test_attempt_answer(question_id);
+
+)");
+
+    	add_migration("V33__alter_table_question_rename_column_answer_to_answers.sql", R"(
+ALTER TABLE question RENAME COLUMN answer TO answers;
+)");
 
 
 

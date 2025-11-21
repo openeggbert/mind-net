@@ -6,6 +6,31 @@
 
 namespace mindnet::plugins::slipbox::models
 {
+    QuestionAnswer::QuestionAnswer(const std::string& answer_to_be_parsed)
+    {
+        std::stringstream ss(answer_to_be_parsed);
+        std::string item;
+        bool is_first = true;
+
+        while (std::getline(ss, item, *ANSWER_SEPARATOR))
+        {
+            if (is_first)
+            {
+                value.emplace_back(item, true);
+                is_first = false;
+            }
+            else
+            {
+                bool is_correct = !item.empty() && item[0] == '+';
+                if (is_correct)
+                {
+                    item = item.substr(1);
+                }
+                value.emplace_back(item, is_correct);
+            }
+        }
+    }
+
     entity_fields Question::to_values() const
     {
         entity_fields result;
@@ -14,7 +39,7 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(cast64(updated_at));
         result.push_back(note_id);
         result.push_back(question_text);
-        result.push_back(answers_json);
+        result.push_back(answers);
         return result;
     }
 
@@ -29,7 +54,7 @@ namespace mindnet::plugins::slipbox::models
         updated_at = number();
         note_id = number();
         question_text = text();
-        answers_json = text();
+        answers = text();
     };
 
     string Question::validate()

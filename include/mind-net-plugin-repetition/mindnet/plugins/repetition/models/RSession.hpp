@@ -3,6 +3,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/repetition/RepetitionPlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model RSession
@@ -21,7 +22,7 @@ namespace mindnet::plugins::repetition::models
     using_flags();
 
     inline const def R_SESSION_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, REPETITION_PLUGIN_NAME)
         .set_all_rest_operations()
         .set_group("Repetition", 200)
         .allow_reader_write()

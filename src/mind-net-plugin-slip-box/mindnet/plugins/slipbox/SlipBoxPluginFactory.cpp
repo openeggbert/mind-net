@@ -29,6 +29,9 @@
 #include "mindnet/plugins/slipbox/validators/ProjectValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/TaskValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.hpp"
+#include "mindnet/plugins/slipbox/validators/TestValidator.hpp"
+#include "mindnet/plugins/slipbox/validators/TestAttemptValidator.hpp"
+#include "mindnet/plugins/slipbox/validators/TestAttemptAnswerValidator.hpp"
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateUpdateNoteTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.hpp"
@@ -39,8 +42,6 @@
 
 namespace mindnet::plugins::slipbox
 {
-    const string SLIP_BOX_PLUGIN_NAME = "slip_box";
-
     api::PluginPtr SlipBoxPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
@@ -80,6 +81,9 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(map_collection, MapCollection, MAP_COLLECTION)
         REGISTER_MODEL(map_collection_item, MapCollectionItem, MAP_COLLECTION_ITEM)
         REGISTER_MODEL(note_navigation, NoteNavigation, NOTE_NAVIGATION)
+        REGISTER_MODEL(test, Test, TEST)
+        REGISTER_MODEL(test_attempt, TestAttempt, TEST_ATTEMPT)
+        REGISTER_MODEL(test_attempt_answer, TestAttemptAnswer, TEST_ATTEMPT_ANSWER)
 
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());

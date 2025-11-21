@@ -21,6 +21,7 @@
 
 
 #include <string>
+#include <sstream>
 
 #include "mindnet/model/BaseModel.hpp"
 // ***** MACROS : START *****
@@ -28,6 +29,7 @@
 #define MODEL QUESTION
 #define COLS columns::QuestionColumns
 #include "../columns/QuestionColumns.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -35,31 +37,46 @@ namespace mindnet::plugins::slipbox::models
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
+    static constexpr char ANSWER_SEPARATOR[] = "::::";
 
     inline const def QUESTION_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
         .set_group("Slip Box", 100)
         .set_title_column(COLS::QUESTION_TEXT)
         .set_columns(
             {
-                coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY),
+                coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY),
                 coldef(COLS::QUESTION_TEXT, TEXTAREA | MANDATORY),
-                coldef(COLS::ANSWERS_JSON, TEXT),
+                coldef(COLS::ANSWERS, TEXT),
             });
     // *** Definition of model ends ***
 
-    // answers_json
+    // answers
     // [
     //   { "text": "std::vector", "is_correct": true },
     //   { "text": "std::map", "is_correct": false },
     //   { "text": "std::set", "is_correct": false }
     // ]
+    struct QuestionAnswer
+    {
+        
+    private:
+        std::vector<std::pair<std::string, bool>> value;
+
+    public:
+        explicit QuestionAnswer(const std::string& answer_to_be_parsed);
+
+        const std::vector<std::pair<std::string, bool>>& get_parsed() const
+        {
+            return value;
+        }
+    };
     struct Model : mindnet::model::BaseModel
     {
         int note_id{};
         string question_text;
-        string answers_json;
+        string answers;
 
         create_model_h_methods(Model, MODEL)
 
@@ -70,7 +87,7 @@ namespace mindnet::plugins::slipbox::models
                 updated_at == other.updated_at &&
                 note_id == other.note_id &&
                 question_text == other.question_text &&
-                answers_json == other.answers_json;
+                answers == other.answers;
         }
     };
 }

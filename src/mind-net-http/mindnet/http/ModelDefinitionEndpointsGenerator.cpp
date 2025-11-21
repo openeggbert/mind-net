@@ -9,6 +9,7 @@
 #include "mindnet/http/HttpUtils.hpp"
 #include "mindnet/plugins/core/models/User.hpp"
 
+//todo: move to_json instructions to ModelDefinition and related structs
 namespace mindnet::http
 {
     void ModelDefinitionEndpointsGenerator::create_model_definition_endpoints(
@@ -103,6 +104,10 @@ namespace mindnet::http
             if (fields_set_empty || fields_set.contains("model_name"))
             {
                 res["model_name"] = model_definition->get_model_name();
+            }
+            if (fields_set_empty || fields_set.contains("plugin_name"))
+            {
+                res["plugin_name"] = model_definition->get_plugin_name();
             }
             if (fields_set_empty || fields_set.contains("group"))
             {

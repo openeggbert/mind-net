@@ -76,7 +76,7 @@ WHERE id IN (SELECT id FROM descendants);
 
             query.exec();
 
-            invalidate_method.invalidate(plugins::slipbox::models::NOTE_DEFINITION.get_model_name(), note_id);
+            invalidate_method.invalidate(plugins::slipbox::models::NOTE_DEFINITION, note_id);
         }
         catch (SQLite::Exception& e)
         {

@@ -23,6 +23,7 @@
 #include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : START *****
 #define Model MapCollectionItem
 #define MODEL MAP_COLLECTION_ITEM
@@ -37,7 +38,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def MAP_COLLECTION_ITEM_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_group("Slip Box", 100)
         .set_all_rest_operations()
         .set_columns({

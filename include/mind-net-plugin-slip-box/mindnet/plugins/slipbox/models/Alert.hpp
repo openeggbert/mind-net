@@ -31,6 +31,7 @@
 #include "mindnet/plugins/slipbox/enums/AlertChannel.hpp"
 #include "mindnet/plugins/slipbox/enums/AlertRepeatInterval.hpp"
 #include "mindnet/plugins/slipbox/enums/AlertStatus.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -40,7 +41,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def ALERT_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
         .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
         .set_columns({

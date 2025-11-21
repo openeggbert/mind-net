@@ -25,6 +25,7 @@
 #include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : START *****
 #define Model Link
 #define MODEL LINK
@@ -39,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def LINK_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_group("Slip Box", 100)
         .set_columns({

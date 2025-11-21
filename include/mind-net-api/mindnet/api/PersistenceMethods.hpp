@@ -5,10 +5,10 @@
 #pragma once
 
 #define gen_find_h(plugin, Model, model) \
-std::pair<plugins :: plugin :: models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, int id);
+std::pair<plugins :: plugin :: models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, i64 id);
 
 #define gen_find_cpp(plugin, Model, model, MODEL)\
-std::pair< mindnet::plugins:: plugin ::models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, int id)\
+std::pair< mindnet::plugins:: plugin ::models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, i64 id)\
 {\
 auto result = ctx.db->read(mindnet::plugins:: plugin ::models::MODEL##_DEFINITION, ctx.token, id);\
 if (result.second.ko()) return {{}, result.second.error};\

@@ -19,6 +19,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model RefreshToken
@@ -34,7 +35,7 @@ namespace mindnet::plugins::core::models
     using_flags();
 
     inline const def REFRESH_TOKEN_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("crl")
         .set_group("Core", 300)
         .set_title_column(COLS::TOKEN_HASH).allow_reader_write()

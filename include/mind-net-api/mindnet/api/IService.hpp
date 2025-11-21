@@ -86,11 +86,11 @@ namespace mindnet::api
             const model::ModelDefinition& model_definition,
             api::AccessTokenContext& token, entity_fields& ef) = 0;
         virtual OperationResult can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                         int id) = 0;
+                                         i64 id) = 0;
         virtual OperationResult can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                            entity_fields& ef, entity_fields& old_fields) = 0;
         virtual OperationResult can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                           int id) =
+                                           i64 id) =
         0;
         virtual OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                          string_map& filter) = 0;

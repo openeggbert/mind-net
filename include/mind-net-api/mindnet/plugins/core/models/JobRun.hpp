@@ -22,6 +22,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model JobRun
@@ -37,7 +38,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::coldef;
     using_flags();
     inline const def JOB_RUN_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_group("Core", 500).set_read_cache_enabled(false)
         .set_columns({

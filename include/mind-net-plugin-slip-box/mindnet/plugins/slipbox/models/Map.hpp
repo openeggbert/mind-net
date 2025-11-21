@@ -30,6 +30,7 @@
 #define COLS columns::MapColumns
 #include "../columns/MapColumns.hpp"
 #include "mindnet/plugins/core/enums/AccessRight.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -39,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def MAP_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_group("Slip Box", 100)
         .set_all_rest_operations().set_title_column(COLS::NAME)
         .set_columns({

@@ -23,6 +23,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model AuthLog
@@ -39,7 +40,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::coldef;
     using_flags();
     inline const def AUTH_LOG_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_title_column(COLS::ENDPOINT)
         .set_group("Core", 600).allow_reader_write()

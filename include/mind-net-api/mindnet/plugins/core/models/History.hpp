@@ -29,6 +29,7 @@
 #define MODEL HISTORY
 #define COLS columns::HistoryColumns
 #include "../columns/HistoryColumns.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 #include "mindnet/plugins/core/enums/Crudl.hpp"
 // ***** MACROS : END *****
 
@@ -38,7 +39,7 @@ namespace mindnet::plugins::core::models
     using mindnet::model::coldef;
     using_flags();
     inline const def HISTORY_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_group("Core", 500).allow_reader_write().set_read_cache_enabled(false)
         .set_columns({

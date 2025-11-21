@@ -9,6 +9,7 @@
 #define MODEL R0_STATE
 #define COLS columns::R0StateColumns
 #include "../columns/R0StateColumns.hpp"
+#include "mindnet/plugins/repetition/RepetitionPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::repetition::models
@@ -18,7 +19,7 @@ namespace mindnet::plugins::repetition::models
     using_flags();
 
     inline const def R0_STATE_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, REPETITION_PLUGIN_NAME)
         .set_group("Repetition", 200).set_title_column(COLS::INTERVAL).allow_reader_write()
         .set_rest_operations("rl")
         .set_columns({

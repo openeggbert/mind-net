@@ -25,6 +25,7 @@
 #define MODEL ACCESS_TOKEN
 #define COLS columns::AccessTokenColumns
 #include "../columns/AccessTokenColumns.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 #include "mindnet/plugins/core/enums/TokenPurpose.hpp"
 // ***** MACROS : END *****
 
@@ -35,7 +36,7 @@ namespace mindnet::plugins::core::models
     using_flags();
 
     inline const def ACCESS_TOKEN_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("crl")
         .set_group("Core", 300)
         .set_title_column(COLS::TOKEN_HASH).allow_reader_write().set_read_cache_enabled(false)

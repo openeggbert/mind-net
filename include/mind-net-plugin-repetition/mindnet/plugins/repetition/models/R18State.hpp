@@ -22,6 +22,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/repetition/RepetitionPlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model R18State
@@ -37,7 +38,7 @@ namespace mindnet::plugins::repetition::models
     using_flags();
 
     inline const def R18_STATE_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, REPETITION_PLUGIN_NAME)
         .set_group("Repetition", 200).set_title_column(COLS::STABILITY_TIMES_100).allow_reader_write()
         .set_rest_operations("rl")
         .set_columns({

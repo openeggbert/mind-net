@@ -42,6 +42,7 @@ namespace mindnet::util
         static std::vector<std::string> split_with_quotes(const std::string& input);
         static std::set<string> split_string_by_commas(const string& string_,
                                                        std::set<std::string>& result);
+        static std::vector<string> split_with_commas(const string& string_);
         static std::string compute_sha256(const std::string& text);
         //openssl rand -base64 32
         static std::string generate_secret_key(

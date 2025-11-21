@@ -23,6 +23,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model User
@@ -40,7 +41,7 @@ namespace mindnet::plugins::core::models
     using_flags();
 
     inline const def USER_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("crul")
         .set_group("Core", 300)
         .set_title_column(COLS::USERNAME).allow_reader_write()

@@ -23,6 +23,7 @@
 #define MODEL R18_PERF_AGG
 #define COLS columns::R18PerfAggColumns
 #include "../columns/R18PerfAggColumns.hpp"
+#include "mindnet/plugins/repetition/RepetitionPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::repetition::models
@@ -32,7 +33,7 @@ namespace mindnet::plugins::repetition::models
     using_flags();
 
     inline const def R18_PERF_AGG_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, REPETITION_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_group("Repetition", 200)
         .set_title_column(COLS::BIN_LOG_T_TIMES_100)

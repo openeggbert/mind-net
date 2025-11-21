@@ -23,6 +23,7 @@
 
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/core/CorePlugin.hpp"
 
 // ***** MACROS : START *****
 #define Model Team
@@ -38,7 +39,7 @@ namespace mindnet::plugins::core::models
     using_flags();
 
     inline const def TEAM_DEFINITION =
-        def(COLS::MODEL_NAME).set_rest_operations("rl")
+        def(COLS::MODEL_NAME, CORE_PLUGIN_NAME).set_rest_operations("rl")
                              .set_group("Core", 300)
                              .set_title_column(COLS::NAME)
                              .set_columns({

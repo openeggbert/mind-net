@@ -43,6 +43,7 @@ namespace mindnet::model
     {
     private:
         string model_name; ///< Name of the model
+        string plugin_name;
         string group;
         int group_order_index = 0;
         column_definitions columns; ///< Column definitions for the model
@@ -58,17 +59,25 @@ namespace mindnet::model
         /**
          * Constructs a ModelDefinition with the given name
          * @param name The name for the model
+         * @param plugin_name_
          */
-        ModelDefinition(const string& name)
+        explicit ModelDefinition(const string& name, const string& plugin_name_)
         {
             model_name = name;
-        };
+            plugin_name = plugin_name_;
+        }
 
         // Getters
         /** @return The model name */
         [[nodiscard]] const string& get_model_name() const
         {
             return model_name;
+        }
+
+        /** @return The plugin name */
+        [[nodiscard]] const string& get_plugin_name() const
+        {
+            return plugin_name;
         }
 
         [[nodiscard]] const string& get_group() const

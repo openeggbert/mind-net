@@ -36,6 +36,8 @@
 // #include "mindnet/plugins/repetition/models/SM2State.hpp"
 #include "mindnet/plugins/slipbox/models/Question.hpp"
 #include "mindnet/plugins/slipbox/models/Link.hpp"
+#include "mindnet/plugins/slipbox/models/Test.hpp"
+#include "mindnet/plugins/slipbox/models/TestAttempt.hpp"
 #include "mindnet/plugins/slipbox/models/Url.hpp"
 
 namespace mindnet::plugins::slipbox::models
@@ -60,6 +62,8 @@ namespace mindnet::plugins::slipbox
     gen_find_h(slipbox, Map, map)
     // gen_find_h(mail, Message, message)
     gen_find_h(slipbox, Note, note)
+    gen_find_h(slipbox, Test, test)
+    gen_find_h(slipbox, TestAttempt, test_attempt)
     gen_find_h(slipbox, Property, property)
     gen_find_h(slipbox, Question, question)
     gen_find_h(slipbox, Link, link)

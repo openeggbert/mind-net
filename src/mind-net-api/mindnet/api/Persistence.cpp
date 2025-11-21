@@ -55,7 +55,7 @@ namespace mindnet::api
         return repository_names;
     }
 
-    std::pair<int, OperationResult> Persistence::create(
+    std::pair<i64, OperationResult> Persistence::create(
         const ModelDefinition& def,
         api::AccessTokenContext& token,
         entity_fields& fields)

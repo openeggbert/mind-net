@@ -1287,7 +1287,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const answerDiv = document.createElement("div");
             answerDiv.classList.add("back");
-            answerDiv.innerText = "Answer: " + (q.answers_json || "unknown");
+            answerDiv.innerText = "Answer: " + (q.answers || "unknown");
             answerDiv.style.display = "none";
             card.appendChild(answerDiv);
 

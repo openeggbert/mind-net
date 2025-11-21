@@ -76,6 +76,8 @@ namespace mindnet::plugins::slipbox
     gen_find_cpp(slipbox, Map, map, MAP)
     gen_find_cpp(slipbox, Content, content, CONTENT)
     gen_find_cpp(slipbox, Note, note, NOTE)
+    gen_find_cpp(slipbox, Test, test, TEST)
+    gen_find_cpp(slipbox, TestAttempt, test_attempt, TEST_ATTEMPT)
     gen_find_cpp(slipbox, Property, property, PROPERTY)
     gen_find_cpp(slipbox, TagType, tag_type, TAG_TYPE)
     gen_find_cpp(slipbox, Tag, tag, TAG)

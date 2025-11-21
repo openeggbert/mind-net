@@ -145,7 +145,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, int id) const
+        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, i64 id) const
         {
             auto action = Crudl::Read;
             static_assert(
@@ -293,7 +293,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, int id) const
+        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, i64 id) const
         {
             auto action = Crudl::Delete;
             static_assert(

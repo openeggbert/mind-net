@@ -28,6 +28,7 @@
 #define MODEL COLLECTION
 #define COLS columns::CollectionColumns
 #include "../columns/CollectionColumns.hpp"
+#include "mindnet/plugins/slipbox/SlipBoxPlugin.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::slipbox::models
@@ -37,7 +38,7 @@ namespace mindnet::plugins::slipbox::models
     using_flags();
 
     inline const def COLLECTION_DEFINITION =
-        def(COLS::MODEL_NAME)
+        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
         .set_group("Slip Box", 100).set_title_column(COLS::NAME)
         .set_columns({
