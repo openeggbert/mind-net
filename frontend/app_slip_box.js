@@ -744,7 +744,7 @@ async function render() {
                 { label: "Quote", title: "Blockquote", before: "> ", after: "" },
                 { label: "Link", title: "Insert link", before: "[", after: "](url)" },
                 { label: "[[...]]", title: "Wiki link", before: "[[", after: "]]" },
-                { label: "UL", title: "List item", before: "- ", after: "" },
+                { label: "List", title: "List item", before: "- ", after: "" },
                 { label: "[ ]", title: "Checkbox", before: "- [ ] ", after: "" },
                 { label: "---", title: "Divider", before: "\n---\n", after: "" },
             ];
