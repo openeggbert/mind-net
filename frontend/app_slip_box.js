@@ -1107,6 +1107,27 @@ async function render() {
         showWindow();
     };
 
+    async function add_note_to_children(e) {
+        let children = document.getElementById("children_ul");
+
+        const li = document.createElement("li");
+        children.appendChild(li);
+        li.innerText = "#" + e.id + " ";
+        let a = document.createElement("a")
+        li.appendChild(a);
+        a.innerText = e.title;
+        await link_to(a, {note_id: e.id});
+        a.style.display = "inline-block";
+        a.style.minWidth = "20px";
+        a.style.marginRight = "10px";
+
+        const button_copy = document.createElement("button");
+        li.appendChild(button_copy);
+        button_copy.innerText = simple ? "Copy" : "📋 Copy";
+        button_copy.onclick = function () {
+            copy_to_clipboard(e.id);
+        };
+    }
     if (mode_root) document.getElementById("children_button_add").onclick = async function () {
         let title = prompt("Title of new note");
 
@@ -1116,7 +1137,9 @@ async function render() {
 
             new_note.title = title
             new_note.map_id = map_id
-            await post_entity("note", new_note)
+            let result = await post_entity("note", new_note)
+            if(result === undefined || result === null) return;
+            await add_note_to_children(result)
         }
     };
 
@@ -1130,7 +1153,9 @@ async function render() {
             new_note.title = title
             new_note.map_id = note.map_id
             new_note.parent_note_id = note.id
-            await post_entity("note", new_note)
+            let result = await post_entity("note", new_note)
+            if(result === undefined || result === null) return;
+            await add_note_to_children(result)
         }
     };
 
@@ -1172,58 +1197,12 @@ async function render() {
         }
     }
 
-    if (mode_root) {
+    if (mode_root || mode_notes) {
 
         for (const e of notes) {
-
-            const li = document.createElement("li");
-            children.appendChild(li);
-            li.innerText = "#" + e.id + " ";
-            let a = document.createElement("a")
-            li.appendChild(a);
-            a.innerText = e.title;
-            link_to(a, { note_id: e.id });
-            a.style.display = "inline-block";
-            a.style.minWidth = "20px";
-            a.style.marginRight = "10px";
-
-
-            //http://localhost:8888/web/index.html?entity=map&action=create#
-            const button_copy = document.createElement("button");
-            li.appendChild(button_copy);
-            button_copy.innerText = simple ? "Copy" : "📋 Copy";
-            button_copy.onclick = function () {
-                copy_to_clipboard(e.id);
-            };
-
+            await add_note_to_children(e)
         }
 
-    }
-
-    if (mode_notes) {
-
-        for (const e of notes) {
-
-            const li = document.createElement("li");
-            children.appendChild(li);
-            li.innerText = "#" + e.id + " ";
-            let a = document.createElement("a")
-            li.appendChild(a);
-            a.innerText = e.title;
-            await link_to(a, { note_id: e.id });
-            a.style.display = "inline-block";
-            a.style.minWidth = "20px";
-            a.style.marginRight = "10px";
-
-
-            //http://localhost:8888/web/index.html?entity=map&action=create#
-            const button_copy = document.createElement("button");
-            li.appendChild(button_copy);
-            button_copy.innerText = simple ? "Copy" : "📋 Copy";
-            button_copy.onclick = function () {
-                copy_to_clipboard(e.id);
-            };
-        }
     }
 
     //document.getElementById("children_li_example").remove();
