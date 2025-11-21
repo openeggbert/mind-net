@@ -17,7 +17,7 @@ namespace mindnet::plugins::core::jobs
             "VacuumJob",
             "@monthly",
             false,
-            true
+            false
         )
     {
 

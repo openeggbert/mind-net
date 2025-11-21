@@ -17,7 +17,7 @@ namespace mindnet::plugins::core::jobs
             "CleanupJob",
             "@daily_at(02:30)",
             true,
-            true
+            false
         )
     {
 
