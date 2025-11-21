@@ -14,7 +14,7 @@ namespace mindnet::plugins::core::jobs
             "CleanupHistoryOrphansJob",
             "@monthly",
             true,
-            false
+            true
         )
     {
 

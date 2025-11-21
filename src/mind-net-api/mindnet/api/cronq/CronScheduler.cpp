@@ -14,7 +14,7 @@ namespace mindnet::api::cronq
 {
     using namespace std::chrono;
 
-    static constexpr long DO_REFRESH_EACH_X_SECONDS = 60L;
+    static constexpr long DO_REFRESH_EACH_X_SECONDS = 300L;
 
     CronScheduler::CronScheduler()
         : AbstractTriggerJob("CronScheduler", "CronScheduler")
@@ -364,22 +364,23 @@ namespace mindnet::api::cronq
                         auto next_after = j.cron.next_after(nowtp);
 
                         // If run_once_when_missed and the scheduled time was in the past → run NOW (once)
-                        if (j.job->get_run_once_when_missed() && next_after <= nowtp)
+                        // detect missed run based on stored next_run (not recomputed)
+                        if (j.job->get_run_once_when_missed() && j.next_run <= std::chrono::system_clock::now())
                         {
-                            // run job once asynchronously
+                            // run job once
                             auto* job_ptr = &j;
                             enqueue_task([this, job_ptr]{ run_job(*job_ptr); });
 
-                            // after running once, compute next proper future time
-                            j.next_run = j.cron.next_after(nowtp + std::chrono::seconds(1L));
+                            // compute next future run
+                            j.next_run = j.cron.next_after(std::chrono::system_clock::now());
                             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
                             continue;
                         }
 
-                        // normal case
-                        j.next_run = next_after;
-                        update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
-                        continue;
+                        // // normal case
+                        // j.next_run = next_after;
+                        // update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
+                        // continue;
 
 
 
@@ -453,10 +454,7 @@ namespace mindnet::api::cronq
 
                 // --- NEW unified sleep logic (no busy loop, max 60s sleep) ---
 
-                auto wake_at = std::min(
-                    next ? next->next_run : std::chrono::system_clock::time_point::max(),
-                    std::chrono::system_clock::now() + std::chrono::seconds(60L)
-                );
+                auto wake_at = next ? next->next_run : std::chrono::system_clock::time_point::max();
 
                 if (wake_at > std::chrono::system_clock::now())
                 {
@@ -501,11 +499,14 @@ namespace mindnet::api::cronq
                     next->running = false;
                 });
 
-                // 6) SCHEDULE NEXT RUN
-                auto now_tp = std::chrono::system_clock::now();
-                next->next_run = next->cron.next_after(now_tp);
+                // 6) SCHEDULE NEXT RUN – based on the OLD next_run
+                auto baseline = next->next_run + std::chrono::seconds(1L);
+                auto next_scheduled = next->cron.next_after(baseline);
 
-                update_next_run_in_db(next->job_id, system_clock_to_unixtime(next->next_run));
+                next->next_run = next_scheduled;
+                update_next_run_in_db(next->job_id, system_clock_to_unixtime(next_scheduled));
+
+
                 std::this_thread::sleep_for(std::chrono::milliseconds(10L));
             }
 

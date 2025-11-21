@@ -12,7 +12,7 @@ namespace mindnet::plugins::core::jobs
         : Job(
             "TestJob",
             "For tests",
-            "@monthly",
+            "@minutely",
             false,
             true
         )

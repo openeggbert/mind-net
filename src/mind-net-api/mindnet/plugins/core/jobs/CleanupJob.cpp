@@ -15,9 +15,9 @@ namespace mindnet::plugins::core::jobs
         : Job(
             "CleanupJob",
             "CleanupJob",
-            "@daily_at(02:30)",
+            "@monthly",
             true,
-            false
+            true
         )
     {
 
