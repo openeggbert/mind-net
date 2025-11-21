@@ -55,6 +55,11 @@ namespace mindnet::api
 
         std::unique_lock lock(mutex_);
 
+        if (std::get<int64_t>(row[0]) == 0)
+        {
+            essential::warn << "Id is null: " << table << " " << id << essential::commit;
+            return;
+        }
         auto it = readCache.find(key);
 
         if (it != readCache.end())

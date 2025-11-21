@@ -66,7 +66,11 @@ namespace mindnet::api
 
         if (newId >= 0)
         {
-            if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.put(def.get_model_name(), newId, fields);
+            if (READ_CACHE_ENABLED && def.is_read_cache_enabled())
+            {
+                fields[0] = newId;
+                model_cache_.put(def.get_model_name(), newId, fields);
+            }
             return {newId, ok_result};
         }
         return {newId, {500, error}};
