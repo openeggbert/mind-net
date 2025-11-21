@@ -50,7 +50,8 @@ namespace mindnet::plugins::slipbox::models
                 coldef(COLS::FINISHED_AT, DATETIME).set_default_value(0),
                 coldef(COLS::SCORE_TIMES_100, INTEGER),
                 coldef(COLS::QUESTION_IDS),
-            });
+            })
+        .add_custom_list_action("test_attempt_answer", "List answers", {"test_attempt_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {

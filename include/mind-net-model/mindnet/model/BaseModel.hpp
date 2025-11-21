@@ -119,6 +119,14 @@ namespace mindnet::model
         {
             id = id_;
         }
+        [[nodiscard]] unixtime get_created_at() const
+        {
+            return created_at;
+        }
+        [[nodiscard]] unixtime get_updated_at() const
+        {
+            return updated_at;
+        }
 
         [[nodiscard]] virtual const ModelDefinition& get_definition() const = 0;
 

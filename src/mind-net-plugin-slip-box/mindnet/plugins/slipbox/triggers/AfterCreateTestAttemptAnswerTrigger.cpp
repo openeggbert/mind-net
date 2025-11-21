@@ -58,10 +58,33 @@ namespace mindnet::plugins::slipbox::triggers
             err << read_test_attempt.second.error << commit;
             return;
         }
-
         models::TestAttempt test_attempt;
         test_attempt.from_values(read_test_attempt.first);
+
+        if (test_attempt.finished_at != 0)
+        {
+            warn << "Test attempt is already finished! " << std::to_string(test_attempt.get_id()) << commit;
+            return;
+        }
+
+        ////
+        auto read_test = run_read(models::TEST_DEFINITION, token, test_attempt.test_id, stack_depth);
+        if (read_test.second.ko())
+        {
+            err << read_test.second.error << commit;
+            return;
+        }
+        models::Test test;
+        test.from_values(read_test.first);
+        ////
+
         int question_count = util::Utils::split_with_commas(test_attempt.question_ids).size();
+
+        unixtime test_attempt_started_at = test_attempt.started_at;
+        i64 second_limit = test.time_limit_in_seconds;
+        unixtime test_attempt_should_be_finished_until = test_attempt_started_at + second_limit * 1000;
+        auto now = util::Utils::current_unix_timestamp_ms();
+        bool answered_after_limit = now > test_attempt_should_be_finished_until;
 
         orm::QueryParams qp;
         qp.add_filter("test_attempt_id", test_attempt.get_id());
@@ -71,7 +94,7 @@ namespace mindnet::plugins::slipbox::triggers
             err << list_result.second.error << commit;
             return;
         }
-        if (list_result.first.size() < question_count)
+        if (list_result.first.size() < question_count && !answered_after_limit)
         {
             debug << "Not all questions in test were answered." << commit;
             return;
@@ -81,9 +104,11 @@ namespace mindnet::plugins::slipbox::triggers
         {
             models::TestAttemptAnswer test_attempt_answer;
             test_attempt_answer.from_values(e);
-            if (test_attempt_answer.is_correct) count_successes++;
+            bool before_limit = test_attempt_answer.get_created_at() < test_attempt_should_be_finished_until;
+
+            if (test_attempt_answer.is_correct && before_limit) count_successes++;
         }
-        double score = count_successes / list_result.first.size();
+        double score = count_successes / question_count;
         test_attempt.finished_at = mindnet::util::Utils::current_unix_timestamp_ms();
         test_attempt.score_times_100 = cast64(score * 100.0);
         auto v = test_attempt.to_values();

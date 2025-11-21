@@ -52,7 +52,10 @@ namespace mindnet::plugins::slipbox::models
                 coldef(COLS::ANSWER_COUNT_LIMIT, INTEGER).set_default_value(100),
                 coldef(COLS::ATTEMPT_LIMIT, INTEGER).set_default_value(1),
                 coldef(COLS::IS_PUBLIC, BOOL | READONLY).set_default_value(true),
-            });
+            })
+    .add_custom_list_action("test_attempt", "List test attempts", {"test_id", "{id}"})
+    .add_custom_create_action("test_attempt", "Create test attempt", {"test_id", "{id}"})
+    ;
 
     struct Model : mindnet::model::BaseModel
     {

@@ -49,7 +49,9 @@ namespace mindnet::plugins::slipbox::models
                 coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY),
                 coldef(COLS::QUESTION_TEXT, TEXTAREA | MANDATORY),
                 coldef(COLS::ANSWERS, TEXT),
-            });
+            })
+    .add_custom_list_action("test_attempt", "List test attempt answers", {"question_id", "{id}"})
+    ;
     // *** Definition of model ends ***
 
     // answers
