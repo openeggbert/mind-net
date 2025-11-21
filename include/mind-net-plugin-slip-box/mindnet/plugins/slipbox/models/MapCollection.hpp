@@ -40,7 +40,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline const def MAP_COLLECTION_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
-        .set_group("Slip Box", 100)
+        .set_group("Slip Box #2", 100)
         .set_all_rest_operations().set_title_column(COLS::NAME)
         .set_columns({
             coldef(COLS::NAME, MANDATORY | READONLY),

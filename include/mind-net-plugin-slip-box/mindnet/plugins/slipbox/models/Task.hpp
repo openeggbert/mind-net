@@ -41,7 +41,7 @@ namespace mindnet::plugins::slipbox::models
     inline const def TASK_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
-        .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
+        .set_group("Slip Box #2", 100).set_title_column(COLS::TITLE)
         .set_columns({
             coldef(COLS::NOTE_ID, INTEGER | FOREIGN_KEY).set_description("Note ID this task is linked to"),
             coldef(COLS::PROJECT_ID, INTEGER | FOREIGN_KEY).set_description(
