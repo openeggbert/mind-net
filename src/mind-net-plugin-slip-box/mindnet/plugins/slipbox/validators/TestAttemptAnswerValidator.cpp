@@ -28,7 +28,7 @@ namespace mindnet::plugins::slipbox::validators
         auto test = slipbox::find_test(ctx, attempt.first.test_id);
         if (!test.second.empty()) return {400, test.second};
 
-        auto note = slipbox::find_note(ctx, test.first.note_id);
+        auto note = slipbox::find_note(ctx, test.first.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -92,11 +92,12 @@ namespace mindnet::plugins::slipbox::validators
         auto test = find_test(ctx, test_attempt.first.test_id);
         if (!test.second.empty()) return {500, test.second};
         if (test_attempt.first.user_id != ctx.token.user_id) return {400, "test_attempt.user_id must be id of your user"};
-        auto question_ids = util::Utils::split_with_commas(test_attempt.first.question_ids);
+        auto question_ids = mindnet::util::Utils::split_with_commas(test_attempt.first.question_ids);
         bool found = false;
         std::string question_id_string = std::to_string(entity.question_id);
         for (const auto& question_id : question_ids)
         {
+            if (question_id.empty()) continue;
             if (question_id == question_id_string)
             {
                 found = true;
@@ -125,15 +126,18 @@ namespace mindnet::plugins::slipbox::validators
             }
 
         }
-        if (!user_answer_found)
+        if (!user_answer_found && entity.is_correct)
         {
             return {
                 400,
-                "The question.answers does not contain such answers: " + question_id_string + " " + entity.user_answer + "."};
+                "The question.answers does not contain such answers: " + question_id_string + " " + entity.user_answer + ", but is_correct is true"};
         }
-
-
-
+        orm::QueryParams query_params;
+        query_params.add_filter("test_attempt_id", entity.test_attempt_id);
+        query_params.add_filter("question_id", entity.question_id);
+        auto list_answers = ctx.db->list(models::TEST_ATTEMPT_ANSWER_DEFINITION, ctx.token, query_params);
+        if (list_answers.second.ko()) return {500, list_answers.second.error};
+        if (!list_answers.first.empty()) return {400, "There is already such test_attempt with this test_attempt_id and question_id"};
 
         return ok_result;
     }

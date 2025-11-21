@@ -19,7 +19,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TestValidator::validate_create_authorization(const RequestContext& ctx,
                                                                  const Model& entity) const
     {
-        auto note = slipbox::find_note(ctx, entity.note_id);
+        auto note = slipbox::find_note(ctx, entity.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
@@ -31,7 +31,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TestValidator::validate_read_authorization(const RequestContext& ctx,
                                                                const Model& entity) const
     {
-        auto note = slipbox::find_note(ctx, entity.note_id);
+        auto note = slipbox::find_note(ctx, entity.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -44,7 +44,7 @@ namespace mindnet::plugins::slipbox::validators
                                                                  const Model& old_entity,
                                                                  const Model& new_entity) const
     {
-        auto note = slipbox::find_note(ctx, old_entity.note_id);
+        auto note = slipbox::find_note(ctx, old_entity.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
@@ -56,7 +56,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TestValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                  const Model& entity) const
     {
-        auto note = slipbox::find_note(ctx, entity.note_id);
+        auto note = slipbox::find_note(ctx, entity.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Delete))
@@ -80,8 +80,13 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-    OperationResult TestValidator::validate_create_integrity(const RequestContext&, const Model&) const
+    OperationResult TestValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
+        auto note = slipbox::find_note(ctx, entity.under_note_id);
+        if (!note.second.empty()) return {400, note.second};
+
+        if (note.first.map_id != entity.map_id)
+            return {400, "The map_id in the test must match the map_id of the associated note"};
         return ok_result;
     }
 

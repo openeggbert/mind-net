@@ -665,8 +665,8 @@ ALTER TABLE content ADD change_ratio INTEGER DEFAULT 0;
     	add_migration("V28__alter_table_note_add_column_hint.sql", R"(
 ALTER TABLE note ADD hint TEXT DEFAULT "";
 )");
-    	add_migration("V29__alter_table_question_rename_column_answers_json_to_answer.sql", R"(
-ALTER TABLE question RENAME COLUMN answers_json TO answer;
+    	add_migration("V29__alter_table_question_rename_column_answers_json_to_answers.sql", R"(
+ALTER TABLE question RENAME COLUMN answers_json TO answers;
 )");
 
     	add_migration("V30__create_table_test.sql", R"(
@@ -675,7 +675,8 @@ CREATE TABLE test (
     created_at DATETIME,
     updated_at DATETIME,
 
-    note_id INTEGER NOT NULL,
+    under_note_id INTEGER NOT NULL,
+    map_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
 
@@ -684,10 +685,11 @@ CREATE TABLE test (
     attempt_limit INTEGER DEFAULT 1,
     is_public BOOLEAN DEFAULT 1,
 
-    FOREIGN KEY(note_id) REFERENCES note(id)
+    FOREIGN KEY(under_note_id) REFERENCES note(id),
+    FOREIGN KEY(map_id) REFERENCES map(id)
 );
 
-CREATE INDEX idx_test_note_id ON test(note_id);
+CREATE INDEX idx_test_under_note_id ON test(under_note_id);
 
 )");
 
@@ -736,10 +738,6 @@ CREATE TABLE test_attempt_answer (
 CREATE INDEX idx_test_attempt_answer_attempt ON test_attempt_answer(test_attempt_id);
 CREATE INDEX idx_test_attempt_answer_question ON test_attempt_answer(question_id);
 
-)");
-
-    	add_migration("V33__alter_table_question_rename_column_answer_to_answers.sql", R"(
-ALTER TABLE question RENAME COLUMN answer TO answers;
 )");
 
 

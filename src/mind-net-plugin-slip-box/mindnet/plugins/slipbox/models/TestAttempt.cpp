@@ -51,7 +51,6 @@ namespace mindnet::plugins::slipbox::models
             [this] { return test_at_least(attempt_number, 1, TestAttemptColumns::ATTEMPT_NUMBER); },
             [this] { return test_true(finished_at == 0 ? true : finished_at > started_at, "finished_at must be later than started_at"); },
             [this] { return test_between(score_times_100, 0, 10000, TestAttemptColumns::SCORE_TIMES_100); },
-            [this] { return testt_not_empty(question_ids, TestAttemptColumns::QUESTION_IDS); }
         };
 
         return util::ValidatorChain::run(list);

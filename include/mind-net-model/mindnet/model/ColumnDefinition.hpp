@@ -304,6 +304,7 @@ namespace mindnet::model
             if (column_name.ends_with("_id"))
             {
                 foreign_key = column_name.substr(0, column_name.size() - 3);
+                column_type = mindnet::model::ColumnType::Integer;
             }
             else
             {

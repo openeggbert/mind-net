@@ -46,10 +46,10 @@ namespace mindnet::plugins::slipbox::models
                 coldef(COLS::TEST_ID, MANDATORY | FOREIGN_KEY | READONLY),
                 coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY),
                 coldef(COLS::ATTEMPT_NUMBER, INTEGER | MANDATORY | READONLY),
-                coldef(COLS::STARTED_AT, DATETIME | MANDATORY | READONLY),
-                coldef(COLS::FINISHED_AT, DATETIME),
+                coldef(COLS::STARTED_AT, DATETIME).set_default_value(0),
+                coldef(COLS::FINISHED_AT, DATETIME).set_default_value(0),
                 coldef(COLS::SCORE_TIMES_100, INTEGER),
-                coldef(COLS::QUESTION_IDS, MANDATORY | READONLY),
+                coldef(COLS::QUESTION_IDS),
             });
 
     struct Model : mindnet::model::BaseModel

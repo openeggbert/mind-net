@@ -12,7 +12,8 @@ namespace mindnet::plugins::slipbox::models
         result.push_back(cast64(created_at));
         result.push_back(cast64(updated_at));
 
-        result.push_back(note_id);
+        result.push_back(under_note_id);
+        result.push_back(map_id);
         result.push_back(title);
         result.push_back(description);
         result.push_back(time_limit_in_seconds);
@@ -32,7 +33,8 @@ namespace mindnet::plugins::slipbox::models
         created_at = number();
         updated_at = number();
 
-        note_id = number();
+        under_note_id = number();
+        map_id = number();
         title = text();
         description = text();
         time_limit_in_seconds = number();
@@ -46,7 +48,8 @@ namespace mindnet::plugins::slipbox::models
         using columns::TestColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(note_id, 0, TestColumns::NOTE_ID); },
+            [this] { return test_ne(under_note_id, 0, TestColumns::UNDER_NOTE_ID); },
+            [this] { return test_ne(map_id, 0, TestColumns::MAP_ID); },
             [this] { return testt_between(title, 3, 256, TestColumns::TITLE); },
             [this] { return test_at_least(time_limit_in_seconds, 60, TestColumns::ANSWER_COUNT_LIMIT); },
             [this] { return test_at_least(answer_count_limit, 1, TestColumns::ANSWER_COUNT_LIMIT); },

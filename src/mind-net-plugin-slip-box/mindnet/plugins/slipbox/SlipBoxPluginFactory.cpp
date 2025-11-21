@@ -4,6 +4,7 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetQuestionIdsSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
 #include "mindnet/plugins/slipbox/validators/CollectionValidator.hpp"
@@ -39,6 +40,8 @@
 #include "mindnet/plugins/slipbox/triggers/BeforeUpdateContentTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/InsteadOfReadNoteNavigationTrigger.hpp"
+#include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptTrigger.hpp"
+#include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
 
 namespace mindnet::plugins::slipbox
 {
@@ -91,10 +94,15 @@ namespace mindnet::plugins::slipbox
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::BeforeUpdateContentTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfReadNoteNavigationTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptAnswerTrigger>());
+
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindPreviousAndNextNoteSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::GetQuestionIdsSQLiteQuery>());
+
         plugin->register_library_file("markdown-it.min.js");
         plugin->register_library_file("highlight.min.js");
         plugin->register_library_file("markdown-it-emoji.min.js");

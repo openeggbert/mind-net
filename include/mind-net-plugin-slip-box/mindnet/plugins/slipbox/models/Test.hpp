@@ -44,7 +44,8 @@ namespace mindnet::plugins::slipbox::models
         .set_title_column(COLS::TITLE)
         .set_columns(
             {
-                coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY),
+                coldef(COLS::UNDER_NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY).set_foreign_key("note"),
+                coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY),
                 coldef(COLS::TITLE, MANDATORY),
                 coldef(COLS::DESCRIPTION),
                 coldef(COLS::TIME_LIMIT_IN_SECONDS, INTEGER).set_default_value(SECONDS_PER_DAY),
@@ -55,7 +56,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 note_id{};
+        i64 under_note_id{};
+        i64 map_id{};
         std::string title;
         std::string description;
         int time_limit_in_seconds{};
@@ -70,7 +72,8 @@ namespace mindnet::plugins::slipbox::models
             return id == other.id
                 && created_at == other.created_at
                 && updated_at == other.updated_at
-                && note_id == other.note_id
+                && map_id == other.map_id
+                && under_note_id == other.under_note_id
                 && title == other.title
                 && description == other.description
                 && time_limit_in_seconds == other.time_limit_in_seconds

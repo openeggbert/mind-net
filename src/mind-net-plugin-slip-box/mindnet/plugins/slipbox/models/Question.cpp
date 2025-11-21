@@ -63,7 +63,7 @@ namespace mindnet::plugins::slipbox::models
 
         validator_chain_vector list{
             [this] { return test_ne(note_id, 0, QuestionColumns::NOTE_ID); },
-            [this] { return testt_between(question_text, 5, 256, QuestionColumns::QUESTION_TEXT); }
+            [this] { return testt_between(question_text, 3, 256, QuestionColumns::QUESTION_TEXT); }
         };
         return util::ValidatorChain::run(list);
     }

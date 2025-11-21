@@ -162,6 +162,10 @@ namespace mindnet::db::sqlite
             bool has_value = body.has(col.get_column_name());
             auto rvalue = has_value ? body[col.get_column_name()] : crow::json::rvalue();
             crow::json::type crow_json_type = has_value ? rvalue.t() : crow::json::type::Null;
+            if (crow_json_type == crow::json::type::Null)
+            {
+                has_value = false;
+            }
             bool auto_value = col.is_auto();
             bool internal_value = col.is_internal();
 

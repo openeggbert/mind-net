@@ -23,7 +23,7 @@ namespace mindnet::plugins::slipbox::validators
         auto test = slipbox::find_test(ctx, entity.test_id);
         if (!test.second.empty()) return {400, test.second};
 
-        auto note = slipbox::find_note(ctx, test.first.note_id);
+        auto note = slipbox::find_note(ctx, test.first.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         // user must have read access to take test
@@ -78,7 +78,7 @@ namespace mindnet::plugins::slipbox::validators
         auto test = slipbox::find_test(ctx, test_id);
         if (!test.second.empty()) return {400, test.second};
 
-        auto note = slipbox::find_note(ctx, test.first.note_id);
+        auto note = slipbox::find_note(ctx, test.first.under_note_id);
         if (!note.second.empty()) return {400, note.second};
 
         if (!slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
@@ -95,6 +95,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TestAttemptValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (entity.user_id != ctx.token.user_id) return {400, "user_id must be id of your user."};
+        if (entity.started_at != 0) return {400, "started_at must be 0 during creation."};
         if (entity.finished_at != 0) return {400, "finished_at must be 0 during creation."};
         if (entity.score_times_100 != 0) return {400, "score_times_100 must be 0 during creation."};
         if (!entity.question_ids.empty()) return {400, "question_ids must be empty during creation."};
@@ -108,9 +109,11 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TestAttemptValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
+        bool started_at_was_default = old_entity.started_at == 0;
         bool finished_at_was_default = old_entity.finished_at == 0;
         bool score_times_100_was_default = old_entity.score_times_100 == 0;
         bool question_ids_was_default = old_entity.question_ids == "";
+        if (!started_at_was_default && old_entity.started_at != new_entity.started_at) return {400, "started_at cannot be changed, if already set"};
         if (!finished_at_was_default && old_entity.finished_at != new_entity.finished_at) return {400, "finished_at cannot be changed, if already set"};
         if (!score_times_100_was_default && old_entity.score_times_100 != new_entity.score_times_100) return {400, "score_times_100 cannot be changed, if already set"};
         if (!question_ids_was_default && old_entity.question_ids != new_entity.question_ids) return {400, "question_ids cannot be changed, if already set"};
