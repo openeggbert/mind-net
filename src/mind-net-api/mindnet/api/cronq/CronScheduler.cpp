@@ -251,6 +251,14 @@ namespace mindnet::api::cronq
             // ----------------------------------------------
             // RUN_AT_START: run exactly once at startup
             // ----------------------------------------------
+
+            if (!j.enabled)
+            {
+                j.next_run = std::chrono::system_clock::time_point::max();
+                update_next_run_in_db(j.job_id, 0);
+                continue;
+            }
+
             if (j.cron.run_at_start)
             {
                 auto* job_ptr = &j;
