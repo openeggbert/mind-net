@@ -42,6 +42,7 @@
 #include "mindnet/plugins/slipbox/triggers/InsteadOfReadNoteNavigationTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
+#include "mindnet/plugins/slipbox/jobs/HtmlExportJob.hpp"
 
 namespace mindnet::plugins::slipbox
 {
@@ -103,6 +104,7 @@ namespace mindnet::plugins::slipbox
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindPreviousAndNextNoteSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::GetQuestionIdsSQLiteQuery>());
 
+        plugin->register_job(std::make_shared<mindnet::plugins::slipbox::jobs::HtmlExportJob>());
         plugin->register_library_file("markdown-it.min.js");
         plugin->register_library_file("highlight.min.js");
         plugin->register_library_file("markdown-it-emoji.min.js");

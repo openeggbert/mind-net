@@ -55,6 +55,23 @@ namespace mindnet::util
         return {result};
     }
 
+    std::string Utils::unixtime_to_short_string(unixtime unixTimestampMs)
+    {
+        using namespace std::chrono;
+
+        auto tp = system_clock::time_point(milliseconds(unixTimestampMs));
+        std::time_t t = system_clock::to_time_t(tp);
+        std::tm tm = *std::localtime(&t);
+
+        return std::format("{:04}{:02}{:02}_{:02}{:02}{:02}",
+                           tm.tm_year + 1900,
+                           tm.tm_mon + 1,
+                           tm.tm_mday,
+                           tm.tm_hour,
+                           tm.tm_min,
+                           tm.tm_sec);
+    }
+
     string Utils::current_unixtime_to_string()
     {
         return Utils::unixtime_to_string(Utils::current_unix_timestamp_ms());

@@ -23,6 +23,7 @@ namespace mindnet::util
         static long long current_unix_timestamp_seconds();
         static long long current_unix_timestamp_ms();
         static string unixtime_to_string(unixtime unixTimestamp);
+        static std::string unixtime_to_short_string(unixtime unixTimestamp);
         static string current_unixtime_to_string();
         // static ll formattedStringToUnix(const std::string& formattedTime);
 
