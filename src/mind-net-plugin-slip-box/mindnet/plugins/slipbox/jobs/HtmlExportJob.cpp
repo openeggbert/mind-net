@@ -11,6 +11,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <map>
 
 #include "mindnet/plugins/slipbox/jobs/HtmlExportUtils.hpp"
 
@@ -55,6 +56,7 @@ namespace mindnet::plugins::slipbox::jobs
         {
             models::Map map;
             map.from_values(map_values);
+            if (map.name == "C++") map.name = "cppforever.com";
             auto export_map_dir = export_dir / map.name;
             try {
                 std::filesystem::create_directories(export_map_dir);
@@ -111,23 +113,23 @@ namespace mindnet::plugins::slipbox::jobs
             note.from_values(note_values);
             root_notes.push_back(note);
         }
-
+        auto author_display_name = author_.display_name.empty() ? author_.username : author_.display_name;
         {
             string index_html = plugin::slipbox::jobs::get_html_template();
 
             std::string empty_string;
-            string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(empty_string, empty_string, root_notes);
+            string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(false, empty_string, root_notes);
             std::map<string,string> placeholder_map =
             {
-                {note_title, map.name},
+                {note_title, "Home"},
                 {description_, map.name},
                 {keywords, map.name},
-                {author, author_.display_name.empty() ? author_.username : author_.display_name},
+                {author, author_display_name},
                 {map_name, map.name},
                 {base_href, "."},
                 {breadcrumb, "<span id=\"panel_current\">Home</span>"},
                 {hierarchy_panel, hierarchy_panel_html},
-                {html_content, map.description},
+                {html_content, plugin::slipbox::jobs::markdown_to_html(map.description)},
                             };
             index_html = plugin::slipbox::jobs::replace_placeholders(index_html, placeholder_map);
             std::ofstream index_html_file(export_map_dir / "index.html");
@@ -136,7 +138,7 @@ namespace mindnet::plugins::slipbox::jobs
 
         for (auto& note:root_notes)
         {
-            auto result = generate_page(note, token);
+            auto result = generate_page(note, token, author_display_name, map, export_map_dir);
             if (!result.empty()) return result;
         }
 
@@ -144,8 +146,87 @@ namespace mindnet::plugins::slipbox::jobs
         return "";
     }
 
-    std::string HtmlExportJob::generate_page(models::Note& note, api::AccessTokenContext& token)
+    std::string HtmlExportJob::generate_page(models::Note& note, api::AccessTokenContext& token, string& author_display_name, models::Map& map, std::filesystem::path& export_map_dir)
     {
+        string index_html = plugin::slipbox::jobs::get_html_template();
+
+
+
+
+
+        mindnet::orm::QueryParams query_params;
+        query_params.add_filter("map_id", map.get_id());
+        query_params.add_filter("parent_note_id", note.get_id());
+        query_params.sort = "sibling_order";
+        query_params.order = mindnet::orm::Order::Asc;
+        auto children_result = run_list(mindnet::plugins::slipbox::models::NOTE_DEFINITION, token, query_params, 0 );
+        if (children_result.second.ko()) return children_result.second.error;
+
+        std::vector<models::Note> children;
+        for (auto& note_values:children_result.first)
+        {
+            models::Note note_;
+            note_.from_values(note_values);
+            children.push_back(note_);
+        }
+
+        auto path_ids = plugin::slipbox::jobs::split_path_numbers(note.path);
+
+        string path__;
+        std::vector<std::string> parents;
+        for (auto& note_id:path_ids)
+        {
+            auto e = run_read(models::NOTE_DEFINITION, token, note_id, 0);
+            if (e.second.ko()) return e.second.error;
+            if (!path__.empty()) path__ += "/";
+            models::Note n;
+            n.from_values(e.first);
+            path__ += plugin::slipbox::jobs::normalize_text_for_url(n.title);
+            parents.push_back(n.title);
+
+        }
+        string breadcrumb_html = plugin::slipbox::jobs::generate_breadcrumb(parents, note.title);
+        string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(true, path__, children);
+
+        string base_href_;
+        for (int i = 1; i <= (note.depth + 1);i++)
+        {
+            if (!base_href_.empty()) base_href_ += "/";
+            base_href_+="..";
+        }
+        models::Content content;
+
+        if (note.content_id != 0) {
+        auto read_content = run_read(models::CONTENT_DEFINITION, token, note.content_id, 0);
+        if (read_content.second.ko()) return read_content.second.error;
+        content.from_values(read_content.first);
+        }
+
+        std::map<string,string> placeholder_map =
+        {
+            {note_title, note.title},
+            {description_, note.title},
+            {keywords, note.title},
+            {author, author_display_name},
+            {map_name, map.name},
+            {base_href, base_href_},
+            {breadcrumb, breadcrumb_html},
+            {hierarchy_panel, hierarchy_panel_html},
+            {html_content, note.content_id == 0 ? "" :plugin::slipbox::jobs::markdown_to_html(content.value)},
+                        };
+        index_html = plugin::slipbox::jobs::replace_placeholders(index_html, placeholder_map);
+        auto dir = export_map_dir / path__ ;
+        std::filesystem::create_directories(dir);
+        auto index_html_path = dir / "index.html";
+        debug << "index_html_path=" << index_html_path << commit;
+        std::ofstream index_html_file(index_html_path);
+
+        index_html_file << index_html;
+
+        for (auto& n: children)
+        {
+            auto result = generate_page(n, token, author_display_name, map, export_map_dir);
+        }
         return "";
     }
 

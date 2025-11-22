@@ -8,6 +8,7 @@
 #include "mindnet/plugins/slipbox/models/Test.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
+#include "mindnet/util/Utils.hpp"
 
 #define Model TestAttemptAnswer
 #define MODEL TEST_ATTEMPT_ANSWER
