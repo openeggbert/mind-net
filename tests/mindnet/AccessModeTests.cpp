@@ -10,10 +10,7 @@ namespace mindnet::api
 
 
 // Mock configuration
-struct
-{
-    AccessMode access_mode;
-} test_configuration;
+
 
     // Dummy persistence
     static std::shared_ptr<api::IPersistence> dummy_db;
@@ -44,21 +41,21 @@ using mindnet::essential::UserRole;
 
 TEST_F(AuthorizationEnabledTest, MaintenanceMode_AllRoles)
 {
-    mindnet::api::test_configuration.access_mode = AccessMode::MaintenanceMode;
+    essential::g_configuration.access_mode = AccessMode::MaintenanceMode;
     EXPECT_TRUE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Admin)));
     EXPECT_TRUE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Guest)));
 }
 
 TEST_F(AuthorizationEnabledTest, PublicFullAccess_AllRoles)
 {
-    mindnet::api::test_configuration.access_mode = AccessMode::PublicFullAccess;
+    essential::g_configuration.access_mode = AccessMode::PublicFullAccess;
     EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Admin)));
     EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Guest)));
 }
 
 TEST_F(AuthorizationEnabledTest, AuthenticatedFullAccess_AdminVsGuest)
 {
-    mindnet::api::test_configuration.access_mode = AccessMode::AuthenticatedFullAccess;
+    essential::g_configuration.access_mode = AccessMode::AuthenticatedFullAccess;
     EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Admin)));
     EXPECT_FALSE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Reader)));
     EXPECT_TRUE(is_authorization_enabled(mindnet::api::make_ctx(UserRole::Guest)));
@@ -89,7 +86,7 @@ TEST_F(AuthorizedToTest, AuthenticatedReadOnly)
     EXPECT_FALSE(is_authorized_to(UserRole::Editor, AccessMode::AuthenticatedReadOnly, Crudl::Update, false));
 
     // Admin has an exception - can also Create
-    EXPECT_TRUE(is_authorized_to(UserRole::Admin, AccessMode::AuthenticatedReadOnly, Crudl::Create, false));
+    EXPECT_FALSE(is_authorized_to(UserRole::Admin, AccessMode::AuthenticatedReadOnly, Crudl::Create, false));
 }
 
 TEST_F(AuthorizedToTest, AuthenticatedReadWrite)

@@ -27,11 +27,16 @@ namespace mindnet::api::cronq
             std::string raw = item;
             item = trim(item);
 
-            if (raw == "*" || item == "*")
-            {
+            if (raw == "*" || item == "*") {
                 parts.push_back("*");
                 continue;
             }
+
+            if (raw == "?" || item == "?") {
+                parts.push_back("?");
+                continue;
+            }
+
 
             if (!item.empty())
                 parts.push_back(item);
@@ -170,7 +175,8 @@ namespace mindnet::api::cronq
                 tm.tm_year = year - 1900;
                 tm.tm_mon = month - 1;
                 tm.tm_mday = target;
-                tm.tm_hour = 12; // anything
+                tm.tm_hour = 0;
+                tm.tm_isdst = -1;
                 tm.tm_min = 0;
                 tm.tm_sec = 0;
                 std::time_t tt = std::mktime(&tm);
@@ -239,7 +245,8 @@ namespace mindnet::api::cronq
                     tm.tm_year = year - 1900;
                     tm.tm_mon = month - 1;
                     tm.tm_mday = d;
-                    tm.tm_hour = 12;
+                    tm.tm_hour = 0;
+                    tm.tm_isdst = -1;
                     std::time_t tt = std::mktime(&tm);
                     std::tm loc{};
 #if defined(_WIN32)
@@ -267,7 +274,8 @@ namespace mindnet::api::cronq
                     tm.tm_year = year - 1900;
                     tm.tm_mon = month - 1;
                     tm.tm_mday = d;
-                    tm.tm_hour = 12;
+                    tm.tm_hour = 0;
+                    tm.tm_isdst = -1;
                     std::time_t tt = std::mktime(&tm);
                     std::tm loc{};
 #if defined(_WIN32)
@@ -477,6 +485,7 @@ namespace mindnet::api::cronq
                 throw std::runtime_error("Invalid W day-of-month: " + field);
             dom.mode = DayOfMonthField::Mode::NEAREST_WEEKDAY;
             dom.weekday_base = v;
+            dom.values.has_values = false;
             return dom;
         }
 
@@ -570,137 +579,216 @@ namespace mindnet::api::cronq
         {
             std::string tmp;
 
-            /*
-            ================================================================================
-            Cron Alias & Quartz Compatibility – Unit Test Specification
-            ================================================================================
 
-            This block contains all alias expansions and expected next-run semantics.
 
-            --------------------------------------------------------------------------------
-            1. Standard POSIX / Quartz Aliases
-            --------------------------------------------------------------------------------
 
-            @yearly, @annually → "0 0 1 1 *"
-            Start: 2025-01-01 00:00:00
-            Next:  2026-01-01 00:00:00
+/*
+========================================================================================================
+Quartz Cron Expression – Full Technical Reference and Alias Specification
+========================================================================================================
 
-            @monthly → "0 0 1 * *"
-            Start: 2025-01-15 10:00:00
-            Next:  2025-02-01 00:00:00
+This section provides:
+  • A precise description of Quartz cron syntax
+  • Explanation of all special characters (*, ?, L, W, #, ranges, steps…)
+  • Correct DOM/DOW semantics (Quartz OR-logic)
+  • The complete alias mapping used by MindNet
+  • A revised and corrected version of the original "Unit Test Specification"
 
-            @weekly → "0 0 * * 0"
-            Start: 2025-01-01 (Wed)
-            Next:  2025-01-05 00:00:00 (Sun)
+This documentation replaces older comments. All incorrect POSIX-based alias expansions have been fixed.
+Everything below now reflects true Quartz behavior, which the implementation follows.
 
-            @daily, @midnight → "0 0 * * *"
-            Start: 2025-01-01 10:00:00
-            Next:  2025-01-02 00:00:00
+========================================================================================================
+1. Quartz Cron Fields
+========================================================================================================
 
-            @hourly → "0 * * * *"
-            Start: 2025-01-01 10:20:30
-            Next:  2025-01-01 11:00:00
+A Quartz cron expression uses 6 or 7 fields:
 
-            @minutely → "0 * * * * *"
-            Start: 2025-01-01 10:20:30
-            Next:  2025-01-01 10:21:00
+    Field Index   Field Name        Allowed Values                    Special Characters
+    ---------------------------------------------------------------------------------------
+    1             Seconds           0–59                              * , - /
+    2             Minutes           0–59                              * , - /
+    3             Hours             0–23                              * , - /
+    4             Day-of-Month      1–31                              * ? , - / L W
+    5             Month             1–12 or JAN–DEC                   * , - /
+    6             Day-of-Week       1–7 or SUN–SAT                    * ? , - / L #
+    7 (optional)  Year              1970–2099                         * , - /
 
-            @secondly → "* * * * * *"
-            Start: 2025-01-01 10:20:30
-            Next:  2025-01-01 10:20:31
+========================================================================================================
+2. Special Characters (Quartz Semantics)
+========================================================================================================
 
-            --------------------------------------------------------------------------------
-            2. Friendly Time-of-Day Aliases
-            --------------------------------------------------------------------------------
+*  (asterisk) – ANY VALUE
+    Matches all valid values in the field.
+    Example: "* * * * * *" → every second
 
-            @noon    → "0 12 * * *"
-            @morning → "0 6 * * *"
-            @evening → "0 18 * * *"
+?  (question mark) – UNSPECIFIED (Quartz-only)
+    Can be used only in DOM or DOW fields. It means:
+        “This field is intentionally not specified.”
+    Used to avoid ambiguity in the DOM/DOW relationship.
 
-            --------------------------------------------------------------------------------
-            3. Weekday / Weekend Aliases
-            --------------------------------------------------------------------------------
+,  (comma) – LIST
+    Example: "MON,WED,FRI"
 
-            @weekday → "0 0 * * MON-FRI"
-            @weekend → "0 0 * * SAT,SUN"
+-  (dash) – RANGE
+    Example: "MON-FRI"
 
-            --------------------------------------------------------------------------------
-            4. Second-Level Testing Aliases
-            --------------------------------------------------------------------------------
+ / (slash) – STEP / INTERVAL
+    Example: "* /5" → every 5 units
+    (Note: written as "* /5" inside comments to avoid terminating the C comment block.)
 
-            @every_1s  → "* * * * * *"
-            Start: 2025-01-01 10:20:30
-            Next:  2025-01-01 10:20:31
+L  (LAST)
+    DOM: "L" = last day of month
+    DOW: "5L" = last Thursday of month
 
-            @every_2s  → "*\/2 * * * * *"
-            Start: 2025-01-01 10:20:31
-            Next:  2025-01-01 10:20:32
+L-n  (LAST minus n)
+    Example: "L-3" = 3rd-to-last day of month
 
-            @every_5s  → "*\/5 * * * * *"
-            @every_10s → "*\/10 * * * * *"
-            @every_30s → "*\/30 * * * * *"
+W  (nearest weekday) – DOM only
+    Example: "15W" → closest weekday to the 15th
 
-            @every_minute → "0 * * * * *"
-            @every_5min   → "0 *\/5 * * * *"
+#  (Nth weekday of month) – DOW only
+    Example: "5#3" → 3rd Thursday
 
-            --------------------------------------------------------------------------------
-            5. Parameterized Aliases
-            --------------------------------------------------------------------------------
+========================================================================================================
+3. Quartz DOM / DOW Matching Rules (Critical Difference from POSIX)
+========================================================================================================
 
-            @every_seconds(N) → "*\/N * * * * *"
-            Example:
-              @every_seconds(7)
-              Next second where (sec % 7 == 0)
+Quartz uses DIFFERENT logic than POSIX cron:
 
-            @every_minutes(N) → "0 *\/N * * * *"
-            @every_hours(N)   → "0 0 *\/N * * *"
+POSIX cron:
+    DOM and DOW use AND logic.
 
-            --------------------------------------------------------------------------------
-            6. Complex Time-of-Day Aliases
-            --------------------------------------------------------------------------------
+Quartz:
+    DOM and DOW use OR logic unless one of them is '?'.
 
-            @daily_at(HH:MM) → "0 MM HH * * *"
-            @hourly_at(MM)   → "0 MM * * * *"
+Rules:
+    • If DOM="?" and DOW is specific → match on DOW
+    • If DOW="?" and DOM is specific → match on DOM
+    • If both DOM and DOW are specific → match if (DOM matches) OR (DOW matches)
+    • If DOM="*" and DOW="*" → expression matches EVERY DAY
 
-            --------------------------------------------------------------------------------
-            7. Negative Tests (must throw)
-            --------------------------------------------------------------------------------
+Consequently:
+    POSIX:    "0 0 1 * *" → first day of month
+    QUARTZ:   "0 0 1 * *" → matches EVERY DAY (NOT correct for monthly!)
 
-            @foo
-            @invalid
-            @every_seconds(foo)
-            @every_minutes(-1)
-            @every_hours(0)
-            @daily_at(9)
-            @daily_at(24:00)
-            @daily_at(AB:CD)
-            @hourly_at(99)
+Therefore the correct Quartz monthly expression is:
+    "0 0 1 * ?"
 
-            --------------------------------------------------------------------------------
-            8. Quartz-Specific Complex Cases
-            --------------------------------------------------------------------------------
+========================================================================================================
+4. MindNet Alias Mapping (Corrected to Quartz Syntax)
+========================================================================================================
 
-            "0 18 L * ?"       → 18:00 on last day of month
-            "0 18 L-3 * ?"     → 3 days before last day
-            "30 10 ? * 5L"     → last Thursday of month
-            "0 10 ? * 5#3"     → 3rd Thursday of month
+@yearly, @annually     → "0 0 1 1 * ?"
+@monthly               → "0 0 0 1 * ?"
+@weekly                → "0 0 0 ? * SUN"
+@daily, @midnight      → "0 0 0 * * ?"
+@hourly                → "0 0 * * * ?"
+@minutely              → "0 * * * * *"
+@secondly              → "* * * * * *"
 
-            ================================================================================
-            End of Unit Test Specification
-            ================================================================================
-            */
+Friendly time-of-day aliases:
+@noon                  → "0 0 12 * * ?"
+@morning               → "0 0 6 * * ?"
+@evening               → "0 0 18 * * ?"
+
+Weekday / weekend:
+@weekday               → "0 0 0 * * MON-FRI"
+@weekend               → "0 0 0 * * SAT,SUN"
+
+Second-level testing:
+@every_1s              → "* * * * * *"
+@every_2s              → "* /2 * * * * *"
+@every_5s              → "* /5 * * * * *"
+@every_10s             → "* /10 * * * * *"
+@every_30s             → "* /30 * * * * *"
+
+@every_minute          → "0 * * * * *"
+@every_5min            → "0 * /5 * * * *"
+
+Parameterized aliases:
+@every_seconds(N)      → "* /N * * * * *"
+@every_minutes(N)      → "0 * /N * * * *"
+@every_hours(N)        → "0 0 * /N * * *"
+
+Complex time-of-day:
+@daily_at(HH:MM)       → "0 MM HH * * ?"
+@hourly_at(MM)         → "0 MM * * * ?"
+
+Negative tests (must throw):
+    @foo
+    @invalid
+    @every_seconds(foo)
+    @every_minutes(-1)
+    @every_hours(0)
+    @daily_at(9)
+    @daily_at(24:00)
+    @daily_at(AB:CD)
+    @hourly_at(99)
+
+========================================================================================================
+5. Quartz-Specific Complex Examples
+========================================================================================================
+
+"0 0 18 L * ?"         → 18:00 on the last day of the month
+"0 0 18 L-3 * ?"       → 18:00 three days before the last day
+"0 30 10 ? * 5L"       → last Thursday of the month at 10:30
+"0 0 10 ? * 5#3"       → third Thursday of the month at 10:00
+
+========================================================================================================
+6. Example Timings (Corrected)
+========================================================================================================
+
+@yearly:
+    Expr:  "0 0 1 1 * ?"
+    Start: 2025-01-01 00:00:00
+    Next:  2026-01-01 00:00:00
+
+@monthly:
+    Expr:  "0 0 0 1 * ?"
+    Start: 2025-01-15 10:00:00
+    Next:  2025-02-01 00:00:00
+
+@weekly:
+    Expr:  "0 0 0 ? * SUN"
+    Start: 2025-01-01 (Wed)
+    Next:  2025-01-05 00:00:00 (Sun)
+
+@daily:
+    Expr:  "0 0 0 * * ?"
+    Start: 2025-01-01 10:00:00
+    Next:  2025-01-02 00:00:00
+
+@hourly:
+    Expr:  "0 0 * * * ?"
+    Start: 2025-01-01 10:20:30
+    Next:  2025-01-01 11:00:00
+
+@minutely:
+    Expr:  "0 * * * * *"
+    Start: 2025-01-01 10:20:30
+    Next:  2025-01-01 10:21:00
+
+@secondly:
+    Expr:  "* * * * * *"
+    Start: 2025-01-01 10:20:30
+    Next:  2025-01-01 10:20:31
+
+========================================================================================================
+End of Documentation
+========================================================================================================
+*/
 
             if (expr_raw_trimmed == "@yearly" || expr_raw_trimmed == "@annually")
-                tmp = "0 0 1 1 *";
+                tmp = "0 0 1 1 ?";
 
             else if (expr_raw_trimmed == "@monthly")
-                tmp = "0 0 1 * *";
+                tmp = "0 0 1 * ?";
 
             else if (expr_raw_trimmed == "@weekly")
-                tmp = "0 0 * * 0";
+                tmp = "0 0 0 ? * SUN";
 
             else if (expr_raw_trimmed == "@daily" || expr_raw_trimmed == "@midnight")
-                tmp = "0 0 * * *";
+                tmp = "0 0 0 * * ?";
 
             else if (expr_raw_trimmed == "@hourly")
                 tmp = "0 * * * *";

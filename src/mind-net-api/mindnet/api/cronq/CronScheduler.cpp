@@ -241,7 +241,6 @@ namespace mindnet::api::cronq
         return true;
     }
 
-
     void CronScheduler::compute_initial_next_runs()
     {
         auto now = system_clock::now();

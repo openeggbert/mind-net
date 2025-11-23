@@ -8,7 +8,7 @@
 
 namespace mindnet::plugins::core::jobs
 {
-    CleanupHistoryOrphansJob::CleanupHistoryOrphansJob()
+    CleanupHistoryOrphansJob::CleanupHistoryOrphansJob(void)
         : Job(
             "CleanupHistoryOrphansJob",
             "CleanupHistoryOrphansJob",

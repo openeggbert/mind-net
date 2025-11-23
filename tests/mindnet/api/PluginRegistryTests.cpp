@@ -33,6 +33,7 @@ TEST(PluginRegistryTest, PluginDependsOnCore)
     auto core = make_plugin("core");
     auto a = make_plugin("A"); // automatically has dependency on core
 
+    mindnet::essential::g_configuration.allowed_plugins.insert("A");
     registry.register_plugin(core);
     registry.register_plugin(a);
 
@@ -53,6 +54,9 @@ TEST(PluginRegistryTest, MultipleIndependentPlugins)
     auto core = make_plugin("core");
     auto a = make_plugin("A");
     auto b = make_plugin("B");
+
+    mindnet::essential::g_configuration.allowed_plugins.insert("A");
+    mindnet::essential::g_configuration.allowed_plugins.insert("B");
 
     registry.register_plugin(core);
     registry.register_plugin(a);
@@ -76,6 +80,7 @@ TEST(PluginRegistryTest, MissingDependencyThrows)
     auto core = make_plugin("core");
     // plugin C has explicit dependency on X (which doesn't exist)
     auto c = make_plugin("C", {}, {"X"});
+    mindnet::essential::g_configuration.allowed_plugins.insert("C");
 
     registry.register_plugin(core);
     registry.register_plugin(c);
@@ -92,6 +97,8 @@ TEST(PluginRegistryTest, CyclicDependencyThrows)
     auto core = make_plugin("core");
     auto a = make_plugin("A", {},{"B"}); // A depends on B (+ core)
     auto b = make_plugin("B", {},{"A"}); // B depends on A (+ core)
+    mindnet::essential::g_configuration.allowed_plugins.insert("A");
+    mindnet::essential::g_configuration.allowed_plugins.insert("B");
 
     registry.register_plugin(core);
     registry.register_plugin(a);
