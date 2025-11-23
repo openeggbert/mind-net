@@ -49,10 +49,9 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 
 ### Backend
-
+- [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] All ID fields should be migrated from integer to int64_t (i64) type for consistency and future compatibility
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
-- [ ] FEATURE Support for export to static HTML files
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
 - [ ] IMPROVEMENT QueryParam - add filter(complex json filtering) and query (like '%_%')
@@ -216,3 +215,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Previous next in slipbox plugin
 - [x] Path in slipbox plugin
 - [x] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
+- [x] FEATURE Support for export to static HTML files
