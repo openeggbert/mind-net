@@ -1,6 +1,26 @@
-//
-// Created by robertvokac on 9/7/25.
-//
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #pragma once
 
 #include "expected"
@@ -14,6 +34,7 @@
 #include "mindnet/model/BaseModel.hpp"
 
 #include "mindnet/essential/DatabaseType.hpp"
+
 
 #define create_method_prototypes_for_ValidatorBase(M)\
 mindnet::api::OperationResult validate_create_integrity(const RequestContext&, const M& entity) const ;\
@@ -90,7 +111,7 @@ namespace mindnet::api
     public:
         virtual ~ValidatorBase() = default;
 
-        OperationResult can_create(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const
+        OperationResult can_create(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const override
         {
             auto action = Crudl::Create;
             static_assert(
@@ -145,7 +166,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, i64 id) const
+        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, i64 id) const override
         {
             auto action = Crudl::Read;
             static_assert(
@@ -197,7 +218,7 @@ namespace mindnet::api
         }
 
         OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& new_fields,
-                                   entity_fields& old_fields) const
+                                   entity_fields& old_fields) const override
         {
             auto action = Crudl::Update;
             static_assert(
@@ -293,7 +314,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, i64 id) const
+        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, i64 id) const override
         {
             auto action = Crudl::Delete;
             static_assert(
@@ -340,7 +361,7 @@ namespace mindnet::api
             return ok_result;
         };
 
-        OperationResult can_list(DbPtr& db, api::AccessTokenContext& token, string_map& filter) const
+        OperationResult can_list(DbPtr& db, api::AccessTokenContext& token, string_map& filter) const override
         {
             auto action = Crudl::List;
             static_assert(
@@ -382,10 +403,10 @@ namespace mindnet::api
 
             return ok_result;
         };
-        [[nodiscard]] virtual string get_model_name() const = 0;
+        [[nodiscard]] string get_model_name() const override = 0;
 
         void set_validator_func(GetValidatorFunc func) override { get_validator_func_ = func; }
-        [[nodiscard]] GetValidatorFunc get_validator_func() const { return get_validator_func_; }
+        [[nodiscard]] GetValidatorFunc get_validator_func() const override { return get_validator_func_; }
 
     private:
         const Derived& derived() const { return static_cast<const Derived&>(*this); }

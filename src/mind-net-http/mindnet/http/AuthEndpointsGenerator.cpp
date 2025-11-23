@@ -1,6 +1,26 @@
-//
-// Created by robertvokac on 9/24/25.
-//
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 
 #include "mindnet/http/AuthEndpointsGenerator.hpp"
 
@@ -18,6 +38,7 @@
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/plugins/core/validators/AccessTokenValidator.hpp"
 #include "mindnet/util/Utils.hpp"
+
 
 namespace mindnet::http
 {
@@ -101,7 +122,7 @@ namespace mindnet::http
             auto result = service_ptr->create(
                 plugins::core::models::AUTH_LOG_DEFINITION,
                 login_token,
-                log);
+                log, 0);
             if (result.second.ko())
             {
                 essential::warn << "Saving record to the table auth_log failed for this reason: " << result.second.error
@@ -130,7 +151,7 @@ namespace mindnet::http
                 query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
 
                 auto users = service_ptr.get()->
-                                         list(plugins::core::models::USER_DEFINITION, system_token, query_params);
+                                         list(plugins::core::models::USER_DEFINITION, system_token, query_params, 0);
                 if (users.second.ko())
                 {
                     log_request(service_ptr, req, system_token, 500, 0,
@@ -189,7 +210,7 @@ namespace mindnet::http
                     auto result = service_ptr->create(
                         plugins::core::models::ACCESS_TOKEN_DEFINITION,
                         system_token,
-                        access_token_values);
+                        access_token_values, 0);
                     if (result.second.ko())
                     {
                         log_request(service_ptr, req, system_token, 401, 0,
@@ -218,7 +239,7 @@ namespace mindnet::http
                     auto result = service_ptr->create(
                         plugins::core::models::REFRESH_TOKEN_DEFINITION,
                         system_token,
-                        refresh_token_values);
+                        refresh_token_values, 0);
                     if (result.second.ko())
                     {
                         log_request(service_ptr, req, system_token, 401, 0,
@@ -250,7 +271,7 @@ namespace mindnet::http
                     auto result = service_ptr->create(
                         plugins::core::models::LOGIN_SESSION_DEFINITION,
                         system_token,
-                        login_session_values);
+                        login_session_values, 0);
                     if (result.second.ko())
                     {
                         log_request(service_ptr, req, system_token, 401, 0,
@@ -308,7 +329,7 @@ namespace mindnet::http
                 orm::QueryParams query;
                 query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
                 auto tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, token_to_be_used,
-                                                query);
+                                                query, 0);
                 if (tokens.second.ko())
                 {
                     log_request(service_ptr, req, token_to_be_used, 500, 0,
@@ -329,7 +350,7 @@ namespace mindnet::http
                 refresh.revoked_at = now;
                 auto v = refresh.to_values();
                 auto refresh_updated = service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION,
-                                                           token_to_be_used, refresh.get_id(), v);
+                                                           token_to_be_used, refresh.get_id(), v, 0);
                 if (refresh_updated.ko())
                 {
                     log_request(service_ptr, req, token_to_be_used, 500, 0,
@@ -343,7 +364,7 @@ namespace mindnet::http
                                          std::to_string(refresh.get_id()));
                 auto sessions_listed = service_ptr->list(plugins::core::models::LOGIN_SESSION_DEFINITION,
                                                          token_to_be_used,
-                                                         session_query);
+                                                         session_query, 0);
                 if (sessions_listed.second.ko())
                 {
                     log_request(service_ptr, req, token_to_be_used, 500, 0,
@@ -357,7 +378,7 @@ namespace mindnet::http
                     session.expires_at = now; // or session.is_revoked = 1, if you have the flag
                     auto session_values = session.to_values();
                     auto session_updated = service_ptr->update(plugins::core::models::LOGIN_SESSION_DEFINITION,
-                                                               token_to_be_used, session.get_id(), session_values);
+                                                               token_to_be_used, session.get_id(), session_values, 0);
 
                     if (session_updated.ko())
                     {
@@ -372,7 +393,7 @@ namespace mindnet::http
                 access_query.add_filter(plugins::core::columns::AccessTokenColumns::USER_ID,
                                         std::to_string(refresh.user_id));
                 auto accesses_listed = service_ptr->list(plugins::core::models::ACCESS_TOKEN_DEFINITION,
-                                                         token_to_be_used, access_query);
+                                                         token_to_be_used, access_query, 0);
                 if (accesses_listed.second.ko())
                 {
                     log_request(service_ptr, req, token_to_be_used, 500, 0,
@@ -387,7 +408,7 @@ namespace mindnet::http
                     access.revoked_at = now;
                     auto access_token_values = access.to_values();
                     auto access_updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION,
-                                                              token_to_be_used, access.get_id(), access_token_values);
+                                                              token_to_be_used, access.get_id(), access_token_values, 0);
 
                     if (access_updated.ko())
                     {
@@ -423,7 +444,7 @@ namespace mindnet::http
                 // 1. Find refresh token
                 orm::QueryParams query;
                 query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
-                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, system_token, query);
+                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, system_token, query, 0);
                 if (result.second.ko())
                 {
                     log_request(service_ptr, req, system_token, result.second.status, 0, result.second.error);
@@ -465,7 +486,7 @@ namespace mindnet::http
                 auto create_res = service_ptr->create(
                     plugins::core::models::ACCESS_TOKEN_DEFINITION,
                     system_token,
-                    values
+                    values, 0
                 );
 
                 if (create_res.second.ko())
@@ -502,7 +523,7 @@ namespace mindnet::http
                         plugins::core::models::REFRESH_TOKEN_DEFINITION,
                         system_token,
                         refresh.get_id(),
-                        old_vals
+                        old_vals, 0
                     );
                     if (upd.ko())
                     {
@@ -532,7 +553,7 @@ namespace mindnet::http
                     auto new_res = service_ptr->create(
                         plugins::core::models::REFRESH_TOKEN_DEFINITION,
                         system_token,
-                        new_vals
+                        new_vals, 0
                     );
                     if (new_res.second.ko())
                     {
@@ -549,7 +570,7 @@ namespace mindnet::http
                         plugins::core::models::REFRESH_TOKEN_DEFINITION,
                         system_token,
                         refresh.get_id(),
-                        link_vals
+                        link_vals, 0
                     );
 
                     // return new refresh token to client
@@ -568,7 +589,7 @@ namespace mindnet::http
                         plugins::core::models::REFRESH_TOKEN_DEFINITION,
                         system_token,
                         refresh.get_id(),
-                        rv
+                        rv, 0
                     );
                     // no refresh token returned to client
                 }
@@ -615,7 +636,7 @@ namespace mindnet::http
                 query_params.add_filter(plugins::core::columns::UserColumns::USERNAME, username);
                 query_params.fields = {plugins::core::columns::UserColumns::USERNAME};
 
-                auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, ctx, query_params);
+                auto users = service_ptr.get()->list(plugins::core::models::USER_DEFINITION, ctx, query_params, 0);
                 if (users.second.ko())
                 {
                     log_request(service_ptr, req, ctx, 500, 0,
@@ -642,7 +663,7 @@ namespace mindnet::http
 
                 auto fields_ = user.to_values();
                 auto create_result = service_ptr.get()->
-                                                 create(plugins::core::models::USER_DEFINITION, ctx, fields_);
+                                                 create(plugins::core::models::USER_DEFINITION, ctx, fields_, 0);
                 if (create_result.second.ko())
                 {
                     log_request(service_ptr, req, ctx, 400, 0, "Registration failed. " + create_result.second.error);
@@ -683,7 +704,7 @@ namespace mindnet::http
 
                 // 1. Load user
                 auto user_id = ctx.user_id;
-                auto user_res = service_ptr->read(plugins::core::models::USER_DEFINITION, ctx, user_id);
+                auto user_res = service_ptr->read(plugins::core::models::USER_DEFINITION, ctx, user_id, 0);
                 if (user_res.second.ko())
                 {
                     log_request(service_ptr, req, ctx, 500, 0, "Failed to load user: " + user_res.second.error);
@@ -721,7 +742,7 @@ namespace mindnet::http
                     plugins::core::models::USER_DEFINITION,
                     ctx,
                     user.get_id(),
-                    v
+                    v, 0
                 );
                 ctx.system = false;
 
@@ -736,7 +757,7 @@ namespace mindnet::http
                 refresh_query.add_filter(plugins::core::columns::RefreshTokenColumns::USER_ID,
                                          std::to_string(user.get_id()));
                 auto refresh_tokens = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx,
-                                                        refresh_query);
+                                                        refresh_query, 0);
                 auto now = util::Utils::current_unix_timestamp_ms();
                 for (auto& r : refresh_tokens.first)
                 {
@@ -745,7 +766,7 @@ namespace mindnet::http
                     t.is_revoked = true;
                     t.revoked_at = now;
                     auto tv = t.to_values();
-                    service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, t.get_id(), tv);
+                    service_ptr->update(plugins::core::models::REFRESH_TOKEN_DEFINITION, ctx, t.get_id(), tv, 0);
                 }
 
                 log_request(service_ptr, req, ctx, 200, 0, "");

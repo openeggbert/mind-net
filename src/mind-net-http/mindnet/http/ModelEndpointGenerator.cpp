@@ -1,6 +1,26 @@
-//
-// Created by robertvokac on 8/16/25.
-//
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 
 #include "mindnet/http/ModelEndpointGenerator.hpp"
 #include "crow.h"
@@ -10,6 +30,7 @@
 #include "mindnet/http/RestHelper.hpp"
 #include "mindnet/plugins/core/models/ApiLog.hpp"
 #include "mindnet/http/HttpUtils.hpp"
+
 
 using mindnet::essential::g_configuration;
 
@@ -65,7 +86,7 @@ namespace mindnet::http
             auto result = service_ptr->create(
                 plugins::core::models::API_LOG_DEFINITION,
                 token_to_be_used,
-                log);
+                log, 0);
             if (result.second.ko())
             {
                 warn << "Saving record to the table api_log failed for this reason: " << result.second.error <<
@@ -110,7 +131,7 @@ namespace mindnet::http
                     + def.get_model_name() + ".");
             }
 
-            auto last_inserted_id = service_ptr.get()->create(def, login_token, fields);
+            auto last_inserted_id = service_ptr.get()->create(def, login_token, fields, 0);
             if (last_inserted_id.first == -1)
             {
                 log_request(service_ptr, req, login_token, 500, 0,
@@ -147,7 +168,7 @@ namespace mindnet::http
             int error_http_status{0};
             try
             {
-                auto read_result = service_ptr->read(def, login_token, id);
+                auto read_result = service_ptr->read(def, login_token, id, 0);
                 if (read_result.second.ko())
                 {
                     error = read_result.second.error;
@@ -227,7 +248,7 @@ namespace mindnet::http
                     + def.get_model_name() + ".");
             }
 
-            auto success = service_ptr->update(def, login_token, id, fields);
+            auto success = service_ptr->update(def, login_token, id, fields, 0);
             if (success.ko())
             {
                 log_request(service_ptr, req, login_token, 404, id,
@@ -260,7 +281,7 @@ namespace mindnet::http
                 return crow::response(405, "Method not allowed for model " + def.get_model_name() + ".");
             }
 
-            auto success = service_ptr->remove(def, login_token, id);
+            auto success = service_ptr->remove(def, login_token, id, 0);
 
             if (success.ko())
             {
@@ -341,7 +362,7 @@ namespace mindnet::http
                 query_params.add_filter(column.get_column_name(), value);
             }
 
-            auto all_records = service_ptr->list(def, login_token, query_params);
+            auto all_records = service_ptr->list(def, login_token, query_params, 0);
             if (all_records.second.ko())
             {
                 log_request(service_ptr, req, login_token, all_records.second.status, 0,

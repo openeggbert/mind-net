@@ -1,6 +1,26 @@
-//
-// Created by robertvokac on 9/13/25.
-//
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #pragma once
 
 #include "crow/json.h"
@@ -9,6 +29,7 @@
 #include "IValidator.hpp"
 #include "IPersistence.hpp"
 #include "PluginRegistry.hpp"
+
 
 namespace mindnet::api
 {
@@ -30,21 +51,21 @@ namespace mindnet::api
         virtual nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) = 0;
         //
         virtual std::pair<i64, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
-                                                       entity_fields& fields, int stack_depth = 0) = 0;
+                                                       entity_fields& fields, int stack_depth) = 0;
         virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def,
                                                                api::AccessTokenContext& token,
-                                                               i64 id, int stack_depth = 0) = 0;
+                                                               i64 id, int stack_depth) = 0;
         virtual OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
-                                       entity_fields& fields, int stack_depth = 0) = 0;
+                                       entity_fields& fields, int stack_depth) = 0;
         virtual OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
-                                       int stack_depth = 0) = 0;
+                                       int stack_depth) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
-            int stack_depth = 0) = 0;
+            int stack_depth) = 0;
 
         std::pair<int, OperationResult> count(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
-            int stack_depth = 0)
+            int stack_depth)
         {
             auto result = list(def, token, query_params, stack_depth);
             return {result.second.ko() ? 0 : result.first.size(), result.second};
@@ -52,7 +73,7 @@ namespace mindnet::api
 
         std::pair<bool, OperationResult> exists(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
-            int stack_depth = 0)
+            int stack_depth)
         {
             auto result = count(def, token, query_params, stack_depth);
             return {result.second.ko() ? false : result.first > 0, result.second};
@@ -60,7 +81,7 @@ namespace mindnet::api
 
         std::pair<bool, OperationResult> empty(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
-            int stack_depth = 0)
+            int stack_depth)
         {
             auto result = count(def, token, query_params, stack_depth);
             return {result.second.ko() ? false : result.first == 0, result.second};

@@ -1,9 +1,27 @@
-//
-// Created by robertvokac on 7/31/25.
-//
-//
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
-//
+
 #include <iostream>
 #include <filesystem>
 
@@ -27,6 +45,7 @@
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
 #include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
+
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;
@@ -119,7 +138,7 @@ bool commands_function_start(
     mindnet::api::AccessTokenContext system_token{0, "system", 403, true};
 
     mindnet::orm::QueryParams params;
-    auto users = service_ptr->list(mindnet::plugins::core::models::USER_DEFINITION, system_token, params);
+    auto users = service_ptr->list(mindnet::plugins::core::models::USER_DEFINITION, system_token, params, 0);
     if (users.second.ko())
     {
         fatal << "Loading list of users during the start of application failed: " << users.second.ko() << commit;
@@ -144,7 +163,7 @@ bool commands_function_start(
         user_to_values[2] = mindnet::util::Utils::current_unix_timestamp_ms();
         auto create_result = service_ptr.get()->
                                          create(mindnet::plugins::core::models::USER_DEFINITION, system_token,
-                                                user_to_values);
+                                                user_to_values, 0);
         if (create_result.second.ko())
         {
             const auto& error = "Creating default administrator failed. " + create_result.second.error;

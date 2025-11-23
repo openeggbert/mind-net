@@ -1,6 +1,6 @@
 # 🧠 Mind-Net
 
-![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
 
 **Mind-Net** is an open-source software for **note-taking, knowledge mapping, and Zettelkasten-style linking**.  
@@ -151,7 +151,7 @@ mind-net/
 │   ├── navigation.js       # Navigation
 │   └── explore.js          # Map visualization (vis.js)
 ├── CMakeLists.txt          # Build configuration
-└── LICENSE                 # GPLv3
+└── LICENSE                 # MIT
 ```
 
 ## 🤝 Contributing
@@ -160,7 +160,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines and [DEVELOPERS.md](./DE
 
 ## 📜 License
 
-This project is licensed under **GNU GPL v3**.
+This project is licensed under **MIT**.
 See [LICENSE](LICENSE) for details.
 
 ## 🌟 Project Goals
