@@ -46,7 +46,7 @@ namespace mindnet::plugins::core::models
     inline const def HISTORY_DEFINITION =
         def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
-        .set_group("Core", 500).allow_reader_write().set_read_cache_enabled(false)
+        .set_group("Core", 500).allow_reader_write().set_cache_enabled(false)
         .set_columns({
             //
             coldef(COLS::USER_ID, FOREIGN_KEY | READONLY).set_description("User ID who made the change"),

@@ -87,7 +87,7 @@ namespace mindnet::api
 
         if (newId >= 0)
         {
-            if (READ_CACHE_ENABLED && def.is_read_cache_enabled())
+            if (READ_CACHE_ENABLED && def.is_cache_enabled() && def.is_cached_after_create())
             {
                 fields[0] = newId;
                 model_cache_.put(def.get_model_name(), newId, fields);
@@ -104,7 +104,7 @@ namespace mindnet::api
 
         // 1) Try cache
         entity_fields cached;
-        if (READ_CACHE_ENABLED && def.is_read_cache_enabled() && model_cache_.get(table, id, cached))
+        if (READ_CACHE_ENABLED && def.is_cache_enabled() && model_cache_.get(table, id, cached))
         {
             return {cached, ok_result};
         }
@@ -118,13 +118,13 @@ namespace mindnet::api
         }
 
         // 3) Save to cache
-        if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.put(table, id, ef);
+        if (READ_CACHE_ENABLED && def.is_cache_enabled()) model_cache_.put(table, id, ef);
 
         return {ef, ok_result};
     }
     void Persistence::invalidate(const model::ModelDefinition& def, const i64 id)
     {
-        if (READ_CACHE_ENABLED && def.is_read_cache_enabled())
+        if (READ_CACHE_ENABLED && def.is_cache_enabled())
             model_cache_.invalidate(def.get_model_name(), id);
     }
 
@@ -138,7 +138,7 @@ namespace mindnet::api
         get_repository(def.get_model_name())->update(id, fields, error);
         if (error.empty())
         {
-            if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            if (READ_CACHE_ENABLED && def.is_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
             return ok_result;
         }
         return {500, error};
@@ -154,7 +154,7 @@ namespace mindnet::api
 
         if (error.empty())
         {
-            if (READ_CACHE_ENABLED && def.is_read_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            if (READ_CACHE_ENABLED && def.is_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
             return ok_result;
         }
 
@@ -171,7 +171,7 @@ namespace mindnet::api
         std::vector<entity_fields> items;
         const auto& model_name = def.get_model_name();
         const auto& repo = get_repository(model_name);
-        if (READ_CACHE_ENABLED && LIST_CACHE_ENABLED && def.is_read_cache_enabled())
+        if (READ_CACHE_ENABLED && LIST_CACHE_ENABLED && def.is_cache_enabled())
         {
             std::vector<i64> ids = repo->list_ids(query_params, error);
             std::vector<i64> ids_not_in_cache;

@@ -46,7 +46,7 @@ namespace mindnet::db::sqlite::queries
         {
             throw std::runtime_error("Request is missing key \"note_id\"");
         }
-        int note_id = request["note_id"];
+        i64 note_id = request["note_id"];
 
         nlohmann::json response;
 
@@ -56,7 +56,7 @@ WITH RECURSIVE descendants(id, parent_note_id, new_path, new_depth) AS (
   SELECT
     n.id,
     n.parent_note_id,
-    p.path || '.' || printf('%06d', n.id) AS new_path,
+    p.path || '/' || printf('%06d', n.id) AS new_path,
     p.depth + 1 AS new_depth
   FROM note n
   JOIN note p ON n.parent_note_id = p.id
@@ -68,7 +68,7 @@ WITH RECURSIVE descendants(id, parent_note_id, new_path, new_depth) AS (
   SELECT
     n.id,
     n.parent_note_id,
-    d.new_path || '.' || printf('%06d', n.id),
+    d.new_path || '/' || printf('%06d', n.id),
     d.new_depth + 1
   FROM note n
   JOIN descendants d ON n.parent_note_id = d.id
@@ -84,6 +84,8 @@ depth = (
 )
 WHERE id IN (SELECT id FROM descendants);
 
+SELECT id FROM descendants;
+
 )";
         try
         {
@@ -95,9 +97,22 @@ WHERE id IN (SELECT id FROM descendants);
             SQLite::Statement query(db, sql);
             query.bind(1, note_id);
 
-            query.exec();
+            // exec UPDATE + then SELECT descendants
+            std::vector<i64> changed_ids;
 
-            invalidate_method.invalidate(plugins::slipbox::models::NOTE_DEFINITION, note_id);
+            changed_ids.push_back(note_id);
+
+            while (query.executeStep()) {
+                changed_ids.push_back(query.getColumn(0).getInt64());
+            }
+
+            // invalidate descendants
+            for (auto id : changed_ids) {
+                invalidate_method.invalidate(
+                    plugins::slipbox::models::NOTE_DEFINITION,
+                    id
+                );
+            }
         }
         catch (SQLite::Exception& e)
         {

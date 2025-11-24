@@ -46,7 +46,7 @@ namespace mindnet::plugins::core::models
     inline const def JOB_ENTRY_DEFINITION =
         def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rudl")
-        .set_group("Core", 500).set_read_cache_enabled(false)
+        .set_group("Core", 500).set_cache_enabled(false)
         .set_columns({
             //
             coldef(COLS::NAME, READONLY | MANDATORY | UNIQUE),

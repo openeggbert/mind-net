@@ -37,7 +37,7 @@ namespace mindnet::plugins::slipbox::triggers
 
     UpdateNotePathAndDepthAfterTrigger::UpdateNotePathAndDepthAfterTrigger()
         : Trigger(
-            "NoteUpdateParentBeforeTrigger",
+            "UpdateNotePathAndDepthAfterTrigger",
             "Updates note path and depth of all descendants.",
             1000,
             {essential::Crudl::Update},

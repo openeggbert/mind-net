@@ -35,7 +35,6 @@
 #include "CustomAction.hpp"
 #include "mindnet/model/ModelTypeDefs.hpp"
 
-
 namespace mindnet::model
 {
     using std::string;
@@ -58,7 +57,8 @@ namespace mindnet::model
         std::vector<CustomAction> custom_actions{};
         std::string title_column;
         bool reader_can_write{false};
-        bool read_cache_enabled{true};
+        bool cache_enabled{true};
+        bool cached_after_create{true};
 
     public:
         /**
@@ -133,9 +133,13 @@ namespace mindnet::model
             return reader_can_write;
         }
 
-        [[nodiscard]] const bool is_read_cache_enabled() const
+        [[nodiscard]] bool is_cache_enabled() const
         {
-            return read_cache_enabled;
+            return cache_enabled;
+        }
+        [[nodiscard]] bool is_cached_after_create() const
+        {
+            return cached_after_create;
         }
 
         //Setters
@@ -246,9 +250,14 @@ namespace mindnet::model
             reader_can_write = true;
             return *this;
         }
-        ModelDefinition& set_read_cache_enabled(bool value)
+        ModelDefinition& set_cache_enabled(bool value)
         {
-            read_cache_enabled = value;
+            cache_enabled = value;
+            return *this;
+        }
+        ModelDefinition& set_cached_after_create(bool value)
+        {
+            cached_after_create = value;
             return *this;
         }
 

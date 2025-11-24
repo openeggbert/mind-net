@@ -49,7 +49,7 @@ namespace mindnet::plugins::slipbox::models
         .set_group("Slip Box #2", 100)
         .set_rest_operations("r").set_title_column(COLS::ID)
         .set_no_table(true)
-        .set_read_cache_enabled(false)
+        .set_cache_enabled(false)
         .set_columns({
             //
             coldef(COLS::NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY),

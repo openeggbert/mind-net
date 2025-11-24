@@ -90,6 +90,7 @@ namespace mindnet::plugins::slipbox::models
         def(COLS::MODEL_NAME, "slip_box")
         .set_group("Slip Box", 100)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
+        .set_cached_after_create(false)
         .set_columns({
             //
             coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("Map, this note belongs to."),
