@@ -483,14 +483,34 @@ async function render() {
         if (note_navigation === null || note_navigation === undefined) return;
 
         if (note_navigation.prev_note_id === 0) {
-            show_warn("There is no previous note in the map.")
+            //show_warn("There is no previous note in the map.")
+            await navigate_to({map_id: map_id});
             return;
         }
 
         await navigate_to({note_id: note_navigation.prev_note_id});
     }
     get_element("button_next").onclick = async () => {
-        if(!mode_notes) return
+
+        if(!mode_notes) {
+            let children_url = get_element("children_ul")
+
+            const firstLi = children_ul.querySelector("li");
+            if (!firstLi) {
+                show_warn("This map has no note")
+                return
+            }
+
+            const text = firstLi.innerText.trim();
+
+            let sliced = text.slice(1);
+
+            const spaceIndex = sliced.indexOf(" ");
+            sliced = sliced.substring(0, spaceIndex);
+            await navigate_to({note_id: sliced});
+
+        }
+
         if(note_navigation === null || note_navigation === undefined) return;
 
         if (note_navigation.next_note_id === 0) {
