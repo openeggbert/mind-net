@@ -76,7 +76,9 @@ namespace mindnet::db::sqlite::queries
 
         i64 note_id = request["note_id"];
 
-        static std::string does_note_exist_sql = "SELECT 1 FROM note WHERE id = ?";
+        i64 map_id {0};
+
+        static std::string get_note_map_sql = "SELECT map_id FROM note WHERE id = ?";
         static std::string sql = R"(
 WITH RECURSIVE preorder AS (
     -- 1) ROOT NODES ordered by sibling_order
@@ -88,6 +90,7 @@ WITH RECURSIVE preorder AS (
         printf('%06d', sibling_order) AS sortkey
     FROM note
     WHERE parent_note_id IS NULL
+      AND map_id = :map_id
 
     UNION ALL
 
@@ -100,6 +103,7 @@ WITH RECURSIVE preorder AS (
         p.sortkey || '-' || printf('%06d', n.sibling_order) AS sortkey
     FROM note n
     JOIN preorder p ON n.parent_note_id = p.id
+    WHERE n.map_id = :map_id
 )
 
 ,
@@ -123,38 +127,32 @@ SELECT
 
 )";
 
-        bool exists = false;
-
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
             db.exec("PRAGMA foreign_keys = ON;");
             db.exec("PRAGMA journal_mode=WAL;");
 
-            essential::debug << does_note_exist_sql << essential::commit;
-            essential::debug << "Executing does_note_exist_sql note_id=" << note_id << essential::commit;
-            SQLite::Statement query(db, does_note_exist_sql);
+            essential::debug << get_note_map_sql << essential::commit;
+            essential::debug << "Looking up map_id for note_id=" << note_id << essential::commit;
 
+            SQLite::Statement query(db, get_note_map_sql);
             query.bind(1, note_id);
 
-            bool exists = false;
-            if (query.executeStep())
-            {
-                exists = true;
-            }
-
-            if (!exists)
+            if (!query.executeStep())
             {
                 response["error"] = "Note with this ID does not exist";
                 response["exists"] = false;
                 return response;
             }
 
+            map_id = query.getColumn(0).getInt64();
+
         }
         catch (SQLite::Exception& e)
         {
             response["error"] = e.what();
-            response["sql_failed"] = does_note_exist_sql;
+            response["sql_failed"] = get_note_map_sql;
             return response;
         }
 
@@ -171,10 +169,12 @@ SELECT
             essential::debug << "Executing FindPreviousAndNextNoteSQLiteQuery note_id=" << note_id << essential::commit;
             SQLite::Statement query(db, sql);
 
-            query.bind(1, note_id);
+            query.bind(1, map_id);
+            query.bind(2, note_id);
 
             if (query.executeStep())
             {
+                essential::debug << "is column 0 null? " << query.isColumnNull(0) << essential::commit;
                 prev_note_id = query.isColumnNull(0) ? 0 : query.getColumn(0);
                 next_note_id = query.isColumnNull(1) ? 0 : query.getColumn(1);
             }
