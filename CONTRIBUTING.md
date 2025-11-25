@@ -42,6 +42,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Toggle Theme
 - [ ] import note as JSON and via the web interface
 - [ ] add Tests to the web interfaces
+- [ ] Bug: Changes are not saved when exiting a note prematurely
 
 ### Plugin Repetition
 - [ ] rewrite app_repetition.js to OOP and classes
@@ -64,7 +65,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
   file content
 - [ ] Implement adding reason for changes (history.reason)
 - [ ] Validators - reorder methods in cpp files
-- [ ] Add support for missing column types (JSON, BLOB, REAL, etc.)
+- [ ] Add new ColumnTypes: BLOB, REAL: std::variant<int64_t, std::string, double, std::vector<std::byte>> `static_assert(sizeof(double) == 8, "double must be 64-bit"); typedef double r64;`
 - [ ] Integrate AI into mind-net
 - [ ] Add tests
 - [ ] ORM framework: add count, exists, empty

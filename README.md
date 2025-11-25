@@ -3,8 +3,21 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
 
-**Mind-Net** is an open-source software for **note-taking, knowledge mapping, and Zettelkasten-style linking**.  
-Its goal is to provide a **fast, extensible, and sustainable** tool for everyday knowledge management.
+Mind Net – Advanced universal data server and storage platform
+
+- **Scalable** architecture designed for high‑performance **data management** and rapid extension
+- Modern **RESTful web interface** enabling secure access and administration of data
+- Robust **security** with **user authentication**, **role‑based permissions**, and automated **validation** of operations
+- Automation engine supporting **scheduled tasks** and **event‑driven workflows** (e.g. triggers reacting to data changes)
+- **Performance optimization** through intelligent **caching** of frequently accessed records and lists
+- Extensible design with modular **plugins** for **custom** **entities**, **validators**, and **business logic**
+- **Dynamic UI generation:** user interfaces **automatically built** from database **model definitions**, reducing development effort
+
+
+**Plugins:**
+- Slipbox - note-taking, knowledge mapping, and Zettelkasten-style linking
+- Repetition - Inspired by Super Memo 18
+
 
 With its flexible design, Mind-Net can be extended beyond note-taking—adapting to your personal workflows, research, or entirely new use cases.
 
