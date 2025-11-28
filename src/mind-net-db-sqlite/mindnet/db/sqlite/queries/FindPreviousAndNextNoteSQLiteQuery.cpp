@@ -63,7 +63,8 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindPreviousAndNextNoteSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json FindPreviousAndNextNoteSQLiteQuery::call(nlohmann::json& request,
+                                                            api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -74,7 +75,7 @@ namespace mindnet::db::sqlite::queries
 
         identification note_id = request["note_id"];
 
-        identification map_id {0};
+        identification map_id{0};
 
         static std::string get_note_map_sql = "SELECT map_id FROM note WHERE id = ?";
         static std::string sql = R"(
@@ -144,7 +145,6 @@ SELECT
             }
 
             map_id = query.getColumn(0).getInt64();
-
         }
         catch (SQLite::Exception& e)
         {

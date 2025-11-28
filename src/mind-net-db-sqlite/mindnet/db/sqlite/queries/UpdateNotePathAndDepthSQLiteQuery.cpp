@@ -32,13 +32,13 @@ namespace mindnet::db::sqlite::queries
 {
     UpdateNotePathAndDepthSQLiteQuery::UpdateNotePathAndDepthSQLiteQuery()
         : api::Query(QUERY_UpdateNotePathAndDepth, "Updates paths and depth of all descendants",
-                essential::DatabaseType::SQLite)
+                     essential::DatabaseType::SQLite)
     {
     }
 
     nlohmann::json UpdateNotePathAndDepthSQLiteQuery::call(
         nlohmann::json& request, api::InvalidateMethod& invalidate_method
-        )
+    )
     {
         if (!request.contains("note_id"))
         {
@@ -100,12 +100,14 @@ SELECT id FROM descendants;
 
             changed_ids.push_back(note_id);
 
-            while (query.executeStep()) {
+            while (query.executeStep())
+            {
                 changed_ids.push_back(query.getColumn(0).getInt64());
             }
 
             // invalidate descendants
-            for (auto id : changed_ids) {
+            for (auto id : changed_ids)
+            {
                 invalidate_method.invalidate(
                     plugins::slipbox::models::NOTE_DEFINITION,
                     id

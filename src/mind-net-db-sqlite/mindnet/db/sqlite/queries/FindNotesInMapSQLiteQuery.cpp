@@ -66,7 +66,7 @@ namespace mindnet::db::sqlite::queries
         }
         sql += ")";
 
-// --- Execute SQL query ---
+        // --- Execute SQL query ---
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);

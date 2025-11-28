@@ -36,4 +36,3 @@ namespace mindnet::plugins::repetition::migrations
         void define_migrations() override;
     };
 }
-

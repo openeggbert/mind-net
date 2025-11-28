@@ -287,7 +287,7 @@ if (!form) {{
 </html>
 )");
 
-inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user)
+    inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user)
     {
         if (user.role < essential::UserRole::SuperAdmin)
         {

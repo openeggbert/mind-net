@@ -33,7 +33,7 @@ namespace mindnet::db::sqlite::queries
 
     VacuumSQLiteQuery::VacuumSQLiteQuery()
         : api::Query(QUERY_Vacuum, "Vacuum the database",
-                essential::DatabaseType::SQLite)
+                     essential::DatabaseType::SQLite)
     {
     }
 

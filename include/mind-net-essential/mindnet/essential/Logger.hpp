@@ -40,4 +40,3 @@ namespace mindnet::essential
         bool is_enabled();
     };
 }
-

@@ -68,7 +68,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult UrlValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult UrlValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

@@ -47,4 +47,3 @@ namespace mindnet::plugins::core::triggers
         ) override;
     };
 }
-

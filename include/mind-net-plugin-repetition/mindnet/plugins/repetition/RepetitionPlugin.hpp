@@ -27,6 +27,4 @@
 namespace mindnet::plugins::repetition
 {
     const std::string REPETITION_PLUGIN_NAME = "repetition";
-
 }
-

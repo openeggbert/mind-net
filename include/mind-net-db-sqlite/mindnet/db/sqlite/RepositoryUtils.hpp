@@ -40,6 +40,4 @@ namespace mindnet::db::sqlite
         string& error,
         orm::SelectMode select_mode = orm::STAR
     );
-
 }
-

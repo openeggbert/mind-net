@@ -90,7 +90,6 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TestAttemptValidator::validate_list_authorization(const RequestContext& ctx,
                                                                       const string_map& filter) const
     {
-
         mandatory_filter(test_id)
         mandatory_filter(user_id)
 
@@ -113,7 +112,8 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult TestAttemptValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TestAttemptValidator::validate_create_integrity(const RequestContext& ctx,
+                                                                    const Model& entity) const
     {
         if (entity.user_id != ctx.token.user_id) return {400, "user_id must be id of your user."};
         if (entity.started_at != 0) return {400, "started_at must be 0 during creation."};
@@ -128,21 +128,31 @@ OperationResult TestAttemptValidator::validate_create_integrity(const RequestCon
         return ok_result;
     }
 
-    OperationResult TestAttemptValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult TestAttemptValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
+                                                                    const Model& new_entity) const
     {
         bool started_at_was_default = old_entity.started_at == 0;
         bool finished_at_was_default = old_entity.finished_at == 0;
         bool score_times_100_was_default = old_entity.score_times_100 == 0;
         bool question_ids_was_default = old_entity.question_ids == "";
-        if (!started_at_was_default && old_entity.started_at != new_entity.started_at) return {400, "started_at cannot be changed, if already set"};
-        if (!finished_at_was_default && old_entity.finished_at != new_entity.finished_at) return {400, "finished_at cannot be changed, if already set"};
-        if (!score_times_100_was_default && old_entity.score_times_100 != new_entity.score_times_100) return {400, "score_times_100 cannot be changed, if already set"};
-        if (!question_ids_was_default && old_entity.question_ids != new_entity.question_ids) return {400, "question_ids cannot be changed, if already set"};
+        if (!started_at_was_default && old_entity.started_at != new_entity.started_at) return {
+            400, "started_at cannot be changed, if already set"
+        };
+        if (!finished_at_was_default && old_entity.finished_at != new_entity.finished_at) return {
+            400, "finished_at cannot be changed, if already set"
+        };
+        if (!score_times_100_was_default && old_entity.score_times_100 != new_entity.score_times_100) return {
+            400, "score_times_100 cannot be changed, if already set"
+        };
+        if (!question_ids_was_default && old_entity.question_ids != new_entity.question_ids) return {
+            400, "question_ids cannot be changed, if already set"
+        };
 
         return ok_result;
     }
 
-    OperationResult TestAttemptValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TestAttemptValidator::validate_delete_integrity(const RequestContext& ctx,
+                                                                    const Model& entity) const
     {
         return ok_result;
     }

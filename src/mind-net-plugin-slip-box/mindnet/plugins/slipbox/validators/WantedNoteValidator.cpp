@@ -70,7 +70,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult WantedNoteValidator::validate_list_authorization(const RequestContext& ctx,
+    OperationResult WantedNoteValidator::validate_list_authorization(const RequestContext& ctx,
                                                                      const string_map& filter) const
     {
         mandatory_filter(from_note_id)
@@ -87,12 +87,12 @@ OperationResult WantedNoteValidator::validate_list_authorization(const RequestCo
         return ok_result;
     }
 
-OperationResult WantedNoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult WantedNoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-OperationResult WantedNoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult WantedNoteValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

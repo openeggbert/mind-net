@@ -48,4 +48,3 @@ namespace mindnet::plugins::slipbox::triggers
         ) override;
     };
 }
-

@@ -37,4 +37,3 @@ namespace mindnet::http
         );
     };
 }
-

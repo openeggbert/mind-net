@@ -88,7 +88,7 @@ namespace mindnet::http
     {
         namespace fs = std::filesystem;
 
-//#define generate_js_files_to_js_txt
+        //#define generate_js_files_to_js_txt
 #ifdef generate_js_files_to_js_txt
         std::ofstream js_file(fs::path(directory_for_static_files) / "js.txt");
         std::vector<fs::path> js_files;
@@ -135,7 +135,7 @@ namespace mindnet::http
     //     return crow_app;
     // }
 
-void HttpServer::create_web_endpoints(const api::ServicePtr& service_ptr)
+    void HttpServer::create_web_endpoints(const api::ServicePtr& service_ptr)
     {
         web_endpoints_generator_ = std::make_shared<WebEndpointsGenerator>(directory_for_static_files);
         web_endpoints_generator_->create_web_endpoints(service_ptr, crow_app);

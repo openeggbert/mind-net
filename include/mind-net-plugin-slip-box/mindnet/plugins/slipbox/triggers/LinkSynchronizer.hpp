@@ -46,15 +46,21 @@ namespace mindnet::plugins::slipbox::triggers
             int stack_depth,
             identification note_id,
             std::function<api::OperationResult(
-                const model::ModelDefinition&,
-                api::AccessTokenContext&,
-                identification,
-                int)> run_delete,
-            std::function<std::pair<identification, api::OperationResult>(
-                const model::ModelDefinition&,
-                api::AccessTokenContext&,
-                entity_fields&,
-                int)> run_create
+                          const model::ModelDefinition&,
+                          api::AccessTokenContext&,
+                          identification,
+                          int)
+        >
+        run_delete
+        ,
+        std::function<std::pair<identification, api::OperationResult>(
+                      const model::ModelDefinition&,
+                      api::AccessTokenContext&,
+                      entity_fields&,
+                      int
+        )
+        >
+        run_create
         );
 
         void sync_urls(const std::vector<std::string>& old_urls,
@@ -75,15 +81,21 @@ namespace mindnet::plugins::slipbox::triggers
         int stack_depth;
         identification note_id;
         std::function<api::OperationResult(
-            const model::ModelDefinition&,
-            api::AccessTokenContext&,
-            identification,
-            int)> run_delete_;
+                      const model::ModelDefinition&,
+                      api::AccessTokenContext&,
+                      identification,
+                      int
+        )
+        >
+        run_delete_;
         std::function<std::pair<identification, api::OperationResult>(
-            const model::ModelDefinition&,
-            api::AccessTokenContext&,
-            entity_fields&,
-            int)> run_create_;
+                      const model::ModelDefinition&,
+                      api::AccessTokenContext&,
+                      entity_fields&,
+                      int
+        )
+        >
+        run_create_;
 
 
         template <typename Entity, typename MakeFn>

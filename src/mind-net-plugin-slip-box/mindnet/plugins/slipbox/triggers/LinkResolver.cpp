@@ -34,7 +34,7 @@ namespace mindnet::plugins::slipbox::triggers
     LinkResolution LinkResolver::resolve(
         identification map_id,
         const std::vector<WikiLink>& wikilinks,
-        std::function<nlohmann::json(const std::string&, nlohmann::json&)>& call)
+        std::function<nlohmann::json(const std::string &, nlohmann::json &)>& call)
     {
         std::vector<WikiLink> existing;
         std::vector<WikiLink> missing;

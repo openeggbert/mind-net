@@ -77,7 +77,10 @@ namespace mindnet::plugins::repetition::models
             [this] { return test_at_least(repetitions, 0, R18StateColumns::REPETITIONS); },
             [this] { return test_at_least(lapses, 0, R18StateColumns::LAPSES); },
             [this] { return test_between(last_quality, 0, 5, R18StateColumns::LAST_QUALITY); },
-            [this] { return test_at_least(last_seen_semantic_version, 1, R18StateColumns::LAST_SEEN_SEMANTIC_VERSION); },
+            [this]
+            {
+                return test_at_least(last_seen_semantic_version, 1, R18StateColumns::LAST_SEEN_SEMANTIC_VERSION);
+            },
         };
         return util::ValidatorChain::run(list);
     }

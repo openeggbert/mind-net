@@ -94,4 +94,3 @@ namespace mindnet::plugins::slipbox
     gen_find_h(slipbox, MapCollection, map_collection)
     gen_find_h(slipbox, Annotation, annotation)
 }
-

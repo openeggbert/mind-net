@@ -23,6 +23,7 @@
 
 #include "mindnet/api/SqliteGlobal.hpp"
 
-namespace mindnet::api {
-std::mutex sqlite_mutex;
+namespace mindnet::api
+{
+    std::mutex sqlite_mutex;
 }

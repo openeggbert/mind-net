@@ -39,8 +39,8 @@ namespace mindnet::plugins::core::jobs
             true
         )
     {
-
     }
+
     std::string CleanupJob::run(api::cronq::JobConfig& job_config)
     {
         essential::info << "CleanupJob TestJob (" << util::Utils::current_unixtime_to_string() << essential::commit;
@@ -50,7 +50,7 @@ namespace mindnet::plugins::core::jobs
         auto history_list_threshold_in_days = job_config.get_int_or_default("history_list_threshold_in_days", 90);
         auto access_token_threshold_in_days = job_config.get_int_or_default("access_token_threshold_in_days", 90);
 
-nlohmann::json req;
+        nlohmann::json req;
         req["api_log_threshold_in_days"] = cast64(api_log_threshold_in_days.first);
         req["history_read_threshold_in_days"] = cast64(history_read_threshold_in_days.first);
         req["history_list_threshold_in_days"] = cast64(history_list_threshold_in_days.first);
@@ -60,5 +60,6 @@ nlohmann::json req;
 
         return result.contains("error") ? result["error"] : "";
     }
+
     using_loggers()
 }

@@ -36,4 +36,3 @@ namespace mindnet::api
 {
     extern std::mutex sqlite_mutex;
 }
-

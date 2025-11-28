@@ -82,7 +82,7 @@ namespace mindnet::http
             };
             static std::unordered_set<std::string> plugin_allowed_files;
 
-auto& plugin_registry = service_ptr_->get_plugin_registry();
+            auto& plugin_registry = service_ptr_->get_plugin_registry();
             for (const auto& plugin_name : plugin_registry->get_plugin_names())
             {
                 const auto& plugin = plugin_registry->get_plugin(plugin_name);
@@ -118,7 +118,7 @@ auto& plugin_registry = service_ptr_->get_plugin_registry();
                 fs::path base_path = fs::canonical(directory_for_static_files);
                 fs::path requested_path = fs::weakly_canonical(base_path / file_name);
 
-if (requested_path.string().find(base_path.string()) != 0)
+                if (requested_path.string().find(base_path.string()) != 0)
                 {
                     res.code = 403;
                     res.write("Access denied");
@@ -199,7 +199,7 @@ if (requested_path.string().find(base_path.string()) != 0)
             res.end();
         });
 
-CROW_ROUTE(crow_app, "/")
+        CROW_ROUTE(crow_app, "/")
         ([](const crow::request&, crow::response& res)
         {
             res.redirect("/web");

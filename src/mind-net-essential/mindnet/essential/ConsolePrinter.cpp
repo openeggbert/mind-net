@@ -43,13 +43,13 @@ namespace mindnet::essential
     {
     }
 
-    ConsolePrinter& ConsolePrinter::operator<<(ConsolePrinter& (*manip)(ConsolePrinter&))
+    ConsolePrinter& ConsolePrinter::operator<<(ConsolePrinter & (*manip)(ConsolePrinter &))
     {
         std::lock_guard<std::recursive_mutex> lock(mtx);
         return manip(*this);
     }
 
-    ConsolePrinter& ConsolePrinter::operator<<(std::ostream& (*manip)(std::ostream&))
+    ConsolePrinter& ConsolePrinter::operator<<(std::ostream & (*manip)(std::ostream &))
     {
         std::lock_guard<std::recursive_mutex> lock(mtx);
 

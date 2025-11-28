@@ -41,4 +41,3 @@ namespace mindnet::http
         );
     };
 }
-

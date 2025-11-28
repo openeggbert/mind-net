@@ -58,7 +58,7 @@ namespace mindnet::api
         std::unordered_map<std::string, int> visit_state; // 0=unvisited,1=visiting,2=visited
         std::vector<std::string> sorted;
 
-        std::function<void(const std::string&)> dfs = [&](const std::string& name)
+        std::function < void(const std::string &) > dfs = [&](const std::string& name)
         {
             if (visit_state[name] == 1)
             {
@@ -93,7 +93,7 @@ namespace mindnet::api
         return sorted;
     }
 
-PluginPtr PluginRegistry::get_plugin(const std::string& plugin_name) const
+    PluginPtr PluginRegistry::get_plugin(const std::string& plugin_name) const
     {
         if (!has_plugin_name(plugin_name)) return nullptr;
         return plugins.at(plugin_name);

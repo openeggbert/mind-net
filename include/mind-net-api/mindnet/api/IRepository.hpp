@@ -58,4 +58,3 @@ namespace mindnet::api
         model::ModelDefinition model_definition;
     };
 }
-

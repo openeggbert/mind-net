@@ -93,7 +93,8 @@ namespace mindnet::plugins::repetition::models
             [this]
             {
                 return test_true((map_id > 0) != (map_collection_id > 0),
-                                 "either map_id or map_collection_id must be set"); },
+                                 "either map_id or map_collection_id must be set");
+            },
             [this] { return test_true(filter_date_from == 0, "filter_date_from is not yet supported"); },
             [this] { return test_true(filter_date_to == 0, "filter_date_to is not yet supported"); },
             [this] { return test_true(filter_tag == 0, "filter_tag is not yet supported"); },

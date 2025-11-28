@@ -41,8 +41,8 @@ namespace mindnet::plugins::core::validators
     OperationResult TeamMemberValidator::validate_create_authorization(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "User does not have permission to create a team member.");
+        return_if(ctx.role<mindnet::essential::UserRole::Editor,
+                           403, "User does not have permission to create a team member.");
 
         auto team = core::find_team(ctx, entity.team_id);;
         return_if(!team.second.empty(), 400, "Team does not exist.")
@@ -125,7 +125,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.left_at != 0,
                   400, "left_at must be set to 0 during team member creation")

@@ -110,6 +110,7 @@ namespace mindnet::model
         {
             return virtual_table;
         }
+
         /** @return True if the model is no table otherwise false. */
         [[nodiscard]] const bool is_no_table() const
         {
@@ -135,6 +136,7 @@ namespace mindnet::model
         {
             return cache_enabled;
         }
+
         [[nodiscard]] bool is_cached_after_create() const
         {
             return cached_after_create;
@@ -231,6 +233,7 @@ namespace mindnet::model
             virtual_table = value;
             return *this;
         }
+
         ModelDefinition& set_no_table(bool value)
         {
             no_table = value;
@@ -248,11 +251,13 @@ namespace mindnet::model
             reader_can_write = true;
             return *this;
         }
+
         ModelDefinition& set_cache_enabled(bool value)
         {
             cache_enabled = value;
             return *this;
         }
+
         ModelDefinition& set_cached_after_create(bool value)
         {
             cached_after_create = value;
@@ -298,6 +303,7 @@ namespace mindnet::model
         {
             return add_custom_action(mindnet::essential::Crudl::Create, model_name_, label_, params_);
         }
+
         [[nodiscard]] ModelDefinition& add_custom_read_action(
             std::string model_name_,
             std::string label_,
@@ -307,4 +313,3 @@ namespace mindnet::model
         }
     };
 }
-

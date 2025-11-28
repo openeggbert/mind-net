@@ -28,12 +28,14 @@
 #include "mindnet/api/SqliteGlobal.hpp"
 #include "mindnet/api/CompilationFlags.hpp"
 
-namespace {
+namespace
+{
     bool database_type_is_sqlite()
     {
         return mindnet::essential::g_configuration.database_type == mindnet::essential::DatabaseType::SQLite;
     }
 }
+
 namespace mindnet::api
 {
     using_loggers()
@@ -85,7 +87,10 @@ namespace mindnet::api
 
         if (newId >= 0)
         {
-            if (READ_CACHE_ENABLED && def.is_cache_enabled() && def.is_cached_after_create())
+            if (READ_CACHE_ENABLED&& def
+            .
+            is_cache_enabled() && def.is_cached_after_create()
+            )
             {
                 fields[0] = newId;
                 model_cache_.put(def.get_model_name(), newId, fields);
@@ -102,7 +107,10 @@ namespace mindnet::api
 
         // 1) Try cache
         entity_fields cached;
-        if (READ_CACHE_ENABLED && def.is_cache_enabled() && model_cache_.get(table, id, cached))
+        if (READ_CACHE_ENABLED&& def
+        .
+        is_cache_enabled() && model_cache_.get(table, id, cached)
+        )
         {
             return {cached, ok_result};
         }
@@ -116,14 +124,22 @@ namespace mindnet::api
         }
 
         // 3) Save to cache
-        if (READ_CACHE_ENABLED && def.is_cache_enabled()) model_cache_.put(table, id, ef);
+        if (READ_CACHE_ENABLED&& def
+        .
+        is_cache_enabled()
+        )
+        model_cache_.put(table, id, ef);
 
         return {ef, ok_result};
     }
+
     void Persistence::invalidate(const model::ModelDefinition& def, const identification id)
     {
-        if (READ_CACHE_ENABLED && def.is_cache_enabled())
-            model_cache_.invalidate(def.get_model_name(), id);
+        if (READ_CACHE_ENABLED&& def
+        .
+        is_cache_enabled()
+        )
+        model_cache_.invalidate(def.get_model_name(), id);
     }
 
     OperationResult Persistence::update(
@@ -136,13 +152,18 @@ namespace mindnet::api
         get_repository(def.get_model_name())->update(id, fields, error);
         if (error.empty())
         {
-            if (READ_CACHE_ENABLED && def.is_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            if (READ_CACHE_ENABLED&& def
+            .
+            is_cache_enabled()
+            )
+            model_cache_.invalidate(def.get_model_name(), id);
             return ok_result;
         }
         return {500, error};
     }
 
-    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, identification id)
+    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token,
+                                        identification id)
     {
         SQLITE_LOCK_GUARD()
         string_map empty_map;
@@ -152,7 +173,11 @@ namespace mindnet::api
 
         if (error.empty())
         {
-            if (READ_CACHE_ENABLED && def.is_cache_enabled()) model_cache_.invalidate(def.get_model_name(), id);
+            if (READ_CACHE_ENABLED&& def
+            .
+            is_cache_enabled()
+            )
+            model_cache_.invalidate(def.get_model_name(), id);
             return ok_result;
         }
 
@@ -169,7 +194,10 @@ namespace mindnet::api
         std::vector<entity_fields> items;
         const auto& model_name = def.get_model_name();
         const auto& repo = get_repository(model_name);
-        if (READ_CACHE_ENABLED && LIST_CACHE_ENABLED && def.is_cache_enabled())
+        if (READ_CACHE_ENABLED&& LIST_CACHE_ENABLED && def
+        .
+        is_cache_enabled()
+        )
         {
             std::vector<identification> ids = repo->list_ids(query_params, error);
             std::vector<identification> ids_not_in_cache;
@@ -179,7 +207,8 @@ namespace mindnet::api
                 if (model_cache_.get(model_name, id, cached))
                 {
                     items.push_back(cached);
-                } else
+                }
+                else
                 {
                     ids_not_in_cache.push_back(id);
                 }
@@ -194,9 +223,10 @@ namespace mindnet::api
                     model_cache_.put(model_name, number, item);
                 }
             }
-        } else
+        }
+        else
         {
-            items= repo->list(query_params, error);
+            items = repo->list(query_params, error);
         }
         if (error.empty())
         {

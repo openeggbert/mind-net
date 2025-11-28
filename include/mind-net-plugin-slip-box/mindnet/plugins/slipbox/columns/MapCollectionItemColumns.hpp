@@ -47,4 +47,3 @@ namespace mindnet::plugins::slipbox::columns
         static constexpr const char* POSITION = "position";
     };
 }
-

@@ -37,7 +37,6 @@ namespace mindnet::api
     class Trigger : public AbstractTriggerJob
     {
     public:
-
         Trigger(
             const std::string& name_,
             const std::string& description_,
@@ -69,12 +68,12 @@ namespace mindnet::api
         );
 
         std::optional<std::pair<int, OperationResult>> run_instead_of_create(
-    int stack_depth,
-    OperationResult& validation_result,
-    const model::ModelDefinition& def,
-    identification user_id,
-    identification id,
-    entity_fields& fields);
+            int stack_depth,
+            OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            identification id,
+            entity_fields& fields);
 
         virtual std::optional<std::pair<entity_fields, OperationResult>> run_instead_of_read(
             int stack_depth,
@@ -121,6 +120,6 @@ namespace mindnet::api
         TriggerPhase phase = TriggerPhase::Before;
         std::string table;
     };
+
     typedef std::shared_ptr<Trigger> TriggerPtr;
 }
-

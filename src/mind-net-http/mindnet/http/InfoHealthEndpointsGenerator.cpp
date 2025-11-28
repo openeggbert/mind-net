@@ -95,7 +95,7 @@ namespace mindnet::http
                 static const int MILLISECONDS_PER_HOUR = 60 * MILLISECONDS_PER_MINUTE;
                 static const int MILLISECONDS_PER_DAY = 24 * MILLISECONDS_PER_HOUR;
 
-//#define test_health_endpoint
+                //#define test_health_endpoint
 #ifdef test_health_endpoint
                 std::random_device rd;
                 std::mt19937 gen(rd());
@@ -133,7 +133,7 @@ namespace mindnet::http
                 }
                 std::uniform_int_distribution<> distrib(0, max);
 
-ll elapsed_seconds = end_time - start_time + distrib(gen);
+                ll elapsed_seconds = end_time - start_time + distrib(gen);
 #else
 
                 ll elapsed_milliseconds = end_time - start_time;
@@ -187,7 +187,7 @@ ll elapsed_seconds = end_time - start_time + distrib(gen);
                         oss << "0 milliseconds";
                 }
 
-return oss.str();
+                return oss.str();
             };
 
             nlohmann::ordered_json result;

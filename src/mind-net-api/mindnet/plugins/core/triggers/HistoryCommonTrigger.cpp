@@ -99,7 +99,8 @@ namespace mindnet::plugins::core::triggers
         if (operation == mindnet::essential::Crudl::Create || operation == mindnet::essential::Crudl::Update)
         {
             history.data_json = model_to_json(fields, def).dump();
-        } else if (operation == mindnet::essential::Crudl::List)
+        }
+        else if (operation == mindnet::essential::Crudl::List)
         {
             history.data_json = query_params.to_json();
         }

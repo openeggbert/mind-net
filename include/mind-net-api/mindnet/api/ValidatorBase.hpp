@@ -96,7 +96,7 @@ namespace mindnet::api
         }
     }
 
-    typedef std::function<std::shared_ptr<IValidator>(const std::string&)> GetValidatorFunc;
+    typedef std::function<std::shared_ptr<IValidator>(const std::string &)> GetValidatorFunc;
 
     template <typename Derived, typename Model>
     class ValidatorBase : public api::IValidator
@@ -129,7 +129,7 @@ namespace mindnet::api
                 "Derived must implement validate_create_integrity returning OperationResult"
             );
 
-auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
+            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
@@ -151,9 +151,10 @@ auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, tok
                 auto def = db->get_model_definition(get_model_name());
                 auto authorized_to = token.is_system() || is_authorized_to(
                     logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {
-                    403, "You are not authorized to access resource. " + def->get_model_name() + " CREATE"
-                };
+                if (!authorized_to)
+                    return {
+                        403, "You are not authorized to access resource. " + def->get_model_name() + " CREATE"
+                    };
                 if (logged_user.role < essential::UserRole::Admin)
                     if (auto res = derived().validate_create_authorization(context, entity); !res.ok())
                         return res;
@@ -188,21 +189,23 @@ auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, tok
             ////
             auto def = db->get_model_definition(get_model_name());
             Model entity;
-            if (!def.value().is_no_table()) {
-            auto [values, read_err] = db->read(
-                db->get_model_definition(derived().get_model_name()).value(), token, id
-            );
-            if (read_err.ko()) return read_err;
-            entity.from_values(values);
+            if (!def.value().is_no_table())
+            {
+                auto [values, read_err] = db->read(
+                    db->get_model_definition(derived().get_model_name()).value(), token, id
+                );
+                if (read_err.ko()) return read_err;
+                entity.from_values(values);
             }
             ////
             if (is_authorization_enabled(context))
             {
                 auto authorized_to = token.is_system() || is_authorized_to(
                     logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {
-                    403, "You are not authorized to access resource. " + def->get_model_name() + " READ"
-                };
+                if (!authorized_to)
+                    return {
+                        403, "You are not authorized to access resource. " + def->get_model_name() + " READ"
+                    };
 
                 if (logged_user.role < essential::UserRole::Admin)
                     if (auto res = derived().validate_read_authorization(context, entity); !res.ok())
@@ -279,7 +282,7 @@ auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, tok
             if (auto error = new_entity.validate(); !error.empty())
                 return {400, error};
 
-if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
+            if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
                 return {400, error};
             if (auto error = validate_internal(old_values, new_fields, def); !error.empty())
                 return {400, error};
@@ -294,9 +297,10 @@ if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
                 auto def = db->get_model_definition(get_model_name());
                 auto authorized_to = token.is_system() || is_authorized_to(
                     logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {
-                    403, "You are not authorized to access resource. " + def->get_model_name() + " UPDATE"
-                };
+                if (!authorized_to)
+                    return {
+                        403, "You are not authorized to access resource. " + def->get_model_name() + " UPDATE"
+                    };
 
                 if (logged_user.role < essential::UserRole::Admin)
                     if (auto res = derived().validate_update_authorization(
@@ -343,9 +347,10 @@ if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
                 auto def = db->get_model_definition(get_model_name());
                 auto authorized_to = token.is_system() || is_authorized_to(
                     logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {
-                    403, "You are not authorized to access resource. " + def->get_model_name() + " DELETE"
-                };
+                if (!authorized_to)
+                    return {
+                        403, "You are not authorized to access resource. " + def->get_model_name() + " DELETE"
+                    };
 
                 if (logged_user.role < essential::UserRole::Admin)
                     if (auto res = derived().validate_delete_authorization(context, entity); !res.ok())
@@ -385,10 +390,11 @@ if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
                 auto def = db->get_model_definition(get_model_name());
                 auto authorized_to = token.is_system() || is_authorized_to(
                     logged_user.role, g_configuration.access_mode, action, def->is_reader_can_write());
-                if (!authorized_to) return {
-                    logged_user.role == essential::UserRole::Guest ? 401 : 403,
-                    "You are not authorized to access resource. " + def->get_model_name() + " LIST"
-                };
+                if (!authorized_to)
+                    return {
+                        logged_user.role == essential::UserRole::Guest ? 401 : 403,
+                        "You are not authorized to access resource. " + def->get_model_name() + " LIST"
+                    };
 
                 if (logged_user.role < essential::UserRole::Admin)
                     if (auto res = derived().validate_list_authorization(context, filter); !res.ok())

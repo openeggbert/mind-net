@@ -111,4 +111,3 @@ namespace mindnet::essential
         throw std::runtime_error("Invalid user role: " + role_str);
     }
 }
-

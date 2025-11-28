@@ -87,4 +87,3 @@ namespace mindnet::model
         }
     }
 }
-

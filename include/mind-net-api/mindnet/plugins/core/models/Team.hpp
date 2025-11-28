@@ -43,17 +43,18 @@ namespace mindnet::plugins::core::models
 
     inline const def TEAM_DEFINITION =
         def(COLS::MODEL_NAME, CORE_PLUGIN_NAME).set_rest_operations("rl")
-                             .set_group("Core", 300)
-                             .set_title_column(COLS::NAME)
-                             .set_columns({
-                                 //
-                                 coldef(COLS::NAME, MANDATORY | UNIQUE),
-                                 coldef(COLS::DESCRIPTION),
-                                 coldef(COLS::CREATED_BY, READONLY | MANDATORY).set_foreign_key("user"),
-                                 coldef(COLS::LEADER_ID, MANDATORY).set_foreign_key("user"),
+                                               .set_group("Core", 300)
+                                               .set_title_column(COLS::NAME)
+                                               .set_columns({
+                                                   //
+                                                   coldef(COLS::NAME, MANDATORY | UNIQUE),
+                                                   coldef(COLS::DESCRIPTION),
+                                                   coldef(COLS::CREATED_BY, READONLY | MANDATORY).set_foreign_key(
+                                                       "user"),
+                                                   coldef(COLS::LEADER_ID, MANDATORY).set_foreign_key("user"),
 
-                                 //
-                             });
+                                                   //
+                                               });
 
     struct Model : mindnet::model::BaseModel
     {

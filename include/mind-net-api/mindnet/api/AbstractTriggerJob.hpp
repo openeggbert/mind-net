@@ -57,16 +57,18 @@ namespace mindnet::api
         using Service = mindnet::api::Service;
 
         using CreateFn = std::pair<identification, OperationResult>(Service::*)(const model::ModelDefinition&,
-                                                                     api::AccessTokenContext&, entity_fields&, int);
+            api::AccessTokenContext&, entity_fields&, int);
         using ReadFn = std::pair<entity_fields, OperationResult>(Service::*)(
             const model::ModelDefinition&, api::AccessTokenContext&, identification, int);
-        using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, identification,
+        using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&,
+                                                     identification,
                                                      entity_fields&, int);
-        using DeleteFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, identification, int);
+        using DeleteFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&,
+                                                     identification, int);
         using ListFn = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(
             const model::ModelDefinition&, api::AccessTokenContext&, orm::QueryParams&, int);
 
-AbstractTriggerJob(
+        AbstractTriggerJob(
             const std::string& name_,
             const std::string& description_)
             : name(name_),
@@ -83,8 +85,9 @@ AbstractTriggerJob(
         void set_delete_fn(DeleteFn fn) { delete_fn = fn; }
         void set_list_fn(ListFn fn) { list_fn = fn; }
 
-        std::pair<identification, OperationResult> run_create(const model::ModelDefinition& def, api::AccessTokenContext& token,
-                                                   entity_fields& fields, int depth)
+        std::pair<identification, OperationResult> run_create(const model::ModelDefinition& def,
+                                                              api::AccessTokenContext& token,
+                                                              entity_fields& fields, int depth)
         {
             return (service_ptr->*create_fn)(def, token, fields, depth);
         }
@@ -101,7 +104,8 @@ AbstractTriggerJob(
             return (service_ptr->*update_fn)(def, token, id, fields, depth);
         }
 
-        OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, identification id, int depth)
+        OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, identification id,
+                                   int depth)
         {
             return (service_ptr->*delete_fn)(def, token, id, depth);
         }
@@ -126,8 +130,8 @@ AbstractTriggerJob(
         UpdateFn update_fn = nullptr;
         DeleteFn delete_fn = nullptr;
         ListFn list_fn = nullptr;
+
     protected:
         Service* service_ptr = nullptr;
     };
-
 }

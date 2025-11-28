@@ -39,7 +39,7 @@ namespace mindnet::essential
      */
     enum class ByteUnit
     {
-        B  = 0,
+        B = 0,
         KB = 1,
         MB = 2,
         GB = 3,
@@ -50,7 +50,7 @@ namespace mindnet::essential
     {
         switch (unit)
         {
-        case ByteUnit::B:  return "B";
+        case ByteUnit::B: return "B";
         case ByteUnit::KB: return "KB";
         case ByteUnit::MB: return "MB";
         case ByteUnit::GB: return "GB";
@@ -73,7 +73,7 @@ namespace mindnet::essential
 
     inline ByteUnit string_to_byte_unit(const std::string& s)
     {
-        if (s == "B")  return ByteUnit::B;
+        if (s == "B") return ByteUnit::B;
         if (s == "KB") return ByteUnit::KB;
         if (s == "MB") return ByteUnit::MB;
         if (s == "GB") return ByteUnit::GB;
@@ -90,7 +90,7 @@ namespace mindnet::essential
     {
         switch (unit)
         {
-        case ByteUnit::B:  return value;
+        case ByteUnit::B: return value;
         case ByteUnit::KB: return value * 1024ULL;
         case ByteUnit::MB: return value * 1024ULL * 1024ULL;
         case ByteUnit::GB: return value * 1024ULL * 1024ULL * 1024ULL;
@@ -108,7 +108,7 @@ namespace mindnet::essential
     {
         switch (unit)
         {
-        case ByteUnit::B:  return static_cast<double>(bytes);
+        case ByteUnit::B: return static_cast<double>(bytes);
         case ByteUnit::KB: return bytes / 1024.0;
         case ByteUnit::MB: return bytes / (1024.0 * 1024.0);
         case ByteUnit::GB: return bytes / (1024.0 * 1024.0 * 1024.0);

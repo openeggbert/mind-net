@@ -48,4 +48,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* USER_AGENT = "user_agent";
     };
 }
-

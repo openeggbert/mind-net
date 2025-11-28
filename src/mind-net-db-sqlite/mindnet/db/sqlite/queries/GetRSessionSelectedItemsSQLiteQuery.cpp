@@ -244,7 +244,7 @@ ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-const std::string SQL_ALL = R"(
+    const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
 FROM note n {parent_join}
 {map_join}
@@ -296,13 +296,14 @@ ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
+    GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
         : Query(QUERY_GetRSessionSelectedItemsQuery, "Returns new note ids for repetition session",
                 essential::DatabaseType::SQLite)
     {
     }
 
-    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json& request,
+                                                             api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -351,7 +352,7 @@ GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
             order_sql_part = "";
             break;
 
-            case 1: // BreadthFirst
+        case 1: // BreadthFirst
             order_sql_part = "ORDER BY n.depth ASC, n.sibling_order ASC, n.id ASC";
             break;
 
@@ -444,7 +445,8 @@ GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
             db.exec("PRAGMA journal_mode=WAL;");
 
             essential::debug << sql << essential::commit;
-            essential::debug << "Executing scope=" << scope << " schedule=" << schedule << " algorithm=" << algorithm << essential::commit;
+            essential::debug << "Executing scope=" << scope << " schedule=" << schedule << " algorithm=" << algorithm <<
+                essential::commit;
             SQLite::Statement query(db, sql);
             std::vector<identification> note_ids;
 

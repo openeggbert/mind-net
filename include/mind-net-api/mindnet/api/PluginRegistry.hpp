@@ -45,7 +45,7 @@ namespace mindnet::api
         }
     };
 
-class PluginRegistry
+    class PluginRegistry
     {
     public:
         PluginRegistry() = default;

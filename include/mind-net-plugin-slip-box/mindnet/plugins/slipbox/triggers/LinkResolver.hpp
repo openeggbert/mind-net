@@ -46,6 +46,6 @@ namespace mindnet::plugins::slipbox::triggers
         static LinkResolution resolve(
             identification map_id,
             const std::vector<WikiLink>& wikilinks,
-            std::function<nlohmann::json(const std::string&, nlohmann::json&)>& call);
+            std::function<nlohmann::json(const std::string &, nlohmann::json &)>& call);
     };
 }

@@ -66,7 +66,7 @@ namespace mindnet::plugins::slipbox::models
         using columns::ContentColumns;
 
         validator_chain_vector list{
-            [this] { return test_between(change_ratio, 0, 100, ContentColumns::CHANGE_RATIO);},
+            [this] { return test_between(change_ratio, 0, 100, ContentColumns::CHANGE_RATIO); },
         };
         return util::ValidatorChain::run(list);
     }

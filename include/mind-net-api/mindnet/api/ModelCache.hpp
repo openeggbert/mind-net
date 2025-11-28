@@ -52,12 +52,13 @@ namespace mindnet::api
         {
             std::size_t h1 = std::hash<std::string>()(k.table);
             std::size_t h2 = std::hash<identification>()(k.id);
-            return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1<<6) + (h1>>2));
+            return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
         }
     };
 
     size_t ram_usage_cache(
-const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
+        const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
+
     inline std::string format_bytes(size_t bytes)
     {
         constexpr double KB = 1024.0;
@@ -66,16 +67,20 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
 
         char buffer[64];
 
-        if (bytes < KB) {
+        if (bytes < KB)
+        {
             std::snprintf(buffer, sizeof(buffer), "%zu B", bytes);
         }
-        else if (bytes < MB) {
+        else if (bytes < MB)
+        {
             std::snprintf(buffer, sizeof(buffer), "%.2f KB", bytes / KB);
         }
-        else if (bytes < GB) {
+        else if (bytes < GB)
+        {
             std::snprintf(buffer, sizeof(buffer), "%.2f MB", bytes / MB);
         }
-        else {
+        else
+        {
             std::snprintf(buffer, sizeof(buffer), "%.2f GB", bytes / GB);
         }
 
@@ -85,7 +90,8 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
     size_t ram_usage_cache_key(const CacheKey& key);
     size_t ram_usage_entity_fields(const entity_fields& row);
 
-    struct CacheEntry {
+    struct CacheEntry
+    {
         entity_fields fields;
         std::list<CacheKey>::iterator it;
         unixtime created_at;
@@ -115,7 +121,8 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         // CACHE: (table, id) -> row
         size_t capacity_size{};
         size_t capacity_bytes{std::numeric_limits<size_t>::max()};
-        static constexpr long long MS_PER_WEEK = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::weeks{1L}).count();
+        static constexpr long long MS_PER_WEEK = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::weeks{1L}).count();
         size_t ttl_ms = MS_PER_WEEK;
         std::list<CacheKey> order_;
         std::unordered_map<CacheKey, CacheEntry, CacheKeyHash> readCache;
@@ -129,7 +136,8 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         {
         }
 
-        void validate_invariants() const {
+        void validate_invariants() const
+        {
 #ifndef NDEBUG
 #if 0
             static size_t validate_counter = 0;
@@ -137,9 +145,10 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
             {
                 assert(order_.size() == readCache.size());
                 assert(std::all_of(order_.begin(), order_.end(),
-                    [&](const CacheKey& k){
-                    return readCache.find(k) != readCache.end();
-                    }
+                                   [&](const CacheKey& k)
+                                   {
+                                       return readCache.find(k) != readCache.end();
+                                   }
                 ));
             }
 #endif
@@ -163,26 +172,32 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         {
             return capacity_size > 0;
         }
+
         bool is_disabled() const
         {
             return capacity_size <= 0;
         }
+
         void set_capacity_size(size_t capacity)
         {
             capacity_size = capacity;
         }
+
         void set_capacity_bytes(size_t capacity)
         {
             capacity_bytes = capacity;
         }
+
         size_t get_capacity_size() const
         {
             return capacity_size;
         }
+
         size_t get_capacity_bytes() const
         {
             return capacity_bytes;
         }
+
         bool get(
             const std::string& table,
             identification id,
@@ -196,10 +211,12 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         void invalidate(
             const std::string& table,
             identification id);
-        void clear() {
-        std::unique_lock lock(mutex_);
-        readCache.clear();
-        order_.clear();
+
+        void clear()
+        {
+            std::unique_lock lock(mutex_);
+            readCache.clear();
+            order_.clear();
         }
 
         // Just the map (the heavy part)
@@ -208,6 +225,7 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
             std::shared_lock lock(mutex_);
             return ram_usage_cache_map_only_nolock();
         }
+
         size_t ram_usage_cache_map_only_nolock();
 
         size_t size()
@@ -215,15 +233,16 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
             std::unique_lock lock(mutex_);
             return readCache.size();
         }
+
         std::string information_no_lock()
         {
             size_t ram = ram_usage_cache_map_only_nolock();
             size_t count = readCache.size();
 
             return "ram=" + format_bytes(ram) +
-                   " size=" + std::to_string(count) +
-                   " capacity=" + std::to_string(capacity_size) +
-                       " " + stats.to_string();
+                " size=" + std::to_string(count) +
+                " capacity=" + std::to_string(capacity_size) +
+                " " + stats.to_string();
         }
 
         void print_info()
@@ -233,7 +252,6 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
 
         void shrink_to(std::uint64_t targetSize, essential::ByteUnit unit = essential::ByteUnit::B);
         void maybe_shrink_nolock();
-
     };
 
     [[nodiscard]] inline size_t ram_usage_int64(int64_t)
@@ -260,28 +278,36 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         return 0;
     }
 
-    [[nodiscard]] inline size_t ram_usage_entity_fields(const entity_fields& row) {
+    [[nodiscard]] inline size_t ram_usage_entity_fields(const entity_fields& row)
+    {
         size_t total = sizeof(entity_fields) + row.capacity() * sizeof(entity_field);
 
-        for (const auto& value : row) {
+        for (const auto& value : row)
+        {
             total += ram_usage_entity_field(value);
         }
         return total;
     }
-    [[nodiscard]] inline size_t ram_usage_cache_key(const CacheKey& key) {
+
+    [[nodiscard]] inline size_t ram_usage_cache_key(const CacheKey& key)
+    {
         return sizeof(CacheKey) + key.table.capacity();
     }
-    [[nodiscard]] inline size_t ram_usage_cache_entry(const CacheKey& key, const entity_fields& row) {
+
+    [[nodiscard]] inline size_t ram_usage_cache_entry(const CacheKey& key, const entity_fields& row)
+    {
         return
             ram_usage_cache_key(key)
             + ram_usage_entity_fields(row);
     }
+
     [[nodiscard]] inline size_t ram_usage_cache(
-    const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache)
+        const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache)
     {
         size_t total = sizeof(cache);
 
-        for (const auto& [key, row] : cache) {
+        for (const auto& [key, row] : cache)
+        {
             total += ram_usage_cache_entry(key, row);
         }
 
@@ -289,5 +315,4 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
 
         return total;
     }
-
 }

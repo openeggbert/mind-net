@@ -106,13 +106,14 @@ namespace mindnet::plugins::slipbox::validators
             return {
                 403,
                 std::string(
-                    "You do not have permission to list map_collection_items for map_collection with ID " + std::to_string(map_collection_id) + ".")
+                    "You do not have permission to list map_collection_items for map_collection with ID " +
+                    std::to_string(map_collection_id) + ".")
             };
 
         return ok_result;
     }
 
-OperationResult MapCollectionItemValidator::validate_create_integrity(
+    OperationResult MapCollectionItemValidator::validate_create_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
         auto map_collection = slipbox::find_map_collection(ctx, entity.map_collection_id);

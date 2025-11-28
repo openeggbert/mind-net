@@ -63,7 +63,11 @@ namespace mindnet::plugins::core::models
             [this] { return test_at_least(job_entry_id, 1, JobRunColumns::JOB_ENTRY_ID); },
             [this] { return test_at_least(started_at, 0, JobRunColumns::STARTED_AT); },
             [this] { return test_at_least(finished_at, 0, JobRunColumns::FINISHED_AT); },
-            [this] { return test_true(finished_at >= started_at || finished_at == 0, "Finished at must be at least the same as Started at");}
+            [this]
+            {
+                return test_true(finished_at >= started_at || finished_at == 0,
+                                 "Finished at must be at least the same as Started at");
+            }
         };
         return util::ValidatorChain::run(list);
     }

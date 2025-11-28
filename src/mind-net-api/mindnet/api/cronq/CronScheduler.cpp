@@ -42,27 +42,27 @@ namespace mindnet::api::cronq
         : AbstractTriggerJob("CronScheduler", "CronScheduler")
     {
         essential::info
-    << "[CRON] CronScheduler::Ctor this=" << (void*)this
-    << " thread_id=" << std::this_thread::get_id()
-    << essential::commit;
+            << "[CRON] CronScheduler::Ctor this=" << (void*)this
+            << " thread_id=" << std::this_thread::get_id()
+            << essential::commit;
     }
 
     CronScheduler::~CronScheduler()
     {
         essential::info
-    << "[CRON] CronScheduler::Dtor this=" << (void*)this
-    << " thread_id=" << std::this_thread::get_id()
-    << essential::commit;
+            << "[CRON] CronScheduler::Dtor this=" << (void*)this
+            << " thread_id=" << std::this_thread::get_id()
+            << essential::commit;
         stop();
     }
 
     void CronScheduler::start()
     {
         essential::info
-    << "[CRON] CronScheduler::start this=" << (void*)this
-    << " running_=" << running_.load()
-    << " thread_id=" << std::this_thread::get_id()
-    << essential::commit;
+            << "[CRON] CronScheduler::start this=" << (void*)this
+            << " running_=" << running_.load()
+            << " thread_id=" << std::this_thread::get_id()
+            << essential::commit;
         if (all_job_ptrs.empty())
         {
             essential::warn << "CronScheduler: no jobs registered, but starting anyway" << essential::commit;
@@ -83,11 +83,11 @@ namespace mindnet::api::cronq
     void CronScheduler::stop()
     {
         essential::warn
-    << "[CRON] CronScheduler::stop this=" << (void*)this
-    << " running_=" << running_.load()
-    << " pool_running_=" << pool_running_.load()
-    << " thread_id=" << std::this_thread::get_id()
-    << essential::commit;
+            << "[CRON] CronScheduler::stop this=" << (void*)this
+            << " running_=" << running_.load()
+            << " pool_running_=" << pool_running_.load()
+            << " thread_id=" << std::this_thread::get_id()
+            << essential::commit;
         running_ = false;
         pool_running_ = false;
 
@@ -194,7 +194,7 @@ namespace mindnet::api::cronq
                 << " raw='" << job_ptr->get_cron_expression() << "'"
                 << essential::commit;
 
-std::string cfg_text = jobs_in_db_map[job_ptr->get_name()].configuration;
+            std::string cfg_text = jobs_in_db_map[job_ptr->get_name()].configuration;
             JobConfig cfg(cfg_text);
 
             jobs_.emplace_back(
@@ -304,14 +304,15 @@ std::string cfg_text = jobs_in_db_map[job_ptr->get_name()].configuration;
                 << util::Utils::unixtime_to_string(system_clock_to_unixtime(next_scheduled))
                 << essential::commit;
 
-if (next_scheduled <= now) {
+            if (next_scheduled <= now)
+            {
                 essential::info
                     << "[CRON-COMPUTE-ERROR] next_after returned PAST DATE!"
                     << " cron=" << j.job->get_cron_expression()
                     << essential::commit;
             }
 
-// compute initial next_run — Quartz previous_before() removed (buggy)
+            // compute initial next_run — Quartz previous_before() removed (buggy)
             j.next_run = next_scheduled;
 
             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
@@ -381,7 +382,7 @@ if (next_scheduled <= now) {
                             continue;
                         }
 
-//avoid running jobs, which should not be running
+                        //avoid running jobs, which should not be running
                         auto nowtp = std::chrono::system_clock::now();
 
                         // Case 1: enabled after downtime, compute proper next
@@ -393,7 +394,7 @@ if (next_scheduled <= now) {
                         {
                             // run job once
                             auto* job_ptr = &j;
-                            enqueue_task([this, job_ptr]{ run_job(*job_ptr); });
+                            enqueue_task([this, job_ptr] { run_job(*job_ptr); });
 
                             // compute next future run
                             j.next_run = j.cron.next_after(std::chrono::system_clock::now());
@@ -406,7 +407,7 @@ if (next_scheduled <= now) {
                         // update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
                         // continue;
 
-// Configuration change
+                        // Configuration change
                         if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())
                         {
                             j.job_config = JobConfig(new_cfg);
@@ -418,7 +419,7 @@ if (next_scheduled <= now) {
                     }
                 }
 
-essential::info
+                essential::info
                     << "[CRON-LOOP] listing jobs:"
                     << essential::commit;
 
@@ -453,7 +454,7 @@ essential::info
                     continue;
                 }
 
-// 2) FIND NEXT JOB TO RUN
+                // 2) FIND NEXT JOB TO RUN
                 auto* next = find_next_job();
                 if (next == nullptr)
                 {
@@ -477,9 +478,8 @@ essential::info
                 {
                     std::unique_lock lk(mtx_);
                     essential::err << "[SCHED] WAIT start" << essential::commit;
-                    cv_.wait_until(lk, wake_at, [this]{ return !running_; });
+                    cv_.wait_until(lk, wake_at, [this] { return !running_; });
                     essential::err << "[SCHED] WAIT done" << essential::commit;
-
                 }
 
                 if (!running_)
@@ -491,7 +491,7 @@ essential::info
                     continue;
                 }
 
-if (!running_) return;
+                if (!running_) return;
 
                 // 4) PREVENT PARALLEL EXECUTION OF THE SAME JOB
                 if (next->running)
@@ -520,7 +520,7 @@ if (!running_) return;
                 next->next_run = next_scheduled;
                 update_next_run_in_db(next->job_id, system_clock_to_unixtime(next_scheduled));
 
-std::this_thread::sleep_for(std::chrono::milliseconds(10L));
+                std::this_thread::sleep_for(std::chrono::milliseconds(10L));
             }
 
             essential::warn
@@ -556,7 +556,7 @@ std::this_thread::sleep_for(std::chrono::milliseconds(10L));
         return best;
     }
 
-void CronScheduler::start_threadpool(int threads)
+    void CronScheduler::start_threadpool(int threads)
     {
         essential::err << "[CRON-POOL] creating " << threads << " workers" << essential::commit;
         for (int i = 0; i < threads; i++)
@@ -564,12 +564,12 @@ void CronScheduler::start_threadpool(int threads)
             workers_.emplace_back([this]
             {
                 essential::err << "[CRON-POOL] WORKER STARTED id="
-               << std::this_thread::get_id()
-               << essential::commit;
+                    << std::this_thread::get_id()
+                    << essential::commit;
 
                 while (pool_running_)
                 {
-                    std::function<void()> task;
+                    std::function < void() > task;
 
                     {
                         std::unique_lock lk(queue_mtx_);
@@ -799,4 +799,3 @@ void CronScheduler::start_threadpool(int threads)
         }
     }
 }
-

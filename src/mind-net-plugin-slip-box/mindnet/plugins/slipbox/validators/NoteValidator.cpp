@@ -40,9 +40,10 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult NoteValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "User does not have permission to create a note. Role: " + essential::user_role_to_string(ctx.
-                      role))
+        return_if(ctx.role<mindnet::essential::UserRole::Editor,
+                           403, "User does not have permission to create a note. Role: " +
+                           essential::user_role_to_string(ctx.
+                               role))
 
         if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -114,7 +115,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

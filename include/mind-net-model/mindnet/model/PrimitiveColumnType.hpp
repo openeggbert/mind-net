@@ -52,4 +52,3 @@ namespace mindnet::model
         return primitive_column_type_to_string(static_cast<PrimitiveColumnType>(primitive_column_type));
     }
 }
-

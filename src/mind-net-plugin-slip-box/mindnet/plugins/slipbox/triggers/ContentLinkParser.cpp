@@ -163,7 +163,7 @@ namespace mindnet::plugins::slipbox::triggers
         return out;
     }
 
-ParsedLinks ContentLinkParser::parse_links(const std::string& content)
+    ParsedLinks ContentLinkParser::parse_links(const std::string& content)
     {
         ParsedLinks out;
         auto urls = find_urls(content);
@@ -183,10 +183,9 @@ ParsedLinks ContentLinkParser::parse_links(const std::string& content)
             std::string title = wikilink_title(m.title);
             std::string display = m.display.empty() ? title : m.display;
 
-            out.wikilinks.push_back({ std::move(title), std::move(display) });
+            out.wikilinks.push_back({std::move(title), std::move(display)});
         }
 
         return out;
     }
-
 }

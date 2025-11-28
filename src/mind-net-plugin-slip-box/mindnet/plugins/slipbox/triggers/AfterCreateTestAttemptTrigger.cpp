@@ -45,7 +45,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-void AfterCreateTestAttemptTrigger::run_before_or_after(
+    void AfterCreateTestAttemptTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -89,7 +89,9 @@ void AfterCreateTestAttemptTrigger::run_before_or_after(
 
             if (res.contains("error"))
             {
-                validation_result = {500, std::string("Loading question ids failed: " + res["error"].get<std::string>())};
+                validation_result = {
+                    500, std::string("Loading question ids failed: " + res["error"].get<std::string>())
+                };
                 return;
             }
 
@@ -101,18 +103,18 @@ void AfterCreateTestAttemptTrigger::run_before_or_after(
         catch (std::exception& e)
         {
             err << "Query GetQuestionIds failed " << e.what() << commit;
-            validation_result = {500,std::string("Query FindPreviousAndNextNote failed ")+ e.what()};
+            validation_result = {500, std::string("Query FindPreviousAndNextNote failed ") + e.what()};
             return;
         }
         new_test_attempt.question_ids = question_ids;
         new_test_attempt.started_at = mindnet::util::Utils::current_unix_timestamp_ms();
         auto values = new_test_attempt.to_values();
-        auto update_test_attempt = run_update(models::TEST_ATTEMPT_DEFINITION, token, new_test_attempt.get_id(), values, stack_depth);
+        auto update_test_attempt = run_update(models::TEST_ATTEMPT_DEFINITION, token, new_test_attempt.get_id(), values,
+                                              stack_depth);
         if (update_test_attempt.ko())
         {
             validation_result = {500, update_test_attempt.error};
             return;
         }
-
     }
 }

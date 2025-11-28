@@ -32,6 +32,7 @@ namespace mindnet::db::sqlite::queries
     class CleanupSQLiteQuery : public api::Query
     {
         static constexpr long long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
+
     public:
         CleanupSQLiteQuery();
 

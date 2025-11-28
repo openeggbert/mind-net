@@ -90,7 +90,7 @@ namespace mindnet::plugins::repetition::validators
         return ok_result;
     }
 
-OperationResult R2StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult R2StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
@@ -104,7 +104,7 @@ OperationResult R2StateValidator::validate_create_integrity(const RequestContext
                                                                 const Model& new_entity) const
     {
         return_if(new_entity.last_seen_semantic_version < old_entity.last_seen_semantic_version, 400,
-          "last_seen_semantic_version cannot decrease")
+                  "last_seen_semantic_version cannot decrease")
         return ok_result;
     }
 

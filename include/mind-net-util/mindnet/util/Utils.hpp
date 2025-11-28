@@ -177,4 +177,3 @@ namespace mindnet::util
         set_text_colour({foreground, -1});
     }
 }
-

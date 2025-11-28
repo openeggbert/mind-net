@@ -38,7 +38,7 @@ namespace mindnet::plugins::core::validators
     using mindnet::essential::g_configuration;
 
     OperationResult JobRunValidator::validate_create_authorization(const RequestContext& ctx,
-                                                                    const Model& entity) const
+                                                                   const Model& entity) const
     {
         return ok_result;
     }
@@ -49,24 +49,24 @@ namespace mindnet::plugins::core::validators
     }
 
     OperationResult JobRunValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                    const Model& new_entity) const
+                                                                   const Model& new_entity) const
     {
         return ok_result;
     }
 
     OperationResult JobRunValidator::validate_delete_authorization(const RequestContext& ctx,
-                                                                    const Model& entity) const
+                                                                   const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
     OperationResult JobRunValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                  const string_map& filter) const
+                                                                 const string_map& filter) const
     {
         return ok_result;
     }
 
-OperationResult JobRunValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult JobRunValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
@@ -77,7 +77,7 @@ OperationResult JobRunValidator::validate_create_integrity(const RequestContext&
     }
 
     OperationResult JobRunValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                                const Model& new_entity) const
+                                                               const Model& new_entity) const
     {
         return ok_result;
     }

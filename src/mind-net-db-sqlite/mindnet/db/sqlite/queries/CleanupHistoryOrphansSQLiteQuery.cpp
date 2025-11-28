@@ -37,7 +37,8 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json CleanupHistoryOrphansSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json CleanupHistoryOrphansSQLiteQuery::call(nlohmann::json& request,
+                                                          api::InvalidateMethod& invalidate_method)
     {
         if (!request.contains("history_orphan_threshold_in_days"))
             throw std::runtime_error("history_orphan_threshold_in_days not found");
@@ -64,9 +65,9 @@ created_at <= ? and
 
 )SQL";
 
-info << history_rows_without_delete_operation_sql << commit;
+        info << history_rows_without_delete_operation_sql << commit;
 
-try
+        try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
             db.exec("PRAGMA journal_mode=WAL;");

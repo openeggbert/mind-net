@@ -58,7 +58,7 @@ namespace mindnet::plugins::repetition::migrations
         // ('S_min', 0.5),
         // ('short_retry', 0.5); -- 12 hours
 
-add_migration("V2__create_r_user_setting.sql", R"(
+        add_migration("V2__create_r_user_setting.sql", R"(
 CREATE TABLE r_user_setting (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -221,7 +221,7 @@ CREATE TABLE r4_state (
 );
 )");
 
-add_migration("V8__create_r18_state.sql", R"(
+        add_migration("V8__create_r18_state.sql", R"(
 CREATE TABLE r18_state (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -278,7 +278,7 @@ CREATE TABLE r18_prediction_log (
 );
 )");
 
-add_migration("V11__create_repetition_indexes.sql", R"(
+        add_migration("V11__create_repetition_indexes.sql", R"(
 
 -- Index for fast selection of "due items" (SM-18 and other algorithms)
 CREATE INDEX IF NOT EXISTS idx_r18_state_user_due
@@ -318,7 +318,7 @@ CREATE INDEX IF NOT EXISTS idx_r18_state_note
 
 )");
 
-add_migration("V12__alter_r_session_add_map_collection_id.sql", R"(
+        add_migration("V12__alter_r_session_add_map_collection_id.sql", R"(
 -- FK_OFF
 
 -- 1) Prepare new table with correct schema
@@ -382,7 +382,7 @@ ALTER TABLE r_session_new RENAME TO r_session;
 
 )");
 
-    	add_migration("V13__add_indexes_to_r_session.sql", R"(
+        add_migration("V13__add_indexes_to_r_session.sql", R"(
 -- Extra indexes for fast filtering in UI and queries
 
 -- Already created in V12, but repeat safely in case some DBs missed it
@@ -413,33 +413,32 @@ CREATE INDEX IF NOT EXISTS idx_r_session_cloned_from
     ON r_session(cloned_from_session_id);
 )");
 
-    	add_migration("V14__alter_r0_state_table_add_column_last_seen_semantic_version.sql", R"(
+        add_migration("V14__alter_r0_state_table_add_column_last_seen_semantic_version.sql", R"(
 ALTER TABLE r0_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
 )");
-    	add_migration("V15__alter_r2_state_table_add_column_last_seen_semantic_version.sql", R"(
+        add_migration("V15__alter_r2_state_table_add_column_last_seen_semantic_version.sql", R"(
 ALTER TABLE r2_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
 )");
-    	add_migration("V16__alter_r4_state_table_add_column_last_seen_semantic_version.sql", R"(
+        add_migration("V16__alter_r4_state_table_add_column_last_seen_semantic_version.sql", R"(
 ALTER TABLE r4_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
 )");
-    	add_migration("V17__alter_r18_state_table_add_column_last_seen_semantic_version.sql", R"(
+        add_migration("V17__alter_r18_state_table_add_column_last_seen_semantic_version.sql", R"(
 ALTER TABLE r18_state ADD last_seen_semantic_version INTEGER DEFAULT 1;
 )");
 
-    	add_migration("V18__alter_r0_state_table_add_column_content_modified_since_last_review.sql", R"(
+        add_migration("V18__alter_r0_state_table_add_column_content_modified_since_last_review.sql", R"(
 ALTER TABLE r0_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 )");
-    	add_migration("V19__alter_r2_state_table_add_column_content_modified_since_last_review.sql", R"(
+        add_migration("V19__alter_r2_state_table_add_column_content_modified_since_last_review.sql", R"(
 ALTER TABLE r2_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 )");
-    	add_migration("V20__alter_r4_state_table_add_column_content_modified_since_last_review.sql", R"(
+        add_migration("V20__alter_r4_state_table_add_column_content_modified_since_last_review.sql", R"(
 ALTER TABLE r4_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 )");
-    	add_migration("V21__alter_r18_state_table_add_column_content_modified_since_last_review.sql", R"(
+        add_migration("V21__alter_r18_state_table_add_column_content_modified_since_last_review.sql", R"(
 ALTER TABLE r18_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 )");
-
-}
+    }
 }
 
 /*

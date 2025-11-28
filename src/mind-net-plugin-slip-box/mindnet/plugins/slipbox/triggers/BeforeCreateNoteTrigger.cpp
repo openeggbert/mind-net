@@ -45,7 +45,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-void BeforeCreateNoteTrigger::run_before_or_after(
+    void BeforeCreateNoteTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -67,7 +67,7 @@ void BeforeCreateNoteTrigger::run_before_or_after(
         identification map_id = new_note.map_id;
         identification parent_note_id = new_note.parent_note_id;
 
-nlohmann::json req;
+        nlohmann::json req;
         req["map_id"] = map_id;
         req["parent_note_id"] = parent_note_id;
         req["note_id"] = id;

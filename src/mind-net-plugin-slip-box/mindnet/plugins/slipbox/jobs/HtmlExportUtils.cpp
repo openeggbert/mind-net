@@ -38,11 +38,13 @@ namespace mindnet::plugin::slipbox::jobs
         std::replace(title.begin(), title.end(), '#', ' ');
         return title;
     }
+
     string& replace_underscore_by_space(string& title)
     {
         std::replace(title.begin(), title.end(), '_', ' ');
         return title;
     }
+
     std::string replace_wikilinks(const std::string& input)
     {
         std::string out;
@@ -50,7 +52,7 @@ namespace mindnet::plugin::slipbox::jobs
 
         for (size_t i = 0; i < input.size();)
         {
-            if (i + 1 < input.size() && input[i] == '[' && input[i+1] == '[')
+            if (i + 1 < input.size() && input[i] == '[' && input[i + 1] == '[')
             {
                 size_t end = input.find("]]", i + 2);
                 if (end != std::string::npos)
@@ -67,7 +69,7 @@ namespace mindnet::plugin::slipbox::jobs
         return out;
     }
 
-std::string replace_placeholders(
+    std::string replace_placeholders(
         const std::string& text,
         const std::map<std::string, std::string>& values)
     {
@@ -98,19 +100,19 @@ std::string replace_placeholders(
         {
             if (p == current_for_url) break;
             if (!path.empty()) path += "/";
-            path+= p;
+            path += p;
 
-            result+= "<a href=\"";
-            result+=path;
-            result+= "/index.html\">";
-            result+=replace_underscore_by_space(p);
-            result+="</a>";
-            result+="\n";
+            result += "<a href=\"";
+            result += path;
+            result += "/index.html\">";
+            result += replace_underscore_by_space(p);
+            result += "</a>";
+            result += "\n";
         }
         result += "<span id=\"panel_current\">";
         result += current;
-        result+="</span>";
-        result+="\n";
+        result += "</span>";
+        result += "\n";
         return result;
     }
 

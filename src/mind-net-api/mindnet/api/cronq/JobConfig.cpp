@@ -24,9 +24,8 @@
 
 namespace mindnet::api::cronq
 {
-
-    JobConfig::JobConfig(const std::string& configuration):
-    config_sha256(util::Utils::compute_sha256(configuration))
+    JobConfig::JobConfig(const std::string& configuration) :
+        config_sha256(util::Utils::compute_sha256(configuration))
     {
         parse(configuration);
     }
@@ -53,11 +52,13 @@ namespace mindnet::api::cronq
         if (it == values.end())
             return {std::nullopt, ""};
 
-        try {
+        try
+        {
             int v = std::stoi(it->second);
             return {v, ""};
         }
-        catch (...) {
+        catch (...)
+        {
             return {std::nullopt, "Parsing integer failed: " + it->second};
         }
     }
@@ -100,11 +101,13 @@ namespace mindnet::api::cronq
         if (it == values.end())
             return {default_value, ""};
 
-        try {
+        try
+        {
             int v = std::stoi(it->second);
             return {v, ""};
         }
-        catch (...) {
+        catch (...)
+        {
             return {default_value, "Parsing integer failed: " + it->second};
         }
     }
@@ -180,5 +183,4 @@ namespace mindnet::api::cronq
                 values[key] = value;
         }
     }
-
 }

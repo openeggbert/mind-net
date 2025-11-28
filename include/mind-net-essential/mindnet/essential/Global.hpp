@@ -49,4 +49,3 @@ namespace mindnet::essential
     //
     extern Logger& log;
 }
-

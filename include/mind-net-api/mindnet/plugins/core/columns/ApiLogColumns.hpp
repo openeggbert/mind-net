@@ -56,4 +56,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* ERROR = "error";
     };
 }
-

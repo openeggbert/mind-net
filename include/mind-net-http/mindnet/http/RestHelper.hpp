@@ -53,4 +53,3 @@ namespace mindnet::http
         static crow::json::wvalue rjson_to_wjson(const crow::json::rvalue& rjson);
     };
 }
-

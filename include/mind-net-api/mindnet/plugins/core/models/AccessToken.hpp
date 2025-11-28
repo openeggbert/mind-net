@@ -111,7 +111,7 @@ namespace mindnet::plugins::core::models
  *                                 read/list on tasks
  */
 
-string allowed_operations;
+        string allowed_operations;
 
         create_model_h_methods(Model, MODEL)
 

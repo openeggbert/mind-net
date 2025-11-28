@@ -27,4 +27,3 @@ namespace mindnet::plugins::core
 {
     const string CORE_PLUGIN_NAME = "core";
 }
-

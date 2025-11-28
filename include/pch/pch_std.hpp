@@ -41,4 +41,3 @@
 #include <atomic>
 #include <algorithm>
 #include <functional>
-

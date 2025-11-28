@@ -33,15 +33,17 @@ namespace mindnet::api
     using mindnet::api::OperationResult;
     using model::ModelDefinition;
 
-    class InvalidateMethodImpl: public InvalidateMethod
+    class InvalidateMethodImpl : public InvalidateMethod
     {
     public:
         InvalidateMethodImpl(const DbPtr& db) : db_(db)
         {
-
         }
+
         DbPtr db_;
-        void invalidate(const model::ModelDefinition& def, identification id) {
+
+        void invalidate(const model::ModelDefinition& def, identification id)
+        {
             db_->invalidate(def, id);
         };
     };
@@ -69,12 +71,13 @@ namespace mindnet::api
         nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) override;
 
         std::pair<identification, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
-                                               entity_fields& fields, int stack_depth) override;
+                                                          entity_fields& fields, int stack_depth) override;
         std::pair<entity_fields, OperationResult>
         read(const ModelDefinition& def, api::AccessTokenContext& token, identification id, int stack_depth) override;
         OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                entity_fields& fields, int stack_depth) override;
-        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, identification id, int stack_depth) override;
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
+                               int stack_depth) override;
         std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
                                                                     api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params,
@@ -87,6 +90,7 @@ namespace mindnet::api
         ) override;
         const api::PluginRegistryPtr get_plugin_registry() const override;
         void stop_service() override;
+
     private:
         std::shared_ptr<IValidator> get_validator(const std::string& name);
         OperationResult can_create(const ModelDefinition& model_definition, api::AccessTokenContext& token,
@@ -99,6 +103,5 @@ namespace mindnet::api
                                    identification id) override;
         OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                  string_map& filter) override;
-
     };
 }

@@ -55,7 +55,7 @@ namespace mindnet::api
         std::vector<std::string>& list_model_names() override;
 
         std::pair<identification, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
-                                               entity_fields& fields) override;
+                                                          entity_fields& fields) override;
         std::pair<entity_fields, OperationResult>
         read(const ModelDefinition& def, api::AccessTokenContext& token, identification id) override;
         void invalidate(const model::ModelDefinition& def, identification id) override;
@@ -72,4 +72,3 @@ namespace mindnet::api
                                                ModelDefinition& def) override;
     };
 }
-

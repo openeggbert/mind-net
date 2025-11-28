@@ -60,4 +60,3 @@ namespace mindnet::plugins::core::columns
         static constexpr const char* SUCCESS = "success";
     };
 }
-

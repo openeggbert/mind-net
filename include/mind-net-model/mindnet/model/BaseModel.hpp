@@ -95,7 +95,7 @@ namespace mindnet::model
         entity_fields fields,
         const ModelDefinition& definition);
 
-using std::string;
+    using std::string;
     using type = ColumnType;
     using coldef = ColumnDefinition;
     using def = ModelDefinition;
@@ -120,10 +120,12 @@ using std::string;
         {
             id = id_;
         }
+
         [[nodiscard]] unixtime get_created_at() const
         {
             return created_at;
         }
+
         [[nodiscard]] unixtime get_updated_at() const
         {
             return updated_at;
@@ -236,4 +238,3 @@ using std::string;
         return "";
     }
 }
-

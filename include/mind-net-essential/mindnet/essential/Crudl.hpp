@@ -86,4 +86,3 @@ namespace mindnet::essential
 
     static const constexpr char* CRUDL = "CRUDL";
 }
-

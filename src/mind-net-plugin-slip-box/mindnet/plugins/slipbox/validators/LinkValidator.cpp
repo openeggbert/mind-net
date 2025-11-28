@@ -67,7 +67,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-using validators::LinkValidator;
+    using validators::LinkValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 

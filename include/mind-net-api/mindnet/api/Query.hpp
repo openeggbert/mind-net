@@ -70,4 +70,3 @@ namespace mindnet::api
 
     typedef std::shared_ptr<Query> QueryPtr;
 }
-

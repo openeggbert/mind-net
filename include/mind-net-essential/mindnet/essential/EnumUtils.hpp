@@ -85,4 +85,3 @@ inline model::EnumDefinition PREFIX##_to_enum_definition() {                 \
 #define DECLARE_STRING_TO_ENUM_VALID_IF(name, value, ENUM_NAME) if (str == #name) return true;
 #define DECLARE_ENUM_TO_INT_ARGS(name, value, ENUM_NAME) value,
 #define DECLARE_INT_TO_ENUM_CASE(name, value, ENUM_NAME) case value: return ENUM_NAME::name;
-

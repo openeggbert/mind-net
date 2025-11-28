@@ -187,7 +187,7 @@ namespace mindnet::http
                 std::string access_hash = util::Utils::compute_sha256(raw_access); // or SHA256
                 std::string refresh_hash = util::Utils::compute_sha256(raw_refresh); // or SHA256
 
-// -------------------------------
+                // -------------------------------
                 // 2. Save to DB
                 // -------------------------------
                 identification access_id = -1;
@@ -405,7 +405,8 @@ namespace mindnet::http
                     access.revoked_at = now;
                     auto access_token_values = access.to_values();
                     auto access_updated = service_ptr->update(plugins::core::models::ACCESS_TOKEN_DEFINITION,
-                                                              token_to_be_used, access.get_id(), access_token_values, 0);
+                                                              token_to_be_used, access.get_id(), access_token_values,
+                                                              0);
 
                     if (access_updated.ko())
                     {
@@ -441,7 +442,8 @@ namespace mindnet::http
                 // 1. Find refresh token
                 orm::QueryParams query;
                 query.add_filter(plugins::core::columns::RefreshTokenColumns::TOKEN_HASH, refresh_hash);
-                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, system_token, query, 0);
+                auto result = service_ptr->list(plugins::core::models::REFRESH_TOKEN_DEFINITION, system_token, query,
+                                                0);
                 if (result.second.ko())
                 {
                     log_request(service_ptr, req, system_token, result.second.status, 0, result.second.error);
@@ -595,7 +597,7 @@ namespace mindnet::http
                 return crow::response{200, response};
             });
 
-CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)(
+        CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)(
             [service_ptr, &log_request](const crow::request& req)
             {
                 check_maintenance_mode()
@@ -769,7 +771,7 @@ CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)(
                 return crow::response{200, "Password changed successfully"};
             });
 
-// CROW_ROUTE(crow_app, "/api/v1/auth/protected")([service_ptr, &log_request](const crow::request& req)
+        // CROW_ROUTE(crow_app, "/api/v1/auth/protected")([service_ptr, &log_request](const crow::request& req)
         // {
         //     check_maintenance_mode()
         //

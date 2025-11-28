@@ -73,7 +73,7 @@ namespace mindnet::db::sqlite
  * structural/cleanliness improvement for later.
  */
 
-SqliteDatabaseMigration::SqliteDatabaseMigration()
+    SqliteDatabaseMigration::SqliteDatabaseMigration()
     {
         //Not meant to be instantiated
     };
@@ -491,7 +491,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                 }
             }
 
-int last_successful_version = get_last_successful_version(db);
+            int last_successful_version = get_last_successful_version(db);
             if (last_successful_version == -1) return false;
             for (int version = 1; version <= last_successful_version; version++)
             {
@@ -564,7 +564,7 @@ int last_successful_version = get_last_successful_version(db);
                 }
             }
 
-return true;
+            return true;
         }
 
         bool insert_migration(
@@ -762,11 +762,12 @@ return true;
 
                         db.exec("COMMIT;");
                         SQLite::Statement chk(db, "PRAGMA foreign_key_check;");
-                        while (chk.executeStep()) {
+                        while (chk.executeStep())
+                        {
                             warn << "Foreign key violation: table=" << chk.getColumn(0).getString()
-                                 << " rowid=" << chk.getColumn(1).getInt()
-                                 << " ref-table=" << chk.getColumn(2).getString()
-                                 << commit;
+                                << " rowid=" << chk.getColumn(1).getInt()
+                                << " ref-table=" << chk.getColumn(2).getString()
+                                << commit;
                         }
 
                         if (disableFK)
@@ -790,7 +791,10 @@ return true;
                         }
                         if (disableFK)
                         {
-                            try { db.exec("PRAGMA foreign_keys=ON;"); } catch(...) {}
+                            try { db.exec("PRAGMA foreign_keys=ON;"); }
+                            catch (...)
+                            {
+                            }
                         }
 
                         err << "Migration " << version << " failed and was rolled back: " << e.what() << commit;

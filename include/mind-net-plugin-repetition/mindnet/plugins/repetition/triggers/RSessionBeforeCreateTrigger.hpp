@@ -47,4 +47,3 @@ namespace mindnet::plugins::repetition::triggers
         ) override;
     };
 }
-

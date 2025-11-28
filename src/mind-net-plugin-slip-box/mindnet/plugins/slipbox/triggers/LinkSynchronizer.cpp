@@ -41,16 +41,24 @@ namespace mindnet::plugins::slipbox::triggers
         int stack_depth,
         identification note_id,
         std::function<api::OperationResult(
-            const model::ModelDefinition&,
-            api::AccessTokenContext&,
-            identification,
-            int)> run_delete,
-        std::function<std::pair<identification, api::OperationResult>(
-            const model::ModelDefinition&,
-            api::AccessTokenContext&,
-            entity_fields&,
-            int)> run_create)
-        : token(token),
+                      const model::ModelDefinition&,
+                      api::AccessTokenContext&,
+                      identification,
+                      int)
+    >
+    run_delete
+    ,
+    std::function<std::pair<identification, api::OperationResult>(
+                  const model::ModelDefinition&,
+                  api::AccessTokenContext&,
+                  entity_fields&,
+                  int
+    )
+    >
+    run_create
+    )
+    :
+    token (token),
           stack_depth(stack_depth),
           note_id(note_id),
           run_delete_(std::move(run_delete)),
@@ -58,7 +66,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-// Generic sync for items represented as string titles
+    // Generic sync for items represented as string titles
     template <typename Entity, typename MakeFn>
     void LinkSynchronizer::sync_entities(const std::vector<std::string>& old_items,
                                          const std::map<std::string, identification>& old_ids,
@@ -82,7 +90,7 @@ namespace mindnet::plugins::slipbox::triggers
                 auto del_result = run_delete_(def, token, id, stack_depth);
                 if (del_result.ko())
                     warn << "Failed to delete " << name << "='" << val << "' for note_id=" << note_id
-                         << ": " << del_result.error << commit;
+                        << ": " << del_result.error << commit;
                 else
                     info << "Deleted " << name << " '" << val << "' for note_id=" << note_id << commit;
             }
@@ -100,14 +108,14 @@ namespace mindnet::plugins::slipbox::triggers
                 auto result = run_create_(def, token, v, stack_depth);
                 if (result.second.ko())
                     warn << "Failed to insert " << name << "='" << val << "' for note_id=" << note_id
-                         << ": " << result.second.error << commit;
+                        << ": " << result.second.error << commit;
                 else
                     info << "Inserted " << name << " '" << val << "' for note_id=" << note_id << commit;
             }
         }
     }
 
-// --- URL ---
+    // --- URL ---
     void LinkSynchronizer::sync_urls(const std::vector<std::string>& old_urls,
                                      const std::map<std::string, identification>& old_urls_ids,
                                      const std::vector<std::string>& new_urls)
@@ -124,7 +132,7 @@ namespace mindnet::plugins::slipbox::triggers
             });
     }
 
-// --- LINK ---
+    // --- LINK ---
     void LinkSynchronizer::sync_links(
         const std::vector<std::string>& old_links,
         const std::map<std::string, identification>& old_links_ids,
@@ -166,7 +174,7 @@ namespace mindnet::plugins::slipbox::triggers
         );
     }
 
-// --- WANTED_NOTE ---
+    // --- WANTED_NOTE ---
     void LinkSynchronizer::sync_wanted_notes(
         const std::vector<std::string>& old_wanted,
         const std::map<std::string, identification>& old_wanted_ids,
@@ -203,5 +211,4 @@ namespace mindnet::plugins::slipbox::triggers
             }
         );
     }
-
 }

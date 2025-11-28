@@ -48,4 +48,3 @@ namespace mindnet::http
         std::string directory_for_static_files;
     };
 }
-

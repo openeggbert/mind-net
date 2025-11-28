@@ -156,7 +156,8 @@ namespace mindnet::plugins::slipbox::triggers
             return;
         }
 
-        if (std::abs((int)diff.old_word_count - (int)diff.new_word_count) > 50) {
+        if (std::abs((int)diff.old_word_count - (int)diff.new_word_count) > 50)
+        {
             // huge change, no need to calculate ED
             new_content.change_ratio = 100;
             new_content.semantic_version++;
@@ -166,7 +167,7 @@ namespace mindnet::plugins::slipbox::triggers
             return;
         }
 
-auto& wer = diff.wer_percent;
+        auto& wer = diff.wer_percent;
 
         // WER is in percent. 20% = 20.0
         bool big_change =

@@ -6,10 +6,10 @@ target_include_directories(mind_net_app PRIVATE
 
 find_library(JEMALLOC_LIB jemalloc)
 
-if(JEMALLOC_LIB)
+if (JEMALLOC_LIB)
     message(STATUS "Found jemalloc: ${JEMALLOC_LIB}")
     target_link_libraries(mind_net_app PRIVATE ${JEMALLOC_LIB})
-endif()
+endif ()
 
 target_link_libraries(mind_net_app PRIVATE
         mind_net_essential

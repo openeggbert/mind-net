@@ -57,7 +57,7 @@ namespace mindnet::essential
     // therefore we only set an "absolute upper bound" here
     constexpr int REFRESH_TOKEN_ROTATION_THRESHOLD_MAX_VALUE = REFRESH_TOKEN_EXPIRES_IN_MAX_VALUE;
 
-struct Configuration
+    struct Configuration
     {
         //identification
         std::string name;

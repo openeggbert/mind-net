@@ -105,10 +105,8 @@ namespace mindnet::api
             const orm::QueryParams& query_params);
 
     private:
-
         TableMap registry_;
     };
 
     typedef std::shared_ptr<TriggerRegistry> TriggerRegistryPtr;
 }
-

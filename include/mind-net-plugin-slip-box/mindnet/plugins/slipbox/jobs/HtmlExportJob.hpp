@@ -41,10 +41,11 @@ namespace mindnet::plugins::slipbox::jobs
         ~HtmlExportJob() = default;
 
         string run(api::cronq::JobConfig& job_config) override;
+
     private:
         string generate_map(std::filesystem::path& export_map_dir, models::Map& map, api::AccessTokenContext& token);
-        string generate_page(models::Note& note, api::AccessTokenContext& token, string& author_display_name, models::Map& map, std::filesystem::
+        string generate_page(models::Note& note, api::AccessTokenContext& token, string& author_display_name,
+                             models::Map& map, std::filesystem::
                              path& export_map_dir);
-
     };
 }

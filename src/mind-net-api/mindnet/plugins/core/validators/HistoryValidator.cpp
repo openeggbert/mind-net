@@ -79,7 +79,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-OperationResult HistoryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult HistoryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

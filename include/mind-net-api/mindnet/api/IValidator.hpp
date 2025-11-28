@@ -47,7 +47,7 @@ namespace mindnet::api
 namespace mindnet::api
 {
     class IValidator;
-    typedef std::function<std::shared_ptr<IValidator>(const std::string&)> GetValidatorFunc;
+    typedef std::function<std::shared_ptr<IValidator>(const std::string &)> GetValidatorFunc;
 
     using string = std::string;
 

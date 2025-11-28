@@ -49,14 +49,14 @@ namespace mindnet::plugins::slipbox::enums
     {
         switch (type)
         {
-            case AnnotationType::Comment:     return "Comment";
-            case AnnotationType::Todo:        return "Todo";
-            case AnnotationType::Warning:     return "Warning";
-            case AnnotationType::Question:    return "Question";
-            case AnnotationType::Summary:     return "Summary";
-            case AnnotationType::Link:        return "Link";
-            case AnnotationType::Definition:  return "Definition";
-            default:                          return "unknown";
+        case AnnotationType::Comment: return "Comment";
+        case AnnotationType::Todo: return "Todo";
+        case AnnotationType::Warning: return "Warning";
+        case AnnotationType::Question: return "Question";
+        case AnnotationType::Summary: return "Summary";
+        case AnnotationType::Link: return "Link";
+        case AnnotationType::Definition: return "Definition";
+        default: return "unknown";
         }
     }
 
@@ -73,5 +73,4 @@ namespace mindnet::plugins::slipbox::enums
             0, 1, 2, 3, 4, 5, 6
         };
     }
-
 } // namespace mindnet::plugins::slipbox::enums

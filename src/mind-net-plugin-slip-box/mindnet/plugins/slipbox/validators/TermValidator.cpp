@@ -40,7 +40,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TermValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not create Terms.")
+        return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not create Terms.")
 
         if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -65,7 +65,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TermValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                  const Model& new_entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not update Terms.")
+        return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not update Terms.")
 
         if (!slipbox::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -77,7 +77,7 @@ namespace mindnet::plugins::slipbox::validators
 
     OperationResult TermValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor, 403, "You can not delete Terms.")
+        return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not delete Terms.")
 
         if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
@@ -103,7 +103,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult TermValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TermValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (entity.note_id != 0)
         {

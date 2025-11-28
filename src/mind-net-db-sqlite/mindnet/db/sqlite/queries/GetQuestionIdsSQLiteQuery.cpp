@@ -59,8 +59,8 @@ LIMIT {limit};
     }
 
     nlohmann::json GetQuestionIdsSQLiteQuery::call(
-         nlohmann::json& request,
-         api::InvalidateMethod& invalidate_method)
+        nlohmann::json& request,
+        api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -71,8 +71,8 @@ LIMIT {limit};
 
         // --- mandatory inputs ---
         identification under_note_id = test.value("under_note_id", 0);
-        identification map_id        = test.value("map_id", 0);
-        int limit         = test.value("answer_count_limit", 100);
+        identification map_id = test.value("map_id", 0);
+        int limit = test.value("answer_count_limit", 100);
 
         // --- prepare SQL variables ---
         std::string filter_under_note_sql = std::to_string(under_note_id);
@@ -94,12 +94,12 @@ LIMIT {limit};
 
         std::unordered_map<std::string, std::string> vars = {
             {"filter_under_note", filter_under_note_sql},
-            {"map_join",          map_join_sql},
-            {"map_where",         map_where_sql},
-            {"limit",             std::to_string(limit)}
+            {"map_join", map_join_sql},
+            {"map_where", map_where_sql},
+            {"limit", std::to_string(limit)}
         };
 
-std::string sql = SQL;
+        std::string sql = SQL;
         for (const auto& [key, val] : vars)
         {
             std::string placeholder = "{" + key + "}";
@@ -142,5 +142,4 @@ std::string sql = SQL;
 
         return response;
     }
-
 }

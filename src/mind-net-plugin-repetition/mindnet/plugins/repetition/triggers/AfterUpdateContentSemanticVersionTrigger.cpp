@@ -56,7 +56,8 @@ namespace mindnet::plugins::repetition::triggers
     // S_old: previous stability value
     // S_min: minimum allowed stability (e.g., 1.0)
 
-    double adjust_stability(double change_ratio, double S_old, double S_min = 1.0) {
+    double adjust_stability(double change_ratio, double S_old, double S_min = 1.0)
+    {
         // Clamp change_ratio to [0, 100]
         if (change_ratio < 0) change_ratio = 0;
         if (change_ratio > 100) change_ratio = 100;
@@ -138,11 +139,16 @@ namespace mindnet::plugins::repetition::triggers
             const model::ModelDefinition* model_definition = &models::R0_STATE_DEFINITION;
             switch (r_version)
             {
-            case 0: model_definition = &models::R0_STATE_DEFINITION;break;
-            case 2: model_definition = &models::R2_STATE_DEFINITION;break;
-            case 4: model_definition = &models::R4_STATE_DEFINITION;break;
-            case 18: model_definition = &models::R18_STATE_DEFINITION;break;
-            default: err << "Unsupported algorithm " << r_version << commit; continue;
+            case 0: model_definition = &models::R0_STATE_DEFINITION;
+                break;
+            case 2: model_definition = &models::R2_STATE_DEFINITION;
+                break;
+            case 4: model_definition = &models::R4_STATE_DEFINITION;
+                break;
+            case 18: model_definition = &models::R18_STATE_DEFINITION;
+                break;
+            default: err << "Unsupported algorithm " << r_version << commit;
+                continue;
             }
             auto state_result = run_list(*model_definition, token, state_params, stack_depth);
             if (state_result.second.ko())
@@ -159,11 +165,16 @@ namespace mindnet::plugins::repetition::triggers
             {
                 switch (r_version)
                 {
-                case 0: r0_state.from_values(state); break;
-                case 2: r2_state.from_values(state); break;
-                case 4: r4_state.from_values(state); break;
-                case 18: r18_state.from_values(state); break;
-                default: err << "Unsupported algorithm " << r_version << commit; continue;
+                case 0: r0_state.from_values(state);
+                    break;
+                case 2: r2_state.from_values(state);
+                    break;
+                case 4: r4_state.from_values(state);
+                    break;
+                case 18: r18_state.from_values(state);
+                    break;
+                default: err << "Unsupported algorithm " << r_version << commit;
+                    continue;
                 }
                 int64_t now = util::Utils::current_unix_timestamp_ms();
                 if (r_version == 0)
@@ -173,13 +184,16 @@ namespace mindnet::plugins::repetition::triggers
                         const static std::vector<int> SM0 = {1, 6, 16, 35, 62, 100, 150, 210, 300, 420};
 
                         auto it = std::lower_bound(SM0.begin(), SM0.end(), r0_state.interval);
-                        if (it != SM0.begin()) {
+                        if (it != SM0.begin())
+                        {
                             // move back 1 step
                             --it;
                             r0_state.interval = std::max(1, *it);
-                            r0_state.next_review = r0_state.last_review + (int64_t)r0_state.interval * MILLISECONDS_PER_DAY;
+                            r0_state.next_review = r0_state.last_review + (int64_t)r0_state.interval *
+                                MILLISECONDS_PER_DAY;
                         }
-                    } else
+                    }
+                    else
                     {
                         r0_state.repetitions = 0;
                         r0_state.interval = 1;
@@ -193,18 +207,22 @@ namespace mindnet::plugins::repetition::triggers
                     auto v = r0_state.to_values();
 
                     debug << "Updating table " << model_definition->get_model_name()
-      << " id=" << r0_state.get_id()
-      << " version=" << r_version
-      << " change_ratio=" << change_ratio << commit;
+                        << " id=" << r0_state.get_id()
+                        << " version=" << r_version
+                        << " change_ratio=" << change_ratio << commit;
 
-                        run_update(*model_definition, token, r0_state.get_id(), v, stack_depth);
+                    run_update(*model_definition, token, r0_state.get_id(), v, stack_depth);
                 }
                 if (r_version == 2)
                 {
-                    if (change_20_50) {
+                    if (change_20_50)
+                    {
                         r2_state.interval = std::max(1.0, r2_state.interval * 0.5);
-                        r2_state.next_review = r2_state.last_review + (int64_t)std::llround(r2_state.interval * MILLISECONDS_PER_DAY);
-                    } else {
+                        r2_state.next_review = r2_state.last_review + (int64_t)std::llround(
+                            r2_state.interval * MILLISECONDS_PER_DAY);
+                    }
+                    else
+                    {
                         r2_state.repetitions = 0;
                         r2_state.interval = 1;
                         r2_state.ef_times_100 = std::max(100, r2_state.ef_times_100 - 20);
@@ -213,23 +231,25 @@ namespace mindnet::plugins::repetition::triggers
                     }
                     if (r2_state.next_review < now) r2_state.next_review = now + MILLISECONDS_PER_HOUR;
 
-                        r2_state.last_seen_semantic_version = new_semantic_version;
-                        r2_state.content_modified_since_last_review = true;
-                        auto v = r2_state.to_values();
+                    r2_state.last_seen_semantic_version = new_semantic_version;
+                    r2_state.content_modified_since_last_review = true;
+                    auto v = r2_state.to_values();
                     debug << "Updating table " << model_definition->get_model_name()
-<< " id=" << r2_state.get_id()
-<< " version=" << r_version
-<< " change_ratio=" << change_ratio << commit;
-                        run_update(*model_definition, token, r2_state.get_id(), v, stack_depth);
-
+                        << " id=" << r2_state.get_id()
+                        << " version=" << r_version
+                        << " change_ratio=" << change_ratio << commit;
+                    run_update(*model_definition, token, r2_state.get_id(), v, stack_depth);
                 }
                 if (r_version == 4)
                 {
-
-                    if (change_20_50) {
+                    if (change_20_50)
+                    {
                         r4_state.interval = std::max(1.0, r4_state.interval * 0.5);
-                        r4_state.next_review = r4_state.last_review + (int64_t)std::llround(r4_state.interval * MILLISECONDS_PER_DAY);
-                    } else {
+                        r4_state.next_review = r4_state.last_review + (int64_t)std::llround(
+                            r4_state.interval * MILLISECONDS_PER_DAY);
+                    }
+                    else
+                    {
                         r4_state.repetitions = 0;
                         r4_state.interval = 1;
                         r4_state.ef_times_100 = std::max(100, r4_state.ef_times_100 - 20);
@@ -242,15 +262,15 @@ namespace mindnet::plugins::repetition::triggers
                     r4_state.content_modified_since_last_review = true;
                     auto v = r4_state.to_values();
                     debug << "Updating table " << model_definition->get_model_name()
-<< " id=" << r4_state.get_id()
-<< " version=" << r_version
-<< " change_ratio=" << change_ratio << commit;
+                        << " id=" << r4_state.get_id()
+                        << " version=" << r_version
+                        << " change_ratio=" << change_ratio << commit;
                     run_update(*model_definition, token, r4_state.get_id(), v, stack_depth);
-
                 }
                 if (r_version == 18)
                 {
-                    if (change_20_50 && r18_state.last_interval_times_100 != 0) {
+                    if (change_20_50 && r18_state.last_interval_times_100 != 0)
+                    {
                         double S_old = r18_state.stability_times_100 / 100.0;
                         double S_new = adjust_stability(change_ratio, S_old, 8.0);
                         r18_state.stability_times_100 = (int)std::round(S_new * 100.0);
@@ -263,7 +283,9 @@ namespace mindnet::plugins::repetition::triggers
 
                         r18_state.last_interval_times_100 = (int)std::round(elapsed_days * 100.0);
                         r18_state.next_review = now + (int64_t)std::llround(new_interval_days * MILLISECONDS_PER_DAY);
-                    } else {
+                    }
+                    else
+                    {
                         r18_state.stability_times_100 = 800;
                         r18_state.last_interval_times_100 = 0;
                         r18_state.repetitions = 0;
@@ -277,15 +299,14 @@ namespace mindnet::plugins::repetition::triggers
                     r18_state.content_modified_since_last_review = true;
                     auto v = r18_state.to_values();
                     debug << "Updating table " << model_definition->get_model_name()
-<< " id=" << r18_state.get_id()
-<< " version=" << r_version
-<< " change_ratio=" << change_ratio << commit;
+                        << " id=" << r18_state.get_id()
+                        << " version=" << r_version
+                        << " change_ratio=" << change_ratio << commit;
                     run_update(*model_definition, token, r18_state.get_id(), v, stack_depth);
-
                 }
             }
         }
         info << "Semantic version updated → spaced repetition adjusted (ratio="
-     << change_ratio << "%, sem_v=" << new_semantic_version << ")" << commit;
+            << change_ratio << "%, sem_v=" << new_semantic_version << ")" << commit;
     }
 }

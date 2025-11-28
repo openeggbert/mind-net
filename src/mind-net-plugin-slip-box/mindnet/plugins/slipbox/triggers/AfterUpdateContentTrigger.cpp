@@ -93,7 +93,7 @@ namespace mindnet::plugins::slipbox::triggers
     //   '[[Another page|display text]]' -> inner: 'Another page|display text' at pos 185
     //   '[[Nested [[bad]]' -> inner: 'Nested [[bad' at pos 220
 
-void AfterUpdateContentTrigger::run_before_or_after(
+    void AfterUpdateContentTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -203,7 +203,7 @@ void AfterUpdateContentTrigger::run_before_or_after(
         std::map<std::string, i64> old_links_ids;
         std::map<std::string, i64> old_wanted_notes_ids;
 
-// --- load persisted state for this note_id (URL, LINK, WANTED_NOTE) ----
+        // --- load persisted state for this note_id (URL, LINK, WANTED_NOTE) ----
         {
             // 1) URL
             {
@@ -289,7 +289,7 @@ void AfterUpdateContentTrigger::run_before_or_after(
                 << ", WANTED_NOTES=" << old_wanted_notes.size() << commit;
         }
 
-std::function<api::OperationResult(
+        std::function<api::OperationResult(
             const model::ModelDefinition&,
             api::AccessTokenContext&,
             int,
@@ -301,7 +301,7 @@ std::function<api::OperationResult(
             return run_delete(def, token, id, depth);
         };
 
-std::function<std::pair<int, api::OperationResult>(
+        std::function<std::pair<int, api::OperationResult>(
             const model::ModelDefinition&,
             api::AccessTokenContext&,
             entity_fields&,
@@ -314,7 +314,7 @@ std::function<std::pair<int, api::OperationResult>(
             return run_create(def, token, fields, depth);
         };
 
-LinkSynchronizer sync(
+        LinkSynchronizer sync(
             token,
             stack_depth,
             note.get_id(),

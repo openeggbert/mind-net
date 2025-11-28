@@ -56,7 +56,7 @@ namespace mindnet::http
         std::string directory_for_static_files;
         std::shared_ptr<WebEndpointsGenerator> web_endpoints_generator_ = nullptr;
 
-//
+        //
         void create_web_endpoints(const api::ServicePtr& service_ptr);
         void create_model_definition_endpoints(const api::ServicePtr& service_ptr);
         void create_info_endpoint(const api::ServicePtr& service_ptr);
@@ -65,4 +65,3 @@ namespace mindnet::http
         void create_authentication_endpoints(api::ServicePtr& service_ptr);
     };
 }
-

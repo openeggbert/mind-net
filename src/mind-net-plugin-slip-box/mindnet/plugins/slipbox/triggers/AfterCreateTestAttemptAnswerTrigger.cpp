@@ -47,7 +47,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
+    void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -70,7 +70,8 @@ void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
                                             ? api::AccessTokenContext(user_id, "system", 403)
                                             : api::AccessTokenContext(user_id, "", 200);
 
-        auto read_test_attempt = run_read(models::TEST_ATTEMPT_DEFINITION, token, new_test_attempt_answer.test_attempt_id, stack_depth);
+        auto read_test_attempt = run_read(models::TEST_ATTEMPT_DEFINITION, token,
+                                          new_test_attempt_answer.test_attempt_id, stack_depth);
         if (read_test_attempt.second.ko())
         {
             err << read_test_attempt.second.error << commit;
@@ -118,7 +119,7 @@ void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
             return;
         }
         double count_successes{0};
-        for (auto& e: list_result.first)
+        for (auto& e : list_result.first)
         {
             models::TestAttemptAnswer test_attempt_answer;
             test_attempt_answer.from_values(e);
@@ -130,11 +131,11 @@ void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
         test_attempt.finished_at = mindnet::util::Utils::current_unix_timestamp_ms();
         test_attempt.score_times_100 = cast64(score * 100.0);
         auto v = test_attempt.to_values();
-        auto update_test_attempt = run_update(models::TEST_ATTEMPT_DEFINITION, token, test_attempt.get_id(), v, stack_depth );
+        auto update_test_attempt = run_update(models::TEST_ATTEMPT_DEFINITION, token, test_attempt.get_id(), v,
+                                              stack_depth);
         if (update_test_attempt.ko())
         {
             err << "Updating test_attempt failed: " << update_test_attempt.error << commit;
         }
-
-}
+    }
 }

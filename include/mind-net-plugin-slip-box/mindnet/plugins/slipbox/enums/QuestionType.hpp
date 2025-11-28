@@ -66,4 +66,3 @@ namespace mindnet::plugins::slipbox::enums
         };
     }
 } // namespace mindnet::enums
-

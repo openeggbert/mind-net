@@ -70,4 +70,3 @@ namespace mindnet::plugins::core::enums
         };
     }
 } // namespace mindnet::enums
-

@@ -49,8 +49,9 @@ namespace mindnet::api
         virtual std::vector<std::string>& list_model_names() = 0;
         virtual nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) = 0;
         //
-        virtual std::pair<identification, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
-                                                       entity_fields& fields, int stack_depth) = 0;
+        virtual std::pair<identification, OperationResult> create(const ModelDefinition& def,
+                                                                  api::AccessTokenContext& token,
+                                                                  entity_fields& fields, int stack_depth) = 0;
         virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def,
                                                                api::AccessTokenContext& token,
                                                                identification id, int stack_depth) = 0;
@@ -101,6 +102,7 @@ namespace mindnet::api
         void schedule_restart() { restart_scheduled = true; };
         void schedule_shutdown() { shutdown_scheduled = true; };
         virtual void stop_service() = 0;
+
     private:
         virtual OperationResult can_create(
             const model::ModelDefinition& model_definition,
@@ -120,4 +122,3 @@ namespace mindnet::api
 
     typedef std::shared_ptr<mindnet::api::IService> ServicePtr;
 }
-

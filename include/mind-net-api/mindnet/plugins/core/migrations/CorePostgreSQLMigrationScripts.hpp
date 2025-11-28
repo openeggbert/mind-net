@@ -36,4 +36,3 @@ namespace mindnet::plugins::core::migrations
         void define_migrations() override;
     };
 }
-

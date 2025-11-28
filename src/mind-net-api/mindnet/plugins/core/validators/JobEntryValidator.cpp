@@ -38,7 +38,7 @@ namespace mindnet::plugins::core::validators
     using mindnet::essential::g_configuration;
 
     OperationResult JobEntryValidator::validate_create_authorization(const RequestContext& ctx,
-                                                                    const Model& entity) const
+                                                                     const Model& entity) const
     {
         return ok_result;
     }
@@ -49,7 +49,7 @@ namespace mindnet::plugins::core::validators
     }
 
     OperationResult JobEntryValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                    const Model& new_entity) const
+                                                                     const Model& new_entity) const
     {
         if (ctx.role < mindnet::essential::UserRole::Admin) return status_403_forbidden;
 
@@ -64,19 +64,19 @@ namespace mindnet::plugins::core::validators
     }
 
     OperationResult JobEntryValidator::validate_delete_authorization(const RequestContext& ctx,
-                                                                    const Model& entity) const
+                                                                     const Model& entity) const
     {
         if (ctx.role < mindnet::essential::UserRole::Admin) return status_403_forbidden;
         return ok_result;
     }
 
     OperationResult JobEntryValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                  const string_map& filter) const
+                                                                   const string_map& filter) const
     {
         return ok_result;
     }
 
-OperationResult JobEntryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult JobEntryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
@@ -87,7 +87,7 @@ OperationResult JobEntryValidator::validate_create_integrity(const RequestContex
     }
 
     OperationResult JobEntryValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                                const Model& new_entity) const
+                                                                 const Model& new_entity) const
     {
         return ok_result;
     }
@@ -97,7 +97,8 @@ OperationResult JobEntryValidator::validate_create_integrity(const RequestContex
         return ok_result;
     }
 
-    OperationResult JobEntryValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult JobEntryValidator::validate_list_integrity(const RequestContext& ctx,
+                                                               const string_map& filter) const
     {
         return ok_result;
     }

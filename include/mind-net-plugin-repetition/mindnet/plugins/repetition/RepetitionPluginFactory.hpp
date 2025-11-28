@@ -38,4 +38,3 @@ namespace mindnet::plugins::repetition
         [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;
     };
 }
-

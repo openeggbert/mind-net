@@ -69,7 +69,7 @@ namespace mindnet::api::cronq
         std::pair<bool, std::string>
         get_bool_or_default(const std::string& key, bool default_value) const;
 
-private:
+    private:
         std::unordered_map<std::string, std::string> values;
         std::string config_sha256;
 
@@ -85,5 +85,4 @@ private:
 
         void parse(const std::string& config);
     };
-
 }

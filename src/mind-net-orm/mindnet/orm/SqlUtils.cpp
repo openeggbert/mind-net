@@ -105,18 +105,19 @@ namespace mindnet::orm
         auto& columns = definition.get_columns();
         int column_index = 0;
         int last_column = columns.size() - 1;
-        for (auto& col:columns)
+        for (auto& col : columns)
         {
-            sql+= col.get_column_name();
+            sql += col.get_column_name();
             sql += column_index < last_column ? ", " : " ";
             column_index++;
         }
         return sql;
     }
+
     string SqlUtils::generate_select_one_sql(const std::string& table_name, const model::ModelDefinition& definition)
     {
         std::string sql = generate_select_columns(definition);
-        sql+=  "FROM " + table_name + " WHERE id = ?";
+        sql += "FROM " + table_name + " WHERE id = ?";
         return sql;
     }
 
@@ -144,7 +145,7 @@ namespace mindnet::orm
         switch (select_mode)
         {
         case SelectMode::IN_IDS:
-        case SelectMode::STAR: sql+=generate_select_columns(def);
+        case SelectMode::STAR: sql += generate_select_columns(def);
             break;
         case SelectMode::COUNT: sql += select_count;
             break;
@@ -153,7 +154,7 @@ namespace mindnet::orm
         default: throw std::runtime_error("Unknown select_mode");
         }
         bool count = select_mode == SelectMode::COUNT;
-        sql +=  " FROM " + table_name;
+        sql += " FROM " + table_name;
         if (select_mode != IN_IDS && !query_params.filters.empty())
         {
             auto filter = query_params.filters;
@@ -193,7 +194,7 @@ namespace mindnet::orm
                 for (int i = 0; i < id_count; i++)
                 {
                     sql += "?";
-                    if (i != (id_count -1) )
+                    if (i != (id_count - 1))
                     {
                         sql += ", ";
                     }
@@ -222,12 +223,13 @@ namespace mindnet::orm
     }
 
     string SqlUtils::generate_select_ids_sql(const std::string& table_name, const orm::QueryParams& query_params,
-        model::ModelDefinition& def)
+                                             model::ModelDefinition& def)
     {
         return generate_select_all_sql(table_name, query_params, def, IDS);
     }
+
     string SqlUtils::generate_select_in_ids_sql(const std::string& table_name, const orm::QueryParams& query_params,
-    model::ModelDefinition& def, int id_count)
+                                                model::ModelDefinition& def, int id_count)
     {
         return generate_select_all_sql(table_name, query_params, def, IN_IDS, id_count);
     }

@@ -89,7 +89,7 @@ namespace mindnet::plugins::repetition::validators
         return ok_result;
     }
 
-OperationResult R4StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult R4StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

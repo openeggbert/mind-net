@@ -96,7 +96,7 @@ namespace mindnet::api::cronq
             }
         };
 
-std::vector<JobPtr> all_job_ptrs;
+        std::vector<JobPtr> all_job_ptrs;
         std::thread scheduler_thread_;
         std::atomic<bool> running_{false};
 
@@ -130,7 +130,7 @@ std::vector<JobPtr> all_job_ptrs;
 
         // SQLite helpers
         identification insert_job_run(const identification job_id,
-                           unixtime start_time);
+                                      unixtime start_time);
 
         void update_job_run(const identification run_id,
                             unixtime finish_time,
@@ -143,4 +143,3 @@ std::vector<JobPtr> all_job_ptrs;
 
     typedef std::shared_ptr<CronScheduler> CronSchedulerPtr;
 }
-

@@ -86,4 +86,3 @@ namespace mindnet::plugins::core::models
 #undef Model
 #undef MODEL
 #undef COLS
-

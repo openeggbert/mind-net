@@ -237,13 +237,15 @@ namespace mindnet::util
         }
         return result;
     }
+
     std::vector<string> Utils::split_with_commas(const string& string_)
     {
         std::vector<std::string> result;
         std::stringstream ss(string_);
         std::string item;
 
-        while (std::getline(ss, item, ',')) {
+        while (std::getline(ss, item, ','))
+        {
             result.push_back(item);
         }
 

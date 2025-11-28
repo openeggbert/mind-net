@@ -45,7 +45,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-void AfterCreateUpdateNoteTrigger::run_before_or_after(
+    void AfterCreateUpdateNoteTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -117,7 +117,7 @@ void AfterCreateUpdateNoteTrigger::run_before_or_after(
             return wanted_notes;
         };
 
-auto find_links_for_title = [&](const std::string& title)
+        auto find_links_for_title = [&](const std::string& title)
         {
             orm::QueryParams params_links;
             params_links.add_filter("to_note_title", title);
@@ -138,7 +138,7 @@ auto find_links_for_title = [&](const std::string& title)
             return links;
         };
 
-auto convert_link_to_wanted_note = [&](const models::Link& link)
+        auto convert_link_to_wanted_note = [&](const models::Link& link)
         {
             models::WantedNote wanted_note;
             wanted_note.from_note_id = link.from_note_id;

@@ -29,4 +29,3 @@
 
 typedef mindnet::model::ColumnDefinition column_definition;
 typedef std::vector<column_definition> column_definitions;
-

@@ -442,7 +442,7 @@ namespace mindnet::http
         app.route_dynamic(string("/api/v1/") + def.get_model_name()).methods(crow::HTTPMethod::POST)
             (create_lambda_function);
 
-//READ
+        //READ
         app.route_dynamic(string("/api/v1/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::GET)
             (read_lambda_function);
 

@@ -47,9 +47,9 @@ namespace mindnet::plugins::core::validators
 
         return_if(
             g_configuration.registration_mode == mindnet::essential::RegistrationMode::AdminAddsUsers && ctx.token.ok()
-            && ctx.role < mindnet::essential::UserRole::
-            Admin,
-            403, "You must be admin to create a user.")
+            && ctx.role<mindnet::essential::UserRole::
+                        Admin,
+                        403, "You must be admin to create a user.")
 
         return ok_result;
     }
@@ -72,7 +72,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult UserValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < essential::UserRole::Admin, 403, "You are not allowed to delete this user");
+        return_if(ctx.role<essential::UserRole::Admin, 403, "You are not allowed to delete this user");
 
         return ok_result;
     }
@@ -83,7 +83,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(
             ctx.role < mindnet::essential::UserRole::Admin && entity.role != g_configuration.default_user_role && !ctx.
@@ -126,15 +126,15 @@ OperationResult UserValidator::validate_create_integrity(const RequestContext& c
         return_if(role_different && logged_user_updates_himself,
                   400, "Role cannot be changed. You cannot change your own role.");
 
-        return_if(role_different && ctx.role < mindnet::essential::UserRole::Admin,
-                  400, "Role cannot be changed. You must be at least Admin.");
+        return_if(role_different && ctx.role<mindnet::essential::UserRole::Admin,
+                                             400, "Role cannot be changed. You must be at least Admin.");
         return_if(
             role_different && ctx.role == mindnet::essential::UserRole::Admin && old_entity.role == essential::UserRole
             ::SuperAdmin,
             400, "Role cannot be changed. You must be at least SuperAdmin to change role of a SuperAdmin user.");
 
-        return_if(old_entity.status != new_entity.status && ctx.role < mindnet::essential::UserRole::Admin,
-                  400, "Status cannot be changed by yourself.")
+        return_if(old_entity.status != new_entity.status && ctx.role<mindnet::essential::UserRole::Admin,
+                                                                     400, "Status cannot be changed by yourself.")
 
         return ok_result;
     }

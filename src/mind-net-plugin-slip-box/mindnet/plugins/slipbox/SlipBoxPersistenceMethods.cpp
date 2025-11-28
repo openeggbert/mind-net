@@ -43,7 +43,7 @@ namespace mindnet::plugins::slipbox
         return !ctx.db->list(plugins::slipbox::models::MAP_DEFINITION, ctx.token, query_params).first.empty();
     }
 
-std::pair<identification, string> find_note_for_content(const api::RequestContext& ctx, identification content_id)
+    std::pair<identification, string> find_note_for_content(const api::RequestContext& ctx, identification content_id)
     {
         orm::QueryParams query_params;
         query_params.filters.emplace("content_id", std::to_string(content_id));
@@ -59,7 +59,8 @@ std::pair<identification, string> find_note_for_content(const api::RequestContex
     }
 
     bool has_right_for_map(
-        const api::RequestContext& ctx, const identification map_id, const plugins::core::enums::SingleRight single_right)
+        const api::RequestContext& ctx, const identification map_id,
+        const plugins::core::enums::SingleRight single_right)
     {
         if (ctx.role == essential::UserRole::Admin) { return true; }
 

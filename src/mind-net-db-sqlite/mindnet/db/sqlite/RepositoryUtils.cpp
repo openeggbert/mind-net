@@ -466,8 +466,13 @@ namespace mindnet::db::sqlite
             query_params.sort = "id";
             query_params.order = orm::Order::Asc;
         }
-        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params, def, select_mode, select_mode == orm::IN_IDS ? query_params.ids.size() : 0);
-        std::string sql_count = select_mode == orm::IN_IDS ? "" :orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params, def);
+        std::string sql = orm::SqlUtils::generate_select_all_sql(def.get_model_name(), query_params, def, select_mode,
+                                                                 select_mode == orm::IN_IDS
+                                                                     ? query_params.ids.size()
+                                                                     : 0);
+        std::string sql_count = select_mode == orm::IN_IDS
+                                    ? ""
+                                    : orm::SqlUtils::generate_select_count_sql(def.get_model_name(), query_params, def);
 
         debug << "Going to execute select all SQL: " << sql << commit;
 
@@ -511,13 +516,13 @@ namespace mindnet::db::sqlite
 
                 return {};
             }
-        } else
+        }
+        else
         {
-            for (auto& id: query_params.ids)
+            for (auto& id : query_params.ids)
             {
-                query_ptr ->bind(bind_index++, id);
+                query_ptr->bind(bind_index++, id);
             }
-
         }
         // if (query_params.sort.has_value())
         // {
@@ -528,13 +533,15 @@ namespace mindnet::db::sqlite
         //     }
         // }
 
-        if (select_mode != orm::IN_IDS) {
-        experiment << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) <<
-            commit;
-        (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size));
-        experiment << "Binding index " << bind_index << " with value " + std::to_string(
-            query_params.page_size * (query_params.page_number - 1)) << commit;
-        (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size * (query_params.page_number - 1)));
+        if (select_mode != orm::IN_IDS)
+        {
+            experiment << "Binding index " << bind_index << " with value " + std::to_string(query_params.page_size) <<
+                commit;
+            (*query_ptr).bind(bind_index++, static_cast<int32_t>(query_params.page_size));
+            experiment << "Binding index " << bind_index << " with value " + std::to_string(
+                query_params.page_size * (query_params.page_number - 1)) << commit;
+            (*query_ptr).bind(bind_index++,
+                              static_cast<int32_t>(query_params.page_size * (query_params.page_number - 1)));
         }
 
         std::vector<entity_fields> results;
@@ -586,7 +593,7 @@ namespace mindnet::db::sqlite
             return results;
         }
 
-SQLite::Statement* query_count_ptr = nullptr;
+        SQLite::Statement* query_count_ptr = nullptr;
         if (select_mode != orm::IN_IDS)
         {
             try
@@ -615,7 +622,8 @@ SQLite::Statement* query_count_ptr = nullptr;
 
                 return results;
             }
-        } else
+        }
+        else
         {
             query_params.total_items = query_params.ids.size();
         }
@@ -634,6 +642,6 @@ SQLite::Statement* query_count_ptr = nullptr;
             query_ptr = nullptr;
         }
 
-return results;
+        return results;
     }
 }

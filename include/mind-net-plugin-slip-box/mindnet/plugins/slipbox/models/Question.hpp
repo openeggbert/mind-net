@@ -54,8 +54,7 @@ namespace mindnet::plugins::slipbox::models
                 coldef(COLS::QUESTION_TEXT, TEXTAREA | MANDATORY),
                 coldef(COLS::ANSWERS, TEXT),
             })
-    .add_custom_list_action("test_attempt", "List test attempt answers", {"question_id", "{id}"})
-    ;
+        .add_custom_list_action("test_attempt", "List test attempt answers", {"question_id", "{id}"});
     // *** Definition of model ends ***
 
     // answers
@@ -66,7 +65,6 @@ namespace mindnet::plugins::slipbox::models
     // ]
     struct QuestionAnswer
     {
-        
     private:
         std::vector<std::pair<std::string, bool>> value;
 
@@ -78,6 +76,7 @@ namespace mindnet::plugins::slipbox::models
             return value;
         }
     };
+
     struct Model : mindnet::model::BaseModel
     {
         identification note_id{};

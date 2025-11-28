@@ -27,9 +27,9 @@
 namespace mindnet::api
 {
     bool ModelCache::get(
-    const std::string& table,
-    identification id,
-    entity_fields& outRow)
+        const std::string& table,
+        identification id,
+        entity_fields& outRow)
     {
         if (is_disabled()) return false;
         CacheKey key{table, id};
@@ -63,9 +63,9 @@ namespace mindnet::api
     }
 
     void ModelCache::put(
-    const std::string& table,
-    identification id,
-    const entity_fields& row)
+        const std::string& table,
+        identification id,
+        const entity_fields& row)
     {
         if (is_disabled()) return;
 
@@ -107,13 +107,13 @@ namespace mindnet::api
             unixtime(mindnet::util::Utils::current_unix_timestamp_ms())
         };
 
-maybe_shrink_nolock();
+        maybe_shrink_nolock();
         validate_invariants();
     }
 
     void ModelCache::invalidate(
-    const std::string& table,
-    identification id)
+        const std::string& table,
+        identification id)
     {
         if (is_disabled()) return;
 
@@ -130,6 +130,7 @@ maybe_shrink_nolock();
 
         validate_invariants();
     }
+
     void ModelCache::shrink_to(std::uint64_t targetSize, essential::ByteUnit unit)
     {
         if (is_disabled()) return;
@@ -267,9 +268,8 @@ maybe_shrink_nolock();
 
         stats.shrinks++;
         essential::info << "LRU auto-shrink: "
-                << used << " -> " << targetBytes
-                << essential::commit;
-
+            << used << " -> " << targetBytes
+            << essential::commit;
     }
 
     size_t ModelCache::ram_usage_cache_map_only_nolock()
@@ -282,5 +282,4 @@ maybe_shrink_nolock();
         }
         return total;
     }
-
 }

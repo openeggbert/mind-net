@@ -33,7 +33,7 @@ namespace mindnet::db::sqlite::queries
 
     CleanupSQLiteQuery::CleanupSQLiteQuery()
         : api::Query(QUERY_Cleanup, "Cleanup the database",
-                essential::DatabaseType::SQLite)
+                     essential::DatabaseType::SQLite)
     {
     }
 
@@ -109,7 +109,8 @@ WHERE created_at <= ?
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception happened during SQL " << cleanup_table_history_read_sql << e.what() << " " << std::endl;
+            std::cerr << "Exception happened during SQL " << cleanup_table_history_read_sql << e.what() << " " <<
+                std::endl;
             response["error"] = e.what();
             response["cleanup_table_history_read_sql"] = cleanup_table_history_read_sql;
         }
@@ -130,7 +131,8 @@ WHERE created_at <= ?
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception happened during SQL " << cleanup_table_history_list_sql << e.what() << " " << std::endl;
+            std::cerr << "Exception happened during SQL " << cleanup_table_history_list_sql << e.what() << " " <<
+                std::endl;
             response["error"] = e.what();
             response["cleanup_table_history_list_sql"] = cleanup_table_history_list_sql;
         }
@@ -151,7 +153,8 @@ WHERE created_at <= ?
         }
         catch (SQLite::Exception& e)
         {
-            std::cerr << "Exception happened during SQL " << cleanup_table_access_token_sql << e.what() << " " << std::endl;
+            std::cerr << "Exception happened during SQL " << cleanup_table_access_token_sql << e.what() << " " <<
+                std::endl;
             response["error"] = e.what();
             response["cleanup_table_access_token_sql"] = cleanup_table_access_token_sql;
         }

@@ -36,4 +36,3 @@ namespace mindnet::plugins::slipbox::migrations
         void define_migrations() override;
     };
 }
-

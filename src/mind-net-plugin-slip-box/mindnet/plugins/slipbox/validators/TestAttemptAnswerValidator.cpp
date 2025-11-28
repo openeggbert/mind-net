@@ -108,13 +108,16 @@ namespace mindnet::plugins::slipbox::validators
         return ensure_access_to_attempt(ctx, ta_id);
     }
 
-    OperationResult TestAttemptAnswerValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TestAttemptAnswerValidator::validate_create_integrity(
+        const RequestContext& ctx, const Model& entity) const
     {
         auto test_attempt = find_test_attempt(ctx, entity.test_attempt_id);
         if (!test_attempt.second.empty()) return {500, test_attempt.second};
         auto test = find_test(ctx, test_attempt.first.test_id);
         if (!test.second.empty()) return {500, test.second};
-        if (test_attempt.first.user_id != ctx.token.user_id) return {400, "test_attempt.user_id must be id of your user"};
+        if (test_attempt.first.user_id != ctx.token.user_id) return {
+            400, "test_attempt.user_id must be id of your user"
+        };
         auto question_ids = mindnet::util::Utils::split_with_commas(test_attempt.first.question_ids);
         bool found = false;
         std::string question_id_string = std::to_string(entity.question_id);
@@ -129,13 +132,17 @@ namespace mindnet::plugins::slipbox::validators
         }
         if (!found)
         {
-            return {400, "Question with ID " + question_id_string + " does not belong to test_attempt with id " + std::to_string(test_attempt.first.get_id()) + "."};
+            return {
+                400,
+                "Question with ID " + question_id_string + " does not belong to test_attempt with id " + std::to_string(
+                    test_attempt.first.get_id()) + "."
+            };
         }
         auto question = find_question(ctx, entity.question_id);
         if (!question.second.empty()) return {500, question.second};
         models::QuestionAnswer question_answer(question.first.answers);
         bool user_answer_found = false;
-        for (const auto& e: question_answer.get_parsed())
+        for (const auto& e : question_answer.get_parsed())
         {
             auto& choice = e.first;
             auto& correct = e.second;
@@ -145,42 +152,50 @@ namespace mindnet::plugins::slipbox::validators
             {
                 return {
                     400,
-                    "The is_correct value must match the correct answers defined for question ID: " + question_id_string};
+                    "The is_correct value must match the correct answers defined for question ID: " + question_id_string
+                };
             }
-
         }
         if (!user_answer_found && entity.is_correct)
         {
             return {
                 400,
-                "The question.answers does not contain such answers: " + question_id_string + " " + entity.user_answer + ", but is_correct is true"};
+                "The question.answers does not contain such answers: " + question_id_string + " " + entity.user_answer +
+                ", but is_correct is true"
+            };
         }
         orm::QueryParams query_params;
         query_params.add_filter("test_attempt_id", entity.test_attempt_id);
         query_params.add_filter("question_id", entity.question_id);
         auto list_answers = ctx.db->list(models::TEST_ATTEMPT_ANSWER_DEFINITION, ctx.token, query_params);
         if (list_answers.second.ko()) return {500, list_answers.second.error};
-        if (!list_answers.first.empty()) return {400, "There is already such test_attempt with this test_attempt_id and question_id"};
+        if (!list_answers.first.empty()) return {
+            400, "There is already such test_attempt with this test_attempt_id and question_id"
+        };
 
         return ok_result;
     }
 
-    OperationResult TestAttemptAnswerValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TestAttemptAnswerValidator::validate_read_integrity(const RequestContext& ctx,
+                                                                        const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TestAttemptAnswerValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
+    OperationResult TestAttemptAnswerValidator::validate_update_integrity(
+        const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TestAttemptAnswerValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult TestAttemptAnswerValidator::validate_delete_integrity(
+        const RequestContext& ctx, const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TestAttemptAnswerValidator::validate_list_integrity(const RequestContext& ctx, const string_map&) const
+    OperationResult TestAttemptAnswerValidator::validate_list_integrity(const RequestContext& ctx,
+                                                                        const string_map&) const
     {
         return ok_result;
     }

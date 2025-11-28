@@ -75,4 +75,3 @@ namespace mindnet::plugins::slipbox::models
 #undef Model
 #undef MODEL
 #undef COLS
-

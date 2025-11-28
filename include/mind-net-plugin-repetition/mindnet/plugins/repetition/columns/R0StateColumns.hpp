@@ -51,6 +51,5 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* LAST_QUALITY = "last_quality";
         static constexpr const char* LAST_SEEN_SEMANTIC_VERSION = "last_seen_semantic_version";
         static constexpr const char* CONTENT_MODIFIED_SINCE_LAST_REVIEW = "content_modified_since_last_review";
-
     };
 }

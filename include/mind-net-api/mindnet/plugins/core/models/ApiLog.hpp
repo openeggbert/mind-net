@@ -96,10 +96,10 @@ namespace mindnet::plugins::core::models
         }
     };
 
-    const ApiLog api_log_from_crow_request(const crow::request& req, identification user_id, int status_code, identification entity_id = 0,
+    const ApiLog api_log_from_crow_request(const crow::request& req, identification user_id, int status_code,
+                                           identification entity_id = 0,
                                            std::string error = "");
 }
 #undef Model
 #undef MODEL
 #undef COLS
-

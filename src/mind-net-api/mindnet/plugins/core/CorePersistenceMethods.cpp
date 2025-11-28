@@ -90,7 +90,7 @@ namespace mindnet::plugins::core
         return "";
     }
 
-// gen_find_cpp(chat, Comment, comment, COMMENT)
+    // gen_find_cpp(chat, Comment, comment, COMMENT)
     gen_find_cpp(core, User, user, USER)
     // gen_find_cpp(mail, Message, message, MESSAGE)
     gen_find_cpp(core, Team, team, TEAM)

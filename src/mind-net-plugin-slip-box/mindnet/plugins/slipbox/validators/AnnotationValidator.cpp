@@ -52,7 +52,6 @@ namespace mindnet::plugins::slipbox::validators
             return ok_result;
         }
         return {403, "You do not have permission to create a annotation for this note."};
-
     }
 
     OperationResult AnnotationValidator::validate_read_authorization(const RequestContext& ctx,
@@ -66,7 +65,6 @@ namespace mindnet::plugins::slipbox::validators
             return ok_result;
         }
         return {403, "You do not have permission to read this annotation for this note."};
-
     }
 
     OperationResult AnnotationValidator::validate_update_authorization(const RequestContext& ctx,
@@ -110,7 +108,6 @@ namespace mindnet::plugins::slipbox::validators
             return ok_result;
         }
         return {403, "You do not have permission to list annotations for this note."};
-
     }
 
     //

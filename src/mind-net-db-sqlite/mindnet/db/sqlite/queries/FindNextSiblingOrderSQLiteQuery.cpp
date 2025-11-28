@@ -35,7 +35,8 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json& request,
+                                                         api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -74,11 +75,11 @@ namespace mindnet::db::sqlite::queries
                 parent_note_id << essential::commit;
             SQLite::Statement query(db, sql);
 
-query.bind(1, map_id);
+            query.bind(1, map_id);
             if (parent_note_id != 0)
                 query.bind(2, parent_note_id);
 
-if (query.executeStep())
+            if (query.executeStep())
             {
                 max_sibling_order = query.isColumnNull(0) ? 0 : query.getColumn(0);
             }

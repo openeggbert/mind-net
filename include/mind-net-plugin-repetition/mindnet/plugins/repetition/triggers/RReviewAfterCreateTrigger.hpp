@@ -28,7 +28,8 @@
 
 namespace mindnet::plugins::repetition::triggers
 {
-    struct Params {
+    struct Params
+    {
         double b, R_target, R_opt, alpha, beta, gamma, delta, k_over, S_min,
                short_retry, t0, R_inf, fatigue_lambda, theta, g_over_max,
                s_damp, max_gain, interval_scale, growth_cap, min_interval_days, ef_max;

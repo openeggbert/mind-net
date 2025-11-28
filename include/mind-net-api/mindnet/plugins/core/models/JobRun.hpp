@@ -61,7 +61,7 @@ namespace mindnet::plugins::core::models
         unixtime finished_at;
         bool success{};
         string message{true};
-        
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

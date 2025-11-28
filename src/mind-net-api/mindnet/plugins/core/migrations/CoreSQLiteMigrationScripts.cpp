@@ -315,7 +315,7 @@ CREATE TABLE super_admin_log (
 );
 )");
 
-    	add_migration("V11__create_job_entry.sql", R"(
+        add_migration("V11__create_job_entry.sql", R"(
 CREATE TABLE job_entry (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -331,7 +331,7 @@ CREATE TABLE job_entry (
 	next_run DATETIME
 );
 )");
-    	add_migration("V12__create_job_run.sql", R"(
+        add_migration("V12__create_job_run.sql", R"(
 CREATE TABLE job_run (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -348,7 +348,7 @@ CREATE TABLE job_run (
 );
 )");
 
-    	add_migration("V13__alter_table_job_entry_add_column_configuration.sql", R"(
+        add_migration("V13__alter_table_job_entry_add_column_configuration.sql", R"(
 ALTER TABLE job_entry ADD configuration TEXT;
 )");
     }

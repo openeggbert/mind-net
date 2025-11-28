@@ -44,4 +44,3 @@ namespace mindnet::plugins::repetition::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-

@@ -377,4 +377,3 @@ namespace mindnet::model
     public:
     };
 }
-

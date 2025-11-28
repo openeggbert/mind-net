@@ -45,4 +45,3 @@ namespace mindnet::plugins::core::validators
         create_method_prototypes_for_ValidatorBase(Model)
     };
 }
-

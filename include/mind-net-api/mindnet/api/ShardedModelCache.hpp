@@ -57,7 +57,7 @@ namespace mindnet::api
             return hash;
         }
 
-size_t shard_index(const std::string& table, identification id) const noexcept
+        size_t shard_index(const std::string& table, identification id) const noexcept
         {
             uint64_t h1 = stable_hash(table);
             uint64_t h2 = (uint64_t)id;
@@ -66,7 +66,7 @@ size_t shard_index(const std::string& table, identification id) const noexcept
             return x & (NUM_SHARDS - 1);
         }
 
-inline ModelCache& pick(const std::string& table, identification id) noexcept
+        inline ModelCache& pick(const std::string& table, identification id) noexcept
         {
             return shards[shard_index(table, id)];
         }

@@ -41,4 +41,3 @@ namespace mindnet::api
         virtual std::shared_ptr<IRepository> create(const model::ModelDefinition& model_definition) = 0;
     };
 }
-

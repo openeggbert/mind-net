@@ -81,4 +81,3 @@ namespace mindnet::plugins::core::enums
         };
     }
 } // namespace mindnet::plugins::core::enums
-

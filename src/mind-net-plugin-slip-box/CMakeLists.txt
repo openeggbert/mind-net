@@ -21,7 +21,7 @@ include(FetchContent)
 FetchContent_Declare(
         cmark
         GIT_REPOSITORY https://github.com/commonmark/cmark.git
-        GIT_TAG        master
+        GIT_TAG master
 )
 
 FetchContent_MakeAvailable(cmark)

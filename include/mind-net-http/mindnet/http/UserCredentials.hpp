@@ -70,4 +70,3 @@ namespace mindnet::http
         }
     };
 }
-

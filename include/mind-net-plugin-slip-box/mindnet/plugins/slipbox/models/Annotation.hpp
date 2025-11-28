@@ -68,20 +68,20 @@ namespace mindnet::plugins::slipbox::models
         std::string anchor_start_text;
         std::string anchor_end_text;
 
-create_model_h_methods(Model, MODEL)
+        create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                   note_id == other.note_id &&
-                   parent_annotation_id == other.parent_annotation_id &&
-                   title == other.title &&
-                   content == other.content &&
-                   type == other.type &&
-                   anchor_start_text == other.anchor_start_text &&
-                   anchor_end_text == other.anchor_end_text &&
-                   created_at == other.created_at &&
-                   updated_at == other.updated_at;
+                note_id == other.note_id &&
+                parent_annotation_id == other.parent_annotation_id &&
+                title == other.title &&
+                content == other.content &&
+                type == other.type &&
+                anchor_start_text == other.anchor_start_text &&
+                anchor_end_text == other.anchor_end_text &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at;
         }
     };
 }

@@ -63,4 +63,3 @@ namespace mindnet::plugins::core
     gen_find_h(core, TeamMember, team_member)
     gen_find_h(core, User, user)
 }
-

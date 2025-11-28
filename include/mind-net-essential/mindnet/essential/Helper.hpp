@@ -52,4 +52,3 @@ typedef std::vector<entity_field> entity_fields;
 typedef std::map<std::string, std::string> string_map;
 
 static constexpr const char* PRIMARY_KEY_COLUMN_NAME = "id";
-

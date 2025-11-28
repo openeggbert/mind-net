@@ -86,7 +86,7 @@ namespace mindnet::db::sqlite
     {
         orm::QueryParams query_params;
         std::string ids_string;
-        for (auto& id: ids)
+        for (auto& id : ids)
         {
             query_params.ids.push_back(id);
         }
@@ -175,7 +175,7 @@ namespace mindnet::db::sqlite
             auto column_type = col.get_column_type();
             auto primitive_column_type = column_type_to_primitive_column_type(column_type);
 
-if (auto_value ? has_value : false) debug << "rvalue=" << rvalue << commit;
+            if (auto_value ? has_value : false) debug << "rvalue=" << rvalue << commit;
             if (mandatory && !has_value)
             {
                 throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");

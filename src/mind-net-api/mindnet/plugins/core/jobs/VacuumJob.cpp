@@ -39,8 +39,8 @@ namespace mindnet::plugins::core::jobs
             true
         )
     {
-
     }
+
     std::string VacuumJob::run(api::cronq::JobConfig& job_config)
     {
         essential::info << "Started VacuumJob" << essential::commit;
@@ -51,5 +51,6 @@ namespace mindnet::plugins::core::jobs
 
         return result.contains("error") ? result["error"] : "";
     }
+
     using_loggers()
 }

@@ -33,4 +33,3 @@ namespace mindnet::db::sqlite
 {
     inline std::string SQLITE_FILE_NAME = "./mindnet.sqlite3";
 }
-

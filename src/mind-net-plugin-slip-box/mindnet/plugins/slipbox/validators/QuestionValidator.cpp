@@ -110,7 +110,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

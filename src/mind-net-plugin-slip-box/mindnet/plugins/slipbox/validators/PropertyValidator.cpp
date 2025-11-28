@@ -41,8 +41,8 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult PropertyValidator::validate_create_authorization(const RequestContext& ctx,
                                                                      const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "User does not have permission to create a property.")
+        return_if(ctx.role<mindnet::essential::UserRole::Editor,
+                           403, "User does not have permission to create a property.")
 
         if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -102,7 +102,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-OperationResult PropertyValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult PropertyValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
