@@ -154,32 +154,51 @@ function makeDraggable(el) {
     const header = el.querySelector('.window_container-header');
     let offsetX = 0, offsetY = 0, dragging = false;
 
-    function startDrag(x, y) {
+    function startDrag(x, y, ev) {
+        // stop fake drags
+        if (ev && ev.buttons !== 1) return;
+
+        console.log("START DRAG", {display: el.style.display, left: el.style.left, top: el.style.top});
+
+        if (el.style.display === "none") return;
+
         const rect = el.getBoundingClientRect();
         dragging = true;
         wasDragged = true;
+
         offsetX = x - rect.left;
         offsetY = y - rect.top;
+
         el.style.position = "fixed";
         el.style.transform = "none";
     }
 
-    function doDrag(x, y) {
+
+
+    function doDrag(x, y, ev) {
+        if (document.body._forceStopDragging) {
+            dragging = false;
+            document.body._forceStopDragging = false;
+            return;
+        }
         if (!dragging) return;
+        if (ev && ev.buttons !== 1) {
+            dragging = false;
+            return;
+        }
         el.style.left = `${x - offsetX}px`;
         el.style.top = `${y - offsetY}px`;
     }
 
+
     function stopDrag() {
+        console.log("STOP DRAG");
         dragging = false;
     }
 
     // --- Mouse support ---
-    header.addEventListener('mousedown', e => {
-        startDrag(e.clientX, e.clientY);
-        e.preventDefault();
-    });
-    document.addEventListener('mousemove', e => doDrag(e.clientX, e.clientY));
+    header.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY, e));
+    document.addEventListener('mousemove', e => doDrag(e.clientX, e.clientY, e));
     document.addEventListener('mouseup', stopDrag);
 
     // --- Touch support ---
@@ -204,32 +223,53 @@ window.closeWindow = closeWindow;
 export function closeWindow() {
     const win = document.getElementById('window_container');
 
-    win.style.display = 'none';
-
-    Promise.resolve().then(() => {
-        wasDragged = false;
-        win.style.left = "";
-        win.style.top = "";
-        win.style.transform = "translate(-50%, -50%)";
-        win.style.position = "fixed";
+    console.log("CLOSE WINDOW before", {
+        display: win.style.display,
+        left: win.style.left,
+        top: win.style.top,
+        transform: win.style.transform
     });
+
+    wasDragged = false;
+    win.hidden = true;
+
+    win.style.display = 'none';
+    win.style.left = "";
+    win.style.top = "";
+    win.style.transform = "translate(-50%, -50%)";
+    win.style.position = "fixed";
+
+    setTimeout(() => win.hidden = false, 50);
 }
+
 
 
 
 export function showWindow() {
     const win = document.getElementById("window_container");
+    document.body._forceStopDragging = true;
+
     win.style.display = "block";
     win.style.position = "fixed";
+    win.style.left = "50%";
+    win.style.top = "50%";
+    win.style.transform = "translate(-50%, -50%)";
 
-    if (!wasDragged) {
-        Object.assign(win.style, {
-            left: "50%",
-            top: "50%",
-            transform: "translate(-50%, -50%)"
-        });
-    }
+    requestAnimationFrame(() => {
+        const rect = win.getBoundingClientRect();
+
+        win.style.setProperty("--win-init-w", rect.width + "px");
+        win.style.setProperty("--win-init-h", rect.height + "px");
+
+        if (!wasDragged) {
+            win.style.left = "calc(50% - (var(--win-init-w) / 2))";
+            win.style.top = "calc(50% - (var(--win-init-h) / 2))";
+            win.style.transform = "none";
+        }
+    });
 }
+
+
 
 window.showWindow = showWindow;
 export const clearWindow = () => document.getElementById("window_container_content").innerHTML = "";
@@ -1077,7 +1117,12 @@ async function render() {
             }
         }
 
-        assign_meta_list_function("links", "Links", "link")
+        get_element("meta_button_links").onclick = function () {
+            let Models = "Links";
+            let model = "link"
+            showWindowFrom(Models, "index.html?entity=" + model + "&action=list&from_note_id=" + note.id);
+        }
+        // assign_meta_list_function("links", "Links", "link")
         assign_meta_list_function("urls", "Urls", "url")
         assign_meta_list_function("terms", "Terms", "term")
         assign_meta_list_function("sources", "Sources", "source")
@@ -1086,9 +1131,16 @@ async function render() {
 
         // assign_meta_list_function("backlinks", "Backlinks", "backlink")
         // assign_meta_list_function("siblings", "Siblings", "sibling")
-        hide_element("meta_button_backlinks")
-        hide_element("meta_button_siblings")
-        assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
+        // hide_element("meta_button_backlinks")
+        // hide_element("meta_button_siblings")
+
+        get_element("meta_button_wanted_notes").onclick = function () {
+            let Models = "Wanted notes";
+            let model = "wanted_note"
+            showWindowFrom(Models, "index.html?entity=" + model + "&action=list&from_note_id=" + note.id);
+        }
+        // assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
+
         assign_meta_list_function("properties", "Properties", "property")
         assign_meta_list_function("tags", "Tags", "tag")
         assign_meta_list_function("collections", "Collections", "collection")
