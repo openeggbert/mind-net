@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 #include <utility>
 #include <memory>
 #include "IValidator.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
-
 
 namespace mindnet::api
 {

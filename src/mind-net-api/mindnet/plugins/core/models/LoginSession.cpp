@@ -21,10 +21,8 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/models/LoginSession.hpp"
 #include "mindnet/plugins/core/columns/LoginSessionColumns.hpp"
-
 
 namespace mindnet::plugins::core::models
 {

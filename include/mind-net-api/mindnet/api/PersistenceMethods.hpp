@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
-
 
 #define gen_find_h(plugin, Model, model) \
 std::pair<mindnet::plugins :: plugin :: models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, identification id);

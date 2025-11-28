@@ -68,8 +68,7 @@ namespace mindnet::plugins::slipbox::models
         std::string anchor_start_text;
         std::string anchor_end_text;
 
-
-        create_model_h_methods(Model, MODEL)
+create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {

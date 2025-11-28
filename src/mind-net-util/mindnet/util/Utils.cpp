@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/util/Utils.hpp"
 
 #include <complex>
@@ -35,7 +34,6 @@
 #include <openssl/sha.h>
 
 #include "mindnet/essential/Global.hpp"
-
 
 namespace mindnet::util
 {

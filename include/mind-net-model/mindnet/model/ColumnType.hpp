@@ -23,12 +23,9 @@
 
 #pragma once
 
-
-
 #include <string>
 
 #include "PrimitiveColumnType.hpp"
-
 
 namespace mindnet::model
 {

@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/BeforeUpdateContentTrigger.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -35,7 +34,6 @@
 
 #include "mindnet/plugins/slipbox/models/Note.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -168,8 +166,7 @@ namespace mindnet::plugins::slipbox::triggers
             return;
         }
 
-
-        auto& wer = diff.wer_percent;
+auto& wer = diff.wer_percent;
 
         // WER is in percent. 20% = 20.0
         bool big_change =

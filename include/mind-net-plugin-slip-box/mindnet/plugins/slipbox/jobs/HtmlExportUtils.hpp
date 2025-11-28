@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 #include <map>
 #include <string>
 
 #include "mindnet/plugins/slipbox/models/Note.hpp"
-
 
 namespace mindnet::plugin::slipbox::jobs
 {

@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/AuthEndpointsGenerator.hpp"
 
 #include <string>
@@ -38,7 +37,6 @@
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/plugins/core/validators/AccessTokenValidator.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::http
 {
@@ -189,8 +187,7 @@ namespace mindnet::http
                 std::string access_hash = util::Utils::compute_sha256(raw_access); // or SHA256
                 std::string refresh_hash = util::Utils::compute_sha256(raw_refresh); // or SHA256
 
-
-                // -------------------------------
+// -------------------------------
                 // 2. Save to DB
                 // -------------------------------
                 identification access_id = -1;
@@ -598,8 +595,7 @@ namespace mindnet::http
                 return crow::response{200, response};
             });
 
-
-        CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)(
+CROW_ROUTE(crow_app, "/api/v1/auth/register").methods("POST"_method)(
             [service_ptr, &log_request](const crow::request& req)
             {
                 check_maintenance_mode()
@@ -773,8 +769,7 @@ namespace mindnet::http
                 return crow::response{200, "Password changed successfully"};
             });
 
-
-        // CROW_ROUTE(crow_app, "/api/v1/auth/protected")([service_ptr, &log_request](const crow::request& req)
+// CROW_ROUTE(crow_app, "/api/v1/auth/protected")([service_ptr, &log_request](const crow::request& req)
         // {
         //     check_maintenance_mode()
         //

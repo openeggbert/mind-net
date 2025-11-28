@@ -23,9 +23,7 @@
 
 #pragma once
 
-
 #include <string>
-
 
 namespace mindnet::essential
 {

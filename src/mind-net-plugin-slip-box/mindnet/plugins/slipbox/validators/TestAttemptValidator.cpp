@@ -31,7 +31,6 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/api/Persistence.hpp"
 
-
 #define Model TestAttempt
 #define MODEL TEST_ATTEMPT
 #define model test_attempt
@@ -114,8 +113,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult TestAttemptValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult TestAttemptValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (entity.user_id != ctx.token.user_id) return {400, "user_id must be id of your user."};
         if (entity.started_at != 0) return {400, "started_at must be 0 during creation."};

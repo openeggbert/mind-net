@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/essential/Global.hpp"
-
 
 namespace mindnet::essential
 {

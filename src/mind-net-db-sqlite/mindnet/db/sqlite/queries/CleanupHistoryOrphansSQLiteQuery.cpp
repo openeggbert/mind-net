@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/CleanupHistoryOrphansSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::db::sqlite::queries
 {
@@ -66,11 +64,9 @@ created_at <= ? and
 
 )SQL";
 
+info << history_rows_without_delete_operation_sql << commit;
 
-        info << history_rows_without_delete_operation_sql << commit;
-
-
-        try
+try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
             db.exec("PRAGMA journal_mode=WAL;");

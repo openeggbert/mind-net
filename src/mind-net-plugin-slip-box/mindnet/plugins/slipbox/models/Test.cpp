@@ -25,7 +25,6 @@
 
 #include "mindnet/plugins/slipbox/models/Test.hpp"
 
-
 namespace mindnet::plugins::slipbox::models
 {
     entity_fields Test::to_values() const

@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/CollectionItemValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/CollectionItem.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model CollectionItem
 #define MODEL COLLECTION_ITEM
@@ -39,8 +37,7 @@ namespace mindnet::plugins::slipbox::validators
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-
-    OperationResult CollectionItemValidator::validate_create_authorization(
+OperationResult CollectionItemValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         assert_editor()
@@ -77,8 +74,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult CollectionItemValidator::validate_create_integrity(const RequestContext& ctx,
+OperationResult CollectionItemValidator::validate_create_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
         return ok_result;

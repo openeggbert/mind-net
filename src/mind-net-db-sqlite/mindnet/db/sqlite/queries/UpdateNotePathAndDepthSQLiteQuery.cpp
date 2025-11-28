@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #include "../../../../../../include/mind-net-plugin-slip-box/mindnet/plugins/slipbox/models/Note.hpp"
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
-
 
 namespace mindnet::db::sqlite::queries
 {

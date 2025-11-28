@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.hpp"
-
 
 namespace mindnet::plugins::slipbox::migrations
 {
@@ -127,7 +125,6 @@ CREATE INDEX idx_note_parent_sibling ON note(parent_note_id, sibling_order);
 CREATE INDEX idx_note_path ON note(path);
 CREATE INDEX idx_note_depth ON note(depth);
 
-
 CREATE TRIGGER IF NOT EXISTS trg_note_prevent_cycles
 BEFORE UPDATE OF parent_note_id ON note
 FOR EACH ROW
@@ -145,7 +142,6 @@ BEGIN
             THEN RAISE(ABORT, 'Cycle detected in note hierarchy')
         END;
 END;
-
 
 CREATE TRIGGER IF NOT EXISTS trg_note_set_path_depth_after_insert
 AFTER INSERT ON note
@@ -177,7 +173,6 @@ BEGIN
     WHERE id = NEW.id;
 END;
 
-
 CREATE TRIGGER IF NOT EXISTS trg_note_set_path_depth_after_update
 AFTER UPDATE OF parent_note_id ON note
 FOR EACH ROW
@@ -206,7 +201,6 @@ BEGIN
         )
     WHERE id = NEW.id;
 END;
-
 
 )");
         add_migration("V5__create_property.sql", R"(
@@ -345,8 +339,7 @@ CREATE TABLE url(
 CREATE INDEX idx_url_from_note ON url(from_note_id);
 )");
 
-
-        add_migration("V13__create_term.sql", R"(
+add_migration("V13__create_term.sql", R"(
 CREATE TABLE term(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -391,8 +384,7 @@ CREATE TABLE source(
 CREATE INDEX idx_source_title ON source(title);
 )");
 
-
-        add_migration("V15__create_idea.sql", R"(
+add_migration("V15__create_idea.sql", R"(
 CREATE TABLE idea(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -413,8 +405,7 @@ CREATE TABLE idea(
 CREATE INDEX idx_idea_title ON idea(title);
 )");
 
-
-        add_migration("V16__create_wanted_note.sql", R"(
+add_migration("V16__create_wanted_note.sql", R"(
 CREATE TABLE wanted_note(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -477,8 +468,7 @@ CREATE INDEX idx_alert_note_id ON alert(note_id);
 
 )");
 
-
-        add_migration("V18__create_flag.sql", R"(
+add_migration("V18__create_flag.sql", R"(
 CREATE TABLE flag(
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -537,8 +527,7 @@ CREATE INDEX idx_project_assigned_to ON project(assigned_to);
 
 )");
 
-
-        add_migration("V20__create_task.sql", R"(
+add_migration("V20__create_task.sql", R"(
 CREATE TABLE task (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -596,8 +585,6 @@ CREATE INDEX idx_task_assigned_to ON task(assigned_to);
 CREATE INDEX idx_task_parent ON task(parent_task_id);
 CREATE INDEX idx_task_blocked ON task(blocked_by_task_id);
 
-
-
 )");
 
         add_migration("V21__create_pinned_note.sql", R"(
@@ -630,11 +617,9 @@ ALTER TABLE wanted_note ADD COLUMN label TEXT;
     	add_migration("V23__update_table_wanted_note_set_column_label_to_empty_string.sql", R"(
 UPDATE wanted_note SET label = '' WHERE label IS NULL;
 
-
 )");
 
-
-    	add_migration("V24__create_map_collection.sql", R"(
+add_migration("V24__create_map_collection.sql", R"(
 CREATE TABLE map_collection (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -678,8 +663,7 @@ CREATE INDEX idx_note_depth_sibling ON note(depth, sibling_order);
 CREATE INDEX idx_note_depth_sibling_id ON note(depth, sibling_order, id);
 )");
 
-
-    	add_migration("V27__alter_table_content_add_columns_semantic_version_and_change_ratio.sql", R"(
+add_migration("V27__alter_table_content_add_columns_semantic_version_and_change_ratio.sql", R"(
 ALTER TABLE content ADD semantic_version INTEGER DEFAULT 1;
 ALTER TABLE content ADD change_ratio INTEGER DEFAULT 0;
 )");
@@ -714,8 +698,7 @@ CREATE INDEX idx_test_under_note_id ON test(under_note_id);
 
 )");
 
-
-    	add_migration("V31__create_table_test_attempt.sql", R"(
+add_migration("V31__create_table_test_attempt.sql", R"(
 CREATE TABLE test_attempt (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -736,11 +719,9 @@ CREATE TABLE test_attempt (
 
 CREATE INDEX idx_test_attempt_test_user ON test_attempt(test_id, user_id);
 
-
 )");
 
-
-    	add_migration("V32__create_table_test_attempt_answer.sql", R"(
+add_migration("V32__create_table_test_attempt_answer.sql", R"(
 CREATE TABLE test_attempt_answer (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -783,10 +764,5 @@ CREATE TABLE annotation (
 );
 )");
 
-
-
-
-
-
-    }
+}
 }

@@ -31,7 +31,6 @@
 #include <vector>
 #include <cstdint>
 
-
 namespace mindnet::essential
 {
     /**

@@ -23,11 +23,8 @@
 
 #pragma once
 
-
-
 #include "mindnet/api/Job.hpp"
 #include "mindnet/essential/Global.hpp"
-
 
 namespace mindnet::plugins::core::jobs
 {

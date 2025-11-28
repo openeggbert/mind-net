@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/essential/AccessMode.hpp"
-
 
 namespace mindnet::essential
 {

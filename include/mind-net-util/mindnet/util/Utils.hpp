@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 #include <string>
@@ -29,7 +28,6 @@
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Helper.hpp"
-
 
 namespace mindnet::util
 {

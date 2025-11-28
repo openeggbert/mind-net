@@ -23,10 +23,7 @@
 
 #pragma once
 
-
-
 #include "mindnet/api/MigrationScripts.hpp"
-
 
 namespace mindnet::plugins::repetition::migrations
 {

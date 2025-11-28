@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptTrigger.hpp"
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetQuestionIdsSQLiteQuery.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/plugins/slipbox/models/Test.hpp"
 #include "mindnet/plugins/slipbox/models/TestAttempt.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -47,8 +45,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-
-    void AfterCreateTestAttemptTrigger::run_before_or_after(
+void AfterCreateTestAttemptTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

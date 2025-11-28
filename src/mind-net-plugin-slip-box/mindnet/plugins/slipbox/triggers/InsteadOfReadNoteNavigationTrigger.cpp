@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/InsteadOfReadNoteNavigationTrigger.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
@@ -30,7 +29,6 @@
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
 
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

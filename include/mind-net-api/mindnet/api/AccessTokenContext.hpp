@@ -26,7 +26,6 @@
 #include "crow/http_request.h"
 #include "mindnet/essential/Helper.hpp"
 
-
 namespace mindnet::api
 {
     class IService;

@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/models/MapCollection.hpp"
 
 

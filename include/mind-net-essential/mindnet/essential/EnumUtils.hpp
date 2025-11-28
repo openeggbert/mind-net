@@ -23,12 +23,10 @@
 
 #pragma once
 
-
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include "mindnet/model/EnumDefinition.hpp"
-
 
 // NAME   = name of the enum (e.g. RepetitionScope)
 // PREFIX = prefix for functions (e.g. repetition_scope)

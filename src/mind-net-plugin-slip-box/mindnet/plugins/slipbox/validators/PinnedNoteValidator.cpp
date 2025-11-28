@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/PinnedNoteValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/slipbox/models/PinnedNote.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model PinnedNote
 #define MODEL PINNED_NOTE

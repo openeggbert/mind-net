@@ -25,7 +25,6 @@
 
 #include "mindnet/api/Job.hpp"
 
-
 namespace mindnet::plugins::core::jobs
 {
     class CleanupJob : public api::Job

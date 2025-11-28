@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include <vector>
 
 #include "mindnet/util/Utils.hpp"
@@ -31,7 +30,6 @@
 #include "SQLiteCpp/Database.h"
 #include "mindnet/model/ModelDefinition.hpp"
 #include "mindnet/orm/SqlUtils.hpp"
-
 
 namespace mindnet::db::sqlite
 {
@@ -588,8 +586,7 @@ namespace mindnet::db::sqlite
             return results;
         }
 
-
-        SQLite::Statement* query_count_ptr = nullptr;
+SQLite::Statement* query_count_ptr = nullptr;
         if (select_mode != orm::IN_IDS)
         {
             try
@@ -637,7 +634,6 @@ namespace mindnet::db::sqlite
             query_ptr = nullptr;
         }
 
-
-        return results;
+return results;
     }
 }

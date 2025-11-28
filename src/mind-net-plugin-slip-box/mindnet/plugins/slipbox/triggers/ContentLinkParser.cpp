@@ -21,10 +21,8 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/ContentLinkParser.hpp"
 #include <regex>
-
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -165,9 +163,7 @@ namespace mindnet::plugins::slipbox::triggers
         return out;
     }
 
-
-
-    ParsedLinks ContentLinkParser::parse_links(const std::string& content)
+ParsedLinks ContentLinkParser::parse_links(const std::string& content)
     {
         ParsedLinks out;
         auto urls = find_urls(content);

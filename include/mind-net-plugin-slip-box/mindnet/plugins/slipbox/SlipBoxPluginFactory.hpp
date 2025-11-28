@@ -23,10 +23,7 @@
 
 #pragma once
 
-
-
 #include "mindnet/api/PluginFactory.hpp"
-
 
 namespace mindnet::plugins::slipbox
 {

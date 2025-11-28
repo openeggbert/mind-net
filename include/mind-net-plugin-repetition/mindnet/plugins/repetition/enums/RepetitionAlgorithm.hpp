@@ -23,11 +23,9 @@
 
 #pragma once
 
-
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
 #include "mindnet/essential/EnumUtils.hpp"
-
 
 namespace mindnet::plugins::repetition::enums
 {

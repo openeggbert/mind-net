@@ -30,7 +30,6 @@
 #include "mindnet/api/ValidatorBase.hpp"
 #include "mindnet/plugins/slipbox/models/TestAttemptAnswer.hpp"
 
-
 namespace mindnet::plugins::slipbox::validators
 {
     using api::RequestContext;

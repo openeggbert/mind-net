@@ -28,7 +28,6 @@
 
 #include "ConsoleColor.hpp"
 
-
 namespace mindnet::essential
 {
     using print_timestamp_function = std::string (*)();

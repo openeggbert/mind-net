@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include <iostream>
 #include <filesystem>
 
@@ -45,7 +44,6 @@
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
 #include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
-
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;

@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Global.hpp"
-
 
 namespace mindnet::db::sqlite::queries
 {
@@ -76,13 +74,11 @@ namespace mindnet::db::sqlite::queries
                 parent_note_id << essential::commit;
             SQLite::Statement query(db, sql);
 
-
-            query.bind(1, map_id);
+query.bind(1, map_id);
             if (parent_note_id != 0)
                 query.bind(2, parent_note_id);
 
-
-            if (query.executeStep())
+if (query.executeStep())
             {
                 max_sibling_order = query.isColumnNull(0) ? 0 : query.getColumn(0);
             }

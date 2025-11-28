@@ -24,7 +24,6 @@
 // IRepository.cpp
 #include "mindnet/api/IRepository.hpp"
 
-
 namespace mindnet::api
 {
     IRepository::IRepository(

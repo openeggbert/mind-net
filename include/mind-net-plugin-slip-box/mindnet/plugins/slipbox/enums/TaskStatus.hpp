@@ -26,7 +26,6 @@
 
 #include "mindnet/model/EnumDefinition.hpp"
 
-
 enum class TaskStatus
 {
     Open = 0,

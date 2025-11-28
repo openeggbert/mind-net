@@ -30,7 +30,6 @@
 #include "OperationResult.hpp"
 #include "mindnet/essential/Helper.hpp"
 
-
 namespace mindnet
 {
     namespace orm
@@ -67,8 +66,7 @@ namespace mindnet::api
         using ListFn = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(
             const model::ModelDefinition&, api::AccessTokenContext&, orm::QueryParams&, int);
 
-
-        AbstractTriggerJob(
+AbstractTriggerJob(
             const std::string& name_,
             const std::string& description_)
             : name(name_),

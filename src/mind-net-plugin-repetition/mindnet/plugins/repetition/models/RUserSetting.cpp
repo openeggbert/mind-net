@@ -21,11 +21,9 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/models/RUserSetting.hpp"
 
 #include "mindnet/plugins/repetition/RSetting.hpp"
-
 
 namespace mindnet::plugins::repetition::models
 {

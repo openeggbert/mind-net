@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/TermValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Term.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Term
 #define MODEL TERM
@@ -105,8 +103,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult TermValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult TermValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         if (entity.note_id != 0)
         {

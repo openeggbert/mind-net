@@ -23,11 +23,9 @@
 
 #pragma once
 
-
 #include <stdexcept>
 #include <string>
 #include <vector>
-
 
 namespace mindnet::essential
 {

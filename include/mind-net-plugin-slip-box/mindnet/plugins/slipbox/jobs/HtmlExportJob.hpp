@@ -29,7 +29,6 @@
 #include "mindnet/plugins/slipbox/models/Content.hpp"
 #include "mindnet/plugins/core/models/User.hpp"
 
-
 namespace mindnet::plugins::slipbox::jobs
 {
     using std::string;

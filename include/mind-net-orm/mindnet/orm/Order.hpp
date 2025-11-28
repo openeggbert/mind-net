@@ -27,7 +27,6 @@
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Helper.hpp"
 
-
 namespace mindnet::orm
 {
     enum class Order

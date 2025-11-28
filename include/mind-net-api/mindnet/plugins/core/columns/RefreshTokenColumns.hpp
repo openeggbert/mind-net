@@ -21,12 +21,9 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
-
 #include "mindnet/model/BaseColumns.hpp"
-
 
 namespace mindnet::plugins::core::columns
 {

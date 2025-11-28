@@ -30,7 +30,6 @@
 #include "mindnet/plugins/slipbox/models/Map.hpp"
 #include "mindnet/plugins/slipbox/models/MapCollection.hpp"
 
-
 namespace mindnet::plugins::slipbox::validators
 {
     using api::RequestContext;

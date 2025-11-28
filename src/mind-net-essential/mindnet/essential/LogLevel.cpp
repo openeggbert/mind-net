@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/essential/LogLevel.hpp"
 
 #include "mindnet/essential/Environment.hpp"
@@ -30,7 +29,6 @@
 #include <string>
 
 #include "mindnet/essential/ConsoleColor.hpp"
-
 
 namespace mindnet::essential
 {

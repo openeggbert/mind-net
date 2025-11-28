@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 #define MIND_NET_VERSION_MAYOR 0
 #define MIND_NET_VERSION_MINOR 0
 #define MIND_NET_VERSION_PATCH 0

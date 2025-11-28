@@ -27,7 +27,6 @@
 #include "mindnet/essential/ConsolePrinter.hpp"
 #include "mindnet/essential/Global.hpp"
 
-
 namespace mindnet::http
 {
     class CrowLoggerAdapter : public crow::ILogHandler

@@ -15,7 +15,6 @@ target_include_directories(mind_net_db_sqlite
         ${CMAKE_SOURCE_DIR}/include/mind-net-model
 )
 
-
 target_link_libraries(mind_net_db_sqlite
         PUBLIC
         SQLiteCpp sqlite3

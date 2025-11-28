@@ -25,7 +25,6 @@
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 
-
 namespace mindnet::db::sqlite::queries
 {
     const std::string SQL = R"(
@@ -100,8 +99,7 @@ LIMIT {limit};
             {"limit",             std::to_string(limit)}
         };
 
-
-        std::string sql = SQL;
+std::string sql = SQL;
         for (const auto& [key, val] : vars)
         {
             std::string placeholder = "{" + key + "}";

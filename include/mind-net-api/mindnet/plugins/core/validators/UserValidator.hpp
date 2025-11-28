@@ -23,12 +23,10 @@
 
 #pragma once
 
-
 #include <memory>
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
-
 
 namespace mindnet::plugins::core::validators
 {

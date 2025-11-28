@@ -28,7 +28,6 @@
 #include "mindnet/essential/UserStatus.hpp"
 #include "AccessTokenContext.hpp"
 
-
 namespace mindnet::api
 {
     struct RequestContext

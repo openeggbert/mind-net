@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 #include <map>
 
 #include "ostream"
@@ -33,7 +31,6 @@
 
 #include "mindnet/essential/Configuration.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
-
 
 namespace mindnet::model
 {

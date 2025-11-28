@@ -32,7 +32,6 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/util/Utils.hpp"
 
-
 #define Model TestAttemptAnswer
 #define MODEL TEST_ATTEMPT_ANSWER
 #define model test_attempt_answer

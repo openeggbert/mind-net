@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 #include <utility>
 
 #include "mindnet/api/PersistenceMethods.hpp"
@@ -60,7 +58,6 @@
 #include "mindnet/plugins/slipbox/models/TestAttempt.hpp"
 #include "mindnet/plugins/slipbox/models/Url.hpp"
 #include "mindnet/plugins/slipbox/models/Annotation.hpp"
-
 
 namespace mindnet::plugins::slipbox::models
 {

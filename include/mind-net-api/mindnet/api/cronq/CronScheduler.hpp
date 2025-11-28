@@ -35,7 +35,6 @@
 #include "mindnet/api/AbstractTriggerJob.hpp"
 #include "mindnet/api/Job.hpp"
 
-
 namespace mindnet::api::cronq
 {
     class CronScheduler : public AbstractTriggerJob
@@ -97,8 +96,7 @@ namespace mindnet::api::cronq
             }
         };
 
-
-        std::vector<JobPtr> all_job_ptrs;
+std::vector<JobPtr> all_job_ptrs;
         std::thread scheduler_thread_;
         std::atomic<bool> running_{false};
 

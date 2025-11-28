@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/R18PredictionLogValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/repetition/models/R18PredictionLog.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model R18PredictionLog
 #define MODEL R18_PREDICTION_LOG

@@ -23,7 +23,6 @@
 
 #pragma once
 
-
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/core/CorePlugin.hpp"

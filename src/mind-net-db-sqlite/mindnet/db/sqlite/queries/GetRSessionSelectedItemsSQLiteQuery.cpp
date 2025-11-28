@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
-
 
 namespace mindnet::db::sqlite::queries
 {
@@ -246,8 +244,7 @@ ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-
-    const std::string SQL_ALL = R"(
+const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
 FROM note n {parent_join}
 {map_join}
@@ -299,9 +296,7 @@ ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-
-
-    GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
+GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
         : Query(QUERY_GetRSessionSelectedItemsQuery, "Returns new note ids for repetition session",
                 essential::DatabaseType::SQLite)
     {

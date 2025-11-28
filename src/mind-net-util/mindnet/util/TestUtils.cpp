@@ -25,7 +25,6 @@
 
 #include <algorithm>
 
-
 namespace mindnet::util
 {
     test_result test_ok()

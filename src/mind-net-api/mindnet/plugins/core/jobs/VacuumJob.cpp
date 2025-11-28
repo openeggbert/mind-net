@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/jobs/VacuumJob.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::core::jobs
 {

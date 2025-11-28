@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/IdeaValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Idea.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model Idea
 #define MODEL IDEA

@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.hpp"
-
 
 namespace mindnet::plugins::repetition::migrations
 {
@@ -60,8 +58,7 @@ namespace mindnet::plugins::repetition::migrations
         // ('S_min', 0.5),
         // ('short_retry', 0.5); -- 12 hours
 
-
-        add_migration("V2__create_r_user_setting.sql", R"(
+add_migration("V2__create_r_user_setting.sql", R"(
 CREATE TABLE r_user_setting (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -224,8 +221,7 @@ CREATE TABLE r4_state (
 );
 )");
 
-
-        add_migration("V8__create_r18_state.sql", R"(
+add_migration("V8__create_r18_state.sql", R"(
 CREATE TABLE r18_state (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
@@ -282,8 +278,7 @@ CREATE TABLE r18_prediction_log (
 );
 )");
 
-
-        add_migration("V11__create_repetition_indexes.sql", R"(
+add_migration("V11__create_repetition_indexes.sql", R"(
 
 -- Index for fast selection of "due items" (SM-18 and other algorithms)
 CREATE INDEX IF NOT EXISTS idx_r18_state_user_due
@@ -323,9 +318,7 @@ CREATE INDEX IF NOT EXISTS idx_r18_state_note
 
 )");
 
-
-
-    	add_migration("V12__alter_r_session_add_map_collection_id.sql", R"(
+add_migration("V12__alter_r_session_add_map_collection_id.sql", R"(
 -- FK_OFF
 
 -- 1) Prepare new table with correct schema
@@ -446,12 +439,8 @@ ALTER TABLE r4_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 ALTER TABLE r18_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 )");
 
-
-
-
-    }
 }
-
+}
 
 /*
 CREATE TABLE r_session_metric (
@@ -476,21 +465,6 @@ SELECT
 FROM r_review
 WHERE r_session_id = ?
 GROUP BY r_session_id, user_id;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 Here’s your English version formatted as a clear `todo.md`:
 
@@ -597,11 +571,6 @@ The `r18_prediction_log` table serves as:
 
 ```
 ```
-
-
-
-
-
 
 add_migration("V11__create_r18_adaptive_parameters.sql", R"(
 CREATE TABLE r18_adaptive_parameters (

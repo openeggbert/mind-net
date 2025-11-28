@@ -23,7 +23,6 @@
 
 #pragma once
 
-
 #include "mindnet/api/Trigger.hpp"
 
 

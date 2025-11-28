@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 namespace mindnet::essential
 {
     enum ExitStatus

@@ -21,11 +21,9 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/jobs/CleanupHistoryOrphansJob.hpp"
 
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::core::jobs
 {
@@ -44,8 +42,7 @@ namespace mindnet::plugins::core::jobs
     {
         auto history_orphan_threshold_in_days = job_config.get_int_or_default("history_orphan_threshold_in_days", 30);
 
-
-        nlohmann::json req;
+nlohmann::json req;
         req["history_orphan_threshold_in_days"] = cast64(history_orphan_threshold_in_days.first);
 
         nlohmann::json result = call_query("CleanupHistoryOrphans", req);

@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/RGlobalSettingValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/repetition/models/RGlobalSetting.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model RGlobalSetting
 #define MODEL R_GLOBAL_SETTING

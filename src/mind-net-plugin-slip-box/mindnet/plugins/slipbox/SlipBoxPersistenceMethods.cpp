@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
 
 #include "mindnet/api/IService.hpp"
@@ -32,7 +31,6 @@
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/plugins/slipbox/models/MapCollection.hpp"
 #include "mindnet/plugins/slipbox/models/Url.hpp"
-
 
 namespace mindnet::plugins::slipbox
 {
@@ -45,8 +43,7 @@ namespace mindnet::plugins::slipbox
         return !ctx.db->list(plugins::slipbox::models::MAP_DEFINITION, ctx.token, query_params).first.empty();
     }
 
-
-    std::pair<identification, string> find_note_for_content(const api::RequestContext& ctx, identification content_id)
+std::pair<identification, string> find_note_for_content(const api::RequestContext& ctx, identification content_id)
     {
         orm::QueryParams query_params;
         query_params.filters.emplace("content_id", std::to_string(content_id));

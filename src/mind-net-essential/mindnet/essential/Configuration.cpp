@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/essential/Configuration.hpp"
 
 #include <filesystem>
 #include <iostream>
 #include <sstream>
-
 
 #define if_map_has(key) if (map_contains(map, #key))
 #define save_enum(key) if_map_has(key) key = string_to_##key(map.at( #key));

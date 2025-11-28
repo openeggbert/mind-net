@@ -23,12 +23,10 @@
 
 #pragma once
 
-
 #include <string>
 
 #include "mindnet/essential/UserStatus.hpp"
 #include "mindnet/model/EnumDefinition.hpp"
-
 
 namespace mindnet::plugins::core::enums
 {

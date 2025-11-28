@@ -23,11 +23,9 @@
 
 #pragma once
 
-
 #include "crow.h"
 #include "HttpUtils.hpp"
 #include "mindnet/api/IService.hpp"
-
 
 namespace mindnet::http
 {
@@ -58,8 +56,7 @@ namespace mindnet::http
         std::string directory_for_static_files;
         std::shared_ptr<WebEndpointsGenerator> web_endpoints_generator_ = nullptr;
 
-
-        //
+//
         void create_web_endpoints(const api::ServicePtr& service_ptr);
         void create_model_definition_endpoints(const api::ServicePtr& service_ptr);
         void create_info_endpoint(const api::ServicePtr& service_ptr);

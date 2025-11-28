@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/Plugin.hpp"
 
 #include "mindnet/api/RepositoryFactory.hpp"
 #include "mindnet/essential/Global.hpp"
-
 
 namespace mindnet::api
 {

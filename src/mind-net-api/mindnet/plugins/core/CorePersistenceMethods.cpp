@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/CorePersistenceMethods.hpp"
 
 #include "mindnet/api/IService.hpp"
@@ -30,7 +29,6 @@
 #include "mindnet/api/ValidatorBase.hpp"
 #include "mindnet/plugins/core/models/Team.hpp"
 #include "mindnet/plugins/core/models/User.hpp"
-
 
 namespace mindnet::plugins::core
 {
@@ -92,8 +90,7 @@ namespace mindnet::plugins::core
         return "";
     }
 
-
-    // gen_find_cpp(chat, Comment, comment, COMMENT)
+// gen_find_cpp(chat, Comment, comment, COMMENT)
     gen_find_cpp(core, User, user, USER)
     // gen_find_cpp(mail, Message, message, MESSAGE)
     gen_find_cpp(core, Team, team, TEAM)

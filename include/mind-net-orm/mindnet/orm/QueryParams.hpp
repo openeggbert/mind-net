@@ -29,7 +29,6 @@
 
 #include "Order.hpp"
 
-
 namespace mindnet::orm
 {
     struct QueryParams

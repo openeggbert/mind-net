@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/NoteValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Note.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Note
 #define MODEL NOTE
@@ -116,8 +114,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult NoteValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

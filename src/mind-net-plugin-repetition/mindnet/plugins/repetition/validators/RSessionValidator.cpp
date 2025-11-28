@@ -27,7 +27,6 @@
 #include "mindnet/plugins/repetition/models/RSession.hpp"
 #include "mindnet/api/Persistence.hpp"
 
-
 #define Model RSession
 #define MODEL R_SESSION
 #define model r_session

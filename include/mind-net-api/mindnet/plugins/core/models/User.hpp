@@ -36,7 +36,6 @@
 #include "../enums/UserStatus.hpp"
 #include "mindnet/plugins/core/enums/UserRole.hpp"
 
-
 namespace mindnet::plugins::core::models
 {
     using mindnet::model::def;

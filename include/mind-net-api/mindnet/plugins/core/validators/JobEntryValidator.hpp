@@ -23,12 +23,10 @@
 
 #pragma once
 
-
 #include <memory>
 
 #include "mindnet/api/ValidatorBase.hpp"
 #include "mindnet/plugins/core/models/JobEntry.hpp"
-
 
 namespace mindnet::plugins::core::validators
 {

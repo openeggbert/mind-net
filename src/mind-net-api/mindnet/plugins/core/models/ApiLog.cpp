@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/models/ApiLog.hpp"
-
 
 namespace mindnet::plugins::core::models
 {
@@ -124,8 +122,7 @@ namespace mindnet::plugins::core::models
             break;
         }
 
-
-        // Entity name + ID - if it's part of the URL
+// Entity name + ID - if it's part of the URL
         // e.g. /api/v1/note/123  → entity_name="note", entity_id=123
         {
             std::string path = req.url;

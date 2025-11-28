@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/PluginRegistry.hpp"
 #include <string>
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/Plugin.hpp"
-
 
 namespace mindnet::api
 {
@@ -95,8 +93,7 @@ namespace mindnet::api
         return sorted;
     }
 
-
-    PluginPtr PluginRegistry::get_plugin(const std::string& plugin_name) const
+PluginPtr PluginRegistry::get_plugin(const std::string& plugin_name) const
     {
         if (!has_plugin_name(plugin_name)) return nullptr;
         return plugins.at(plugin_name);

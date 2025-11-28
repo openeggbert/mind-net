@@ -28,7 +28,6 @@
 #include <limits>
 #include <algorithm>
 
-
 namespace mindnet::api::cronq
 {
     inline std::string trim(const std::string& s)
@@ -60,8 +59,7 @@ namespace mindnet::api::cronq
                 continue;
             }
 
-
-            if (!item.empty())
+if (!item.empty())
                 parts.push_back(item);
         }
 
@@ -161,8 +159,7 @@ namespace mindnet::api::cronq
     // Structures for cron expression fields
     // =======================================
 
-
-    // evaluation against a specific date
+// evaluation against a specific date
     bool DayOfMonthField::matches(int year, int month, int day, int dow_quartz) const
     {
         switch (mode)
@@ -602,9 +599,6 @@ namespace mindnet::api::cronq
         {
             std::string tmp;
 
-
-
-
 /*
 ========================================================================================================
 Quartz Cron Expression – Full Technical Reference and Alias Specification
@@ -821,8 +815,7 @@ End of Documentation
             else if (expr_raw_trimmed == "@secondly")
                 tmp = "* * * * * *";
 
-
-                // ------------------------------------------------------------
+// ------------------------------------------------------------
                 // MindNet-friendly time-of-day aliases
                 // ------------------------------------------------------------
             else if (expr_raw_trimmed == "@noon")
@@ -834,8 +827,7 @@ End of Documentation
             else if (expr_raw_trimmed == "@evening")
                 tmp = "0 18 * * *";
 
-
-                // ------------------------------------------------------------
+// ------------------------------------------------------------
                 // Weekday / weekend aliases
                 // ------------------------------------------------------------
             else if (expr_raw_trimmed == "@weekday")
@@ -868,8 +860,7 @@ End of Documentation
             else if (expr_raw_trimmed == "@every_5min")
                 tmp = "0 */5 * * * *";
 
-
-                // ------------------------------------------------------------
+// ------------------------------------------------------------
                 // Generic "every X seconds/minutes/hours"
                 // Example: @every_seconds(5)
                 // ------------------------------------------------------------
@@ -922,8 +913,7 @@ End of Documentation
                 tmp = "0 " + std::to_string(mm) + " " + std::to_string(hh) + " * * *";
             }
 
-
-            // ------------------------------------------------------------
+// ------------------------------------------------------------
             // Hourly at mm – @hourly_at(15)
             // → run every hour at 15 minutes
             // ------------------------------------------------------------
@@ -937,15 +927,13 @@ End of Documentation
                 tmp = "0 " + std::to_string(mm) + " * * * *";
             }
 
-
-            // ------------------------------------------------------------
+// ------------------------------------------------------------
             // No match → error
             // ------------------------------------------------------------
             else
                 throw std::runtime_error("Invalid CRON alias: " + expr_raw_trimmed);
 
-
-            // make parts from tmp
+// make parts from tmp
             parts = split(tmp, DELIMITER);
         }
 

@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 #include <map>
 #include <string>
 #include <variant>
 #include <vector>
-
 
 #define cast64 static_cast<int64_t>
 #define PASTE(a,b) a##b
@@ -47,7 +45,6 @@ using i32 = std::int32_t;
 using u32 = std::uint32_t;
 //do not change this alias please
 using identification = i64;
-
 
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;

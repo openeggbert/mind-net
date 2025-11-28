@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Global.hpp"
-
 
 namespace mindnet::db::sqlite::queries
 {
@@ -68,8 +66,7 @@ namespace mindnet::db::sqlite::queries
         }
         sql += ")";
 
-
-        // --- Execute SQL query ---
+// --- Execute SQL query ---
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);

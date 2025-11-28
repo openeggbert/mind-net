@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/triggers/HistoryCommonTrigger.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/plugins/core/models/History.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::core::triggers
 {

@@ -25,7 +25,6 @@
 
 #include "mindnet/api/Trigger.hpp"
 
-
 namespace mindnet::plugins::core::triggers
 {
     class HistoryCommonTrigger : public api::Trigger

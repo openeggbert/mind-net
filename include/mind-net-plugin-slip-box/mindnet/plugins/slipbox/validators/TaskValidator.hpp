@@ -23,13 +23,11 @@
 
 #pragma once
 
-
 #include <memory>
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
 #include "mindnet/plugins/slipbox/models/Task.hpp"
-
 
 namespace mindnet::plugins::slipbox::validators
 {

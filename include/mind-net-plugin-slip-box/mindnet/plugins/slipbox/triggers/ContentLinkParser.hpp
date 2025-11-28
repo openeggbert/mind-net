@@ -21,13 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 #include <string>
 #include <vector>
-
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

@@ -32,7 +32,6 @@
 #include <nlohmann/json.hpp>
 #include "mindnet/api/AbstractTriggerJob.hpp"
 
-
 namespace mindnet::api
 {
     class Trigger : public AbstractTriggerJob

@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/MapValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Map.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Map
 #define MODEL MAP
@@ -148,8 +146,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult MapValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult MapValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(slipbox::has_map_name(ctx, entity.name),
                   409, "name already exists")

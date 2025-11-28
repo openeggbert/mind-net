@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/UrlValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/slipbox/models/Url.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model Url
 #define MODEL URL
@@ -70,8 +68,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult UrlValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult UrlValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

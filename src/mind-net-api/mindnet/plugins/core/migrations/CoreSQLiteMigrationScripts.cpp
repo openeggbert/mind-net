@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/migrations/CoreSQLiteMigrationScripts.hpp"
-
 
 namespace mindnet::plugins::core::migrations
 {
@@ -192,7 +190,6 @@ CREATE INDEX idx_access_token_expires_at
   ON access_token(expires_at);
 CREATE INDEX idx_access_token_last_used
   ON access_token(last_used_at);
-
 
 )");
 

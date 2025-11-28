@@ -21,10 +21,8 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/TriggerRegistry.hpp"
 #include <iostream>
-
 
 namespace mindnet::api
 {

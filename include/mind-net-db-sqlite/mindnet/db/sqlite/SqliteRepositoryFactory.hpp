@@ -23,13 +23,10 @@
 
 #pragma once
 
-
-
 #include <memory>
 
 #include "mindnet/api/IRepository.hpp"
 #include "mindnet/api/RepositoryFactory.hpp"
-
 
 namespace mindnet::db::sqlite
 {

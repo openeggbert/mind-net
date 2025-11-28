@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/PropertyValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Property.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Property
 #define MODEL PROPERTY
@@ -104,8 +102,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult PropertyValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult PropertyValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

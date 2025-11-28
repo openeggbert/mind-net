@@ -23,12 +23,9 @@
 
 #pragma once
 
-
-
 #include <cstdarg>
 #include <stdexcept>
 #include <string>
-
 
 namespace mindnet::model
 {

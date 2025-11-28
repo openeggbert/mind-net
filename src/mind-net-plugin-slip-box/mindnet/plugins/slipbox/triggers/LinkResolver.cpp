@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/LinkResolver.hpp"
 
 #include <unordered_set>
@@ -29,7 +28,6 @@
 #include "mindnet/essential/ConsolePrinter.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

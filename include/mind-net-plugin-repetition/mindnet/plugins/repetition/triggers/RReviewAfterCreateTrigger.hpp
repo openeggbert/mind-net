@@ -23,11 +23,8 @@
 
 #pragma once
 
-
-
 #include "mindnet/api/Trigger.hpp"
 #include "mindnet/plugins/repetition/models/RReview.hpp"
-
 
 namespace mindnet::plugins::repetition::triggers
 {

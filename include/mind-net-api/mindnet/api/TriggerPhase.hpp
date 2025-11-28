@@ -28,7 +28,6 @@
 
 #include "mindnet/model/EnumDefinition.hpp"
 
-
 namespace mindnet::api
 {
     enum class TriggerPhase

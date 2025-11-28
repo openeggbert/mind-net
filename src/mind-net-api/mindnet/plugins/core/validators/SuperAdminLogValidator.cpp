@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/SuperAdminLogValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/SuperAdminLog.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model SuperAdminLog
 #define MODEL SUPER_ADMIN_LOG

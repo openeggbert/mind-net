@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/RReviewValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/plugins/repetition/models/RReview.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/repetition/models/RSession.hpp"
-
 
 #define Model RReview
 #define MODEL R_REVIEW

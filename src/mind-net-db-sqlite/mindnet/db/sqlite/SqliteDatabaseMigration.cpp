@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include <iostream>
 #include <string>
 
@@ -41,7 +40,6 @@
 
 #include "mindnet/orm/SchemaHistoryMetaColumns.hpp"
 #include "nlohmann/detail/exceptions.hpp"
-
 
 namespace mindnet::db::sqlite
 {
@@ -75,8 +73,7 @@ namespace mindnet::db::sqlite
  * structural/cleanliness improvement for later.
  */
 
-
-    SqliteDatabaseMigration::SqliteDatabaseMigration()
+SqliteDatabaseMigration::SqliteDatabaseMigration()
     {
         //Not meant to be instantiated
     };
@@ -494,8 +491,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                 }
             }
 
-
-            int last_successful_version = get_last_successful_version(db);
+int last_successful_version = get_last_successful_version(db);
             if (last_successful_version == -1) return false;
             for (int version = 1; version <= last_successful_version; version++)
             {
@@ -568,8 +564,7 @@ WHERE NOT EXISTS (SELECT 1 FROM "schema_history_meta");
                 }
             }
 
-
-            return true;
+return true;
         }
 
         bool insert_migration(

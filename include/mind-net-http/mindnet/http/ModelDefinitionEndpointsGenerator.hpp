@@ -23,11 +23,8 @@
 
 #pragma once
 
-
-
 #include "crow.h"
 #include "mindnet/api/IService.hpp"
-
 
 namespace mindnet::http
 {

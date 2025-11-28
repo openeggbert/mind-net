@@ -21,15 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 /**
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 #pragma once
-
-
-
 
 namespace mindnet::orm
 {

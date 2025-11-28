@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/TaskValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/slipbox/models/Task.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model Task
 #define MODEL TASK

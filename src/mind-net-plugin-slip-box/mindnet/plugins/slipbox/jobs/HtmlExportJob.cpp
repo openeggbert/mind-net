@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/jobs/HtmlExportJob.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -34,7 +33,6 @@
 #include <map>
 
 #include "mindnet/plugins/slipbox/jobs/HtmlExportUtils.hpp"
-
 
 namespace mindnet::plugins::slipbox::jobs
 {
@@ -117,9 +115,7 @@ namespace mindnet::plugins::slipbox::jobs
         core::models::User author_;
         author_.from_values(author_result.first);
 
-
-
-        mindnet::orm::QueryParams query_params;
+mindnet::orm::QueryParams query_params;
         query_params.add_filter("map_id", map.get_id());
         query_params.add_filter("parent_note_id", 0);
         query_params.sort = "sibling_order";
@@ -163,19 +159,14 @@ namespace mindnet::plugins::slipbox::jobs
             if (!result.empty()) return result;
         }
 
-
-        return "";
+return "";
     }
 
     std::string HtmlExportJob::generate_page(models::Note& note, api::AccessTokenContext& token, string& author_display_name, models::Map& map, std::filesystem::path& export_map_dir)
     {
         string index_html = plugin::slipbox::jobs::get_html_template();
 
-
-
-
-
-        mindnet::orm::QueryParams query_params;
+mindnet::orm::QueryParams query_params;
         query_params.add_filter("map_id", map.get_id());
         query_params.add_filter("parent_note_id", note.get_id());
         query_params.sort = "sibling_order";

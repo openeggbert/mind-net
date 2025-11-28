@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/TeamValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/Team.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model Team
 #define MODEL TEAM
@@ -78,8 +76,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-
-    OperationResult TeamValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult TeamValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.created_by != ctx.token.user_id,
                   400, "created_by must be set to the logged in user.")

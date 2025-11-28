@@ -30,7 +30,6 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/essential/Global.hpp"
 
-
 #define Model Test
 #define MODEL TEST
 #define model test

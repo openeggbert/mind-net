@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/LoginSessionValidator.hpp"
 
 #include <regex>
@@ -29,7 +28,6 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/LoginSession.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model LoginSession
 #define MODEL LOGIN_SESSION

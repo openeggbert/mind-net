@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/QuestionValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/plugins/slipbox/models/Question.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Question
 #define MODEL QUESTION
@@ -112,8 +110,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult QuestionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

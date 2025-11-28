@@ -23,12 +23,9 @@
 
 #pragma once
 
-
-
 #include <string>
 
 #include "SingleRight.hpp"
-
 
 namespace mindnet::plugins::core::enums
 {

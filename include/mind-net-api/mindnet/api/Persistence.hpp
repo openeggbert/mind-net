@@ -33,7 +33,6 @@
 #include "OperationResult.hpp"
 #include "ShardedModelCache.hpp"
 
-
 namespace mindnet::api
 {
     using mindnet::model::ModelDefinition;

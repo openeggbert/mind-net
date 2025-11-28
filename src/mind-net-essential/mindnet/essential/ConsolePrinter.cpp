@@ -22,7 +22,6 @@
  */
 #include "mindnet/essential/ConsolePrinter.hpp"
 
-
 namespace mindnet::essential
 {
     ConsolePrinter& commit(ConsolePrinter& printer)

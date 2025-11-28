@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/ApiLogValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/ApiLog.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model ApiLog
 #define MODEL API_LOG

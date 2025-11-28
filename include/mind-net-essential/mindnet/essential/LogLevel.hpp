@@ -23,11 +23,9 @@
 
 #pragma once
 
-
 #include <string>
 
 #include "ConsoleColor.hpp"
-
 
 namespace mindnet::essential
 {

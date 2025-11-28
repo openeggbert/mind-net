@@ -32,7 +32,6 @@
 #include "Query.hpp"
 #include "Trigger.hpp"
 
-
 namespace mindnet::model
 {
     struct ModelDefinition;

@@ -39,7 +39,6 @@ plugin->register_model(\
 
 #include "Plugin.hpp"
 
-
 namespace mindnet::api
 {
     class PluginFactory

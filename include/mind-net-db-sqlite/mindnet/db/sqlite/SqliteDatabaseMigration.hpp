@@ -23,12 +23,10 @@
 
 #pragma once
 
-
 #include <string>
 
 #include "mindnet/util/Utils.hpp"
 #include "mindnet/api/MigrationScripts.hpp"
-
 
 namespace mindnet::db::sqlite
 {

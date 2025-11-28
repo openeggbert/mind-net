@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/plugins/repetition/models/RSession.hpp"
 #include "mindnet/util/Utils.hpp"
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.hpp"
-
 
 namespace mindnet::plugins::repetition::triggers
 {

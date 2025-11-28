@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 #include <string>
 #include <set>
-
 
 namespace mindnet::plugins::repetition
 {

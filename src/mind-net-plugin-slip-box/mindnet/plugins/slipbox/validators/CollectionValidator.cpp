@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/CollectionValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/slipbox/models/Collection.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model Collection
 #define MODEL COLLECTION
@@ -77,8 +75,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult CollectionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult CollectionValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

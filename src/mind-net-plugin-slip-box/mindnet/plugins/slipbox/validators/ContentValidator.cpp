@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/ContentValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Content.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Content
 #define MODEL CONTENT
@@ -97,8 +95,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult ContentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult ContentValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.version != 1,
                   404, "version must be 1 during content creation.");

@@ -32,7 +32,6 @@
 #include "mindnet/util/Utils.hpp"
 #include "mindnet/api/Service.hpp"
 
-
 namespace mindnet::api::cronq
 {
     using namespace std::chrono;
@@ -195,8 +194,7 @@ namespace mindnet::api::cronq
                 << " raw='" << job_ptr->get_cron_expression() << "'"
                 << essential::commit;
 
-
-            std::string cfg_text = jobs_in_db_map[job_ptr->get_name()].configuration;
+std::string cfg_text = jobs_in_db_map[job_ptr->get_name()].configuration;
             JobConfig cfg(cfg_text);
 
             jobs_.emplace_back(
@@ -306,17 +304,14 @@ namespace mindnet::api::cronq
                 << util::Utils::unixtime_to_string(system_clock_to_unixtime(next_scheduled))
                 << essential::commit;
 
-
-            if (next_scheduled <= now) {
+if (next_scheduled <= now) {
                 essential::info
                     << "[CRON-COMPUTE-ERROR] next_after returned PAST DATE!"
                     << " cron=" << j.job->get_cron_expression()
                     << essential::commit;
             }
 
-
-
-            // compute initial next_run — Quartz previous_before() removed (buggy)
+// compute initial next_run — Quartz previous_before() removed (buggy)
             j.next_run = next_scheduled;
 
             update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
@@ -386,7 +381,6 @@ namespace mindnet::api::cronq
                             continue;
                         }
 
-
 //avoid running jobs, which should not be running
                         auto nowtp = std::chrono::system_clock::now();
 
@@ -412,11 +406,7 @@ namespace mindnet::api::cronq
                         // update_next_run_in_db(j.job_id, system_clock_to_unixtime(j.next_run));
                         // continue;
 
-
-
-
-
-                        // Configuration change
+// Configuration change
                         if (util::Utils::compute_sha256(new_cfg) != j.job_config.get_sha256())
                         {
                             j.job_config = JobConfig(new_cfg);
@@ -428,9 +418,7 @@ namespace mindnet::api::cronq
                     }
                 }
 
-
-
-                essential::info
+essential::info
                     << "[CRON-LOOP] listing jobs:"
                     << essential::commit;
 
@@ -465,8 +453,7 @@ namespace mindnet::api::cronq
                     continue;
                 }
 
-
-                // 2) FIND NEXT JOB TO RUN
+// 2) FIND NEXT JOB TO RUN
                 auto* next = find_next_job();
                 if (next == nullptr)
                 {
@@ -504,10 +491,7 @@ namespace mindnet::api::cronq
                     continue;
                 }
 
-
-
-
-                if (!running_) return;
+if (!running_) return;
 
                 // 4) PREVENT PARALLEL EXECUTION OF THE SAME JOB
                 if (next->running)
@@ -536,8 +520,7 @@ namespace mindnet::api::cronq
                 next->next_run = next_scheduled;
                 update_next_run_in_db(next->job_id, system_clock_to_unixtime(next_scheduled));
 
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(10L));
+std::this_thread::sleep_for(std::chrono::milliseconds(10L));
             }
 
             essential::warn
@@ -573,8 +556,7 @@ namespace mindnet::api::cronq
         return best;
     }
 
-
-    void CronScheduler::start_threadpool(int threads)
+void CronScheduler::start_threadpool(int threads)
     {
         essential::err << "[CRON-POOL] creating " << threads << " workers" << essential::commit;
         for (int i = 0; i < threads; i++)

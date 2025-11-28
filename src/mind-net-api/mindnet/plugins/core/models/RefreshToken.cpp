@@ -23,7 +23,6 @@
 #include "mindnet/plugins/core/models/RefreshToken.hpp"
 #include "mindnet/plugins/core/columns/RefreshTokenColumns.hpp"
 
-
 namespace mindnet::plugins::core::models
 {
     entity_fields RefreshToken::to_values() const

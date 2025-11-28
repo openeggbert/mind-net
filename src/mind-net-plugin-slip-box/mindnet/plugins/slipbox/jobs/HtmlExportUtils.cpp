@@ -26,7 +26,6 @@
 
 #include <cmark.h>
 
-
 namespace mindnet::plugin::slipbox::jobs
 {
     using std::string;
@@ -68,8 +67,7 @@ namespace mindnet::plugin::slipbox::jobs
         return out;
     }
 
-
-    std::string replace_placeholders(
+std::string replace_placeholders(
         const std::string& text,
         const std::map<std::string, std::string>& values)
     {
@@ -476,7 +474,6 @@ blockquote {
   border-radius: 8px;
 }
 
-
 )";
     }
 
@@ -561,19 +558,12 @@ function loadContent() {
     } else {
     toc.style.display = 'none';
 
-
-
-
-
-
-
-    }
+}
 
     //a.ref
         document.querySelectorAll('a.ref').forEach(function (link) {
           link.setAttribute('target', '_blank');
         });
-
 
 }
 )";

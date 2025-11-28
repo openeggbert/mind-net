@@ -21,18 +21,15 @@
  * THE SOFTWARE.
  */
 
-
 /**
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 #pragma once
 
-
 #include <vector>
 
 #include "mindnet/api/IRepository.hpp"
-
 
 namespace mindnet::db::sqlite
 {

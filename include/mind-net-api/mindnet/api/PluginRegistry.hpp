@@ -28,7 +28,6 @@
 #include "Plugin.hpp"
 #include "IValidator.hpp"
 
-
 namespace mindnet::api
 {
     struct CyclicDependencyException : std::runtime_error
@@ -46,8 +45,7 @@ namespace mindnet::api
         }
     };
 
-
-    class PluginRegistry
+class PluginRegistry
     {
     public:
         PluginRegistry() = default;

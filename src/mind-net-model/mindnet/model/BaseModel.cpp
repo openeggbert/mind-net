@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/model/BaseModel.hpp"
-
 
 namespace mindnet::model
 {

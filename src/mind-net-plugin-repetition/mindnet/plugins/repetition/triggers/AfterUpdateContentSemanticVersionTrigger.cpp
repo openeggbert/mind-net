@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/triggers/AfterUpdateContentSemanticVersionTrigger.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -35,7 +34,6 @@
 #include "mindnet/plugins/slipbox/models/Content.hpp"
 #include "mindnet/plugins/slipbox/models/Note.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::repetition::triggers
 {

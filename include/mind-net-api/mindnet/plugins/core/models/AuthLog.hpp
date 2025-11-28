@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 #include <string>
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/core/CorePlugin.hpp"
@@ -114,5 +112,4 @@ namespace mindnet::plugins::core::models
 #undef Model
 #undef MODEL
 #undef COLS
-
 

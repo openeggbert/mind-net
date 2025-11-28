@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/RefreshTokenValidator.hpp"
 
 #include <regex>
@@ -29,7 +28,6 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/RefreshToken.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model RefreshToken
 #define MODEL REFRESH_TOKEN

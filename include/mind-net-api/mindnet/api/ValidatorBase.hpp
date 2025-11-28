@@ -35,7 +35,6 @@
 
 #include "mindnet/essential/DatabaseType.hpp"
 
-
 #define create_method_prototypes_for_ValidatorBase(M)\
 mindnet::api::OperationResult validate_create_integrity(const RequestContext&, const M& entity) const ;\
 mindnet::api::OperationResult validate_read_integrity(const RequestContext&, const M& entity) const;\
@@ -130,8 +129,7 @@ namespace mindnet::api
                 "Derived must implement validate_create_integrity returning OperationResult"
             );
 
-
-            auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
+auto [logged_user, logged_user_result] = plugins::core::find_logged_user(db, token);
             if (logged_user_result.ko()) return logged_user_result;
             RequestContext context{db, token, logged_user.role, logged_user.status};
             ////
@@ -281,8 +279,7 @@ namespace mindnet::api
             if (auto error = new_entity.validate(); !error.empty())
                 return {400, error};
 
-
-            if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
+if (auto error = validate_readonly(old_values, new_fields, def); !error.empty())
                 return {400, error};
             if (auto error = validate_internal(old_values, new_fields, def); !error.empty())
                 return {400, error};

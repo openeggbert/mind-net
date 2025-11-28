@@ -23,15 +23,12 @@
 
 #pragma once
 
-
-
 #include <string>
 #include <crow.h>
 #include <nlohmann/json.hpp>
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
-
 
 namespace mindnet::http
 {

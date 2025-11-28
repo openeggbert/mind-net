@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/JobRunValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/JobRun.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model JobRun
 #define MODEL JOB_RUN
@@ -68,8 +66,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-
-    OperationResult JobRunValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult JobRunValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

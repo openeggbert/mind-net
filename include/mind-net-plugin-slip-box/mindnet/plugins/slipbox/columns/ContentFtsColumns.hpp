@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 /**
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
@@ -29,7 +28,6 @@
 #pragma once
 
 #include "mindnet/model/BaseColumns.hpp"
-
 
 namespace mindnet::plugins::slipbox::columns
 {

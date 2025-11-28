@@ -30,7 +30,6 @@
 #include "mindnet/api/SqliteGlobal.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
 
-
 namespace mindnet::api
 {
     class InvalidateMethod

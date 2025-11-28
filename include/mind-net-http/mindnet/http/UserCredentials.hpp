@@ -21,12 +21,9 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
-
 #include "crow/http_request.h"
-
 
 namespace mindnet::http
 {

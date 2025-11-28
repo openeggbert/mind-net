@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/TagValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/plugins/slipbox/models/Tag.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model Tag
 #define MODEL TAG_H
@@ -106,8 +104,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult TagValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult TagValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

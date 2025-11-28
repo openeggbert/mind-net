@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/MapCollectionItemValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/MapCollectionItem.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model MapCollectionItem
 #define MODEL MAP_COLLECTION_ITEM
@@ -114,8 +112,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult MapCollectionItemValidator::validate_create_integrity(
+OperationResult MapCollectionItemValidator::validate_create_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
         auto map_collection = slipbox::find_map_collection(ctx, entity.map_collection_id);

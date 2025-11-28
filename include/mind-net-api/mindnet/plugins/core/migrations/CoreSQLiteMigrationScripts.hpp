@@ -21,12 +21,9 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
-
 #include "mindnet/api/MigrationScripts.hpp"
-
 
 namespace mindnet::plugins::core::migrations
 {
@@ -39,5 +36,4 @@ namespace mindnet::plugins::core::migrations
         void define_migrations() override;
     };
 }
-
 

@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/Service.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/RefreshToken.hpp"
 #include "mindnet/api/cronq/cron_quartz.hpp"
-
 
 namespace mindnet::api
 {

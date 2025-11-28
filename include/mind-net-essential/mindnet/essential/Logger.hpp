@@ -22,12 +22,10 @@
  */
 #pragma once
 
-
 #include "mindnet/essential/ConsolePrinter.hpp"
 #include <stdexcept>
 
 #include "LogLevel.hpp"
-
 
 namespace mindnet::essential
 {

@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/models/R2State.hpp"
-
 
 namespace mindnet::plugins::repetition::models
 {

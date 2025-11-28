@@ -22,9 +22,7 @@
  */
 #pragma once
 
-
 #include "mindnet/model/BaseColumns.hpp"
-
 
 namespace mindnet::plugins::repetition::columns
 {

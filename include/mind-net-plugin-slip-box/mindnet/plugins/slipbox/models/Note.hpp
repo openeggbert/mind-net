@@ -38,7 +38,6 @@
 #include "../enums/Difficulty.hpp"
 #include "../enums/Importance.hpp"
 
-
 /**
  * @file Note.h
  * @brief Definition of the SlipBox Note model within Mind Net ORM framework.

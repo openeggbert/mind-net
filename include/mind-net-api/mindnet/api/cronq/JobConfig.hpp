@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 #include <string>
 #include <unordered_map>
@@ -31,7 +30,6 @@
 #include <algorithm>
 
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::api::cronq
 {
@@ -71,8 +69,7 @@ namespace mindnet::api::cronq
         std::pair<bool, std::string>
         get_bool_or_default(const std::string& key, bool default_value) const;
 
-
-    private:
+private:
         std::unordered_map<std::string, std::string> values;
         std::string config_sha256;
 

@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/WebEndpointsGenerator.hpp"
 
 #include <unordered_set>
@@ -29,7 +28,6 @@
 #include "mindnet/http/ModelDefinitionEndpointsGenerator.hpp"
 
 #include "mindnet/api/IService.hpp"
-
 
 namespace mindnet::http
 {
@@ -84,8 +82,7 @@ namespace mindnet::http
             };
             static std::unordered_set<std::string> plugin_allowed_files;
 
-
-            auto& plugin_registry = service_ptr_->get_plugin_registry();
+auto& plugin_registry = service_ptr_->get_plugin_registry();
             for (const auto& plugin_name : plugin_registry->get_plugin_names())
             {
                 const auto& plugin = plugin_registry->get_plugin(plugin_name);
@@ -121,8 +118,7 @@ namespace mindnet::http
                 fs::path base_path = fs::canonical(directory_for_static_files);
                 fs::path requested_path = fs::weakly_canonical(base_path / file_name);
 
-
-                if (requested_path.string().find(base_path.string()) != 0)
+if (requested_path.string().find(base_path.string()) != 0)
                 {
                     res.code = 403;
                     res.write("Access denied");
@@ -203,8 +199,7 @@ namespace mindnet::http
             res.end();
         });
 
-
-        CROW_ROUTE(crow_app, "/")
+CROW_ROUTE(crow_app, "/")
         ([](const crow::request&, crow::response& res)
         {
             res.redirect("/web");

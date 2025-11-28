@@ -21,13 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
-
 
 #include "Helper.hpp"
 #include "Logger.hpp"
-
 
 #define using_loggers()\
 using mindnet::essential::fatal;\

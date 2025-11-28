@@ -17,7 +17,6 @@ target_include_directories(mind_net_api
         ${CMAKE_SOURCE_DIR}/include/mind-net-orm
 )
 
-
 target_link_libraries(mind_net_api
         PUBLIC
         mind_net_essential

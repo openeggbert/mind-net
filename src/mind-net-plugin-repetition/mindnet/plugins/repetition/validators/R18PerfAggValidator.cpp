@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/R18PerfAggValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/repetition/models/R18PerfAgg.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model R18PerfAgg
 #define MODEL R18_PERF_AGG

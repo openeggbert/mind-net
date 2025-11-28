@@ -29,7 +29,6 @@
 #include "Crudl.hpp"
 #include "UserRole.hpp"
 
-
 namespace mindnet::essential
 {
     using essential::Crudl;

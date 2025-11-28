@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 /**
  * Column definitions for the r_review table which stores review records
  * for spaced repetition learning.
@@ -30,9 +29,7 @@
  */
 #pragma once
 
-
 #include "mindnet/model/BaseColumns.hpp"
-
 
 namespace mindnet::plugins::repetition::columns
 {

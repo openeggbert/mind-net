@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 /**
  *
  * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
@@ -34,7 +33,6 @@
 #include "mindnet/db/sqlite/RepositoryUtils.hpp"
 #include "mindnet/util/Utils.hpp"
 #include "SQLiteCpp/Database.h"
-
 
 namespace mindnet::api
 {
@@ -177,8 +175,7 @@ namespace mindnet::db::sqlite
             auto column_type = col.get_column_type();
             auto primitive_column_type = column_type_to_primitive_column_type(column_type);
 
-
-            if (auto_value ? has_value : false) debug << "rvalue=" << rvalue << commit;
+if (auto_value ? has_value : false) debug << "rvalue=" << rvalue << commit;
             if (mandatory && !has_value)
             {
                 throw std::runtime_error("Mandatory column " + col.get_column_name() + " is missing");

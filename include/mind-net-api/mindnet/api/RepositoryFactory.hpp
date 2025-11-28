@@ -24,7 +24,6 @@
 #pragma once
 #include <memory>
 
-
 namespace mindnet::model
 {
     struct ModelDefinition;

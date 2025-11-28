@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 #include <list>
 #include <string>
@@ -31,7 +30,6 @@
 #include "mindnet/essential/ByteUnit.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/essential/Helper.hpp"
-
 
 //todo: Use LRU cache
 namespace mindnet::api

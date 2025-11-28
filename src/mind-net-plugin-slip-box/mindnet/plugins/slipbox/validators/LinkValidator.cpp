@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/LinkValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/slipbox/models/Link.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model Link
 #define MODEL LINK
@@ -69,8 +67,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    using validators::LinkValidator;
+using validators::LinkValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 

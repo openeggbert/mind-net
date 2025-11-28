@@ -45,7 +45,6 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/CleanupHistoryOrphansSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/VacuumSQLiteQuery.hpp"
 
-
 namespace mindnet::plugins::core
 {
     api::PluginPtr CorePluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const

@@ -25,7 +25,6 @@
 
 #include "mindnet/api/Query.hpp"
 
-
 namespace mindnet::db::sqlite::queries
 {
     const std::string QUERY_Vacuum = "Vacuum";

@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/CleanupSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::db::sqlite::queries
 {

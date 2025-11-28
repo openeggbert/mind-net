@@ -67,7 +67,6 @@
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
 #include "mindnet/plugins/slipbox/jobs/HtmlExportJob.hpp"
 
-
 namespace mindnet::plugins::slipbox
 {
     api::PluginPtr SlipBoxPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const

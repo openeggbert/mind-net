@@ -23,13 +23,10 @@
 
 #pragma once
 
-
-
 #include <string>
 
 #include "mindnet/model/EnumDefinition.hpp"
 #include "mindnet/essential/Crudl.hpp"
-
 
 namespace mindnet::plugins::core::enums
 {

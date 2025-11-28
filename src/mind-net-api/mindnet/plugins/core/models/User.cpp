@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/models/User.hpp"
 
 #include <regex>
 
 #include "mindnet/essential/Configuration.hpp"
-
 
 namespace mindnet::plugins::core::models
 {

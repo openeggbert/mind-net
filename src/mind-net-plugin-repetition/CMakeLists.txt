@@ -16,7 +16,6 @@ target_include_directories(mind_net_plugin_repetition
         ${CMAKE_SOURCE_DIR}/include/mind-net-api
 )
 
-
 target_link_libraries(mind_net_plugin_repetition
         PUBLIC
         mind_net_plugin_slip_box

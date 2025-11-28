@@ -29,7 +29,6 @@
 #include "cronq/JobConfig.hpp"
 #include "mindnet/api/AbstractTriggerJob.hpp"
 
-
 namespace mindnet::api
 {
     class Job : public AbstractTriggerJob

@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/TeamMemberValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/TeamMember.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/core/CorePersistenceMethods.hpp"
-
 
 #define Model TeamMember
 #define MODEL TEAM_MEMBER
@@ -127,8 +125,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-
-    OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult TeamMemberValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(entity.left_at != 0,
                   400, "left_at must be set to 0 during team member creation")

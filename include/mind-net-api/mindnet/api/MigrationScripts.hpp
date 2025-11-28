@@ -32,7 +32,6 @@
 #include "Trigger.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 
-
 namespace mindnet::api
 {
     struct MigrationScript

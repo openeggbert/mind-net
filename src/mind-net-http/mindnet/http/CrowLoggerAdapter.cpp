@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/CrowLoggerAdapter.hpp"
-
 
 namespace mindnet::http
 {

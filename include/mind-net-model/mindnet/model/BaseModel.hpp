@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 #include <nlohmann/json.hpp>
 
 #include <string>
@@ -35,7 +33,6 @@
 #include "mindnet/essential/DatabaseType.hpp"
 
 #include "mindnet/util/TestUtils.hpp"
-
 
 #define create_model_h_methods(Model, MODEL)\
 [[nodiscard]] const def& get_definition() const override\
@@ -98,8 +95,7 @@ namespace mindnet::model
         entity_fields fields,
         const ModelDefinition& definition);
 
-
-    using std::string;
+using std::string;
     using type = ColumnType;
     using coldef = ColumnDefinition;
     using def = ModelDefinition;

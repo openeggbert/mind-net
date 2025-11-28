@@ -23,14 +23,11 @@
 
 #pragma once
 
-
-
 #include <memory>
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
 #include "mindnet/plugins/repetition/models/R2State.hpp"
-
 
 namespace mindnet::plugins::repetition::validators
 {

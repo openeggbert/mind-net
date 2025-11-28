@@ -55,7 +55,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Backend
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
-- [ ] All ID fields should be migrated from integer to identification for consistency and future compatibility
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
@@ -223,3 +222,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Path in slipbox plugin
 - [x] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
 - [x] FEATURE Support for export to static HTML files
+- [x] All ID fields should be migrated from integer to identification for consistency and future compatibility

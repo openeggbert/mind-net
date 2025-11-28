@@ -24,7 +24,6 @@
 #include "mindnet/api/Job.hpp"
 #include "mindnet/api/Service.hpp"
 
-
 namespace mindnet::api
 {
     nlohmann::json mindnet::api::Job::call_query(const std::string& query_name, nlohmann::json& request)

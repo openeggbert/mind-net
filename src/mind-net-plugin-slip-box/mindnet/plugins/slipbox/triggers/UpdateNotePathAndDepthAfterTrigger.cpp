@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.hpp"
 
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/plugins/slipbox/models/Note.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

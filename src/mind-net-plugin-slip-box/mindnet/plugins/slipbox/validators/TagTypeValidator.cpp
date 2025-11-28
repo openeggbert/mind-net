@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/validators/TagTypeValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -29,7 +28,6 @@
 #include "mindnet/plugins/slipbox/models/TagType.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPersistenceMethods.hpp"
-
 
 #define Model TagType
 #define MODEL TAG_TYPE
@@ -98,8 +96,7 @@ namespace mindnet::plugins::slipbox::validators
         return ok_result;
     }
 
-
-    OperationResult TagTypeValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult TagTypeValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

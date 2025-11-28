@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/BeforeCreateNoteTrigger.hpp"
 
 #include "mindnet/api/AccessTokenContext.hpp"
@@ -29,8 +28,6 @@
 #include "mindnet/plugins/slipbox/models/Link.hpp"
 #include "mindnet/plugins/slipbox/models/Note.hpp"
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
-
-
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -48,8 +45,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-
-    void BeforeCreateNoteTrigger::run_before_or_after(
+void BeforeCreateNoteTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -71,8 +67,7 @@ namespace mindnet::plugins::slipbox::triggers
         identification map_id = new_note.map_id;
         identification parent_note_id = new_note.parent_note_id;
 
-
-        nlohmann::json req;
+nlohmann::json req;
         req["map_id"] = map_id;
         req["parent_note_id"] = parent_note_id;
         req["note_id"] = id;

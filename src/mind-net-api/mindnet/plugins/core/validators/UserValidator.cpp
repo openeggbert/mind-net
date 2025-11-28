@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/UserValidator.hpp"
 
 #include <regex>
@@ -29,7 +28,6 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model User
 #define MODEL USER
@@ -85,8 +83,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-
-    OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult UserValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return_if(
             ctx.role < mindnet::essential::UserRole::Admin && entity.role != g_configuration.default_user_role && !ctx.

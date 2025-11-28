@@ -25,7 +25,6 @@
 
 #include <string>
 
-
 namespace mindnet::http
 {
     enum class HttpMethod

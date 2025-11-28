@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/ModelEndpointGenerator.hpp"
 #include "crow.h"
 #include "mindnet/essential/Configuration.hpp"
@@ -73,7 +72,6 @@
 // This refactor will reduce this file by ~70–80%, make ModelEndpointGenerator
 // significantly easier to maintain, and ensure future models can be added with
 // minimal code.
-
 
 using mindnet::essential::g_configuration;
 
@@ -444,8 +442,7 @@ namespace mindnet::http
         app.route_dynamic(string("/api/v1/") + def.get_model_name()).methods(crow::HTTPMethod::POST)
             (create_lambda_function);
 
-
-        //READ
+//READ
         app.route_dynamic(string("/api/v1/") + def.get_model_name() + "/<int>").methods(crow::HTTPMethod::GET)
             (read_lambda_function);
 

@@ -23,7 +23,6 @@
 
 #pragma once
 
-
 #include <cstring>
 #include <optional>
 #include <string>
@@ -34,7 +33,6 @@
 #include "ColumnType.hpp"
 #include "CustomAction.hpp"
 #include "EnumDefinition.hpp"
-
 
 #define using_flags()\
 using mindnet::model::MANDATORY;\

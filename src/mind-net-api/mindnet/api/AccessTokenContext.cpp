@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/AccessTokenContext.hpp"
 
 #include "crow/http_request.h"
@@ -31,7 +30,6 @@
 #include "mindnet/plugins/core/columns/AccessTokenColumns.hpp"
 #include "mindnet/plugins/core/models/AccessToken.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::api
 {

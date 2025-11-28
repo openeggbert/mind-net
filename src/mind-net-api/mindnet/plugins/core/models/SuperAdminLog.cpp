@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/models/SuperAdminLog.hpp"
-
 
 namespace mindnet::plugins::core::models
 {

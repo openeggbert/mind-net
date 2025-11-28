@@ -21,11 +21,9 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/jobs/TestJob.hpp"
 
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::core::jobs
 {

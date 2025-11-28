@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.hpp"
 
 #include "mindnet/essential/Global.hpp"
@@ -41,8 +40,6 @@
 #include "mindnet/plugins/slipbox/triggers/LinkResolver.hpp"
 #include "mindnet/plugins/slipbox/triggers/LinkSynchronizer.hpp"
 #include "mindnet/util/Utils.hpp"
-
-
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -96,8 +93,7 @@ namespace mindnet::plugins::slipbox::triggers
     //   '[[Another page|display text]]' -> inner: 'Another page|display text' at pos 185
     //   '[[Nested [[bad]]' -> inner: 'Nested [[bad' at pos 220
 
-
-    void AfterUpdateContentTrigger::run_before_or_after(
+void AfterUpdateContentTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -207,8 +203,7 @@ namespace mindnet::plugins::slipbox::triggers
         std::map<std::string, i64> old_links_ids;
         std::map<std::string, i64> old_wanted_notes_ids;
 
-
-        // --- load persisted state for this note_id (URL, LINK, WANTED_NOTE) ----
+// --- load persisted state for this note_id (URL, LINK, WANTED_NOTE) ----
         {
             // 1) URL
             {
@@ -294,8 +289,7 @@ namespace mindnet::plugins::slipbox::triggers
                 << ", WANTED_NOTES=" << old_wanted_notes.size() << commit;
         }
 
-
-        std::function<api::OperationResult(
+std::function<api::OperationResult(
             const model::ModelDefinition&,
             api::AccessTokenContext&,
             int,
@@ -307,8 +301,7 @@ namespace mindnet::plugins::slipbox::triggers
             return run_delete(def, token, id, depth);
         };
 
-
-        std::function<std::pair<int, api::OperationResult>(
+std::function<std::pair<int, api::OperationResult>(
             const model::ModelDefinition&,
             api::AccessTokenContext&,
             entity_fields&,
@@ -321,8 +314,7 @@ namespace mindnet::plugins::slipbox::triggers
             return run_create(def, token, fields, depth);
         };
 
-
-        LinkSynchronizer sync(
+LinkSynchronizer sync(
             token,
             stack_depth,
             note.get_id(),

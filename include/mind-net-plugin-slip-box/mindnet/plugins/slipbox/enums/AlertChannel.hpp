@@ -26,7 +26,6 @@
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
 
-
 namespace mindnet::plugins::slipbox::enums
 {
     /**

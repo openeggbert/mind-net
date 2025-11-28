@@ -23,7 +23,6 @@
 
 #pragma once
 
-
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -36,7 +35,6 @@
 
 #include "mindnet/api/OperationResult.hpp"
 #include "mindnet/plugins/slipbox/triggers/ContentLinkParser.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

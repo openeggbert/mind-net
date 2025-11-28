@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
 
 #include "mindnet/api/AccessTokenContext.hpp"
@@ -31,7 +30,6 @@
 #include "mindnet/plugins/slipbox/models/TestAttemptAnswer.hpp"
 #include "mindnet/plugins/slipbox/validators/TestAttemptAnswerValidator.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -49,8 +47,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-
-    void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
+void AfterCreateTestAttemptAnswerTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,
@@ -139,7 +136,5 @@ namespace mindnet::plugins::slipbox::triggers
             err << "Updating test_attempt failed: " << update_test_attempt.error << commit;
         }
 
-
-
-    }
+}
 }

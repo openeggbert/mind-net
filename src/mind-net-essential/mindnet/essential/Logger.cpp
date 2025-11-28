@@ -25,7 +25,6 @@
 #include "mindnet/essential/ConsolePrinter.hpp"
 #include "mindnet/essential/Configuration.hpp"
 
-
 namespace mindnet::essential
 {
     Logger::Logger(LogLevel log_level)

@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/Trigger.hpp"
 #include "mindnet/api/Service.hpp"
 

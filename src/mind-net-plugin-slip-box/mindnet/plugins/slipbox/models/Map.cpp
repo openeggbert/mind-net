@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/models/Map.hpp"
-
 
 namespace mindnet::plugins::slipbox::models
 {

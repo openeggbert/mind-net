@@ -13,7 +13,6 @@ target_include_directories(mind_net_orm
         ${CMAKE_SOURCE_DIR}/include/mind-net-model
 )
 
-
 target_link_libraries(mind_net_orm
         PUBLIC
         mind_net_essential

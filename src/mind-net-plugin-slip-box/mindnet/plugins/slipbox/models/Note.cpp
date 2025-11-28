@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/slipbox/models/Note.hpp"
-
 
 namespace mindnet::plugins::slipbox::models
 {

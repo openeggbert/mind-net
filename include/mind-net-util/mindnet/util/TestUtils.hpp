@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 #include <expected>
 #include <functional>
 #include <string>
 #include <vector>
-
 
 namespace mindnet::util
 {

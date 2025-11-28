@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/ModelDefinitionEndpointsGenerator.hpp"
 
 #include "mindnet/api/IService.hpp"
 #include "mindnet/essential/Configuration.hpp"
 #include "mindnet/http/HttpUtils.hpp"
 #include "mindnet/plugins/core/models/User.hpp"
-
 
 //todo: move to_json instructions to ModelDefinition and related structs
 namespace mindnet::http
@@ -81,8 +79,7 @@ namespace mindnet::http
             return result;
         };
 
-
-        auto custom_action_to_json = [](const mindnet::model::CustomAction& custom_action)
+auto custom_action_to_json = [](const mindnet::model::CustomAction& custom_action)
         {
             crow::json::wvalue result;
 
@@ -106,8 +103,7 @@ namespace mindnet::http
             return result;
         };
 
-
-        auto model_definition_to_json = [column_definition_to_json, service_ptr, custom_action_to_json](
+auto model_definition_to_json = [column_definition_to_json, service_ptr, custom_action_to_json](
             string& model_name,
             const std::set<string>& fields_set
         )
@@ -199,8 +195,7 @@ namespace mindnet::http
                 res["custom_actions"] = std::move(custom_action_list);
             }
 
-
-            return res;
+return res;
         };
 
         //CREATE
@@ -211,8 +206,7 @@ namespace mindnet::http
             return crow::response(405, "Method not allowed for model_definition.");
         });
 
-
-        //READ
+//READ
         CROW_ROUTE(crow_app, "/api/v1/model_definition/<string>").methods(crow::HTTPMethod::GET)
         ([service_ptr, model_definition_to_json](const crow::request& req, string model_name)
         {
@@ -280,15 +274,13 @@ namespace mindnet::http
             return crow::response(200, result);
         });
 
-
-        // LIST
+// LIST
         CROW_ROUTE(crow_app, "/api/v1/app").methods(crow::HTTPMethod::GET)
         ([service_ptr](const crow::request& req)
         {
             check_maintenance_mode()
 
-
-            crow::json::wvalue result;
+crow::json::wvalue result;
 
             crow::json::wvalue::list apps_as_json;
             for (auto& plugin_name : service_ptr->get_plugin_registry()->get_plugin_names())

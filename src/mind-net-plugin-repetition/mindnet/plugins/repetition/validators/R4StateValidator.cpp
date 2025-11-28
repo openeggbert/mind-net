@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/R4StateValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/repetition/models/R4State.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model R4State
 #define MODEL R4_STATE
@@ -91,8 +89,7 @@ namespace mindnet::plugins::repetition::validators
         return ok_result;
     }
 
-
-    OperationResult R4StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult R4StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/migrations/CorePostgreSQLMigrationScripts.hpp"
-
 
 namespace mindnet::plugins::core::migrations
 {

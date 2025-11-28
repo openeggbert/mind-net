@@ -24,8 +24,6 @@
 #pragma once
 #include "mindnet/orm/SqlUtils.hpp"
 
-
-
 namespace mindnet::db::sqlite
 {
     identification create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);

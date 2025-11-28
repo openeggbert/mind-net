@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/Persistence.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/api/SqliteGlobal.hpp"
 #include "mindnet/api/CompilationFlags.hpp"
-
 
 namespace {
     bool database_type_is_sqlite()

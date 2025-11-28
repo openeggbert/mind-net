@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/JobEntryValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/JobEntry.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model JobEntry
 #define MODEL JOB_ENTRY
@@ -78,8 +76,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-
-    OperationResult JobEntryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult JobEntryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

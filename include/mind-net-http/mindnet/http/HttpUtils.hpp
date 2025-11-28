@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
-
 
 #define check_maintenance_mode()\
 if (\
@@ -35,7 +33,6 @@ if (\
 
 #include "crow.h"
 #include <string>
-
 
 namespace mindnet::http
 {

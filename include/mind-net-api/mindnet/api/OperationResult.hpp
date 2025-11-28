@@ -30,7 +30,6 @@
 #include <utility>
 #include <string>
 
-
 namespace mindnet::api
 {
     struct OperationResult

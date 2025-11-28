@@ -21,9 +21,7 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/models/R18PredictionLog.hpp"
-
 
 namespace mindnet::plugins::repetition::models
 {

@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
 #include <SQLiteCpp/SQLiteCpp.h>
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Global.hpp"
-
 
 // TODO (future enhancement):
 // Implement fast PREORDER-based navigation for notes (previous/next)
@@ -123,7 +121,6 @@ current AS (
 SELECT
     (SELECT id FROM ordered o WHERE o.preorder_index = (SELECT preorder_index FROM current) - 1) AS prev_note,
     (SELECT id FROM ordered o WHERE o.preorder_index = (SELECT preorder_index FROM current) + 1) AS next_note;
-
 
 )";
 

@@ -21,10 +21,8 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/api/ModelCache.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::api
 {
@@ -109,8 +107,7 @@ namespace mindnet::api
             unixtime(mindnet::util::Utils::current_unix_timestamp_ms())
         };
 
-
-        maybe_shrink_nolock();
+maybe_shrink_nolock();
         validate_invariants();
     }
 
@@ -285,6 +282,5 @@ namespace mindnet::api
         }
         return total;
     }
-
 
 }

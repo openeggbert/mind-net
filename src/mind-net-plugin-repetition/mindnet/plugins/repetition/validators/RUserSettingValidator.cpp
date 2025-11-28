@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/RUserSettingValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/repetition/models/RUserSetting.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model RUserSetting
 #define MODEL R_USER_SETTING

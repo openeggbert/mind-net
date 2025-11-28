@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 #include "IService.hpp"
 #include "PluginRegistry.hpp"
 #include "TriggerRegistry.hpp"
 #include "cronq/CronScheduler.hpp"
-
 
 namespace mindnet::api
 {

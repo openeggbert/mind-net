@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/essential/Environment.hpp"
 
 #include <stdexcept>
 #include <string>
-
 
 namespace mindnet::essential
 {

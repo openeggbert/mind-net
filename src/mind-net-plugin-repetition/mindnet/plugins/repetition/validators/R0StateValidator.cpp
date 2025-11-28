@@ -21,14 +21,12 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/validators/R0StateValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/repetition/models/R0State.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model R0State
 #define MODEL R0_STATE
@@ -92,8 +90,7 @@ namespace mindnet::plugins::repetition::validators
         return ok_result;
     }
 
-
-    OperationResult R0StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult R0StateValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

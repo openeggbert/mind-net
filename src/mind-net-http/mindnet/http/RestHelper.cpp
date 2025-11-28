@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/RestHelper.hpp"
 
 #include <string>
@@ -98,8 +97,7 @@ namespace mindnet::http
 #include <crow.h>
 #include <nlohmann/json.hpp>
 
-
-    nlohmann::json RestHelper::crow_json_to_nlohmann_json(const crow::json::rvalue& crow_json)
+nlohmann::json RestHelper::crow_json_to_nlohmann_json(const crow::json::rvalue& crow_json)
     {
         nlohmann::json result;
 

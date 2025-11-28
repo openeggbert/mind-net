@@ -22,9 +22,6 @@
  */
 #pragma once
 
-
-
-
 namespace mindnet::model
 {
     struct BaseColumns

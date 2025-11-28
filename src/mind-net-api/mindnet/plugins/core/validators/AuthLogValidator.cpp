@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/AuthLogValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/AuthLog.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model AuthLog
 #define MODEL AUTH_LOG

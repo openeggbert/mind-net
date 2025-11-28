@@ -39,7 +39,6 @@
 #include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.hpp"
 #include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.hpp"
 
-
 namespace mindnet::plugins::repetition
 {
     api::PluginPtr RepetitionPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const

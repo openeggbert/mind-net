@@ -32,7 +32,6 @@
 #include "mindnet/plugins/slipbox/models/WantedNote.hpp"
 #include "mindnet/util/Utils.hpp"
 
-
 namespace mindnet::plugins::slipbox::triggers
 {
     using_loggers()
@@ -59,8 +58,7 @@ namespace mindnet::plugins::slipbox::triggers
     {
     }
 
-
-    // Generic sync for items represented as string titles
+// Generic sync for items represented as string titles
     template <typename Entity, typename MakeFn>
     void LinkSynchronizer::sync_entities(const std::vector<std::string>& old_items,
                                          const std::map<std::string, identification>& old_ids,
@@ -109,9 +107,7 @@ namespace mindnet::plugins::slipbox::triggers
         }
     }
 
-
-
-    // --- URL ---
+// --- URL ---
     void LinkSynchronizer::sync_urls(const std::vector<std::string>& old_urls,
                                      const std::map<std::string, identification>& old_urls_ids,
                                      const std::vector<std::string>& new_urls)
@@ -128,8 +124,7 @@ namespace mindnet::plugins::slipbox::triggers
             });
     }
 
-
-    // --- LINK ---
+// --- LINK ---
     void LinkSynchronizer::sync_links(
         const std::vector<std::string>& old_links,
         const std::map<std::string, identification>& old_links_ids,
@@ -171,8 +166,7 @@ namespace mindnet::plugins::slipbox::triggers
         );
     }
 
-
-    // --- WANTED_NOTE ---
+// --- WANTED_NOTE ---
     void LinkSynchronizer::sync_wanted_notes(
         const std::vector<std::string>& old_wanted,
         const std::map<std::string, identification>& old_wanted_ids,

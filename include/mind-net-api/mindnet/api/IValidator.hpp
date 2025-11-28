@@ -23,7 +23,6 @@
 
 #pragma once
 
-
 #include <functional>
 #include <memory>
 
@@ -31,7 +30,6 @@
 #include "OperationResult.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Helper.hpp"
-
 
 // 🔐 Validator as a Security Gate
 // Validator does more than just check data — it acts as protection against unauthorized access:

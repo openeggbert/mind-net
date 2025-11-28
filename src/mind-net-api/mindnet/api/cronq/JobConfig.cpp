@@ -22,7 +22,6 @@
  */
 #include "mindnet/api/cronq/JobConfig.hpp"
 
-
 namespace mindnet::api::cronq
 {
 

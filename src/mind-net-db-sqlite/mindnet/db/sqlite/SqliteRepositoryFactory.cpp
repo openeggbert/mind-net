@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/db/sqlite/SqliteRepositoryFactory.hpp"
 
 #include <memory>
@@ -29,7 +28,6 @@
 #include "mindnet/api/IRepository.hpp"
 #include "mindnet/api/RepositoryFactory.hpp"
 #include "mindnet/db/sqlite/RepositoryImplSqlite.hpp"
-
 
 namespace mindnet::db::sqlite
 {

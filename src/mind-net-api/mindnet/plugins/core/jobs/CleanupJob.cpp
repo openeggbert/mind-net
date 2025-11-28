@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/jobs/CleanupJob.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 namespace mindnet::plugins::core::jobs
 {
@@ -52,8 +50,7 @@ namespace mindnet::plugins::core::jobs
         auto history_list_threshold_in_days = job_config.get_int_or_default("history_list_threshold_in_days", 90);
         auto access_token_threshold_in_days = job_config.get_int_or_default("access_token_threshold_in_days", 90);
 
-
-        nlohmann::json req;
+nlohmann::json req;
         req["api_log_threshold_in_days"] = cast64(api_log_threshold_in_days.first);
         req["history_read_threshold_in_days"] = cast64(history_read_threshold_in_days.first);
         req["history_list_threshold_in_days"] = cast64(history_list_threshold_in_days.first);

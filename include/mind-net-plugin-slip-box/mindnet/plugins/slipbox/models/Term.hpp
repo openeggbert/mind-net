@@ -23,8 +23,6 @@
 
 #pragma once
 
-
-
 #include <string>
 #include <utility>
 
@@ -65,8 +63,7 @@ namespace mindnet::plugins::slipbox::models
         string title;
         string disambiguation;
 
-
-        create_model_h_methods(Model, MODEL)
+create_model_h_methods(Model, MODEL)
 
         bool operator==(const Term& other) const
         {

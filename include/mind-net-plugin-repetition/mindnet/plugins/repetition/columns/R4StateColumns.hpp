@@ -21,19 +21,15 @@
  * THE SOFTWARE.
  */
 
-
 /**
  *
 * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 #pragma once
 
-
-
 #include "mindnet/model/BaseColumns.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/model/ColumnType.hpp"
-
 
 namespace mindnet::plugins::repetition::columns
 {

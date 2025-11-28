@@ -21,13 +21,11 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/core/validators/HistoryValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/models/History.hpp"
 #include "mindnet/api/Persistence.hpp"
-
 
 #define Model History
 #define MODEL HISTORY
@@ -81,8 +79,7 @@ namespace mindnet::plugins::core::validators
         return ok_result;
     }
 
-
-    OperationResult HistoryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+OperationResult HistoryValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }

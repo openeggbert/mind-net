@@ -23,11 +23,8 @@
 
 #pragma once
 
-
-
 #include "mindnet/api/Trigger.hpp"
 #include "mindnet/plugins/slipbox/models/NoteNavigation.hpp"
-
 
 namespace mindnet::plugins::slipbox::triggers
 {

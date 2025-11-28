@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/orm/SqlUtils.hpp"
 
 #include <ranges>
@@ -29,7 +28,6 @@
 #include "mindnet/model/ModelDefinition.hpp"
 #include "mindnet/orm/Order.hpp"
 #include "mindnet/orm/QueryParams.hpp"
-
 
 namespace mindnet::orm
 {

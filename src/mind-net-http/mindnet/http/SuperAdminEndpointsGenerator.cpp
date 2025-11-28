@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/http/SuperAdminEndpointsGenerator.hpp"
 
 #include "mindnet/api/IService.hpp"
@@ -31,7 +30,6 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/util/Utils.hpp"
 #include <jemalloc/jemalloc.h>
-
 
 namespace mindnet::http
 {
@@ -83,7 +81,6 @@ input[type="checkbox"] {{
   margin-right: 0.5rem;
 }}
 
-
 label.checkbox {{
   display: flex;
   align-items: center;
@@ -95,8 +92,6 @@ label.checkbox input[type="checkbox"] {{
   transform: scale(1.5);
   margin-right: 1rem;
 }}
-
-
 
 .restart_needed{{
 color:orange;
@@ -220,8 +215,7 @@ content: " (takes effect after restart) ";
     Schedule restart
     </label>
 
-
-    <button type="submit">Save Configuration</button>
+<button type="submit">Save Configuration</button>
   </form>
 <script>
 console.log("Script parsed OK");
@@ -248,9 +242,6 @@ window.addEventListener("load", () => {{
     }});
   }});
 }});
-
-
-
 
 console.log("JS loaded");
 
@@ -292,14 +283,11 @@ if (!form) {{
 
 </script>
 
-
-
 </body>
 </html>
 )");
 
-
-    inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user)
+inline std::optional<crow::response> require_superadmin(const plugins::core::models::User& user)
     {
         if (user.role < essential::UserRole::SuperAdmin)
         {
@@ -554,9 +542,7 @@ if (!form) {{
   <h1><a href="configure">Mind Net Configuration</a></h1>
   <a style="padding:5px; border:2px solid grey; background:#ddd;text-align:center;" href="/web">Go to Main Menu</a>
 
-
 <script>
-
 
 function showToast(message, timeout = 5000) {
   const toast = document.createElement("div");
@@ -581,13 +567,10 @@ window.addEventListener("load", () => {
   });
 });
 
-
 showToast(")"
                                       + msg +
                                       R"(           ");
 </script>
-
-
 
 </body>
 </html>)"

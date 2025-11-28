@@ -16,9 +16,6 @@ target_include_directories(mind_net_plugin_slip_box
         ${CMAKE_SOURCE_DIR}/include/mind-net-util
 )
 
-
-
-
 include(FetchContent)
 
 FetchContent_Declare(
@@ -28,9 +25,6 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(cmark)
-
-
-
 
 target_link_libraries(mind_net_plugin_slip_box
         PUBLIC

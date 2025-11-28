@@ -21,7 +21,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.hpp"
 
 #include <shared_mutex>
@@ -40,7 +39,6 @@
 #include "mindnet/plugins/repetition/models/RReview.hpp"
 #include "mindnet/plugins/repetition/models/RSession.hpp"
 #include "mindnet/util/Utils.hpp"
-
 
 // ============================================================
 // PARAMETER RESOLUTION (r_user_setting -> r_global_setting -> default)
@@ -192,8 +190,7 @@ namespace mindnet::plugins::repetition::triggers
         return std::nullopt;
     }
 
-
-    std::optional<double> RReviewAfterCreateTrigger::fetch_global_param(
+std::optional<double> RReviewAfterCreateTrigger::fetch_global_param(
      const std::string& key, api::AccessTokenContext& token, int stack_depth)
     {
         { std::shared_lock lock(g_global_param_mutex);
@@ -218,8 +215,7 @@ namespace mindnet::plugins::repetition::triggers
         return std::nullopt;
     }
 
-
-    double RReviewAfterCreateTrigger::get_param(
+double RReviewAfterCreateTrigger::get_param(
         identification user_id,
         const std::string& key,
         double def,
@@ -517,8 +513,7 @@ namespace mindnet::plugins::repetition::triggers
 
                 const int q = std::clamp(r_review.grade, 0, 5);
 
-
-                double ef = r2_state.ef_times_100 / 100.0;
+double ef = r2_state.ef_times_100 / 100.0;
                 int interval = r2_state.interval;
                 int reps = r2_state.repetitions;
 
@@ -550,8 +545,7 @@ namespace mindnet::plugins::repetition::triggers
                 if (interval < 1) interval = 1;
                 if (interval > MAX_INTERVAL_DAYS) interval = MAX_INTERVAL_DAYS;
 
-
-                // Update the state
+// Update the state
                 r2_state.repetitions = reps;
                 r2_state.interval = interval;
                 r2_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
@@ -643,8 +637,7 @@ namespace mindnet::plugins::repetition::triggers
                 if (interval < 1) interval = 1;
                 if (interval > MAX_INTERVAL_DAYS) interval = MAX_INTERVAL_DAYS;
 
-
-                // save back
+// save back
                 r4_state.repetitions = reps;
                 r4_state.interval = interval;
                 r4_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
@@ -719,8 +712,7 @@ namespace mindnet::plugins::repetition::triggers
                 double interval_scale = par.interval_scale;
                 const double min_interval_days = par.min_interval_days;
 
-
-                if (r18_state.stability_times_100 < S_min * 100.0)
+if (r18_state.stability_times_100 < S_min * 100.0)
                 {
                     r18_state.stability_times_100 = S_min * 100.0;
                 }
@@ -827,8 +819,7 @@ namespace mindnet::plugins::repetition::triggers
                     next_interval_days = std::min(next_interval_days, last_days * GROWTH_CAP);
                 }
 
-
-                // =======================
+// =======================
                 // Update state
                 // =======================
 
@@ -874,8 +865,7 @@ namespace mindnet::plugins::repetition::triggers
                     << " theta=" << theta
                     << commit;
 
-
-                {
+{
                     double R_pred = R_now; // retrievability before review
                     int R_pred_times_100 = (int)(R_pred * 100.0);
 
@@ -943,6 +933,5 @@ namespace mindnet::plugins::repetition::triggers
             }
         }
 
-
-    }
+}
 }

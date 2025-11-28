@@ -23,9 +23,7 @@
 
 #pragma once
 
-
 #include "mindnet/api/Trigger.hpp"
-
 
 namespace mindnet::plugins::repetition::triggers
 {

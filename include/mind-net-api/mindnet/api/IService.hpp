@@ -30,7 +30,6 @@
 #include "IPersistence.hpp"
 #include "PluginRegistry.hpp"
 
-
 namespace mindnet::api
 {
     using validator = api::IValidator*;
