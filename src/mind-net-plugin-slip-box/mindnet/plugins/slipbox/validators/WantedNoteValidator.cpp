@@ -77,7 +77,7 @@ namespace mindnet::plugins::slipbox::validators
                                                                      const string_map& filter) const
     {
         mandatory_filter(from_note_id)
-        auto note_id = std::stoi(filter.at("from_note_id"));
+        auto note_id = std::stoll(filter.at("from_note_id"));
 
         auto note = slipbox::find_note(ctx, note_id);;
         if (!note.second.empty()) return {400, note.second};

@@ -21,12 +21,10 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 #include <mutex>
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
-
 
 #define SQLITE_LOCK_GUARD() \
 std::unique_lock<std::mutex> lock; \

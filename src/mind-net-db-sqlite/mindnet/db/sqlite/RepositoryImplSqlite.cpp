@@ -58,23 +58,23 @@ namespace mindnet::db::sqlite
 
     RepositoryImplSqlite::~RepositoryImplSqlite() = default;
 
-    int RepositoryImplSqlite::create(const entity_fields& fields, string& error)
+    identification RepositoryImplSqlite::create(const entity_fields& fields, string& error)
     {
         try { return create_model(fields, get_model_definition(), error); }
         catch (std::exception& e) { return -1; }
     }
 
-    entity_fields RepositoryImplSqlite::read(const i64 id, string& error)
+    entity_fields RepositoryImplSqlite::read(const identification id, string& error)
     {
         return read_model(get_model_definition(), id, error);
     }
 
-    bool RepositoryImplSqlite::update(i64 id, entity_fields& fields, string& error)
+    bool RepositoryImplSqlite::update(identification id, entity_fields& fields, string& error)
     {
         return update_model(id, get_model_definition(), fields, error);
     }
 
-    bool RepositoryImplSqlite::remove(i64 id, string& error)
+    bool RepositoryImplSqlite::remove(identification id, string& error)
     {
         return delete_model(get_model_definition(), id, error);
     }
@@ -84,7 +84,7 @@ namespace mindnet::db::sqlite
         return list_models(get_model_definition(), query_params, error);
     }
 
-    std::vector<entity_fields> RepositoryImplSqlite::list_in_ids(std::vector<i64>& ids, string& error)
+    std::vector<entity_fields> RepositoryImplSqlite::list_in_ids(std::vector<identification>& ids, string& error)
     {
         orm::QueryParams query_params;
         std::string ids_string;
@@ -95,15 +95,15 @@ namespace mindnet::db::sqlite
         return list_models(get_model_definition(), query_params, error, orm::IN_IDS);
     }
 
-    std::vector<i64> RepositoryImplSqlite::list_ids(orm::QueryParams& query_params, string& error)
+    std::vector<identification> RepositoryImplSqlite::list_ids(orm::QueryParams& query_params, string& error)
     {
         std::vector<entity_fields> fields = list_models(get_model_definition(), query_params, error, orm::IDS);
-        std::vector<i64> result;
+        std::vector<identification> result;
         if (!error.empty()) return result;
 
         for (auto& f : fields)
         {
-            std::variant<string, long>& i_1 = f[0];
+            std::variant<string, i64>& i_1 = f[0];
             result.push_back(std::get<i64>(i_1));
         }
         return result;
@@ -226,7 +226,7 @@ namespace mindnet::db::sqlite
                                 ? cast64(rvalue)
                                 : (col.get_default_value().empty()
                                        ? cast64(0)
-                                       : cast64(col.get_default_int_value())));
+                                       : cast64(col.get_default_i64_value())));
                     }
                     break;
                 default: throw std::runtime_error("Unsupported type " + column_type_to_string(col.get_column_type()));

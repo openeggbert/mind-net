@@ -50,8 +50,8 @@ namespace mindnet::plugins::repetition::triggers
             api::OperationResult& validation_result,
             api::OperationResult& action_result,
             const model::ModelDefinition def,
-            i64 user_id,
-            i64 id,
+            identification user_id,
+            identification id,
             entity_fields& fields,
             entity_fields& old_fields,
             const orm::QueryParams query_params
@@ -59,7 +59,7 @@ namespace mindnet::plugins::repetition::triggers
 
     private:
         std::optional<double> fetch_user_param(
-            int user_id,
+            identification user_id,
             const std::string& key,
             mindnet::api::AccessTokenContext& token,
             int stack_depth);
@@ -70,11 +70,11 @@ namespace mindnet::plugins::repetition::triggers
             int stack_depth);
 
         double get_param(
-            int user_id,
+            identification user_id,
             const std::string& key,
             double def,
             api::AccessTokenContext& token,
             int stack_depth);
-        Params load_params_once(int user_id, api::AccessTokenContext& token, int stack_depth);
+        Params load_params_once(identification user_id, api::AccessTokenContext& token, int stack_depth);
     };
 }

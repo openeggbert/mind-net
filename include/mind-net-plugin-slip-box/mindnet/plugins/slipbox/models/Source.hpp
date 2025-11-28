@@ -66,7 +66,7 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int map_id{};
+        identification map_id{};
         string title;
         string author;
         int year{};

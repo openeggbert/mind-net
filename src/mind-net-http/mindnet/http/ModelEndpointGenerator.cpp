@@ -31,6 +31,49 @@
 #include "mindnet/plugins/core/models/ApiLog.hpp"
 #include "mindnet/http/HttpUtils.hpp"
 
+// TODO (Major Refactor):
+//
+// The CRUD lambda handlers in this file (create/read/update/delete/list) contain
+// a significant amount of duplicated logic such as:
+//   - access token extraction
+//   - maintenance mode check
+//   - permission validation based on allowed REST operations
+//   - JSON parsing and validation
+//   - error handling
+//   - crow::response construction
+//   - logging via log_request()
+//
+// To make the code more maintainable, create a unified abstraction layer.
+//
+// Proposed improvements:
+//
+// 1) Implement a generic helper function:
+//        handle_request(req, service_ptr, def, Crudl operation, id, Fn&& fn)
+//    This function should:
+//        - check maintenance mode
+//        - initialize AccessTokenContext
+//        - validate that the operation is allowed
+//        - call the provided lambda (fn) for the model-specific logic
+//        - catch exceptions and convert them to crow::response
+//        - perform log_request() automatically
+//
+// 2) Move request parsing helpers into a dedicated utility, e.g.:
+//        RestHelper::parse_query_params()
+//        RestHelper::parse_fields()
+//        RestHelper::parse_sorting()
+//    to remove repeated parameter parsing logic in list endpoints.
+//
+// 3) Simplify log_request() by extracting common behavior and eliminating
+//    duplicated branches.
+//
+// 4) After introducing the new pipeline, rewrite each CRUD lambda so that it
+//    only contains model-specific logic (10–20 lines), with the generic flow
+//    handled by handle_request().
+//
+// This refactor will reduce this file by ~70–80%, make ModelEndpointGenerator
+// significantly easier to maintain, and ensure future models can be added with
+// minimal code.
+
 
 using mindnet::essential::g_configuration;
 
@@ -60,7 +103,7 @@ namespace mindnet::http
             }
         };
         auto log_request = [](const api::ServicePtr& service_ptr, const crow::request& req,
-                              api::AccessTokenContext& login_token, int status_code, int entity_id = 0,
+                              api::AccessTokenContext& login_token, int status_code, identification entity_id = 0,
                               const std::string& error = "")
         {
             auto log_object = plugins::core::models::api_log_from_crow_request(
@@ -148,7 +191,7 @@ namespace mindnet::http
         };
 
         auto read_lambda_function = [&service_ptr, &def, &split_string_by_commas, &log_request
-            ](const crow::request& req, int id)
+            ](const crow::request& req, identification id)
         {
             check_maintenance_mode()
 
@@ -203,7 +246,7 @@ namespace mindnet::http
             return crow::response(200, res);
         };
 
-        auto update_lambda_function = [&service_ptr, &def, &log_request](const crow::request& req, int id)
+        auto update_lambda_function = [&service_ptr, &def, &log_request](const crow::request& req, identification id)
         {
             check_maintenance_mode()
 
@@ -268,7 +311,7 @@ namespace mindnet::http
             return crow::response(200, res);
         };
 
-        auto delete_lambda_function = [&service_ptr, &def, &log_request](const crow::request& req, int id)
+        auto delete_lambda_function = [&service_ptr, &def, &log_request](const crow::request& req, identification id)
         {
             check_maintenance_mode()
 

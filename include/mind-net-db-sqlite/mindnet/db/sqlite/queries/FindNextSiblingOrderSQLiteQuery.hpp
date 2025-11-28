@@ -39,7 +39,7 @@ namespace mindnet::db::sqlite::queries
 
         ~FindNextSiblingOrderSQLiteQuery() = default;
 
-        nlohmann::json call(nlohmann::json request, api::InvalidateMethod& invalidate_method) override;
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method) override;
 
     private:
     };

@@ -39,7 +39,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json CleanupHistoryOrphansSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json CleanupHistoryOrphansSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
     {
         if (!request.contains("history_orphan_threshold_in_days"))
             throw std::runtime_error("history_orphan_threshold_in_days not found");
@@ -80,11 +80,11 @@ created_at <= ? and
             SQLite::Statement query(db, history_rows_without_delete_operation_sql);
             query.bind(1, cast64(now - history_orphan_threshold_in_days * MILLISECONDS_PER_DAY));
 
-            std::vector<std::pair<std::string, i64>> table_id_pairs_to_be_deleted;
+            std::vector<std::pair<std::string, identification>> table_id_pairs_to_be_deleted;
             while (query.executeStep())
             {
                 string table_name = query.getColumn(0).getString();
-                i64 record_id = query.getColumn(1).getInt64();
+                identification record_id = query.getColumn(1).getInt64();
 
                 if (record_id == 0) continue;
 
@@ -118,7 +118,7 @@ created_at <= ? and
                 SQLite::Statement query_delete_table_history(
                     db, "delete from history where table_name=? and record_id=?");
                 string table_name = p.first;
-                i64 record_id = p.second;
+                identification record_id = p.second;
 
                 if (record_id == 0) continue;
 

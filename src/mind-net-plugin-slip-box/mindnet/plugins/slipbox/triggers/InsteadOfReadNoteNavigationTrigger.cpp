@@ -50,13 +50,13 @@ namespace mindnet::plugins::slipbox::triggers
 
     std::optional<std::pair<entity_fields, api::OperationResult>> InsteadOfReadNoteNavigationTrigger::
     run_instead_of_read(int stack_depth, api::OperationResult& validation_result, const model::ModelDefinition& def,
-                        i64 user_id, i64 id)
+                        identification user_id, identification id)
     {
         nlohmann::json req;
         req["note_id"] = cast64(id);
         nlohmann::json res;
-        i64 prev_note_id{};
-        i64 next_note_id{};
+        identification prev_note_id{};
+        identification next_note_id{};
         try
         {
             res = call_query(db::sqlite::queries::QUERY_FindPreviousAndNextNote, req);

@@ -64,8 +64,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 under_note_id{};
-        i64 map_id{};
+        identification under_note_id{};
+        identification map_id{};
         std::string title;
         std::string description;
         int time_limit_in_seconds{};

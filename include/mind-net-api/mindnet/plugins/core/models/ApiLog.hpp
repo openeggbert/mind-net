@@ -66,12 +66,12 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
+        identification user_id{};
         std::string ip_address;
         std::string endpoint;
         enums::HttpMethod method{enums::HttpMethod::Undefined};
         std::string entity_name;
-        int entity_id{};
+        identification entity_id{};
         std::string parameters;
         std::string request_body;
         int status_code{};
@@ -97,7 +97,7 @@ namespace mindnet::plugins::core::models
         }
     };
 
-    const ApiLog api_log_from_crow_request(const crow::request& req, int user_id, int status_code, int entity_id = 0,
+    const ApiLog api_log_from_crow_request(const crow::request& req, identification user_id, int status_code, identification entity_id = 0,
                                            std::string error = "");
 }
 #undef Model

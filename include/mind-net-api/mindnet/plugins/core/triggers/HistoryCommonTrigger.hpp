@@ -40,8 +40,8 @@ namespace mindnet::plugins::core::triggers
             api::OperationResult& validation_result,
             api::OperationResult& action_result,
             const model::ModelDefinition def,
-            i64 user_id,
-            i64 id,
+            identification user_id,
+            identification id,
             entity_fields& fields,
             entity_fields& old_fields,
             const orm::QueryParams query_params

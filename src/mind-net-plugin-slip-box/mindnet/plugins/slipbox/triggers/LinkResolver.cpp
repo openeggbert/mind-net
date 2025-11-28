@@ -34,13 +34,13 @@
 namespace mindnet::plugins::slipbox::triggers
 {
     LinkResolution LinkResolver::resolve(
-        i64 map_id,
+        identification map_id,
         const std::vector<WikiLink>& wikilinks,
         std::function<nlohmann::json(const std::string&, nlohmann::json&)>& call)
     {
         std::vector<WikiLink> existing;
         std::vector<WikiLink> missing;
-        std::unordered_map<std::string, i64> title_to_id;
+        std::unordered_map<std::string, identification> title_to_id;
 
         // Unique titles to avoid redundant DB hits
         std::unordered_set<std::string> uniq_titles;

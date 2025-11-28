@@ -123,11 +123,11 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 map_id{};
-        i64 parent_note_id{};
-        i64 content_id{};
-        i64 source_id{};
-        i64 alias_for_note_id{};
+        identification map_id{};
+        identification parent_note_id{};
+        identification content_id{};
+        identification source_id{};
+        identification alias_for_note_id{};
         string title;
         string hint;
         int sibling_order{};

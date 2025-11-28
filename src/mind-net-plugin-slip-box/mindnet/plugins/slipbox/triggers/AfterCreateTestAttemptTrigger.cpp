@@ -54,8 +54,8 @@ namespace mindnet::plugins::slipbox::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        i64 user_id,
-        i64 id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)
@@ -67,7 +67,7 @@ namespace mindnet::plugins::slipbox::triggers
         models::TestAttempt new_test_attempt;
         new_test_attempt.from_values(fields);
 
-        i64 test_id = new_test_attempt.test_id;
+        identification test_id = new_test_attempt.test_id;
 
         api::AccessTokenContext token = user_id == 0
                                             ? api::AccessTokenContext(user_id, "system", 403)

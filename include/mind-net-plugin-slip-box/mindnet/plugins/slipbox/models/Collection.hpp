@@ -62,7 +62,7 @@ namespace mindnet::plugins::slipbox::models
         string name;
         string description;
         int order_index{};
-        int created_by{};
+        identification created_by{};
         bool is_public{false};
 
         create_model_h_methods(Model, MODEL)

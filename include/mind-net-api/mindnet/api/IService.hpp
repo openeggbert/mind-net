@@ -50,20 +50,20 @@ namespace mindnet::api
         virtual std::vector<std::string>& list_model_names() = 0;
         virtual nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) = 0;
         //
-        virtual std::pair<i64, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
+        virtual std::pair<identification, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                        entity_fields& fields, int stack_depth) = 0;
         virtual std::pair<entity_fields, OperationResult> read(const ModelDefinition& def,
                                                                api::AccessTokenContext& token,
-                                                               i64 id, int stack_depth) = 0;
-        virtual OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
+                                                               identification id, int stack_depth) = 0;
+        virtual OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                        entity_fields& fields, int stack_depth) = 0;
-        virtual OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
+        virtual OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                        int stack_depth) = 0;
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
             int stack_depth) = 0;
 
-        std::pair<int, OperationResult> count(
+        std::pair<identification, OperationResult> count(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
             int stack_depth)
         {
@@ -107,11 +107,11 @@ namespace mindnet::api
             const model::ModelDefinition& model_definition,
             api::AccessTokenContext& token, entity_fields& ef) = 0;
         virtual OperationResult can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                         i64 id) = 0;
+                                         identification id) = 0;
         virtual OperationResult can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                            entity_fields& ef, entity_fields& old_fields) = 0;
         virtual OperationResult can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                           i64 id) =
+                                           identification id) =
         0;
         virtual OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                          string_map& filter) = 0;

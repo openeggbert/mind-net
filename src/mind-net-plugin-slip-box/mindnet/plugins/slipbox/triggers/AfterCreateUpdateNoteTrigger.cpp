@@ -54,8 +54,8 @@ namespace mindnet::plugins::slipbox::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        i64 user_id,
-        i64 id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)
@@ -79,13 +79,13 @@ namespace mindnet::plugins::slipbox::triggers
             return;
         }
 
-        i64 map_id = new_note.map_id;
+        identification map_id = new_note.map_id;
 
         api::AccessTokenContext token = user_id == 0
                                             ? api::AccessTokenContext(user_id, "system", 403)
                                             : api::AccessTokenContext(user_id, "", 200);
 
-        auto has_map_this_note = [&](i64 note_id)
+        auto has_map_this_note = [&](identification note_id)
         {
             orm::QueryParams params_notes;
             params_notes.add_filter("id", note_id);
@@ -150,7 +150,7 @@ namespace mindnet::plugins::slipbox::triggers
             wanted_note.to_note_title = link.to_note_title;
             return wanted_note;
         };
-        auto convert_wanted_note_to_link = [&](const models::WantedNote& wanted_note, i64 note_id)
+        auto convert_wanted_note_to_link = [&](const models::WantedNote& wanted_note, identification note_id)
         {
             models::Link link;
             link.from_note_id = wanted_note.from_note_id;

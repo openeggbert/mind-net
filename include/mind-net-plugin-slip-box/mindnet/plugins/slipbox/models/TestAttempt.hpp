@@ -60,8 +60,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 test_id{};
-        i64 user_id{};
+        identification test_id{};
+        identification user_id{};
         int attempt_number{};
         unixtime started_at;
         unixtime finished_at;

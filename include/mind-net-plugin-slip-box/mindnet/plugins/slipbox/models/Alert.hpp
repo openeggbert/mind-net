@@ -89,8 +89,8 @@ namespace mindnet::plugins::slipbox::models
         int repeat_count{};
         unixtime repeat_until;
 
-        int user_id{};
-        int note_id{};
+        identification user_id{};
+        identification note_id{};
         string url;
 
         string title;

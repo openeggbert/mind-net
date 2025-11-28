@@ -59,9 +59,9 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 note_id{};
-        i64 prev_note_id{};
-        i64 next_note_id{};
+        identification note_id{};
+        identification prev_note_id{};
+        identification next_note_id{};
 
         create_model_h_methods(Model, MODEL)
 

@@ -60,8 +60,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int map_id{};
-        int note_id{};
+        identification map_id{};
+        identification note_id{};
         string title;
         string disambiguation;
 

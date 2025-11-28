@@ -66,7 +66,6 @@ namespace mindnet::api
 
     };
 
-
     typedef std::shared_ptr<Job> JobPtr;
 }
 

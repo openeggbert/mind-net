@@ -67,11 +67,11 @@ namespace mindnet::plugins::repetition::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
-        int map_id{};
-        int r_session_id{};
+        identification user_id{};
+        identification map_id{};
+        identification r_session_id{};
         enums::RepetitionAlgorithm algorithm{};
-        int note_id{};
+        identification note_id{};
         unixtime review_date;
         int grade{};
         string response_data;

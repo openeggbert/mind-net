@@ -62,8 +62,8 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int team_id{};
-        int user_id{};
+        identification team_id{};
+        identification user_id{};
         mindnet::essential::UserRole role{};
         mindnet::essential::UserStatus status{};
         unixtime joined_at{};

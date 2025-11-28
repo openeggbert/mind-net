@@ -193,21 +193,21 @@ namespace mindnet::plugins::slipbox::jobs
 
         auto path_ids = plugin::slipbox::jobs::split_path_numbers(note.path);
 
-        string path__;
+        string path_;
         std::vector<std::string> parents;
         for (auto& note_id:path_ids)
         {
             auto e = run_read(models::NOTE_DEFINITION, token, note_id, 0);
             if (e.second.ko()) return e.second.error;
-            if (!path__.empty()) path__ += "/";
+            if (!path_.empty()) path_ += "/";
             models::Note n;
             n.from_values(e.first);
-            path__ += plugin::slipbox::jobs::normalize_text_for_url(n.title);
+            path_ += plugin::slipbox::jobs::normalize_text_for_url(n.title);
             parents.push_back(n.title);
 
         }
         string breadcrumb_html = plugin::slipbox::jobs::generate_breadcrumb(parents, note.title);
-        string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(true, path__, children);
+        string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(true, path_, children);
 
         string base_href_;
         for (int i = 1; i <= (note.depth + 1);i++)
@@ -236,7 +236,7 @@ namespace mindnet::plugins::slipbox::jobs
             {html_content, note.content_id == 0 ? "" :plugin::slipbox::jobs::markdown_to_html(content.value)},
                         };
         index_html = plugin::slipbox::jobs::replace_placeholders(index_html, placeholder_map);
-        auto dir = export_map_dir / path__ ;
+        auto dir = export_map_dir / path_ ;
         std::filesystem::create_directories(dir);
         auto index_html_path = dir / "index.html";
         debug << "index_html_path=" << index_html_path << commit;

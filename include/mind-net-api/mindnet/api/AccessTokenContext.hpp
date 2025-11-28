@@ -24,6 +24,7 @@
 #pragma once
 
 #include "crow/http_request.h"
+#include "mindnet/essential/Helper.hpp"
 
 
 namespace mindnet::api
@@ -33,12 +34,12 @@ namespace mindnet::api
 
     struct AccessTokenContext
     {
-        int user_id{};
+        identification user_id{};
         std::string msg;
         int status{};
         bool system{false};
 
-        AccessTokenContext(int user_id, const std::string& msg, int status, bool system = false);
+        AccessTokenContext(identification user_id, const std::string& msg, int status, bool system = false);
 
         AccessTokenContext(const crow::request& req, ServicePtr service_ptr);
 

@@ -36,7 +36,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindNotesInMapSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json FindNotesInMapSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -51,7 +51,7 @@ namespace mindnet::db::sqlite::queries
         }
         std::vector<std::string> note_titles = request["note_titles"];
 
-        i64 map_id = request["map_id"];
+        identification map_id = request["map_id"];
 
         std::string sql = "select id, title from note where map_id = ? and title in (";
         int note_titles_index = 0;
@@ -80,7 +80,7 @@ namespace mindnet::db::sqlite::queries
             essential::debug << "Executing FindNotesInMapSQLiteQuery map_id " << map_id << essential::commit;
             SQLite::Statement query(db, sql);
             std::vector<string> found_note_titles;
-            std::map<string, i64> found_note_ids;
+            std::map<string, identification> found_note_ids;
             int index = 0;
             query.bind(++index, map_id);
             for (auto& m : note_titles)

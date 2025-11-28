@@ -88,11 +88,11 @@ namespace mindnet::plugins::slipbox::validators
                                                                    const string_map& filter) const
     {
         mandatory_filter(note_id)
-        auto note_id = std::stoi(filter.at("note_id"));
+        auto note_id = std::stoll(filter.at("note_id"));
         auto note = slipbox::find_note(ctx, note_id);;
         if (!note.second.empty()) return {400, note.second};
 
-        int map_id = note.first.map_id;
+        auto map_id = note.first.map_id;
 
         if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {

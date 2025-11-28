@@ -70,8 +70,8 @@ namespace mindnet::plugins::slipbox::models
 namespace mindnet::plugins::slipbox
 {
     bool has_map_name(const api::RequestContext& ctx, string map_name);
-    std::pair<int, string> find_note_for_content(const api::RequestContext& ctx, int content_id);
-    bool has_right_for_map(const api::RequestContext& ctx, const int map_id,
+    std::pair<identification, string> find_note_for_content(const api::RequestContext& ctx, identification content_id);
+    bool has_right_for_map(const api::RequestContext& ctx, const identification map_id,
                            const plugins::core::enums::SingleRight single_right);
 
     gen_find_h(slipbox, Collection, collection)

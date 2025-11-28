@@ -28,13 +28,13 @@
 
 namespace mindnet::db::sqlite
 {
-    int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);
+    identification create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);
 
-    entity_fields read_model(model::ModelDefinition& def, int id, string& error);
+    entity_fields read_model(model::ModelDefinition& def, identification id, string& error);
 
-    bool update_model(int id, model::ModelDefinition& def, entity_fields& fields, string& error);
+    bool update_model(identification id, model::ModelDefinition& def, entity_fields& fields, string& error);
 
-    bool delete_model(model::ModelDefinition& def, int id, string& error);
+    bool delete_model(model::ModelDefinition& def, identification id, string& error);
 
     std::vector<entity_fields> list_models(
         model::ModelDefinition& def,

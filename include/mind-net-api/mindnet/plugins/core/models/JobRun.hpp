@@ -57,7 +57,7 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 job_entry_id;
+        identification job_entry_id;
         unixtime started_at;
         unixtime finished_at;
         bool success{};

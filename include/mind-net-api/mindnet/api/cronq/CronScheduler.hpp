@@ -54,7 +54,7 @@ namespace mindnet::api::cronq
             JobPtr job;
             cronq::CronExpr cron;
             std::chrono::system_clock::time_point next_run;
-            i64 job_id;
+            identification job_id;
             std::string job_name;
             bool enabled = true;
             std::chrono::system_clock::time_point last_started_at;
@@ -65,7 +65,7 @@ namespace mindnet::api::cronq
             // --- COPY CONSTRUCTOR (OK) ---
             ScheduledJobEntry(const ScheduledJobEntry&) = default;
 
-            // --- COPY ASSIGNMENT (ZAKÁZAT!) ---
+            // --- COPY ASSIGNMENT (FORBIDDEN!) ---
             ScheduledJobEntry& operator=(const ScheduledJobEntry&) = delete;
 
             // --- MOVE CONSTRUCTOR / ASSIGNMENT ---
@@ -76,7 +76,7 @@ namespace mindnet::api::cronq
                 JobPtr job_,
                 const cronq::CronExpr& cron_,
                 std::chrono::system_clock::time_point last_started_at_,
-                i64 job_id_,
+                identification job_id_,
                 const std::string& job_name_,
                 bool enabled_,
                 std::chrono::system_clock::time_point next_run_,
@@ -117,8 +117,8 @@ namespace mindnet::api::cronq
         // ---
         void scheduler_loop();
         void load_jobs_from_db();
-        bool load_enabled_from_db(i64 job_id);
-        bool load_enabled_and_configuration(i64 job_id, bool& enabled_out, std::string& cfg_out);
+        bool load_enabled_from_db(identification job_id);
+        bool load_enabled_and_configuration(identification job_id, bool& enabled_out, std::string& cfg_out);
         void compute_initial_next_runs();
         void sleep_until_next_job();
         ScheduledJobEntry* find_next_job();
@@ -131,15 +131,15 @@ namespace mindnet::api::cronq
         void run_job(ScheduledJobEntry& entry);
 
         // SQLite helpers
-        i64 insert_job_run(const i64 job_id,
+        identification insert_job_run(const identification job_id,
                            unixtime start_time);
 
-        void update_job_run(const i64 run_id,
+        void update_job_run(const identification run_id,
                             unixtime finish_time,
                             bool success,
                             const std::string& message);
 
-        void update_next_run_in_db(i64 job_id,
+        void update_next_run_in_db(identification job_id,
                                    unixtime tp);
     };
 

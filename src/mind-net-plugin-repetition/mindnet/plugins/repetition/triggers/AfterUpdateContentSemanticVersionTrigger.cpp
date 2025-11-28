@@ -78,8 +78,8 @@ namespace mindnet::plugins::repetition::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        i64 user_id,
-        i64 id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)
@@ -131,7 +131,7 @@ namespace mindnet::plugins::repetition::triggers
         models::R18State r18_state;
 
         constexpr static int64_t MILLISECONDS_PER_DAY = 86400L * 1000;
-        constexpr int64_t ONE_HOUR_MS = 3600LL * 1000;
+        constexpr static int64_t MILLISECONDS_PER_HOUR = 3600LL * 1000;
 
         for (int r_version : {0, 2, 4, 18})
         {
@@ -188,7 +188,7 @@ namespace mindnet::plugins::repetition::triggers
                         r0_state.next_review = r0_state.last_review + r0_state.interval * MILLISECONDS_PER_DAY;
                         r0_state.last_quality = 0;
                     }
-                    if (r0_state.next_review < now) r0_state.next_review = now + ONE_HOUR_MS;
+                    if (r0_state.next_review < now) r0_state.next_review = now + MILLISECONDS_PER_HOUR;
 
                     r0_state.last_seen_semantic_version = new_semantic_version;
                     r0_state.content_modified_since_last_review = true;
@@ -213,7 +213,7 @@ namespace mindnet::plugins::repetition::triggers
                         r2_state.last_quality = 0;
                         r2_state.next_review = r2_state.last_review + MILLISECONDS_PER_DAY;
                     }
-                    if (r2_state.next_review < now) r2_state.next_review = now + ONE_HOUR_MS;
+                    if (r2_state.next_review < now) r2_state.next_review = now + MILLISECONDS_PER_HOUR;
 
                         r2_state.last_seen_semantic_version = new_semantic_version;
                         r2_state.content_modified_since_last_review = true;
@@ -238,7 +238,7 @@ namespace mindnet::plugins::repetition::triggers
                         r4_state.last_quality = 0;
                         r4_state.next_review = r4_state.last_review + MILLISECONDS_PER_DAY;
                     }
-                    if (r4_state.next_review < now) r4_state.next_review = now + ONE_HOUR_MS;
+                    if (r4_state.next_review < now) r4_state.next_review = now + MILLISECONDS_PER_HOUR;
 
                     r4_state.last_seen_semantic_version = new_semantic_version;
                     r4_state.content_modified_since_last_review = true;
@@ -271,7 +271,7 @@ namespace mindnet::plugins::repetition::triggers
                         r18_state.repetitions = 0;
                         r18_state.lapses = 0;
                         r18_state.last_quality = 0;
-                        r18_state.next_review = now + ONE_HOUR_MS;
+                        r18_state.next_review = now + MILLISECONDS_PER_HOUR;
                         r18_state.last_review = now;
                     }
 

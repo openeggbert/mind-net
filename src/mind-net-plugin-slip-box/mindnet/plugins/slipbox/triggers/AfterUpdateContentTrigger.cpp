@@ -103,8 +103,8 @@ namespace mindnet::plugins::slipbox::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        i64 user_id,
-        i64 id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)
@@ -172,7 +172,7 @@ namespace mindnet::plugins::slipbox::triggers
 
         models::Note note;
         note.from_values(list_notes_result.first[0]);
-        i64 map_id = note.map_id;
+        identification map_id = note.map_id;
 
         auto parsed = ContentLinkParser::parse_links(new_content.value);
         auto& new_urls = parsed.urls;
@@ -301,7 +301,7 @@ namespace mindnet::plugins::slipbox::triggers
             int,
             int)> run_delete_lambda = [this](const model::ModelDefinition& def,
                                              api::AccessTokenContext& token,
-                                             int id,
+                                             identification id,
                                              int depth) -> api::OperationResult
         {
             return run_delete(def, token, id, depth);

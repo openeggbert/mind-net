@@ -62,9 +62,9 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
+        identification user_id{};
         string table_name;
-        int record_id{};
+        identification record_id{};
         mindnet::essential::Crudl operation{};
         string data_json;
         string reason;

@@ -157,14 +157,11 @@ namespace mindnet::db::sqlite
         }
     }
 
-    int create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
+    identification create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
     {
         std::string sql = orm::SqlUtils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
-if (definition.get_model_name() == "content")
-{
-    std::cout << 123 << std::endl;
-}
+
         SQLite::Database db(
             SQLITE_FILE_NAME,
             SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE
@@ -184,8 +181,7 @@ if (definition.get_model_name() == "content")
             return -1;
         }
 
-        fill_sqlite_query(*query_ptr, fields, definition, essential::Crudl::Create, true
-        );
+        fill_sqlite_query(*query_ptr, fields, definition, essential::Crudl::Create, true);
 
         try
         {
@@ -201,7 +197,7 @@ if (definition.get_model_name() == "content")
         return db.getLastInsertRowid();
     }
 
-    entity_fields read_model(model::ModelDefinition& def, const int id, string& error)
+    entity_fields read_model(model::ModelDefinition& def, const identification id, string& error)
     {
         std::string sql = orm::SqlUtils::generate_select_one_sql(def.get_model_name(), def);
         debug << "Going to execute select one SQL: " << sql << commit;
@@ -280,7 +276,7 @@ if (definition.get_model_name() == "content")
         return {};
     }
 
-    bool update_model(int id, model::ModelDefinition& def, entity_fields& fields_, string& error)
+    bool update_model(identification id, model::ModelDefinition& def, entity_fields& fields_, string& error)
     {
         std::string sql = orm::SqlUtils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
@@ -327,7 +323,7 @@ if (definition.get_model_name() == "content")
         }
     }
 
-    bool delete_model(model::ModelDefinition& def, const int id, string& error)
+    bool delete_model(model::ModelDefinition& def, const identification id, string& error)
     {
         string sql = orm::SqlUtils::generate_delete_sql(def);
         debug << "Going to execute delete SQL: " << sql << commit;
@@ -544,7 +540,7 @@ if (definition.get_model_name() == "content")
         }
 
         std::vector<entity_fields> results;
-        std::vector<i64> result_ids;
+        std::vector<identification> result_ids;
         try
         {
             while ((*query_ptr).executeStep())
@@ -552,7 +548,7 @@ if (definition.get_model_name() == "content")
                 entity_fields result;
                 if (select_mode == orm::IDS)
                 {
-                    int64_t number = (*query_ptr).getColumn(0);;
+                    identification number = (*query_ptr).getColumn(0);;
                     result.push_back(number);
                     results.push_back(result);
                     continue;

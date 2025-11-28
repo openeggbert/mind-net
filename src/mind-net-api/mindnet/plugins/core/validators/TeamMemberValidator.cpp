@@ -120,7 +120,7 @@ namespace mindnet::plugins::core::validators
 
         mandatory_filter(team_id)
 
-        auto is_member = core::is_member_of_team(ctx, std::stoi(filter.at("team_id")));
+        auto is_member = core::is_member_of_team(ctx, std::stoll(filter.at("team_id")));
         return_if(!is_member.empty(),
                   403, "Only team members can list team members.")
 

@@ -83,10 +83,10 @@ namespace mindnet::essential
         //other
         LogLevel max_log_level{ERROR};
         std::set<string> allowed_plugins;
-        int access_token_expires_in{15}; // minutes
-        int refresh_token_expires_in{43200}; // minutes (30 days)
-        int refresh_token_rotation_threshold_in{10080}; // minutes (7 days)
-        int read_cache_capacity_size{10000};
+        i64 access_token_expires_in{15}; // minutes
+        i64 refresh_token_expires_in{43200}; // minutes (30 days)
+        i64 refresh_token_rotation_threshold_in{10080}; // minutes (7 days)
+        i64 read_cache_capacity_size{10000};
         size_t read_cache_capacity_bytes{1073741824};
 
         Configuration(const string_map& map);

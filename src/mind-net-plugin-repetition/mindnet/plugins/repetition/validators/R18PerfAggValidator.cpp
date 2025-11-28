@@ -87,7 +87,7 @@ namespace mindnet::plugins::repetition::validators
 
         // Users can only list their own perf aggs
         auto it = filter.find("user_id");
-        if (it == filter.end() || std::stoi(it->second) != ctx.token.user_id)
+        if (it == filter.end() || std::stoll(it->second) != ctx.token.user_id)
         {
             return {403, "Can only list your own perf aggs"};
         }

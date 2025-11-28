@@ -61,8 +61,8 @@ namespace mindnet::plugins::core::models
     {
         string name;
         string description;
-        int created_by{};
-        int leader_id{};
+        identification created_by{};
+        identification leader_id{};
 
         create_model_h_methods(Model, MODEL)
 

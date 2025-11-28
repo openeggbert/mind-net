@@ -75,8 +75,8 @@ const mindnet::model::ModelDefinition& def,
         OperationResult& validation_result,
         OperationResult& action_result,
         const mindnet::model::ModelDefinition& def,
-        int user_id,
-        int id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams& query_params)
@@ -91,8 +91,8 @@ const mindnet::model::ModelDefinition& def,
         }
     }
 
-    std::optional<std::pair<int, OperationResult>> TriggerRegistry::execute_instead_of_create(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, int user_id, int id,
+    std::optional<std::pair<identification, OperationResult>> TriggerRegistry::execute_instead_of_create(int stack_depth,
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id, identification id,
         entity_fields& fields)
     {
         auto phase= TriggerPhase::InsteadOf;
@@ -107,7 +107,7 @@ const mindnet::model::ModelDefinition& def,
     }
 
     std::optional<std::pair<entity_fields, OperationResult>> TriggerRegistry::execute_instead_of_read(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, int user_id, int id)
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id, identification id)
     {
         auto phase= TriggerPhase::InsteadOf;
         auto operation = essential::Crudl::Read;
@@ -121,7 +121,7 @@ const mindnet::model::ModelDefinition& def,
     }
 
     std::optional<OperationResult> TriggerRegistry::execute_instead_of_update(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, int user_id, int id,
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id, identification id,
         entity_fields& fields, entity_fields& old_fields)
     {
         auto phase= TriggerPhase::InsteadOf;
@@ -136,7 +136,7 @@ const mindnet::model::ModelDefinition& def,
     }
 
     std::optional<OperationResult> TriggerRegistry::execute_instead_of_delete(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, int user_id, int id)
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id, identification id)
     {
         auto phase= TriggerPhase::InsteadOf;
         auto operation = essential::Crudl::Delete;
@@ -150,7 +150,7 @@ const mindnet::model::ModelDefinition& def,
     }
 
     std::optional<std::pair<std::vector<entity_fields>, OperationResult>> TriggerRegistry::execute_instead_of_list(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, int user_id,
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id,
         const orm::QueryParams& query_params)
     {
         auto phase= TriggerPhase::InsteadOf;

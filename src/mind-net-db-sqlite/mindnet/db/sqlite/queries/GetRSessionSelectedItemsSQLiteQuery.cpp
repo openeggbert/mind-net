@@ -307,7 +307,7 @@ LIMIT {limit};
     {
     }
 
-    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -317,13 +317,13 @@ LIMIT {limit};
         }
         nlohmann::json session = request["r_session"];
 
-        int map_id = session["map_id"];
-        int map_collection_id = session["map_collection_id"];
+        identification map_id = session["map_id"];
+        identification map_collection_id = session["map_collection_id"];
         int algorithm = session["algorithm"];
-        int filter_under_note = session["filter_under_note"];
+        identification filter_under_note = session["filter_under_note"];
         int schedule = session["schedule"];
         int scope = session["scope"];
-        int user_id = session["user_id"];
+        identification user_id = session["user_id"];
         int limit = session.value("limit", 250);
         long long now_ms = std::time(nullptr) * 1000LL;
 
@@ -451,7 +451,7 @@ LIMIT {limit};
             essential::debug << sql << essential::commit;
             essential::debug << "Executing scope=" << scope << " schedule=" << schedule << " algorithm=" << algorithm << essential::commit;
             SQLite::Statement query(db, sql);
-            std::vector<int64_t> note_ids;
+            std::vector<identification> note_ids;
 
             while (query.executeStep())
             {

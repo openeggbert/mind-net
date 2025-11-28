@@ -56,9 +56,9 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 map_collection_id{};
-        i64 map_id{};
-        i64 position{};
+        identification map_collection_id{};
+        identification map_id{};
+        int position{};
 
         create_model_h_methods(Model, MODEL)
 

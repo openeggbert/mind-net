@@ -55,8 +55,8 @@ namespace mindnet::plugins::slipbox::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        i64 user_id,
-        i64 id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)
@@ -68,8 +68,8 @@ namespace mindnet::plugins::slipbox::triggers
         models::Note new_note;
         new_note.from_values(fields);
 
-        i64 map_id = new_note.map_id;
-        i64 parent_note_id = new_note.parent_note_id;
+        identification map_id = new_note.map_id;
+        identification parent_note_id = new_note.parent_note_id;
 
 
         nlohmann::json req;

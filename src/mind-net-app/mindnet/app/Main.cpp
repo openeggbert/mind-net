@@ -62,7 +62,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
     {
         err << "This Database Type is not yet supported: " <<
             mindnet::essential::database_type_to_string(configured_database_type) << commit;
-        exit(ExitStatus::MIGRATION_FAILED);
+        exit(ExitStatus::MigrationFailed);
     }
     for (auto& plugin_name : plugin_registry_ptr->get_plugin_names_sorted_by_dependencies())
     {
@@ -87,7 +87,7 @@ void migrate_schema_if_needed(mindnet::api::PluginRegistryPtr& plugin_registry_p
         }
         migration_scripts.reset();
         err << "Migrating schema for plugin " << plugin_name << ": KO. Failed." << commit;
-        exit(ExitStatus::MIGRATION_FAILED);
+        exit(ExitStatus::MigrationFailed);
     }
 }
 
@@ -127,7 +127,7 @@ void load_args(int argc, char** argv, std::vector<std::string>& arguments)
     {
         arguments.push_back(argv[i]);
     }
-    if (!check_args(arguments)) exit(ExitStatus::NO_ARGUMENT_PROVIDED);
+    if (!check_args(arguments)) exit(ExitStatus::NoArgumentProvided);
 }
 
 bool commands_function_start(

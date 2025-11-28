@@ -40,13 +40,13 @@ namespace mindnet::plugins::slipbox::triggers
     LinkSynchronizer::LinkSynchronizer(
         api::AccessTokenContext& token,
         int stack_depth,
-        i64 note_id,
+        identification note_id,
         std::function<api::OperationResult(
             const model::ModelDefinition&,
             api::AccessTokenContext&,
-            int,
+            identification,
             int)> run_delete,
-        std::function<std::pair<int, api::OperationResult>(
+        std::function<std::pair<identification, api::OperationResult>(
             const model::ModelDefinition&,
             api::AccessTokenContext&,
             entity_fields&,
@@ -63,7 +63,7 @@ namespace mindnet::plugins::slipbox::triggers
     // Generic sync for items represented as string titles
     template <typename Entity, typename MakeFn>
     void LinkSynchronizer::sync_entities(const std::vector<std::string>& old_items,
-                                         const std::map<std::string, i64>& old_ids,
+                                         const std::map<std::string, identification>& old_ids,
                                          const std::vector<std::string>& new_items,
                                          const mindnet::model::ModelDefinition& def,
                                          MakeFn make_entity_fn)
@@ -79,7 +79,7 @@ namespace mindnet::plugins::slipbox::triggers
             {
                 auto it = old_ids.find(val);
                 if (it == old_ids.end()) continue;
-                i64 id = it->second;
+                identification id = it->second;
 
                 auto del_result = run_delete_(def, token, id, stack_depth);
                 if (del_result.ko())
@@ -113,7 +113,7 @@ namespace mindnet::plugins::slipbox::triggers
 
     // --- URL ---
     void LinkSynchronizer::sync_urls(const std::vector<std::string>& old_urls,
-                                     const std::map<std::string, i64>& old_urls_ids,
+                                     const std::map<std::string, identification>& old_urls_ids,
                                      const std::vector<std::string>& new_urls)
     {
         sync_entities<models::Url>(
@@ -132,9 +132,9 @@ namespace mindnet::plugins::slipbox::triggers
     // --- LINK ---
     void LinkSynchronizer::sync_links(
         const std::vector<std::string>& old_links,
-        const std::map<std::string, i64>& old_links_ids,
+        const std::map<std::string, identification>& old_links_ids,
         const std::vector<WikiLink>& new_links,
-        const std::unordered_map<std::string, i64>& title_to_id)
+        const std::unordered_map<std::string, identification>& title_to_id)
     {
         // Build lookup: title -> display
         std::unordered_map<std::string, std::string> display_map;
@@ -175,7 +175,7 @@ namespace mindnet::plugins::slipbox::triggers
     // --- WANTED_NOTE ---
     void LinkSynchronizer::sync_wanted_notes(
         const std::vector<std::string>& old_wanted,
-        const std::map<std::string, i64>& old_wanted_ids,
+        const std::map<std::string, identification>& old_wanted_ids,
         const std::vector<WikiLink>& new_wanted)
     {
         // Build lookup: title -> display

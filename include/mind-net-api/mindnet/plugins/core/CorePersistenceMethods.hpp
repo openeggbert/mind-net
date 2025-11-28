@@ -59,8 +59,7 @@ namespace mindnet::plugins::core
 
     bool has_user_name(const api::RequestContext& ctx, string user_name);
     bool has_user_email(const api::RequestContext& ctx, string user_mail);
-    string is_member_of_team(const api::RequestContext& ctx, int team_id);
-
+    string is_member_of_team(const api::RequestContext& ctx, identification team_id);
 
     gen_find_h(core, Team, team)
     gen_find_h(core, TeamMember, team_member)

@@ -22,8 +22,6 @@
  */
 #pragma once
 
-
-
 namespace mindnet::api
 {
     static constexpr bool READ_CACHE_ENABLED = true;

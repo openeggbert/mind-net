@@ -60,8 +60,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
-        int note_id{};
+        identification user_id{};
+        identification note_id{};
         int position{};
         bool is_public{false};
 

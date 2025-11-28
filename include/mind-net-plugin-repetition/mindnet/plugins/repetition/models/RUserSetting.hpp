@@ -57,7 +57,7 @@ namespace mindnet::plugins::repetition::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
+        identification user_id{};
         string key;
         string value;
 

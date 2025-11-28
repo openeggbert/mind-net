@@ -63,14 +63,14 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int64_t user_id{};
+        identification user_id{};
         string token_hash;
         unixtime issued_at{};
         unixtime expires_at{};
         bool is_revoked{false};
         unixtime revoked_at{};
-        int64_t replaced_by_id{};
-        int64_t rotated_from_id{};
+        identification replaced_by_id{};
+        identification rotated_from_id{};
         unixtime last_used_at{};
         string ip_address;
         string user_agent;

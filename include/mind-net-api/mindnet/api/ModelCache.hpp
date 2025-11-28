@@ -39,7 +39,7 @@ namespace mindnet::api
     struct CacheKey
     {
         std::string table;
-        int64_t id;
+        identification id;
 
         bool operator==(const CacheKey& other) const noexcept
         {
@@ -53,7 +53,7 @@ namespace mindnet::api
         std::size_t operator()(const CacheKey& k) const noexcept
         {
             std::size_t h1 = std::hash<std::string>()(k.table);
-            std::size_t h2 = std::hash<int64_t>()(k.id);
+            std::size_t h2 = std::hash<identification>()(k.id);
             return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1<<6) + (h1>>2));
         }
     };
@@ -187,17 +187,17 @@ const std::unordered_map<CacheKey, entity_fields, CacheKeyHash>& cache);
         }
         bool get(
             const std::string& table,
-            int64_t id,
+            identification id,
             entity_fields& outRow);
 
         void put(
             const std::string& table,
-            int64_t id,
+            identification id,
             const entity_fields& row);
 
         void invalidate(
             const std::string& table,
-            int64_t id);
+            identification id);
         void clear() {
         std::unique_lock lock(mutex_);
         readCache.clear();

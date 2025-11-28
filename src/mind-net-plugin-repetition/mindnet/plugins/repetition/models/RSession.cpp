@@ -55,6 +55,8 @@ namespace mindnet::plugins::repetition::models
     {
         int i = 0;
 
+        //todo: check, why there is no macro
+
         auto number = [&values, &i]
         {
             // std::cout << "values[" << i << "]" << std::endl;

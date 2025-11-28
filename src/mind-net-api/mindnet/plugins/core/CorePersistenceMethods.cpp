@@ -71,7 +71,7 @@ namespace mindnet::plugins::core
         return !ctx.db->list(plugins::core::models::USER_DEFINITION, ctx.token, query_params).first.empty();
     }
 
-    string is_member_of_team(const api::RequestContext& ctx, int team_id)
+    string is_member_of_team(const api::RequestContext& ctx, identification team_id)
     {
         auto team_result = ctx.db->read(plugins::core::models::TEAM_DEFINITION, ctx.token, team_id);
         if (team_result.second.ko()) return team_result.second.error;

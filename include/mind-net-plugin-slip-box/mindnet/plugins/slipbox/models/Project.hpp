@@ -63,16 +63,16 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int note_id{};
+        identification note_id{};
         string title;
         string description;
         int progress{};
         bool in_progress{false};
         bool important{false};
         unixtime due_date;
-        int created_by{};
-        int owner_id{};
-        int assigned_to{};
+        identification created_by{};
+        identification owner_id{};
+        identification assigned_to{};
         string category;
         bool is_public{false};
 

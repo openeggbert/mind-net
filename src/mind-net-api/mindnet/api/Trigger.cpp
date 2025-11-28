@@ -30,39 +30,39 @@
 namespace mindnet::api
 {
     void Trigger::run_before_or_after(mindnet::essential::Crudl operation, int stack_depth,
-        OperationResult& validation_result, OperationResult& action_result, model::ModelDefinition def, i64 user_id,
-        i64 id, entity_fields& fields, entity_fields& old_fields, orm::QueryParams query_params)
+        OperationResult& validation_result, OperationResult& action_result, model::ModelDefinition def, identification user_id,
+        identification id, entity_fields& fields, entity_fields& old_fields, orm::QueryParams query_params)
     {
         throw std::runtime_error("Empty implementation was called: run_before_or_after()");
     }
 
     std::optional<std::pair<int, OperationResult>> Trigger::run_instead_of_create(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, i64 user_id, i64 id,
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id, identification id,
         entity_fields& fields)
     {
         throw std::runtime_error("Empty implementation was called: run_instead_of_create()");
     }
 
     std::optional<std::pair<entity_fields, OperationResult>> Trigger::run_instead_of_read(int stack_depth,
-        OperationResult& validation_result, const model::ModelDefinition& def, i64 user_id, i64 id)
+        OperationResult& validation_result, const model::ModelDefinition& def, identification user_id, identification id)
     {
         throw std::runtime_error("Empty implementation was called: run_instead_of_read()");
     }
 
     std::optional<OperationResult> Trigger::run_instead_of_update(int stack_depth, OperationResult& validation_result,
-        const model::ModelDefinition& def, i64 user_id, i64 id, entity_fields& fields, entity_fields& old_fields)
+        const model::ModelDefinition& def, identification user_id, identification id, entity_fields& fields, entity_fields& old_fields)
     {
         throw std::runtime_error("Empty implementation was called: run_instead_of_update()");
     }
 
     std::optional<OperationResult> Trigger::run_instead_of_delete(int stack_depth, OperationResult& validation_result,
-        const model::ModelDefinition& def, i64 user_id, i64 id)
+        const model::ModelDefinition& def, identification user_id, identification id)
     {
         throw std::runtime_error("Empty implementation was called: run_instead_of_delete()");
     }
 
     std::optional<std::pair<std::vector<entity_fields>, OperationResult>> Trigger::run_instead_of_list(int stack_depth, OperationResult& validation_result,
-        const model::ModelDefinition& def, i64 user_id, const orm::QueryParams& query_params)
+        const model::ModelDefinition& def, identification user_id, const orm::QueryParams& query_params)
     {
         throw std::runtime_error("Empty implementation was called: run_instead_of_list()");
     }

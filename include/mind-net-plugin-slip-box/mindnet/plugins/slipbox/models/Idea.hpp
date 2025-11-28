@@ -62,7 +62,7 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
+        identification user_id{};
         string title;
         string content;
         string category;

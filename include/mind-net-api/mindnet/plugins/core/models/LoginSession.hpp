@@ -62,9 +62,9 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int64_t user_id{};
-        int64_t access_token_id{};
-        int64_t refresh_token_id{};
+        identification user_id{};
+        identification access_token_id{};
+        identification refresh_token_id{};
         unixtime issued_at{};
         unixtime expires_at{};
         bool is_revoked{false};

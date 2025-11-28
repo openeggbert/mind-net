@@ -30,7 +30,7 @@ namespace mindnet::api
 {
     bool ModelCache::get(
     const std::string& table,
-    int64_t id,
+    identification id,
     entity_fields& outRow)
     {
         if (is_disabled()) return false;
@@ -66,7 +66,7 @@ namespace mindnet::api
 
     void ModelCache::put(
     const std::string& table,
-    int64_t id,
+    identification id,
     const entity_fields& row)
     {
         if (is_disabled()) return;
@@ -116,7 +116,7 @@ namespace mindnet::api
 
     void ModelCache::invalidate(
     const std::string& table,
-    int64_t id)
+    identification id)
     {
         if (is_disabled()) return;
 

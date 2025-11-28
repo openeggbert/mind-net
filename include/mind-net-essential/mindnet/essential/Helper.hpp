@@ -31,7 +31,6 @@
 
 
 #define cast64 static_cast<int64_t>
-#define castint static_cast<int>
 #define PASTE(a,b) a##b
 #define XPASTE(a,b) PASTE(a,b)
 #define STRINGIFY_HELPER(x) #x
@@ -42,7 +41,13 @@ typedef unsigned long long ull;
 typedef ull unixtime;
 typedef unsigned short ushort;
 using std::string;
-typedef int64_t i64;
+using i64 = std::int64_t;
+using u64 = std::uint64_t;
+using i32 = std::int32_t;
+using u32 = std::uint32_t;
+//do not change this alias please
+using identification = i64;
+
 
 typedef std::variant<std::string, int64_t> entity_field;
 typedef std::vector<entity_field> entity_fields;

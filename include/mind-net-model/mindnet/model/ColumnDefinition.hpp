@@ -224,9 +224,9 @@ namespace mindnet::model
             return default_value;
         }
 
-        [[nodiscard]] const int get_default_int_value() const
+        [[nodiscard]] const i64 get_default_i64_value() const
         {
-            return default_value.empty() ? 0 : std::stoi(default_value);
+            return default_value.empty() ? 0 : std::stoll(default_value);
         }
 
         [[nodiscard]] const bool is_auto() const

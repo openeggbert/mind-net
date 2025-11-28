@@ -90,7 +90,7 @@ namespace mindnet::plugins::slipbox::validators
                                                               const string_map& filter) const
     {
         mandatory_filter(tag_type_id)
-        auto tag_type_id = std::stoi(filter.at("tag_type_id"));
+        auto tag_type_id = std::stoll(filter.at("tag_type_id"));
 
         auto tag_type = slipbox::find_tag_type(ctx, tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};

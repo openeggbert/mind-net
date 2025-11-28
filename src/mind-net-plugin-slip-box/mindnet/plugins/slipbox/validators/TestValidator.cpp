@@ -93,7 +93,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         mandatory_filter(note_id)
 
-        int note_id = std::stoi(filter.at("note_id"));
+        identification note_id = std::stoll(filter.at("note_id"));
         auto note = slipbox::find_note(ctx, note_id);
         if (!note.second.empty()) return {400, note.second};
 

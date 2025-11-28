@@ -94,7 +94,7 @@ namespace mindnet::plugins::slipbox::validators
                                                                             const string_map& filter) const
     {
         mandatory_filter(map_collection_id)
-        auto map_collection_id = std::stoi(filter.at("map_collection_id"));
+        auto map_collection_id = std::stoll(filter.at("map_collection_id"));
         auto map_collection = slipbox::find_collection(ctx, map_collection_id);;
         if (!map_collection.second.empty()) return {400, map_collection.second};
         const auto& map_collection_validator = get_validator("map_collection");

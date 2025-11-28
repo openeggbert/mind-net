@@ -63,8 +63,8 @@ namespace mindnet::plugins::repetition::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
-        int note_id{};
+        identification user_id{};
+        identification note_id{};
         int stability_times_100{100};
         int last_interval_times_100{0};
         int repetitions{0};
@@ -72,7 +72,7 @@ namespace mindnet::plugins::repetition::models
         unixtime next_review;
         unixtime last_review;
         int last_quality{0};
-        int last_seen_semantic_version{};
+        i64 last_seen_semantic_version{};
         bool content_modified_since_last_review{false};
 
         create_model_h_methods(Model, MODEL)

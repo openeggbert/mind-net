@@ -75,19 +75,19 @@ namespace mindnet::plugins::repetition::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 user_id{};
-        i64 map_id{};
-        i64 map_collection_id{};
-        i64 cloned_from_session_id{};
+        identification user_id{};
+        identification map_id{};
+        identification map_collection_id{};
+        identification cloned_from_session_id{};
         enums::RepetitionAlgorithm algorithm{};
         enums::RepetitionSchedule schedule{};
         enums::RepetitionScope scope{};
         std::string description;
-        i64 filter_under_note{};
+        identification filter_under_note{};
         unixtime filter_date_from{};
         unixtime filter_date_to{};
-        i64 filter_tag{};
-        i64 filter_collection{};
+        identification filter_tag{};
+        identification filter_collection{};
         //example: {"note_ids":[3,4,5,6,7]}
         string selected_items{"{}"};
         bool pinned{false};

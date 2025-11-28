@@ -55,14 +55,14 @@ namespace mindnet::api
 
         std::vector<std::string>& list_model_names() override;
 
-        std::pair<i64, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
+        std::pair<identification, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                entity_fields& fields) override;
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, api::AccessTokenContext& token, i64 id) override;
-        void invalidate(const model::ModelDefinition& def, i64 id) override;
-        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
+        read(const ModelDefinition& def, api::AccessTokenContext& token, identification id) override;
+        void invalidate(const model::ModelDefinition& def, identification id) override;
+        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                entity_fields& fields) override;
-        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id) override;
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, identification id) override;
         std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
                                                                     api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params) override;

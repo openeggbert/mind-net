@@ -75,8 +75,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int note_id{};
-        int project_id{};
+        identification note_id{};
+        identification project_id{};
         string title;
         string description;
         int progress{};
@@ -86,15 +86,15 @@ namespace mindnet::plugins::slipbox::models
         unixtime start_date;
         unixtime due_date;
         unixtime completed_at;
-        int created_by{};
-        int owner_id{};
-        int assigned_to{};
+        identification created_by{};
+        identification owner_id{};
+        identification assigned_to{};
         string category;
         string context;
         string tags;
         bool is_public{false};
-        int parent_task_id{};
-        int blocked_by_task_id{};
+        identification parent_task_id{};
+        identification blocked_by_task_id{};
         string related_tasks;
 
         create_model_h_methods(Model, MODEL)

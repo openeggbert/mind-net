@@ -37,7 +37,7 @@ namespace mindnet::api
     {
     public:
         virtual ~InvalidateMethod() = default;
-        virtual void invalidate(const model::ModelDefinition& def, i64 id) = 0;
+        virtual void invalidate(const model::ModelDefinition& def, identification id) = 0;
     };
 
     class Query
@@ -56,7 +56,7 @@ namespace mindnet::api
         virtual ~Query() = default;
 
         virtual nlohmann::json call(
-            nlohmann::json request, InvalidateMethod& invalidate_method
+            nlohmann::json& request, InvalidateMethod& invalidate_method
         ) = 0;
         //
         virtual const std::string& get_name() const { return name; }

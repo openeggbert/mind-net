@@ -76,7 +76,7 @@ namespace mindnet::api
         return repository_names;
     }
 
-    std::pair<i64, OperationResult> Persistence::create(
+    std::pair<identification, OperationResult> Persistence::create(
         const ModelDefinition& def,
         api::AccessTokenContext& token,
         entity_fields& fields)
@@ -98,7 +98,7 @@ namespace mindnet::api
     }
 
     std::pair<entity_fields, OperationResult> Persistence::read(const model::ModelDefinition& def,
-                                                                api::AccessTokenContext& token, const i64 id)
+                                                                api::AccessTokenContext& token, const identification id)
     {
         const std::string& table = def.get_model_name();
 
@@ -122,7 +122,7 @@ namespace mindnet::api
 
         return {ef, ok_result};
     }
-    void Persistence::invalidate(const model::ModelDefinition& def, const i64 id)
+    void Persistence::invalidate(const model::ModelDefinition& def, const identification id)
     {
         if (READ_CACHE_ENABLED && def.is_cache_enabled())
             model_cache_.invalidate(def.get_model_name(), id);
@@ -130,7 +130,7 @@ namespace mindnet::api
 
     OperationResult Persistence::update(
         const model::ModelDefinition& def, api::AccessTokenContext& token,
-        i64 id, entity_fields& fields
+        identification id, entity_fields& fields
     )
     {
         SQLITE_LOCK_GUARD()
@@ -144,7 +144,7 @@ namespace mindnet::api
         return {500, error};
     }
 
-    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, i64 id)
+    OperationResult Persistence::remove(const model::ModelDefinition& def, api::AccessTokenContext& token, identification id)
     {
         SQLITE_LOCK_GUARD()
         string_map empty_map;
@@ -173,8 +173,8 @@ namespace mindnet::api
         const auto& repo = get_repository(model_name);
         if (READ_CACHE_ENABLED && LIST_CACHE_ENABLED && def.is_cache_enabled())
         {
-            std::vector<i64> ids = repo->list_ids(query_params, error);
-            std::vector<i64> ids_not_in_cache;
+            std::vector<identification> ids = repo->list_ids(query_params, error);
+            std::vector<identification> ids_not_in_cache;
             for (auto& id : ids)
             {
                 entity_fields cached;
@@ -192,7 +192,7 @@ namespace mindnet::api
                 for (auto& item : items_from_db)
                 {
                     items.push_back(item);
-                    int64_t number = std::get<int64_t>(item[0]);
+                    identification number = std::get<int64_t>(item[0]);
                     model_cache_.put(model_name, number, item);
                 }
             }

@@ -62,12 +62,12 @@ namespace mindnet::api
 
         virtual OperationResult can_create(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef) const = 0;
 
-        virtual OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, i64 id) const = 0;
+        virtual OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, identification id) const = 0;
 
         virtual OperationResult can_update(DbPtr& db, api::AccessTokenContext& token, entity_fields& ef,
                                            entity_fields& old_fields) const = 0;
 
-        virtual OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, i64 id) const = 0;
+        virtual OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, identification id) const = 0;
 
         virtual OperationResult can_list(DbPtr& db, api::AccessTokenContext& token, string_map& filter) const = 0;
 

@@ -24,7 +24,6 @@
 
 #pragma once
 
-
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -36,7 +35,6 @@
 #include "mindnet/orm/QueryParams.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
 #include "Trigger.hpp"
-
 
 namespace mindnet::api
 {
@@ -63,33 +61,33 @@ namespace mindnet::api
             OperationResult& validation_result,
             OperationResult& action_result,
             const mindnet::model::ModelDefinition& def,
-            int user_id,
-            int id,
+            identification user_id,
+            identification id,
             entity_fields& fields = empty_entity_fields,
             entity_fields& old_fields = empty_entity_fields,
             const orm::QueryParams& query_params = empty_query_params);
 
-        std::optional<std::pair<int, OperationResult>> execute_instead_of_create(
+        std::optional<std::pair<i64, OperationResult>> execute_instead_of_create(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            int user_id,
-            int id,
+            identification user_id,
+            identification id,
             entity_fields& fields);
 
         std::optional<std::pair<entity_fields, OperationResult>> execute_instead_of_read(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            int user_id,
-            int id);
+            identification user_id,
+            identification id);
 
         std::optional<OperationResult> execute_instead_of_update(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            int user_id,
-            int id,
+            identification user_id,
+            identification id,
             entity_fields& fields,
             entity_fields& old_fields);
 
@@ -97,13 +95,13 @@ namespace mindnet::api
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            int user_id,
-            int id);
+            identification user_id,
+            identification id);
         std::optional<std::pair<std::vector<entity_fields>, OperationResult>> execute_instead_of_list(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            int user_id,
+            identification user_id,
             const orm::QueryParams& query_params);
 
     private:

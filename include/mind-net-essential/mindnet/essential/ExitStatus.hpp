@@ -29,7 +29,7 @@ namespace mindnet::essential
 {
     enum ExitStatus
     {
-        NO_ARGUMENT_PROVIDED = 1,
-        MIGRATION_FAILED = 2,
+        NoArgumentProvided = 1,
+        MigrationFailed = 2,
     };
 }

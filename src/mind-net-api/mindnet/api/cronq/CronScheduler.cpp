@@ -131,7 +131,7 @@ namespace mindnet::api::cronq
         for (auto& job_ptr : all_job_ptrs)
         {
             bool enabled = job_ptr->get_enabled_by_default();
-            i64 id = 0;
+            identification id = 0;
 
             // Synchronize software and database
             if (jobs_in_db_map.contains(job_ptr->get_name()))
@@ -222,7 +222,7 @@ namespace mindnet::api::cronq
         return unix_milliseconds;
     }
 
-    bool CronScheduler::load_enabled_from_db(i64 job_id)
+    bool CronScheduler::load_enabled_from_db(identification job_id)
     {
         api::AccessTokenContext ctx(0, "system", 403);
 
@@ -242,7 +242,7 @@ namespace mindnet::api::cronq
         return entry.enabled;
     }
 
-    bool CronScheduler::load_enabled_and_configuration(i64 job_id, bool& enabled_out, std::string& cfg_out)
+    bool CronScheduler::load_enabled_and_configuration(identification job_id, bool& enabled_out, std::string& cfg_out)
     {
         api::AccessTokenContext ctx(0, "system", 403);
 
@@ -637,9 +637,9 @@ namespace mindnet::api::cronq
         auto start = system_clock::now();
 
         // insert job_run row
-        const i64 job_id = entry.job_id;
+        const identification job_id = entry.job_id;
         unixtime start_unixtime = system_clock_to_unixtime(start);
-        i64 run_id = 0;
+        identification run_id = 0;
         try
         {
             run_id = insert_job_run(job_id, start_unixtime);
@@ -676,7 +676,7 @@ namespace mindnet::api::cronq
     }
 
     i64 CronScheduler::insert_job_run(
-        const i64 job_id,
+        const identification job_id,
         unixtime start_time
     )
     {
@@ -707,7 +707,7 @@ namespace mindnet::api::cronq
     }
 
     void CronScheduler::update_job_run(
-        const i64 run_id,
+        const identification run_id,
         unixtime finish_time,
         bool success,
         const std::string& message)
@@ -744,7 +744,6 @@ namespace mindnet::api::cronq
         {
             throw std::runtime_error("Cannot update job run: " + update_job_run_result.error);
         }
-
 
         auto read_job_run2 = run_read(
             plugins::core::models::JOB_RUN_DEFINITION,
@@ -783,7 +782,7 @@ namespace mindnet::api::cronq
     }
 
     void CronScheduler::update_next_run_in_db(
-        const i64 job_id,
+        const identification job_id,
         unixtime next_run)
     {
         api::AccessTokenContext ctx(0, "system", 403);

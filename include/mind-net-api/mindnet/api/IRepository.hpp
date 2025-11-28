@@ -43,13 +43,13 @@ namespace mindnet::api
         IRepository(
             const model::ModelDefinition& model_definition
         );
-        virtual int create(const entity_fields& fields, string& error) = 0;
-        virtual entity_fields read(i64 id, string& error) = 0;
-        virtual bool update(i64 id, entity_fields& fields, string& error) = 0;
-        virtual bool remove(i64 id, string& error) = 0;
+        virtual identification create(const entity_fields& fields, string& error) = 0;
+        virtual entity_fields read(identification id, string& error) = 0;
+        virtual bool update(identification id, entity_fields& fields, string& error) = 0;
+        virtual bool remove(identification id, string& error) = 0;
         virtual std::vector<entity_fields> list(orm::QueryParams& query_params, string& error) = 0;
-        virtual std::vector<entity_fields> list_in_ids(std::vector<i64>& ids, string& error) = 0;
-        virtual std::vector<i64> list_ids(orm::QueryParams& query_params, string& error) = 0;
+        virtual std::vector<entity_fields> list_in_ids(std::vector<identification>& ids, string& error) = 0;
+        virtual std::vector<identification> list_ids(orm::QueryParams& query_params, string& error) = 0;
 
         [[nodiscard]] virtual mindnet::model::ModelDefinition& get_model_definition() = 0;
         virtual entity_fields request_to_entity_fields(crow::json::rvalue& body,

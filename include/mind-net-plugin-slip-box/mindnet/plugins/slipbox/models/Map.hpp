@@ -72,14 +72,14 @@ namespace mindnet::plugins::slipbox::models
         string name;
         string description;
         string category;
-        int owner_id{};
-        int team_id{};
+        identification owner_id{};
+        identification team_id{};
         core::enums::AccessRight owner_rights{7};
         core::enums::AccessRight team_rights{7};
         core::enums::AccessRight other_rights{7};
-        int owner_rights_int() const { return cast64(owner_rights); }
-        int team_rights_int() const { return cast64(team_rights); }
-        int other_rights_int() const { return cast64(other_rights); }
+        [[nodiscard]] int owner_rights_int() const { return cast64(owner_rights); }
+        [[nodiscard]] int team_rights_int() const { return cast64(team_rights); }
+        [[nodiscard]] int other_rights_int() const { return cast64(other_rights); }
 
         create_model_h_methods(Model, MODEL)
 

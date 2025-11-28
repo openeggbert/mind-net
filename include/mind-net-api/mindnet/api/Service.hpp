@@ -43,7 +43,7 @@ namespace mindnet::api
 
         }
         DbPtr db_;
-        void invalidate(const model::ModelDefinition& def, i64 id) {
+        void invalidate(const model::ModelDefinition& def, identification id) {
             db_->invalidate(def, id);
         };
     };
@@ -70,13 +70,13 @@ namespace mindnet::api
 
         nlohmann::json call_query(const std::string& query_name, nlohmann::json& request) override;
 
-        std::pair<i64, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
+        std::pair<identification, OperationResult> create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                entity_fields& fields, int stack_depth) override;
         std::pair<entity_fields, OperationResult>
-        read(const ModelDefinition& def, api::AccessTokenContext& token, i64 id, int stack_depth) override;
-        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
+        read(const ModelDefinition& def, api::AccessTokenContext& token, identification id, int stack_depth) override;
+        OperationResult update(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                entity_fields& fields, int stack_depth) override;
-        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id, int stack_depth) override;
+        OperationResult remove(const ModelDefinition& def, api::AccessTokenContext& token, identification id, int stack_depth) override;
         std::pair<std::vector<entity_fields>, OperationResult> list(const ModelDefinition& def,
                                                                     api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params,
@@ -94,14 +94,13 @@ namespace mindnet::api
         OperationResult can_create(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                    entity_fields& ef) override;
         OperationResult can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                 i64 id) override;
+                                 identification id) override;
         OperationResult can_update(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                    entity_fields& ef, entity_fields& old_fields) override;
         OperationResult can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token,
-                                   i64 id) override;
+                                   identification id) override;
         OperationResult can_list(const ModelDefinition& model_definition, api::AccessTokenContext& token,
                                  string_map& filter) override;
 
-        //
     };
 }

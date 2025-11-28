@@ -93,7 +93,7 @@ namespace mindnet::plugins::slipbox::validators
                                                                const string_map& filter) const
     {
         mandatory_filter(map_id)
-        auto map_id = std::stoi(filter.at("map_id"));
+        auto map_id = std::stoll(filter.at("map_id"));
 
         if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {

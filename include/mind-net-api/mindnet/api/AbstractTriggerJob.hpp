@@ -57,13 +57,13 @@ namespace mindnet::api
     public:
         using Service = mindnet::api::Service;
 
-        using CreateFn = std::pair<i64, OperationResult>(Service::*)(const model::ModelDefinition&,
+        using CreateFn = std::pair<identification, OperationResult>(Service::*)(const model::ModelDefinition&,
                                                                      api::AccessTokenContext&, entity_fields&, int);
         using ReadFn = std::pair<entity_fields, OperationResult>(Service::*)(
-            const model::ModelDefinition&, api::AccessTokenContext&, i64, int);
-        using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, i64,
+            const model::ModelDefinition&, api::AccessTokenContext&, identification, int);
+        using UpdateFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, identification,
                                                      entity_fields&, int);
-        using DeleteFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, i64, int);
+        using DeleteFn = OperationResult(Service::*)(const model::ModelDefinition&, api::AccessTokenContext&, identification, int);
         using ListFn = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(
             const model::ModelDefinition&, api::AccessTokenContext&, orm::QueryParams&, int);
 
@@ -85,25 +85,25 @@ namespace mindnet::api
         void set_delete_fn(DeleteFn fn) { delete_fn = fn; }
         void set_list_fn(ListFn fn) { list_fn = fn; }
 
-        std::pair<i64, OperationResult> run_create(const model::ModelDefinition& def, api::AccessTokenContext& token,
+        std::pair<identification, OperationResult> run_create(const model::ModelDefinition& def, api::AccessTokenContext& token,
                                                    entity_fields& fields, int depth)
         {
             return (service_ptr->*create_fn)(def, token, fields, depth);
         }
 
         std::pair<entity_fields, OperationResult> run_read(const model::ModelDefinition& def,
-                                                           api::AccessTokenContext& token, i64 id, int depth)
+                                                           api::AccessTokenContext& token, identification id, int depth)
         {
             return (service_ptr->*read_fn)(def, token, id, depth);
         }
 
-        OperationResult run_update(const model::ModelDefinition& def, api::AccessTokenContext& token, i64 id,
+        OperationResult run_update(const model::ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                    entity_fields& fields, int depth)
         {
             return (service_ptr->*update_fn)(def, token, id, fields, depth);
         }
 
-        OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, i64 id, int depth)
+        OperationResult run_delete(const model::ModelDefinition& def, api::AccessTokenContext& token, identification id, int depth)
         {
             return (service_ptr->*delete_fn)(def, token, id, depth);
         }

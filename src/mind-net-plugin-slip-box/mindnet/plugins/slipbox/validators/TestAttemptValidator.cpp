@@ -95,8 +95,8 @@ namespace mindnet::plugins::slipbox::validators
         mandatory_filter(test_id)
         mandatory_filter(user_id)
 
-        i64 test_id = std::stoi(filter.at("test_id"));
-        i64 user_id = std::stol(filter.at("user_id"));
+        identification test_id = std::stoll(filter.at("test_id"));
+        identification user_id = std::stoll(filter.at("user_id"));
 
         auto test = slipbox::find_test(ctx, test_id);
         if (!test.second.empty()) return {400, test.second};

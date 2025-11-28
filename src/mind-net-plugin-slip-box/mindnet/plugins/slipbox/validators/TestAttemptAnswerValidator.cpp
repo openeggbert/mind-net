@@ -96,7 +96,7 @@ namespace mindnet::plugins::slipbox::validators
     {
         mandatory_filter(test_attempt_id)
 
-        i64 ta_id = std::stoll(filter.at("test_attempt_id"));
+        identification ta_id = std::stoll(filter.at("test_attempt_id"));
         auto test_attempt_result = find_test_attempt(ctx, ta_id);
         if (!test_attempt_result.second.empty())
         {

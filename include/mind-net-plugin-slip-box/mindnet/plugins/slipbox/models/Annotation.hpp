@@ -60,8 +60,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 note_id;
-        i64 parent_annotation_id;
+        identification note_id;
+        identification parent_annotation_id;
         std::string title;
         std::string content;
         enums::AnnotationType type;

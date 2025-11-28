@@ -55,7 +55,7 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int note_id{};
+        identification note_id{};
         string title;
 
         create_model_h_methods(Model, MODEL)

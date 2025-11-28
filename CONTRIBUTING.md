@@ -55,7 +55,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Backend
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
-- [ ] All ID fields should be migrated from integer to int64_t (i64) type for consistency and future compatibility
+- [ ] All ID fields should be migrated from integer to identification for consistency and future compatibility
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for PostgresSQL storage
 - [ ] Move some parts of enum header files to cpp files
@@ -82,7 +82,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 - [ ] sort and order is missing
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
-- [ ] Frontend should not show actions, for which user is not authorized
+- [ ] Frontend should not show actions, for which user is not authorized to
 - 
 ### Experimental
 - [ ] Chat plugin - Slack-like

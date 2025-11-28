@@ -56,8 +56,8 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 test_attempt_id{};
-        i64 question_id{};
+        identification test_attempt_id{};
+        identification question_id{};
         std::string user_answer;
         bool is_correct{};
 

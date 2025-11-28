@@ -66,7 +66,7 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int user_id{};
+        identification user_id{};
         std::string ip_address;
         std::string user_agent;
         std::string endpoint;

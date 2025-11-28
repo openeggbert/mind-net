@@ -49,7 +49,7 @@ namespace mindnet::db::sqlite
     using orm::SchemaHistoryColumns;
     using_loggers()
 
-    /* TODO REFACTOR (future improvement):
+    /* TODO REFACTOR (future improvements):
  *
  * The migration engine works reliably, but the DBMigration::migrate() method
  * has become too large and mixes several responsibilities:

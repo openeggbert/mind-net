@@ -39,14 +39,14 @@ namespace mindnet::db::sqlite::queries
     }
 
     nlohmann::json UpdateNotePathAndDepthSQLiteQuery::call(
-        nlohmann::json request, api::InvalidateMethod& invalidate_method
+        nlohmann::json& request, api::InvalidateMethod& invalidate_method
         )
     {
         if (!request.contains("note_id"))
         {
             throw std::runtime_error("Request is missing key \"note_id\"");
         }
-        i64 note_id = request["note_id"];
+        identification note_id = request["note_id"];
 
         nlohmann::json response;
 
@@ -98,7 +98,7 @@ SELECT id FROM descendants;
             query.bind(1, note_id);
 
             // exec UPDATE + then SELECT descendants
-            std::vector<i64> changed_ids;
+            std::vector<identification> changed_ids;
 
             changed_ids.push_back(note_id);
 

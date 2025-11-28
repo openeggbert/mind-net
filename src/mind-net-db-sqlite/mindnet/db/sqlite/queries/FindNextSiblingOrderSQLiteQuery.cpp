@@ -37,7 +37,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json FindNextSiblingOrderSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -54,9 +54,9 @@ namespace mindnet::db::sqlite::queries
             throw std::invalid_argument("Mandatory key map_id is missing");
         }
 
-        i64 parent_note_id = request["parent_note_id"];
-        i64 note_id = request["note_id"];
-        i64 map_id = request["map_id"];
+        identification parent_note_id = request["parent_note_id"];
+        identification note_id = request["note_id"];
+        identification map_id = request["map_id"];
 
         std::string sql = parent_note_id == 0
                               ? "select max(sibling_order) from note where map_id = ? and parent_note_id is null"
@@ -65,8 +65,8 @@ namespace mindnet::db::sqlite::queries
         // --- Execute SQL query ---
         try
         {
-            i64 max_sibling_order{};
-            i64 next_sibling_order{};
+            identification max_sibling_order{};
+            identification next_sibling_order{};
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
             db.exec("PRAGMA foreign_keys = ON;");
             db.exec("PRAGMA journal_mode=WAL;");

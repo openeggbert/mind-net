@@ -50,7 +50,7 @@ namespace
 {
     struct ParamKey
     {
-        int user_id;
+        identification user_id;
         std::string key;
     };
 
@@ -142,11 +142,11 @@ namespace mindnet::plugins::repetition::triggers
         return SM0_INTERVALS[next_index];
     }
 
-    static inline bool user_param_was_not_found(int user_id, const std::string& key) {
+    static inline bool user_param_was_not_found(identification user_id, const std::string& key) {
         std::shared_lock lk(g_user_param_not_found_mutex);
         return g_user_param_not_found.count(ParamKey{user_id, key}) > 0;
     }
-    static inline void mark_user_param_not_found(int user_id, const std::string& key) {
+    static inline void mark_user_param_not_found(identification user_id, const std::string& key) {
         std::unique_lock lk(g_user_param_not_found_mutex);
         g_user_param_not_found.emplace(ParamKey{user_id, key});
     }
@@ -161,7 +161,7 @@ namespace mindnet::plugins::repetition::triggers
     }
 
     std::optional<double> RReviewAfterCreateTrigger::fetch_user_param(
-     int user_id, const std::string& key, mindnet::api::AccessTokenContext& token, int stack_depth)
+     identification user_id, const std::string& key, mindnet::api::AccessTokenContext& token, int stack_depth)
     {
         ParamKey pk{user_id, key};
         {
@@ -220,7 +220,7 @@ namespace mindnet::plugins::repetition::triggers
 
 
     double RReviewAfterCreateTrigger::get_param(
-        int user_id,
+        identification user_id,
         const std::string& key,
         double def,
         api::AccessTokenContext& token,
@@ -231,7 +231,7 @@ namespace mindnet::plugins::repetition::triggers
         return def;
     }
 
-    Params RReviewAfterCreateTrigger::load_params_once(int user_id, api::AccessTokenContext& token, int stack_depth) {
+    Params RReviewAfterCreateTrigger::load_params_once(identification user_id, api::AccessTokenContext& token, int stack_depth) {
         auto P = [&](const char* k, double d){ return get_param(user_id, k, d, token, stack_depth); };
         Params p {
             P("b",1.1), P("R_target",0.82), P("R_opt",0.75), P("alpha",0.5), P("beta",1.05),
@@ -262,8 +262,8 @@ namespace mindnet::plugins::repetition::triggers
         api::OperationResult& validation_result,
         api::OperationResult& action_result,
         const mindnet::model::ModelDefinition def,
-        i64 user_id,
-        i64 id,
+        identification user_id,
+        identification id,
         entity_fields& fields,
         entity_fields& old_fields,
         const orm::QueryParams query_params)
@@ -309,7 +309,7 @@ namespace mindnet::plugins::repetition::triggers
 
         if (!is_algorithm_supported(validation_result, r_review, model_definition)) return;
 
-        int state_record_id{};
+        identification state_record_id{};
 
         // ============================================================
         // Checking, if the state record already exists.
@@ -437,7 +437,7 @@ namespace mindnet::plugins::repetition::triggers
         if (state_record_already_exists)
         {
             entity_fields entity_fields_ = list_result.first[0];
-            int64_t* id_tmp = std::get_if<int64_t>(&entity_fields_[0]);
+            identification* id_tmp = std::get_if<int64_t>(&entity_fields_[0]);
             if (id_tmp == nullptr)
             {
                 err << "id_tmp == nullptr" << commit;

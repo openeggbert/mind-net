@@ -98,7 +98,7 @@ namespace mindnet::plugins::core::models
         return oss.str();
     }
 
-    const ApiLog api_log_from_crow_request(const crow::request& req, int user_id, int status_code, int entity_id,
+    const ApiLog api_log_from_crow_request(const crow::request& req, identification user_id, int status_code, identification entity_id,
                                            std::string error)
     {
         ApiLog log;
@@ -142,7 +142,7 @@ namespace mindnet::plugins::core::models
                 log.entity_name = parts[2];
                 if (parts.size() >= 4)
                 {
-                    try { log.entity_id = std::stoi(parts[3]); }
+                    try { log.entity_id = std::stoll(parts[3]); }
                     catch (...) { log.entity_id = 0; }
                 }
             }

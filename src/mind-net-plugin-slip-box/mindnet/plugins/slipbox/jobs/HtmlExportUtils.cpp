@@ -150,9 +150,9 @@ namespace mindnet::plugin::slipbox::jobs
         return result;
     }
 
-    std::vector<int64_t> split_path_numbers(const std::string& s)
+    std::vector<identification> split_path_numbers(const std::string& s)
     {
-        std::vector<int64_t> result;
+        std::vector<identification> result;
         std::stringstream ss(s);
         std::string item;
 

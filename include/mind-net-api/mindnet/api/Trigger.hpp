@@ -62,8 +62,8 @@ namespace mindnet::api
             OperationResult& validation_result,
             OperationResult& action_result,
             model::ModelDefinition def,
-            i64 user_id,
-            i64 id,
+            identification user_id,
+            identification id,
             entity_fields& fields,
             entity_fields& old_fields,
             orm::QueryParams query_params
@@ -73,23 +73,23 @@ namespace mindnet::api
     int stack_depth,
     OperationResult& validation_result,
     const model::ModelDefinition& def,
-    i64 user_id,
-    i64 id,
+    identification user_id,
+    identification id,
     entity_fields& fields);
 
         virtual std::optional<std::pair<entity_fields, OperationResult>> run_instead_of_read(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            i64 user_id,
-            i64 id);
+            identification user_id,
+            identification id);
 
         virtual std::optional<OperationResult> run_instead_of_update(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            i64 user_id,
-            i64 id,
+            identification user_id,
+            identification id,
             entity_fields& fields,
             entity_fields& old_fields);
 
@@ -97,13 +97,13 @@ namespace mindnet::api
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            i64 user_id,
-            i64 id);
+            identification user_id,
+            identification id);
         virtual std::optional<std::pair<std::vector<entity_fields>, OperationResult>> run_instead_of_list(
             int stack_depth,
             OperationResult& validation_result,
             const model::ModelDefinition& def,
-            i64 user_id,
+            identification user_id,
             const orm::QueryParams& query_params);
 
         //

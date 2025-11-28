@@ -166,7 +166,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, i64 id) const override
+        OperationResult can_read(DbPtr& db, api::AccessTokenContext& token, identification id) const override
         {
             auto action = Crudl::Read;
             static_assert(
@@ -192,7 +192,6 @@ namespace mindnet::api
             Model entity;
             if (!def.value().is_no_table()) {
             auto [values, read_err] = db->read(
-                //todo
                 db->get_model_definition(derived().get_model_name()).value(), token, id
             );
             if (read_err.ko()) return read_err;
@@ -314,7 +313,7 @@ namespace mindnet::api
             return ok_result;
         }
 
-        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, i64 id) const override
+        OperationResult can_delete(DbPtr& db, api::AccessTokenContext& token, identification id) const override
         {
             auto action = Crudl::Delete;
             static_assert(

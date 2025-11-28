@@ -60,7 +60,7 @@ LIMIT {limit};
     }
 
     nlohmann::json GetQuestionIdsSQLiteQuery::call(
-         nlohmann::json request,
+         nlohmann::json& request,
          api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
@@ -71,8 +71,8 @@ LIMIT {limit};
         nlohmann::json test = request["test"];
 
         // --- mandatory inputs ---
-        int under_note_id = test.value("under_note_id", 0);
-        int map_id        = test.value("map_id", 0);
+        identification under_note_id = test.value("under_note_id", 0);
+        identification map_id        = test.value("map_id", 0);
         int limit         = test.value("answer_count_limit", 100);
 
         // --- prepare SQL variables ---

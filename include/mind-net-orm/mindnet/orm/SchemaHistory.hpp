@@ -43,7 +43,7 @@ namespace mindnet::orm
         string installed_on;
 
         // in microseconds
-        int execution_time;
+        i64 execution_time;
         bool success;
     };
 }

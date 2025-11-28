@@ -46,13 +46,13 @@ namespace mindnet::db::sqlite
         );
         ~RepositoryImplSqlite() override;
 
-        int create(const entity_fields& fields, string& error) override;
-        entity_fields read(i64 id, string& error) override;
-        bool update(i64 id, entity_fields& fields, string& error) override;
-        bool remove(i64 id, string& error) override;
+        identification create(const entity_fields& fields, string& error) override;
+        entity_fields read(identification id, string& error) override;
+        bool update(identification id, entity_fields& fields, string& error) override;
+        bool remove(identification id, string& error) override;
         std::vector<entity_fields> list(orm::QueryParams& query_params, string& error) override;
-        std::vector<entity_fields> list_in_ids(std::vector<i64>& ids, string& error) override;
-        std::vector<i64> list_ids(orm::QueryParams& query_params, string& error) override;
+        std::vector<entity_fields> list_in_ids(std::vector<identification>& ids, string& error) override;
+        std::vector<identification> list_ids(orm::QueryParams& query_params, string& error) override;
         [[nodiscard]] model::ModelDefinition& get_model_definition() override;
         entity_fields request_to_entity_fields(crow::json::rvalue& body, mindnet::essential::Crudl crudl) override;
     };

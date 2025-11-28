@@ -83,7 +83,7 @@ namespace mindnet::http
             const crow::request& req,
             api::AccessTokenContext& login_token,
             int status_code,
-            const int& entity_id = 0,
+            const identification& entity_id = 0,
             const std::string& error = ""
         )
         {
@@ -193,7 +193,7 @@ namespace mindnet::http
                 // -------------------------------
                 // 2. Save to DB
                 // -------------------------------
-                int access_id = -1;
+                identification access_id = -1;
                 {
                     plugins::core::models::AccessToken access_token;
 
@@ -223,7 +223,7 @@ namespace mindnet::http
                     access_id = result.first;
                 }
 
-                int refresh_id = -1;
+                identification refresh_id = -1;
                 {
                     plugins::core::models::RefreshToken refresh_token;
 
@@ -561,7 +561,7 @@ namespace mindnet::http
                                     "Failed to create new refresh token: " + new_res.second.error);
                         return crow::response{500, "Failed to create new refresh token: " + new_res.second.error};
                     }
-                    int new_id = new_res.first;
+                    identification new_id = new_res.first;
 
                     // link old refresh to new one
                     refresh.replaced_by_id = new_id;

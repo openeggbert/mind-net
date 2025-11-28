@@ -102,7 +102,7 @@ namespace mindnet::model
             }
         }
 
-        short get_value_count() const
+        [[nodiscard]] short get_value_count() const
         {
             return value_count;
         }
@@ -120,7 +120,7 @@ namespace mindnet::model
             }
         }
 
-        short get_value(const size_t index) const
+        [[nodiscard]] short get_value(const size_t index) const
         {
             check_index_is_valid(index);
             return values[index];

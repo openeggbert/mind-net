@@ -67,7 +67,7 @@ namespace mindnet::plugins::core::models
 
     struct Model : mindnet::model::BaseModel
     {
-        int64_t user_id{};
+        identification user_id{};
         string token_hash;
         enums::TokenPurpose token_purpose{};
         bool is_created_by_user{false};

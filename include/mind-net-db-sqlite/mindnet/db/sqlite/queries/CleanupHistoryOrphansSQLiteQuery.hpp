@@ -38,7 +38,7 @@ namespace mindnet::db::sqlite::queries
 
         ~CleanupHistoryOrphansSQLiteQuery() = default;
 
-        nlohmann::json call(nlohmann::json request, api::InvalidateMethod& invalidate_method) override;
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method) override;
 
     private:
     };

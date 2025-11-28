@@ -153,7 +153,7 @@ namespace mindnet::plugins::core::models
                 log.entity_name = parts[2];
                 if (parts.size() >= 4)
                 {
-                    try { log.entity_id = std::stoi(parts[3]); }
+                    try { log.entity_id = std::stoll(parts[3]); }
                     catch (...) { log.entity_id = 0; }
                 }
             }

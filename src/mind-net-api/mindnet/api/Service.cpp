@@ -203,11 +203,12 @@ namespace mindnet::api
 
     static constexpr int MAX_TRIGGER_DEPTH = 32;
 
-    std::pair<i64, OperationResult> Service::create(const ModelDefinition& def, api::AccessTokenContext& token,
+    std::pair<identification, OperationResult> Service::create(const ModelDefinition& def, api::AccessTokenContext& token,
                                                     entity_fields& fields, int stack_depth)
     {
-        fields[1] = mindnet::util::Utils::current_unix_timestamp_ms();
-        fields[2] = mindnet::util::Utils::current_unix_timestamp_ms();
+        auto now = mindnet::util::Utils::current_unix_timestamp_ms();
+        fields[1] = now;
+        fields[2] = now;
         if (stack_depth > MAX_TRIGGER_DEPTH) return {-1, {500, "Max trigger depth exceeded"}};
 
         auto action = Crudl::Create;
@@ -258,7 +259,7 @@ namespace mindnet::api
     }
 
     std::pair<entity_fields, OperationResult> Service::read(const ModelDefinition& def, api::AccessTokenContext& token,
-                                                            i64 id, int stack_depth)
+                                                            identification id, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {api::empty_entity_fields, {500, "Max trigger depth exceeded"}};
 
@@ -292,7 +293,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    OperationResult Service::update(const ModelDefinition& def, api::AccessTokenContext& token, i64 id,
+    OperationResult Service::update(const ModelDefinition& def, api::AccessTokenContext& token, identification id,
                                     entity_fields& fields, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
@@ -316,7 +317,7 @@ namespace mindnet::api
         return action_result;
     };
 
-    OperationResult Service::remove(const ModelDefinition& def, api::AccessTokenContext& token, i64 id, int stack_depth)
+    OperationResult Service::remove(const ModelDefinition& def, api::AccessTokenContext& token, identification id, int stack_depth)
     {
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
         auto action = Crudl::Delete;
@@ -404,7 +405,7 @@ namespace mindnet::api
         };
     };
 
-    OperationResult Service::can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token, i64 id)
+    OperationResult Service::can_read(const ModelDefinition& model_definition, api::AccessTokenContext& token, identification id)
     {
         if (!VALIDATION_ENABLED) return ok_result;
 
@@ -435,7 +436,7 @@ namespace mindnet::api
         };
     }
 
-    OperationResult Service::can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token, i64 id)
+    OperationResult Service::can_delete(const ModelDefinition& model_definition, api::AccessTokenContext& token, identification id)
     {
         if (!VALIDATION_ENABLED) return ok_result;
 

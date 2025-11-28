@@ -65,7 +65,7 @@ namespace mindnet::db::sqlite::queries
     {
     }
 
-    nlohmann::json FindPreviousAndNextNoteSQLiteQuery::call(nlohmann::json request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json FindPreviousAndNextNoteSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
     {
         nlohmann::json response;
 
@@ -74,9 +74,9 @@ namespace mindnet::db::sqlite::queries
             throw std::invalid_argument("Mandatory key note_id is missing");
         }
 
-        i64 note_id = request["note_id"];
+        identification note_id = request["note_id"];
 
-        i64 map_id {0};
+        identification map_id {0};
 
         static std::string get_note_map_sql = "SELECT map_id FROM note WHERE id = ?";
         static std::string sql = R"(
@@ -159,8 +159,8 @@ SELECT
         // --- Execute SQL query ---
         try
         {
-            i64 prev_note_id{};
-            i64 next_note_id{};
+            identification prev_note_id{};
+            identification next_note_id{};
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
             db.exec("PRAGMA foreign_keys = ON;");
             db.exec("PRAGMA journal_mode=WAL;");

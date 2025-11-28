@@ -57,10 +57,10 @@ namespace mindnet::plugins::repetition::models
 
     struct Model : mindnet::model::BaseModel
     {
-        i64 user_id{};
-        i64 note_id;
-        i64 predicted_R_times_100{};
-        i64 actual_grade{};
+        identification user_id{};
+        identification note_id{};
+        int predicted_R_times_100{};
+        int actual_grade{};
         bool was_correct{};
 
         create_model_h_methods(Model, MODEL)

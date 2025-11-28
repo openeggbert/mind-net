@@ -35,7 +35,7 @@
 
 namespace mindnet::api
 {
-    AccessTokenContext::AccessTokenContext(int user_id, const std::string& msg, int status, bool system)
+    AccessTokenContext::AccessTokenContext(identification user_id, const std::string& msg, int status, bool system)
         : user_id(user_id),
           msg(msg),
           status(status),

@@ -108,19 +108,19 @@ namespace mindnet::model
     struct BaseModel
     {
     protected:
-        i64 id{};
+        identification id{};
         unixtime created_at{};
         unixtime updated_at{};
 
     public:
         virtual ~BaseModel() = default;
 
-        [[nodiscard]] i64 get_id() const
+        [[nodiscard]] identification get_id() const
         {
             return id;
         }
 
-        void set_id(const i64 id_)
+        void set_id(const identification id_)
         {
             id = id_;
         }
