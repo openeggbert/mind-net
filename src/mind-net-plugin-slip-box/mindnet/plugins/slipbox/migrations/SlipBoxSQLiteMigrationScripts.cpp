@@ -761,6 +761,27 @@ CREATE INDEX idx_test_attempt_answer_question ON test_attempt_answer(question_id
 
 )");
 
+    	add_migration("V33__create_annotation.sql", R"(
+CREATE TABLE annotation (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    note_id INTEGER NOT NULL,
+    parent_annotation_id INTEGER,
+
+    title TEXT,
+    content TEXT NOT NULL,
+
+    type INTEGER NOT NULL,
+
+    anchor_start_text TEXT NOT NULL,
+    anchor_end_text TEXT NOT NULL,
+
+    FOREIGN KEY (note_id) REFERENCES note(id),
+    FOREIGN KEY (parent_annotation_id) REFERENCES annotation(id)
+);
+)");
 
 
 

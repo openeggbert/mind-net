@@ -110,4 +110,5 @@ namespace mindnet::plugins::slipbox
     gen_find_cpp(slipbox, Link, link, LINK)
     gen_find_cpp(slipbox, Url, url, URL)
     gen_find_cpp(slipbox, MapCollection, map_collection, MAP_COLLECTION)
+    gen_find_cpp(slipbox, Annotation, annotation, ANNOTATION)
 }

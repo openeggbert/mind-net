@@ -55,6 +55,7 @@
 #include "mindnet/plugins/slipbox/validators/TestValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/TestAttemptValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/TestAttemptAnswerValidator.hpp"
+#include "mindnet/plugins/slipbox/validators/AnnotationValidator.hpp"
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateUpdateNoteTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.hpp"
@@ -111,6 +112,7 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(test, Test, TEST)
         REGISTER_MODEL(test_attempt, TestAttempt, TEST_ATTEMPT)
         REGISTER_MODEL(test_attempt_answer, TestAttemptAnswer, TEST_ATTEMPT_ANSWER)
+        REGISTER_MODEL(annotation, Annotation, ANNOTATION)
 
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());

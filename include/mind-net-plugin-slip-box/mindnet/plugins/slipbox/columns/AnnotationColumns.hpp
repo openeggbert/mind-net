@@ -22,18 +22,39 @@
  */
 
 
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
 #pragma once
 
 
-#define gen_find_h(plugin, Model, model) \
-std::pair<mindnet::plugins :: plugin :: models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, i64 id);
+#include "mindnet/model/BaseColumns.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/model/ColumnType.hpp"
 
-#define gen_find_cpp(plugin, Model, model, MODEL)\
-std::pair< mindnet::plugins:: plugin ::models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, i64 id)\
-{\
-auto result = ctx.db->read(mindnet::plugins:: plugin ::models::MODEL##_DEFINITION, ctx.token, id);\
-if (result.second.ko()) return {{}, result.second.error};\
-mindnet::plugins:: plugin ::models::Model entity;\
-entity.from_values(result.first);\
-return {entity, ""};\
+
+namespace mindnet::plugins::slipbox::columns
+{
+    struct AnnotationColumns : model::BaseColumns
+    {
+        AnnotationColumns() = delete;
+
+        AnnotationColumns(const AnnotationColumns&) = delete;
+        AnnotationColumns& operator=(const AnnotationColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "annotation";
+
+        // Primary and foreign key columns
+        static constexpr const char* NOTE_ID = "note_id";
+        static constexpr const char* PARENT_ANNOTATION_ID = "parent_annotation_id";
+
+        // Main content columns
+        static constexpr const char* TITLE = "title";
+        static constexpr const char* CONTENT = "content";
+        static constexpr const char* TYPE = "type";
+
+        static constexpr const char* ANCHOR_START_TEXT = "anchor_start_text";
+        static constexpr const char* ANCHOR_END_TEXT = "anchor_end_text";
+    };
 }

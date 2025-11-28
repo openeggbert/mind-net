@@ -23,54 +23,55 @@
 
 #pragma once
 
-
 #include <string>
 #include "mindnet/model/EnumDefinition.hpp"
-
 
 namespace mindnet::plugins::slipbox::enums
 {
     /**
+     * Enumerates different types of annotations inside SlipBox.
+     * These values correspond to UI icons, colors and behavior.
      *
      * @author robertvokac
      */
-    enum class AlertStatus
+    enum class AnnotationType
     {
-        PENDING = 0,
-        TRIGGERED = 1,
-        SNOOZED = 2,
-        DISMISSED = 3,
-        FAILED = 4
+        Comment = 0,
+        Todo = 1,
+        Warning = 2,
+        Question = 3,
+        Summary = 4,
+        Link = 5,
+        Definition = 6
     };
 
-    inline std::string alert_status_to_string(AlertStatus status)
+    inline std::string annotation_type_to_string(AnnotationType type)
     {
-        switch (status)
+        switch (type)
         {
-        case AlertStatus::PENDING:
-            return "PENDING";
-        case AlertStatus::TRIGGERED:
-            return "TRIGGERED";
-        case AlertStatus::SNOOZED:
-            return "SNOOZED";
-        case AlertStatus::DISMISSED:
-            return "DISMISSED";
-        case AlertStatus::FAILED:
-            return "Failed";
-        default:
-            return "Unknown";
+            case AnnotationType::Comment:     return "Comment";
+            case AnnotationType::Todo:        return "Todo";
+            case AnnotationType::Warning:     return "Warning";
+            case AnnotationType::Question:    return "Question";
+            case AnnotationType::Summary:     return "Summary";
+            case AnnotationType::Link:        return "Link";
+            case AnnotationType::Definition:  return "Definition";
+            default:                          return "unknown";
         }
     }
 
-    inline std::string alert_status_to_string(int status)
+    inline std::string annotation_type_to_string(int type)
     {
-        return alert_status_to_string(static_cast<AlertStatus>(status));
+        return annotation_type_to_string(static_cast<AnnotationType>(type));
     }
 
-    inline model::EnumDefinition alert_status_to_enum_definition()
+    inline model::EnumDefinition annotation_type_to_enum_definition()
     {
         return model::EnumDefinition{
-            alert_status_to_string, 5, 0, 1, 2, 3, 4
+            annotation_type_to_string,
+            7, // number of values
+            0, 1, 2, 3, 4, 5, 6
         };
     }
+
 } // namespace mindnet::plugins::slipbox::enums

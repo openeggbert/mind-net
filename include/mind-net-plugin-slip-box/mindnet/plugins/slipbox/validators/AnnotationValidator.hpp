@@ -21,19 +21,28 @@
  * THE SOFTWARE.
  */
 
-
 #pragma once
 
 
-#define gen_find_h(plugin, Model, model) \
-std::pair<mindnet::plugins :: plugin :: models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, i64 id);
+#include <memory>
 
-#define gen_find_cpp(plugin, Model, model, MODEL)\
-std::pair< mindnet::plugins:: plugin ::models::Model, string> find_##model(const mindnet::api::RequestContext& ctx, i64 id)\
-{\
-auto result = ctx.db->read(mindnet::plugins:: plugin ::models::MODEL##_DEFINITION, ctx.token, id);\
-if (result.second.ko()) return {{}, result.second.error};\
-mindnet::plugins:: plugin ::models::Model entity;\
-entity.from_values(result.first);\
-return {entity, ""};\
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/slipbox/models/Annotation.hpp"
+
+
+namespace mindnet::plugins::slipbox::validators
+{
+    using api::RequestContext;
+    using mindnet::plugins::slipbox::models::Annotation;
+
+    class AnnotationValidator : public api::ValidatorBase<
+            AnnotationValidator, Annotation>
+    {
+    public:
+        AnnotationValidator() = default;
+        ~AnnotationValidator() = default; // explicitly make it destructible
+        using Model = Annotation;
+
+        create_method_prototypes_for_ValidatorBase(Model)
+    };
 }

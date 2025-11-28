@@ -29,33 +29,33 @@
 
 enum class TaskStatus
 {
-    OPEN = 0,
-    IN_PROGRESS = 1,
-    BLOCKED = 2,
-    PAUSED = 3,
-    DONE = 4,
-    CANCELLED = 5,
-    FAILED = 6
+    Open = 0,
+    InProgress = 1,
+    Blocked = 2,
+    Paused = 3,
+    Done = 4,
+    Cancelled = 5,
+    Failed = 6
 };
 
 inline std::string task_status_to_string(TaskStatus status)
 {
     switch (status)
     {
-    case TaskStatus::OPEN:
-        return "OPEN";
-    case TaskStatus::IN_PROGRESS:
-        return "IN_PROGRESS";
-    case TaskStatus::BLOCKED:
-        return "BLOCKED";
-    case TaskStatus::PAUSED:
-        return "PAUSED";
-    case TaskStatus::DONE:
-        return "DONE";
-    case TaskStatus::CANCELLED:
-        return "CANCELLED";
-    case TaskStatus::FAILED:
-        return "FAILED";
+    case TaskStatus::Open:
+        return "Open";
+    case TaskStatus::InProgress:
+        return "InProgress";
+    case TaskStatus::Blocked:
+        return "Blocked";
+    case TaskStatus::Paused:
+        return "Paused";
+    case TaskStatus::Done:
+        return "Done";
+    case TaskStatus::Cancelled:
+        return "Cancelled";
+    case TaskStatus::Failed:
+        return "Failed";
     default:
         return "Unknown";
     }

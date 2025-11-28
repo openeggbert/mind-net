@@ -59,6 +59,7 @@
 #include "mindnet/plugins/slipbox/models/Test.hpp"
 #include "mindnet/plugins/slipbox/models/TestAttempt.hpp"
 #include "mindnet/plugins/slipbox/models/Url.hpp"
+#include "mindnet/plugins/slipbox/models/Annotation.hpp"
 
 
 namespace mindnet::plugins::slipbox::models
@@ -94,5 +95,6 @@ namespace mindnet::plugins::slipbox
     gen_find_h(slipbox, Tag, tag)
     gen_find_h(slipbox, TagType, tag_type)
     gen_find_h(slipbox, MapCollection, map_collection)
+    gen_find_h(slipbox, Annotation, annotation)
 }
 

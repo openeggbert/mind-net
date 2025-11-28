@@ -57,7 +57,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult QuestionValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
         auto note = slipbox::find_note(ctx, entity.note_id);;
-        if (note.second.empty()) return {400, note.second};
+        if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Read))
         {
@@ -70,7 +70,7 @@ namespace mindnet::plugins::slipbox::validators
                                                                      const Model& new_entity) const
     {
         auto note = slipbox::find_note(ctx, old_entity.note_id);;
-        if (note.second.empty()) return {400, note.second};
+        if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -83,7 +83,7 @@ namespace mindnet::plugins::slipbox::validators
                                                                      const Model& entity) const
     {
         auto note = slipbox::find_note(ctx, entity.note_id);;
-        if (note.second.empty()) return {400, note.second};
+        if (!note.second.empty()) return {400, note.second};
 
         if (slipbox::has_right_for_map(ctx, note.first.map_id, plugins::core::enums::SingleRight::Delete))
         {

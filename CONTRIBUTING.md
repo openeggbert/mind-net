@@ -42,7 +42,10 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Toggle Theme
 - [ ] import note as JSON and via the web interface
 - [ ] add Tests to the web interfaces
+- [ ] add Annotation to the web interfaces
 - [ ] Bug: Changes are not saved when exiting a note prematurely
+- [ ] HtmlExportJob: Add previous, next buttons
+- [ ] HtmlExportJob: Add support for links, tags, flags, etc.
 
 ### Plugin Repetition
 - [ ] rewrite app_repetition.js to OOP and classes
@@ -73,6 +76,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] To avoid model name collisions, use plugin_name consistently throughout the system. When finding a model, both
   plugin_name and model_name are required. This allows the same model_name to exist multiple times across different
   plugins.
+- [ ] Use PascalCase naming convention for all enums
 
 ### Frontend
 
