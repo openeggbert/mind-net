@@ -51,6 +51,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Backend
 - [ ] Fix bugs in the cron_quartz and CronScheduler
+- [ ] CronScheduler: fix ShardedModelCache, computing the shard index
 - [ ] All ID fields should be migrated from integer to int64_t (i64) type for consistency and future compatibility
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
 - [ ] FEATURE Support for PostgresSQL storage
@@ -88,6 +89,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Add support for Docker
 - [ ] Rewrite enums using EnumUtils.h
 - [ ] Table note - new column path9
+- [ ] QT desktop application, which starts or stops the server
 
 
 ### Table File

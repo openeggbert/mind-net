@@ -23,7 +23,6 @@
 
 
 #include "mindnet/api/ModelCache.hpp"
-
 #include "mindnet/util/Utils.hpp"
 
 

@@ -50,6 +50,7 @@ namespace mindnet::db::sqlite::queries
 
         auto now = util::Utils::current_unix_timestamp_ms();
 
+        std::string does_table_exist_sql = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=?;";
 
         std::string history_rows_without_delete_operation_sql = R"SQL(
 SELECT distinct table_name, record_id
@@ -86,6 +87,16 @@ created_at <= ? and
                 i64 record_id = query.getColumn(1).getInt64();
 
                 if (record_id == 0) continue;
+
+                SQLite::Statement query_does_table_exist(db, does_table_exist_sql);
+                query_does_table_exist.bind(1, table_name);
+                if (query_does_table_exist.executeStep())
+                {
+                    int count = query_does_table_exist.getColumn(0).getInt64();
+                    if (count == 0)
+                        continue;
+                }
+
                 SQLite::Statement query_concrete_table(
                     db, "select count(*) from " + table_name + " where id = " + std::to_string(record_id));
                 if (query_concrete_table.executeStep())
