@@ -153,7 +153,7 @@ CREATE INDEX idx_api_log_entity ON api_log(entity_name, entity_id);
 
 )");
 
-        add_migration("V6__create_access_token.sql", R"(
+    	add_migration("V6__create_access_token.sql", R"(
 CREATE TABLE access_token (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	created_at DATETIME,
@@ -190,6 +190,7 @@ CREATE INDEX idx_access_token_expires_at
   ON access_token(expires_at);
 CREATE INDEX idx_access_token_last_used
   ON access_token(last_used_at);
+
 
 )");
 
