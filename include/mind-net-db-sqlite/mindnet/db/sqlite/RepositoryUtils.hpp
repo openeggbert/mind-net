@@ -26,11 +26,11 @@
 
 namespace mindnet::db::sqlite
 {
-    identification create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error);
+    identification create_model(const model::ModelDefinition& definition, const entity_fields& fields, string& error);
 
     entity_fields read_model(model::ModelDefinition& def, identification id, string& error);
 
-    bool update_model(identification id, model::ModelDefinition& def, entity_fields& fields, string& error);
+    bool update_model(model::ModelDefinition& def, entity_fields& fields, identification id, string& error);
 
     bool delete_model(model::ModelDefinition& def, identification id, string& error);
 

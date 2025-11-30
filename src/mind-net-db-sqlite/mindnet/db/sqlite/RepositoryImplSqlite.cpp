@@ -58,7 +58,7 @@ namespace mindnet::db::sqlite
 
     identification RepositoryImplSqlite::create(const entity_fields& fields, string& error)
     {
-        try { return create_model(fields, get_model_definition(), error); }
+        try { return create_model(get_model_definition(), fields, error); }
         catch (std::exception& e) { return -1; }
     }
 
@@ -69,7 +69,7 @@ namespace mindnet::db::sqlite
 
     bool RepositoryImplSqlite::update(identification id, entity_fields& fields, string& error)
     {
-        return update_model(id, get_model_definition(), fields, error);
+        return update_model(get_model_definition(), fields, id, error);
     }
 
     bool RepositoryImplSqlite::remove(identification id, string& error)

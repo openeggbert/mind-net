@@ -155,7 +155,7 @@ namespace mindnet::db::sqlite
         }
     }
 
-    identification create_model(const entity_fields& fields, const model::ModelDefinition& definition, string& error)
+    identification create_model(const model::ModelDefinition& definition, const entity_fields& fields, string& error)
     {
         std::string sql = orm::SqlUtils::generate_insert_sql(definition);
         debug << "Going to execute insert SQL: " << sql << commit;
@@ -274,7 +274,7 @@ namespace mindnet::db::sqlite
         return {};
     }
 
-    bool update_model(identification id, model::ModelDefinition& def, entity_fields& fields_, string& error)
+    bool update_model(model::ModelDefinition& def, entity_fields& fields_, identification id, string& error)
     {
         std::string sql = orm::SqlUtils::generate_update_sql(def);
         debug << "Going to execute update SQL: " << sql << commit;
