@@ -40,7 +40,7 @@ JOIN r{algorithm}_state s ON s.note_id = n.id
 {map_join}
 WHERE s.user_id = {user_id}
   AND s.next_review <= {now_ms}
-  {eligible_where}
+  {eligible_where} AND
   AND n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
@@ -82,7 +82,8 @@ JOIN due d ON d.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      {eligible_where}
+      {where_base}
+      {eligible_where} AND
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
@@ -101,6 +102,8 @@ LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
 {map_join}
 WHERE s.note_id IS NULL
+AND EXISTS (SELECT 1 FROM flag f WHERE f.note_id = n.id AND f.title = 'repetition')
+  AND ({eligible_where_new})
   AND n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
@@ -142,7 +145,9 @@ JOIN new ne ON ne.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      n.content_id IS NOT NULL
+      EXISTS (SELECT 1 FROM flag f WHERE f.note_id = n.id AND f.title = 'repetition')
+      AND ({eligible_where_new})
+      AND n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
       {filter_under_note} = 0
@@ -167,6 +172,7 @@ new AS (
     LEFT JOIN r{algorithm}_state s
       ON s.note_id = n.id AND s.user_id = {user_id}
     WHERE s.note_id IS NULL
+  AND EXISTS (SELECT 1 FROM flag f WHERE f.note_id = n.id AND f.title = 'repetition')
 )
 SELECT n.id AS note_id
 FROM note n {parent_join}
@@ -177,7 +183,8 @@ JOIN (
 ) x ON x.note_id = n.id
 {map_join}
 WHERE
-      {eligible_where}
+      {where_base}
+      {eligible_where} AND
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c
               WHERE c.id = n.content_id AND TRIM(c.value) <> '')
@@ -217,6 +224,7 @@ new AS (
     LEFT JOIN r{algorithm}_state s
       ON s.note_id = n.id AND s.user_id = {user_id}
     WHERE s.note_id IS NULL
+  AND EXISTS (SELECT 1 FROM flag f WHERE f.note_id = n.id AND f.title = 'repetition')
 ),
 all_set AS (
     SELECT note_id FROM due
@@ -229,7 +237,8 @@ JOIN all_set x ON x.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      {eligible_where}
+      {where_base}
+      {eligible_where} AND
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c
               WHERE c.id = n.content_id AND TRIM(c.value) <> '')
@@ -247,7 +256,11 @@ SELECT n.id AS note_id
 FROM note n {parent_join}
 {map_join}
 WHERE
-      {eligible_where}
+      (
+           {eligible_where}
+        OR
+           ({eligible_where_new})
+      ) AND
       n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
@@ -282,7 +295,11 @@ LEFT JOIN note p ON p.id = n.parent_note_id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      {eligible_where}
+      (
+           {eligible_where}
+        OR
+           ({eligible_where_new})
+      ) AND
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
@@ -345,6 +362,22 @@ nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(
     else
     {
         eligible_where = ""; // no filtering — behave normally
+    }
+
+    std::string eligible_where_new;
+
+    if (filter_eligible)
+    {
+        eligible_where_new =
+            "AND EXISTS (SELECT 1 FROM flag f WHERE f.note_id = n.id AND f.title = 'repetition')\n  ";
+    }
+    else
+    {
+        eligible_where_new = "";
+    }
+    if (!filter_eligible) {
+        eligible_where = "";
+        eligible_where_new = "";
     }
 
     // --------------------------------------------------------
@@ -439,6 +472,8 @@ nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(
     // 🔵 Replace placeholders
     // --------------------------------------------------------
 
+    std::string where_base = "1=1";
+
     std::unordered_map<std::string, std::string> vars = {
         {"map_id", std::to_string(map_id)},
         {"map_collection_id", std::to_string(map_collection_id)},
@@ -451,7 +486,9 @@ nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(
         {"map_join", map_join_sql},
         {"map_where", map_where_sql},
         {"parent_join", parent_join_sql},
-        {"eligible_where", eligible_where}
+        {"where_base", where_base},
+        {"eligible_where", eligible_where},
+        {"eligible_where_new", eligible_where_new}
     };
 
         std::string sql = *sql_template;
