@@ -143,7 +143,8 @@ namespace mindnet::api
     std::optional<OperationResult> TriggerRegistry::execute_instead_of_delete(int stack_depth,
                                                                               OperationResult& validation_result,
                                                                               const model::ModelDefinition& def,
-                                                                              identification user_id, identification id)
+                                                                              identification user_id, identification id,
+                                                                              entity_fields& fields)
     {
         auto phase = TriggerPhase::InsteadOf;
         auto operation = essential::Crudl::Delete;
@@ -153,7 +154,7 @@ namespace mindnet::api
         if (run_list.empty()) return std::nullopt;
 
         return run_list[0]->run_instead_of_delete(stack_depth + 1, validation_result,
-                                                  def, user_id, id);
+                                                  def, user_id, id, fields);
     }
 
     std::optional<std::pair<std::vector<entity_fields>, OperationResult>> TriggerRegistry::execute_instead_of_list(

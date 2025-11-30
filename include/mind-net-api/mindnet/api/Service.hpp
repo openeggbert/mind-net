@@ -82,6 +82,7 @@ namespace mindnet::api
                                                                     api::AccessTokenContext& token,
                                                                     orm::QueryParams& query_params,
                                                                     int stack_depth) override;
+        void invalidate(const ModelDefinition& def, identification id) override;
 
         std::optional<ModelDefinition> get_model_definition(const string& model_name) override;
 

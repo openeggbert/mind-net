@@ -56,6 +56,10 @@ namespace mindnet::api
         {
             return !ok();
         }
+        explicit operator bool() const noexcept {
+            return ok();
+        }
+
     };
 
     inline OperationResult empty_result;

@@ -67,6 +67,7 @@ namespace mindnet::api
                                                      identification, int);
         using ListFn = std::pair<std::vector<entity_fields>, OperationResult>(Service::*)(
             const model::ModelDefinition&, api::AccessTokenContext&, orm::QueryParams&, int);
+        using InvalidateFn = void(Service::*)(const model::ModelDefinition&, identification id);
 
         AbstractTriggerJob(
             const std::string& name_,
@@ -84,6 +85,7 @@ namespace mindnet::api
         void set_update_fn(UpdateFn fn) { update_fn = fn; }
         void set_delete_fn(DeleteFn fn) { delete_fn = fn; }
         void set_list_fn(ListFn fn) { list_fn = fn; }
+        void set_invalidate_fn(InvalidateFn fn) { invalidate_fn = fn; }
 
         std::pair<identification, OperationResult> run_create(const model::ModelDefinition& def,
                                                               api::AccessTokenContext& token,
@@ -116,6 +118,10 @@ namespace mindnet::api
         {
             return (service_ptr->*list_fn)(def, token, query_params, depth);
         }
+        void run_invalidate(const model::ModelDefinition& def, identification id)
+        {
+            (service_ptr->*invalidate_fn)(def, id);
+        }
 
         //
         inline const std::string& get_name() const { return name; }
@@ -130,6 +136,7 @@ namespace mindnet::api
         UpdateFn update_fn = nullptr;
         DeleteFn delete_fn = nullptr;
         ListFn list_fn = nullptr;
+        InvalidateFn invalidate_fn = nullptr;
 
     protected:
         Service* service_ptr = nullptr;

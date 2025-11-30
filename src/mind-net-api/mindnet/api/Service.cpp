@@ -90,6 +90,7 @@ namespace mindnet::api
                         trigger->set_update_fn(&Service::update);
                         trigger->set_delete_fn(&Service::remove);
                         trigger->set_list_fn(&Service::list);
+                        trigger->set_invalidate_fn(&Service::invalidate);
                     }
                     auto operations = trigger->get_operations();
                     using mindnet::essential::Crudl;
@@ -136,6 +137,7 @@ namespace mindnet::api
                     job->set_update_fn(&Service::update);
                     job->set_delete_fn(&Service::remove);
                     job->set_list_fn(&Service::list);
+                    job->set_invalidate_fn(&Service::invalidate);
                     job->set_plugin_name(plugin_name);
                     job_map[job->get_name()] = job;
                 };
@@ -161,6 +163,7 @@ namespace mindnet::api
             cron_scheduler->set_update_fn(&Service::update);
             cron_scheduler->set_delete_fn(&Service::remove);
             cron_scheduler->set_list_fn(&Service::list);
+            cron_scheduler->set_invalidate_fn(&Service::invalidate);
             for (auto& e : job_map)
             {
                 cron_scheduler->add_job(e.second);
@@ -331,21 +334,24 @@ namespace mindnet::api
         if (stack_depth > MAX_TRIGGER_DEPTH) return {500, "Max trigger depth exceeded"};
         auto action = Crudl::Delete;
         auto validation_result = can_delete(def, token, id);
+        entity_fields fields{};
+        auto fields_result = db_ptr->read(def, token, id);
+        if (fields_result.second) fields = fields_result.first;
         trigger_registry_ptr->execute_before_or_after(TriggerPhase::Before, action, stack_depth, validation_result,
                                                       empty_result, def,
-                                                      token.user_id, id);
-
+                                                      token.user_id, id, fields);
         if (validation_result.ko())
         {
             return validation_result;
         }
         auto handled = trigger_registry_ptr->execute_instead_of_delete(stack_depth, validation_result, def,
-                                                                       token.user_id, id);
+                                                                       token.user_id, id, fields);
         auto action_result = handled.value_or(db_ptr->remove(def, token, id));
         trigger_registry_ptr->execute_before_or_after(TriggerPhase::After, action, stack_depth, validation_result,
                                                       action_result, def,
                                                       token.user_id,
-                                                      id);
+                                                      id,
+                                                      fields);
         if (validation_result.ko())
         {
             return validation_result;
@@ -386,7 +392,13 @@ namespace mindnet::api
                 mask_hidden_columns(def, fields);
         }
         return action_result;
-    };
+    }
+
+    void Service::invalidate(
+    const ModelDefinition& def, identification id)
+    {
+        db_ptr->invalidate(def, id);
+    }
 
     std::optional<ModelDefinition> Service::get_model_definition(const string& model_name)
     {

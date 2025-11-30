@@ -62,6 +62,7 @@ namespace mindnet::plugins::repetition::models
             coldef(COLS::SCOPE, MANDATORY | READONLY).set_enum_definition(enums::repetition_scope_to_enum_definition()),
             coldef(COLS::DESCRIPTION),
 
+            coldef(COLS::FILTER_ELIGIBLE, BOOL | READONLY).set_default_value(false),
             coldef(COLS::FILTER_UNDER_NOTE, READONLY).set_foreign_key("note"),
             coldef(COLS::FILTER_DATE_FROM, DATETIME | READONLY),
             coldef(COLS::FILTER_DATE_TO, DATETIME | READONLY),
@@ -82,6 +83,7 @@ namespace mindnet::plugins::repetition::models
         enums::RepetitionSchedule schedule{};
         enums::RepetitionScope scope{};
         std::string description;
+        bool filter_eligible{false};
         identification filter_under_note{};
         unixtime filter_date_from{};
         unixtime filter_date_to{};
@@ -106,6 +108,7 @@ namespace mindnet::plugins::repetition::models
                 schedule == other.schedule &&
                 scope == other.scope &&
                 description == other.description &&
+                filter_eligible == other.filter_eligible &&
                 filter_under_note == other.filter_under_note &&
                 filter_date_from == other.filter_date_from &&
                 filter_date_to == other.filter_date_to &&

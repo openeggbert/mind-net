@@ -53,6 +53,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 
 ### Backend
+- [ ] New table error
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2
@@ -76,6 +77,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
   plugin_name and model_name are required. This allows the same model_name to exist multiple times across different
   plugins.
 - [ ] Use PascalCase naming convention for all enums
+- [ ] Create a system user during startup if it doesn't exist. This user should not be able to login.
+- [ ] Check, test and fix all validators
 
 ### Frontend
 

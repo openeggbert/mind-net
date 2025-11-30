@@ -413,13 +413,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                 detailsBtn.textContent = shown ? "Show details" : "Hide details";
             };
             card.appendChild(detailsBtn);
-
             // Details table
             let details = document.createElement("div");
             details.className = "session-details";
             details.style.display = "none";
             details.innerHTML = `
             <table class="session-table">
+                <tr><th>Filter eligible</th><td>${(json.filter_eligible === null || json.filter_eligible === undefined) ? "-" : (json.filter_eligible === 0 ? "-" : "Yes")}</td></tr>
                 <tr><th>Filter under note</th><td>${json.filter_under_note || "-"}</td></tr>
                 <tr><th>Filter date from</th><td>${formatDateTimeHM(json.filter_date_from)}</td></tr>
                 <tr><th>Filter date to</th><td>${formatDateTimeHM(json.filter_date_to)}</td></tr>
@@ -701,6 +701,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         make_select("Scope", "new_session_scope", scopes)
         make_input("Description", "new_session_description")
 
+        make_input("Filter eligible", "new_session_filter_eligible", "checkbox")
+        if (cloned) get_element("new_session_filter_eligible").checked = clone_from_r_session.filter_eligible !== 0
+
         make_input("Filter under note", "new_session_filter_under_note", "text")
         if (cloned) get_element("new_session_filter_under_note").value = clone_from_r_session.filter_under_note
 
@@ -740,6 +743,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             new_session["schedule"] = get_element("new_session_schedule").value;
             new_session["scope"] = get_element("new_session_scope").value;
             new_session["description"] = get_element("new_session_description").value;
+
+            new_session["filter_eligible"] = get_element("new_session_filter_eligible").checked ? 1 : 0;
+            if (new_session["filter_eligible"] === "") new_session["filter_eligible"] = 0
 
             new_session["filter_under_note"] = get_element("new_session_filter_under_note").value;
             if (new_session["filter_under_note"] === "") new_session["filter_under_note"] = 0

@@ -33,6 +33,14 @@
 
 namespace mindnet::api
 {
+    AccessTokenContext::AccessTokenContext(bool value)
+    :
+    msg("system"),
+      status(403),
+      system(true)
+    {
+        if (!value) throw std::invalid_argument{"AccessTokenContext: invalid value for bool"};
+    }
     AccessTokenContext::AccessTokenContext(identification user_id, const std::string& msg, int status, bool system)
         : user_id(user_id),
           msg(msg),

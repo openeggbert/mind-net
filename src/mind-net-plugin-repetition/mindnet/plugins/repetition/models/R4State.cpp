@@ -33,6 +33,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(updated_at));
         result.push_back(user_id);
         result.push_back(note_id);
+        result.push_back(eligible);
         result.push_back(repetitions);
         result.push_back(interval);
         result.push_back(ef_times_100);
@@ -56,6 +57,7 @@ namespace mindnet::plugins::repetition::models
         updated_at = number();
         user_id = number();
         note_id = number();
+        eligible = boolean();
         repetitions = number();
         interval = number();
         ef_times_100 = number();

@@ -38,6 +38,7 @@
 #include "mindnet/plugins/repetition/triggers/AfterUpdateContentSemanticVersionTrigger.hpp"
 #include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.hpp"
 #include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.hpp"
+#include "mindnet/plugins/repetition/triggers/AfterCreateDeleteFlagRepetitionTrigger.hpp"
 
 namespace mindnet::plugins::repetition
 {
@@ -66,6 +67,7 @@ namespace mindnet::plugins::repetition
         plugin->register_trigger(std::make_shared<triggers::RSessionBeforeCreateTrigger>());
         plugin->register_trigger(std::make_shared<triggers::RReviewAfterCreateTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentSemanticVersionTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::AfterCreateDeleteFlagRepetitionTrigger>());
 
         plugin->register_query(std::make_shared<db::sqlite::queries::GetRSessionSelectedItemsSQLiteQuery>());
         plugin->close_for_changes();

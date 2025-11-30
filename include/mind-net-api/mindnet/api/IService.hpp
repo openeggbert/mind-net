@@ -62,6 +62,7 @@ namespace mindnet::api
         virtual std::pair<std::vector<entity_fields>, OperationResult> list(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,
             int stack_depth) = 0;
+        virtual void invalidate(const ModelDefinition& def, identification id) = 0;
 
         std::pair<identification, OperationResult> count(
             const ModelDefinition& def, api::AccessTokenContext& token, orm::QueryParams& query_params,

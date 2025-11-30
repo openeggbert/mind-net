@@ -43,12 +43,12 @@ namespace mindnet::plugins::slipbox::models
 
     inline const def FLAG_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
-        .set_all_rest_operations()
+        .set_rest_operations("crdl")
         .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
         .set_columns({
-            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY)
-            .set_description("Associated map ID"),
-            coldef(COLS::TITLE, MANDATORY)
+            coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY)
+            .set_description("Associated note ID"),
+            coldef(COLS::TITLE, MANDATORY | READONLY)
             .set_description("Flag title")
         });
 

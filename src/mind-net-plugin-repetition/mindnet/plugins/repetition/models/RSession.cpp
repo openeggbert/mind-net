@@ -39,6 +39,7 @@ namespace mindnet::plugins::repetition::models
         result.push_back(cast64(schedule));
         result.push_back(cast64(scope));
         result.push_back(description);
+        result.push_back(filter_eligible);
         result.push_back(filter_under_note);
         result.push_back(cast64(filter_date_from));
         result.push_back(cast64(filter_date_to));
@@ -53,17 +54,7 @@ namespace mindnet::plugins::repetition::models
     {
         int i = 0;
 
-        //todo: check, why there is no macro
-
-        auto number = [&values, &i]
-        {
-            // std::cout << "values[" << i << "]" << std::endl;
-            std::int64_t result = std::get<std::int64_t>(values[i++]);
-            // std::cout << "result[" << i << "]" << result << std::endl;
-            return result;
-        };
-        auto boolean = [&number] { return number() != 0; };
-        auto text = [&values, &i] { return std::get<std::string>(values[i++]); };
+        def_helper_lambdas()
 
         set_id(number());
         created_at = number();
@@ -76,6 +67,7 @@ namespace mindnet::plugins::repetition::models
         schedule = enums::int_to_repetition_schedule(number());
         scope = enums::int_to_repetition_scope(number());
         description = text();
+        filter_eligible = boolean();
         filter_under_note = number();
         filter_date_from = number();
         filter_date_to = number();

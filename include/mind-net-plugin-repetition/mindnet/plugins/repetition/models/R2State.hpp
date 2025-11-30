@@ -49,6 +49,7 @@ namespace mindnet::plugins::repetition::models
             //
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::NOTE_ID, FOREIGN_KEY | READONLY),
+            coldef(COLS::ELIGIBLE, BOOL | INTERNAL).set_default_value(false),
 
             coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
             coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
@@ -65,6 +66,7 @@ namespace mindnet::plugins::repetition::models
     {
         identification user_id{};
         identification note_id{};
+        bool eligible{false};
         int repetitions{};
         int interval{1};
         int ef_times_100{250};
@@ -83,6 +85,7 @@ namespace mindnet::plugins::repetition::models
                 updated_at == other.updated_at &&
                 user_id == other.user_id &&
                 note_id == other.note_id &&
+                eligible == other.eligible &&
                 repetitions == other.repetitions &&
                 interval == other.interval &&
                 ef_times_100 == other.ef_times_100 &&

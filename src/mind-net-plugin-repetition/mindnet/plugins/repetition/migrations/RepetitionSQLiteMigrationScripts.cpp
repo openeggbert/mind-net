@@ -438,6 +438,18 @@ ALTER TABLE r4_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
         add_migration("V21__alter_r18_state_table_add_column_content_modified_since_last_review.sql", R"(
 ALTER TABLE r18_state ADD content_modified_since_last_review INTEGER DEFAULT 0;
 )");
+
+    	add_migration("V22__alter_state_tables_add_column_eligible.sql", R"(
+ALTER TABLE r0_state ADD COLUMN eligible BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE r2_state ADD COLUMN eligible BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE r4_state ADD COLUMN eligible BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE r18_state ADD COLUMN eligible BOOLEAN NOT NULL DEFAULT 0;
+)");
+
+    	add_migration("V23__alter_r_session_add_filter_eligible.sql", R"(
+ALTER TABLE r_session ADD COLUMN filter_eligible BOOLEAN NOT NULL DEFAULT 0;
+)");
+
     }
 }
 

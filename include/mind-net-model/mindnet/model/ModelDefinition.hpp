@@ -49,6 +49,7 @@ namespace mindnet::model
         string group;
         int group_order_index = 0;
         column_definitions columns; ///< Column definitions for the model
+        std::map<string, int> column_indexes;
         std::set<mindnet::essential::Crudl> allowed_rest_operations; ///< Allowed CRUD operations for REST API
         bool virtual_table = false;
         bool no_table = false;
@@ -97,6 +98,16 @@ namespace mindnet::model
         [[nodiscard]] const column_definitions& get_columns() const
         {
             return columns;
+        }
+        [[nodiscard]] const int get_column_index(const char* column_name) const
+        {
+            if (!column_indexes.contains(column_name)) throw std::runtime_error(std::string("There is no column with name ") + column_name);
+            return column_indexes.at(column_name);
+        }
+        [[nodiscard]] const column_definition& get_column(const char* column_name)
+        {
+            int index = get_column_index(column_name);
+            return columns[index];
         }
 
         /** @return The allowed CRUD operations */
@@ -157,10 +168,19 @@ namespace mindnet::model
          */
         ModelDefinition& set_columns(column_definitions cols)
         {
+            if (!columns.empty()) throw std::runtime_error("columns is not empty");
+
             cols.emplace(cols.begin(), BaseColumns::UPDATED_AT);
             cols.emplace(cols.begin(), BaseColumns::CREATED_AT);
             cols.emplace(cols.begin(), BaseColumns::ID);
             columns = std::move(cols);
+
+            int index{0};
+            for (auto& column :columns)
+            {
+                column_indexes[column.get_column_name()] = index;
+                index++;
+            }
 
             return *this;
         }
@@ -310,6 +330,19 @@ namespace mindnet::model
             const std::vector<std::string>& params_)
         {
             return add_custom_action(mindnet::essential::Crudl::Read, model_name_, label_, params_);
+        }
+
+        void update_entity_field(entity_fields& fields, const char* column_name, i64 value) const
+        {
+            fields[get_column_index(column_name)] = value;
+        }
+        void update_entity_field(entity_fields& fields, const char* column_name, bool value) const
+        {
+            update_entity_field(fields, column_name, cast64(value? 1 : 0));
+        }
+        void update_entity_field(entity_fields& fields, const char* column_name, std::string value) const
+        {
+            fields[get_column_index(column_name)] = value;
         }
     };
 }

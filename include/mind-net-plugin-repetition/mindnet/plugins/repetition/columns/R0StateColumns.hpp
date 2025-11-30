@@ -44,6 +44,7 @@ namespace mindnet::plugins::repetition::columns
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* NOTE_ID = "note_id";
+        static constexpr const char* ELIGIBLE = "eligible";
         static constexpr const char* REPETITIONS = "repetitions";
         static constexpr const char* INTERVAL = "interval";
         static constexpr const char* NEXT_REVIEW = "next_review";

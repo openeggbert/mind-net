@@ -62,7 +62,8 @@ namespace mindnet::api
 
     std::optional<OperationResult> Trigger::run_instead_of_delete(int stack_depth, OperationResult& validation_result,
                                                                   const model::ModelDefinition& def,
-                                                                  identification user_id, identification id)
+                                                                  identification user_id, identification id,
+                                                                  entity_fields& fields)
     {
         throw std::runtime_error("Empty implementation was called: run_instead_of_delete()");
     }

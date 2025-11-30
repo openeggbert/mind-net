@@ -96,7 +96,9 @@ namespace mindnet::api
             OperationResult& validation_result,
             const model::ModelDefinition& def,
             identification user_id,
-            identification id);
+            identification id,
+            entity_fields& fields);
+
         virtual std::optional<std::pair<std::vector<entity_fields>, OperationResult>> run_instead_of_list(
             int stack_depth,
             OperationResult& validation_result,

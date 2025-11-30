@@ -28,34 +28,36 @@
 
 namespace mindnet::db::sqlite::queries
 {
-    const std::string SQL_DUE_ONLY = R"(
+
+// ------------------------------------------------------------
+// 🟦 SQL templates with unified {eligible_where}
+// ------------------------------------------------------------
+
+const std::string SQL_DUE_ONLY = R"(
 SELECT n.id AS note_id
 FROM note n {parent_join}
 JOIN r{algorithm}_state s ON s.note_id = n.id
 {map_join}
 WHERE s.user_id = {user_id}
   AND s.next_review <= {now_ms}
-
+  {eligible_where}
   AND n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
       WHERE c.id = n.content_id AND TRIM(c.value) <> ''
   )
-
   AND (
-    {filter_under_note} = 0
-    OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+      {filter_under_note} = 0
+      OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
-
   {map_where}
-
 {order_by}
 LIMIT {limit};
 )";
-    const std::string SQL_DUE_ONLY_DFS = R"(
+
+const std::string SQL_DUE_ONLY_DFS = R"(
 WITH RECURSIVE ord(note_id, ord_key) AS (
-    SELECT n0.id,
-           printf('/%06d', n0.sibling_order)
+    SELECT n0.id, printf('/%06d', n0.sibling_order)
     FROM note n0
     WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
@@ -64,7 +66,8 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
+    JOIN ord ON ord.note_id = c.parent_note_id
+    WHERE c.map_id = {map_id}
 ),
 due AS (
     SELECT n.id AS note_id
@@ -79,46 +82,42 @@ JOIN due d ON d.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
+      {eligible_where}
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
-        {filter_under_note} = 0
-        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+      {filter_under_note} = 0
+      OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
   {map_where}
 ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-    const std::string SQL_NEW_ONLY = R"(
+const std::string SQL_NEW_ONLY = R"(
 SELECT n.id AS note_id
 FROM note n {parent_join}
 LEFT JOIN r{algorithm}_state s
   ON s.note_id = n.id AND s.user_id = {user_id}
 {map_join}
 WHERE s.note_id IS NULL
-
   AND n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
       WHERE c.id = n.content_id AND TRIM(c.value) <> ''
   )
-
   AND (
-    {filter_under_note} = 0
-    OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+      {filter_under_note} = 0
+      OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
-
   {map_where}
-
 {order_by}
 LIMIT {limit};
 )";
 
-    const std::string SQL_NEW_ONLY_DFS = R"(
+const std::string SQL_NEW_ONLY_DFS = R"(
 WITH RECURSIVE ord(note_id, ord_key) AS (
-    SELECT n0.id,
-           printf('/%06d', n0.sibling_order)
+    SELECT n0.id, printf('/%06d', n0.sibling_order)
     FROM note n0
     WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
@@ -127,7 +126,8 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
+    JOIN ord ON ord.note_id = c.parent_note_id
+    WHERE c.map_id = {map_id}
 ),
 new AS (
     SELECT n.id AS note_id
@@ -145,15 +145,15 @@ WHERE
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
-        {filter_under_note} = 0
-        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+      {filter_under_note} = 0
+      OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
   {map_where}
 ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-    const std::string SQL_DUE_AND_NEW = R"(
+const std::string SQL_DUE_AND_NEW = R"(
 WITH due AS (
     SELECT n.id AS note_id
     FROM note n
@@ -176,28 +176,23 @@ JOIN (
     SELECT note_id FROM new
 ) x ON x.note_id = n.id
 {map_join}
-
 WHERE
+      {eligible_where}
       n.content_id IS NOT NULL
-  AND EXISTS (
-      SELECT 1 FROM content c
-      WHERE c.id = n.content_id AND TRIM(c.value) <> ''
-  )
+  AND EXISTS (SELECT 1 FROM content c
+              WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
        {filter_under_note} = 0
        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
-
   {map_where}
-
 {order_by}
 LIMIT {limit};
 )";
 
-    const std::string SQL_DUE_AND_NEW_DFS = R"(
+const std::string SQL_DUE_AND_NEW_DFS = R"(
 WITH RECURSIVE ord(note_id, ord_key) AS (
-    SELECT n0.id,
-           printf('/%06d', n0.sibling_order)
+    SELECT n0.id, printf('/%06d', n0.sibling_order)
     FROM note n0
     WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
@@ -206,7 +201,8 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
+    JOIN ord ON ord.note_id = c.parent_note_id
+    WHERE c.map_id = {map_id}
 ),
 due AS (
     SELECT n.id AS note_id
@@ -233,22 +229,25 @@ JOIN all_set x ON x.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
+      {eligible_where}
       n.content_id IS NOT NULL
-  AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
+  AND EXISTS (SELECT 1 FROM content c
+              WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
-        {filter_under_note} = 0
-        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+      {filter_under_note} = 0
+      OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
   {map_where}
 ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-    const std::string SQL_ALL = R"(
+const std::string SQL_ALL = R"(
 SELECT n.id AS note_id
 FROM note n {parent_join}
 {map_join}
 WHERE
+      {eligible_where}
       n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
@@ -258,17 +257,14 @@ WHERE
        {filter_under_note} = 0
        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
-
   {map_where}
-
 {order_by}
 LIMIT {limit};
 )";
 
-    const std::string SQL_ALL_DFS = R"(
+const std::string SQL_ALL_DFS = R"(
 WITH RECURSIVE ord(note_id, ord_key) AS (
-    SELECT n0.id,
-           printf('/%06d', n0.sibling_order)
+    SELECT n0.id, printf('/%06d', n0.sibling_order)
     FROM note n0
     WHERE n0.parent_note_id IS NULL AND n0.map_id = {map_id}
 
@@ -277,7 +273,8 @@ WITH RECURSIVE ord(note_id, ord_key) AS (
     SELECT c.id,
            ord.ord_key || '/' || printf('%06d', c.sibling_order)
     FROM note c
-    JOIN ord ON ord.note_id = c.parent_note_id WHERE c.map_id = {map_id}
+    JOIN ord ON ord.note_id = c.parent_note_id
+    WHERE c.map_id = {map_id}
 )
 SELECT n.id AS note_id
 FROM note n
@@ -285,66 +282,92 @@ LEFT JOIN note p ON p.id = n.parent_note_id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
+      {eligible_where}
       n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
-        {filter_under_note} = 0
-        OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
+      {filter_under_note} = 0
+      OR n.path LIKE (SELECT path || '%' FROM note WHERE id = {filter_under_note})
   )
   {map_where}
 ORDER BY o.ord_key ASC, n.id ASC
 LIMIT {limit};
 )";
 
-    GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
-        : Query(QUERY_GetRSessionSelectedItemsQuery, "Returns new note ids for repetition session",
-                essential::DatabaseType::SQLite)
+// ------------------------------------------------------------
+// 🟥 Constructor
+// ------------------------------------------------------------
+GetRSessionSelectedItemsSQLiteQuery::GetRSessionSelectedItemsSQLiteQuery()
+    : Query(QUERY_GetRSessionSelectedItemsQuery,
+            "Returns new note ids for repetition session",
+            essential::DatabaseType::SQLite)
+{
+}
+
+// ------------------------------------------------------------
+// 🟩 Main call() method
+// ------------------------------------------------------------
+nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(
+        nlohmann::json& request,
+        api::InvalidateMethod& invalidate_method)
+{
+    nlohmann::json response;
+
+    if (!request.contains("r_session"))
+        throw std::invalid_argument("Mandatory key r_session is missing");
+
+    nlohmann::json session = request["r_session"];
+
+    identification map_id = session["map_id"];
+    identification map_collection_id = session["map_collection_id"];
+    int algorithm = session["algorithm"];
+    bool filter_eligible = session["filter_eligible"] == 1;
+    identification filter_under_note = session["filter_under_note"];
+    int schedule = session["schedule"];
+    int scope = session["scope"];
+    identification user_id = session["user_id"];
+    int limit = session.value("limit", 250);
+    long long now_ms = std::time(nullptr) * 1000LL;
+
+    // --------------------------------------------------------
+    // 🔵 Eligible WHERE logic
+    // --------------------------------------------------------
+
+    std::string eligible_where;
+
+    if (filter_eligible)
     {
+        eligible_where =
+            "AND EXISTS (SELECT 1 FROM r" + std::to_string(algorithm) +
+            "_state s2 WHERE s2.note_id = n.id AND s2.user_id = " + std::to_string(user_id) +
+            " AND s2.eligible = 1)\n  ";
+    }
+    else
+    {
+        eligible_where = ""; // no filtering — behave normally
     }
 
-    nlohmann::json GetRSessionSelectedItemsSQLiteQuery::call(nlohmann::json& request,
-                                                             api::InvalidateMethod& invalidate_method)
+    // --------------------------------------------------------
+    // 🔵 Select SQL by scope
+    // --------------------------------------------------------
+
+    const std::string* sql_template = nullptr;
+
+    switch (scope)
     {
-        nlohmann::json response;
-
-        if (!request.contains("r_session"))
-        {
-            throw std::invalid_argument("Mandatory key r_session is missing");
-        }
-        nlohmann::json session = request["r_session"];
-
-        identification map_id = session["map_id"];
-        identification map_collection_id = session["map_collection_id"];
-        int algorithm = session["algorithm"];
-        identification filter_under_note = session["filter_under_note"];
-        int schedule = session["schedule"];
-        int scope = session["scope"];
-        identification user_id = session["user_id"];
-        int limit = session.value("limit", 250);
-        long long now_ms = std::time(nullptr) * 1000LL;
-
-        // --- Select SQL template based on scope ---
-        const std::string* sql_template = nullptr;
-        switch (scope)
-        {
-        case 0:
-            sql_template = (schedule == 0 ? &SQL_DUE_ONLY_DFS : &SQL_DUE_ONLY);
-            break;
-        case 1:
-            sql_template = (schedule == 0 ? &SQL_NEW_ONLY_DFS : &SQL_NEW_ONLY);
-            break;
-        case 2:
-            sql_template = (schedule == 0 ? &SQL_DUE_AND_NEW_DFS : &SQL_DUE_AND_NEW);
-            break;
-        case 3:
-            sql_template = (schedule == 0 ? &SQL_ALL_DFS : &SQL_ALL);
-            break;
+        case 0: sql_template = (schedule == 0 ? &SQL_DUE_ONLY_DFS : &SQL_DUE_ONLY); break;
+        case 1: sql_template = (schedule == 0 ? &SQL_NEW_ONLY_DFS : &SQL_NEW_ONLY); break;
+        case 2: sql_template = (schedule == 0 ? &SQL_DUE_AND_NEW_DFS : &SQL_DUE_AND_NEW); break;
+        case 3: sql_template = (schedule == 0 ? &SQL_ALL_DFS : &SQL_ALL); break;
         default:
             throw std::invalid_argument("Invalid scope value");
-        }
+    }
 
-        // --- ORDER BY based on schedule ---
-        std::string order_sql_part;
+    // --------------------------------------------------------
+    // 🔵 ORDER BY
+    // --------------------------------------------------------
+
+    std::string order_sql_part;
 
         switch (schedule)
         {
@@ -388,42 +411,48 @@ LIMIT {limit};
 
         default:
             throw std::invalid_argument("Invalid schedule value");
-        }
+    }
 
-        std::string map_join_sql;
-        std::string map_where_sql;
+    // --------------------------------------------------------
+    // 🔵 MAP JOIN
+    // --------------------------------------------------------
 
-        if (map_id != 0)
-        {
-            map_join_sql = "";
-            map_where_sql = "AND n.map_id = " + std::to_string(map_id);
-        }
-        else
-        {
-            map_join_sql =
-                "JOIN map_collection_item mci ON mci.map_id = n.map_id AND mci.map_collection_id = " +
-                std::to_string(map_collection_id);
+    std::string map_join_sql;
+    std::string map_where_sql;
 
-            map_where_sql = "";
-        }
+    if (map_id != 0)
+    {
+        map_join_sql = "";
+        map_where_sql = "AND n.map_id = " + std::to_string(map_id);
+    }
+    else
+    {
+        map_join_sql =
+            "JOIN map_collection_item mci ON mci.map_id = n.map_id "
+            "AND mci.map_collection_id = " + std::to_string(map_collection_id);
+        map_where_sql = "";
+    }
 
-        std::string parent_join_sql = "LEFT JOIN note p ON p.id = n.parent_note_id";
+    std::string parent_join_sql = "LEFT JOIN note p ON p.id = n.parent_note_id";
 
-        // --- Replace placeholders ---
-        std::unordered_map<std::string, std::string> vars = {
-            {"map_id", std::to_string(map_id)},
-            {"map_collection_id", std::to_string(map_collection_id)},
-            {"algorithm", std::to_string(algorithm)},
-            {"user_id", std::to_string(user_id)},
-            {"filter_under_note", std::to_string(filter_under_note)},
-            {"now_ms", std::to_string(now_ms)},
-            {"limit", std::to_string(limit)},
-            {"order_by", (schedule == 0 ? "" : order_sql_part)},
-            {"map_join", map_join_sql},
-            {"map_where", map_where_sql},
-            {"parent_join", parent_join_sql},
+    // --------------------------------------------------------
+    // 🔵 Replace placeholders
+    // --------------------------------------------------------
 
-        };
+    std::unordered_map<std::string, std::string> vars = {
+        {"map_id", std::to_string(map_id)},
+        {"map_collection_id", std::to_string(map_collection_id)},
+        {"algorithm", std::to_string(algorithm)},
+        {"user_id", std::to_string(user_id)},
+        {"filter_under_note", std::to_string(filter_under_note)},
+        {"now_ms", std::to_string(now_ms)},
+        {"limit", std::to_string(limit)},
+        {"order_by", (schedule == 0 ? "" : order_sql_part)},
+        {"map_join", map_join_sql},
+        {"map_where", map_where_sql},
+        {"parent_join", parent_join_sql},
+        {"eligible_where", eligible_where}
+    };
 
         std::string sql = *sql_template;
         for (const auto& [key, val] : vars)

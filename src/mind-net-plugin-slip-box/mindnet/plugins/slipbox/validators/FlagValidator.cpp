@@ -53,9 +53,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult FlagValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                  const Model& new_entity) const
     {
-        assert_editor()
-
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult FlagValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
@@ -84,7 +82,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult FlagValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
                                                              const Model& new_entity) const
     {
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult FlagValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const

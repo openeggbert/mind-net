@@ -23,38 +23,27 @@
 
 #pragma once
 
-#include "crow/http_request.h"
-#include "mindnet/essential/Helper.hpp"
+#include "mindnet/api/Trigger.hpp"
 
-namespace mindnet::api
+namespace mindnet::plugins::repetition::triggers
 {
-    class IService;
-    using ServicePtr = std::shared_ptr<IService>;
-
-    struct AccessTokenContext
+    class AfterCreateDeleteFlagRepetitionTrigger : public api::Trigger
     {
-        identification user_id{};
-        std::string msg;
-        int status{};
-        bool system{false};
+    public:
+        AfterCreateDeleteFlagRepetitionTrigger();
 
-        AccessTokenContext(bool value);
-        AccessTokenContext(identification user_id, const std::string& msg, int status, bool system = false);
-
-        AccessTokenContext(const crow::request& req, ServicePtr service_ptr);
-
-        bool ok() const { return status == 200; }
-        bool ko() const { return !ok(); }
-
-        bool is_system() const
-        {
-            if (system) return true;
-            return user_id == 0 && msg == "system" && status == 403;
-        }
-
-        bool is_not_system() const
-        {
-            return !is_system();
-        }
+        ~AfterCreateDeleteFlagRepetitionTrigger() override = default;
+        void run_before_or_after(
+            mindnet::essential::Crudl operation,
+            int stack_depth,
+            api::OperationResult& validation_result,
+            api::OperationResult& action_result,
+            const model::ModelDefinition def,
+            identification user_id,
+            identification id,
+            entity_fields& fields,
+            entity_fields& old_fields,
+            const orm::QueryParams query_params
+        ) override;
     };
 }

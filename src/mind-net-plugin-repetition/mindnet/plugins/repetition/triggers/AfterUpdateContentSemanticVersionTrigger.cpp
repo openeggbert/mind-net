@@ -42,7 +42,7 @@ namespace mindnet::plugins::repetition::triggers
     AfterUpdateContentSemanticVersionTrigger::AfterUpdateContentSemanticVersionTrigger()
         : Trigger(
             "AfterUpdateContentSemanticVersionTrigger",
-            "Updates state tables, if needed",
+            "Updates state tables, if the semantic version of the content changed",
             0,
             {essential::Crudl::Update},
             api::TriggerPhase::After,
@@ -83,6 +83,9 @@ namespace mindnet::plugins::repetition::triggers
         entity_fields& old_fields,
         const orm::QueryParams query_params)
     {
+        if (validation_result.ko()) return;
+        if (action_result.ko()) return;
+
         mindnet::plugins::slipbox::models::Content old_content;
         mindnet::plugins::slipbox::models::Content new_content;
         old_content.from_values(old_fields);

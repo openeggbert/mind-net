@@ -48,6 +48,7 @@ namespace mindnet::plugins::repetition::columns
         static constexpr const char* DESCRIPTION = "description";
 
         // Filter settings
+        static constexpr const char* FILTER_ELIGIBLE = "filter_eligible";
         static constexpr const char* FILTER_UNDER_NOTE = "filter_under_note";
         static constexpr const char* FILTER_DATE_FROM = "filter_date_from";
         static constexpr const char* FILTER_DATE_TO = "filter_date_to";

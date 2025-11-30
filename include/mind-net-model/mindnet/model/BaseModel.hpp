@@ -35,7 +35,7 @@
 #include "mindnet/util/TestUtils.hpp"
 
 #define create_model_h_methods(Model, MODEL)\
-[[nodiscard]] const def& get_definition() const override\
+[[nodiscard]] const def& get_model_definition() const override\
         {\
             return XPASTE(MODEL,_DEFINITION);\
         }\
@@ -131,7 +131,7 @@ namespace mindnet::model
             return updated_at;
         }
 
-        [[nodiscard]] virtual const ModelDefinition& get_definition() const = 0;
+        [[nodiscard]] virtual const ModelDefinition& get_model_definition() const = 0;
 
         [[nodiscard]] virtual entity_fields to_values() const = 0;
         virtual void from_values(const entity_fields& values) = 0;
@@ -139,7 +139,7 @@ namespace mindnet::model
 
         [[nodiscard]] JSON to_json() const
         {
-            return model_to_json(to_values(), get_definition());
+            return model_to_json(to_values(), get_model_definition());
         };
 
         // [[nodiscard]] bool equals(const BaseModel &other) const
@@ -154,6 +154,12 @@ namespace mindnet::model
         bool operator<(const BaseModel& other) const
         {
             return id < other.id;
+        }
+
+        int get_column_index(const char* column_name) const
+        {
+            auto& def = get_model_definition();
+            return def.get_column_index(column_name);
         }
     };
 
