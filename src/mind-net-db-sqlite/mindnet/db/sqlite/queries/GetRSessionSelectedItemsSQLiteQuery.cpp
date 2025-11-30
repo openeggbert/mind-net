@@ -36,7 +36,7 @@ JOIN r{algorithm}_state s ON s.note_id = n.id
 WHERE s.user_id = {user_id}
   AND s.next_review <= {now_ms}
 
-  AND n.content_id IS NOT NULL
+  AND {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
       WHERE c.id = n.content_id AND TRIM(c.value) <> ''
@@ -79,7 +79,7 @@ JOIN due d ON d.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      n.content_id IS NOT NULL
+      {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
         {filter_under_note} = 0
@@ -98,7 +98,7 @@ LEFT JOIN r{algorithm}_state s
 {map_join}
 WHERE s.note_id IS NULL
 
-  AND n.content_id IS NOT NULL
+  AND {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
       WHERE c.id = n.content_id AND TRIM(c.value) <> ''
@@ -142,7 +142,7 @@ JOIN new ne ON ne.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      n.content_id IS NOT NULL
+      {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
         {filter_under_note} = 0
@@ -178,7 +178,7 @@ JOIN (
 {map_join}
 
 WHERE
-      n.content_id IS NOT NULL
+      {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
       WHERE c.id = n.content_id AND TRIM(c.value) <> ''
@@ -233,7 +233,7 @@ JOIN all_set x ON x.note_id = n.id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      n.content_id IS NOT NULL
+      {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
         {filter_under_note} = 0
@@ -249,7 +249,7 @@ SELECT n.id AS note_id
 FROM note n {parent_join}
 {map_join}
 WHERE
-      n.content_id IS NOT NULL
+      {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (
       SELECT 1 FROM content c
       WHERE c.id = n.content_id AND TRIM(c.value) <> ''
@@ -285,7 +285,7 @@ LEFT JOIN note p ON p.id = n.parent_note_id
 LEFT JOIN ord o ON o.note_id = n.id
 {map_join}
 WHERE
-      n.content_id IS NOT NULL
+      {eligible_filter} n.content_id IS NOT NULL
   AND EXISTS (SELECT 1 FROM content c WHERE c.id = n.content_id AND TRIM(c.value) <> '')
   AND (
         {filter_under_note} = 0
@@ -322,6 +322,89 @@ LIMIT {limit};
         identification user_id = session["user_id"];
         int limit = session.value("limit", 250);
         long long now_ms = std::time(nullptr) * 1000LL;
+
+
+
+
+        std::string eligible_filter;
+
+if (session["filter_eligible"] == 0) {
+    eligible_filter = "1=1 AND";
+}
+else {
+    switch (scope) {
+
+    case 0: // DUE only
+        eligible_filter =
+            "EXISTS (\n"
+            "    SELECT 1 FROM r" + std::to_string(algorithm) + "_state s2\n"
+            "    WHERE s2.note_id = n.id\n"
+            "      AND s2.user_id = " + std::to_string(user_id) + "\n"
+            "      AND s2.eligible = 1\n"
+            ")\nAND";
+        break;
+
+    case 1: // NEW only
+        eligible_filter =
+            "EXISTS (\n"
+            "    SELECT 1 FROM flag f\n"
+            "    WHERE f.note_id = n.id\n"
+            "      AND f.title = 'repetition'\n"
+            ")\nAND";
+        break;
+
+    case 2: // DUE + NEW
+        eligible_filter =
+            "(\n"
+            "    EXISTS (\n"
+            "        SELECT 1 FROM r" + std::to_string(algorithm) + "_state s2\n"
+            "        WHERE s2.note_id = n.id\n"
+            "          AND s2.user_id = " + std::to_string(user_id) + "\n"
+            "          AND s2.eligible = 1\n"
+            "    )\n"
+            "    OR\n"
+            "    EXISTS (\n"
+            "        SELECT 1 FROM flag f\n"
+            "        WHERE f.note_id = n.id\n"
+            "          AND f.title = 'repetition'\n"
+            "    )\n"
+            ")\nAND";
+        break;
+
+    case 3: // ALL
+        eligible_filter =
+            "(\n"
+            "    -- pokud je note ve state tabulce → musí být eligible=1\n"
+            "    EXISTS (\n"
+            "        SELECT 1 FROM r" + std::to_string(algorithm) + "_state s2\n"
+            "        WHERE s2.note_id = n.id\n"
+            "          AND s2.user_id = " + std::to_string(user_id) + "\n"
+            "          AND s2.eligible = 1\n"
+            "    )\n"
+            "    OR\n"
+            "    -- pokud není ve state tabulce → musí mít repetition flag\n"
+            "    (\n"
+            "        NOT EXISTS (\n"
+            "            SELECT 1 FROM r" + std::to_string(algorithm) + "_state s3\n"
+            "            WHERE s3.note_id = n.id\n"
+            "              AND s3.user_id = " + std::to_string(user_id) + "\n"
+            "        )\n"
+            "        AND EXISTS (\n"
+            "            SELECT 1 FROM flag f\n"
+            "            WHERE f.note_id = n.id\n"
+            "              AND f.title = 'repetition'\n"
+            "        )\n"
+            "    )\n"
+            ")\nAND";
+        break;
+
+    default:
+        throw std::invalid_argument("Invalid scope value for eligibility.");
+    }
+}
+
+
+
 
         // --- Select SQL template based on scope ---
         const std::string* sql_template = nullptr;
@@ -422,6 +505,7 @@ LIMIT {limit};
             {"map_join", map_join_sql},
             {"map_where", map_where_sql},
             {"parent_join", parent_join_sql},
+            {"eligible_filter", eligible_filter},
 
         };
 
