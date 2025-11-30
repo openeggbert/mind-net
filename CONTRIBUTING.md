@@ -53,6 +53,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 
 ### Backend
+- [ ] All occurrences of methods to_values(), from_values must use serialize_fields() and deserialize_fields()
 - [ ] New table error
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
@@ -81,7 +82,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Check, test and fix all validators
 
 ### Frontend
-
 - [ ] sort and order is missing
 - [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 - [ ] Frontend should not show actions, for which user is not authorized to

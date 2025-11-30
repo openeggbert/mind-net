@@ -135,6 +135,28 @@ namespace mindnet::plugins::slipbox::models
         string path;
         int depth{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::id,
+            &Model::created_at,
+            &Model::updated_at,
+
+            &Model::map_id,
+            &Model::parent_note_id,
+            &Model::content_id,
+            &Model::source_id,
+            &Model::alias_for_note_id,
+
+            &Model::title,
+            &Model::hint,
+            &Model::sibling_order,
+
+            &Model::importance,
+            &Model::difficulty,
+
+            &Model::path,
+            &Model::depth
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

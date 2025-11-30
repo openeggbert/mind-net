@@ -27,47 +27,13 @@ namespace mindnet::plugins::repetition::models
 {
     entity_fields R18State::to_values() const
     {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(user_id);
-        result.push_back(note_id);
-        result.push_back(eligible);
-        result.push_back(stability_times_100);
-        result.push_back(last_interval_times_100);
-        result.push_back(repetitions);
-        result.push_back(lapses);
-        result.push_back(cast64(next_review));
-        result.push_back(cast64(last_review));
-        result.push_back(last_quality);
-        result.push_back(last_seen_semantic_version);
-        result.push_back(content_modified_since_last_review);
-        return result;
+        return serialize_fields(*this);
     }
 
     void R18State::from_values(const entity_fields& values)
     {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        user_id = number();
-        note_id = number();
-        eligible = boolean();
-        stability_times_100 = number();
-        last_interval_times_100 = number();
-        repetitions = number();
-        lapses = number();
-        next_review = number();
-        last_review = number();
-        last_quality = number();
-        last_seen_semantic_version = number();
-        content_modified_since_last_review = boolean();
-    };
+        deserialize_fields(*this, values);
+    }
 
     string R18State::validate()
     {

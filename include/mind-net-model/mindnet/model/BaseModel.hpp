@@ -101,6 +101,16 @@ namespace mindnet::model
     using def = ModelDefinition;
     using crudl = mindnet::essential::Crudl;
 
+    // ---------- GENERIC SERIALIZATION HELPERS ----------
+    template<typename FieldType>
+    auto serialize_value(const FieldType& value);
+    template<typename FieldType>
+    FieldType deserialize_value(const entity_field& input);
+
+    template<typename Obj, typename MemberPtr>
+using member_type_t =
+    std::decay_t<decltype(std::declval<Obj>().*std::declval<MemberPtr>())>;
+
     struct BaseModel
     {
     protected:
@@ -161,6 +171,45 @@ namespace mindnet::model
             auto& def = get_model_definition();
             return def.get_column_index(column_name);
         }
+    protected:
+        template<typename T>
+        entity_fields serialize_fields(const T& obj) const
+        {
+            entity_fields out;
+            out.reserve(std::tuple_size_v<decltype(T::fields)>);
+
+            std::apply([&](auto... memptr){
+                (
+                    out.push_back(
+                        serialize_value(obj.*memptr)
+                    ),
+                ...);
+            }, T::fields);
+
+            return out;
+        }
+
+        template<typename T>
+        void deserialize_fields(T& obj, const entity_fields& values)
+        {
+            int found_count = values.size();
+            auto& def = get_model_definition();
+            int expected_count = get_model_definition().get_column_count();
+            if (found_count != expected_count)
+            {
+                throw std::runtime_error(std::string("Cannot deserialize fields: ") + def.get_model_name() + " " + "expected_count=" + std::to_string(expected_count) + " found_count=" + std::to_string(found_count));
+            }
+            int i = 0;
+            std::apply([&](auto... memptr){
+                (
+                    [&]{
+                        using F = member_type_t<T, decltype(memptr)>;
+                        obj.*memptr = deserialize_value<F>(values[i++]);
+                    }(),
+                ...);
+            }, T::fields);
+        }
+
     };
 
     inline string validate_enums(const entity_fields& fields_, const ModelDefinition& def_)
@@ -243,4 +292,48 @@ namespace mindnet::model
         }
         return "";
     }
+
+    // ---------- GENERIC SERIALIZATION HELPERS ----------
+    template<typename FieldType>
+    auto serialize_value(const FieldType& value)
+    {
+        if constexpr (std::is_enum_v<FieldType>) {
+            return (int64_t) static_cast<std::underlying_type_t<FieldType>>(value);
+        }
+        else if constexpr (std::is_same_v<FieldType, bool>) {
+            return value;
+        }
+        else if constexpr (std::is_convertible_v<FieldType, std::string>) {
+            return std::string(value);
+        }
+        else if constexpr (std::is_arithmetic_v<FieldType>) {
+            return (int64_t) value;
+        }
+        else {
+            static_assert(!sizeof(FieldType), "Unsupported field type in serialize_value");
+        }
+    }
+
+    template<typename FieldType>
+    FieldType deserialize_value(const entity_field& input)
+    {
+        if constexpr (std::is_enum_v<FieldType>) {
+            using UT = std::underlying_type_t<FieldType>;
+            return static_cast<FieldType>((UT) std::get<int64_t>(input));
+        }
+        else if constexpr (std::is_same_v<FieldType, bool>) {
+            return std::get<int64_t>(input) != 0;
+        }
+        else if constexpr (std::is_convertible_v<std::string, FieldType>) {
+            return std::get<std::string>(input);
+        }
+        else if constexpr (std::is_arithmetic_v<FieldType>) {
+            return (FieldType) std::get<int64_t>(input);
+        }
+        else {
+            static_assert(!sizeof(FieldType), "Unsupported type in deserialize_value");
+        }
+        throw new std::runtime_error("Illegal state");
+    }
+
 }

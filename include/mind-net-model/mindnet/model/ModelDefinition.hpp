@@ -99,6 +99,10 @@ namespace mindnet::model
         {
             return columns;
         }
+        [[nodiscard]] const int get_column_count() const
+        {
+            return columns.size();
+        }
         [[nodiscard]] const int get_column_index(const char* column_name) const
         {
             if (!column_indexes.contains(column_name)) throw std::runtime_error(std::string("There is no column with name ") + column_name);
