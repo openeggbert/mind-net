@@ -36,14 +36,11 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Plugin Slipbox
 - [ ] Table map: add new column position
 - [ ] onclick textarea starts editing
-- [ ] visit history
 - [ ] fulltext search
 - [ ] Keyboard shortcuts
 - [ ] Fix Focus Mode
 - [ ] Toggle Theme
 - [ ] import note as JSON and via the web interface
-- [ ] add Tests to the web interfaces
-- [ ] add Annotation to the web interfaces
 - [ ] Bug: Changes are not saved when exiting a note prematurely
 - [ ] HtmlExportJob: Add previous, next buttons
 - [ ] HtmlExportJob: Add support for links, tags, flags, etc.
@@ -224,6 +221,9 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Links will allow labels using |
 - [x] Previous next in slipbox plugin
 - [x] Path in slipbox plugin
-- [x] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs -delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
+- [x] CronJobs - https://www.baeldung.com/cron-expressions - also cleanup CronJobs - delete old auth_log, api_log, super_admin_log, history (READ and LIST only)
 - [x] FEATURE Support for export to static HTML files
 - [x] All ID fields should be migrated from integer to identification for consistency and future compatibility
+- [x] add Tests to the web interfaces
+- [x] add Annotation to the web interfaces
+- [x] visit history

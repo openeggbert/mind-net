@@ -427,7 +427,7 @@ namespace mindnet::http
             res["total_items"] = query_params.total_items;
             res["page_number"] = page_number;
             res["page_size"] = page_size;
-            int total_pages = query_params.total_items / page_size;
+            i64 total_pages = query_params.total_items / page_size;
             if (query_params.total_items % page_size != 0)
             {
                 ++total_pages;
