@@ -201,7 +201,7 @@ export function copy_to_clipboard(text) {
     showInfo("Copied to clipboard: " + text);
 }
 
-export function chooseOption(options) {
+export function chooseOption(options, title = "") {
     return new Promise((resolve) => {
         // Overlay
         const overlay = document.createElement("div");
@@ -226,6 +226,12 @@ export function chooseOption(options) {
         panel.style.flexDirection = "column";
         panel.style.gap = "10px";
         panel.style.minWidth = "200px";
+        if(title !== "") {
+            let h1 = document.createElement("h1");
+            h1.innerText = title;
+            h1.style.textAlign = "center";
+            panel.appendChild(h1);
+        }
 
         // Create buttons for all options
         options.forEach((text) => {

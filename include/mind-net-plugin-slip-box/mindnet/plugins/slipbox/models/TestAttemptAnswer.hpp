@@ -54,6 +54,8 @@ namespace mindnet::plugins::slipbox::models
                 coldef(COLS::IS_CORRECT, BOOL | READONLY),
             });
 
+    //todo: add unique index: test_attempt_id, question_id
+
     struct Model : mindnet::model::BaseModel
     {
         identification test_attempt_id{};

@@ -29,24 +29,15 @@ namespace mindnet::plugins::slipbox::models
     {
         std::stringstream ss(answer_to_be_parsed);
         std::string item;
-        bool is_first = true;
 
         while (std::getline(ss, item, *ANSWER_SEPARATOR))
         {
-            if (is_first)
+            bool is_correct = !item.empty() && item[0] != '-';
+            if (!is_correct)
             {
-                value.emplace_back(item, true);
-                is_first = false;
+                item = item.substr(1);
             }
-            else
-            {
-                bool is_correct = !item.empty() && item[0] == '+';
-                if (is_correct)
-                {
-                    item = item.substr(1);
-                }
-                value.emplace_back(item, is_correct);
-            }
+            value.emplace_back(item, is_correct);
         }
     }
 

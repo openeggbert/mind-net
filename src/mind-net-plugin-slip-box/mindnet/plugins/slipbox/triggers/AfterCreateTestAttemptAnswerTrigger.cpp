@@ -70,6 +70,21 @@ namespace mindnet::plugins::slipbox::triggers
                                             ? api::AccessTokenContext(user_id, "system", 403)
                                             : api::AccessTokenContext(user_id, "", 200);
 
+        orm::QueryParams qp0;
+        qp0.add_filter("test_attempt_id", new_test_attempt_answer.test_attempt_id);
+        qp0.add_filter("question_id", new_test_attempt_answer.question_id);
+        auto list_test_attempt_answers = run_list(models::TEST_ATTEMPT_ANSWER_DEFINITION, token, qp0, stack_depth);
+        if (!list_test_attempt_answers.second)
+        {
+            err << "Loading list of test attempt answers failed " << list_test_attempt_answers.second.error << commit;
+            return;
+        }
+        if (list_test_attempt_answers.first.size() > 1)
+        {
+            warn << "Ignoring this test_attempt_answer. An answer with such test_attempt_id and question_id already exists." << commit;
+            return;
+        }
+
         auto read_test_attempt = run_read(models::TEST_ATTEMPT_DEFINITION, token,
                                           new_test_attempt_answer.test_attempt_id, stack_depth);
         if (read_test_attempt.second.ko())

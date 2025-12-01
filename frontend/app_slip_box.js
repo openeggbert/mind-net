@@ -13,7 +13,7 @@ import {
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
     chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element, saveToLocalStorage,
-    formatDateTimeHM, formatDateTime
+    formatDateTimeHM, formatDateTime, showInfo, showError
 } from "./dom.js";
 
 let map_id = "";
@@ -1331,7 +1331,104 @@ async function render() {
                 showWindowFrom(Models, url);
             }
             if(result === "Run") {
-                show_warn("Not yet implemented")
+                let test_attempt_id = prompt("Test attempt ID");
+
+                if (test_attempt_id === undefined || test_attempt_id === null) {
+                    show_warn("No Test attempt ID was entered")
+                    return
+                }
+                let test_attempt = await read_entity("test_attempt", test_attempt_id)
+                let test = await read_entity("test", test_attempt.test_id)
+                // alert(JSON.stringify(test_attempt, null, 2));
+                // alert(JSON.stringify(test, null, 2));
+                let started_at = test_attempt.started_at;
+                let finished_at = test_attempt.finished_at;
+                if(finished_at !== 0) {
+                    show_warn("This test attempt is already finished.")
+                    return;
+                }
+                let time_limit_in_seconds = test.time_limit_in_seconds;
+                let expires_at = started_at + time_limit_in_seconds * 1000;
+                let expired = Date.now() > expires_at
+                if(expired) {
+                    show_warn("This test attempt is expired.")
+                    return;
+                }
+                const question_ids = test_attempt.question_ids.split(",");
+                let any_question = false
+
+                for (const question_id of question_ids) {
+                    let test_attempt_answers = await list_all_entities(
+                        "test_attempt_answer",
+                        "&test_attempt_id=" + test_attempt_id + "&question_id=" + question_id
+                        )
+                    if(test_attempt_answers.length !== 0) {
+                        continue;
+                    }
+                    any_question = true
+
+                    let question = await read_entity("question", question_id)
+
+                    const answers = question.answers.split("::::");
+                    let question_text = question.question_text + "?"
+
+                    let result = ""
+                    let correct = false
+
+                    if (answers.length > 1) {
+                        result = await chooseOption(answers.slice().map(e=> {e.length === 0 ? e : e.substr(0)}), question_text);
+                        if (result === null || result === undefined) {
+                            show_warn("You exited this test.")
+                            break;
+                        }
+                        for (const answer of answers) {
+                            if(answer === result) {
+                                correct = true;
+                                break;
+                            }
+                        }
+                        correct = result.length !== 0 && result[0] !== "-";
+                    } else {
+                        result = await chooseOption(["Show answer"], question_text);
+                        show_info(answers[0])
+                        result = await chooseOption(["I know", "I don't know"], "Did you know?");
+                        correct = result !== null && result !== undefined && result === "I know";
+                        if(correct) result = answers[0];
+                    }
+                    let test_attempt_answer = {
+                        test_attempt_id: test_attempt.id,
+                        question_id: question_id,
+                        user_answer: result,
+                        is_correct: correct ? 1 : 0,
+                    }
+                    let post_test_attempt_answer = post_entity("test_attempt_answer", test_attempt_answer)
+                    if(correct) show_info("Correct answer")
+                    if(!correct) show_error("Incorrect answer")
+                }
+                if(!any_question) {
+                    show_warn("All questions were already answered.");
+                }
+
+                await sleep_for_seconds(1)
+                let test_attempt2 = await read_entity("test_attempt", test_attempt_id)
+                alert(JSON.stringify(test_attempt2, null, 2));
+                function score_to_text(score) {
+                    if(score >= 90) return "Excellent"
+                    if(score >= 80) return "Very Good"
+                    if(score >= 70) return "Good"
+                    if(score >= 60) return "Satisfactory"
+                    if(score >= 50) return "Poor"
+                    return "Insufficient"
+                }
+                if(test_attempt2.finished_at !== 0) {
+                    let score = test_attempt2.score_times_100
+                    show_info("Test finished. Your score: " + score + "%. " + score_to_text(score))
+                    if(score >= 60) {
+                        show_info("You passed.")
+                    } else {
+                        show_error("You failed.")
+                    }
+                }
             }
 
         }
