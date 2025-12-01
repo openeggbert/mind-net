@@ -3,7 +3,7 @@
 // ========================================
 import {
     delete_entity,
-    getTitleCache,
+    getTitleCache, getUserId,
     list_all_entities,
     post_entity,
     put_entity,
@@ -12,7 +12,8 @@ import {
 } from "./api.js";
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
-    chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element
+    chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element, saveToLocalStorage,
+    formatDateTimeHM, formatDateTime
 } from "./dom.js";
 
 let map_id = "";
@@ -1120,39 +1121,375 @@ async function render() {
         get_element("meta_button_links").onclick = function () {
             let Models = "Links";
             let model = "link"
-            showWindowFrom(Models, "index.html?entity=" + model + "&action=list&from_note_id=" + note.id);
+            let url = "index.html?entity=" + model + "&action=list"
+            if(mode_notes) url= url + "&from_note_id=" + note.id
+            showWindowFrom(Models, url);
         }
-        // assign_meta_list_function("links", "Links", "link")
-        assign_meta_list_function("urls", "Urls", "url")
-        assign_meta_list_function("terms", "Terms", "term")
-        assign_meta_list_function("sources", "Sources", "source")
-        assign_meta_list_function("ideas", "Ideas", "idea")
-        assign_meta_list_function("questions", "Questions", "question")
 
-        // assign_meta_list_function("backlinks", "Backlinks", "backlink")
-        // assign_meta_list_function("siblings", "Siblings", "sibling")
-        // hide_element("meta_button_backlinks")
-        // hide_element("meta_button_siblings")
+        get_element("meta_button_urls").onclick = function () {
+            let Models = "Urls";
+            let model = "url"
+            let url = "index.html?entity=" + model + "&action=list"
+            if(mode_notes) url= url + "&from_note_id=" + note.id
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_terms").onclick = async function () {
+            const result = await chooseOption(["List", "Add"]);
+            if(result === null || result === undefined) return
+
+            let Models = "Terms";
+            let model = "term"
+            let url;
+            if(result === "List") url = "index.html?entity=" + model + "&action=list"
+            if(result === "Add") url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
+            showWindowFrom(Models, url);
+        }
+
+        assign_meta_list_function("sources", "Sources", "source")
+
+        get_element("meta_button_ideas").onclick = async function () {
+            const result = await chooseOption(["List", "Add"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Ideas";
+            let model = "idea"
+            let url;
+            if(result === "List") url = "index.html?entity=" + model + "&action=list&user_id="+getUserId()
+            if(result === "Add") url = "index.html?entity=" + model + "&action=create&user_id="+getUserId()
+            showWindowFrom(Models, url);
+        }
+        get_element("meta_button_questions").onclick = async function () {
+            const result = await chooseOption(["List", "List all", "Add"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Questions";
+            let model = "question"
+            let url;
+            if(result === "List") url = "index.html?entity=" + model + "&action=list&note_id="+note.id
+            if(result === "List all") url = "index.html?entity=" + model + "&action=list"
+            if(result === "Add") url = "index.html?entity=" + model + "&action=create&note_id="+note.id
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_backlinks").onclick = function () {
+            let Models = "Backlinks";
+            let model = "link"
+            let url = "index.html?entity=" + model + "&action=list"
+            if(mode_notes) url= url + "&to_note_id=" + note.id
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_siblings").onclick = function () {
+            let Models = "Siblings";
+            let model = "note"
+            let url = "index.html?entity=" + model + "&action=list&parent_note_id=" + note.parent_note_id
+            showWindowFrom(Models, url);
+        }
+
+        show_or_hide_elements(mode_notes, "meta_button_backlinks")
+        show_or_hide_elements(mode_notes, "meta_button_siblings")
 
         get_element("meta_button_wanted_notes").onclick = function () {
             let Models = "Wanted notes";
             let model = "wanted_note"
-            showWindowFrom(Models, "index.html?entity=" + model + "&action=list&from_note_id=" + note.id);
+            let url = "index.html?entity=" + model + "&action=list";
+            if(mode_notes) url= url + "&from_note_id=" + note.id
+            showWindowFrom(Models, url);
         }
-        // assign_meta_list_function("wanted_notes", "Wanted notes", "wanted_note")
 
-        assign_meta_list_function("properties", "Properties", "property")
-        assign_meta_list_function("tags", "Tags", "tag")
-        assign_meta_list_function("collections", "Collections", "collection")
+        get_element("meta_button_properties").onclick = async function () {
+            const result = await chooseOption(["List", "Add"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Properties";
+            let model = "property"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "Add") {
+                url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
+                if(mode_notes) url= url + "&note_id=" + note.id
+
+            }
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_tags").onclick = async function () {
+            const result = await chooseOption(["List", "Add", "List types", "Add type"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Tags";
+            let model = "tag"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "Add") {
+                url = "index.html?entity=" + model + "&action=create"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "List types") {
+                url = "index.html?entity=" + "tag_type" + "&action=list&map_id=" + map.id;
+            }
+            if(result === "Add type") {
+                url = "index.html?entity=" + "tag_type" + "&action=create&map_id=" + map.id;
+            }
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_collections").onclick = async function () {
+            const result = await chooseOption(["List collections", "Create collection", "Add to collection"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Collections";
+            let model = "collection"
+            let url;
+            if(result === "List collections") {
+                url = "index.html?entity=" + model + "&action=list"
+            }
+            if(result === "Create collection") {
+                url = "index.html?entity=" + model + "&action=create"
+            }
+            if(result === "Add to collection") {
+                url = "index.html?entity=" + "collection_item" + "&action=create"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            showWindowFrom(Models, url);
+        }
 //
         assign_meta_list_function("alert", "Alerts", "alert")
-        assign_meta_list_function("flags", "Flags", "flag")
+
+        get_element("meta_button_flags").onclick = async function () {
+            const result = await chooseOption(["List", "Add"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Flags";
+            let model = "flag"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "Add") {
+                url = "index.html?entity=" + model + "&action=create"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_annotations").onclick = async function () {
+            const result = await chooseOption(["List", "Add"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Annotations";
+            let model = "annotation"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "Add") {
+                url = "index.html?entity=" + model + "&action=create"
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            showWindowFrom(Models, url);
+        }
+
+        get_element("meta_button_tests").onclick = async function () {
+            const result = await chooseOption(["List", "Add"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Tests";
+            let model = "test"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
+            }
+            if(result === "Add") {
+                url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
+                if(mode_notes) url= url + "&under_note_id=" + note.id
+            }
+            showWindowFrom(Models, url);
+        }
+        get_element("meta_button_test_attempts").onclick = async function () {
+            const result = await chooseOption(["List", "Add", "Run"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Test attempts";
+            let model = "test_attempt"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId();
+                showWindowFrom(Models, url);
+            }
+            if(result === "Add") {
+                url = "index.html?entity=" + model + "&action=create&user_id=" + getUserId();
+                showWindowFrom(Models, url);
+            }
+            if(result === "Run") {
+                show_warn("Not yet implemented")
+            }
+
+        }
+
         assign_meta_list_function("projects", "Projects", "project")
         assign_meta_list_function("tasks", "Tasks", "task")
-        assign_meta_list_function("pinned_notes", "Pinned notes", "pinned_note")
+
+
+        get_element("meta_button_pinned_notes").onclick = async function () {
+            const result = await chooseOption(["List", "Pin", "Pinned"]);
+            if (result === null || result === undefined) return
+
+            let Models = "Pinned notes";
+            let model = "pinned_note"
+            let url;
+            if(result === "List") {
+                url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId()
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "Pin") {
+                url = "index.html?entity=" + model + "&action=create&user_id=" + getUserId()
+                if(mode_notes) url= url + "&note_id=" + note.id
+            }
+            if(result === "Pinned") {
+                url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId()
+            }
+            showWindowFrom(Models, url);
+        }
         //
-        assign_meta_list_function("visited", "Visited", "visited")
-        assign_meta_list_function("history", "History", "history")
+
+        // save the id of the visited note to the local storage
+        function save_visited_note_id(id) {
+            const key = "visited_note_ids";
+            let ids = JSON.parse(localStorage.getItem(key)) || [];
+            const last = ids.length === 0 ? null : ids[ids.length - 1];
+
+            if (last && last.id === id) {
+                last.ts = Date.now();
+            } else {
+                ids.push({
+                    id: id,
+                    ts: Date.now()
+                });
+            }
+
+            const MAX = 200;
+
+            if (ids.length > MAX) {
+                ids = ids.slice(ids.length - MAX);
+            }
+
+            localStorage.setItem(key, JSON.stringify(ids));
+        }
+
+        if(mode_notes) save_visited_note_id(note.id)
+
+        get_element("meta_button_visited").onclick = async function () {
+            let visited_note_ids = localStorage.getItem("visited_note_ids")
+            if(visited_note_ids === null || visited_note_ids === undefined) {
+                show_warn("History is empty");
+                return;
+            }
+
+            let visited_note_ids_json = JSON.parse(visited_note_ids)
+            let table = document.createElement("table");
+            table.style.borderCollapse = "collapse";
+            table.style.margin = "0 auto";
+            let tr_first = document.createElement("tr");
+            table.appendChild(tr_first);
+            let th_number = document.createElement("th"); th_number.innerText = "#"
+            let th_id = document.createElement("th"); th_id.innerText = "ID"
+            let th_title = document.createElement("th"); th_title.innerText = "Title"
+            let th_timestamp = document.createElement("th"); th_timestamp.innerText = "Timestamp"
+            tr_first.appendChild(th_number)
+            tr_first.appendChild(th_id)
+            tr_first.appendChild(th_title)
+            tr_first.appendChild(th_timestamp)
+            for(const el of [th_number, th_id, th_title, th_timestamp]) {
+                el.style.minWidth = "20px"
+                el.style.padding = "10px";
+                el.style.border = "1px solid black";
+                el.style.background = "#ccc"
+            }
+            th_title.style.minWidth = "200px"
+
+            let history_entry_number = 0;
+            for (const entry of visited_note_ids_json.slice().reverse()) {
+                history_entry_number++
+
+                let visited_note_id = entry.id
+                let tr = document.createElement("tr");
+                table.appendChild(tr)
+                let td_number = document.createElement("td");
+                let td_id = document.createElement("td");
+                let td_title = document.createElement("td");
+                let td_timestamp = document.createElement("td");
+                for(const el of [td_number, td_id, td_title, td_timestamp]) {
+                    el.style.padding = "10px";
+                    el.style.border = "1px solid black";
+                }
+
+                tr.appendChild(td_number)
+                tr.appendChild(td_id)
+                tr.appendChild(td_title)
+                tr.appendChild(td_timestamp)
+                td_number.innerText = history_entry_number;
+                td_id.innerText = visited_note_id;
+                let a = document.createElement("a");
+                a.href = "?";
+                {
+                    let title = getTitleCache("note", visited_note_id)
+                    if (title === null || title === undefined) {
+
+                        let note_ = await read_entity("note", x)
+                        if (note_ === null) {
+                            show_warn("Loading note with id " + x + " failed.");
+                            title = "Unknown (#" + x + ")"
+                        } else {
+                            title = note_.title
+                            setTitleCache("note", x, title);
+                        }
+                    }
+                    a.title = title
+                    a.innerText = title;
+                }
+                a.onclick = async function () {
+                    event.preventDefault();
+                    await navigate_to({note_id: visited_note_id});
+                }
+                td_title.appendChild(a)
+                td_timestamp.innerText = formatDateTime(entry.ts,true, true, true)
+            }
+            clearWindow()
+            getWindowContent().appendChild(table);
+            getWindowContent().style.height = "100%";
+
+            showWindow()
+        }
+
+        get_element("meta_button_history").onclick = async function () {
+            const result = await chooseOption(["History", "Content history"]);
+            if (result === null || result === undefined) return
+
+            let Models = "History";
+            let model = "history"
+            let url;
+            url = "index.html?entity=" + model + "&action=list"
+            if(result === "History") {
+            if (mode_notes) url = url + "&table_name=note&record_id=" + note.id
+            if (mode_root) url = url + "&table_name=map&record_id=" + map.id
+            }
+            if(result === "Content history") {
+                if (mode_notes) url = url + "&table_name=content&record_id=" + note.content_id
+                if (mode_root) url = url + "&table_name=map&record_id=" + map.id
+            }
+
+            showWindowFrom(Models, url);
+        }
     }
 
     // Children

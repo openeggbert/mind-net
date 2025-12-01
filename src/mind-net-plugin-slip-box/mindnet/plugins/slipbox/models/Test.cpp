@@ -70,7 +70,7 @@ namespace mindnet::plugins::slipbox::models
         using columns::TestColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(under_note_id, 0, TestColumns::UNDER_NOTE_ID); },
+            [this] { return test_at_least(under_note_id, 0, TestColumns::UNDER_NOTE_ID); },
             [this] { return test_ne(map_id, 0, TestColumns::MAP_ID); },
             [this] { return testt_between(title, 3, 256, TestColumns::TITLE); },
             [this] { return test_at_least(time_limit_in_seconds, 60, TestColumns::ANSWER_COUNT_LIMIT); },

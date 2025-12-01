@@ -49,7 +49,7 @@ namespace mindnet::plugins::slipbox::models
         .set_title_column(COLS::TITLE)
         .set_columns(
             {
-                coldef(COLS::UNDER_NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY).set_foreign_key("note"),
+                coldef(COLS::UNDER_NOTE_ID, FOREIGN_KEY | READONLY).set_foreign_key("note"),
                 coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY),
                 coldef(COLS::TITLE, MANDATORY),
                 coldef(COLS::DESCRIPTION),
