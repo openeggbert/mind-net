@@ -1564,6 +1564,7 @@ async function render() {
             clearWindow()
             getWindowContent().appendChild(table);
             getWindowContent().style.height = "100%";
+            setWindowTitle("History")
 
             showWindow()
         }
