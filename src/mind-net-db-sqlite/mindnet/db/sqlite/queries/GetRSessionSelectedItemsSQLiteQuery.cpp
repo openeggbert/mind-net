@@ -328,6 +328,13 @@ LIMIT {limit};
 
         std::string eligible_filter;
 
+        static std::string exclude_norepetition =
+"NOT EXISTS (\n"
+"    SELECT 1 FROM flag f2\n"
+"    WHERE f2.note_id = n.id\n"
+"      AND f2.title = 'norepetition'\n"
+")\nAND ";
+
 if (session["filter_eligible"] == 0) {
     eligible_filter = "1=1 AND";
 }
@@ -402,9 +409,7 @@ else {
         throw std::invalid_argument("Invalid scope value for eligibility.");
     }
 }
-
-
-
+        eligible_filter = exclude_norepetition + eligible_filter;
 
         // --- Select SQL template based on scope ---
         const std::string* sql_template = nullptr;
