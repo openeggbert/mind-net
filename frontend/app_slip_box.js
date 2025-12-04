@@ -1334,7 +1334,7 @@ async function render() {
         }
 
         get_element("meta_button_tags").onclick = async function () {
-            const result = await chooseOption(["List", "Add", "List types", "Add type"]);
+            const result = await chooseOption(["List", "Add", "List types", "Add type", "Fulltext"]);
             if (result === null || result === undefined) return
 
             let Models = "Tags";
@@ -1354,7 +1354,71 @@ async function render() {
             if(result === "Add type") {
                 url = "index.html?entity=" + "tag_type" + "&action=create&map_id=" + map.id;
             }
-            showWindowFrom(Models, url);
+            if(result === "Fulltext") {
+                clearWindow()
+                let div = document.createElement("div");
+                div.style.padding = "10px"
+                let inputElement = document.createElement("input");
+                inputElement.type = "text";
+                inputElement.id = "tag_type_input"
+                inputElement.placeholder = "Search tag type ..."
+                inputElement.autocomplete = "off";
+                inputElement.style.fontSize = "150%";
+                let suggestions = document.createElement("div")
+                suggestions.className = "suggestions"
+                suggestions.id = "suggestions"
+                div.appendChild(inputElement);
+                // div.appendChild(suggestions);
+                getWindowContent().appendChild(div);
+
+                const input = document.getElementById("tag_type_input");
+
+                let ac = new Autocomplete(input, 2, "tag_type_fulltext", "&map_id=" + map.id, "title", "title_part")
+                let button = document.createElement("button");
+                button.innerText = "Add"
+                button.style.marginLeft = "10px";
+                input.parentNode.appendChild(button);
+                button.onclick = async function () {
+                    let tag_type_exists = ac.get_item() !== null;
+                    let tag_type_id = null;
+                    if(!tag_type_exists) {
+                    let tag_type = {
+                        map_id: map.id,
+                        title: input.value,
+                    }
+
+                    let created = await post_entity("tag_type", tag_type)
+                    if (created === null) {
+                        showError("Saving tag_type " + input.value + " failed.")
+                        return
+                    } else {
+                        showInfo("Saving tag_type " + input.value + " was successful.")
+                        tag_type_id = created.id
+                    }
+                    } else {
+                        tag_type_id = ac.get_item().id
+                    }
+                    if (mode_notes) {
+                        let tag = {
+                            note_id: note.id,
+                            tag_type_id: tag_type_id,
+                        }
+                        let created = await post_entity("tag", tag)
+                        if (created === null) {
+                            showError("Saving tag " + input.value + " failed.")
+                        } else {
+                            showInfo("Saving tag " + input.value + " was successful.")
+                        }
+                    }
+                }
+
+                getWindowContent().style.height = "100%";
+                setWindowTitle("Tag Type Fulltext")
+
+                showWindow()
+            } else {
+                showWindowFrom(Models, url);
+            }
         }
 
         get_element("meta_button_collections").onclick = async function () {

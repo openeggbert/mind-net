@@ -53,9 +53,44 @@ namespace mindnet::plugins::slipbox::models
     {
         using columns::TagTypeColumns;
 
+        auto is_tag_type_title_valid = [] (const std::string& title) -> std::string
+        {
+            if (title.empty())
+                return "title must not be empty";
+
+            if (title[0] == '-')
+                return "title must not start with '-'";
+
+            char prev = '\0';
+
+            for (char c : title)
+            {
+                // forbid two consecutive dashes
+                if (c == '-' && prev == '-')
+                    return "tag type cannot contain two consecutive dash characters";
+
+                // allow: lowercase letters
+                if (c >= 'a' && c <= 'z') { prev = c; continue; }
+
+                // allow: digits
+                if (c >= '0' && c <= '9') { prev = c; continue; }
+
+                // allow: dash
+                if (c == '-') { prev = c; continue; }
+
+                // otherwise not allowed
+                return std::string("invalid character in tag type: '") + c + "'";
+            }
+
+            return "";
+        };
+
+
+        string is_tag_type_title_valid_result = is_tag_type_title_valid(title);
         validator_chain_vector list{
             [this] { return test_ne(map_id, 0, TagTypeColumns::MAP_ID); },
             [this] { return testt_between(title, 1, 64, TagTypeColumns::TITLE); },
+            [this, &is_tag_type_title_valid_result] { return test_true(is_tag_type_title_valid_result.empty(), "Tag type is not valid: " + is_tag_type_title_valid_result); },
         };
         return util::ValidatorChain::run(list);
     }

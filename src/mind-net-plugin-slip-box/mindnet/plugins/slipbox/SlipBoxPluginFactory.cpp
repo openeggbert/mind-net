@@ -28,6 +28,7 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetQuestionIdsSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTagTypesSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
 #include "mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
@@ -59,6 +60,7 @@
 #include "mindnet/plugins/slipbox/validators/TestAttemptAnswerValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/AnnotationValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/TermFulltextValidator.hpp"
+#include "mindnet/plugins/slipbox/validators/TagTypeFulltextValidator.hpp"
 #include "mindnet/plugins/slipbox/migrations/SlipBoxSQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateUpdateNoteTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterUpdateContentTrigger.hpp"
@@ -69,6 +71,7 @@
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
 #include "mindnet/plugins/slipbox/triggers/InsteadOfListTermFulltextTrigger.hpp"
+#include "mindnet/plugins/slipbox/triggers/InsteadOfListTagTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/slipbox/jobs/HtmlExportJob.hpp"
 
 namespace mindnet::plugins::slipbox
@@ -117,6 +120,7 @@ namespace mindnet::plugins::slipbox
         REGISTER_MODEL(test_attempt_answer, TestAttemptAnswer, TEST_ATTEMPT_ANSWER)
         REGISTER_MODEL(annotation, Annotation, ANNOTATION)
         REGISTER_MODEL(term_fulltext, TermFulltext, TERM_FULLTEXT)
+        REGISTER_MODEL(tag_type_fulltext, TagTypeFulltext, TAG_TYPE_FULLTEXT)
 
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
@@ -127,6 +131,7 @@ namespace mindnet::plugins::slipbox
         plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptAnswerTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListTermFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListTagTypeFulltextTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
@@ -134,6 +139,7 @@ namespace mindnet::plugins::slipbox
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindPreviousAndNextNoteSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::GetQuestionIdsSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTermsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTagTypesSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::slipbox::jobs::HtmlExportJob>());
         plugin->register_library_file("markdown-it.min.js");
