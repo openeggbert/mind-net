@@ -53,9 +53,45 @@ namespace mindnet::plugins::slipbox::models
     {
         using columns::FlagColumns;
 
+        auto is_flag_title_valid = [] (const std::string& title) -> std::string
+        {
+            if (title.empty())
+                return "title must not be empty";
+
+            if (title[0] == '-')
+                return "title must not start with '-'";
+
+            char prev = '\0';
+
+            for (char c : title)
+            {
+                // forbid two consecutive dashes
+                if (c == '-' && prev == '-')
+                    return "flag cannot contain two consecutive dash characters";
+
+                // allow: lowercase letters
+                if (c >= 'a' && c <= 'z') { prev = c; continue; }
+
+                // allow: digits
+                if (c >= '0' && c <= '9') { prev = c; continue; }
+
+                // allow: dash
+                if (c == '-') { prev = c; continue; }
+
+                // otherwise not allowed
+                return std::string("invalid character in flag: '") + c + "'";
+            }
+
+            return "";
+        };
+
+        string is_flag_title_valid_result = is_flag_title_valid(title);
+
         validator_chain_vector list{
             [this] { return test_ne(note_id, 0, FlagColumns::NOTE_ID); },
             [this] { return testt_not_empty(title, FlagColumns::TITLE); },
+            [this, &is_flag_title_valid_result] { return test_true(is_flag_title_valid_result.empty(), "Tag type is not valid: " + is_flag_title_valid_result); },
+
         };
         return util::ValidatorChain::run(list);
     }
