@@ -53,15 +53,15 @@ namespace mindnet::db::sqlite::queries
 
         string title_part = request["title_part"];
 
-        int page_size = request["page_size"];
-        int page_number = request["page_number"];
-        if (page_number * page_size > 50)
-        {
-            page_size = 50;
-            page_number = 1;
-        }
-        page_size = 50;
-        page_number = 1;
+        // int page_size = request["page_size"];
+        // int page_number = request["page_number"];
+        // if (page_number * page_size > 50)
+        // {
+        //     page_size = 50;
+        //     page_number = 1;
+        // }
+        int page_size = 20;
+        int page_number = 1;
 
         static std::string sql = "select id, title from term where map_id=? and title like ? limit ? offset ?";
 

@@ -500,6 +500,77 @@ async function link_to(a, params) {
     }
 }
 
+function debounce(fn, delay) {
+    let timer = null;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+class Autocomplete {
+    constructor(input, input_min_length, entity, query_params, title_column, part_column) {
+        this.input = input;
+        this.title_column = title_column;
+        this.item = null
+        this.fetcher = async function(query) {
+            let qp = query_params + "&" + part_column + "=" + encodeURIComponent(query)
+            return await list_all_entities(entity, qp);
+        }
+
+        this.box = document.createElement("div");
+        this.box.className = "suggestions";
+        this.box.style.display = "none";
+
+        input.parentNode.appendChild(this.box);
+
+        this.input.addEventListener("input", debounce(() => {
+            this.search(this.input.value.trim(), input_min_length);
+        }, 200));
+
+    }
+
+    async search(q, input_min_length = 3) {
+        if (q.length < input_min_length) {
+            this.box.style.display = "none";
+            this.box.innerHTML = "";
+            return;
+        }
+
+        const items = await this.fetcher(q);
+        this.render(items);
+    }
+
+    render(items) {
+        this.box.innerHTML = "";
+
+        if (!items || items.length === 0) {
+            this.box.style.display = "none";
+            return;
+        }
+
+        items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "suggestion-item";
+            let title = item[this.title_column]
+            div.textContent = title;
+
+            div.onclick = () => {
+                this.input.value = title;
+                this.box.style.display = "none";
+                this.item = item;
+            };
+
+            this.box.appendChild(div);
+        });
+
+        this.box.style.display = "block";
+    }
+    get_item() {
+        return this.item;
+    }
+}
+
 let render_number = 0
 async function render() {
     // TODO split into renderParent(), renderCurrent(), renderMeta(), renderChildren().
@@ -1135,15 +1206,60 @@ async function render() {
         }
 
         get_element("meta_button_terms").onclick = async function () {
-            const result = await chooseOption(["List", "Add"]);
+            const result = await chooseOption(["List", "Add", "Fulltext"]);
             if(result === null || result === undefined) return
 
             let Models = "Terms";
             let model = "term"
             let url;
-            if(result === "List") url = "index.html?entity=" + model + "&action=list"
+            if(result === "List") url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
             if(result === "Add") url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
-            showWindowFrom(Models, url);
+            if(result === "Fulltext") {
+                clearWindow()
+                let div = document.createElement("div");
+                div.style.padding = "10px"
+                let inputElement = document.createElement("input");
+                inputElement.type = "text";
+                inputElement.id = "term_input"
+                inputElement.placeholder = "Search term ..."
+                inputElement.autocomplete = "off";
+                inputElement.style.fontSize = "150%";
+                let suggestions = document.createElement("div")
+                suggestions.className = "suggestions"
+                suggestions.id = "suggestions"
+                div.appendChild(inputElement);
+                // div.appendChild(suggestions);
+                getWindowContent().appendChild(div);
+
+                const input = document.getElementById("term_input");
+
+                let ac = new Autocomplete(input, 3, "term_fulltext", "&map_id=" + map.id, "title", "title_part")
+                let button = document.createElement("button");
+                button.innerText = "Add"
+                button.style.marginLeft = "10px";
+                input.parentNode.appendChild(button);
+                button.onclick = async function () {
+                    let term = {
+                        map_id: map.id,
+                        note_id: 0,
+                        title: input.value,
+                    }
+                    let created = await post_entity("term", term)
+                    if (created === null) {
+                        showError("Saving term " + input.value + " failed.")
+                    } else {
+                        showInfo("Saving term " + input.value + " was successful.")
+                    }
+                }
+
+                getWindowContent().style.height = "100%";
+                setWindowTitle("Term Fulltext")
+
+                showWindow()
+            } else {
+                showWindowFrom(Models, url);
+            }
+
         }
 
         assign_meta_list_function("sources", "Sources", "source")
@@ -1272,7 +1388,7 @@ async function render() {
             let url;
             if(result === "List") {
                 url = "index.html?entity=" + model + "&action=list"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if(mode_notes) url = url + "&note_id=" + note.id
             }
             if(result === "Add") {
                 url = "index.html?entity=" + model + "&action=create"
@@ -1542,6 +1658,7 @@ async function render() {
                     let title = getTitleCache("note", visited_note_id)
                     if (title === null || title === undefined) {
 
+                        let x = entry.id
                         let note_ = await read_entity("note", x)
                         if (note_ === null) {
                             show_warn("Loading note with id " + x + " failed.");

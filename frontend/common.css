@@ -212,3 +212,19 @@ a.note-wanted, a.note-unknown {
 #markdown_preview li {
     margin: 0.2em 0;
 }
+
+
+.suggestions {
+    border: 1px solid #ccc;
+    max-width: 300px;
+    position: absolute;
+    background: white;
+    display: none;
+}
+.suggestion-item {
+    padding: 6px 10px;
+    cursor: pointer;
+}
+.suggestion-item:hover {
+    background: #eee;
+}

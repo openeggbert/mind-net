@@ -45,7 +45,8 @@ namespace mindnet::plugins::slipbox::models
     inline const def PROPERTY_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_group("Slip Box", 100)
-        .set_rest_operations("rl").set_title_column(COLS::KEY)
+        .set_all_rest_operations()
+        .set_title_column(COLS::KEY)
         .set_columns({
             //
             coldef(COLS::MAP_ID, MANDATORY | FOREIGN_KEY | READONLY),

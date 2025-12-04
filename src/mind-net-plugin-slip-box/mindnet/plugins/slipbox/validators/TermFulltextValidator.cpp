@@ -108,6 +108,7 @@ namespace mindnet::plugins::slipbox::validators
     OperationResult TermFulltextValidator::validate_list_integrity(const RequestContext& ctx,
                                                                      const string_map& filter) const
     {
+        mandatory_filter(map_id)
         mandatory_filter(title_part)
         auto title_part = filter.at("title_part");
         if (title_part.size() < 3) return {400, "size of title_part must be at least 3"};
