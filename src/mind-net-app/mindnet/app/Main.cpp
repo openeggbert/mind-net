@@ -44,6 +44,7 @@
 #include "mindnet/plugins/core/models/User.hpp"
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
 #include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPluginFactory.hpp"
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;
@@ -372,6 +373,7 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
     REGISTER_PLUGIN(core, Core)
     REGISTER_PLUGIN(slipbox, SlipBox)
     REGISTER_PLUGIN(repetition, Repetition)
+    REGISTER_PLUGIN(dictionary, Dictionary)
     if (plugin_registry->get_plugin_count() == 0)
     {
         throw std::runtime_error("No plugins registered");
