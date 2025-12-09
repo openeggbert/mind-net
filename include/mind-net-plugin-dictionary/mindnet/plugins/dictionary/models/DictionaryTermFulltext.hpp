@@ -27,12 +27,12 @@
 #include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPlugin.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model TermFulltext
-#define MODEL TERM_FULLTEXT
-#define COLS columns::TermFulltextColumns
-#include "../columns/TermFulltextColumns.hpp"
+#define Model DictionaryTermFulltext
+#define MODEL DICTIONARY_TERM_FULLTEXT
+#define COLS columns::DictionaryTermFulltextColumns
+#include "../columns/DictionaryTermFulltextColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -42,15 +42,15 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def TERM_FULLTEXT_DEFINITION =
-        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
-        .set_group("Slip Box #2", 100)
+    inline const def DICTIONARY_TERM_FULLTEXT_DEFINITION =
+        def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
+        .set_group("Dictionary", 100)
         .set_rest_operations("l").set_title_column(COLS::ID)
         .set_no_table(true)
         .set_cache_enabled(false)
         .set_columns({
             //
-            coldef(COLS::TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::TITLE_PART, MANDATORY | READONLY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
@@ -58,7 +58,7 @@ namespace mindnet::plugins::dictionary::models
 
     struct Model : mindnet::model::BaseModel
     {
-        identification term_id{};
+        identification dictionary_term_id{};
         identification map_id{};
         std::string title_part{};
         std::string title{};
@@ -68,7 +68,7 @@ namespace mindnet::plugins::dictionary::models
             &Model::created_at,
             &Model::updated_at,
 
-            &Model::term_id,
+            &Model::dictionary_term_id,
             &Model::map_id,
             &Model::title_part,
             &Model::title
@@ -79,7 +79,7 @@ namespace mindnet::plugins::dictionary::models
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                term_id == other.term_id &&
+                dictionary_term_id == other.dictionary_term_id &&
                 map_id == other.map_id && title_part == other.title_part && title == other.title &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
