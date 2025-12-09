@@ -40,7 +40,7 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* MODEL_NAME = "dictionary_link";
 
-        static constexpr const char* FROM_NOTE_ID = "from_entry_id";
-        static constexpr const char* TO_NOTE_ID = "to_entry_id";
+        static constexpr const char* FROM_DICTIONARY_TERM_ID = "from_dictionary_term_id";
+        static constexpr const char* TO_DICTIONARY_TERM_ID = "to_dictionary_term_id";
     };
 }

@@ -35,23 +35,19 @@ namespace mindnet::plugins::dictionary::enums
      */
     enum class Difficulty
     {
-        Undefined = 0, Easy = 1, Medium = 2, Hard = 3, Expert = 4
+        Easy = 1, Medium = 2, Hard = 3
     };
 
     inline std::string difficulty_to_string(Difficulty difficulty)
     {
         switch (difficulty)
         {
-        case Difficulty::Undefined:
-            return "Undefined";
         case Difficulty::Easy:
             return "Easy";
         case Difficulty::Medium:
             return "Medium";
         case Difficulty::Hard:
             return "Hard";
-        case Difficulty::Expert:
-            return "Expert";
         default:
             return "Unknown";
         }
@@ -65,7 +61,7 @@ namespace mindnet::plugins::dictionary::enums
     inline model::EnumDefinition difficulty_to_enum_definition()
     {
         return model::EnumDefinition{
-            difficulty_to_string, 5, 0, 1, 2, 3, 4
+            difficulty_to_string, 3, 1, 2, 3
         };
     }
 } // namespace mindnet::enums

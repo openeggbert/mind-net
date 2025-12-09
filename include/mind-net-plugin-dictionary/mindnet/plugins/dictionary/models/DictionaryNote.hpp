@@ -23,15 +23,14 @@
 #pragma once
 
 #include <string>
-#include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model DictionaryLink
-#define MODEL DICTIONARY_LINK
-#define COLS columns::DictionaryLinkColumns
-#include "../columns/DictionaryLinkColumns.hpp"
+#define Model DictionaryNote
+#define MODEL DICTIONARY_NOTE
+#define COLS columns::DictionaryNoteColumns
+#include "../columns/DictionaryNoteColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -41,38 +40,31 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_LINK_DEFINITION =
+    inline const def DICTIONARY_NOTE_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_rest_operations("crdl")
         .set_group("Dictionary", 100)
+        .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_columns({
-            coldef(COLS::FROM_DICTIONARY_TERM_ID, MANDATORY | READONLY).set_foreign_key("dictionary_term"),
-            coldef(COLS::TO_DICTIONARY_TERM_ID, MANDATORY | READONLY).set_foreign_key("dictionary_term"),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::CONTENT),
+            coldef(COLS::POSITION, INTEGER).set_default_value(0),
         });
 
     struct Model : mindnet::model::BaseModel
     {
-        identification from_dictionary_term_id;
-        identification to_dictionary_term_id;
-
-        static constexpr auto fields = std::make_tuple(
-            &Model::id,
-            &Model::created_at,
-            &Model::updated_at,
-
-            &Model::from_dictionary_term_id,
-            &Model::to_dictionary_term_id
-        );
+        identification dictionary_term_id;
+        string title;
+        string content;
+        int position{0};
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
+        bool operator==(const DictionaryNote& other) const
         {
-            return id == other.id &&
-                from_dictionary_term_id == other.from_dictionary_term_id &&
-                to_dictionary_term_id == other.to_dictionary_term_id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at;
+            return id == other.id && dictionary_term_id == other.dictionary_term_id &&
+                title == other.title && content == other.content && position == other.position &&
+                created_at == other.created_at && updated_at == other.updated_at;
         }
     };
 }

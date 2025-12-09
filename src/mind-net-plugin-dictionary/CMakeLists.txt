@@ -1,14 +1,14 @@
-file(GLOB_RECURSE PLUGIN_SLIP_BOX_SOURCES
+file(GLOB_RECURSE PLUGIN_DICTIONARY_SOURCES
         mindnet/plugins/dictionary/**/*.cpp
         mindnet/plugins/dictionary/*.cpp
 )
 set(CMAKE_UNITY_BUILD OFF)
-add_library(mind_net_plugin_slip_box STATIC ${PLUGIN_SLIP_BOX_SOURCES})
+add_library(mind_net_plugin_dictionary STATIC ${PLUGIN_DICTIONARY_SOURCES})
 
 # other
-target_include_directories(mind_net_plugin_slip_box
+target_include_directories(mind_net_plugin_dictionary
         PUBLIC
-        ${CMAKE_SOURCE_DIR}/include/mind-net-plugin-slip-box
+        ${CMAKE_SOURCE_DIR}/include/mind-net-plugin-dictionary
         PRIVATE
         ${CMAKE_SOURCE_DIR}/include/mind-net-essential
         ${CMAKE_SOURCE_DIR}/include/mind-net-model
@@ -16,17 +16,7 @@ target_include_directories(mind_net_plugin_slip_box
         ${CMAKE_SOURCE_DIR}/include/mind-net-util
 )
 
-include(FetchContent)
-
-FetchContent_Declare(
-        cmark
-        GIT_REPOSITORY https://github.com/commonmark/cmark.git
-        GIT_TAG master
-)
-
-FetchContent_MakeAvailable(cmark)
-
-target_link_libraries(mind_net_plugin_slip_box
+target_link_libraries(mind_net_plugin_dictionary
         PUBLIC
         mind_net_essential
         mind_net_model
@@ -36,7 +26,7 @@ target_link_libraries(mind_net_plugin_slip_box
         PRIVATE cmark
 )
 
-target_precompile_headers(mind_net_plugin_slip_box PRIVATE
+target_precompile_headers(mind_net_plugin_dictionary PRIVATE
         "${CMAKE_SOURCE_DIR}/include/pch/pch_std.hpp"
 )
 

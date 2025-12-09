@@ -77,7 +77,6 @@ namespace mindnet::plugins::dictionary::models
         string title;
         string hint;
         int sibling_order{};
-        enums::Importance importance{enums::Importance::Undefined};
         enums::Difficulty difficulty{enums::Difficulty::Undefined};
         string path;
         int depth{};

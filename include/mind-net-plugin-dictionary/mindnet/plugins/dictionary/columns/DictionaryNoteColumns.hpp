@@ -42,8 +42,7 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* MODEL_NAME = "dictionary_note";
 
-        static constexpr const char* DICTIONARY_ENTRY_ID = "dictionary_entry_id";
-
+        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
         static constexpr const char* TITLE = "title";
         static constexpr const char* CONTENT = "content";
         static constexpr const char* POSITION = "position";

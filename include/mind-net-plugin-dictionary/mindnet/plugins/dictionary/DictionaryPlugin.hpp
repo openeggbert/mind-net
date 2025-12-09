@@ -27,5 +27,5 @@
 
 namespace mindnet::plugins::dictionary
 {
-    const std::string SLIP_BOX_PLUGIN_NAME = "slip_box";
+    const std::string DICTIONARY_PLUGIN_NAME = "dictionary";
 }

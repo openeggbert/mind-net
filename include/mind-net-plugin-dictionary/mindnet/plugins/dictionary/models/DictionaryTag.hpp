@@ -20,18 +20,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #pragma once
 
 #include <string>
 
 #include "mindnet/model/BaseModel.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPlugin.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model Tag
-#define MODEL TAG
-#define COLS columns::TagColumns
-#include "../columns/TagColumns.hpp"
+#define Model DictionaryTag
+#define MODEL DICTIONARY_TAG
+#define COLS columns::DictionaryTagColumns
+#include "../columns/DictionaryTagColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -41,25 +40,26 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def TAG_DEFINITION =
-        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
-        .set_group("Slip Box", 100)
-        .set_all_rest_operations().set_title_column(COLS::TAG_TYPE_ID)
+    inline const def DICTIONARY_TAG_DEFINITION =
+        def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
+        .set_group("Dictionary", 100)
+        .set_rest_operations("crdl").set_title_column(COLS::DICTIONARY_TAG_TYPE_ID)
         .set_columns({
-            coldef(COLS::NOTE_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::TAG_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TAG_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
         });
 
     struct Model : mindnet::model::BaseModel
     {
-        identification note_id;
-        identification tag_type_id;
+        identification dictionary_term_id;
+        identification dictionary_tag_type_id;
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Tag& other) const
+        bool operator==(const DictionaryTag& other) const
         {
-            return id == other.id && note_id == other.note_id && tag_type_id == other.tag_type_id &&
+            return id == other.id && dictionary_term_id == other.dictionary_term_id &&
+                dictionary_tag_type_id == other.dictionary_tag_type_id &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
     };

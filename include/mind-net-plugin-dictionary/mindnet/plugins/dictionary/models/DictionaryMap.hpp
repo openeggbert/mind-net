@@ -28,12 +28,12 @@
 
 #include "mindnet/model/BaseModel.hpp"
 // ***** MACROS : START *****
-#define Model Map
-#define MODEL MAP
-#define COLS columns::MapColumns
-#include "../columns/MapColumns.hpp"
+#define Model DictionaryMap
+#define MODEL DICTIONARY_MAP
+#define COLS columns::DictionaryMapColumns
+#include "../columns/DictionaryMapColumns.hpp"
 #include "mindnet/plugins/core/enums/AccessRight.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPlugin.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 
 // ***** MACROS : END *****
 
@@ -43,15 +43,15 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def MAP_DEFINITION =
-        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
-        .set_group("Slip Box", 100)
+    inline const def DICTIONARY_MAP_DEFINITION =
+        def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
+        .set_group("Dictionary", 100)
         .set_all_rest_operations().set_title_column(COLS::NAME)
         .set_columns({
             //
             coldef(COLS::NAME, MANDATORY | UNIQUE),
             coldef(COLS::DESCRIPTION),
-            coldef(COLS::CATEGORY),
+            coldef(COLS::POSITION, INTEGER).set_default_value(0),
             coldef(COLS::OWNER_ID, MANDATORY).set_foreign_key("user"),
             coldef(COLS::TEAM_ID, FOREIGN_KEY),
             coldef(COLS::OWNER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(
@@ -61,16 +61,16 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::OTHER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(
                 core::enums::access_right_to_enum_definition()),
         })
-        .add_custom_list_action("note", "List notes", {"map_id", "{id}"})
-        .add_custom_create_action("note", "Add note", {"map_id", "{id}"})
-        .add_custom_list_action("tag_type", "List tags", {"map_id", "{id}"})
-        .add_custom_create_action("tag_type", "Add tag", {"map_id", "{id}"});
+        .add_custom_list_action("dictionary_term", "List terms", {"dictionary_map_id", "{id}"})
+        .add_custom_create_action("dictionary_term", "Add term", {"dictionary_map_id", "{id}"})
+        .add_custom_list_action("dictionary_tag_type", "List tags", {"dictionary_map_id", "{id}"})
+        .add_custom_create_action("dictionary_tag_type", "Add tag", {"dictionary_map_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {
         string name;
         string description;
-        string category;
+        int position{0};
         identification owner_id{};
         identification team_id{};
         core::enums::AccessRight owner_rights{7};
@@ -80,12 +80,31 @@ namespace mindnet::plugins::dictionary::models
         [[nodiscard]] int team_rights_int() const { return cast64(team_rights); }
         [[nodiscard]] int other_rights_int() const { return cast64(other_rights); }
 
+        static constexpr auto fields = std::make_tuple(
+    &Model::id,
+    &Model::created_at,
+    &Model::updated_at,
+
+    &Model::name,
+    &Model::description,
+    &Model::position,
+    &Model::owner_id,
+    &Model::team_id,
+    &Model::owner_rights_int,
+    &Model::team_rights_int,
+    &Model::other_rights_int
+        );
+        
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Map& other) const
+        bool operator==(const DictionaryMap& other) const
         {
-            return id == other.id && name == other.name && description == other.description && category == other.
-                category && created_at == other.created_at && updated_at == other.updated_at;
+            return id == other.id && name == other.name && description == other.description && position == other.
+                position
+                && owner_id == other.owner_id && team_id == other.team_id
+                && owner_rights == other.owner_rights && team_rights == other.team_rights
+                && other_rights == other.other_rights
+                && created_at == other.created_at && updated_at == other.updated_at;
         }
     };
 }

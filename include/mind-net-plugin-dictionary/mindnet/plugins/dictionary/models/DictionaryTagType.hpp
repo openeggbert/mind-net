@@ -27,12 +27,12 @@
 #include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPlugin.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model TagType
-#define MODEL TAG_TYPE
-#define COLS columns::TagTypeColumns
-#include "../columns/TagTypeColumns.hpp"
+#define Model DictionaryTagType
+#define MODEL DICTIONARY_TAG_TYPE
+#define COLS columns::DictionaryTagTypeColumns
+#include "../columns/DictionaryTagTypeColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -42,29 +42,29 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def TAG_TYPE_DEFINITION =
-        def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
+    inline const def DICTIONARY_TAG_TYPE_DEFINITION =
+        def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_all_rest_operations()
-        .set_group("Slip Box", 100).set_title_column(COLS::TITLE)
+        .set_group("Dictionary", 100).set_title_column(COLS::TITLE)
         .set_columns({
             //
-            coldef(COLS::MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
             //
         })
-        .add_custom_list_action("tag", "List tags", {"tag_type_id", "{id}"})
-        .add_custom_create_action("tag", "Add tag", {"tag_type_id", "{id}"});
+        .add_custom_list_action("dictionary_tag", "List tags", {"dictionary_tag_type_id", "{id}"})
+        .add_custom_create_action("dictionary_tag", "Add tag", {"dictionary_tag_type_id", "{id}"});
 
     struct Model : mindnet::model::BaseModel
     {
-        identification map_id;
+        identification dictionary_map_id;
         string title;
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const TagType& other) const
+        bool operator==(const DictionaryTagType& other) const
         {
-            return id == other.id && map_id == other.map_id && title == other.title &&
+            return id == other.id && dictionary_map_id == other.dictionary_map_id && title == other.title &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
     };

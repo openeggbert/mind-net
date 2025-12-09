@@ -31,16 +31,18 @@
 
 namespace mindnet::plugins::dictionary::columns
 {
-    struct DictionaryEntryVisitColumns : model::BaseColumns
+    struct DictionaryTermColumns : model::BaseColumns
     {
-        DictionaryEntryVisitColumns() = delete;
+        DictionaryTermColumns() = delete;
 
-        DictionaryEntryVisitColumns(const DictionaryEntryVisitColumns&) = delete;
-        DictionaryEntryVisitColumns& operator=(const DictionaryEntryVisitColumns&) = delete;
+        DictionaryTermColumns(const DictionaryTermColumns&) = delete;
+        DictionaryTermColumns& operator=(const DictionaryTermColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "dictionary_entry_visit";
+        static constexpr const char* MODEL_NAME = "dictionary_term";
 
-        static constexpr const char* DICTIONARY_ENTRY_ID = "dictionary_entry_id";
-        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
+        static constexpr const char* TITLE = "title";
+        static constexpr const char* DEFINITION = "definition";
+        static constexpr const char* DIFFICULTY = "difficulty";
     };
 }

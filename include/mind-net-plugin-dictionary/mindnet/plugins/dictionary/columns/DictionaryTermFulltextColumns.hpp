@@ -31,16 +31,16 @@
 
 namespace mindnet::plugins::dictionary::columns
 {
-    struct DictionaryEntryFulltextColumns : model::BaseColumns
+    struct DictionaryTermFulltextColumns : model::BaseColumns
     {
-        DictionaryEntryFulltextColumns() = delete;
+        DictionaryTermFulltextColumns() = delete;
 
-        DictionaryEntryFulltextColumns(const DictionaryEntryFulltextColumns&) = delete;
-        DictionaryEntryFulltextColumns& operator=(const DictionaryEntryFulltextColumns&) = delete;
+        DictionaryTermFulltextColumns(const DictionaryTermFulltextColumns&) = delete;
+        DictionaryTermFulltextColumns& operator=(const DictionaryTermFulltextColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "dictionary_entry_fulltext";
+        static constexpr const char* MODEL_NAME = "dictionary_term_fulltext";
 
-        static constexpr const char* DICTIONARY_ENTRY_ID = "dictionary_entry_id";
+        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
         static constexpr const char* MAP_ID = "map_id";
         static constexpr const char* TITLE_PART = "title_part";
         static constexpr const char* TITLE = "title";

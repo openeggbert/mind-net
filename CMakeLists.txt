@@ -59,9 +59,6 @@ add_subdirectory(src/mind-net-plugin-dictionary)
 
 add_subdirectory(src/mind-net-app)
 
-
-
-
 # ===== Tests =====
 if (ENABLE_TESTS)
         enable_testing()
@@ -73,5 +70,3 @@ configure_file(
         ${CMAKE_BINARY_DIR}/mindnet.properties
         COPYONLY
 )
-
-
