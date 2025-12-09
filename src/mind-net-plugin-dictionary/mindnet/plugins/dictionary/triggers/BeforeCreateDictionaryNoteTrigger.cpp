@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/triggers/BeforeCreateNoteTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
 
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/essential/Global.hpp"
@@ -33,9 +33,9 @@ namespace mindnet::plugins::dictionary::triggers
 {
     using_loggers()
 
-    BeforeCreateNoteTrigger::BeforeCreateNoteTrigger()
+    BeforeCreateDictionaryNoteTrigger::BeforeCreateDictionaryNoteTrigger()
         : Trigger(
-            "BeforeCreateNoteTrigger",
+            "BeforeCreateDictionaryNoteTrigger",
             "Set the value of the sibling order.",
             1000,
             {essential::Crudl::Create},
@@ -45,7 +45,7 @@ namespace mindnet::plugins::dictionary::triggers
     {
     }
 
-    void BeforeCreateNoteTrigger::run_before_or_after(
+    void BeforeCreateDictionaryNoteTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
         int stack_depth,
         api::OperationResult& validation_result,

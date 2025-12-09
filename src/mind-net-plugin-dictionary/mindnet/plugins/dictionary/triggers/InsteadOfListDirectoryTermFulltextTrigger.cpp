@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListTermFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDirectoryTermFulltextTrigger.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
@@ -34,9 +34,9 @@ namespace mindnet::plugins::dictionary::triggers
 {
     using_loggers()
 
-    InsteadOfListTermFulltextTrigger::InsteadOfListTermFulltextTrigger()
+    InsteadOfListDirectoryTermFulltextTrigger::InsteadOfListDirectoryTermFulltextTrigger()
         : Trigger(
-            "InsteadOfListTermFulltextTrigger",
+            "InsteadOfListDirectoryTermFulltextTrigger",
             "Calls custom sql for list term request",
             1000,
             {essential::Crudl::List},
@@ -46,7 +46,7 @@ namespace mindnet::plugins::dictionary::triggers
     {
     }
 
-    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListTermFulltextTrigger::
+    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListDirectoryTermFulltextTrigger::
     run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,

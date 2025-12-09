@@ -24,21 +24,26 @@
 #pragma once
 
 #include "mindnet/api/Trigger.hpp"
-#include "mindnet/plugins/dictionary/models/TermFulltext.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
 {
-    class InsteadOfListTermFulltextTrigger : public api::Trigger
+    class BeforeCreateDictionaryNoteTrigger : public api::Trigger
     {
     public:
-        InsteadOfListTermFulltextTrigger();
+        BeforeCreateDictionaryNoteTrigger();
 
-        ~InsteadOfListTermFulltextTrigger() override = default;
-        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+        ~BeforeCreateDictionaryNoteTrigger() override = default;
+        void run_before_or_after(
+            mindnet::essential::Crudl operation,
             int stack_depth,
             api::OperationResult& validation_result,
-            const model::ModelDefinition& def,
+            api::OperationResult& action_result,
+            const model::ModelDefinition def,
             identification user_id,
-            const orm::QueryParams& query_params) override;
+            identification id,
+            entity_fields& fields,
+            entity_fields& old_fields,
+            const orm::QueryParams query_params
+        ) override;
     };
 }

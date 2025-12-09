@@ -24,16 +24,16 @@
 #pragma once
 
 #include "mindnet/api/Trigger.hpp"
-#include "mindnet/plugins/dictionary/models/TermFulltext.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermFulltext.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
 {
-    class InsteadOfListTagTypeFulltextTrigger : public api::Trigger
+    class InsteadOfListDirectoryTermFulltextTrigger : public api::Trigger
     {
     public:
-        InsteadOfListTagTypeFulltextTrigger();
+        InsteadOfListDirectoryTermFulltextTrigger();
 
-        ~InsteadOfListTagTypeFulltextTrigger() override = default;
+        ~InsteadOfListDirectoryTermFulltextTrigger() override = default;
         std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,

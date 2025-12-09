@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/jobs/HtmlExportJob.hpp"
+#include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/util/Utils.hpp"
@@ -32,17 +32,17 @@
 #include <fstream>
 #include <map>
 
-#include "mindnet/plugins/dictionary/jobs/HtmlExportUtils.hpp"
+#include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportUtils.hpp"
 
 namespace mindnet::plugins::dictionary::jobs
 {
     using_loggers()
     using std::string;
 
-    HtmlExportJob::HtmlExportJob()
+    DictionaryHtmlExportJob::DictionaryHtmlExportJob()
         : Job(
-            "HtmlExportJob",
-            "HtmlExportJob",
+            "DictionaryHtmlExportJob",
+            "DictionaryHtmlExportJob",
             "@startup",
             false,
             false
@@ -50,9 +50,9 @@ namespace mindnet::plugins::dictionary::jobs
     {
     }
 
-    std::string HtmlExportJob::run(api::cronq::JobConfig& job_config)
+    std::string DictionaryHtmlExportJob::run(api::cronq::JobConfig& job_config)
     {
-        essential::info << "HtmlExportJob started" << essential::commit;
+        essential::info << "DictionaryHtmlExportJob started" << essential::commit;
 
         auto current_path = std::filesystem::current_path();
         auto export_dir = current_path /
@@ -105,7 +105,7 @@ namespace mindnet::plugins::dictionary::jobs
     static const string hierarchy_panel = "hierarchy_panel";
     static const string html_content = "html_content";
 
-    std::string HtmlExportJob::generate_map(std::filesystem::path& export_map_dir, models::Map& map,
+    std::string DictionaryHtmlExportJob::generate_map(std::filesystem::path& export_map_dir, models::Map& map,
                                             api::AccessTokenContext& token)
     {
         {
@@ -170,7 +170,7 @@ namespace mindnet::plugins::dictionary::jobs
         return "";
     }
 
-    std::string HtmlExportJob::generate_page(models::Note& note, api::AccessTokenContext& token,
+    std::string DictionaryHtmlExportJob::generate_page(models::Note& note, api::AccessTokenContext& token,
                                              string& author_display_name, models::Map& map,
                                              std::filesystem::path& export_map_dir)
     {

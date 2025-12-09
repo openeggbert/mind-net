@@ -23,29 +23,22 @@
 
 #pragma once
 
-#include "mindnet/api/Job.hpp"
-#include "mindnet/plugins/dictionary/models/Map.hpp"
-#include "mindnet/plugins/dictionary/models/Note.hpp"
-#include "mindnet/plugins/dictionary/models/Content.hpp"
-#include "mindnet/plugins/core/models/User.hpp"
+#include "mindnet/api/Trigger.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermFulltext.hpp"
 
-namespace mindnet::plugins::dictionary::jobs
+namespace mindnet::plugins::dictionary::triggers
 {
-    using std::string;
-
-    class HtmlExportJob : public api::Job
+    class InsteadOfListDictionaryTagTypeFulltextTrigger : public api::Trigger
     {
     public:
-        HtmlExportJob();
+        InsteadOfListDictionaryTagTypeFulltextTrigger();
 
-        ~HtmlExportJob() = default;
-
-        string run(api::cronq::JobConfig& job_config) override;
-
-    private:
-        string generate_map(std::filesystem::path& export_map_dir, models::Map& map, api::AccessTokenContext& token);
-        string generate_page(models::Note& note, api::AccessTokenContext& token, string& author_display_name,
-                             models::Map& map, std::filesystem::
-                             path& export_map_dir);
+        ~InsteadOfListDictionaryTagTypeFulltextTrigger() override = default;
+        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            const orm::QueryParams& query_params) override;
     };
 }

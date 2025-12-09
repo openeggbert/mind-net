@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListTagTypeFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTagTypeFulltextTrigger.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
@@ -35,9 +35,9 @@ namespace mindnet::plugins::dictionary::triggers
 {
     using_loggers()
 
-    InsteadOfListTagTypeFulltextTrigger::InsteadOfListTagTypeFulltextTrigger()
+    InsteadOfListDictionaryTagTypeFulltextTrigger::InsteadOfListDictionaryTagTypeFulltextTrigger()
         : Trigger(
-            "InsteadOfListTagTypeFulltextTrigger",
+            "InsteadOfListDictionaryTagTypeFulltextTrigger",
             "Calls custom sql for list tag_type request",
             1000,
             {essential::Crudl::List},
@@ -47,7 +47,7 @@ namespace mindnet::plugins::dictionary::triggers
     {
     }
 
-    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListTagTypeFulltextTrigger::
+    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListDictionaryTagTypeFulltextTrigger::
     run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,

@@ -64,15 +64,15 @@
 #include "mindnet/plugins/dictionary/migrations/SlipBoxSQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/dictionary/triggers/AfterCreateUpdateNoteTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/AfterUpdateContentTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/BeforeCreateNoteTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/BeforeUpdateContentTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/UpdateNotePathAndDepthAfterTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfReadNoteNavigationTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/AfterCreateTestAttemptTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListTermFulltextTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListTagTypeFulltextTrigger.hpp"
-#include "mindnet/plugins/dictionary/jobs/HtmlExportJob.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDirectoryTermFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTagTypeFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
 
 namespace mindnet::plugins::dictionary
 {
@@ -125,13 +125,13 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateUpdateNoteTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::BeforeCreateNoteTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::BeforeUpdateContentTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfReadNoteNavigationTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptAnswerTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::InsteadOfListTermFulltextTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::InsteadOfListTagTypeFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDirectoryTermFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTagTypeFulltextTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
@@ -141,7 +141,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTermsSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTagTypesSQLiteQuery>());
 
-        plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::HtmlExportJob>());
+        plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::DictionaryHtmlExportJob>());
         plugin->register_library_file("markdown-it.min.js");
         plugin->register_library_file("highlight.min.js");
         plugin->register_library_file("markdown-it-emoji.min.js");

@@ -21,7 +21,7 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/jobs/HtmlExportUtils.hpp"
+#include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportUtils.hpp"
 #include "mindnet/plugins/dictionary/models/Note.hpp"
 
 #include <cmark.h>

@@ -23,28 +23,29 @@
 
 #pragma once
 
-#include "mindnet/api/Trigger.hpp"
+#include "mindnet/api/Job.hpp"
+#include "mindnet/plugins/dictionary/models/Map.hpp"
+#include "mindnet/plugins/dictionary/models/Note.hpp"
+#include "mindnet/plugins/dictionary/models/Content.hpp"
+#include "mindnet/plugins/core/models/User.hpp"
 
-
-namespace mindnet::plugins::dictionary::triggers
+namespace mindnet::plugins::dictionary::jobs
 {
-    class BeforeCreateNoteTrigger : public api::Trigger
+    using std::string;
+
+    class DictionaryHtmlExportJob : public api::Job
     {
     public:
-        BeforeCreateNoteTrigger();
+        DictionaryHtmlExportJob();
 
-        ~BeforeCreateNoteTrigger() override = default;
-        void run_before_or_after(
-            mindnet::essential::Crudl operation,
-            int stack_depth,
-            api::OperationResult& validation_result,
-            api::OperationResult& action_result,
-            const model::ModelDefinition def,
-            identification user_id,
-            identification id,
-            entity_fields& fields,
-            entity_fields& old_fields,
-            const orm::QueryParams query_params
-        ) override;
+        ~DictionaryHtmlExportJob() = default;
+
+        string run(api::cronq::JobConfig& job_config) override;
+
+    private:
+        string generate_map(std::filesystem::path& export_map_dir, models::Map& map, api::AccessTokenContext& token);
+        string generate_page(models::Note& note, api::AccessTokenContext& token, string& author_display_name,
+                             models::Map& map, std::filesystem::
+                             path& export_map_dir);
     };
 }
