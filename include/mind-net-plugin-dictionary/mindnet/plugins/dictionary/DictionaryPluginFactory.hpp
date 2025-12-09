@@ -27,7 +27,7 @@
 
 namespace mindnet::plugins::dictionary
 {
-    class SlipBoxPluginFactory : public api::PluginFactory
+    class DictionaryPluginFactory : public api::PluginFactory
     {
     public:
         [[nodiscard]] api::PluginPtr create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const override;

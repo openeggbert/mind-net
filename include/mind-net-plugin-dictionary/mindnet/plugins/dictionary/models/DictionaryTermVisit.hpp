@@ -29,7 +29,7 @@
 #include "mindnet/model/BaseModel.hpp"
 
 // ***** MACROS : START *****
-#define Model DictionaryEntry
+#define Model DictionaryTerm
 #define MODEL DICTIONARY_ENTRY
 #define COLS columns::DictionaryEntryColumns
 #include "../columns/DictionaryEntryColumns.hpp"
@@ -67,7 +67,7 @@ namespace mindnet::plugins::dictionary::models
         .add_custom_create_action("link", "Add link", {"from_note_id", "{id}"})
         .add_custom_read_action("note_navigation", "Read Note Navigation", {"id", "{id}"});
 
-    struct Model : mindnet::model::BaseModel
+    struct DictionaryTerm : mindnet::model::BaseModel
     {
         identification map_id{};
         identification parent_note_id{};
