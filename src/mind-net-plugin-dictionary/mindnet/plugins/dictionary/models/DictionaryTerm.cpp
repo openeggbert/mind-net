@@ -21,27 +21,27 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/TagTypeFulltext.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields TagTypeFulltext::to_values() const
+    entity_fields DictionaryTerm::to_values() const
     {
         return serialize_fields(*this);
     }
 
-    void TagTypeFulltext::from_values(const entity_fields& values)
+    void DictionaryTerm::from_values(const entity_fields& values)
     {
         deserialize_fields(*this, values);
-    };
+    }
 
-    string TagTypeFulltext::validate()
+    string DictionaryTerm::validate()
     {
-        using columns::TagTypeFulltextColumns;
+        using columns::DictionaryTermColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(map_id, 0, TagTypeFulltextColumns::MAP_ID); },
-            [this] { return testt_between(title, 1, 64, TagTypeFulltextColumns::TITLE); },
+            [this] { return testt_between(title, 1, 64, DictionaryTermColumns::TITLE); },
+            [this] { return test_ne(dictionary_map_id, 0, DictionaryTermColumns::DICTIONARY_MAP_ID); },
         };
         return util::ValidatorChain::run(list);
     }

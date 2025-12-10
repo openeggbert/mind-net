@@ -21,41 +21,27 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/Tag.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTag.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields Tag::to_values() const
+    entity_fields DictionaryTag::to_values() const
     {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(note_id);
-        result.push_back(tag_type_id);
-        return result;
+        return serialize_fields(*this);
     }
 
-    void Tag::from_values(const entity_fields& values)
+    void DictionaryTag::from_values(const entity_fields& values)
     {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        note_id = number();
-        tag_type_id = number();
+        deserialize_fields(*this, values);
     };
 
-    string Tag::validate()
+    string DictionaryTag::validate()
     {
-        using columns::TagColumns;
+        using columns::DictionaryTagColumns;
 
         validator_chain_vector list{
-            [this] { return test_ne(note_id, 0, TagColumns::NOTE_ID); },
-            [this] { return test_ne(tag_type_id, 0, TagColumns::TAG_TYPE_ID); },
+            [this] { return test_ne(dictionary_term_id, 0, DictionaryTagColumns::DICTIONARY_TERM_ID); },
+            [this] { return test_ne(dictionary_tag_type_id, 0, DictionaryTagColumns::DICTIONARY_TAG_TYPE_ID); },
         };
         return util::ValidatorChain::run(list);
     }

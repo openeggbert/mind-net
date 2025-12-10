@@ -21,29 +21,28 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/Note.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields Note::to_values() const
+    entity_fields DictionaryNote::to_values() const
     {
         return serialize_fields(*this);
     }
 
-    void Note::from_values(const entity_fields& values)
+    void DictionaryNote::from_values(const entity_fields& values)
     {
         deserialize_fields(*this, values);
     }
 
-    string Note::validate()
+    string DictionaryNote::validate()
     {
-        using columns::NoteColumns;
+        using columns::DictionaryNoteColumns;
 
         validator_chain_vector list{
-            [this] { return id == 0 ? test_ok() : test_ne(id, parent_note_id, NoteColumns::ID); },
-            [this] { return test_ne(map_id, 0, NoteColumns::MAP_ID); },
-            [this] { return testt_between(title, 1, 256, NoteColumns::TITLE); },
-            [this] { return testt_at_most(hint, 128, NoteColumns::HINT); },
+            [this] { return test_ne(dictionary_term_id, 0, DictionaryNoteColumns::DICTIONARY_TERM_ID); },
+            [this] { return testt_between(title, 1, 256, DictionaryNoteColumns::TITLE); },
+            [this] { return testt_at_most(content, 1024, DictionaryNoteColumns::CONTENT); },
         };
         return util::ValidatorChain::run(list);
     }

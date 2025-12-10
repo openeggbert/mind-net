@@ -21,26 +21,25 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/TermFulltext.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermVisit.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields TermFulltext::to_values() const
+    entity_fields DictionaryTermVisit::to_values() const
     {
         return serialize_fields(*this);
     }
 
-    void TermFulltext::from_values(const entity_fields& values)
+    void DictionaryTermVisit::from_values(const entity_fields& values)
     {
         deserialize_fields(*this, values);
     }
 
-    string TermFulltext::validate()
+    string DictionaryTermVisit::validate()
     {
-        using columns::TermFulltextColumns;
+        using columns::DictionaryTermVisitColumns;
 
         validator_chain_vector list{
-            [this] { return testt_at_least(title_part, 3, TermFulltextColumns::TITLE_PART); },
         };
         return util::ValidatorChain::run(list);
     }

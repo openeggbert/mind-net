@@ -21,47 +21,31 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/Term.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryMap.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields Term::to_values() const
+    entity_fields DictionaryMap::to_values() const
     {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(cast64(map_id));
-        result.push_back(cast64(note_id));
-        result.push_back(title);
-        result.push_back(disambiguation);
-
-        return result;
+        return serialize_fields(*this);
     }
 
-    void Term::from_values(const entity_fields& values)
+    void DictionaryMap::from_values(const entity_fields& values)
     {
-        int i = 0;
+        deserialize_fields(*this, values);
+    };
 
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        //
-        map_id = number();
-        note_id = number();
-        title = text();
-        disambiguation = text();
-    }
-
-    string Term::validate()
+    string DictionaryMap::validate()
     {
-        using columns::TermColumns;
+        using columns::DictionaryMapColumns;
 
         validator_chain_vector list{
-            [this] { return testt_between(title, 1, 64, TermColumns::TITLE); },
-            [this] { return test_ne(map_id, 0, TermColumns::MAP_ID); },
+            [this] { return testt_between(name, 1, 80, DictionaryMapColumns::NAME); },
+            [this] { return testt_between(description, 0, 512, DictionaryMapColumns::DESCRIPTION); },
+            [this] { return test_ne(owner_id, 0, DictionaryMapColumns::OWNER_ID); },
+            [this] { return test_between(cast64(owner_rights), 0, 7, DictionaryMapColumns::OWNER_RIGHTS); },
+            [this] { return test_between(cast64(team_rights), 0, 7, DictionaryMapColumns::TEAM_RIGHTS); },
+            [this] { return test_between(cast64(other_rights), 0, 7, DictionaryMapColumns::OTHER_RIGHTS); },
         };
         return util::ValidatorChain::run(list);
     }
