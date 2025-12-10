@@ -6,8 +6,8 @@
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * copies of the Software, and to permit persons to do so, subject to the
+ * following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
@@ -21,50 +21,50 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/TermFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermFulltextValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
-#include "mindnet/plugins/dictionary/models/TermFulltext.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermFulltext.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
-#define Model TermFulltext
-#define MODEL TERM_FULLTEXT
-#define model term_fulltext
+#define Model DictionaryTermFulltext
+#define MODEL DICTIONARY_TERM_FULLTEXT
+#define model dictionary_term_fulltext
 
 namespace mindnet::plugins::dictionary::validators
 {
-    using validators::TermFulltextValidator;
+    using validators::DictionaryTermFulltextValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult TermFulltextValidator::validate_create_authorization(
+    OperationResult DictionaryTermFulltextValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_read_authorization(
+    OperationResult DictionaryTermFulltextValidator::validate_read_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_update_authorization(
+    OperationResult DictionaryTermFulltextValidator::validate_update_authorization(
         const RequestContext& ctx, const Model& old_entity,
         const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_delete_authorization(
+    OperationResult DictionaryTermFulltextValidator::validate_delete_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                         const string_map& filter) const
+    OperationResult DictionaryTermFulltextValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                                 const string_map& filter) const
     {
         mandatory_filter(map_id)
         auto map_id = std::stoll(filter.at("map_id"));
@@ -80,33 +80,33 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermFulltextValidator::validate_create_integrity(const RequestContext& ctx,
-                                                                       const Model& entity) const
+    OperationResult DictionaryTermFulltextValidator::validate_create_integrity(const RequestContext& ctx,
+                                                                               const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_read_integrity(const RequestContext& ctx,
-                                                                     const Model& entity) const
+    OperationResult DictionaryTermFulltextValidator::validate_read_integrity(const RequestContext& ctx,
+                                                                             const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_update_integrity(const RequestContext& ctx,
-                                                                       const Model& old_entity,
-                                                                       const Model& new_entity) const
+    OperationResult DictionaryTermFulltextValidator::validate_update_integrity(const RequestContext& ctx,
+                                                                               const Model& old_entity,
+                                                                               const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_delete_integrity(const RequestContext& ctx,
-                                                                       const Model& entity) const
+    OperationResult DictionaryTermFulltextValidator::validate_delete_integrity(const RequestContext& ctx,
+                                                                               const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult TermFulltextValidator::validate_list_integrity(const RequestContext& ctx,
-                                                                     const string_map& filter) const
+    OperationResult DictionaryTermFulltextValidator::validate_list_integrity(const RequestContext& ctx,
+                                                                             const string_map& filter) const
     {
         mandatory_filter(map_id)
         mandatory_filter(title_part)
@@ -116,7 +116,7 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    string TermFulltextValidator::get_model_name() const
+    string DictionaryTermFulltextValidator::get_model_name() const
     {
         return STRINGIFY(model);
     }

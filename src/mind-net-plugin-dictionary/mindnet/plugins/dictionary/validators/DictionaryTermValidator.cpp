@@ -6,8 +6,8 @@
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * copies of the Software, and to permit persons to do so, subject to the
+ * following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
@@ -21,26 +21,28 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/TermValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
-#include "mindnet/plugins/dictionary/models/Term.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
-#define Model Term
-#define MODEL TERM
-#define model term
+#define Model DictionaryTerm
+#define MODEL DICTIONARY_TERM
+#define model dictionary_term
 
 namespace mindnet::plugins::dictionary::validators
 {
-    using validators::TermValidator;
+    using validators::DictionaryTermValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult TermValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTermValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                           const Model& entity) const
     {
-        return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not create Terms.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor,
+                  403, "You can not create Terms.")
 
         if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -50,7 +52,8 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTermValidator::validate_read_authorization(const RequestContext& ctx,
+                                                                         const Model& entity) const
     {
         auto map = dictionary::find_map(ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
@@ -62,10 +65,12 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                 const Model& new_entity) const
+    OperationResult DictionaryTermValidator::validate_update_authorization(const RequestContext& ctx,
+                                                                           const Model& old_entity,
+                                                                           const Model& new_entity) const
     {
-        return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not update Terms.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor,
+                  403, "You can not update Terms.")
 
         if (!dictionary::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -75,9 +80,11 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTermValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                           const Model& entity) const
     {
-        return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not delete Terms.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor,
+                  403, "You can not delete Terms.")
 
         if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
@@ -87,8 +94,8 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_list_authorization(const RequestContext& ctx,
-                                                               const string_map& filter) const
+    OperationResult DictionaryTermValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                         const string_map& filter) const
     {
         mandatory_filter(map_id)
         auto map_id = std::stoll(filter.at("map_id"));
@@ -103,7 +110,8 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTermValidator::validate_create_integrity(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         if (entity.note_id != 0)
         {
@@ -122,13 +130,15 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTermValidator::validate_read_integrity(const RequestContext& ctx,
+                                                                     const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                             const Model& new_entity) const
+    OperationResult DictionaryTermValidator::validate_update_integrity(const RequestContext& ctx,
+                                                                       const Model& old_entity,
+                                                                       const Model& new_entity) const
     {
         if (new_entity.note_id != 0)
         {
@@ -147,17 +157,19 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTermValidator::validate_delete_integrity(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TermValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult DictionaryTermValidator::validate_list_integrity(const RequestContext& ctx,
+                                                                     const string_map& filter) const
     {
         return ok_result;
     }
 
-    string TermValidator::get_model_name() const
+    string DictionaryTermValidator::get_model_name() const
     {
         return STRINGIFY(model);
     }

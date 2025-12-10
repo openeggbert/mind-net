@@ -6,8 +6,8 @@
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * copies of the Software, and to permit persons to do so, subject to the
+ * following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
@@ -21,29 +21,29 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/TagTypeValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTagTypeValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
-#include "mindnet/plugins/dictionary/models/TagType.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTagType.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
-#define Model TagType
-#define MODEL TAG_TYPE
-#define model tag_type
+#define Model DictionaryTagType
+#define MODEL DICTIONARY_TAG_TYPE
+#define model dictionary_tag_type
 
 namespace mindnet::plugins::dictionary::validators
 {
-    using validators::TagTypeValidator;
+    using validators::DictionaryTagTypeValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult TagTypeValidator::validate_create_authorization(const RequestContext& ctx,
-                                                                    const Model& entity) const
+    OperationResult DictionaryTagTypeValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                              const Model& entity) const
     {
-        return_if(ctx.role<mindnet::essential::UserRole::Editor,
-                           403, "User does not have permission to create a property.")
+        return_if(ctx.role < mindnet::essential::UserRole::Editor,
+                  403, "User does not have permission to create a property.")
 
         if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
@@ -52,7 +52,8 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTagTypeValidator::validate_read_authorization(const RequestContext& ctx,
+                                                                            const Model& entity) const
     {
         auto map = dictionary::find_map(ctx, entity.map_id);
         if (map.second.empty()) return {400, map.second};
@@ -64,24 +65,25 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                    const Model& new_entity) const
+    OperationResult DictionaryTagTypeValidator::validate_update_authorization(const RequestContext& ctx,
+                                                                              const Model& old_entity,
+                                                                              const Model& new_entity) const
     {
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_delete_authorization(const RequestContext& ctx,
-                                                                    const Model& entity) const
+    OperationResult DictionaryTagTypeValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                              const Model& entity) const
     {
-        if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, entity.dictionary_map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
         return {403, "You do not have permission to delete this tag_type."};
     }
 
-    OperationResult TagTypeValidator::validate_list_authorization(const RequestContext& ctx,
-                                                                  const string_map& filter) const
+    OperationResult DictionaryTagTypeValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                            const string_map& filter) const
     {
         mandatory_filter(map_id)
         auto map_id = std::stoll(filter.at("map_id"));
@@ -96,33 +98,38 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTagTypeValidator::validate_create_integrity(const RequestContext& ctx,
+                                                                          const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTagTypeValidator::validate_read_integrity(const RequestContext& ctx,
+                                                                        const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                                const Model& new_entity) const
+    OperationResult DictionaryTagTypeValidator::validate_update_integrity(const RequestContext& ctx,
+                                                                          const Model& old_entity,
+                                                                          const Model& new_entity) const
     {
         return {405, "Update of tag_type is forbidden."};
     }
 
-    OperationResult TagTypeValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryTagTypeValidator::validate_delete_integrity(const RequestContext& ctx,
+                                                                          const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult TagTypeValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult DictionaryTagTypeValidator::validate_list_integrity(const RequestContext& ctx,
+                                                                        const string_map& filter) const
     {
         return ok_result;
     }
 
-    string TagTypeValidator::get_model_name() const
+    string DictionaryTagTypeValidator::get_model_name() const
     {
         return STRINGIFY(model);
     }

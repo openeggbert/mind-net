@@ -6,8 +6,8 @@
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
+ * copies of the Software, and to permit persons to do so, subject to the
+ * following conditions:
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
@@ -21,83 +21,91 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/LinkValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryLinkValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
-#include "mindnet/plugins/dictionary/models/Link.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryLink.hpp"
 #include "mindnet/api/Persistence.hpp"
 
-#define Model Link
-#define MODEL LINK
-#define model link
+#define Model DictionaryLink
+#define MODEL DICTIONARY_LINK
+#define model dictionary_link
 
 namespace mindnet::plugins::dictionary::validators
 {
     using mindnet::api::OperationResult;
 
-    OperationResult LinkValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryLinkValidator::validate_create_authorization(const RequestContext& ctx,
+                                                                          const Model& entity) const
     {
         assert_editor()
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryLinkValidator::validate_read_authorization(const RequestContext& ctx,
+                                                                         const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
-                                                                 const Model& new_entity) const
+    OperationResult DictionaryLinkValidator::validate_update_authorization(const RequestContext& ctx,
+                                                                           const Model& old_entity,
+                                                                           const Model& new_entity) const
+    {
+        assert_editor()
+        return ok_result;
+    }
+
+    OperationResult DictionaryLinkValidator::validate_delete_authorization(const RequestContext& ctx,
+                                                                           const Model& entity) const
     {
         assert_editor()
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
-    {
-        assert_editor()
-
-        return ok_result;
-    }
-
-    OperationResult LinkValidator::validate_list_authorization(const RequestContext& ctx,
-                                                               const string_map& filter) const
+    OperationResult DictionaryLinkValidator::validate_list_authorization(const RequestContext& ctx,
+                                                                         const string_map& filter) const
     {
         return ok_result;
     }
 
-    using validators::LinkValidator;
+    using validators::DictionaryLinkValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult LinkValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryLinkValidator::validate_create_integrity(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_read_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryLinkValidator::validate_read_integrity(const RequestContext& ctx,
+                                                                     const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_update_integrity(const RequestContext& ctx, const Model& old_entity,
-                                                             const Model& new_entity) const
+    OperationResult DictionaryLinkValidator::validate_update_integrity(const RequestContext& ctx,
+                                                                       const Model& old_entity,
+                                                                       const Model& new_entity) const
     {
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_delete_integrity(const RequestContext& ctx, const Model& entity) const
+    OperationResult DictionaryLinkValidator::validate_delete_integrity(const RequestContext& ctx,
+                                                                       const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult LinkValidator::validate_list_integrity(const RequestContext& ctx, const string_map& filter) const
+    OperationResult DictionaryLinkValidator::validate_list_integrity(const RequestContext& ctx,
+                                                                     const string_map& filter) const
     {
         return ok_result;
     }
 
-    string LinkValidator::get_model_name() const
+    string DictionaryLinkValidator::get_model_name() const
     {
         return STRINGIFY(model);
     }
