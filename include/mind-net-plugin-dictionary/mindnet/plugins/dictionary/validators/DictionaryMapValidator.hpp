@@ -27,19 +27,19 @@
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/dictionary/models/Term.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryMap.hpp"
 
 namespace mindnet::plugins::dictionary::validators
 {
     using api::RequestContext;
-    using mindnet::plugins::dictionary::models::Term;
+    using mindnet::plugins::dictionary::models::DictionaryMap;
 
-    class TermValidator : public api::ValidatorBase<TermValidator, Term>
+    class DictionaryMapValidator : public api::ValidatorBase<DictionaryMapValidator, DictionaryMap>
     {
     public:
-        TermValidator() = default;
-        ~TermValidator() = default; // explicitly make it destructible
-        using Model = Term;
+        DictionaryMapValidator() = default;
+        ~DictionaryMapValidator() = default; // explicitly make it destructible
+        using Model = DictionaryMap;
 
         create_method_prototypes_for_ValidatorBase(Model)
     };

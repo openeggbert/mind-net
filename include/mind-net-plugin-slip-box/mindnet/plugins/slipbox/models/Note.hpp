@@ -136,10 +136,6 @@ namespace mindnet::plugins::slipbox::models
         int depth{};
 
         static constexpr auto fields = std::make_tuple(
-            &Model::id,
-            &Model::created_at,
-            &Model::updated_at,
-
             &Model::map_id,
             &Model::parent_note_id,
             &Model::content_id,

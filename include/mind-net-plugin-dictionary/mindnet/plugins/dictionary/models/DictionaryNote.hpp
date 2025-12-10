@@ -47,7 +47,7 @@ namespace mindnet::plugins::dictionary::models
         .set_columns({
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::TITLE, MANDATORY),
-            coldef(COLS::CONTENT),
+            coldef(COLS::CONTENT, TEXTAREA),
             coldef(COLS::POSITION, INTEGER).set_default_value(0),
         });
 
@@ -57,6 +57,13 @@ namespace mindnet::plugins::dictionary::models
         string title;
         string content;
         int position{0};
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::dictionary_term_id,
+            &Model::title,
+            &Model::content,
+            &Model::position
+        );
 
         create_model_h_methods(Model, MODEL)
 

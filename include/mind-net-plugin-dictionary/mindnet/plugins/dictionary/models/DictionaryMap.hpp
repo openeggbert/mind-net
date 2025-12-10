@@ -81,18 +81,14 @@ namespace mindnet::plugins::dictionary::models
         [[nodiscard]] int other_rights_int() const { return cast64(other_rights); }
 
         static constexpr auto fields = std::make_tuple(
-    &Model::id,
-    &Model::created_at,
-    &Model::updated_at,
-
     &Model::name,
     &Model::description,
     &Model::position,
     &Model::owner_id,
     &Model::team_id,
-    &Model::owner_rights_int,
-    &Model::team_rights_int,
-    &Model::other_rights_int
+    &Model::owner_rights,
+    &Model::team_rights,
+    &Model::other_rights
         );
         
         create_model_h_methods(Model, MODEL)

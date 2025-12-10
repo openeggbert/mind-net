@@ -22,7 +22,7 @@
  */
 
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportUtils.hpp"
-#include "mindnet/plugins/dictionary/models/Note.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
 
 #include <cmark.h>
 
@@ -117,7 +117,7 @@ namespace mindnet::plugin::dictionary::jobs
     }
 
     string generate_hierarchy_panel(bool go_up, std::string& path,
-                                    std::vector<plugins::slipbox::models::Note> children)
+                                    const std::vector<plugins::dictionary::models::DictionaryNote>& children)
     {
         string result;
         if (go_up)

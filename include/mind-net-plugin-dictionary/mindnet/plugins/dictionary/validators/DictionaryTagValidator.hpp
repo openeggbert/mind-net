@@ -21,42 +21,28 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/Url.hpp"
+#pragma once
 
-namespace mindnet::plugins::dictionary::models
+
+#include <memory>
+
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTag.hpp"
+
+
+namespace mindnet::plugins::dictionary::validators
 {
-    entity_fields Url::to_values() const
+    using api::RequestContext;
+    using mindnet::plugins::dictionary::models::DictionaryTag;
+
+    class DictionaryTagValidator : public api::ValidatorBase<DictionaryTagValidator, DictionaryTag>
     {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(from_note_id);
-        result.push_back(to_url);
-        return result;
-    }
+    public:
+        DictionaryTagValidator() = default;
+        ~DictionaryTagValidator() = default; // explicitly make it destructible
+        using Model = DictionaryTag;
 
-    void Url::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        from_note_id = number();
-        to_url = text();
+        create_method_prototypes_for_ValidatorBase(Model)
     };
-
-    string Url::validate()
-    {
-        using columns::UrlColumns;
-
-        validator_chain_vector list{
-            [this] { return test_ne(from_note_id, 0, UrlColumns::FROM_NOTE_ID); },
-            [this] { return testt_not_empty(to_url, UrlColumns::TO_URL); },
-        };
-        return util::ValidatorChain::run(list);
-    }
 }

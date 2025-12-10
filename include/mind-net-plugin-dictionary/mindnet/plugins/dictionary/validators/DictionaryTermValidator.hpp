@@ -21,45 +21,26 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/CollectionItem.hpp"
+#pragma once
 
+#include <memory>
 
-namespace mindnet::plugins::dictionary::models
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
+
+namespace mindnet::plugins::dictionary::validators
 {
-    entity_fields CollectionItem::to_values() const
+    using api::RequestContext;
+    using mindnet::plugins::dictionary::models::DictionaryTerm;
+
+    class DictionaryTermValidator : public api::ValidatorBase<DictionaryTermValidator, DictionaryTerm>
     {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(collection_id);
-        result.push_back(note_id);
-        result.push_back(order_index);
-        return result;
-    }
+    public:
+        DictionaryTermValidator() = default;
+        ~DictionaryTermValidator() = default; // explicitly make it destructible
+        using Model = DictionaryTerm;
 
-    void CollectionItem::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        collection_id = number();
-        note_id = number();
-        order_index = number();
+        create_method_prototypes_for_ValidatorBase(Model)
     };
-
-    string CollectionItem::validate()
-    {
-        using columns::CollectionItemColumns;
-
-        validator_chain_vector list{
-            [this] { return test_ne(collection_id, 0, CollectionItemColumns::COLLECTION_ID); },
-            [this] { return test_ne(note_id, 0, CollectionItemColumns::NOTE_ID); },
-        };
-        return util::ValidatorChain::run(list);
-    }
 }

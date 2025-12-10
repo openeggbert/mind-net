@@ -23,24 +23,22 @@
 
 #pragma once
 
-#include <memory>
+#include "mindnet/api/Trigger.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermFulltext.hpp"
 
-#include "mindnet/essential/DatabaseType.hpp"
-#include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/dictionary/models/TagTypeFulltext.hpp"
-
-namespace mindnet::plugins::dictionary::validators
+namespace mindnet::plugins::dictionary::triggers
 {
-    using api::RequestContext;
-    using mindnet::plugins::dictionary::models::TagTypeFulltext;
-
-    class TagTypeFulltextValidator : public api::ValidatorBase<TagTypeFulltextValidator, TagTypeFulltext>
+    class InsteadOfListDictioniaryTermFulltextTrigger : public api::Trigger
     {
     public:
-        TagTypeFulltextValidator() = default;
-        ~TagTypeFulltextValidator() = default; // explicitly make it destructible
-        using Model = TagTypeFulltext;
+        InsteadOfListDictioniaryTermFulltextTrigger();
 
-        create_method_prototypes_for_ValidatorBase(Model)
+        ~InsteadOfListDictioniaryTermFulltextTrigger() override = default;
+        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            const orm::QueryParams& query_params) override;
     };
 }

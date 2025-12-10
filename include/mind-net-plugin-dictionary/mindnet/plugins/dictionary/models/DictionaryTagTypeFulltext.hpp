@@ -63,10 +63,6 @@ namespace mindnet::plugins::dictionary::models
         std::string title{};
 
         static constexpr auto fields = std::make_tuple(
-            &Model::id,
-            &Model::created_at,
-            &Model::updated_at,
-
             &Model::dictionary_tag_type_id,
             &Model::dictionary_map_id,
             &Model::title_part,

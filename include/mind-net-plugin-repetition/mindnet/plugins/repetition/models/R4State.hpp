@@ -77,9 +77,6 @@ namespace mindnet::plugins::repetition::models
         bool content_modified_since_last_review{false};
 
         static constexpr auto fields = std::make_tuple(
-            &Model::id,
-            &Model::created_at,
-            &Model::updated_at,
             &Model::user_id,
             &Model::note_id,
             &Model::eligible,

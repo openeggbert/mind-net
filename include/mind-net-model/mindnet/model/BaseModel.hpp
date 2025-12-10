@@ -118,6 +118,13 @@ using member_type_t =
         unixtime created_at{};
         unixtime updated_at{};
 
+        static constexpr auto base_fields = std::make_tuple(
+            &BaseModel::id,
+            &BaseModel::created_at,
+            &BaseModel::updated_at
+        );
+        static constexpr auto base_fields_size = std::tuple_size_v<decltype(base_fields)>;
+
     public:
         virtual ~BaseModel() = default;
 
@@ -159,7 +166,7 @@ using member_type_t =
         void print(std::ostream& os) const
         {
             os << to_json();
-        };
+        }
 
         bool operator<(const BaseModel& other) const
         {
@@ -175,16 +182,20 @@ using member_type_t =
         template<typename T>
         entity_fields serialize_fields(const T& obj) const
         {
-            entity_fields out;
-            out.reserve(std::tuple_size_v<decltype(T::fields)>);
+            // Combine base and user-defined fields into a single tuple
+            constexpr auto combined_fields = std::tuple_cat(BaseModel::base_fields, T::fields);
 
+            static constexpr auto total_size = std::tuple_size_v<decltype(combined_fields)>;
+
+            entity_fields out;
+            out.reserve(total_size);
+
+            // One single std::apply over all fields
             std::apply([&](auto... memptr){
                 (
-                    out.push_back(
-                        serialize_value(obj.*memptr)
-                    ),
+                    out.push_back( serialize_value(obj.*memptr) ),
                 ...);
-            }, T::fields);
+            }, combined_fields);
 
             return out;
         }
@@ -192,14 +203,14 @@ using member_type_t =
         template<typename T>
         void deserialize_fields(T& obj, const entity_fields& values)
         {
-            int found_count = values.size();
-            auto& def = get_model_definition();
-            int expected_count = get_model_definition().get_column_count();
-            if (found_count != expected_count)
-            {
-                throw std::runtime_error(std::string("Cannot deserialize fields: ") + def.get_model_name() + " " + "expected_count=" + std::to_string(expected_count) + " found_count=" + std::to_string(found_count));
-            }
+            constexpr auto combined_fields = std::tuple_cat(BaseModel::base_fields, T::fields);
+            static constexpr auto total_size = std::tuple_size_v<decltype(combined_fields)>;
+
+            if (values.size() != total_size)
+                throw std::runtime_error("Invalid field count for model " + get_model_definition().get_model_name());
+
             int i = 0;
+
             std::apply([&](auto... memptr){
                 (
                     [&]{
@@ -207,17 +218,17 @@ using member_type_t =
                         obj.*memptr = deserialize_value<F>(values[i++]);
                     }(),
                 ...);
-            }, T::fields);
+            }, combined_fields);
         }
 
     };
 
     inline string validate_enums(const entity_fields& fields_, const ModelDefinition& def_)
     {
-        auto columns = def_.get_columns();
+        const auto& columns = def_.get_columns();
         for (int i = 0; i < fields_.size(); i++)
         {
-            auto column = columns[i];
+            const auto& column = columns[i];
 
             if (column.get_enum_definition().has_value())
             {
@@ -239,10 +250,10 @@ using member_type_t =
     {
         if (old_.size() != new_.size()) return "The number of fields in the entity has changed";
 
-        auto columns = def_.get_columns();
+        const auto& columns = def_.get_columns();
         for (int i = 0; i < old_.size(); i++)
         {
-            auto column = columns[i];
+            const auto& column = columns[i];
             if (column.get_column_name() == BaseColumns::CREATED_AT) continue;
             if (column.is_readonly() && old_[i] != new_[i])
             {
@@ -256,10 +267,10 @@ using member_type_t =
     {
         if (old_.size() != new_.size()) return "The number of fields in the entity has changed";
 
-        auto columns = def_.get_columns();
+        const auto& columns = def_.get_columns();
         for (int i = 0; i < new_.size(); i++)
         {
-            auto column = columns[i];
+            const auto& column = columns[i];
             if (!column.is_internal()) continue;
             if (old_[i] != new_[i])
                 return "Value of column " + column.get_column_name() + " is internal and cannot be changed by user.";
@@ -269,10 +280,10 @@ using member_type_t =
 
     inline string validate_internal(entity_fields& new_, ModelDefinition& def_)
     {
-        auto columns = def_.get_columns();
+        const auto& columns = def_.get_columns();
         for (int i = 0; i < new_.size(); i++)
         {
-            auto column = columns[i];
+            const auto& column = columns[i];
             if (!column.is_internal()) continue;
             auto value = new_[i];
             auto value_int64_t = std::get_if<int64_t>(&value);

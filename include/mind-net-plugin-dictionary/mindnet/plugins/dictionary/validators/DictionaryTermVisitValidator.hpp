@@ -23,22 +23,24 @@
 
 #pragma once
 
-#include "mindnet/api/Trigger.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryTermFulltext.hpp"
+#include <memory>
 
-namespace mindnet::plugins::dictionary::triggers
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermVisit.hpp"
+
+namespace mindnet::plugins::dictionary::validators
 {
-    class InsteadOfListDirectoryTermFulltextTrigger : public api::Trigger
+    using api::RequestContext;
+    using mindnet::plugins::dictionary::models::DictionaryTermVisit;
+
+    class DictionaryTermVisitValidator : public api::ValidatorBase<DictionaryTermVisitValidator, DictionaryTermVisit>
     {
     public:
-        InsteadOfListDirectoryTermFulltextTrigger();
+        DictionaryTermVisitValidator() = default;
+        ~DictionaryTermVisitValidator() = default; // explicitly make it destructible
+        using Model = DictionaryTermVisit;
 
-        ~InsteadOfListDirectoryTermFulltextTrigger() override = default;
-        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
-            int stack_depth,
-            api::OperationResult& validation_result,
-            const model::ModelDefinition& def,
-            identification user_id,
-            const orm::QueryParams& query_params) override;
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }

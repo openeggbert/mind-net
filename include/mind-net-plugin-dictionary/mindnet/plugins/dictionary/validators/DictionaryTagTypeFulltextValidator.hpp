@@ -27,19 +27,19 @@
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/dictionary/models/Link.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTagTypeFulltext.hpp"
 
 namespace mindnet::plugins::dictionary::validators
 {
     using api::RequestContext;
-    using mindnet::plugins::dictionary::models::Link;
+    using mindnet::plugins::dictionary::models::DictionaryTagTypeFulltext;
 
-    class LinkValidator : public api::ValidatorBase<LinkValidator, Link>
+    class DictionaryTagTypeFulltextValidator : public api::ValidatorBase<DictionaryTagTypeFulltextValidator, DictionaryTagTypeFulltext>
     {
     public:
-        LinkValidator() = default;
-        ~LinkValidator() = default; // explicitly make it destructible
-        using Model = Link;
+        DictionaryTagTypeFulltextValidator() = default;
+        ~DictionaryTagTypeFulltextValidator() = default; // explicitly make it destructible
+        using Model = DictionaryTagTypeFulltext;
 
         create_method_prototypes_for_ValidatorBase(Model)
     };

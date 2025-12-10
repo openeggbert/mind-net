@@ -26,7 +26,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/dictionary/models/Term.hpp"
 #include "mindnet/api/Persistence.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model Term
 #define MODEL TERM
@@ -42,7 +42,7 @@ namespace mindnet::plugins::dictionary::validators
     {
         return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not create Terms.")
 
-        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a Term for this map."};
         }
@@ -52,10 +52,10 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult TermValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = slipbox::find_map(ctx, entity.map_id);
+        auto map = dictionary::find_map(ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
-        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this Term."};
         }
@@ -67,7 +67,7 @@ namespace mindnet::plugins::dictionary::validators
     {
         return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not update Terms.")
 
-        if (!slipbox::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to update a Term for this map."};
         }
@@ -79,7 +79,7 @@ namespace mindnet::plugins::dictionary::validators
     {
         return_if(ctx.role<mindnet::essential::UserRole::Editor, 403, "You can not delete Terms.")
 
-        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return {403, "You do not have permission to delete this Term."};
         }
@@ -93,7 +93,7 @@ namespace mindnet::plugins::dictionary::validators
         mandatory_filter(map_id)
         auto map_id = std::stoll(filter.at("map_id"));
 
-        if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(
@@ -107,7 +107,7 @@ namespace mindnet::plugins::dictionary::validators
     {
         if (entity.note_id != 0)
         {
-            auto note = slipbox::find_note(ctx, entity.note_id);
+            auto note = dictionary::find_note(ctx, entity.note_id);
             if (!note.second.empty()) return {400, note.second};
             if (note.first.map_id != entity.map_id)
             {
@@ -132,7 +132,7 @@ namespace mindnet::plugins::dictionary::validators
     {
         if (new_entity.note_id != 0)
         {
-            auto note = slipbox::find_note(ctx, new_entity.note_id);
+            auto note = dictionary::find_note(ctx, new_entity.note_id);
             if (!note.second.empty()) return {400, note.second};
             if (note.first.map_id != new_entity.map_id)
             {

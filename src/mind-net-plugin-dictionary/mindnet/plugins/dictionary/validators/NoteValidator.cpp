@@ -26,7 +26,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/dictionary/models/Note.hpp"
 #include "mindnet/api/Persistence.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model Note
 #define MODEL NOTE
@@ -45,7 +45,7 @@ namespace mindnet::plugins::dictionary::validators
                            essential::user_role_to_string(ctx.
                                role))
 
-        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a note for this map."};
         }
@@ -55,10 +55,10 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult NoteValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = slipbox::find_map(ctx, entity.map_id);
+        auto map = dictionary::find_map(ctx, entity.map_id);
         if (!map.second.empty()) return {400, map.second};
 
-        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -68,7 +68,7 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult NoteValidator::validate_update_authorization(const RequestContext& ctx, const Model& old_entity,
                                                                  const Model& new_entity) const
     {
-        if (!slipbox::has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, old_entity.map_id, plugins::core::enums::SingleRight::Write))
             return {403, "You do not have permission to update this note."};
 
         return ok_result;
@@ -76,7 +76,7 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult NoteValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -94,7 +94,7 @@ namespace mindnet::plugins::dictionary::validators
         }
         while (true)
         {
-            auto maps = ctx.db->list(plugins::slipbox::models::NOTE_DEFINITION, ctx.token, params);
+            auto maps = ctx.db->list(plugins::dictionary::models::NOTE_DEFINITION, ctx.token, params);
             if (maps.second.ko()) return maps.second;
             if (maps.first.empty()) break;
             for (auto& values : maps.first)

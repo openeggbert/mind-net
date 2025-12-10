@@ -26,7 +26,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/dictionary/models/Map.hpp"
 #include "mindnet/api/Persistence.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model Map
 #define MODEL MAP
@@ -126,12 +126,12 @@ namespace mindnet::plugins::dictionary::validators
         }
         while (true)
         {
-            auto maps = ctx.db->list(plugins::slipbox::models::MAP_DEFINITION, ctx.token, params);
+            auto maps = ctx.db->list(plugins::dictionary::models::MAP_DEFINITION, ctx.token, params);
             if (maps.second.ko()) return maps.second;
             if (maps.first.empty()) break;
             for (auto& values : maps.first)
             {
-                plugins::slipbox::models::Map map;
+                plugins::dictionary::models::Map map;
                 map.from_values(values);
                 auto check_result = can_read(ctx.db, ctx.token, map.get_id());
                 if (check_result.ko())
@@ -148,7 +148,7 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult MapValidator::validate_create_integrity(const RequestContext& ctx, const Model& entity) const
     {
-        return_if(slipbox::has_map_name(ctx, entity.name),
+        return_if(dictionary::has_map_name(ctx, entity.name),
                   409, "name already exists")
 
         if (entity.team_id != 0)

@@ -54,6 +54,11 @@ namespace mindnet::plugins::dictionary::models
         identification dictionary_term_id;
         identification dictionary_tag_type_id;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::dictionary_term_id,
+            &Model::dictionary_tag_type_id
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const DictionaryTag& other) const

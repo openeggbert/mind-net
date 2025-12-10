@@ -25,7 +25,7 @@
 #include <map>
 #include <string>
 
-#include "mindnet/plugins/dictionary/models/Note.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
 
 namespace mindnet::plugin::dictionary::jobs
 {
@@ -39,7 +39,7 @@ namespace mindnet::plugin::dictionary::jobs
         const std::map<std::string, std::string>& values);
     string generate_breadcrumb(std::vector<string> & parents, string & current);
     string generate_hierarchy_panel(bool go_up, std::string& path,
-                                    std::vector<plugins::slipbox::models::Note> children);
+                                    const std::vector<plugins::dictionary::models::DictionaryNote>& children);
     std::vector<identification> split_path_numbers(const std::string& s);
 
     std::string markdown_to_html(const std::string& text);

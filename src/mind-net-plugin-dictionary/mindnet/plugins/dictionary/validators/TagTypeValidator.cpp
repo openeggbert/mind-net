@@ -27,7 +27,7 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/dictionary/models/TagType.hpp"
 #include "mindnet/api/Persistence.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model TagType
 #define MODEL TAG_TYPE
@@ -45,7 +45,7 @@ namespace mindnet::plugins::dictionary::validators
         return_if(ctx.role<mindnet::essential::UserRole::Editor,
                            403, "User does not have permission to create a property.")
 
-        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a tag type for this map."};
         }
@@ -54,10 +54,10 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult TagTypeValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto map = slipbox::find_map(ctx, entity.map_id);
+        auto map = dictionary::find_map(ctx, entity.map_id);
         if (map.second.empty()) return {400, map.second};
 
-        if (!slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this tag type."};
         }
@@ -73,7 +73,7 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult TagTypeValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                     const Model& entity) const
     {
-        if (slipbox::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -86,7 +86,7 @@ namespace mindnet::plugins::dictionary::validators
         mandatory_filter(map_id)
         auto map_id = std::stoll(filter.at("map_id"));
 
-        if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

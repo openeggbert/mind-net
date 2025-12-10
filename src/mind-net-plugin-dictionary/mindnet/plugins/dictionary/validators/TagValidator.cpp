@@ -27,7 +27,7 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/dictionary/models/Tag.hpp"
 #include "mindnet/api/Persistence.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model Tag
 #define MODEL TAG_H
@@ -41,10 +41,10 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult TagValidator::validate_create_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto tag_type = slipbox::find_tag_type(ctx, entity.tag_type_id);;
+        auto tag_type = dictionary::find_tag_type(ctx, entity.tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Write))
+        if (dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -53,13 +53,13 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult TagValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto tag_type = slipbox::find_tag_type(ctx, entity.tag_type_id);;
+        auto tag_type = dictionary::find_tag_type(ctx, entity.tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        auto map = slipbox::find_map(ctx, tag_type.first.map_id);
+        auto map = dictionary::find_map(ctx, tag_type.first.map_id);
         if (map.second.empty()) return {400, map.second};
 
-        if (slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -74,10 +74,10 @@ namespace mindnet::plugins::dictionary::validators
 
     OperationResult TagValidator::validate_delete_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        auto tag_type = slipbox::find_tag_type(ctx, entity.tag_type_id);;
+        auto tag_type = dictionary::find_tag_type(ctx, entity.tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -90,10 +90,10 @@ namespace mindnet::plugins::dictionary::validators
         mandatory_filter(tag_type_id)
         auto tag_type_id = std::stoll(filter.at("tag_type_id"));
 
-        auto tag_type = slipbox::find_tag_type(ctx, tag_type_id);;
+        auto tag_type = dictionary::find_tag_type(ctx, tag_type_id);;
         if (tag_type.second.empty()) return {400, tag_type.second};
 
-        if (!slipbox::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

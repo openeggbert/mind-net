@@ -20,117 +20,55 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include "mindnet/plugins/dictionary/SlipBoxPluginFactory.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPluginFactory.hpp"
 
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetQuestionIdsSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTagTypesSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryNextPositionSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryNotesInMapSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTermsSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTagTypesSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
-#include "mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
-#include "mindnet/plugins/dictionary/validators/CollectionValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/CollectionItemValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/ContentValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/UrlValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/MapValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/MapCollectionValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/MapCollectionItemValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/NoteValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/NoteNavigationValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/PropertyValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/QuestionValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/LinkValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TagValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TagTypeValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TermValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/SourceValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/IdeaValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/WantedNoteValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/AlertValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/FlagValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/ProjectValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TaskValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/PinnedNoteValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TestValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TestAttemptValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TestAttemptAnswerValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/AnnotationValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TermFulltextValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/TagTypeFulltextValidator.hpp"
-#include "mindnet/plugins/dictionary/migrations/SlipBoxSQLiteMigrationScripts.hpp"
-#include "mindnet/plugins/dictionary/triggers/AfterCreateUpdateNoteTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/AfterUpdateContentTrigger.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryLinkValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryMapValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryNoteValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTagValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTagTypeValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTagTypeFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
+#include "mindnet/plugins/dictionary/migrations/DictionarySQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/BeforeUpdateContentTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/UpdateNotePathAndDepthAfterTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/InsteadOfReadNoteNavigationTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/AfterCreateTestAttemptTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/AfterCreateTestAttemptAnswerTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListDirectoryTermFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictioniaryTermFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTagTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
 
 namespace mindnet::plugins::dictionary
 {
-    api::PluginPtr SlipBoxPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
+    api::PluginPtr DictionaryPluginFactory::create(std::shared_ptr<api::RepositoryFactory>& repository_factory) const
     {
         auto plugin = std::make_shared<api::Plugin>(
-            SLIP_BOX_PLUGIN_NAME,
-            "slip_box",
+            DICTIONARY_PLUGIN_NAME,
+            "dictionary",
             std::vector<std::string>{
-                "slip_box",
-                "simple_slip_box"
+                "dictionary"
             }
         );
 
-        REGISTER_MIGRATIONS(SlipBox, SQLite)
+        REGISTER_MIGRATIONS(Dictionary, SQLite)
 
-        REGISTER_MODEL(map, Map, MAP)
-        REGISTER_MODEL(note, Note, NOTE)
-        REGISTER_MODEL(content, Content, CONTENT)
-        REGISTER_MODEL(source, Source, SOURCE)
-        REGISTER_MODEL(tag, Tag, TAG)
-        REGISTER_MODEL(property, Property, PROPERTY)
+        REGISTER_MODEL(dictionary_link, DictionaryLink, DICTIONARY_LINK)
+        REGISTER_MODEL(dictionary_map, DictionaryMap, DICTIONARY_MAP)
+        REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
+        REGISTER_MODEL(dictionary_tag, DictionaryTag, DICTIONARY_TAG)
+        REGISTER_MODEL(dictionary_tag_type, DictionaryTagType, DICTIONARY_TAG_TYPE)
+        REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
+        REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
+        REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
+        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
 
-        REGISTER_MODEL(link, Link, LINK)
-        REGISTER_MODEL(url, Url, URL)
-        REGISTER_MODEL(wanted_note, WantedNote, WANTED_NOTE)
-
-        REGISTER_MODEL(question, Question, QUESTION)
-        REGISTER_MODEL(tag_type, TagType, TAG_TYPE)
-
-        REGISTER_MODEL(collection, Collection, COLLECTION)
-        REGISTER_MODEL(collection_item, CollectionItem, COLLECTION_ITEM)
-        REGISTER_MODEL(term, Term, TERM)
-        REGISTER_MODEL(idea, Idea, IDEA)
-        REGISTER_MODEL(alert, Alert, ALERT)
-        REGISTER_MODEL(flag, Flag, FLAG)
-        REGISTER_MODEL(project, Project, PROJECT)
-        REGISTER_MODEL(task, Task, TASK)
-        REGISTER_MODEL(pinned_note, PinnedNote, PINNED_NOTE)
-        REGISTER_MODEL(map_collection, MapCollection, MAP_COLLECTION)
-        REGISTER_MODEL(map_collection_item, MapCollectionItem, MAP_COLLECTION_ITEM)
-        REGISTER_MODEL(note_navigation, NoteNavigation, NOTE_NAVIGATION)
-        REGISTER_MODEL(test, Test, TEST)
-        REGISTER_MODEL(test_attempt, TestAttempt, TEST_ATTEMPT)
-        REGISTER_MODEL(test_attempt_answer, TestAttemptAnswer, TEST_ATTEMPT_ANSWER)
-        REGISTER_MODEL(annotation, Annotation, ANNOTATION)
-        REGISTER_MODEL(term_fulltext, TermFulltext, TERM_FULLTEXT)
-        REGISTER_MODEL(tag_type_fulltext, TagTypeFulltext, TAG_TYPE_FULLTEXT)
-
-        plugin->register_trigger(std::make_shared<triggers::UpdateNotePathAndDepthAfterTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::AfterCreateUpdateNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::BeforeUpdateContentTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::InsteadOfReadNoteNavigationTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::AfterCreateTestAttemptAnswerTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDirectoryTermFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictioniaryTermFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTagTypeFulltextTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());

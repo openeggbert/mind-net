@@ -71,12 +71,12 @@ namespace mindnet::plugins::dictionary::jobs
         api::AccessTokenContext token = api::AccessTokenContext(0, "system", 403);
 
         mindnet::orm::QueryParams maps_query_params;
-        auto maps = run_list(mindnet::plugins::dictionary::models::MAP_DEFINITION, token, maps_query_params, 0);
+        auto maps = run_list(mindnet::plugins::dictionary::models::DICTIONARY_MAP_DEFINITION, token, maps_query_params, 0);
         if (maps.second.ko()) return maps.second.error;
 
         for (auto& map_values : maps.first)
         {
-            models::Map map;
+            models::DictionaryMap map;
             map.from_values(map_values);
             if (map.name == "C++") map.name = "cppforever.com";
             auto export_map_dir = export_dir / map.name;
@@ -105,16 +105,16 @@ namespace mindnet::plugins::dictionary::jobs
     static const string hierarchy_panel = "hierarchy_panel";
     static const string html_content = "html_content";
 
-    std::string DictionaryHtmlExportJob::generate_map(std::filesystem::path& export_map_dir, models::Map& map,
+    std::string DictionaryHtmlExportJob::generate_map(std::filesystem::path& export_map_dir, models::DictionaryMap& map,
                                             api::AccessTokenContext& token)
     {
         {
             std::ofstream styles_css(export_map_dir / "styles.css");
-            styles_css << plugin::slipbox::jobs::get_styles_css();
+            styles_css << plugin::dictionary::jobs::get_styles_css();
         }
         {
             std::ofstream script_js(export_map_dir / "script.js");
-            script_js << plugin::slipbox::jobs::get_script_js();
+            script_js << plugin::dictionary::jobs::get_script_js();
         }
 
         auto author_result = run_read(core::models::USER_DEFINITION, token, map.owner_id, 0);
@@ -127,22 +127,22 @@ namespace mindnet::plugins::dictionary::jobs
         query_params.add_filter("parent_note_id", 0);
         query_params.sort = "sibling_order";
         query_params.order = mindnet::orm::Order::Asc;
-        auto notes = run_list(mindnet::plugins::dictionary::models::NOTE_DEFINITION, token, query_params, 0);
+        auto notes = run_list(mindnet::plugins::dictionary::models::DICTIONARY_NOTE_DEFINITION, token, query_params, 0);
         if (notes.second.ko()) return notes.second.error;
 
-        std::vector<models::Note> root_notes;
+        std::vector<models::DictionaryNote> root_notes;
         for (auto& note_values : notes.first)
         {
-            models::Note note;
+            models::DictionaryNote note;
             note.from_values(note_values);
             root_notes.push_back(note);
         }
         auto author_display_name = author_.display_name.empty() ? author_.username : author_.display_name;
         {
-            string index_html = plugin::slipbox::jobs::get_html_template();
+            string index_html = plugin::dictionary::jobs::get_html_template();
 
             std::string empty_string;
-            string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(
+            string hierarchy_panel_html = plugin::dictionary::jobs::generate_hierarchy_panel(
                 false, empty_string, root_notes);
             std::map<string, string> placeholder_map =
             {
@@ -154,9 +154,9 @@ namespace mindnet::plugins::dictionary::jobs
                 {base_href, "."},
                 {breadcrumb, "<span id=\"panel_current\">Home</span>"},
                 {hierarchy_panel, hierarchy_panel_html},
-                {html_content, plugin::slipbox::jobs::markdown_to_html(map.description)},
+                {html_content, plugin::dictionary::jobs::markdown_to_html(map.description)},
             };
-            index_html = plugin::slipbox::jobs::replace_placeholders(index_html, placeholder_map);
+            index_html = plugin::dictionary::jobs::replace_placeholders(index_html, placeholder_map);
             std::ofstream index_html_file(export_map_dir / "index.html");
             index_html_file << index_html;
         }
@@ -170,85 +170,85 @@ namespace mindnet::plugins::dictionary::jobs
         return "";
     }
 
-    std::string DictionaryHtmlExportJob::generate_page(models::Note& note, api::AccessTokenContext& token,
-                                             string& author_display_name, models::Map& map,
+    std::string DictionaryHtmlExportJob::generate_page(models::DictionaryNote& note, api::AccessTokenContext& token,
+                                             string& author_display_name, models::DictionaryMap& map,
                                              std::filesystem::path& export_map_dir)
     {
-        string index_html = plugin::slipbox::jobs::get_html_template();
-
-        mindnet::orm::QueryParams query_params;
-        query_params.add_filter("map_id", map.get_id());
-        query_params.add_filter("parent_note_id", note.get_id());
-        query_params.sort = "sibling_order";
-        query_params.order = mindnet::orm::Order::Asc;
-        auto children_result = run_list(mindnet::plugins::dictionary::models::NOTE_DEFINITION, token, query_params, 0);
-        if (children_result.second.ko()) return children_result.second.error;
-
-        std::vector<models::Note> children;
-        for (auto& note_values : children_result.first)
-        {
-            models::Note note_;
-            note_.from_values(note_values);
-            children.push_back(note_);
-        }
-
-        auto path_ids = plugin::slipbox::jobs::split_path_numbers(note.path);
-
-        string path_;
-        std::vector<std::string> parents;
-        for (auto& note_id : path_ids)
-        {
-            auto e = run_read(models::NOTE_DEFINITION, token, note_id, 0);
-            if (e.second.ko()) return e.second.error;
-            if (!path_.empty()) path_ += "/";
-            models::Note n;
-            n.from_values(e.first);
-            path_ += plugin::slipbox::jobs::normalize_text_for_url(n.title);
-            parents.push_back(n.title);
-        }
-        string breadcrumb_html = plugin::slipbox::jobs::generate_breadcrumb(parents, note.title);
-        string hierarchy_panel_html = plugin::slipbox::jobs::generate_hierarchy_panel(true, path_, children);
-
-        string base_href_;
-        for (int i = 1; i <= (note.depth + 1); i++)
-        {
-            if (!base_href_.empty()) base_href_ += "/";
-            base_href_ += "..";
-        }
-        models::Content content;
-
-        if (note.content_id != 0)
-        {
-            auto read_content = run_read(models::CONTENT_DEFINITION, token, note.content_id, 0);
-            if (read_content.second.ko()) return read_content.second.error;
-            content.from_values(read_content.first);
-        }
-
-        std::map<string, string> placeholder_map =
-        {
-            {note_title, note.title},
-            {description_, note.title},
-            {keywords, note.title},
-            {author, author_display_name},
-            {map_name, map.name},
-            {base_href, base_href_},
-            {breadcrumb, breadcrumb_html},
-            {hierarchy_panel, hierarchy_panel_html},
-            {html_content, note.content_id == 0 ? "" : plugin::slipbox::jobs::markdown_to_html(content.value)},
-        };
-        index_html = plugin::slipbox::jobs::replace_placeholders(index_html, placeholder_map);
-        auto dir = export_map_dir / path_;
-        std::filesystem::create_directories(dir);
-        auto index_html_path = dir / "index.html";
-        debug << "index_html_path=" << index_html_path << commit;
-        std::ofstream index_html_file(index_html_path);
-
-        index_html_file << index_html;
-
-        for (auto& n : children)
-        {
-            auto result = generate_page(n, token, author_display_name, map, export_map_dir);
-        }
+        // string index_html = plugin::dictionary::jobs::get_html_template();
+        //
+        // mindnet::orm::QueryParams query_params;
+        // query_params.add_filter("map_id", map.get_id());
+        // query_params.add_filter("parent_note_id", note.get_id());
+        // query_params.sort = "sibling_order";
+        // query_params.order = mindnet::orm::Order::Asc;
+        // auto children_result = run_list(mindnet::plugins::dictionary::models::DICTIONARY_NOTE_DEFINITION, token, query_params, 0);
+        // if (children_result.second.ko()) return children_result.second.error;
+        //
+        // std::vector<models::Note> children;
+        // for (auto& note_values : children_result.first)
+        // {
+        //     models::Note note_;
+        //     note_.from_values(note_values);
+        //     children.push_back(note_);
+        // }
+        //
+        // auto path_ids = plugin::dictionary::jobs::split_path_numbers(note.path);
+        //
+        // string path_;
+        // std::vector<std::string> parents;
+        // for (auto& note_id : path_ids)
+        // {
+        //     auto e = run_read(models::DICTIONARY_NOTE_DEFINITION, token, note_id, 0);
+        //     if (e.second.ko()) return e.second.error;
+        //     if (!path_.empty()) path_ += "/";
+        //     models::Note n;
+        //     n.from_values(e.first);
+        //     path_ += plugin::dictionary::jobs::normalize_text_for_url(n.title);
+        //     parents.push_back(n.title);
+        // }
+        // string breadcrumb_html = plugin::dictionary::jobs::generate_breadcrumb(parents, note.title);
+        // string hierarchy_panel_html = plugin::dictionary::jobs::generate_hierarchy_panel(true, path_, children);
+        //
+        // string base_href_;
+        // for (int i = 1; i <= (note.depth + 1); i++)
+        // {
+        //     if (!base_href_.empty()) base_href_ += "/";
+        //     base_href_ += "..";
+        // }
+        // models::Content content;
+        //
+        // if (note.content_id != 0)
+        // {
+        //     auto read_content = run_read(models::DICTIONARY_CONTENT_DEFINITION, token, note.content_id, 0);
+        //     if (read_content.second.ko()) return read_content.second.error;
+        //     content.from_values(read_content.first);
+        // }
+        //
+        // std::map<string, string> placeholder_map =
+        // {
+        //     {note_title, note.title},
+        //     {description_, note.title},
+        //     {keywords, note.title},
+        //     {author, author_display_name},
+        //     {map_name, map.name},
+        //     {base_href, base_href_},
+        //     {breadcrumb, breadcrumb_html},
+        //     {hierarchy_panel, hierarchy_panel_html},
+        //     {html_content, note.content_id == 0 ? "" : plugin::dictionary::jobs::markdown_to_html(content.value)},
+        // };
+        // index_html = plugin::dictionary::jobs::replace_placeholders(index_html, placeholder_map);
+        // auto dir = export_map_dir / path_;
+        // std::filesystem::create_directories(dir);
+        // auto index_html_path = dir / "index.html";
+        // debug << "index_html_path=" << index_html_path << commit;
+        // std::ofstream index_html_file(index_html_path);
+        //
+        // index_html_file << index_html;
+        //
+        // for (auto& n : children)
+        // {
+        //     auto result = generate_page(n, token, author_display_name, map, export_map_dir);
+        // }
         return "";
     }
 }

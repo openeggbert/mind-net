@@ -23,25 +23,23 @@
 
 #pragma once
 
-
 #include <memory>
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/dictionary/models/Tag.hpp"
-
+#include "mindnet/plugins/dictionary/models/DictionaryTagType.hpp"
 
 namespace mindnet::plugins::dictionary::validators
 {
     using api::RequestContext;
-    using mindnet::plugins::dictionary::models::Tag;
+    using mindnet::plugins::dictionary::models::DictionaryTagType;
 
-    class TagValidator : public api::ValidatorBase<TagValidator, Tag>
+    class DictionaryTagTypeValidator : public api::ValidatorBase<DictionaryTagTypeValidator, DictionaryTagType>
     {
     public:
-        TagValidator() = default;
-        ~TagValidator() = default; // explicitly make it destructible
-        using Model = Tag;
+        DictionaryTagTypeValidator() = default;
+        ~DictionaryTagTypeValidator() = default; // explicitly make it destructible
+        using Model = DictionaryTagType;
 
         create_method_prototypes_for_ValidatorBase(Model)
     };

@@ -65,10 +65,6 @@ namespace mindnet::plugins::dictionary::models
         enums::Difficulty difficulty{enums::Difficulty::Medium};
 
         static constexpr auto fields = std::make_tuple(
-            &Model::id,
-            &Model::created_at,
-            &Model::updated_at,
-
             &Model::dictionary_map_id,
             &Model::title,
             &Model::definition,

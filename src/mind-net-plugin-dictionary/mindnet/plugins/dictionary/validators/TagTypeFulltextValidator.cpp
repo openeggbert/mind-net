@@ -26,7 +26,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/dictionary/models/TagTypeFulltext.hpp"
 #include "mindnet/api/Persistence.hpp"
-#include "mindnet/plugins/dictionary/SlipBoxPersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model TagTypeFulltext
 #define MODEL TAG_TYPE_FULLTEXT
@@ -69,7 +69,7 @@ namespace mindnet::plugins::dictionary::validators
         mandatory_filter(map_id)
         auto map_id = std::stoll(filter.at("map_id"));
 
-        if (!slipbox::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(

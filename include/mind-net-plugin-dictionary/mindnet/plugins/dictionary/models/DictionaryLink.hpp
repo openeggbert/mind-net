@@ -56,10 +56,6 @@ namespace mindnet::plugins::dictionary::models
         identification to_dictionary_term_id;
 
         static constexpr auto fields = std::make_tuple(
-            &Model::id,
-            &Model::created_at,
-            &Model::updated_at,
-
             &Model::from_dictionary_term_id,
             &Model::to_dictionary_term_id
         );

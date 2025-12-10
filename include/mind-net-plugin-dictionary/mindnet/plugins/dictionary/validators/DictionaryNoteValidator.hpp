@@ -27,19 +27,19 @@
 
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/dictionary/models/Note.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
 
 namespace mindnet::plugins::dictionary::validators
 {
     using api::RequestContext;
-    using mindnet::plugins::dictionary::models::Note;
+    using mindnet::plugins::dictionary::models::DictionaryNote;
 
-    class NoteValidator : public api::ValidatorBase<NoteValidator, Note>
+    class DictionaryNoteValidator : public api::ValidatorBase<DictionaryNoteValidator, DictionaryNote>
     {
     public:
-        NoteValidator() = default;
-        ~NoteValidator() = default; // explicitly make it destructible
-        using Model = Note;
+        DictionaryNoteValidator() = default;
+        ~DictionaryNoteValidator() = default; // explicitly make it destructible
+        using Model = DictionaryNote;
 
         create_method_prototypes_for_ValidatorBase(Model)
     };
