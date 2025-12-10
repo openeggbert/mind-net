@@ -28,12 +28,12 @@
 
 namespace mindnet::plugins::dictionary::triggers
 {
-    class InsteadOfListDictioniaryTermFulltextTrigger : public api::Trigger
+    class InsteadOfListDictionaryTermFulltextTrigger : public api::Trigger
     {
     public:
-        InsteadOfListDictioniaryTermFulltextTrigger();
+        InsteadOfListDictionaryTermFulltextTrigger();
 
-        ~InsteadOfListDictioniaryTermFulltextTrigger() override = default;
+        ~InsteadOfListDictionaryTermFulltextTrigger() override = default;
         std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,

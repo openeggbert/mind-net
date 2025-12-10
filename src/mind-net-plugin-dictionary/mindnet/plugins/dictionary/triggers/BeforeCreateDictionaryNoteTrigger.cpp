@@ -25,9 +25,8 @@
 
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/essential/Global.hpp"
-#include "mindnet/plugins/dictionary/models/Link.hpp"
-#include "mindnet/plugins/dictionary/models/Note.hpp"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextDictionaryNotePositionSQLiteQuery.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
 {
@@ -36,11 +35,11 @@ namespace mindnet::plugins::dictionary::triggers
     BeforeCreateDictionaryNoteTrigger::BeforeCreateDictionaryNoteTrigger()
         : Trigger(
             "BeforeCreateDictionaryNoteTrigger",
-            "Set the value of the sibling order.",
+            "Set the value of the position.",
             1000,
             {essential::Crudl::Create},
             api::TriggerPhase::Before,
-            "note"
+            "dictionary_note"
         )
     {
     }
@@ -61,29 +60,26 @@ namespace mindnet::plugins::dictionary::triggers
         {
             return;
         }
-        models::Note new_note;
+        models::DictionaryNote new_note;
         new_note.from_values(fields);
 
-        identification map_id = new_note.map_id;
-        identification parent_note_id = new_note.parent_note_id;
+        identification dictionary_term_id = new_note.dictionary_term_id;
 
         nlohmann::json req;
-        req["map_id"] = map_id;
-        req["parent_note_id"] = parent_note_id;
-        req["note_id"] = id;
+        req["dictionary_term_id"] = dictionary_term_id;
         nlohmann::json res;
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindNextSiblingOrder, req);
-            i64 next_sibling_order = res["next_sibling_order"];
-            new_note.sibling_order = next_sibling_order;
+            res = call_query(db::sqlite::queries::QUERY_FindNextDictionaryNotePosition, req);
+            i64 next_position = res["next_position"];
+            new_note.position = next_position;
             auto v = new_note.to_values();
             fields = v;
-            info << "Query FindNextSiblingOrder successful" << commit;
+            info << "Query FindNextDictionaryNotePosition successful" << commit;
         }
         catch (std::exception& e)
         {
-            err << "Query UpdateNotePathAndDepth failed" << commit;
+            err << "Query FindNextDictionaryNotePosition failed" << commit;
         }
     }
 }

@@ -26,8 +26,8 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTagTypesSQLiteQuery.hpp"
-#include "mindnet/plugins/dictionary/models/TagTypeFulltext.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTagTypesSQLiteQuery.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTagTypeFulltext.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -59,8 +59,8 @@ namespace mindnet::plugins::dictionary::triggers
         std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> result;
 
         nlohmann::json req;
-        auto map_id = query_params.filters.at("map_id");
-        req["map_id"] = std::stoll(map_id);
+        auto dictionary_map_id = query_params.filters.at("dictionary_map_id");
+        req["dictionary_map_id"] = std::stoll(dictionary_map_id);
         auto title_part = query_params.filters.at("title_part");
         req["title_part"] = title_part;
         int page_size = query_params.page_size;
@@ -72,7 +72,7 @@ namespace mindnet::plugins::dictionary::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindTagTypes, req);
+            res = call_query(db::sqlite::queries::QUERY_FindDictionaryTagTypes, req);
 
             if (res.contains("error"))
             {
@@ -83,11 +83,11 @@ namespace mindnet::plugins::dictionary::triggers
 
             results = res["results"];
             info << res.dump() << commit;
-            info << "Query FindTermsSQLiteQuery successful" << commit;
+            info << "Query FindDictionaryTerms successful" << commit;
         }
         catch (std::exception& e)
         {
-            err << "Query FindTermsSQLiteQuery failed " << e.what() << commit;
+            err << "Query FindDictionaryTerms failed " << e.what() << commit;
             std::vector<entity_fields> v0;
             result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(std::move(v0), {500, "Internal server error."});
             return result;
@@ -95,10 +95,10 @@ namespace mindnet::plugins::dictionary::triggers
 
         for (auto& e:results)
         {
-            models::TagTypeFulltext tag_type_fulltext;
+            models::DictionaryTagTypeFulltext tag_type_fulltext;
             tag_type_fulltext.set_id(e.first);
-            tag_type_fulltext.tag_type_id = e.first;
-            tag_type_fulltext.map_id = std::stoll(map_id);
+            tag_type_fulltext.dictionary_tag_type_id = e.first;
+            tag_type_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
             tag_type_fulltext.title_part = title_part;
             tag_type_fulltext.title = e.second;
             auto values = tag_type_fulltext.to_values();

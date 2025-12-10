@@ -51,7 +51,7 @@ namespace mindnet::plugins::dictionary::models
         .set_columns({
             //
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::TITLE_PART, MANDATORY | READONLY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
         });
@@ -59,13 +59,13 @@ namespace mindnet::plugins::dictionary::models
     struct Model : mindnet::model::BaseModel
     {
         identification dictionary_term_id{};
-        identification map_id{};
+        identification dictionary_map_id{};
         std::string title_part{};
         std::string title{};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
-            &Model::map_id,
+            &Model::dictionary_map_id,
             &Model::title_part,
             &Model::title
         );
@@ -75,8 +75,8 @@ namespace mindnet::plugins::dictionary::models
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                map_id == other.map_id && title_part == other.title_part && title == other.title &&
+                dictionary_map_id == other.dictionary_map_id &&
+                dictionary_term_id == other.dictionary_term_id && title_part == other.title_part && title == other.title &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
     };

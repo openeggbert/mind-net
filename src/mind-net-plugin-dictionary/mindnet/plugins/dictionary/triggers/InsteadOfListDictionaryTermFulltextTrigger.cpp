@@ -21,12 +21,12 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictioniaryTermFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermFulltextTrigger.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTermsSQLiteQuery.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -34,9 +34,9 @@ namespace mindnet::plugins::dictionary::triggers
 {
     using_loggers()
 
-    InsteadOfListDictioniaryTermFulltextTrigger::InsteadOfListDictioniaryTermFulltextTrigger()
+    InsteadOfListDictionaryTermFulltextTrigger::InsteadOfListDictionaryTermFulltextTrigger()
         : Trigger(
-            "InsteadOfListDictioniaryTermFulltextTrigger",
+            "InsteadOfListDictionaryTermFulltextTrigger",
             "Calls custom sql for list term request",
             1000,
             {essential::Crudl::List},
@@ -46,7 +46,7 @@ namespace mindnet::plugins::dictionary::triggers
     {
     }
 
-    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListDictioniaryTermFulltextTrigger::
+    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListDictionaryTermFulltextTrigger::
     run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,
@@ -58,8 +58,8 @@ namespace mindnet::plugins::dictionary::triggers
         std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> result;
 
         nlohmann::json req;
-        auto map_id = query_params.filters.at("map_id");
-        req["map_id"] = std::stoll(map_id);
+        auto dictionary_map_id = query_params.filters.at("dictionary_map_id");
+        req["dictionary_map_id"] = std::stoll(dictionary_map_id);
         auto title_part = query_params.filters.at("title_part");
         req["title_part"] = title_part;
         int page_size = query_params.page_size;
@@ -71,7 +71,7 @@ namespace mindnet::plugins::dictionary::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindTerms, req);
+            res = call_query(db::sqlite::queries::QUERY_FindDictionaryTerms, req);
 
             if (res.contains("error"))
             {
@@ -82,11 +82,11 @@ namespace mindnet::plugins::dictionary::triggers
 
             results = res["results"];
             info << res.dump() << commit;
-            info << "Query FindTermsSQLiteQuery successful" << commit;
+            info << "Query FindDictionaryTerms successful" << commit;
         }
         catch (std::exception& e)
         {
-            err << "Query FindTermsSQLiteQuery failed " << e.what() << commit;
+            err << "Query FindDictionaryTerms failed " << e.what() << commit;
             std::vector<entity_fields> v0;
             result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(std::move(v0), {500, "Internal server error."});
             return result;
@@ -94,10 +94,10 @@ namespace mindnet::plugins::dictionary::triggers
 
         for (auto& e:results)
         {
-            models::TermFulltext term_fulltext;
+            models::DictionaryTermFulltext term_fulltext;
             term_fulltext.set_id(e.first);
-            term_fulltext.term_id = e.first;
-            term_fulltext.map_id = std::stoll(map_id);
+            term_fulltext.dictionary_term_id = e.first;
+            term_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
             term_fulltext.title_part = title_part;
             term_fulltext.title = e.second;
             auto values = term_fulltext.to_values();

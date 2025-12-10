@@ -22,8 +22,7 @@
  */
 #include "mindnet/plugins/dictionary/DictionaryPluginFactory.hpp"
 
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryNextPositionSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryNotesInMapSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextDictionaryNotePositionSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTermsSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTagTypesSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
@@ -39,7 +38,7 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
 #include "mindnet/plugins/dictionary/migrations/DictionarySQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictioniaryTermFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTagTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
 
@@ -68,22 +67,14 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
 
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictioniaryTermFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTagTypeFulltextTrigger>());
 
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindPreviousAndNextNoteSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::GetQuestionIdsSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTermsSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTagTypesSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextDictionaryNotePositionSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindDictionaryTermsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindDictionaryTagTypesSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::DictionaryHtmlExportJob>());
-        plugin->register_library_file("markdown-it.min.js");
-        plugin->register_library_file("highlight.min.js");
-        plugin->register_library_file("markdown-it-emoji.min.js");
-        plugin->register_library_file("github.min.css");
 
         plugin->close_for_changes();
         return plugin;

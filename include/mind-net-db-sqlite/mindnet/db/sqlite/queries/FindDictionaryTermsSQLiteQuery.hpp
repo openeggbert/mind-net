@@ -21,28 +21,23 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
 #pragma once
 
-#include "mindnet/model/BaseColumns.hpp"
+#include "mindnet/api/Query.hpp"
 
-namespace mindnet::plugins::dictionary::columns
+namespace mindnet::db::sqlite::queries
 {
-    struct DictionaryTermFulltextColumns : model::BaseColumns
+    const std::string QUERY_FindDictionaryTerms = "FindDictionaryTerms";
+
+    class FindDictionaryTermsSQLiteQuery : public api::Query
     {
-        DictionaryTermFulltextColumns() = delete;
+    public:
+        FindDictionaryTermsSQLiteQuery();
 
-        DictionaryTermFulltextColumns(const DictionaryTermFulltextColumns&) = delete;
-        DictionaryTermFulltextColumns& operator=(const DictionaryTermFulltextColumns&) = delete;
+        ~FindDictionaryTermsSQLiteQuery() override = default;
 
-        static constexpr const char* MODEL_NAME = "dictionary_term_fulltext";
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method) override;
 
-        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE_PART = "title_part";
-        static constexpr const char* TITLE = "title";
+    private:
     };
 }
