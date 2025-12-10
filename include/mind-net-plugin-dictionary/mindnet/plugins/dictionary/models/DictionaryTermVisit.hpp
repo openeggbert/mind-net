@@ -44,6 +44,7 @@ namespace mindnet::plugins::dictionary::models
         def(COLS::MODEL_NAME, "dictionary")
         .set_group("Dictionary", 200)
         .set_rest_operations("crl")
+        .allow_reader_write()
         .set_columns({
             //
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(

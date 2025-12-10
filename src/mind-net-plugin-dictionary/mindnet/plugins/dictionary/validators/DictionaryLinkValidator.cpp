@@ -27,6 +27,7 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryLink.hpp"
 #include "mindnet/api/Persistence.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
 #define Model DictionaryLink
 #define MODEL DICTIONARY_LINK
@@ -40,12 +41,33 @@ namespace mindnet::plugins::dictionary::validators
                                                                           const Model& entity) const
     {
         assert_editor()
+
+        auto from_term = find_dictionary_term(ctx, entity.from_dictionary_term_id);
+        if (!from_term.second.empty()) return {500, from_term.second};
+        auto to_term = find_dictionary_term(ctx, entity.to_dictionary_term_id);
+        if (!to_term.second.empty()) return {500, to_term.second};
+        if (from_term.first.dictionary_map_id != to_term.first.dictionary_map_id)
+        {
+            return {400, "Both the dictionary_map ids must be the same."};
+        }
+        auto map_id = from_term.first.dictionary_map_id;
+
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Write))
+        return {403, "You do not have permission to create this link."};
+
         return ok_result;
     }
 
     OperationResult DictionaryLinkValidator::validate_read_authorization(const RequestContext& ctx,
                                                                          const Model& entity) const
     {
+        auto from_term = find_dictionary_term(ctx, entity.from_dictionary_term_id);
+        if (!from_term.second.empty()) return {500, from_term.second};
+        auto map_id = from_term.first.dictionary_map_id;
+
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+            return {403, "You do not have permission to read this link."};
+
         return ok_result;
     }
 
@@ -53,14 +75,22 @@ namespace mindnet::plugins::dictionary::validators
                                                                            const Model& old_entity,
                                                                            const Model& new_entity) const
     {
-        assert_editor()
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryLinkValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                            const Model& entity) const
     {
         assert_editor()
+
+        auto from_term = find_dictionary_term(ctx, entity.from_dictionary_term_id);
+        if (!from_term.second.empty()) return {500, from_term.second};
+        auto map_id = from_term.first.dictionary_map_id;
+
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Delete))
+            return {403, "You do not have permission to delete this link."};
+
+
         return ok_result;
     }
 
@@ -90,7 +120,7 @@ namespace mindnet::plugins::dictionary::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryLinkValidator::validate_delete_integrity(const RequestContext& ctx,

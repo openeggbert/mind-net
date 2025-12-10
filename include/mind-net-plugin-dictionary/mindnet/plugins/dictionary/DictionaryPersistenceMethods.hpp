@@ -50,12 +50,16 @@ namespace mindnet::plugins::dictionary
     bool has_map_name(const api::RequestContext& ctx, string map_name);
     bool has_right_for_map(const api::RequestContext& ctx, const identification map_id,
                            const plugins::core::enums::SingleRight single_right);
+    bool has_right_for_map(
+        const api::RequestContext& ctx,
+        const models::DictionaryNote& dictionary_note,
+        const plugins::core::enums::SingleRight single_right);
 
-    gen_find_h(dictionary, DictionaryMap, map)
-    gen_find_h(dictionary, DictionaryNote, note)
-    gen_find_h(dictionary, DictionaryTagType, tag_type)
-    gen_find_h(dictionary, DictionaryTag, tag)
-    gen_find_h(dictionary, DictionaryLink, link)
-    gen_find_h(dictionary, DictionaryTerm, term)
-    gen_find_h(dictionary, DictionaryTermVisit, term_visit)
+    gen_find_h(dictionary, DictionaryMap, dictionary_map)
+    gen_find_h(dictionary, DictionaryNote, dictionary_note)
+    gen_find_h(dictionary, DictionaryTagType, dictionary_tag_type)
+    gen_find_h(dictionary, DictionaryTag, dictionary_tag)
+    gen_find_h(dictionary, DictionaryLink, dictionary_link)
+    gen_find_h(dictionary, DictionaryTerm, dictionary_term)
+    gen_find_h(dictionary, DictionaryTermVisit, dictionary_term_visit)
 }

@@ -48,7 +48,7 @@ namespace mindnet::plugins::dictionary
     {
         if (ctx.role == essential::UserRole::Admin) { return true; }
 
-        auto map = dictionary::find_map(ctx, map_id);
+        auto map = dictionary::find_dictionary_map(ctx, map_id);
         if (!map.second.empty()) return false;
 
         bool map_owner_and_can = ctx.token.user_id == map.first.owner_id && can(
@@ -70,12 +70,22 @@ namespace mindnet::plugins::dictionary
 
         return false;
     }
+    bool has_right_for_map(
+        const api::RequestContext& ctx,
+        const models::DictionaryNote& dictionary_note,
+        const plugins::core::enums::SingleRight single_right)
+    {
+        auto dictionary_term_id = dictionary_note.dictionary_term_id;
+        auto dictionary_term = find_dictionary_term(ctx, dictionary_term_id);
+        if (!dictionary_term.second.empty()) { return false; }
 
-    gen_find_cpp(dictionary, DictionaryMap, map, DICTIONARY_MAP)
-    gen_find_cpp(dictionary, DictionaryNote, note, DICTIONARY_NOTE)
-    gen_find_cpp(dictionary, DictionaryTagType, tag_type, DICTIONARY_TAG_TYPE)
-    gen_find_cpp(dictionary, DictionaryTag, tag, DICTIONARY_TAG)
-    gen_find_cpp(dictionary, DictionaryLink, link, DICTIONARY_LINK)
-    gen_find_cpp(dictionary, DictionaryTerm, term, DICTIONARY_TERM)
-    gen_find_cpp(dictionary, DictionaryTermVisit, term_visit, DICTIONARY_TERM_VISIT)
+        return has_right_for_map(ctx, dictionary_term.first.dictionary_map_id, single_right);
+    }
+    gen_find_cpp(dictionary, DictionaryMap, dictionary_map, DICTIONARY_MAP)
+    gen_find_cpp(dictionary, DictionaryNote, dictionary_note, DICTIONARY_NOTE)
+    gen_find_cpp(dictionary, DictionaryTagType, dictionary_tag_type, DICTIONARY_TAG_TYPE)
+    gen_find_cpp(dictionary, DictionaryTag, dictionary_tag, DICTIONARY_TAG)
+    gen_find_cpp(dictionary, DictionaryLink, dictionary_link, DICTIONARY_LINK)
+    gen_find_cpp(dictionary, DictionaryTerm, dictionary_term, DICTIONARY_TERM)
+    gen_find_cpp(dictionary, DictionaryTermVisit, dictionary_term_visit, DICTIONARY_TERM_VISIT)
 }

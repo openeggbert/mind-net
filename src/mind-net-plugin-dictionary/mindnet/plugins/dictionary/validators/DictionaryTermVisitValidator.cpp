@@ -41,10 +41,10 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "You can not create TermVisits.")
+        auto dictionary_term = find_dictionary_term(ctx, entity.dictionary_term_id);
+        if (!dictionary_term.second.empty()) return {500, dictionary_term.second};
 
-        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, dictionary_term.first.dictionary_map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a TermVisit for this map."};
         }
@@ -55,12 +55,9 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_read_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
-        auto map = dictionary::find_map(ctx, entity.map_id);
-        if (!map.second.empty()) return {400, map.second};
-
-        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (entity.user_id != ctx.token.user_id)
         {
-            return {403, "You do not have permission to read this TermVisit."};
+            return {403, "You do not have permission to create a TermVisit for this map."};
         }
         return ok_result;
     }
@@ -68,43 +65,19 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_update_authorization(
         const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "You can not update TermVisits.")
-
-        if (!dictionary::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
-        {
-            return {403, "You do not have permission to update a TermVisit for this map."};
-        }
-
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryTermVisitValidator::validate_delete_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
-        return_if(ctx.role < mindnet::essential::UserRole::Editor,
-                  403, "You can not delete TermVisits.")
-
-        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
-        {
-            return {403, "You do not have permission to delete this TermVisit."};
-        }
-
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryTermVisitValidator::validate_list_authorization(
         const RequestContext& ctx, const string_map& filter) const
     {
-        mandatory_filter(map_id)
-        auto map_id = std::stoll(filter.at("map_id"));
-
-        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
-            return {
-                403,
-                "You do not have permission to list TermVisits for map with ID " +
-                std::to_string(map_id) + "."
-            };
+        mandatory_filter(user_id)
 
         return ok_result;
     }
@@ -112,6 +85,9 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_create_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
+        if (entity.user_id != ctx.token.user_id)
+            return {400, "dictionary_term_visit.user_id must be the same as your user id."};
+
         return ok_result;
     }
 
@@ -124,13 +100,13 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_update_integrity(
         const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryTermVisitValidator::validate_delete_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
-        return ok_result;
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryTermVisitValidator::validate_list_integrity(

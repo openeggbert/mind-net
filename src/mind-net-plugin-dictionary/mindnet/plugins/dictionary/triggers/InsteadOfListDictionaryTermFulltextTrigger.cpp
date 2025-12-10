@@ -41,7 +41,7 @@ namespace mindnet::plugins::dictionary::triggers
             1000,
             {essential::Crudl::List},
             api::TriggerPhase::InsteadOf,
-            "term_fulltext"
+            "dictionary_term_fulltext"
         )
     {
     }

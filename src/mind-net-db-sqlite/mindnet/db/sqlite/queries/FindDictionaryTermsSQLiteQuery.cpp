@@ -63,7 +63,7 @@ namespace mindnet::db::sqlite::queries
         int page_size = 20;
         int page_number = 1;
 
-        static std::string sql = "select id, title from term where map_id=? and title like ? limit ? offset ?";
+        static std::string sql = "select id, title from dictionary_term where dictionary_map_id=? and title like ? limit ? offset ?";
 
         try
         {

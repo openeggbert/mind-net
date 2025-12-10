@@ -42,10 +42,10 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTagValidator::validate_create_authorization(const RequestContext& ctx,
                                                                           const Model& entity) const
     {
-        auto tag_type = dictionary::find_tag_type(ctx, entity.tag_type_id);
-        if (tag_type.second.empty()) return {400, tag_type.second};
+        auto tag_type = dictionary::find_dictionary_tag_type(ctx, entity.dictionary_tag_type_id);
+        if (!tag_type.second.empty()) return {400, tag_type.second};
 
-        if (dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Write))
+        if (dictionary::has_right_for_map(ctx, tag_type.first.dictionary_map_id, plugins::core::enums::SingleRight::Write))
         {
             return ok_result;
         }
@@ -55,13 +55,13 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTagValidator::validate_read_authorization(const RequestContext& ctx,
                                                                         const Model& entity) const
     {
-        auto tag_type = dictionary::find_tag_type(ctx, entity.tag_type_id);
-        if (tag_type.second.empty()) return {400, tag_type.second};
+        auto tag_type = dictionary::find_dictionary_tag_type(ctx, entity.dictionary_tag_type_id);
+        if (!tag_type.second.empty()) return {400, tag_type.second};
 
-        auto map = dictionary::find_map(ctx, tag_type.first.map_id);
-        if (map.second.empty()) return {400, map.second};
+        auto map = dictionary::find_dictionary_map(ctx, tag_type.first.dictionary_map_id);
+        if (!map.second.empty()) return {400, map.second};
 
-        if (dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (dictionary::has_right_for_map(ctx, tag_type.first.dictionary_map_id, plugins::core::enums::SingleRight::Read))
         {
             return ok_result;
         }
@@ -78,10 +78,10 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTagValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                           const Model& entity) const
     {
-        auto tag_type = dictionary::find_tag_type(ctx, entity.tag_type_id);
-        if (tag_type.second.empty()) return {400, tag_type.second};
+        auto tag_type = dictionary::find_dictionary_tag_type(ctx, entity.dictionary_tag_type_id);
+        if (!tag_type.second.empty()) return {400, tag_type.second};
 
-        if (dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, tag_type.first.dictionary_map_id, plugins::core::enums::SingleRight::Delete))
         {
             return ok_result;
         }
@@ -91,18 +91,18 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTagValidator::validate_list_authorization(const RequestContext& ctx,
                                                                         const string_map& filter) const
     {
-        mandatory_filter(tag_type_id)
-        auto tag_type_id = std::stoll(filter.at("tag_type_id"));
+        mandatory_filter(dictionary_tag_type_id)
+        auto dictionary_tag_type_id = std::stoll(filter.at("dictionary_tag_type_id"));
 
-        auto tag_type = dictionary::find_tag_type(ctx, tag_type_id);
-        if (tag_type.second.empty()) return {400, tag_type.second};
+        auto dictionary_tag_type = dictionary::find_dictionary_tag_type(ctx, dictionary_tag_type_id);
+        if (!dictionary_tag_type.second.empty()) return {400, dictionary_tag_type.second};
 
-        if (!dictionary::has_right_for_map(ctx, tag_type.first.map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, dictionary_tag_type.first.dictionary_map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(
                     "You do not have permission to list tags for map with ID " +
-                    std::to_string(tag_type.first.map_id) + ".")
+                    std::to_string(dictionary_tag_type.first.dictionary_map_id) + ".")
             };
 
         return ok_result;

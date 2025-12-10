@@ -55,7 +55,14 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DEFINITION, TEXTAREA).set_description("Definition of the term."),
             coldef(COLS::DIFFICULTY).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the term."),
-        });
+        })
+        .add_custom_list_action("dictionary_term_visit", "List term visits", {"dictionary_term_id", "{id}"})
+        .add_custom_create_action("dictionary_term_visit", "Add term visit", {"dictionary_term_id", "{id}"})
+        .add_custom_list_action("dictionary_tag", "List tags", {"dictionary_term_id", "{id}"})
+        .add_custom_create_action("dictionary_tag", "Add tag", {"dictionary_term_id", "{id}"})
+        .add_custom_list_action("dictionary_note", "List notes", {"dictionary_term_id", "{id}"})
+        .add_custom_create_action("dictionary_note", "Add note", {"dictionary_term_id", "{id}"})
+    ;
 
     struct DictionaryTerm : mindnet::model::BaseModel
     {

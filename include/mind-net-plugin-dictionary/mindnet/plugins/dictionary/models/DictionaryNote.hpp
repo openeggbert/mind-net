@@ -45,7 +45,7 @@ namespace mindnet::plugins::dictionary::models
         .set_group("Dictionary", 100)
         .set_all_rest_operations().set_title_column(COLS::TITLE)
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY),
             coldef(COLS::TITLE, MANDATORY),
             coldef(COLS::CONTENT, TEXTAREA),
             coldef(COLS::POSITION, INTEGER).set_default_value(0),
@@ -53,7 +53,7 @@ namespace mindnet::plugins::dictionary::models
 
     struct Model : mindnet::model::BaseModel
     {
-        identification dictionary_term_id;
+        identification dictionary_term_id {};
         string title;
         string content;
         int position{0};

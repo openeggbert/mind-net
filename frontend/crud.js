@@ -140,7 +140,7 @@ export async function renderEntityForm(entity, data = {}, errors = {}) {
         } catch (err) {
             // For thrown errors (e.g. network error)
             showError(`Save error: ${err?.message || "Unknown error"}`);
-            renderEntityForm(entity, payload);
+            await renderEntityForm(entity, payload);
         }
 
 });

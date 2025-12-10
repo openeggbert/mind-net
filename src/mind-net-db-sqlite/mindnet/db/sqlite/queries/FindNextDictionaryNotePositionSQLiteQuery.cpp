@@ -66,7 +66,7 @@ namespace mindnet::db::sqlite::queries
 
             if (query.executeStep())
             {
-                dictionary_term_id = query.isColumnNull(0) ? 0 : query.getColumn(0);
+                max_position = query.isColumnNull(0) ? 0 : query.getColumn(0);
             }
 
             // Round max_sibling_order up to next hundred and add +100 for next sibling slot

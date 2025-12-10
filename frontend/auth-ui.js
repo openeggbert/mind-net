@@ -132,6 +132,7 @@ export function renderAuthStatus() {
         <button id="logoutBtn">Logout</button>
         <button id="changePwdBtn">Change Password</button>
         <button id="configureBtn">Configure</button>
+        <button id="clearCacheBtn">Clear cache</button>
     `;
 
     document.getElementById("logoutBtn").onclick = async () => {
@@ -150,5 +151,8 @@ export function renderAuthStatus() {
     };
     document.getElementById("configureBtn").onclick = () => {
         renderConfigureForm();
+    };
+    document.getElementById("clearCacheBtn").onclick = () => {
+        localStorage.removeItem("model_definition_cache")
     };
 }

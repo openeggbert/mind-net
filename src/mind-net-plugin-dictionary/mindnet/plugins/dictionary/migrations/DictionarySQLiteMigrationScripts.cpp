@@ -124,6 +124,8 @@ CREATE TABLE dictionary_note (
     content TEXT,
     position INTEGER,
 
+    UNIQUE(dictionary_term_id, title),
+
     FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
 );
 

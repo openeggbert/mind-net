@@ -56,15 +56,17 @@ namespace mindnet::plugins::dictionary
 
         REGISTER_MIGRATIONS(Dictionary, SQLite)
 
-        REGISTER_MODEL(dictionary_link, DictionaryLink, DICTIONARY_LINK)
+
         REGISTER_MODEL(dictionary_map, DictionaryMap, DICTIONARY_MAP)
-        REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
+        REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
+        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
+        REGISTER_MODEL(dictionary_link, DictionaryLink, DICTIONARY_LINK)
         REGISTER_MODEL(dictionary_tag, DictionaryTag, DICTIONARY_TAG)
         REGISTER_MODEL(dictionary_tag_type, DictionaryTagType, DICTIONARY_TAG_TYPE)
+        REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
-        REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
         REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
-        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
+
 
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermFulltextTrigger>());

@@ -27,7 +27,8 @@ export function buildEntitySchemas(modelDef) {
         });
 
         schemas[item.model_name] = {
-            label: toLabel(item.model_name),
+            plugin_name: item.plugin_name,
+            label: toLabel(item.model_name, item.plugin_name),
             titleField: findTitleField(item),
             fields,
             allowedOperations: item.allowed_rest_operations.map(op => op.toLowerCase()),
@@ -93,7 +94,10 @@ export function filterColumnsForForm(columns) {
     return columns.filter(col => !col.auto);
 }
 
-export function toLabel(fieldName) {
+export function toLabel(fieldName, plugin_name = "") {
+    if (plugin_name !== "" && fieldName.startsWith(plugin_name + "_")) {
+        fieldName = fieldName.substring(plugin_name.length + 1);
+    }
     return fieldName.replace(/_id$/, '').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 

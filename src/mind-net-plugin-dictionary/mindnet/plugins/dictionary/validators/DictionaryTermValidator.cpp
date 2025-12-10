@@ -44,7 +44,7 @@ namespace mindnet::plugins::dictionary::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "You can not create Terms.")
 
-        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, entity.dictionary_map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create a Term for this map."};
         }
@@ -55,10 +55,10 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermValidator::validate_read_authorization(const RequestContext& ctx,
                                                                          const Model& entity) const
     {
-        auto map = dictionary::find_map(ctx, entity.map_id);
+        auto map = dictionary::find_dictionary_map(ctx, entity.dictionary_map_id);
         if (!map.second.empty()) return {400, map.second};
 
-        if (!dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, entity.dictionary_map_id, plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this Term."};
         }
@@ -72,7 +72,7 @@ namespace mindnet::plugins::dictionary::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "You can not update Terms.")
 
-        if (!dictionary::has_right_for_map(ctx, new_entity.map_id, plugins::core::enums::SingleRight::Write))
+        if (!dictionary::has_right_for_map(ctx, new_entity.dictionary_map_id, plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to update a Term for this map."};
         }
@@ -86,7 +86,7 @@ namespace mindnet::plugins::dictionary::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "You can not delete Terms.")
 
-        if (dictionary::has_right_for_map(ctx, entity.map_id, plugins::core::enums::SingleRight::Delete))
+        if (dictionary::has_right_for_map(ctx, entity.dictionary_map_id, plugins::core::enums::SingleRight::Delete))
         {
             return {403, "You do not have permission to delete this Term."};
         }
@@ -113,19 +113,6 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermValidator::validate_create_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        if (entity.note_id != 0)
-        {
-            auto note = dictionary::find_note(ctx, entity.note_id);
-            if (!note.second.empty()) return {400, note.second};
-            if (note.first.map_id != entity.map_id)
-            {
-                return {400, "Map ID of Term must be the same as the Map ID of the note."};
-            }
-            if (note.first.title != entity.title)
-            {
-                return {400, "Title of Term must be the same as the Title of the note."};
-            }
-        }
 
         return ok_result;
     }
@@ -140,20 +127,6 @@ namespace mindnet::plugins::dictionary::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        if (new_entity.note_id != 0)
-        {
-            auto note = dictionary::find_note(ctx, new_entity.note_id);
-            if (!note.second.empty()) return {400, note.second};
-            if (note.first.map_id != new_entity.map_id)
-            {
-                return {400, "Map ID of Term must be the same as the Map ID of the note."};
-            }
-
-            if (note.first.title != new_entity.title)
-            {
-                return {400, "Title of Term must be the same as the Title of the note."};
-            }
-        }
         return ok_result;
     }
 

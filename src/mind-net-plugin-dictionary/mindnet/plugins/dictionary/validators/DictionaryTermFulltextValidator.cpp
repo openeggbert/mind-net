@@ -66,14 +66,14 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermFulltextValidator::validate_list_authorization(const RequestContext& ctx,
                                                                                  const string_map& filter) const
     {
-        mandatory_filter(map_id)
-        auto map_id = std::stoll(filter.at("map_id"));
+        mandatory_filter(dictionary_map_id)
+        auto dictionary_map_id = std::stoll(filter.at("dictionary_map_id"));
 
-        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Read))
+        if (!dictionary::has_right_for_map(ctx, dictionary_map_id, plugins::core::enums::SingleRight::Read))
             return {
                 403,
                 std::string(
-                    "You do not have permission to list term_fulltext for map with ID " + std::to_string(map_id)
+                    "You do not have permission to list term_fulltext for map with ID " + std::to_string(dictionary_map_id)
                     + ".")
             };
 
@@ -108,10 +108,10 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermFulltextValidator::validate_list_integrity(const RequestContext& ctx,
                                                                              const string_map& filter) const
     {
-        mandatory_filter(map_id)
+        mandatory_filter(dictionary_map_id)
         mandatory_filter(title_part)
         auto title_part = filter.at("title_part");
-        if (title_part.size() < 3) return {400, "size of title_part must be at least 3"};
+        if (title_part.size() < 1) return {400, "size of title_part must be at least 1"};
 
         return ok_result;
     }

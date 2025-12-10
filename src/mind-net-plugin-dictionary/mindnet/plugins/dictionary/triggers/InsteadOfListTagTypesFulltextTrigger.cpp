@@ -42,7 +42,7 @@ namespace mindnet::plugins::dictionary::triggers
             1000,
             {essential::Crudl::List},
             api::TriggerPhase::InsteadOf,
-            "tag_type_fulltext"
+            "dictionary_tag_type_fulltext"
         )
     {
     }
