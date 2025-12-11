@@ -13,6 +13,7 @@
     <script src="highlight.min.js"></script>
     <script src="markdown-it.min.js"></script>
     <script src="markdown-it-emoji.min.js"></script>
+    <script type="module" src="common.js"></script>
     <script type="module" src="app_dictionary.js"></script>
     <style>
 
@@ -28,20 +29,24 @@
     <!-- Select Map -->
     <label for="select_map">🗺️ Map:</label>
     <select id="select_map">
-        <option>Concurrency</option>
-        <option>Parallelism</option>
-        <option>Synchronization</option>
+<!--        <option value="1">Concurrency</option>-->
+<!--        <option value="2">Parallelism</option>-->
+<!--        <option value="3">Synchronization</option>-->
     </select>
     <br>
-    <button>➕ Add Map</button>
+    <button id="button_add_map">➕ Add Map</button>
 
     <label for="input_search_term">🔍 Search term:</label>
     <input type="text" id="input_search_term" placeholder="Start writing..."/>
+    <button id="button_add_term">➕ Add Term</button>
+
 
     <div id="term_container" style="margin-top:30px">
         <!-- Input for term -->
-        <label for="input_term">✍ Term #<span id="term_id">433</span>:</label>
-        <input type="text" id="input_term">
+        <h2 id="term_container_h2">Term #123</h2>
+
+        <label for="input_title">✍ Title:</label>
+        <input type="text" id="input_title">
 
         <label for="input_disambiguation">🌀 Disambiguation:</label>
         <input type="text" id="input_disambiguation" placeholder="Start writing..."/>
@@ -68,7 +73,7 @@
         <button id="button_show_visited">👣 Visited</button>
         <!-- Tags -->
         <label>🏷️ Tags:</label>
-        <div class="tags">
+        <div id="tags" class="tags">
             <div class="tag">Multithreading
                 <button>&times;</button>
             </div>
@@ -76,7 +81,7 @@
                 <button>&times;</button>
             </div>
         </div>
-        <button class="tags_add_btn">➕ Add Tag</button>
+        <button id="button_add_tag" class="tags_add_btn">➕ Add Tag</button>
 
         <!-- Links -->
         <label>🔗 Links:</label>
@@ -92,7 +97,7 @@
             <a href="#">Deadlocks</a>
             <button>🗑️ Delete</button>
         </div>
-        <button>➕ Add Link</button>
+        <button id="button_add_link">➕ Add Link</button>
 
         <!-- Notes -->
         <label>Notes 📑</label>
@@ -108,7 +113,16 @@
             <span>Best Practices</span>
             <button>🗑️ Delete</button>
         </div>
-        <button>➕ Add Topic</button>
+        <button id="button_add_note">➕ Add Note</button>
+    </div>
+    <div id="window_container" class="window_container">
+        <header class="window_container-header">
+
+            <span id="window_container_title">Window title</span>
+            <button onclick="closeWindow()">✖</button>
+        </header>
+        <div id="window_container_content"><p>Window content</p></div>
+
     </div>
 </div>
 </body>

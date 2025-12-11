@@ -15,6 +15,7 @@ import {
     chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element, saveToLocalStorage,
     formatDateTimeHM, formatDateTime, showInfo, showError
 } from "./dom.js";
+import {Autocomplete} from "./common.js";
 
 let map_id = "";
 let note_id = "";
@@ -497,77 +498,6 @@ async function link_to(a, params) {
             await navigate_to(p);
         });
         a._hasLinkListener = true;
-    }
-}
-
-function debounce(fn, delay) {
-    let timer = null;
-    return function (...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), delay);
-    };
-}
-
-class Autocomplete {
-    constructor(input, input_min_length, entity, query_params, title_column, part_column) {
-        this.input = input;
-        this.title_column = title_column;
-        this.item = null
-        this.fetcher = async function(query) {
-            let qp = query_params + "&" + part_column + "=" + encodeURIComponent(query)
-            return await list_all_entities(entity, qp);
-        }
-
-        this.box = document.createElement("div");
-        this.box.className = "suggestions";
-        this.box.style.display = "none";
-
-        input.parentNode.appendChild(this.box);
-
-        this.input.addEventListener("input", debounce(() => {
-            this.search(this.input.value.trim(), input_min_length);
-        }, 200));
-
-    }
-
-    async search(q, input_min_length = 3) {
-        if (q.length < input_min_length) {
-            this.box.style.display = "none";
-            this.box.innerHTML = "";
-            return;
-        }
-
-        const items = await this.fetcher(q);
-        this.render(items);
-    }
-
-    render(items) {
-        this.box.innerHTML = "";
-
-        if (!items || items.length === 0) {
-            this.box.style.display = "none";
-            return;
-        }
-
-        items.forEach(item => {
-            const div = document.createElement("div");
-            div.className = "suggestion-item";
-            let title = item[this.title_column]
-            div.textContent = title;
-
-            div.onclick = () => {
-                this.input.value = title;
-                this.box.style.display = "none";
-                this.item = item;
-            };
-
-            this.box.appendChild(div);
-        });
-
-        this.box.style.display = "block";
-    }
-    get_item() {
-        return this.item;
     }
 }
 
