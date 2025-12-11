@@ -1,44 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8"/>
-    <title>Repetition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Dictionary - App</title>
     <link rel="stylesheet" href="common.css">
-    <link rel="stylesheet" href="app_repetition.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔁</text></svg>">
+    <link rel="stylesheet" href="github.min.css">
+    <link rel="stylesheet" href="app_dictionary.css">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+
     <script src="highlight.min.js"></script>
     <script src="markdown-it.min.js"></script>
     <script src="markdown-it-emoji.min.js"></script>
-    <script type="module" src="app_repetition.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script type="module" src="app_dictionary.js"></script>
+    <style>
+
+    </style>
 </head>
 <body>
-<div id="app" data-version="rich"></div>
-<div id="loading_screen" style="display:none">Loading…</div>
-<div id="slip_box">
-
+<div class="container">
     <header>
-        <div id="repetition_header" onclick="window.location.href='app_repetition.html'">🔁 Repetition</div>
-        <button id="button_menu">Menu</button>
+        <div id="dictionary_header" onclick="window.location.href='app_dictionary.html'">📚 Dictionary</div>
         <button id="button_mindnet">🌐 Mind Net</button>
-        <button id="button_theme">🌓 Toggle Theme</button>
     </header>
 
-    <main id="main">
+    <!-- Select Map -->
+    <label for="select_map">🗺️ Map:</label>
+    <select id="select_map">
+        <option>Concurrency</option>
+        <option>Parallelism</option>
+        <option>Synchronization</option>
+    </select>
+    <br>
+    <button>➕ Add Map</button>
 
-    </main>
+    <label for="input_search_term">🔍 Search term:</label>
+    <input type="text" id="input_search_term" placeholder="Start writing..."/>
 
-    <div id="window_container" class="window_container">
-        <header class="window_container-header">
+    <div id="term_container" style="margin-top:30px">
+        <!-- Input for term -->
+        <label for="input_term">✍ Term #<span id="term_id">433</span>:</label>
+        <input type="text" id="input_term">
 
-            <span id="window_container_title">Window title</span>
-            <button onclick="closeWindow()">✖</button>
-        </header>
-        <div id="window_container_content"><p>Window content</p></div>
+        <label for="input_disambiguation">🌀 Disambiguation:</label>
+        <input type="text" id="input_disambiguation" placeholder="Start writing..."/>
 
+        <label for="textarea_definition" style="margin-right:20px; display: inline;white-space: nowrap;">📖 Definition:</label>
+        <button id="button_edit_definition">✏️ Edit</button>
+        <button id="button_read_definition">📖 Read</button>
+        <textarea id="textarea_definition"></textarea>
+
+        <fieldset>
+            <legend>⭐ Difficulty:</legend>
+
+            <input id="input_difficulty_easy" type="radio" name="difficulty" value="1"><label for="input_difficulty_easy">Easy</label>
+            <input id="input_difficulty_medium" type="radio" name="difficulty" value="2" checked="checked"><label for="input_difficulty_medium">Medium</label>
+            <input id="input_difficulty_hard" type="radio" name="difficulty" value="3"><label for="input_difficulty_hard">Hard</label>
+        </fieldset>
+
+
+        <button id="button_delete_term" class="delete-btn">Delete</button>
+            <!-- Save -->
+        <button id="button_save_term" class="save-btn">Save</button>
+
+        <br>
+        <button id="button_show_visited">👣 Visited</button>
+        <!-- Tags -->
+        <label>🏷️ Tags:</label>
+        <div class="tags">
+            <div class="tag">Multithreading
+                <button>&times;</button>
+            </div>
+            <div class="tag">Performance
+                <button>&times;</button>
+            </div>
+        </div>
+        <button class="tags_add_btn">➕ Add Tag</button>
+
+        <!-- Links -->
+        <label>🔗 Links:</label>
+        <div class="link-item">
+            <a href="#">Thread Safety</a>
+            <button>🗑️ Delete</button>
+        </div>
+        <div class="link-item">
+            <a href="#">Race Conditions</a>
+            <button>🗑️ Delete</button>
+        </div>
+        <div class="link-item">
+            <a href="#">Deadlocks</a>
+            <button>🗑️ Delete</button>
+        </div>
+        <button>➕ Add Link</button>
+
+        <!-- Notes -->
+        <label>Notes 📑</label>
+        <div class="note-item">
+            <span>Advantages</span>
+            <button>🗑️ Delete</button>
+        </div>
+        <div class="note-item">
+            <span>Disadvantages</span>
+            <button>🗑️ Delete</button>
+        </div>
+        <div class="note-item">
+            <span>Best Practices</span>
+            <button>🗑️ Delete</button>
+        </div>
+        <button>➕ Add Topic</button>
     </div>
-
 </div>
-
 </body>
 </html>

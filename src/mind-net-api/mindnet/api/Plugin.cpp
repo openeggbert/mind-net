@@ -71,6 +71,8 @@ namespace mindnet::api
         return library_files;
     }
 
+    std::set<string> registered_library_files;
+
     void Plugin::register_library_file(const string library_file)
     {
         if (is_closed_for_changes_)
@@ -78,7 +80,11 @@ namespace mindnet::api
             warn << "Plugin " << name << " is closed for changes" << commit;
             return;
         }
-
+        if (registered_library_files.contains(library_file))
+        {
+            return;
+        }
+        registered_library_files.insert(library_file);
         library_files.push_back(library_file);
     }
 

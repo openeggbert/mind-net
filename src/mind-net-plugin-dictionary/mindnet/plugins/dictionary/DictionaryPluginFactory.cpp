@@ -56,7 +56,6 @@ namespace mindnet::plugins::dictionary
 
         REGISTER_MIGRATIONS(Dictionary, SQLite)
 
-
         REGISTER_MODEL(dictionary_map, DictionaryMap, DICTIONARY_MAP)
         REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
         REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
@@ -77,6 +76,11 @@ namespace mindnet::plugins::dictionary
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindDictionaryTagTypesSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::DictionaryHtmlExportJob>());
+
+        plugin->register_library_file("markdown-it.min.js");
+        plugin->register_library_file("highlight.min.js");
+        plugin->register_library_file("markdown-it-emoji.min.js");
+        plugin->register_library_file("github.min.css");
 
         plugin->close_for_changes();
         return plugin;
