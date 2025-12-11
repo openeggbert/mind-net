@@ -53,10 +53,11 @@ CREATE TABLE dictionary_term (
 
     dictionary_map_id INTEGER NOT NULL,
     title TEXT NOT NULL,
+    disambiguation TEXT,
     definition TEXT,
     difficulty INTEGER NOT NULL,
 
-    UNIQUE(dictionary_map_id, title),
+    UNIQUE(dictionary_map_id, title, disambiguation),
 
     FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
 );

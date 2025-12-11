@@ -26,6 +26,7 @@
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Global.hpp"
+#include "mindnet/util/triple.hpp"
 
 namespace mindnet::db::sqlite::queries
 {
@@ -63,7 +64,7 @@ namespace mindnet::db::sqlite::queries
         int page_size = 20;
         int page_number = 1;
 
-        static std::string sql = "select id, title from dictionary_term where dictionary_map_id=? and title like ? limit ? offset ?";
+        static std::string sql = "select id, title, disambiguation from dictionary_term where dictionary_map_id=? and title like ? limit ? offset ?";
 
         try
         {
@@ -81,13 +82,14 @@ namespace mindnet::db::sqlite::queries
             query.bind(3, page_size);
             query.bind(4, (page_number - 1) * page_size);
 
-            std::vector<std::pair<identification, std::string>> results;
+
+            std::vector<std::pair<identification, std::pair<std::string, std::string>>> results;
             while (query.executeStep())
             {
                 identification id = query.getColumn(0);
                 std::string title = query.getColumn(1);
-                results.push_back(std::make_pair(id, title));
-            }
+                std::string disambiguation = query.getColumn(2);
+                results.push_back(std::make_pair(id, std::make_pair(title, disambiguation)));            }
             response["results"] = results;
         }
         catch (SQLite::Exception& e)

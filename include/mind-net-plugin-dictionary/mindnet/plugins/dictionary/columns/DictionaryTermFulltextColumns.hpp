@@ -44,5 +44,6 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
         static constexpr const char* TITLE_PART = "title_part";
         static constexpr const char* TITLE = "title";
+        static constexpr const char* DISAMBIGUATION = "disambiguation";
     };
 }

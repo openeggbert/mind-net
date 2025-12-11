@@ -67,7 +67,7 @@ namespace mindnet::plugins::dictionary::triggers
         req["page_size"] = page_size;
         req["page_number"] = page_number;
         nlohmann::json res;
-        std::vector<std::pair<identification, std::string>> results;
+        std::vector<std::pair<identification, std::pair<std::string, std::string>>> results;
 
         try
         {
@@ -99,7 +99,8 @@ namespace mindnet::plugins::dictionary::triggers
             term_fulltext.dictionary_term_id = e.first;
             term_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
             term_fulltext.title_part = title_part;
-            term_fulltext.title = e.second;
+            term_fulltext.title = e.second.first;
+            term_fulltext.disambiguation = e.second.second;
             auto values = term_fulltext.to_values();
             int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
             values[1] = now;

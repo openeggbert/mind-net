@@ -52,6 +52,7 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(
                 "Dictionary map this term belongs to."),
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the dictionary term."),
+            coldef(COLS::DISAMBIGUATION),
             coldef(COLS::DEFINITION, TEXTAREA).set_description("Definition of the term."),
             coldef(COLS::DIFFICULTY).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the term."),
@@ -68,12 +69,14 @@ namespace mindnet::plugins::dictionary::models
     {
         identification dictionary_map_id{};
         string title;
+        string disambiguation;
         string definition;
         enums::Difficulty difficulty{enums::Difficulty::Medium};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_map_id,
             &Model::title,
+            &Model::disambiguation,
             &Model::definition,
             &Model::difficulty
         );
@@ -85,6 +88,7 @@ namespace mindnet::plugins::dictionary::models
             return id == other.id &&
                 dictionary_map_id == other.dictionary_map_id &&
                 title == other.title &&
+                disambiguation == other.disambiguation &&
                 definition == other.definition &&
                 difficulty == other.difficulty &&
                 created_at == other.created_at &&
