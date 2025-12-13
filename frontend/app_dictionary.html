@@ -29,9 +29,9 @@
     <!-- Select Map -->
     <label for="select_map">🗺️ Map:</label>
     <select id="select_map">
-<!--        <option value="1">Concurrency</option>-->
-<!--        <option value="2">Parallelism</option>-->
-<!--        <option value="3">Synchronization</option>-->
+        <!--        <option value="1">Concurrency</option>-->
+        <!--        <option value="2">Parallelism</option>-->
+        <!--        <option value="3">Synchronization</option>-->
     </select>
     <br>
     <button id="button_add_map">➕ Add Map</button>
@@ -51,22 +51,38 @@
         <label for="input_disambiguation">🌀 Disambiguation:</label>
         <input type="text" id="input_disambiguation" placeholder="Start writing..."/>
 
-        <label for="textarea_definition" style="margin-right:20px; display: inline;white-space: nowrap;">📖 Definition:</label>
+        <label for="textarea_definition" style="margin-right:20px; display: inline;white-space: nowrap;">📖
+            Definition:</label>
         <button id="button_edit_definition">✏️ Edit</button>
         <button id="button_read_definition">📖 Read</button>
         <textarea id="textarea_definition"></textarea>
 
         <fieldset>
+            <legend>🔥 Importance:</legend>
+
+            <input id="input_importance_easy" type="radio" name="importance" value="1"><label
+                for="input_importance_easy">Low</label>
+            <input id="input_importance_medium" type="radio" name="importance" value="2" checked="checked"><label
+                for="input_importance_medium">Medium</label>
+            <input id="input_importance_hard" type="radio" name="importance" value="3"><label
+                for="input_importance_hard">High</label>
+        </fieldset>
+
+
+        <fieldset>
             <legend>⭐ Difficulty:</legend>
 
-            <input id="input_difficulty_easy" type="radio" name="difficulty" value="1"><label for="input_difficulty_easy">Easy</label>
-            <input id="input_difficulty_medium" type="radio" name="difficulty" value="2" checked="checked"><label for="input_difficulty_medium">Medium</label>
-            <input id="input_difficulty_hard" type="radio" name="difficulty" value="3"><label for="input_difficulty_hard">Hard</label>
+            <input id="input_difficulty_easy" type="radio" name="difficulty" value="1"><label
+                for="input_difficulty_easy">Easy</label>
+            <input id="input_difficulty_medium" type="radio" name="difficulty" value="2" checked="checked"><label
+                for="input_difficulty_medium">Medium</label>
+            <input id="input_difficulty_hard" type="radio" name="difficulty" value="3"><label
+                for="input_difficulty_hard">Hard</label>
         </fieldset>
 
 
         <button id="button_delete_term" class="delete-btn">Delete</button>
-            <!-- Save -->
+        <!-- Save -->
         <button id="button_save_term" class="save-btn">Save</button>
 
         <br>
@@ -74,48 +90,117 @@
         <button id="button_show_visited">👣 Visited</button>
 
         <!-- Tags -->
-        <label>🏷️ Tags:</label>
-        <div id="tags" class="tags">
-            <div class="tag">Multithreading
-                <button>&times;</button>
+        <div class="container_box">
+            <label>🏷️ Tags:</label>
+            <div id="tags" class="tags">
+                <div class="tag">Multithreading
+                    <button>&times;</button>
+                </div>
+                <div class="tag">Performance
+                    <button>&times;</button>
+                </div>
             </div>
-            <div class="tag">Performance
-                <button>&times;</button>
-            </div>
+            <button id="button_add_tag" class="tags_add_btn">➕ Add Tag</button>
         </div>
-        <button id="button_add_tag" class="tags_add_btn">➕ Add Tag</button>
+
+
+        <!-- Flags -->
+        <div class="container_box">
+            <label>🚩 Flags:</label>
+            <div id="flags" class="tags">
+                <div class="tag">todo
+                    <button>&times;</button>
+                </div>
+                <div class="tag">obsolete
+                    <button>&times;</button>
+                </div>
+                <div class="tag">mass_imported
+                    <button>&times;</button>
+                </div>
+            </div>
+            <button id="button_add_flag" class="tags_add_btn">➕ Add Flag</button>
+        </div>
 
         <!-- Links -->
-        <label>🔗 Links:</label>
-        <div class="link-item">
-            <a href="#">Thread Safety</a>
-            <button>🗑️ Delete</button>
-        </div>
-        <div class="link-item">
-            <a href="#">Race Conditions</a>
-            <button>🗑️ Delete</button>
-        </div>
-        <div class="link-item">
-            <a href="#">Deadlocks</a>
-            <button>🗑️ Delete</button>
-        </div>
-        <button id="button_add_link">➕ Add Link</button>
+        <div class="container_box">
+            <label>🔗 Links:</label>
+            <div id="links">
+                <div class="item">
+                    <a href="#">Thread Safety</a>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <a href="#">Race Conditions</a>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <a href="#">Deadlocks</a>
+                    <button>🗑️ Delete</button>
+                </div>
+            </div>
+            <button id="button_add_link">➕ Add Link</button>
 
+        </div>
         <!-- Notes -->
-        <label>Notes 📑</label>
-        <div class="note-item">
-            <span>Advantages</span>
-            <button>🗑️ Delete</button>
+        <div class="container_box">
+            <label>📑 Notes:</label>
+            <div id="notes">
+                <div class="item">
+                    <span>Advantages</span>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <span>Disadvantages</span>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <span>Best Practices</span>
+                    <button>🗑️ Delete</button>
+                </div>
+            </div>
+            <button id="button_add_note">➕ Add Note</button>
         </div>
-        <div class="note-item">
-            <span>Disadvantages</span>
-            <button>🗑️ Delete</button>
+
+        <!-- Sources -->
+        <div class="container_box">
+            <label>📖 Sources:</label>
+            <div id="sources">
+                <div class="item">
+                    <span>Primer</span>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <span>Effective STL </span>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <span>Inside the C++ Object Model</span>
+                    <button>🗑️ Delete</button>
+                </div>
+            </div>
+            <button id="button_add_source">➕ Add Source</button>
         </div>
-        <div class="note-item">
-            <span>Best Practices</span>
-            <button>🗑️ Delete</button>
+
+        <!-- Aliases -->
+        <div class="container_box">
+            <label>➡️ Aliases:</label>
+            <div id="aliases">
+                <div class="item">
+                    <span>A</span>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <span>Aa </span>
+                    <button>🗑️ Delete</button>
+                </div>
+                <div class="item">
+                    <span>Ab</span>
+                    <button>🗑️ Delete</button>
+                </div>
+            </div>
+            <button id="button_add_alias">➕ Add Alias</button>
         </div>
-        <button id="button_add_note">➕ Add Note</button>
+
     </div>
     <div id="window_container" class="window_container">
         <header class="window_container-header">

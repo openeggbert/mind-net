@@ -70,6 +70,9 @@ label {
     margin-bottom: 5px;
     color: #444;
 }
+.container_box label {
+    margin-top: 5px;
+}
 select, input[type="text"], textarea {
     width: 100%;
     padding: 10px;
@@ -117,7 +120,7 @@ textarea {
 .tags_add_btn:hover {
     background-color: rgba(40, 167, 69, 0.85);
 }
-.link-item, .note-item {
+.item {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -127,10 +130,10 @@ textarea {
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.link-item:hover, .note-item:hover {
+.item:hover {
     background-color: rgba(101, 181, 237, 0.24);
 }
-.link-item a, .note-item span {
+.item a, .item span {
     color: #007bff;
     text-decoration: none;
     cursor: pointer;
@@ -138,11 +141,17 @@ textarea {
     align-items: center;
     gap: 6px;
 }
-.link-item a::before {
+#links .item a::before {
     content: "🔗";
 }
-.note-item span::before {
+#notes .item span::before {
     content: "📑";
+}
+#sources .item span::before {
+    content: "📖";
+}
+#aliases .item span::before {
+    content: "➡️";
 }
 button {
     padding: 6px 12px;
@@ -223,6 +232,9 @@ input[type="text"], select, textarea {
     .tags {
         flex-wrap: wrap;
     }
+    .container {
+        padding: 5px;
+    }
 }
 
 header {
@@ -252,6 +264,11 @@ fieldset label {
 textarea {
     height: 200px;
 }
-#term_container {
-    display: none
+/*#term_container {*/
+/*    display: none*/
+/*}*/
+.container_box {
+    border-top: 2px solid #ddd;
+    padding: 5px;
+    margin: 15px 0 15px 0;
 }

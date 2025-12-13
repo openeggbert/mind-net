@@ -223,6 +223,10 @@ class DictionaryApp {
             this.#term_container.render(item.id)
         })
         get_element("button_add_term").onclick = async () => {
+            if(this.#input_search_term.value === "") {
+                showError("Could not create term, the title must not be empty.");
+                return;
+            }
             let new_term = {
                 dictionary_map_id: this.select_map.get_selected_map_id(),
                 title: this.#input_search_term.value,
