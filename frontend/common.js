@@ -19,7 +19,7 @@ export class Autocomplete {
         this.#callbacks.forEach(fn => fn(...args));
     }
 
-    constructor(input, input_min_length, entity, query_params, title_column, part_column) {
+    constructor(input, input_min_length, entity, query_params, title_column, part_column, insert_before_id = "button_add_term") {
         this.input = input;
         this.title_column = title_column;
         this.item = null;
@@ -34,7 +34,7 @@ export class Autocomplete {
         this.box.style.display = "none";
 
         if (input.parentNode) {
-            input.parentNode.insertBefore(this.box, get_element("button_add_term"));
+            input.parentNode.insertBefore(this.box, get_element(insert_before_id));
         }
 
         this.input_handler = debounce(() => {

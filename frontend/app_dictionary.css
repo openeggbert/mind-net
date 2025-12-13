@@ -264,9 +264,9 @@ fieldset label {
 textarea {
     height: 200px;
 }
-/*#term_container {*/
-/*    display: none*/
-/*}*/
+#term_container {
+    display: none
+}
 .container_box {
     border-top: 2px solid #ddd;
     padding: 5px;

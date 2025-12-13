@@ -217,14 +217,14 @@ class DictionaryApp {
         get_element("button_mindnet").title = "Go to Mind Net generic frontend"
 
         this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
-        this.#autocomplete_term_title.addCallback(()=>{
+        this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
-            showInfo("Found term: " + item.title + (item.disambiguation === "" ? "" : ("(" + item.disambiguation + ")")) )
+            showInfo("Found term: " + item.title + (item.disambiguation === "" ? "" : ("(" + item.disambiguation + ")")))
+            await this.#term_container.render(item.id)
             this.#term_container.show()
-            this.#term_container.render(item.id)
         })
         get_element("button_add_term").onclick = async () => {
-            if(this.#input_search_term.value === "") {
+            if (this.#input_search_term.value === "") {
                 showError("Could not create term, the title must not be empty.");
                 return;
             }
@@ -238,19 +238,30 @@ class DictionaryApp {
                 return;
             }
             showInfo("Created new term: " + new_term_created.title)
+            await this.#term_container.render(new_term_created.id)
             this.#term_container.show()
-            this.#term_container.render(new_term_created.id)
+
         }
+
+        //todo remove me
+        this.#term_container.render(1)
+        sleep_for_seconds(2)
+        this.#term_container.show()
     }
+
     refresh_autocomplete_term_title() {
         this.#autocomplete_term_title.destroy()
         this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
-        this.#autocomplete_term_title.addCallback(()=>{
+        this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
-            showInfo("Found term: " + item.title + (item.disambiguation === "" ? "" : ("(" + item.disambiguation + ")")) )
-            this.#term_container.show()
+            showInfo("Found term: " + item.title + (item.disambiguation === "" ? "" : ("(" + item.disambiguation + ")")))
+            await this.#term_container.show()
             this.#term_container.render(item.id)
         })
+    }
+
+    get_selected_map_id() {
+        return this.select_map.get_selected_map_id()
     }
 }
 class SelectMap {
@@ -311,8 +322,11 @@ class TermContainer {
     #element
     #dictionary_term_json
     dictionary_term_id = 0
+
+    #tags
     constructor() {
         this.#element = get_element("term_container");
+        this.#tags = new Tags()
     }
     show() {
         this.#element.style.display = "block"
@@ -321,11 +335,16 @@ class TermContainer {
         this.#element.style.display = "none"
     }
     async render(dictionary_term_id) {
-        if(this.dictionary_term_id === dictionary_term_id) {
+        if (this.dictionary_term_id === dictionary_term_id) {
             showWarn("This term is already shown.")
             return
         }
         if (dictionary_term_id === 0) return;
+
+        await this.render_term(dictionary_term_id);
+        this.#tags.render(dictionary_term_id)
+    }
+    async render_term(dictionary_term_id) {
         this.dictionary_term_id = dictionary_term_id
         let dictionary_term = await read_entity("dictionary_term", dictionary_term_id)
         this.#dictionary_term_json = dictionary_term
@@ -354,12 +373,12 @@ class TermContainer {
             if (!confirm("Do you really want to delete this term and all its tags, flags, links, notes, sources and aliases?")) return;
 
             async function delete_rows(model_name, entities) {
-                entities.forEach(e => {
-                    let delete_result = delete_entity(model_name, e.id)
+                for (const e of entities) {
+                    let delete_result = await delete_entity(model_name, e.id)
                     if(!delete_result) {
                         showError("Deleting " + model_name + " failed.");
                     }
-                });
+                }
             }
 
             let flags = await list_all_entities(
@@ -457,6 +476,131 @@ class TermContainer {
         if(created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
             showError("Creating new term visit failed.")
         }
+    }
+}
+
+
+class Tags {
+    #element
+    #input_search_tag = document.getElementById("input_search_tag")
+    #autocomplete_tag_title = null
+    constructor() {
+        this.#element = get_element("tags");
+        this.#element.innerHTML = ""
+    }
+    show() {
+        this.#element.style.display = "block"
+    }
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        if(this.#autocomplete_tag_title !== null) {
+            this.#autocomplete_tag_title.destroy()
+            this.#autocomplete_tag_title = null
+        }
+        this.#autocomplete_tag_title = new Autocomplete(
+            this.#input_search_tag,
+            1,
+            "dictionary_tag_type_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
+        "div_search_tag_end"
+        )
+
+        this.#autocomplete_tag_title.addCallback(async () => {
+
+            let item = this.#autocomplete_tag_title.get_item()
+            showInfo("Found tag: " + item.title)
+            let dictionary_tag_type_id = item.id
+            let new_tag = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_tag_type_id: dictionary_tag_type_id
+            }
+
+            let tag_created = await post_entity("dictionary_tag", new_tag)
+            if(tag_created === null || tag_created === undefined) {
+                showError("Creating tag failed: " + item.title)
+                return
+            }
+            showInfo("New tag was assigned: " + item.title)
+            this.add_tag(item.title, tag_created.id)
+            //get_element("div_search_tag").style.display = "none"
+        })
+
+        let tags_result = await list_all_entities("dictionary_tag", "&dictionary_term_id=" + dictionary_term_id)
+        if(!tags_result) {
+            showError("Listing tags failed.")
+            return;
+        }
+        for (const dictionary_tag_json of tags_result) {
+
+            let tag_type = await read_entity("dictionary_tag_type", dictionary_tag_json.dictionary_tag_type_id)
+            if(!tag_type) {
+                showError("Loading tag type failed: " + dictionary_tag_json.dictionary_tag_type_id)
+                continue
+            }
+            let title = tag_type.title
+
+            this.add_tag(title, dictionary_tag_json.id)
+        }
+
+        let button_add_tag = get_element("button_add_tag")
+        button_add_tag.onclick = async () => {
+            get_element("div_search_tag").style.display = "block"
+            let title = this.#input_search_tag.value
+            if (title === "") {
+                return;
+            }
+
+            let new_tag_type = {
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
+                title: title
+            }
+            let new_tag_type_created = await post_entity("dictionary_tag_type", new_tag_type)
+            if (!new_tag_type_created) {
+                showError("Creating new tag type failed: " + title)
+                return
+            }
+            let new_tag = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_tag_type_id: new_tag_type_created.id
+            }
+
+            let tag_created = await post_entity("dictionary_tag", new_tag)
+            if (tag_created === null || tag_created === undefined) {
+                showError("Creating tag failed: " + title)
+                return
+            }
+            showInfo("New tag was assigned: " + title)
+            this.add_tag(title, tag_created.id)
+            //get_element("div_search_tag").style.display = "none"
+        }
+        get_element("button_show_tags").onclick = () => {
+            let url = "index.html?entity=dictionary_tag_type&action=list&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            showWindowFrom("Show tags", url)
+        }
+    }
+    add_tag(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("tag")
+        this.#element.appendChild(div)
+        div.innerText = title
+        let button = document.createElement("button")
+        button.innerHTML = "&times;"
+        button.onclick = () => {
+            let tag_deleted = delete_entity("dictionary_tag", id)
+            let deleted = tag_deleted !== null && tag_deleted !== undefined
+            if(deleted) {
+                showInfo("Tag was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting tag failed: " + title)
+            }
+        }
+        div.appendChild(button)
     }
 }
 
