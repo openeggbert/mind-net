@@ -295,6 +295,7 @@ export function setWindowContentByUrl(url) {
 }
 
 export function showWindowFrom(title, url) {
+    clearWindow()
     setWindowTitle(title)
     if (url === undefined) {
         alert("url is required");

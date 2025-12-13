@@ -115,7 +115,7 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_delete_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        return ok_result;
     }
 
     OperationResult DictionaryTermVisitValidator::validate_list_integrity(

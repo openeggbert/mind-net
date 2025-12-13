@@ -43,7 +43,7 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_TERM_VISIT_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
         .set_group("Dictionary", 200)
-        .set_rest_operations("crl")
+        .set_rest_operations("crdl")
         .set_columns({
             //
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(

@@ -318,6 +318,7 @@ export async function renderEntityList(entity) {
     );
 
 
+
     let html = `<h3>${schema.label} List</h3>`;
 
 
@@ -343,13 +344,12 @@ export async function renderEntityList(entity) {
         <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${getPageSize() === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
     html += `<table><thead><tr>
-    
     <th class="sortable" data-field="id">ID <span>${currentSort==='id' ? (currentOrder==='asc'?'🔼':'🔽') : ''}</span></th>
-    
-    
-    
-    
-    
+    `
+    if(!isColumnHidden(entity, "created_at")) {
+        html += `<th class="sortable" style="max-width:50px;" data-field="created_at">Created at<span>${currentSort==='created_at' ? (currentOrder==='asc'?'🔼':'🔽') : ''}</span></th>`
+    }
+    html += `
 
 ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.description ?? ''}" style="cursor:pointer;">
         ${toLabel(f.name)}${currentSort===f.name ? (currentOrder==='asc'?' 🔼':' 🔽') : ''}
@@ -361,6 +361,9 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     if (items.length === 0) html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
     else for (const item of items) {
         html += `<tr><td>${item.id}</td>`;
+        if(!isColumnHidden(entity, "created_at")) {
+            html += `<td>${formatDateTime(item.created_at, true, true, true, false)}</td>`;
+        }
         for (const f of listFields) {
             let value = item[f.name];
             if (f.type === "datetime") value = formatDateTime(value);
@@ -573,6 +576,9 @@ export function renderColumnSelector(entity) {
     const schema = getEntitySchemas()[entity];
     const hiddenCols = getHiddenColumns()[entity] || [];
     let html = `<div class="column-selector"><strong>Columns:</strong> `;
+    html += `<label style="margin-right:10px;">
+            <input type="checkbox" data-col="created_at" ${hiddenCols.includes("created_at") ? "" : "checked"}> Created at
+        </label>`;
     schema.fields.filter(f => !f.auto && f.list !== false).forEach(f => {
         const checked = hiddenCols.includes(f.name) ? "" : "checked";
         html += `<label style="margin-right:10px;">
@@ -632,7 +638,7 @@ export async function executeCustomAction(entity, action, id) {
         html += `<p><a href="#" onclick="readEntity('${entity}', ${id});return false;">⬅️ Back</a></p>`;
         contentArea.innerHTML = html;
     } else {
-        // fallback: zobraz JSON
+        // fallback: display JSON
         contentArea.innerHTML = `
             <h3>${def.label}</h3>
             <pre style="background:#f5f5f5;padding:10px;border-radius:6px;">${JSON.stringify(json,null,2)}</pre>

@@ -186,6 +186,7 @@ export function setWindowContentByUrl(url) {
 }
 
 export function showWindowFrom(title, url) {
+    clearWindow()
     setWindowTitle(title)
     if (url === undefined) {
         alert("url is required");
@@ -439,8 +440,22 @@ class TermContainer {
             } else {
                 showError("Updating dictionary term failed.")
             }
-
-
+        }
+        get_element("button_show_backlinks").onclick = () => {
+            let url = "index.html?entity=dictionary_link&action=list&to_dictionary_term_id=" + dictionary_term_id
+            showWindowFrom("Backlinks", url)
+        }
+        get_element("button_show_visited").onclick = () => {
+            let url = "index.html?entity=dictionary_term_visit&action=list&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId()
+            showWindowFrom("Backlinks", url)
+        }
+        let new_visit = {
+            dictionary_term_id: dictionary_term_id,
+            user_id: getUserId()
+        }
+        let created_dictionary_term_visit = post_entity("dictionary_term_visit", new_visit)
+        if(created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
+            showError("Creating new term visit failed.")
         }
     }
 }

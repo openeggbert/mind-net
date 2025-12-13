@@ -39,7 +39,7 @@ export class Autocomplete {
 
         this.input_handler = debounce(() => {
             this.search(this.input.value.trim(), input_min_length);
-        }, 200);
+        }, 100);
 
         this.input.addEventListener("input", this.input_handler);
     }
