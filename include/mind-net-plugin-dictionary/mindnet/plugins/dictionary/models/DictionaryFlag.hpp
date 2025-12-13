@@ -43,12 +43,12 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_FLAG_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_group("Dictionary", 100)
-        .set_rest_operations("crudl").set_title_column(COLS::TITLE)
+        .set_rest_operations("crdl").set_title_column(COLS::TITLE)
         .set_columns({
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::USER_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
-            coldef(COLS::IS_PUBLIC, BOOL).set_default_value(false),
+            coldef(COLS::IS_PUBLIC, BOOL | READONLY).set_default_value(false),
         });
 
     struct Model : mindnet::model::BaseModel

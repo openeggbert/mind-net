@@ -81,8 +81,8 @@ namespace mindnet::plugins::dictionary::validators
         if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Write))
             return {403, "You do not have permission to update this flag."};
 
-        if (ctx.token.user_id != new_entity.user_id)
-            return {403, "You do not have permission to update this flag."};
+        // if (ctx.token.user_id != new_entity.user_id)
+        //     return {403, "You do not have permission to update this flag."};
 
         return ok_result;
     }
@@ -97,7 +97,7 @@ namespace mindnet::plugins::dictionary::validators
         if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Delete))
             return {403, "You do not have permission to delete this flag."};
 
-        if (ctx.token.user_id != entity.user_id)
+        if (!entity.is_public && ctx.token.user_id != entity.user_id)
             return {403, "You do not have permission to delete this flag."};
 
         return ok_result;
@@ -118,6 +118,10 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryFlagValidator::validate_create_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {400, "Could not created flag. Your user id and the flag.user_id must be the same."};
+        }
         return ok_result;
     }
 
