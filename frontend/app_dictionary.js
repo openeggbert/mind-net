@@ -263,6 +263,10 @@ class DictionaryApp {
     get_selected_map_id() {
         return this.select_map.get_selected_map_id()
     }
+
+    async render(dictionary_term_id) {
+        await this.#term_container.render(dictionary_term_id)
+    }
 }
 
 class SelectMap {
@@ -778,7 +782,7 @@ class Links {
                 return
             }
             showInfo("New link was created: " + item.title)
-            this.add_link(item.title, link_created.id)
+            this.add_link(item.title, link_created.id, link_created.to_dictionary_term_id)
             //get_element("div_search_tag").style.display = "none"
         })
 
@@ -797,9 +801,12 @@ class Links {
             }
             let title = another_dictionary_term.title
 
-            this.add_link(title, dictionary_link_json.id)
+            this.add_link(
+                title,
+                dictionary_link_json.id,
+                dictionary_link_json.to_dictionary_term_id
+            )
         }
-
         let button_add_link = get_element("button_add_link")
         button_add_link.onclick = async () => {
             let was_hidden = get_element("div_search_link").style.display === "none"
@@ -832,16 +839,18 @@ class Links {
                 return
             }
             showInfo("New link was assigned: " + title)
-            this.add_link(title, link_created.id)
+            this.add_link(title, link_created.id, link_created.to_dictionary_term_id)
             //get_element("div_search_link").style.display = "none"
         }
     }
-    add_link(title, id) {
+    add_link(title, id, to_dictionary_term_id) {
         let div = document.createElement("div")
         div.classList.add("item")
         this.#element.appendChild(div)
         let a = document.createElement("a")
-        a.href = "#"
+        a.onclick = async () => {
+            await dictionary_app.render(to_dictionary_term_id)
+        }
         a.innerText = title
         div.appendChild(a)
         let button = document.createElement("button")
