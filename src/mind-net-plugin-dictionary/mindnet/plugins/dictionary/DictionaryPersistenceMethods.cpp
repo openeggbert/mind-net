@@ -81,11 +81,18 @@ namespace mindnet::plugins::dictionary
 
         return has_right_for_map(ctx, dictionary_term.first.dictionary_map_id, single_right);
     }
+
+    gen_find_cpp(dictionary, DictionaryFlag, dictionary_flag, DICTIONARY_FLAG)
     gen_find_cpp(dictionary, DictionaryMap, dictionary_map, DICTIONARY_MAP)
     gen_find_cpp(dictionary, DictionaryNote, dictionary_note, DICTIONARY_NOTE)
+    gen_find_cpp(dictionary, DictionaryReview, dictionary_review, DICTIONARY_REVIEW)
+    gen_find_cpp(dictionary, DictionarySource, dictionary_source, DICTIONARY_SOURCE)
+    gen_find_cpp(dictionary, DictionarySourceType, dictionary_source_type, DICTIONARY_SOURCE_TYPE)
+    gen_find_cpp(dictionary, DictionaryState4, dictionary_state_4, DICTIONARY_STATE_4)
     gen_find_cpp(dictionary, DictionaryTagType, dictionary_tag_type, DICTIONARY_TAG_TYPE)
     gen_find_cpp(dictionary, DictionaryTag, dictionary_tag, DICTIONARY_TAG)
     gen_find_cpp(dictionary, DictionaryLink, dictionary_link, DICTIONARY_LINK)
     gen_find_cpp(dictionary, DictionaryTerm, dictionary_term, DICTIONARY_TERM)
+    gen_find_cpp(dictionary, DictionaryTermAlias, dictionary_term_alias, DICTIONARY_TERM_ALIAS)
     gen_find_cpp(dictionary, DictionaryTermVisit, dictionary_term_visit, DICTIONARY_TERM_VISIT)
 }

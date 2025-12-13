@@ -24,48 +24,20 @@
 #pragma once
 
 #include <string>
-
 #include "mindnet/model/EnumDefinition.hpp"
+#include "mindnet/essential/EnumUtils.hpp"
 
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::enums
 {
-    enum class SourceType
-    {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
-    };
+    /**
+     *
+     * @author robertvokac
+     */
+#define REPETITION_ALGORITHM_LIST(X, ENUM_NAME) \
+X(Repetition0, 0, ENUM_NAME)               \
+X(Repetition2, 2, ENUM_NAME)               \
+X(Repetition4, 4, ENUM_NAME)               \
+X(Repetition18, 18, ENUM_NAME)
 
-    inline std::string source_type_to_string(const SourceType type)
-    {
-        switch (type)
-        {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
-
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
-
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
-        };
-    }
-}
+    DECLARE_ENUM(RepetitionAlgorithm, repetition_algorithm, REPETITION_ALGORITHM_LIST)
+} // namespace mindnet::plugins::dictionary::enums

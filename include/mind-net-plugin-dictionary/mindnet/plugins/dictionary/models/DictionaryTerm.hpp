@@ -36,6 +36,7 @@
 // ***** MACROS : END *****
 
 #include "../enums/Difficulty.hpp"
+#include "mindnet/plugins/dictionary/enums/Importance.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
@@ -54,6 +55,8 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::TITLE, MANDATORY).set_description("Title of the dictionary term."),
             coldef(COLS::DISAMBIGUATION),
             coldef(COLS::DEFINITION, TEXTAREA).set_description("Definition of the term."),
+            coldef(COLS::IMPORTANCE).set_default_value(2).set_enum_definition(enums::importance_to_enum_definition())
+                                     .set_description("Importance level of the term."),
             coldef(COLS::DIFFICULTY).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the term."),
         })
@@ -71,6 +74,7 @@ namespace mindnet::plugins::dictionary::models
         string title;
         string disambiguation;
         string definition;
+        enums::Importance importance{enums::Importance::Medium};
         enums::Difficulty difficulty{enums::Difficulty::Medium};
 
         static constexpr auto fields = std::make_tuple(
@@ -78,6 +82,7 @@ namespace mindnet::plugins::dictionary::models
             &Model::title,
             &Model::disambiguation,
             &Model::definition,
+            &Model::importance,
             &Model::difficulty
         );
 
@@ -90,6 +95,7 @@ namespace mindnet::plugins::dictionary::models
                 title == other.title &&
                 disambiguation == other.disambiguation &&
                 definition == other.definition &&
+                importance == other.importance &&
                 difficulty == other.difficulty &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at;

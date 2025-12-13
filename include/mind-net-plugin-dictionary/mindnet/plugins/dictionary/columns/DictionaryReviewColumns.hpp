@@ -22,8 +22,10 @@
  */
 
 /**
+ * Column definitions for the r_review table which stores review records
+ * for spaced repetition learning.
  *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ * @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
  */
 #pragma once
 
@@ -31,20 +33,34 @@
 
 namespace mindnet::plugins::dictionary::columns
 {
-    struct DictionaryTermColumns : model::BaseColumns
+    struct DictionaryReviewColumns : model::BaseColumns
     {
-        DictionaryTermColumns() = delete;
+        DictionaryReviewColumns() = delete;
+        DictionaryReviewColumns(const DictionaryReviewColumns&) = delete;
+        DictionaryReviewColumns& operator=(const DictionaryReviewColumns&) = delete;
 
-        DictionaryTermColumns(const DictionaryTermColumns&) = delete;
-        DictionaryTermColumns& operator=(const DictionaryTermColumns&) = delete;
+        static constexpr const char* MODEL_NAME = "dictionary_review";
 
-        static constexpr const char* MODEL_NAME = "dictionary_term";
-
+        // Core fields
+        static constexpr const char* USER_ID = "user_id";
         static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE = "title";
-        static constexpr const char* DISAMBIGUATION = "disambiguation";
-        static constexpr const char* DEFINITION = "definition";
-        static constexpr const char* IMPORTANCE = "importance";
-        static constexpr const char* DIFFICULTY = "difficulty";
+        static constexpr const char* ALGORITHM = "algorithm";
+
+        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
+
+        // Review data
+        static constexpr const char* REVIEW_DATE = "review_date";
+        static constexpr const char* GRADE = "grade";
+
+        // Timing metrics
+        static constexpr const char* STARTED_AT = "started_at";
+        static constexpr const char* ENDED_AT = "ended_at";
+        static constexpr const char* LATENCY_MS = "latency_ms";
+
+        // User behavior
+        static constexpr const char* ANSWER_CHANGE_COUNT = "answer_change_count";
+
+        // Algorithm-specific data
+        static constexpr const char* DETAILS_JSON = "details_json";
     };
 }

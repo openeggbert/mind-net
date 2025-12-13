@@ -23,15 +23,15 @@
 #pragma once
 
 #include <string>
-#include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
-
+#include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model DictionaryTermVisit
-#define MODEL DICTIONARY_TERM_VISIT
-#define COLS columns::DictionaryTermVisitColumns
-#include "../columns/DictionaryTermVisitColumns.hpp"
+#define Model DictionaryFlag
+#define MODEL DICTIONARY_FLAG
+#define COLS columns::DictionaryFlagColumns
+#include "../columns/DictionaryFlagColumns.hpp"
+
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::dictionary::models
@@ -40,36 +40,39 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_TERM_VISIT_DEFINITION =
-        def(COLS::MODEL_NAME, "dictionary")
-        .set_group("Dictionary", 200)
-        .set_rest_operations("crl")
+    inline const def DICTIONARY_FLAG_DEFINITION =
+        def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
+        .set_group("Dictionary", 100)
+        .set_rest_operations("crudl").set_title_column(COLS::TITLE)
         .set_columns({
-            //
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(
-                "Dictionary term that was visited."),
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User who visited the term."),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::USER_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY | READONLY),
+            coldef(COLS::IS_PUBLIC, BOOL).set_default_value(false),
         });
 
-    struct DictionaryTermVisit : mindnet::model::BaseModel
+    struct Model : mindnet::model::BaseModel
     {
-        identification dictionary_term_id{};
-        identification user_id{};
+        identification dictionary_term_id;
+        identification user_id;
+        std::string title;
+        bool is_public{false};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
-            &Model::user_id
+            &Model::user_id,
+            &Model::title,
+            &Model::is_public
         );
 
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
-            return id == other.id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                user_id == other.user_id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at;
+            return id == other.id && dictionary_term_id == other.dictionary_term_id &&
+                user_id == other.user_id && title == other.title &&
+                is_public == other.is_public &&
+                created_at == other.created_at && updated_at == other.updated_at;
         }
     };
 }

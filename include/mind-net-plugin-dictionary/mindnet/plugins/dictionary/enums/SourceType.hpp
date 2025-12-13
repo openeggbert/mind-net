@@ -27,7 +27,7 @@
 
 #include "mindnet/model/EnumDefinition.hpp"
 
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::enums
 {
     enum class SourceType
     {

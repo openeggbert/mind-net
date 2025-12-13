@@ -77,11 +77,11 @@ namespace mindnet::plugins::repetition::validators
     {
         mandatory_filter(user_id)
 
-        // Users can only list their own sessions
+        // Users can only list their own r_review
         auto it = filter.find("user_id");
         if (it == filter.end() || std::stoll(it->second) != ctx.token.user_id)
         {
-            return {403, "Can only list your own r_sessions"};
+            return {403, "Can only list your own r_reviews"};
         }
         return ok_result;
     }

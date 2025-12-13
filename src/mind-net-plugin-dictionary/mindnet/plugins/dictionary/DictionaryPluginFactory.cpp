@@ -27,12 +27,18 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTagTypesSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryFlagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryLinkValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryMapValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryNoteValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryReviewValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionarySourceTypeValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionarySourceValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryState4Validator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagTypeValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagTypeFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermAliasValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
@@ -56,16 +62,21 @@ namespace mindnet::plugins::dictionary
 
         REGISTER_MIGRATIONS(Dictionary, SQLite)
 
-        REGISTER_MODEL(dictionary_map, DictionaryMap, DICTIONARY_MAP)
-        REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
-        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
+        REGISTER_MODEL(dictionary_flag, DictionaryFlag, DICTIONARY_FLAG)
         REGISTER_MODEL(dictionary_link, DictionaryLink, DICTIONARY_LINK)
+        REGISTER_MODEL(dictionary_map, DictionaryMap, DICTIONARY_MAP)
+        REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
+        REGISTER_MODEL(dictionary_review, DictionaryReview, DICTIONARY_REVIEW)
+        REGISTER_MODEL(dictionary_source_type, DictionarySourceType, DICTIONARY_SOURCE_TYPE)
+        REGISTER_MODEL(dictionary_source, DictionarySource, DICTIONARY_SOURCE)
+        REGISTER_MODEL(dictionary_state_4, DictionaryState4, DICTIONARY_STATE_4)
         REGISTER_MODEL(dictionary_tag, DictionaryTag, DICTIONARY_TAG)
         REGISTER_MODEL(dictionary_tag_type, DictionaryTagType, DICTIONARY_TAG_TYPE)
-        REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
+        REGISTER_MODEL(dictionary_term_alias, DictionaryTermAlias, DICTIONARY_TERM_ALIAS)
+        REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
         REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
-
+        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
 
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermFulltextTrigger>());

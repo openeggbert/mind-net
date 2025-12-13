@@ -20,18 +20,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 #pragma once
 
 #include <string>
 #include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
+#include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 
 // ***** MACROS : START *****
-#define Model DictionaryTermVisit
-#define MODEL DICTIONARY_TERM_VISIT
-#define COLS columns::DictionaryTermVisitColumns
-#include "../columns/DictionaryTermVisitColumns.hpp"
+#define Model DictionarySource
+#define MODEL DICTIONARY_SOURCE
+#define COLS columns::DictionarySourceColumns
+#include "../columns/DictionarySourceColumns.hpp"
+
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::dictionary::models
@@ -39,37 +42,44 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
-
-    inline const def DICTIONARY_TERM_VISIT_DEFINITION =
-        def(COLS::MODEL_NAME, "dictionary")
-        .set_group("Dictionary", 200)
-        .set_rest_operations("crl")
+    inline const def DICTIONARY_SOURCE_DEFINITION =
+        def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
+        .set_all_rest_operations()
+        .set_group("Dictionary", 100)
+        .set_title_column(COLS::DICTIONARY_SOURCE_TYPE_ID)
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(
-                "Dictionary term that was visited."),
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User who visited the term."),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_SOURCE_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::PAGE, INTEGER),
+            coldef(COLS::NOTE),
         });
 
-    struct DictionaryTermVisit : mindnet::model::BaseModel
+    struct Model : mindnet::model::BaseModel
     {
-        identification dictionary_term_id{};
-        identification user_id{};
+        identification dictionary_term_id;
+        identification dictionary_source_type_id;
+        string page;
+        string note;
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
-            &Model::user_id
+            &Model::dictionary_source_type_id,
+            &Model::page,
+            &Model::note
         );
 
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
-            return id == other.id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                user_id == other.user_id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at;
+            return id == other.id
+                && dictionary_term_id == other.dictionary_term_id
+                && dictionary_source_type_id == other.dictionary_source_type_id
+                && page == other.page
+                && note == other.note
+                && created_at == other.created_at
+                && updated_at == other.updated_at;
         }
     };
 }

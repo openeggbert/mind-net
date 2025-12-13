@@ -21,51 +21,33 @@
  * THE SOFTWARE.
  */
 
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
 #pragma once
 
-#include <string>
+#include "mindnet/model/BaseColumns.hpp"
 
-#include "mindnet/model/EnumDefinition.hpp"
-
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::columns
 {
-    enum class SourceType
+    struct DictionarySourceTypeColumns : model::BaseColumns
     {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
+        DictionarySourceTypeColumns() = delete;
+
+        DictionarySourceTypeColumns(const DictionarySourceTypeColumns&) = delete;
+        DictionarySourceTypeColumns& operator=(const DictionarySourceTypeColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "dictionary_source_type";
+
+        static constexpr const char* TITLE = "title";
+        static constexpr const char* AUTHOR = "author";
+        static constexpr const char* YEAR = "year";
+        static constexpr const char* PUBLISHER = "publisher";
+        static constexpr const char* EDITION = "edition";
+        static constexpr const char* PAGES = "pages";
+        static constexpr const char* URL = "url";
+        static constexpr const char* TYPE = "type";
+        static constexpr const char* NOTE = "note";
     };
-
-    inline std::string source_type_to_string(const SourceType type)
-    {
-        switch (type)
-        {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
-
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
-
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
-        };
-    }
 }

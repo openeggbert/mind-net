@@ -21,51 +21,26 @@
  * THE SOFTWARE.
  */
 
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
 #pragma once
 
-#include <string>
+#include "mindnet/model/BaseColumns.hpp"
 
-#include "mindnet/model/EnumDefinition.hpp"
-
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::columns
 {
-    enum class SourceType
+    struct DictionaryTermAliasColumns : model::BaseColumns
     {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
+        DictionaryTermAliasColumns() = delete;
+
+        DictionaryTermAliasColumns(const DictionaryTermAliasColumns&) = delete;
+        DictionaryTermAliasColumns& operator=(const DictionaryTermAliasColumns&) = delete;
+
+        static constexpr const char* MODEL_NAME = "dictionary_term_alias";
+
+        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
+        static constexpr const char* ALIAS = "alias";
     };
-
-    inline std::string source_type_to_string(const SourceType type)
-    {
-        switch (type)
-        {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
-
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
-
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
-        };
-    }
 }

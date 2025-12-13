@@ -31,20 +31,25 @@
 
 namespace mindnet::plugins::dictionary::columns
 {
-    struct DictionaryTermColumns : model::BaseColumns
+    struct DictionaryState4Columns : model::BaseColumns
     {
-        DictionaryTermColumns() = delete;
+        DictionaryState4Columns() = delete;
 
-        DictionaryTermColumns(const DictionaryTermColumns&) = delete;
-        DictionaryTermColumns& operator=(const DictionaryTermColumns&) = delete;
+        DictionaryState4Columns(const DictionaryState4Columns&) = delete;
+        DictionaryState4Columns& operator=(const DictionaryState4Columns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "dictionary_term";
+        static constexpr const char* MODEL_NAME = "dictionary_state_4";
 
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE = "title";
-        static constexpr const char* DISAMBIGUATION = "disambiguation";
-        static constexpr const char* DEFINITION = "definition";
-        static constexpr const char* IMPORTANCE = "importance";
-        static constexpr const char* DIFFICULTY = "difficulty";
+        static constexpr const char* USER_ID = "user_id";
+        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
+        static constexpr const char* REPETITIONS = "repetitions";
+        static constexpr const char* INTERVAL = "interval";
+        static constexpr const char* EF_TIMES_100 = "ef_times_100";
+        static constexpr const char* CORRECTION_FACTOR_TIMES_100 = "correction_factor_times_100";
+        static constexpr const char* NEXT_REVIEW = "next_review";
+        static constexpr const char* LAST_REVIEW = "last_review";
+        static constexpr const char* LAST_QUALITY = "last_quality";
+        static constexpr const char* LAST_SEEN_SEMANTIC_VERSION = "last_seen_semantic_version";
+        static constexpr const char* CONTENT_MODIFIED_SINCE_LAST_REVIEW = "content_modified_since_last_review";
     };
 }

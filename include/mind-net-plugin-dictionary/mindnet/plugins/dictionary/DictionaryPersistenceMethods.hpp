@@ -32,12 +32,18 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/api/PersistenceMethods.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryFlag.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryLink.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryMap.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryTagType.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryReview.hpp"
+#include "mindnet/plugins/dictionary/models/DictionarySource.hpp"
+#include "mindnet/plugins/dictionary/models/DictionarySourceType.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTag.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryLink.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTagType.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermAlias.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermVisit.hpp"
 
 namespace mindnet::plugins::dictionary::models
@@ -55,11 +61,17 @@ namespace mindnet::plugins::dictionary
         const models::DictionaryNote& dictionary_note,
         const plugins::core::enums::SingleRight single_right);
 
+    gen_find_h(dictionary, DictionaryFlag, dictionary_flag)
+    gen_find_h(dictionary, DictionaryLink, dictionary_link)
     gen_find_h(dictionary, DictionaryMap, dictionary_map)
     gen_find_h(dictionary, DictionaryNote, dictionary_note)
-    gen_find_h(dictionary, DictionaryTagType, dictionary_tag_type)
+    gen_find_h(dictionary, DictionaryReview, dictionary_review)
+    gen_find_h(dictionary, DictionarySource, dictionary_source)
+    gen_find_h(dictionary, DictionarySourceType, dictionary_source_type)
+    gen_find_h(dictionary, DictionaryState4, dictionary_state4)
     gen_find_h(dictionary, DictionaryTag, dictionary_tag)
-    gen_find_h(dictionary, DictionaryLink, dictionary_link)
+    gen_find_h(dictionary, DictionaryTagType, dictionary_tag_type)
     gen_find_h(dictionary, DictionaryTerm, dictionary_term)
+    gen_find_h(dictionary, DictionaryTermAlias, dictionary_term_alias)
     gen_find_h(dictionary, DictionaryTermVisit, dictionary_term_visit)
 }

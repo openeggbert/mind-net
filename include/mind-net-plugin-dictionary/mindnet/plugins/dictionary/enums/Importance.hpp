@@ -27,45 +27,41 @@
 
 #include "mindnet/model/EnumDefinition.hpp"
 
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::enums
 {
-    enum class SourceType
+    /**
+     *
+     * @author robertvokac
+     */
+    enum class Importance
     {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
+        Low = 1, Medium = 2, High = 3
     };
 
-    inline std::string source_type_to_string(const SourceType type)
+    inline std::string importance_to_string(Importance importance)
     {
-        switch (type)
+        switch (importance)
         {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
+        case Importance::Low:
+            return "Low";
+        case Importance::Medium:
+            return "Medium";
+        case Importance::High:
+            return "High";
         default:
             return "Unknown";
         }
     }
 
-    inline std::string source_type_to_string(int type)
+    inline std::string importance_to_string(int importance)
     {
-        return source_type_to_string(static_cast<SourceType>(type));
+        return importance_to_string(static_cast<Importance>(importance));
     }
 
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
+    inline model::EnumDefinition importance_to_enum_definition()
     {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
+        return model::EnumDefinition{
+            importance_to_string, 3, 1, 2, 3
         };
     }
-}
+} // namespace mindnet::enums

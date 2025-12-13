@@ -21,51 +21,28 @@
  * THE SOFTWARE.
  */
 
-#pragma once
+#include "mindnet/plugins/dictionary/models/DictionarySource.hpp"
 
-#include <string>
-
-#include "mindnet/model/EnumDefinition.hpp"
-
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::models
 {
-    enum class SourceType
+    entity_fields DictionarySource::to_values() const
     {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
-    };
-
-    inline std::string source_type_to_string(const SourceType type)
-    {
-        switch (type)
-        {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
+        return serialize_fields(*this);
     }
 
-    inline std::string source_type_to_string(int type)
+    void DictionarySource::from_values(const entity_fields& values)
     {
-        return source_type_to_string(static_cast<SourceType>(type));
+        deserialize_fields(*this, values);
     }
 
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
+    string DictionarySource::validate()
     {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
+        using columns::DictionarySourceColumns;
+
+        validator_chain_vector list{
+            [this] { return test_ne(dictionary_term_id, 0, DictionarySourceColumns::DICTIONARY_TERM_ID); },
+            [this] { return test_ne(dictionary_source_type_id, 0, DictionarySourceColumns::DICTIONARY_SOURCE_TYPE_ID); },
         };
+        return util::ValidatorChain::run(list);
     }
 }

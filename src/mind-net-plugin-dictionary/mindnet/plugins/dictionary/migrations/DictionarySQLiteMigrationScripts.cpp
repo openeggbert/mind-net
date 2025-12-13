@@ -55,6 +55,7 @@ CREATE TABLE dictionary_term (
     title TEXT NOT NULL,
     disambiguation TEXT,
     definition TEXT,
+    importance INTEGER NOT NULL,
     difficulty INTEGER NOT NULL,
 
     UNIQUE(dictionary_map_id, title, disambiguation),
@@ -175,5 +176,173 @@ CREATE TABLE dictionary_tag (
 CREATE INDEX idx_dictionary_tag_term ON dictionary_tag(dictionary_term_id);
 CREATE INDEX idx_dictionary_tag_type ON dictionary_tag(dictionary_tag_type_id);
 )");
+
+        //
+        // V8 — dictionary_flag
+        //
+        add_migration("V8__create_dictionary_flag.sql", R"(
+CREATE TABLE dictionary_flag (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_term_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    is_public INTEGER NOT NULL CHECK(is_public IN (0,1)),
+
+    UNIQUE(dictionary_term_id, user_id, title),
+
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
+    FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
+CREATE INDEX idx_dictionary_flag_term ON dictionary_flag(dictionary_term_id);
+CREATE INDEX idx_dictionary_flag_user ON dictionary_flag(user_id);
+)");
+
+        //
+        // V9 — dictionary_review
+        //
+        add_migration("V9__create_dictionary_review.sql", R"(
+CREATE TABLE dictionary_review (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    user_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
+    dictionary_term_id INTEGER NOT NULL,
+    algorithm TEXT NOT NULL,
+
+    review_date DATETIME NOT NULL,
+    grade INTEGER NOT NULL,
+
+    started_at DATETIME,
+    ended_at DATETIME,
+    latency_ms INTEGER,
+
+    answer_change_count INTEGER DEFAULT 0,
+    details_json TEXT,
+
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id),
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
+);
+
+CREATE INDEX idx_dictionary_review_user ON dictionary_review(user_id);
+CREATE INDEX idx_dictionary_review_term ON dictionary_review(dictionary_term_id);
+CREATE INDEX idx_dictionary_review_date ON dictionary_review(review_date);
+)");
+
+        //
+        // V10 — dictionary_source_type
+        //
+        add_migration("V10__create_dictionary_source_type.sql", R"(
+CREATE TABLE dictionary_source_type (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    title TEXT NOT NULL,
+    author TEXT,
+    year INTEGER,
+    publisher TEXT,
+    edition TEXT,
+    pages INTEGER,
+    url TEXT,
+    type TEXT,
+    note TEXT
+);
+
+CREATE INDEX idx_dictionary_source_type_title
+    ON dictionary_source_type(title);
+)");
+
+        //
+        // V11 — dictionary_source
+        //
+        add_migration("V11__create_dictionary_source.sql", R"(
+CREATE TABLE dictionary_source (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_term_id INTEGER NOT NULL,
+    dictionary_source_type_id INTEGER NOT NULL,
+
+    page TEXT,
+    note TEXT,
+
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
+    FOREIGN KEY(dictionary_source_type_id) REFERENCES dictionary_source_type(id)
+);
+
+CREATE INDEX idx_dictionary_source_term
+    ON dictionary_source(dictionary_term_id);
+CREATE INDEX idx_dictionary_source_type
+    ON dictionary_source(dictionary_source_type_id);
+)");
+
+
+
+        //
+        // V12 — dictionary_state_4
+        //
+        add_migration("V12__create_dictionary_state_4.sql", R"(
+CREATE TABLE dictionary_state_4 (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    user_id INTEGER NOT NULL,
+    dictionary_term_id INTEGER NOT NULL,
+
+    repetitions INTEGER NOT NULL DEFAULT 0,
+    interval INTEGER NOT NULL DEFAULT 0,
+    ef_times_100 INTEGER NOT NULL DEFAULT 250,
+    correction_factor_times_100 INTEGER NOT NULL DEFAULT 100,
+
+    next_review DATETIME,
+    last_review DATETIME,
+    last_quality INTEGER,
+
+    last_seen_semantic_version INTEGER,
+    content_modified_since_last_review INTEGER NOT NULL CHECK(content_modified_since_last_review IN (0,1)),
+
+    UNIQUE(user_id, dictionary_term_id),
+
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
+);
+
+CREATE INDEX idx_dictionary_state_user
+    ON dictionary_state_4(user_id);
+CREATE INDEX idx_dictionary_state_term
+    ON dictionary_state_4(dictionary_term_id);
+)");
+
+        //
+        // V13 — dictionary_term_alias
+        //
+        add_migration("V13__create_dictionary_term_alias.sql", R"(
+CREATE TABLE dictionary_term_alias (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_term_id INTEGER NOT NULL,
+    alias TEXT NOT NULL,
+
+    UNIQUE(dictionary_term_id, alias),
+
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
+);
+
+CREATE INDEX idx_dictionary_term_alias_term
+    ON dictionary_term_alias(dictionary_term_id);
+)");
+
+
     }
 }

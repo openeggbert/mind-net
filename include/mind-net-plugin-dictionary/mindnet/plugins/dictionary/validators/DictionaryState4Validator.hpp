@@ -23,49 +23,24 @@
 
 #pragma once
 
-#include <string>
+#include <memory>
 
-#include "mindnet/model/EnumDefinition.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
 
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::validators
 {
-    enum class SourceType
+    using api::RequestContext;
+    using mindnet::plugins::dictionary::models::DictionaryState4;
+
+    class DictionaryState4Validator : public api::ValidatorBase<DictionaryState4Validator, DictionaryState4>
     {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
+    public:
+        DictionaryState4Validator() = default;
+        ~DictionaryState4Validator() = default; // explicitly make it destructible
+        using Model = DictionaryState4;
+
+        create_method_prototypes_for_ValidatorBase(Model)
     };
-
-    inline std::string source_type_to_string(const SourceType type)
-    {
-        switch (type)
-        {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
-
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
-
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
-        };
-    }
 }

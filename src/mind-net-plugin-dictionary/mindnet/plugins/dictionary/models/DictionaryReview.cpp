@@ -21,51 +21,32 @@
  * THE SOFTWARE.
  */
 
-#pragma once
+#include "mindnet/plugins/dictionary/models/DictionaryReview.hpp"
 
-#include <string>
-
-#include "mindnet/model/EnumDefinition.hpp"
-
-namespace mindnet::plugins::slipbox::enums
+namespace mindnet::plugins::dictionary::models
 {
-    enum class SourceType
+    entity_fields DictionaryReview::to_values() const
     {
-        Book = 0,
-        Article = 1,
-        Paper = 2,
-        Website = 3,
-        Video = 4,
+        return serialize_fields(*this);
+    }
+
+    void DictionaryReview::from_values(const entity_fields& values)
+    {
+        deserialize_fields(*this, values);
     };
 
-    inline std::string source_type_to_string(const SourceType type)
+    string DictionaryReview::validate()
     {
-        switch (type)
-        {
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
+        using columns::DictionaryReviewColumns;
 
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
+        validator_chain_vector list{
+            [this] { return test_between(grade, 0, 5, DictionaryReviewColumns::GRADE); },
+            [this] { return test_true(started_at<ended_at, "started_at must be less than ended_at"); },
 
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 5, 0, 1, 2, 3, 4
+            [this] { return test_at_least(latency_ms, 0, DictionaryReviewColumns::LATENCY_MS); },
+            [this] { return test_eq(latency_ms, ended_at - started_at, DictionaryReviewColumns::LATENCY_MS); },
+            [this] { return test_at_least(answer_change_count, 0, DictionaryReviewColumns::ANSWER_CHANGE_COUNT); }
         };
+        return util::ValidatorChain::run(list);
     }
 }
