@@ -31,9 +31,10 @@ const md = window.markdownit({
         if (lang && window.hljs.getLanguage(lang)) {
             try {
                 return '<pre class="hljs"><code>' +
-                    window.hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                    window.hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
                     '</code></pre>';
-            } catch (__) {}
+            } catch (__) {
+            }
         }
         return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
     }
@@ -73,7 +74,6 @@ function makeDraggable(el) {
     }
 
 
-
     function doDrag(x, y, ev) {
         if (document.body._forceStopDragging) {
             dragging = false;
@@ -105,12 +105,12 @@ function makeDraggable(el) {
         const t = e.touches[0];
         startDrag(t.clientX, t.clientY);
         e.preventDefault();
-    }, { passive: false });
+    }, {passive: false});
 
     document.addEventListener('touchmove', e => {
         const t = e.touches[0];
         doDrag(t.clientX, t.clientY);
-    }, { passive: false });
+    }, {passive: false});
 
     document.addEventListener('touchend', stopDrag);
 }
@@ -264,6 +264,7 @@ class DictionaryApp {
         return this.select_map.get_selected_map_id()
     }
 }
+
 class SelectMap {
     #element
     #selected_map_id = 1
@@ -272,6 +273,7 @@ class SelectMap {
     async list_maps_from_backend() {
         return await list_all_entities("dictionary_map", "&sort=position");
     }
+
     constructor() {
         this.#element = get_element("select_map");
         this.#element.innerHTML = ""
@@ -300,9 +302,11 @@ class SelectMap {
             this.add_map(new_map_created.id, new_map_created.name)
         }
     }
+
     get_selected_map_id() {
         return this.#selected_map_id
     }
+
     async init() {
         const maps = await this.list_maps_from_backend();
         maps.forEach(e => {
@@ -318,6 +322,7 @@ class SelectMap {
         this.#map.set(option.value, option.innerText)
     }
 }
+
 class TermContainer {
     #element
     #dictionary_term_json
@@ -325,17 +330,23 @@ class TermContainer {
 
     #tags
     #flags
+    #links
+
     constructor() {
         this.#element = get_element("term_container");
         this.#tags = new Tags()
         this.#flags = new Flags()
+        this.#links = new Links()
     }
+
     show() {
         this.#element.style.display = "block"
     }
+
     hide() {
         this.#element.style.display = "none"
     }
+
     async render(dictionary_term_id) {
         if (this.dictionary_term_id === dictionary_term_id) {
             showWarn("This term is already shown.")
@@ -346,7 +357,9 @@ class TermContainer {
         await this.render_term(dictionary_term_id);
         this.#tags.render(dictionary_term_id)
         this.#flags.render(dictionary_term_id)
+        this.#links.render(dictionary_term_id)
     }
+
     async render_term(dictionary_term_id) {
         this.dictionary_term_id = dictionary_term_id
         let dictionary_term = await read_entity("dictionary_term", dictionary_term_id)
@@ -362,13 +375,13 @@ class TermContainer {
 
         let id2 = "input_difficulty_" + (difficulty === 1 ? "easy" : (difficulty === 2 ? "medium" : "hard"))
 
-        let input_importance= get_element(id1)
-        if(input_importance === null) {
+        let input_importance = get_element(id1)
+        if (input_importance === null) {
             showWarn("There is no id: " + id1)
         }
-        let input_difficulty= get_element(id2)
-        input_importance.checked=true;
-        input_difficulty.checked=true;
+        let input_difficulty = get_element(id2)
+        input_importance.checked = true;
+        input_difficulty.checked = true;
 
         get_element("textarea_definition").innerText = dictionary_term.definition
 
@@ -378,7 +391,7 @@ class TermContainer {
             async function delete_rows(model_name, entities) {
                 for (const e of entities) {
                     let delete_result = await delete_entity(model_name, e.id)
-                    if(!delete_result) {
+                    if (!delete_result) {
                         showError("Deleting " + model_name + " failed.");
                     }
                 }
@@ -425,7 +438,7 @@ class TermContainer {
             await delete_rows("dictionary_term_alias", aliases)
             await delete_rows("dictionary_term_visit", visits)
             let delete_dictionary_term = await delete_entity("dictionary_term", dictionary_term_id)
-            if(delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
+            if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
                 showInfo("Deleted dictionary term: " + dictionary_term.title)
                 this.hide()
             } else {
@@ -434,29 +447,29 @@ class TermContainer {
         }
 
         get_element("button_save_term").onclick = async () => {
-            let new_term =structuredClone(this.#dictionary_term_json)
-            new_term.title=get_element("input_title").value
-            new_term.disambiguation=get_element("input_disambiguation").value
-            new_term.definition=get_element("textarea_definition").value
+            let new_term = structuredClone(this.#dictionary_term_json)
+            new_term.title = get_element("input_title").value
+            new_term.disambiguation = get_element("input_disambiguation").value
+            new_term.definition = get_element("textarea_definition").value
 
             let importance = 0
             let difficulty = 0
-            let input_importance_low= get_element("input_importance_low")
-            let input_importance_medium= get_element("input_importance_medium")
-            let input_importance_high= get_element("input_importance_high")
-            let input_difficulty_easy= get_element("input_difficulty_easy")
-            let input_difficulty_medium= get_element("input_difficulty_medium")
-            let input_difficulty_hard= get_element("input_difficulty_hard")
-            if(input_importance_low.checked) importance=1
-            if(input_importance_medium.checked) importance=2
-            if(input_importance_high.checked) importance=3
-            if(input_difficulty_easy.checked) difficulty=1
-            if(input_difficulty_medium.checked) difficulty=2
-            if(input_difficulty_hard.checked) difficulty=3
+            let input_importance_low = get_element("input_importance_low")
+            let input_importance_medium = get_element("input_importance_medium")
+            let input_importance_high = get_element("input_importance_high")
+            let input_difficulty_easy = get_element("input_difficulty_easy")
+            let input_difficulty_medium = get_element("input_difficulty_medium")
+            let input_difficulty_hard = get_element("input_difficulty_hard")
+            if (input_importance_low.checked) importance = 1
+            if (input_importance_medium.checked) importance = 2
+            if (input_importance_high.checked) importance = 3
+            if (input_difficulty_easy.checked) difficulty = 1
+            if (input_difficulty_medium.checked) difficulty = 2
+            if (input_difficulty_hard.checked) difficulty = 3
             new_term.importance = importance
             new_term.difficulty = difficulty
             let updated = put_entity("dictionary_term", dictionary_term_id, new_term)
-            if(updated !== null && updated !== undefined) {
+            if (updated !== null && updated !== undefined) {
                 showInfo("Dictionary term was successfully updated.")
                 this.#dictionary_term_json = new_term
             } else {
@@ -476,7 +489,7 @@ class TermContainer {
             user_id: getUserId()
         }
         let created_dictionary_term_visit = post_entity("dictionary_term_visit", new_visit)
-        if(created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
+        if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
             showError("Creating new term visit failed.")
         }
     }
@@ -486,13 +499,16 @@ class Tags {
     #element
     #input_search_tag = document.getElementById("input_search_tag")
     #autocomplete_tag_title = null
+
     constructor() {
         this.#element = get_element("tags");
         this.#element.innerHTML = ""
     }
+
     show() {
         this.#element.style.display = "block"
     }
+
     hide() {
         this.#element.style.display = "none"
     }
@@ -500,7 +516,7 @@ class Tags {
     async render(dictionary_term_id) {
         this.#element.innerHTML = ""
         get_element("div_search_tag").style.display = "none"
-        if(this.#autocomplete_tag_title !== null) {
+        if (this.#autocomplete_tag_title !== null) {
             this.#autocomplete_tag_title.destroy()
             this.#autocomplete_tag_title = null
         }
@@ -511,7 +527,7 @@ class Tags {
             "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
             "title",
             "title_part",
-        "div_search_tag_end"
+            "div_search_tag_end"
         )
 
         this.#autocomplete_tag_title.addCallback(async () => {
@@ -525,7 +541,7 @@ class Tags {
             }
 
             let tag_created = await post_entity("dictionary_tag", new_tag)
-            if(tag_created === null || tag_created === undefined) {
+            if (tag_created === null || tag_created === undefined) {
                 showError("Creating tag failed: " + item.title)
                 return
             }
@@ -535,7 +551,7 @@ class Tags {
         })
 
         let tags_result = await list_all_entities("dictionary_tag", "&dictionary_term_id=" + dictionary_term_id)
-        if(!tags_result) {
+        if (!tags_result) {
             showError("Listing tags failed.")
             return;
         }
@@ -543,7 +559,7 @@ class Tags {
         for (const dictionary_tag_json of tags_result) {
 
             let tag_type = await read_entity("dictionary_tag_type", dictionary_tag_json.dictionary_tag_type_id)
-            if(!tag_type) {
+            if (!tag_type) {
                 showError("Loading tag type failed: " + dictionary_tag_json.dictionary_tag_type_id)
                 continue
             }
@@ -588,6 +604,7 @@ class Tags {
             showWindowFrom("Show tags", url)
         }
     }
+
     add_tag(title, id) {
         let div = document.createElement("div")
         div.classList.add("tag")
@@ -598,7 +615,7 @@ class Tags {
         button.onclick = () => {
             let tag_deleted = delete_entity("dictionary_tag", id)
             let deleted = tag_deleted !== null && tag_deleted !== undefined
-            if(deleted) {
+            if (deleted) {
                 showInfo("Tag was successfully deleted: " + title)
                 div.remove()
             } else {
@@ -611,28 +628,31 @@ class Tags {
     }
 }
 
-
 class Flags {
     #element
+
     constructor() {
         this.#element = get_element("flags");
         this.#element.innerHTML = ""
     }
+
     show() {
         this.#element.style.display = "block"
     }
+
     hide() {
         this.#element.style.display = "none"
     }
 
     async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
         let private_flags_result = await list_all_entities("dictionary_flag", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
-        if(!private_flags_result) {
+        if (!private_flags_result) {
             showError("Listing private flags failed.")
             return;
         }
         let public_flags_result = await list_all_entities("dictionary_flag", "&dictionary_term_id=" + dictionary_term_id + "&is_public=1")
-        if(!public_flags_result) {
+        if (!public_flags_result) {
             showError("Listing public flags failed.")
             return;
         }
@@ -640,22 +660,26 @@ class Flags {
             this.add_flag(e.title, e.id, false)
         }
         for (const e of public_flags_result) {
-            if(e.user_id === getUserId()) continue
+            if (e.user_id === getUserId()) continue
             this.add_flag(e.title, e.id, true)
         }
 
         let button_add_flag = get_element("button_add_flag")
+
+        let input_checkbox_public_flag = get_element("input_checkbox_public_flag")
+        input_checkbox_public_flag.checked = false
+        input_checkbox_public_flag.si
+
         button_add_flag.onclick = async () => {
-            const title = prompt("Enter map name");
+            const title = prompt("Enter tag title");
             if (title === null || title === "") return;
 
-            let is_public = confirm("Should be the flag public?")
-
+            let is_public = input_checkbox_public_flag.checked
             let new_flag = {
                 dictionary_term_id: dictionary_term_id,
                 user_id: getUserId(),
                 title: title,
-                is_public: is_public? 1 : 0
+                is_public: is_public ? 1 : 0
             }
 
             let flag_created = await post_entity("dictionary_flag", new_flag)
@@ -668,7 +692,9 @@ class Flags {
             //get_element("div_search_tag").style.display = "none"
 
         }
+
     }
+
     add_flag(title, id, is_public = true) {
         let div = document.createElement("div")
         div.classList.add("tag")
@@ -676,7 +702,7 @@ class Flags {
         div.innerText = title
         div.style.backgroundColor = "#e0e0e0"
         div.style.color = "#2b2b2b"
-        if(!is_public) {
+        if (!is_public) {
             div.style.border = "1px dashed #8fa3b8"
             div.innerText = "🔒 " + title;
         }
@@ -704,7 +730,140 @@ class Flags {
     }
 }
 
+class Links {
+    #element
+    #input_search_link = document.getElementById("input_search_link")
+    #autocomplete_link_title = null
+    constructor() {
+        this.#element = get_element("links");
+        this.#element.innerHTML = ""
+    }
+    show() {
+        this.#element.style.display = "block"
+    }
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
+        get_element("div_search_link").style.display = "none"
+        if(this.#autocomplete_link_title !== null) {
+            this.#autocomplete_link_title.destroy()
+            this.#autocomplete_link_title = null
+        }
+        this.#autocomplete_link_title = new Autocomplete(
+            this.#input_search_link,
+            1,
+            "dictionary_term_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
+            "div_search_flag_end"
+        )
+
+        this.#autocomplete_link_title.addCallback(async () => {
+
+            let item = this.#autocomplete_link_title.get_item()
+            showInfo("Found link: " + item.title)
+            let another_dictionary_term_id = item.id
+            let new_link = {
+                from_dictionary_term_id: dictionary_term_id,
+                to_dictionary_term_id: another_dictionary_term_id
+            }
+
+            let link_created = await post_entity("dictionary_link", new_link)
+            if(link_created === null || link_created === undefined) {
+                showError("Creating link failed: " + item.title)
+                return
+            }
+            showInfo("New link was created: " + item.title)
+            this.add_link(item.title, link_created.id)
+            //get_element("div_search_tag").style.display = "none"
+        })
+
+        let links_result = await list_all_entities("dictionary_link", "&from_dictionary_term_id=" + dictionary_term_id)
+        if(!links_result) {
+            showError("Listing links failed.")
+            return;
+        }
+        showInfo("Found " + links_result.length + " links")
+        for (const dictionary_link_json of links_result) {
+
+            let another_dictionary_term = await read_entity("dictionary_term", dictionary_link_json.to_dictionary_term_id)
+            if(!another_dictionary_term) {
+                showError("Loading term failed: " + dictionary_link_json.to_dictionary_term_id)
+                continue
+            }
+            let title = another_dictionary_term.title
+
+            this.add_link(title, dictionary_link_json.id)
+        }
+
+        let button_add_link = get_element("button_add_link")
+        button_add_link.onclick = async () => {
+            let was_hidden = get_element("div_search_link").style.display === "none"
+            get_element("div_search_link").style.display = "block"
+            let title = this.#input_search_link.value
+            if (title === "") {
+                if(!was_hidden) showWarn("Term title must not be empty")
+                return;
+            }
+
+            let new_term = {
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
+                title: title,
+            }
+
+            let term_created = await post_entity("dictionary_term", new_term)
+            if (term_created === null || term_created === undefined) {
+                showError("Creating term failed: " + title)
+                return
+            }
+
+            let new_link = {
+                from_dictionary_term_id: dictionary_term_id,
+                to_dictionary_term_id: term_created.id
+            }
+
+            let link_created = await post_entity("dictionary_link", new_link)
+            if (link_created === null || link_created === undefined) {
+                showError("Creating link failed: " + title)
+                return
+            }
+            showInfo("New link was assigned: " + title)
+            this.add_link(title, link_created.id)
+            //get_element("div_search_link").style.display = "none"
+        }
+    }
+    add_link(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("item")
+        this.#element.appendChild(div)
+        let a = document.createElement("a")
+        a.href = "#"
+        a.innerText = title
+        div.appendChild(a)
+        let button = document.createElement("button")
+        button.innerHTML = "🗑️ Delete"
+        button.onclick = () => {
+            let link_deleted = delete_entity("dictionary_link", id)
+            let deleted = link_deleted !== null && link_deleted !== undefined
+            if(deleted) {
+                showInfo("Link was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting link failed: " + title)
+            }
+        }
+        div.appendChild(button)
+
+        this.#input_search_link.value = ""
+    }
+}
+
 let dictionary_app = null
+
 async function init_dom() {
     dictionary_app = new DictionaryApp()
 
