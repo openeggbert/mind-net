@@ -479,8 +479,137 @@ class TermContainer {
     }
 }
 
-
 class Tags {
+    #element
+    #input_search_tag = document.getElementById("input_search_tag")
+    #autocomplete_tag_title = null
+    constructor() {
+        this.#element = get_element("tags");
+        this.#element.innerHTML = ""
+    }
+    show() {
+        this.#element.style.display = "block"
+    }
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
+        get_element("div_search_tag").style.display = "none"
+        if(this.#autocomplete_tag_title !== null) {
+            this.#autocomplete_tag_title.destroy()
+            this.#autocomplete_tag_title = null
+        }
+        this.#autocomplete_tag_title = new Autocomplete(
+            this.#input_search_tag,
+            1,
+            "dictionary_tag_type_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
+        "div_search_tag_end"
+        )
+
+        this.#autocomplete_tag_title.addCallback(async () => {
+
+            let item = this.#autocomplete_tag_title.get_item()
+            showInfo("Found tag: " + item.title)
+            let dictionary_tag_type_id = item.id
+            let new_tag = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_tag_type_id: dictionary_tag_type_id
+            }
+
+            let tag_created = await post_entity("dictionary_tag", new_tag)
+            if(tag_created === null || tag_created === undefined) {
+                showError("Creating tag failed: " + item.title)
+                return
+            }
+            showInfo("New tag was assigned: " + item.title)
+            this.add_tag(item.title, tag_created.id)
+            //get_element("div_search_tag").style.display = "none"
+        })
+
+        let tags_result = await list_all_entities("dictionary_tag", "&dictionary_term_id=" + dictionary_term_id)
+        if(!tags_result) {
+            showError("Listing tags failed.")
+            return;
+        }
+        showInfo("Found " + tags_result.length + " tags")
+        for (const dictionary_tag_json of tags_result) {
+
+            let tag_type = await read_entity("dictionary_tag_type", dictionary_tag_json.dictionary_tag_type_id)
+            if(!tag_type) {
+                showError("Loading tag type failed: " + dictionary_tag_json.dictionary_tag_type_id)
+                continue
+            }
+            let title = tag_type.title
+
+            this.add_tag(title, dictionary_tag_json.id)
+        }
+
+        let button_add_tag = get_element("button_add_tag")
+        button_add_tag.onclick = async () => {
+            get_element("div_search_tag").style.display = "block"
+            let title = this.#input_search_tag.value
+            if (title === "") {
+                return;
+            }
+
+            let new_tag_type = {
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
+                title: title
+            }
+            let new_tag_type_created = await post_entity("dictionary_tag_type", new_tag_type)
+            if (!new_tag_type_created) {
+                showError("Creating new tag type failed: " + title)
+                return
+            }
+            let new_tag = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_tag_type_id: new_tag_type_created.id
+            }
+
+            let tag_created = await post_entity("dictionary_tag", new_tag)
+            if (tag_created === null || tag_created === undefined) {
+                showError("Creating tag failed: " + title)
+                return
+            }
+            showInfo("New tag was assigned: " + title)
+            this.add_tag(title, tag_created.id)
+            //get_element("div_search_tag").style.display = "none"
+        }
+        get_element("button_show_tags").onclick = () => {
+            let url = "index.html?entity=dictionary_tag_type&action=list&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            showWindowFrom("Show tags", url)
+        }
+    }
+    add_tag(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("tag")
+        this.#element.appendChild(div)
+        div.innerText = title
+        let button = document.createElement("button")
+        button.innerHTML = "&times;"
+        button.onclick = () => {
+            let tag_deleted = delete_entity("dictionary_tag", id)
+            let deleted = tag_deleted !== null && tag_deleted !== undefined
+            if(deleted) {
+                showInfo("Tag was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting tag failed: " + title)
+            }
+        }
+        div.appendChild(button)
+
+        this.#input_search_tag.value = ""
+    }
+}
+
+
+class Flags {
     #element
     #input_search_tag = document.getElementById("input_search_tag")
     #autocomplete_tag_title = null
@@ -507,7 +636,7 @@ class Tags {
             "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
             "title",
             "title_part",
-        "div_search_tag_end"
+            "div_search_tag_end"
         )
 
         this.#autocomplete_tag_title.addCallback(async () => {
