@@ -324,6 +324,24 @@ class TermContainer {
         get_element("term_container_h2").innerText = "Term #" + dictionary_term.id
         get_element("input_title").value = dictionary_term.title
         get_element("input_disambiguation").value = dictionary_term.disambiguation
+        get_element("textarea_definition").innerText = dictionary_term.definition
+
+        let importance = dictionary_term.importance
+        let difficulty = dictionary_term.difficulty
+        let input_importance= get_element("input_importance_" + (importance === 1 ? "low " : (importance === 2 ? "medium" : "high")))
+        let input_difficulty= get_element("input_difficulty_" + (difficulty === 1 ? "easy " : (difficulty === 2 ? "medium" : "hard")))
+        input_importance.checked=true;
+        input_difficulty.checked=true;
+
+        get_element("textarea_definition").innerText = dictionary_term.definition
+        get_element("button_delete_term").onclick(() => {
+            if (!confirm("Do you really want to delete this term and all its tags, flags, links, notes, sources, aliases?")) return;
+            let flags = list_all_entities(
+                "dictionary_flag",
+                "&dictinary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+
+        })
+
     }
 }
 
