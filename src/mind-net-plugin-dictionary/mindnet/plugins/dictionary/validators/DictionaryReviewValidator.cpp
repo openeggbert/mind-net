@@ -68,7 +68,11 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryReviewValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                            const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Can only delete your own reviews"};
+        }
+        return ok_result;
     }
 
     OperationResult DictionaryReviewValidator::validate_list_authorization(const RequestContext& ctx,
@@ -107,7 +111,7 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryReviewValidator::validate_delete_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        return ok_result;
     }
 
     OperationResult DictionaryReviewValidator::validate_list_integrity(const RequestContext& ctx,

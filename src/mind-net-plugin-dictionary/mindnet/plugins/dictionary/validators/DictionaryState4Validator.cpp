@@ -70,8 +70,11 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryState4Validator::validate_delete_authorization(const RequestContext& ctx,
                                                                            const Model& entity) const
     {
-        return status_405_unsupported_operation;
-    }
+        if (ctx.token.user_id != entity.user_id)
+        {
+            return {403, "Can only delete your own states 4"};
+        }
+        return ok_result;    }
 
     OperationResult DictionaryState4Validator::validate_list_authorization(const RequestContext& ctx,
                                                                          const string_map& filter) const
@@ -112,7 +115,7 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryState4Validator::validate_delete_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        return ok_result;
     }
 
     OperationResult DictionaryState4Validator::validate_list_integrity(const RequestContext& ctx,

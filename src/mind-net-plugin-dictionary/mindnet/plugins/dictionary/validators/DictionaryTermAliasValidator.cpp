@@ -81,7 +81,8 @@ namespace mindnet::plugins::dictionary::validators
         if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Delete))
             return {403, "You do not have permission to delete this alias."};
 
-        return ok_result;    }
+        return ok_result;
+    }
 
     OperationResult DictionaryTermAliasValidator::validate_list_authorization(
         const RequestContext& ctx, const string_map& filter) const

@@ -71,8 +71,17 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermVisitValidator::validate_delete_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
-        return status_405_unsupported_operation;
-    }
+        if (ctx.token.user_id != entity.user_id)
+            return {403, "You do not have permission to delete this visit."};
+
+        auto term = find_dictionary_term(ctx, entity.dictionary_term_id);
+        if (!term.second.empty()) return {500, term.second};
+        auto map_id = term.first.dictionary_map_id;
+
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Delete))
+            return {403, "You do not have permission to delete this visit."};
+
+        return ok_result;    }
 
     OperationResult DictionaryTermVisitValidator::validate_list_authorization(
         const RequestContext& ctx, const string_map& filter) const

@@ -13,7 +13,7 @@ import {
 import {
     makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
     chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element, saveToLocalStorage,
-    formatDateTimeHM, formatDateTime, showInfo, showError
+    formatDateTimeHM, formatDateTime, showInfo, showError, showWarn
 } from "./dom.js";
 import {Autocomplete} from "./common.js";
 
@@ -308,6 +308,7 @@ class SelectMap {
 }
 class TermContainer {
     #element
+    #dictionary_term_json
     dictionary_term_id = 0
     constructor() {
         this.#element = get_element("term_container");
@@ -316,11 +317,17 @@ class TermContainer {
         this.#element.style.display = "block"
     }
     hide() {
-        this.#element.style.display = "hidden"
+        this.#element.style.display = "none"
     }
     async render(dictionary_term_id) {
+        if(this.dictionary_term_id === dictionary_term_id) {
+            showWarn("This term is already shown.")
+            return
+        }
         if (dictionary_term_id === 0) return;
+        this.dictionary_term_id = dictionary_term_id
         let dictionary_term = await read_entity("dictionary_term", dictionary_term_id)
+        this.#dictionary_term_json = dictionary_term
         get_element("term_container_h2").innerText = "Term #" + dictionary_term.id
         get_element("input_title").value = dictionary_term.title
         get_element("input_disambiguation").value = dictionary_term.disambiguation
@@ -328,20 +335,113 @@ class TermContainer {
 
         let importance = dictionary_term.importance
         let difficulty = dictionary_term.difficulty
-        let input_importance= get_element("input_importance_" + (importance === 1 ? "low " : (importance === 2 ? "medium" : "high")))
-        let input_difficulty= get_element("input_difficulty_" + (difficulty === 1 ? "easy " : (difficulty === 2 ? "medium" : "hard")))
+        let id1 = "input_importance_" + (importance === 1 ? "low" : (importance === 2 ? "medium" : "high"));
+
+        let id2 = "input_difficulty_" + (difficulty === 1 ? "easy" : (difficulty === 2 ? "medium" : "hard"))
+
+        let input_importance= get_element(id1)
+        if(input_importance === null) {
+            showWarn("There is no id: " + id1)
+        }
+        let input_difficulty= get_element(id2)
         input_importance.checked=true;
         input_difficulty.checked=true;
 
         get_element("textarea_definition").innerText = dictionary_term.definition
-        get_element("button_delete_term").onclick(() => {
-            if (!confirm("Do you really want to delete this term and all its tags, flags, links, notes, sources, aliases?")) return;
-            let flags = list_all_entities(
+
+        get_element("button_delete_term").onclick = async () => {
+            if (!confirm("Do you really want to delete this term and all its tags, flags, links, notes, sources and aliases?")) return;
+
+            async function delete_rows(model_name, entities) {
+                entities.forEach(e => {
+                    let delete_result = delete_entity(model_name, e.id)
+                    if(!delete_result) {
+                        showError("Deleting " + model_name + " failed.");
+                    }
+                });
+            }
+
+            let flags = await list_all_entities(
                 "dictionary_flag",
-                "&dictinary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+            let links1 = await list_all_entities(
+                "dictionary_link",
+                "&from_dictionary_term_id=" + dictionary_term_id)
+            let links2 = await list_all_entities(
+                "dictionary_link",
+                "&to_dictionary_term_id=" + dictionary_term_id)
+            let notes = await list_all_entities(
+                "dictionary_note",
+                "&dictionary_term_id=" + dictionary_term_id)
+            let reviews = await list_all_entities(
+                "dictionary_review",
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id" + getUserId())
+            let sources = await list_all_entities(
+                "dictionary_source",
+                "&dictionary_term_id=" + dictionary_term_id)
+            let states4 = await list_all_entities(
+                "dictionary_state_4",
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id" + getUserId())
+            let tags = await list_all_entities(
+                "dictionary_tag",
+                "&dictionary_term_id=" + dictionary_term_id)
+            let aliases = await list_all_entities(
+                "dictionary_term_alias",
+                "&dictionary_term_id=" + dictionary_term_id)
+            let visits = await list_all_entities(
+                "dictionary_term_visit",
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id" + getUserId())
+            await delete_rows("dictionary_flag", flags)
+            await delete_rows("dictionary_link", links1)
+            await delete_rows("dictionary_link", links2)
+            await delete_rows("dictionary_note", notes)
+            await delete_rows("dictionary_review", reviews)
+            await delete_rows("dictionary_source", sources)
+            await delete_rows("dictionary_state_4", states4)
+            await delete_rows("dictionary_tag", tags)
+            await delete_rows("dictionary_term_alias", aliases)
+            await delete_rows("dictionary_term_visit", visits)
+            let delete_dictionary_term = await delete_entity("dictionary_term", dictionary_term_id)
+            if(delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
+                showInfo("Deleted dictionary term: " + dictionary_term.title)
+                this.hide()
+            } else {
+                showError("Deleting dictionary term failed: " + dictionary_term.title)
+            }
+        }
 
-        })
+        get_element("button_save_term").onclick = async () => {
+            let new_term =structuredClone(this.#dictionary_term_json)
+            new_term.title=get_element("input_title").value
+            new_term.disambiguation=get_element("input_disambiguation").value
+            new_term.definition=get_element("textarea_definition").value
 
+            let importance = 0
+            let difficulty = 0
+            let input_importance_low= get_element("input_importance_low")
+            let input_importance_medium= get_element("input_importance_medium")
+            let input_importance_high= get_element("input_importance_high")
+            let input_difficulty_easy= get_element("input_difficulty_easy")
+            let input_difficulty_medium= get_element("input_difficulty_medium")
+            let input_difficulty_hard= get_element("input_difficulty_hard")
+            if(input_importance_low.checked) importance=1
+            if(input_importance_medium.checked) importance=2
+            if(input_importance_high.checked) importance=3
+            if(input_difficulty_easy.checked) difficulty=1
+            if(input_difficulty_medium.checked) difficulty=2
+            if(input_difficulty_hard.checked) difficulty=3
+            new_term.importance = importance
+            new_term.difficulty = difficulty
+            let updated = put_entity("dictionary_term", dictionary_term_id, new_term)
+            if(updated !== null && updated !== undefined) {
+                showInfo("Dictionary term was successfully updated.")
+                this.#dictionary_term_json = new_term
+            } else {
+                showError("Updating dictionary term failed.")
+            }
+
+
+        }
     }
 }
 

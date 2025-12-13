@@ -43,7 +43,7 @@ namespace mindnet::plugins::dictionary::models
 
     inline const def DICTIONARY_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_rest_operations("crl")
+        .set_rest_operations("crdl")
         .set_group("Dictionary", 100).set_title_column(COLS::DICTIONARY_TERM_ID)
         .allow_reader_write()
         .set_columns({
