@@ -92,128 +92,141 @@
         <!-- Tags -->
         <div class="container_box">
             <label id="label_tags">🏷️ Tags:</label>
-            <div id="tags" class="tags">
-                <div class="tag">Multithreading
-                    <button>&times;</button>
+            <div id="container_tags">
+                <div id="tags" class="tags">
+                    <div class="tag">Multithreading
+                        <button>&times;</button>
+                    </div>
+                    <div class="tag">Performance
+                        <button>&times;</button>
+                    </div>
                 </div>
-                <div class="tag">Performance
-                    <button>&times;</button>
+                <button id="button_add_tag" class="tags_add_btn">➕ Add Tag</button>
+                <button id="button_show_tags">🏷️ Show tags</button>
+                <div id="div_search_tag" style="display:none">
+                    <label for="input_search_tag">🔍 Search tag:</label>
+                    <input type="text" id="input_search_tag" placeholder="Start writing..."/>
+                    <div id="div_search_tag_end"></div>
                 </div>
-            </div>
-            <button id="button_add_tag" class="tags_add_btn">➕ Add Tag</button>
-            <button id="button_show_tags">🏷️ Show tags</button>
-            <div id="div_search_tag" style="display:none">
-                <label for="input_search_tag">🔍 Search tag:</label>
-                <input type="text" id="input_search_tag" placeholder="Start writing..."/>
-                <div id="div_search_tag_end"></div>
             </div>
         </div>
 
         <!-- Flags -->
         <div class="container_box">
             <label id="label_flags">🚩 Flags:</label>
-            <div id="flags" class="tags">
-                <div class="tag">todo
-                    <button>&times;</button>
+            <div id="container_flags">
+                <div id="flags" class="tags">
+                    <div class="tag">todo
+                        <button>&times;</button>
+                    </div>
+                    <div class="tag">obsolete
+                        <button>&times;</button>
+                    </div>
+                    <div class="tag">mass_imported
+                        <button>&times;</button>
+                    </div>
                 </div>
-                <div class="tag">obsolete
-                    <button>&times;</button>
-                </div>
-                <div class="tag">mass_imported
-                    <button>&times;</button>
-                </div>
+                <button id="button_add_flag" class="tags_add_btn">➕ Add Flag</button>
+                <input id="input_checkbox_public_flag" type="checkbox"
+                       style="transform: scale(2);margin-left:10px; margin-right:10px;">
+                <label for="input_checkbox_public_flag" style="display:inline;">Public</label>
             </div>
-            <button id="button_add_flag" class="tags_add_btn">➕ Add Flag</button>
-            <input id="input_checkbox_public_flag" type="checkbox" style="transform: scale(2);margin-left:10px; margin-right:10px;">
-            <label for="input_checkbox_public_flag" style="display:inline;">Public</label>
         </div>
 
         <!-- Links -->
         <div class="container_box">
             <label id="label_links">🔗 Links:</label>
-            <div id="links">
-                <div class="item">
-                    <a href="#">Thread Safety</a>
-                    <button>🗑️ Delete</button>
+            <div id="container_links">
+                <div id="links">
+                    <div class="item">
+                        <a href="#">Thread Safety</a>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <a href="#">Race Conditions</a>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <a href="#">Deadlocks</a>
+                        <button>🗑️ Delete</button>
+                    </div>
                 </div>
-                <div class="item">
-                    <a href="#">Race Conditions</a>
-                    <button>🗑️ Delete</button>
+                <button id="button_add_link">➕ Add Link</button>
+                <div id="div_search_link" style="display:none">
+                    <label for="input_search_link">🔍 Search term:</label>
+                    <input type="text" id="input_search_link" placeholder="Start writing..."/>
+                    <div id="div_search_link_end"></div>
                 </div>
-                <div class="item">
-                    <a href="#">Deadlocks</a>
-                    <button>🗑️ Delete</button>
-                </div>
-            </div>
-            <button id="button_add_link">➕ Add Link</button>
-            <div id="div_search_link" style="display:none">
-                <label for="input_search_link">🔍 Search term:</label>
-                <input type="text" id="input_search_link" placeholder="Start writing..."/>
-                <div id="div_search_link_end"></div>
-            </div>
 
+            </div>
         </div>
 
         <!-- Notes -->
         <div class="container_box">
             <label id="label_notes">📑 Notes:</label>
-            <div id="notes">
-                <div class="item">
-                    <span>Advantages</span>
-                    <button>🗑️ Delete</button>
+            <div id="container_notes">
+                <div id="notes">
+                    <div class="item">
+                        <span>Advantages</span>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <span>Disadvantages</span>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <span>Best Practices</span>
+                        <button>🗑️ Delete</button>
+                    </div>
                 </div>
-                <div class="item">
-                    <span>Disadvantages</span>
-                    <button>🗑️ Delete</button>
-                </div>
-                <div class="item">
-                    <span>Best Practices</span>
-                    <button>🗑️ Delete</button>
-                </div>
+                <button id="button_add_note">➕ Add Note</button>
             </div>
-            <button id="button_add_note">➕ Add Note</button>
         </div>
 
         <!-- Sources -->
         <div class="container_box">
             <label id="label_sources">📖 Sources:</label>
-            <div id="sources">
-                <div class="item">
-                    <span>Primer</span>
-                    <button>🗑️ Delete</button>
+            <div id="container_sources">
+                <div id="sources">
+                    <div class="item">
+                        <span>Primer</span>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <span>Effective STL </span>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <span>Inside the C++ Object Model</span>
+                        <button>🗑️ Delete</button>
+                    </div>
                 </div>
-                <div class="item">
-                    <span>Effective STL </span>
-                    <button>🗑️ Delete</button>
-                </div>
-                <div class="item">
-                    <span>Inside the C++ Object Model</span>
-                    <button>🗑️ Delete</button>
-                </div>
+                <button id="button_add_source">➕ Add Source</button>
             </div>
-            <button id="button_add_source">➕ Add Source</button>
         </div>
 
         <!-- Aliases -->
         <div class="container_box">
             <label id="label_aliases">➡️ Aliases:</label>
-            <div id="aliases">
-                <div class="item">
-                    <span>A</span>
-                    <button>🗑️ Delete</button>
+            <div id="container_aliases">
+                <div id="aliases">
+                    <div class="item">
+                        <span>A</span>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <span>Aa </span>
+                        <button>🗑️ Delete</button>
+                    </div>
+                    <div class="item">
+                        <span>Ab</span>
+                        <button>🗑️ Delete</button>
+                    </div>
                 </div>
-                <div class="item">
-                    <span>Aa </span>
-                    <button>🗑️ Delete</button>
-                </div>
-                <div class="item">
-                    <span>Ab</span>
-                    <button>🗑️ Delete</button>
-                </div>
+                <button id="button_add_alias">➕ Add Alias</button>
             </div>
-            <button id="button_add_alias">➕ Add Alias</button>
-        </div>
 
+        </div>
     </div>
     <div id="window_container" class="window_container">
         <header class="window_container-header">

@@ -343,6 +343,48 @@ class TermContainer {
         this.#flags = new Flags()
         this.#links = new Links()
         this.#notes = new Notes()
+
+        let term_container_h2 = get_element("term_container_h2")
+        term_container_h2.style.backgroundColor = "rgba(213,215,221,0.6)"
+        term_container_h2.style.color = "#2c3e50";
+        term_container_h2.style.padding = "10px"
+        term_container_h2.style.borderBottom = "1px solid #dcdfe3"
+
+        function attach_onclick_to_label(models) {
+            let label = get_element("label_"+models)
+            label.style.cursor = "pointer"
+            label.style.backgroundColor = "rgba(213,215,221,0.6)"
+            label.style.color = "#2c3e50";
+            label.style.borderBottom = "1px solid #dcdfe3"
+            label.style.padding = "10px"
+            label.onclick = () => {
+                let container = get_element("container_" + models)
+                let current_display = container.style.display;
+                let shown = current_display === "block" || current_display === "";
+                container.style.display = shown ? "none" : "block"
+                let tmp_id = "label_"+models + "_tmp"
+                if(shown) {
+                    let tmp_div = document.createElement("div")
+                    let start = models.charAt(0).toUpperCase() + models.slice(1)
+                    tmp_div.innerText = start + " are hidden. " + "Click \"" + start + "\" to show them again."
+
+                    tmp_div.style.color = "grey"
+                    //tmp_div.style.fontStyle = "italic"
+                    tmp_div.id = tmp_id
+                    label.after(tmp_div)
+                } else {
+                    get_element(tmp_id).remove()
+                }
+
+            }
+        }
+        attach_onclick_to_label("tags")
+        attach_onclick_to_label("flags")
+        attach_onclick_to_label("links")
+        attach_onclick_to_label("notes")
+        attach_onclick_to_label("sources")
+        attach_onclick_to_label("aliases")
+
     }
 
     show() {
