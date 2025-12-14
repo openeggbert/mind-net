@@ -20,7 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 #pragma once
 
 #include <string>
@@ -28,12 +27,11 @@
 
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
-
 // ***** MACROS : START *****
-#define Model DictionarySource
-#define MODEL DICTIONARY_SOURCE
-#define COLS columns::DictionarySourceColumns
-#include "../columns/DictionarySourceColumns.hpp"
+#define Model DictionarySourceTypeFulltext
+#define MODEL DICTIONARY_SOURCE_TYPE_FULLTEXT
+#define COLS columns::DictionarySourceTypeFulltextColumns
+#include "../columns/DictionarySourceTypeFulltextColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -42,44 +40,47 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::def;
     using mindnet::model::coldef;
     using_flags();
-    inline const def DICTIONARY_SOURCE_DEFINITION =
+
+    inline const def DICTIONARY_SOURCE_TYPE_FULLTEXT_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_all_rest_operations()
         .set_group("Dictionary", 100)
-        .set_title_column(COLS::DICTIONARY_SOURCE_TYPE_ID)
+        .set_rest_operations("l").set_title_column(COLS::ID)
+        .set_no_table(true)
+        .set_cache_enabled(false)
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::DICTIONARY_SOURCE_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::PAGE),
-            coldef(COLS::NOTE),
+            coldef(COLS::TITLE, MANDATORY | READONLY),
+            coldef(COLS::EDITION),
+            coldef(COLS::TITLE_PART, MANDATORY | READONLY)
         });
 
     struct Model : mindnet::model::BaseModel
     {
-        identification dictionary_term_id;
-        identification dictionary_source_type_id;
-        string page;
-        string note;
+        identification dictionary_source_type_id{};
+        std::string title{};
+        std::string edition{};
+        std::string title_part{};
+        
 
         static constexpr auto fields = std::make_tuple(
-            &Model::dictionary_term_id,
             &Model::dictionary_source_type_id,
-            &Model::page,
-            &Model::note
+            &Model::title,
+            &Model::edition,
+            &Model::title_part            
         );
 
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
-            return id == other.id
-                && dictionary_term_id == other.dictionary_term_id
-                && dictionary_source_type_id == other.dictionary_source_type_id
-                && page == other.page
-                && note == other.note
-                && created_at == other.created_at
-                && updated_at == other.updated_at;
+            return id == other.id &&
+                dictionary_source_type_id == other.dictionary_source_type_id &&
+                title == other.title &&
+                edition == other.edition &&
+                title_part == other.title_part &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at;
         }
     };
 }

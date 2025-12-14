@@ -252,7 +252,9 @@ CREATE TABLE dictionary_source_type (
     pages INTEGER,
     url TEXT,
     type TEXT,
-    note TEXT
+    note TEXT,
+
+    UNIQUE(title, edition)
 );
 
 CREATE INDEX idx_dictionary_source_type_title
@@ -273,6 +275,8 @@ CREATE TABLE dictionary_source (
 
     page TEXT,
     note TEXT,
+
+    UNIQUE(dictionary_term_id, dictionary_source_type_id, page)
 
     FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
     FOREIGN KEY(dictionary_source_type_id) REFERENCES dictionary_source_type(id)

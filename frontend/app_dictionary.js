@@ -336,6 +336,7 @@ class TermContainer {
     #flags
     #links
     #notes
+    #sources
 
     constructor() {
         this.#element = get_element("term_container");
@@ -343,6 +344,7 @@ class TermContainer {
         this.#flags = new Flags()
         this.#links = new Links()
         this.#notes = new Notes()
+        this.#sources = new Sources()
 
         let term_container_h2 = get_element("term_container_h2")
         term_container_h2.style.backgroundColor = "rgba(213,215,221,0.6)"
@@ -407,6 +409,7 @@ class TermContainer {
         this.#flags.render(dictionary_term_id)
         this.#links.render(dictionary_term_id)
         this.#notes.render(dictionary_term_id)
+        this.#sources.render(dictionary_term_id)
     }
 
     async render_term(dictionary_term_id) {
@@ -1122,6 +1125,171 @@ class Notes {
         }
 
         div.appendChild(button)
+    }
+}
+
+class Sources {
+    #element
+    #input_search_source = document.getElementById("input_search_source")
+    #autocomplete_source_title = null
+
+    constructor() {
+        this.#element = get_element("sources");
+        this.#element.innerHTML = ""
+    }
+
+    show() {
+        this.#element.style.display = "block"
+    }
+
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
+        get_element("div_search_source").style.display = "none"
+        if (this.#autocomplete_source_title !== null) {
+            this.#autocomplete_source_title.destroy()
+            this.#autocomplete_source_title = null
+        }
+        this.#autocomplete_source_title = new Autocomplete(
+            this.#input_search_source,
+            1,
+            "dictionary_source_type_fulltext",
+            "",
+            "title",
+            "title_part",
+            "div_search_source_end"
+        )
+
+        this.#autocomplete_source_title.addCallback(async () => {
+
+            let item = this.#autocomplete_source_title.get_item()
+            showInfo("Found source: " + item.title)
+            let dictionary_source_type_id = item.id
+            let new_source = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_source_type_id: dictionary_source_type_id
+            }
+
+            let source_created = await post_entity("dictionary_source", new_source)
+            if (source_created === null || source_created === undefined) {
+                showError("Creating source failed: " + item.title)
+                return
+            }
+            showInfo("New source was assigned: " + item.title)
+            this.add_source(item.title, source_created.id)
+            //get_element("div_search_source").style.display = "none"
+        })
+
+        let sources_result = await list_all_entities("dictionary_source", "&dictionary_term_id=" + dictionary_term_id)
+        if (!sources_result) {
+            showError("Listing sources failed.")
+            return;
+        }
+        showInfo("Found " + sources_result.length + " sources")
+        for (const dictionary_source_json of sources_result) {
+
+            let source_type = await read_entity("dictionary_source_type", dictionary_source_json.dictionary_source_type_id)
+            if (!source_type) {
+                showError("Loading source type failed: " + dictionary_source_json.dictionary_source_type_id)
+                continue
+            }
+            let title = source_type.title
+
+            this.add_source(title, dictionary_source_json.id)
+        }
+
+        let button_add_source = get_element("button_add_source")
+        button_add_source.onclick = async () => {
+            get_element("div_search_source").style.display = "block"
+            let title = this.#input_search_source.value
+            if (title === "") {
+                return;
+            }
+
+            let new_source_type = {
+                dictionary_term_id: dictionary_app.get_selected_map_id(),
+                title: title,
+                type: 0
+            }
+            let new_source_type_created = await post_entity("dictionary_source_type", new_source_type)
+            if (!new_source_type_created) {
+                showError("Creating new source type failed: " + title)
+                return
+            }
+            let new_source = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_source_type_id: new_source_type_created.id
+            }
+
+            let source_created = await post_entity("dictionary_source", new_source)
+            if (source_created === null || source_created === undefined) {
+                showError("Creating source failed: " + title)
+                return
+            }
+            showInfo("New source was assigned: " + title)
+            this.add_source(title, source_created.id)
+            //get_element("div_search_source").style.display = "none"
+        }
+        get_element("button_show_sources").onclick = () => {
+            let url = "index.html?entity=dictionary_source_type&action=list"
+            showWindowFrom("Show sources", url)
+        }
+    }
+
+    add_source(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("item")
+        this.#element.appendChild(div)
+        let span = document.createElement("span")
+        span.innerText = title
+        div.appendChild(span)
+
+        let div_buttons = document.createElement("div")
+        div.appendChild(div_buttons)
+
+        let edit_button = document.createElement("button")
+        edit_button.innerHTML = "📝 Edit"
+        edit_button.style.marginRight = "10px"
+        edit_button.onclick = async () => {
+            const result = await chooseOption(["Source", "Source Type"]);
+            if (result === null || result === undefined) return
+            if (result === "Source") {
+
+                let url = "index.html?entity=dictionary_source&action=update&id=" + id
+                showWindowFrom("Editing Source", url)
+
+            }
+            if (result === "Source Type") {
+                let read_source = await read_entity("dictionary_source", id)
+                if (read_source === null || read_source === undefined) {
+                    showError("Reading source failed: " + title)
+                }
+                let url = "index.html?entity=dictionary_source_type&action=update&id=" + read_source.dictionary_source_type_id
+                showInfo(url)
+                showWindowFrom("Editing Source type", url)
+            }
+        }
+        div_buttons.appendChild(edit_button)
+
+        let delete_button = document.createElement("button")
+        delete_button.innerHTML = "🗑️ Delete"
+        delete_button.onclick = () => {
+            if (!confirm("Do you really want to delete this source?")) return;
+            let source_deleted = delete_entity("dictionary_source", id)
+            let deleted = source_deleted !== null && source_deleted !== undefined
+            if (deleted) {
+                showInfo("Source was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting source failed: " + title)
+            }
+        }
+        div_buttons.appendChild(delete_button)
+
+        this.#input_search_source.value = ""
     }
 }
 
