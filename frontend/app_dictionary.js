@@ -335,12 +335,14 @@ class TermContainer {
     #tags
     #flags
     #links
+    #notes
 
     constructor() {
         this.#element = get_element("term_container");
         this.#tags = new Tags()
         this.#flags = new Flags()
         this.#links = new Links()
+        this.#notes = new Notes()
     }
 
     show() {
@@ -362,6 +364,7 @@ class TermContainer {
         this.#tags.render(dictionary_term_id)
         this.#flags.render(dictionary_term_id)
         this.#links.render(dictionary_term_id)
+        this.#notes.render(dictionary_term_id)
     }
 
     async render_term(dictionary_term_id) {
@@ -617,6 +620,7 @@ class Tags {
         let button = document.createElement("button")
         button.innerHTML = "&times;"
         button.onclick = () => {
+            if (!confirm("Do you really want to delete this tag?")) return;
             let tag_deleted = delete_entity("dictionary_tag", id)
             let deleted = tag_deleted !== null && tag_deleted !== undefined
             if (deleted) {
@@ -672,7 +676,6 @@ class Flags {
 
         let input_checkbox_public_flag = get_element("input_checkbox_public_flag")
         input_checkbox_public_flag.checked = false
-        input_checkbox_public_flag.si
 
         button_add_flag.onclick = async () => {
             const title = prompt("Enter tag title");
@@ -713,6 +716,7 @@ class Flags {
         let button = document.createElement("button")
         button.innerHTML = "&times;"
         button.onclick = async () => {
+            if (!confirm("Do you really want to delete this flag?")) return;
             let flag_deleted = await delete_entity("dictionary_flag", id)
             let deleted = flag_deleted !== null && flag_deleted !== undefined
             if (deleted) {
@@ -828,6 +832,19 @@ class Links {
                 return
             }
 
+            let new_flag = {
+                dictionary_term_id: term_created.id,
+                user_id: getUserId(),
+                title: "stub",
+                is_public: 1
+            }
+
+            let flag_created = await post_entity("dictionary_flag", new_flag)
+            if (flag_created === null || flag_created === undefined) {
+                showError("Creating tag failed: " + title)
+                return
+            }
+
             let new_link = {
                 from_dictionary_term_id: dictionary_term_id,
                 to_dictionary_term_id: term_created.id
@@ -856,6 +873,7 @@ class Links {
         let button = document.createElement("button")
         button.innerHTML = "🗑️ Delete"
         button.onclick = () => {
+            if (!confirm("Do you really want to delete this link?")) return;
             let link_deleted = delete_entity("dictionary_link", id)
             let deleted = link_deleted !== null && link_deleted !== undefined
             if(deleted) {
@@ -868,6 +886,200 @@ class Links {
         div.appendChild(button)
 
         this.#input_search_link.value = ""
+    }
+}
+
+class Notes {
+    #element
+
+    constructor() {
+        this.#element = get_element("notes");
+        this.#element.innerHTML = ""
+    }
+
+    show() {
+        this.#element.style.display = "block"
+    }
+
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
+        let notes_result = await list_all_entities("dictionary_note", "&dictionary_term_id=" + dictionary_term_id + "&sort=position")
+        if (!notes_result) {
+            showError("Listing notes failed.")
+            return;
+        }
+
+        for (const e of notes_result) {
+            this.add_note(e.title, e.id)
+        }
+
+        let button_add_note = get_element("button_add_note")
+
+
+
+        button_add_note.onclick = async () => {
+            const title = prompt("Enter note title");
+            if (title === null || title === "") return;
+
+            let new_note = {
+                dictionary_term_id: dictionary_term_id,
+                title: title,
+                position: 0
+            }
+
+            let note_created = await post_entity("dictionary_note", new_note)
+            if (note_created === null || note_created === undefined) {
+                showError("Creating note failed: " + title)
+                return
+            }
+            showInfo("New note was created: " + title)
+            this.add_note(title, note_created.id)
+        }
+
+    }
+
+    add_note(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("item")
+        this.#element.appendChild(div)
+
+        let span = document.createElement("span")
+        span.innerText = title
+        div.appendChild(span)
+        div.onclick = async (e) => {
+            let div_id = "notes_" + id;
+            let note_details = get_element(div_id)
+
+            let note_details_exist = note_details !== null && note_details !== undefined;
+
+            if (e.target.tagName === "BUTTON") {
+                if(note_details_exist) note_details.remove()
+                return;
+            }
+
+            let id_title = "input_note_title_" + id
+            let id_position = "input_note_position_" + id
+            let id_content = "text_area_content_" + id
+
+            let read_note = await read_entity("dictionary_note", id)
+            if (read_note === null || read_note === undefined) {
+                showError("Loading note failed: " + title)
+                return;
+            }
+
+            if (note_details_exist) {
+                let unsaved_changes = false
+                let title_changed = false
+                let position_changed = false
+                let content_changed = false
+                title_changed = get_element(id_title).value !== read_note.title
+                position_changed = Number(get_element(id_position).value) !== read_note.position
+                content_changed = get_element(id_content).value !== read_note.content
+
+                unsaved_changes = title_changed || position_changed || content_changed
+                if(unsaved_changes) {
+                    if (!confirm("Do you really want to collapse this note? Unsaved changes will be lost.")) return;
+                }
+
+                note_details.remove()
+                return
+            }
+
+
+            note_details = document.createElement("div")
+            note_details.id = div_id
+            div.after(note_details)
+            note_details.style.border = "1px solid #ddd"
+            note_details.style.backgroundColor = "#e4e09c"
+            note_details.style.padding = "10px"
+
+            function make_label(forId, innerText) {
+                let label = document.createElement("label")
+                label.for = forId
+                label.innerText = innerText + ": "
+                label.style.display = "inline-block"
+                label.style.marginTop = "10px"
+                label.style.marginRight = "10px"
+                label.style.minWidth= "100px"
+                note_details.appendChild(label)
+            }
+
+
+            make_label(id_title, "Title")
+
+            let input_title = document.createElement("input")
+            input_title.type = "text"
+            input_title.value = read_note.title
+            input_title.style.maxWidth = "200px"
+            input_title.id = id_title
+
+            note_details.appendChild(input_title)
+            note_details.appendChild(document.createElement("br"))
+
+            make_label(id_position, "Position")
+
+            let input_position = document.createElement("input")
+            input_position.type = "text"
+            input_position.value = read_note.position
+            input_position.style.maxWidth = "200px"
+            input_position.id = id_position
+
+            note_details.appendChild(input_position)
+            note_details.appendChild(document.createElement("br"))
+
+            make_label(id_content, "Content")
+            note_details.appendChild(document.createElement("br"))
+
+            let text_area_content = document.createElement("textarea")
+            text_area_content.value = read_note.content
+            text_area_content.style.width = "100%"
+            text_area_content.style.boxSizing= "border-box"
+            text_area_content.id = id_content
+            text_area_content.style.height= "200px"
+
+            note_details.appendChild(text_area_content)
+            note_details.appendChild(document.createElement("br"))
+
+            let save_button = document.createElement("button")
+            save_button.id = "button_save_term_note_" + id;
+            save_button.classList.add("save-btn")
+            save_button.innerText = "Save"
+            note_details.appendChild(save_button)
+
+            save_button.onclick = async () => {
+                read_note.title = input_title.value
+                read_note.position = input_position.value
+                read_note.content = text_area_content.value
+                let updated = await put_entity("dictionary_note", read_note.id, read_note)
+                if (updated === null || updated === undefined) {
+                    showError("Updating note failed: " + read_note.title)
+                    return
+                }
+                span.innerText = read_note.title
+                showInfo("Note was successfully updated: " + read_note.title)
+            }
+
+        }
+
+        let button = document.createElement("button")
+        button.innerHTML = "🗑️ Delete"
+        button.onclick = async () => {
+            if (!confirm("Do you really want to delete this note?")) return;
+            let note_deleted = await delete_entity("dictionary_note", id)
+            let deleted = note_deleted !== null && note_deleted !== undefined
+            if (deleted) {
+                showInfo("Note was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting note failed: " + title)
+            }
+        }
+
+        div.appendChild(button)
     }
 }
 

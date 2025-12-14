@@ -176,7 +176,7 @@ button:hover {
     margin-left: 10px;
 }
 .save-btn::before {
-    content: "💾";
+    content: "💾 ";
 }
 .save-btn:hover {
     background-color: rgba(0, 123, 255, 0.84);
@@ -193,7 +193,7 @@ button:hover {
     gap: 8px;
 }
 .delete-btn::before {
-    content: "🗑";
+    content: "🗑️ ";
 }
 .delete-btn:hover {
     background-color: rgba(227, 67, 67, 0.84);
