@@ -96,6 +96,10 @@ namespace mindnet::plugins::dictionary::validators
     {
         if (entity.user_id != ctx.token.user_id)
             return {400, "dictionary_term_visit.user_id must be the same as your user id."};
+        auto read_term = find_dictionary_term(ctx, entity.dictionary_term_id);
+        if (!read_term.second.empty()) return {400, read_term.second};        
+        if (entity.dictionary_map_id != read_term.first.dictionary_map_id)
+            return {400, "The dictionary_map_id of the term and term visit must be the same."};
 
         return ok_result;
     }

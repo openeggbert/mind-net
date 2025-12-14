@@ -216,10 +216,10 @@ class DictionaryApp {
         });
         get_element("button_mindnet").title = "Go to Mind Net generic frontend"
 
-        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
-            showInfo("Found term: " + item.title + (item.disambiguation === "" ? "" : ("(" + item.disambiguation + ")")))
+            showInfo("Found term: " + item.title)
             await this.#term_container.render(item.id)
             this.#term_container.show()
         })
@@ -244,17 +244,17 @@ class DictionaryApp {
         }
 
         //todo remove me
-        this.#term_container.render(1)
-        sleep_for_seconds(2)
-        this.#term_container.show()
+        // this.#term_container.render(1)
+        // sleep_for_seconds(2)
+        // this.#term_container.show()
     }
 
     refresh_autocomplete_term_title() {
         this.#autocomplete_term_title.destroy()
-        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
-            showInfo("Found term: " + item.title + (item.disambiguation === "" ? "" : ("(" + item.disambiguation + ")")))
+            showInfo("Found term: " + item.title)
             await this.#term_container.show()
             this.#term_container.render(item.id)
         })
@@ -536,12 +536,13 @@ class TermContainer {
             showWindowFrom("Backlinks", url)
         }
         get_element("button_show_visited").onclick = () => {
-            let url = "index.html?entity=dictionary_term_visit&action=list&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId()
+            let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + getUserId()
             showWindowFrom("Backlinks", url)
         }
         let new_visit = {
             dictionary_term_id: dictionary_term_id,
-            user_id: getUserId()
+            user_id: getUserId(),
+            dictionary_map_id : dictionary_app.get_selected_map_id()
         }
         let created_dictionary_term_visit = post_entity("dictionary_term_visit", new_visit)
         if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
@@ -588,7 +589,7 @@ class Tags {
         this.#autocomplete_tag_title.addCallback(async () => {
 
             let item = this.#autocomplete_tag_title.get_item()
-            showInfo("Found tag: " + item.title)
+            //showInfo("Found tag: " + item.title)
             let dictionary_tag_type_id = item.id
             let new_tag = {
                 dictionary_term_id: dictionary_term_id,
@@ -610,7 +611,7 @@ class Tags {
             showError("Listing tags failed.")
             return;
         }
-        showInfo("Found " + tags_result.length + " tags")
+        //showInfo("Found " + tags_result.length + " tags")
         for (const dictionary_tag_json of tags_result) {
 
             let tag_type = await read_entity("dictionary_tag_type", dictionary_tag_json.dictionary_tag_type_id)
@@ -843,7 +844,7 @@ class Links {
             showError("Listing links failed.")
             return;
         }
-        showInfo("Found " + links_result.length + " links")
+        //showInfo("Found " + links_result.length + " links")
         for (const dictionary_link_json of links_result) {
 
             let another_dictionary_term = await read_entity("dictionary_term", dictionary_link_json.to_dictionary_term_id)
@@ -1191,7 +1192,7 @@ class Sources {
             showError("Listing sources failed.")
             return;
         }
-        showInfo("Found " + sources_result.length + " sources")
+        //showInfo("Found " + sources_result.length + " sources")
         for (const dictionary_source_json of sources_result) {
 
             let source_type = await read_entity("dictionary_source_type", dictionary_source_json.dictionary_source_type_id)

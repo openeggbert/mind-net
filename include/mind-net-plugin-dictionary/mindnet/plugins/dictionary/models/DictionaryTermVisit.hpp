@@ -49,16 +49,19 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(
                 "Dictionary term that was visited."),
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User who visited the term."),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY | READONLY)
         });
 
     struct DictionaryTermVisit : mindnet::model::BaseModel
     {
         identification dictionary_term_id{};
         identification user_id{};
+        identification dictionary_map_id{};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
-            &Model::user_id
+            &Model::user_id,
+            &Model::dictionary_map_id
         );
 
         create_model_h_methods(Model, MODEL)
@@ -68,6 +71,7 @@ namespace mindnet::plugins::dictionary::models
             return id == other.id &&
                 dictionary_term_id == other.dictionary_term_id &&
                 user_id == other.user_id &&
+                dictionary_map_id == other.dictionary_map_id &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at;
         }

@@ -78,13 +78,16 @@ CREATE TABLE dictionary_term_visit (
 
     dictionary_term_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
 
     FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
-    FOREIGN KEY(user_id) REFERENCES user(id)
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
 );
 
 CREATE INDEX idx_dictionary_term_visit_term ON dictionary_term_visit(dictionary_term_id);
 CREATE INDEX idx_dictionary_term_visit_user ON dictionary_term_visit(user_id);
+CREATE INDEX idx_dictionary_term_visit_map ON dictionary_term_visit(dictionary_map_id);
 )");
 
 

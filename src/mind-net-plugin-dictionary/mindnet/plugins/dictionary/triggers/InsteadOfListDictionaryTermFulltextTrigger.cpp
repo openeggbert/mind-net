@@ -100,7 +100,12 @@ namespace mindnet::plugins::dictionary::triggers
             term_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
             term_fulltext.title_part = title_part;
             term_fulltext.title = e.second.first;
-            term_fulltext.disambiguation = e.second.second;
+            auto disambiguation = e.second.second;
+            if (!disambiguation.empty())
+            {
+                term_fulltext.title = term_fulltext.title + " (" + disambiguation + ")";
+            }
+            term_fulltext.disambiguation = disambiguation;
             auto values = term_fulltext.to_values();
             int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
             values[1] = now;
