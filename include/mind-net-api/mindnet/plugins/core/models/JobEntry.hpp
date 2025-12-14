@@ -48,10 +48,10 @@ namespace mindnet::plugins::core::models
         .set_columns({
             //
             coldef(COLS::NAME, READONLY | MANDATORY | UNIQUE),
-            coldef(COLS::DESCRIPTION, MANDATORY),
-            coldef(COLS::PLUGIN_NAME, MANDATORY),
-            coldef(COLS::CRON_EXPRESSION, MANDATORY),
-            coldef(COLS::RUN_ONCE_WHEN_MISSED, BOOL | MANDATORY),
+            coldef(COLS::DESCRIPTION, READONLY |MANDATORY),
+            coldef(COLS::PLUGIN_NAME, READONLY |MANDATORY),
+            coldef(COLS::CRON_EXPRESSION, READONLY | MANDATORY),
+            coldef(COLS::RUN_ONCE_WHEN_MISSED, BOOL | READONLY | MANDATORY),
             coldef(COLS::ENABLED, BOOL | MANDATORY).set_default_value(true),
             coldef(COLS::CONFIGURATION).set_default_value(""),
             coldef(COLS::LAST_RUN, DATETIME | MANDATORY).set_default_value(0),

@@ -268,7 +268,7 @@ textarea {
     display: none
 }
 .container_box {
-    border-top: 2px solid #ddd;
+    /*border-top: 2px solid #ddd;*/
     padding: 5px;
     margin: 15px 0 15px 0;
 }

@@ -96,3 +96,7 @@ export class Autocomplete {
         }
     }
 }
+
+export function null_or_undefined(value) {
+    return value === null || value === undefined;
+}

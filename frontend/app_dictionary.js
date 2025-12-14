@@ -4,7 +4,7 @@
 import {
     delete_entity,
     getTitleCache, getUserId,
-    list_all_entities,
+    list_all_entities, list_entities,
     post_entity,
     put_entity,
     read_entity,
@@ -15,7 +15,7 @@ import {
     chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element, saveToLocalStorage,
     formatDateTimeHM, formatDateTime, showInfo, showError, showWarn
 } from "./dom.js";
-import {Autocomplete} from "./common.js";
+import {Autocomplete, null_or_undefined} from "./common.js";
 
 let wasDragged = false;
 let suppressPopstate = false;
@@ -370,7 +370,7 @@ class TermContainer {
                 if(shown) {
                     let tmp_div = document.createElement("div")
                     let start = models.charAt(0).toUpperCase() + models.slice(1)
-                    tmp_div.innerText = start + " are hidden. " + "Click \"" + start + "\" to show them again."
+                    tmp_div.innerText = start + " are hidden. " + "Click \"" + start + ":\" to show them again."
 
                     tmp_div.style.color = "grey"
                     //tmp_div.style.fontStyle = "italic"
@@ -535,9 +535,125 @@ class TermContainer {
             let url = "index.html?entity=dictionary_link&action=list&to_dictionary_term_id=" + dictionary_term_id
             showWindowFrom("Backlinks", url)
         }
-        get_element("button_show_visited").onclick = () => {
-            let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + getUserId()
-            showWindowFrom("Backlinks", url)
+        get_element("button_show_visited").onclick = async () => {
+            let visits_result = await list_entities("dictionary_term_visit", "&user_id=" + getUserId() + "&sort=created_at&order=desc", 1, 100)
+            if(null_or_undefined(visits_result)) {
+                showError("Loading visits failed.")
+                return;
+            }
+            let visits = visits_result.items
+            const disambiguation_map = new Map()
+
+            let table = document.createElement("table");
+            table.style.borderCollapse = "collapse";
+            table.style.margin = "0 auto";
+            let tr_first = document.createElement("tr");
+            table.appendChild(tr_first);
+            let th_number = document.createElement("th");
+            th_number.innerText = "#"
+            let th_id = document.createElement("th");
+            th_id.innerText = "Term ID"
+            let th_title = document.createElement("th");
+            th_title.innerText = "Title"
+            let th_timestamp = document.createElement("th");
+            th_timestamp.innerText = "Timestamp"
+            tr_first.appendChild(th_number)
+            //tr_first.appendChild(th_id)
+            tr_first.appendChild(th_title)
+            tr_first.appendChild(th_timestamp)
+            for (const el of [th_number, th_id, th_title, th_timestamp]) {
+                el.style.minWidth = "20px"
+                el.style.padding = "10px";
+                el.style.border = "1px solid black";
+                el.style.background = "#ccc"
+            }
+            th_title.style.minWidth = "200px"
+
+            let history_entry_number = 0;
+            for (const entry of visits.slice()) {
+                history_entry_number++
+
+                let visited_term_id = entry.dictionary_term_id
+
+                if(!disambiguation_map.has(visited_term_id)) {
+                    let term = await read_entity("dictionary_term", visited_term_id)
+                    if (term === null || term === undefined) {
+                        showWarn("Loading dictionary_term with id " + visited_term_id + " failed.");
+                        disambiguation_map.set(visited_term_id, "")
+                    } else {
+                        disambiguation_map.set(visited_term_id, term.disambiguation)
+                    }
+                }
+
+                let tr = document.createElement("tr");
+                table.appendChild(tr)
+                let td_number = document.createElement("td");
+                let td_id = document.createElement("td");
+                let td_title = document.createElement("td");
+                let td_timestamp = document.createElement("td");
+                for (const el of [td_number, td_id, td_title, td_timestamp]) {
+                    el.style.padding = "10px";
+                    el.style.border = "1px solid black";
+                }
+
+                tr.appendChild(td_number)
+                //tr.appendChild(td_id)
+                tr.appendChild(td_title)
+                tr.appendChild(td_timestamp)
+                td_number.innerText = history_entry_number;
+                td_id.innerText = visited_term_id;
+                let a = document.createElement("a");
+                a.href = "?";
+                {
+                    let title = getTitleCache("dictionary_term", visited_term_id)
+                    if (title === null || title === undefined) {
+
+                        let x = entry.id
+                        let note_ = await read_entity("dictionary_term", x)
+                        if (note_ === null) {
+                            showWarn("Loading dictionary_term with id " + x + " failed.");
+                            title = "Unknown (#" + x + ")"
+                        } else {
+                            title = note_.title
+                            setTitleCache("dictionary_term", x, title);
+                        }
+                    }
+                    let finalTitle = title
+                    if(disambiguation_map.has(visited_term_id)) {
+                        let value = disambiguation_map.get(visited_term_id)
+                        if(value !== "") finalTitle = title + " (" + disambiguation_map.get(visited_term_id) + ")"
+                    }
+                    a.title = finalTitle
+
+                    a.innerText = finalTitle;
+                }
+
+                a.onclick = async function () {
+                    event.preventDefault();
+                    await dictionary_app.render(visited_term_id)
+                }
+                td_title.appendChild(a)
+                td_timestamp.innerText = formatDateTime(entry.created_at, true, true, true)
+            }
+            clearWindow()
+
+            let button = document.createElement("button")
+            button.innerText = "Show all visits"
+            button.onclick = () => {
+                let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + getUserId()
+                showWindowFrom("All visits", url)
+            }
+            button.style.margin = "20px;"
+            button.style.textAlign = "center"
+
+            getWindowContent().appendChild(button)
+
+            getWindowContent().appendChild(table);
+            getWindowContent().style.height = "100%";
+            setWindowTitle("Term Visit History (Last 100)")
+
+            showWindow()
+
         }
         let new_visit = {
             dictionary_term_id: dictionary_term_id,
@@ -1114,9 +1230,19 @@ class Notes {
 
         }
 
-        let button = document.createElement("button")
-        button.innerHTML = "🗑️ Delete"
-        button.onclick = async () => {
+
+        let div_buttons = document.createElement("div")
+        let edit_button = document.createElement("button")
+        edit_button.innerHTML = "📝 Edit"
+        edit_button.style.marginRight = "10px"
+        edit_button.onclick = async () => {
+            div.click()
+        }
+        div_buttons.appendChild(edit_button)
+
+        let delete_button = document.createElement("button")
+        delete_button.innerHTML = "🗑️ Delete"
+        delete_button.onclick = async () => {
             if (!confirm("Do you really want to delete this note?")) return;
             let note_deleted = await delete_entity("dictionary_note", id)
             let deleted = note_deleted !== null && note_deleted !== undefined
@@ -1127,8 +1253,8 @@ class Notes {
                 showError("Deleting note failed: " + title)
             }
         }
-
-        div.appendChild(button)
+        div_buttons.appendChild(delete_button)
+        div.appendChild(div_buttons)
     }
 }
 
