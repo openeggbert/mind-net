@@ -337,6 +337,7 @@ class TermContainer {
     #links
     #notes
     #sources
+    #aliases
 
     constructor() {
         this.#element = get_element("term_container");
@@ -345,6 +346,7 @@ class TermContainer {
         this.#links = new Links()
         this.#notes = new Notes()
         this.#sources = new Sources()
+        this.#aliases = new Aliases()
 
         let term_container_h2 = get_element("term_container_h2")
         term_container_h2.style.backgroundColor = "rgba(213,215,221,0.6)"
@@ -410,6 +412,7 @@ class TermContainer {
         this.#links.render(dictionary_term_id)
         this.#notes.render(dictionary_term_id)
         this.#sources.render(dictionary_term_id)
+        this.#aliases.render(dictionary_term_id)
     }
 
     async render_term(dictionary_term_id) {
@@ -1292,6 +1295,92 @@ class Sources {
         this.#input_search_source.value = ""
     }
 }
+
+
+class Aliases {
+    #element
+
+    constructor() {
+        this.#element = get_element("aliases");
+        this.#element.innerHTML = ""
+    }
+
+    show() {
+        this.#element.style.display = "block"
+    }
+
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
+        let aliases_result = await list_all_entities("dictionary_term_alias", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
+        if (!aliases_result) {
+            showError("Listing private aliases failed.")
+            return;
+        }
+
+        for (const e of aliases_result) {
+            this.add_alias(e.alias, e.id, false)
+        }
+
+        let button_add_alias = get_element("button_add_alias")
+
+        button_add_alias.onclick = async () => {
+            const title = prompt("Enter alias title");
+            if (title === null || title === "") return;
+
+            let new_alias = {
+                dictionary_term_id: dictionary_term_id,
+                alias: title
+            }
+
+            let alias_created = await post_entity("dictionary_term_alias", new_alias)
+            if (alias_created === null || alias_created === undefined) {
+                showError("Creating alias failed: " + title)
+                return
+            }
+            showInfo("New alias was assigned: " + title)
+            this.add_alias(title, alias_created.id)
+
+        }
+
+    }
+
+    add_alias(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("tag")
+        this.#element.appendChild(div)
+        div.innerText = title
+        div.style.backgroundColor = "rgba(151,112,207,0.71)"
+        div.style.color = "#2b2b2b"
+
+        let button = document.createElement("button")
+        button.innerHTML = "&times;"
+        button.onclick = async () => {
+            if (!confirm("Do you really want to delete this alias?")) return;
+            let alias_deleted = await delete_entity("dictionary_term_alias", id)
+            let deleted = alias_deleted !== null && alias_deleted !== undefined
+            if (deleted) {
+                showInfo("Alias was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting alias failed: " + title)
+            }
+        }
+        let button_background = div.style.background;
+        button.onmouseenter = () => {
+            button.style.background = "#bbb";
+        };
+
+        button.onmouseleave = () => {
+            button.style.background = button_background;
+        };
+        div.appendChild(button)
+    }
+}
+
 
 let dictionary_app = null
 
