@@ -102,10 +102,13 @@ function makeDraggable(el) {
 
     // --- Touch support ---
     header.addEventListener('touchstart', e => {
+        if (e.target.closest('.window-close')) return;
+
         const t = e.touches[0];
         startDrag(t.clientX, t.clientY);
         e.preventDefault();
-    }, {passive: false});
+    }, { passive: false });
+
 
     document.addEventListener('touchmove', e => {
         const t = e.touches[0];
