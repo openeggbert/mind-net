@@ -682,83 +682,91 @@ class TermContainer {
     }
 }
 
-class Tags {
-    #element
-    #input_search_tag = document.getElementById("input_search_tag")
-    #autocomplete_tag_title = null
+class AbstractTermSection {
+    #element;
+    #model
+    #models
 
-    constructor() {
-        this.#element = get_element("tags");
-        this.#element.innerHTML = ""
+    constructor(model, models) {
+        this.#model = model
+        this.#models = models
+        let container_id = this.#models
+        this.#element = get_element(container_id);
+        this.#reset()
     }
 
-    show() {
-        this.#element.style.display = "block"
+    #setVisible(visible) {
+        this.#element.style.display = visible ? "block" : "none";
+    }
+    show() { this.#setVisible(true); }
+    hide() { this.#setVisible(false); }
+
+    #reset() {
+        this.#element.innerHTML = "";
     }
 
-    hide() {
-        this.#element.style.display = "none"
+    get _element() {
+        return this.#element;
     }
 
     async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
-        get_element("div_search_tag").style.display = "none"
-        if (this.#autocomplete_tag_title !== null) {
-            this.#autocomplete_tag_title.destroy()
-            this.#autocomplete_tag_title = null
+        this.#reset();
+        const items = await this.loadItems(dictionary_term_id);
+        if(items === null || items === undefined) {
+            showError("Listing " + this.#models + " failed.")
+            return
         }
-        this.#autocomplete_tag_title = new Autocomplete(
-            this.#input_search_tag,
-            1,
-            "dictionary_tag_type_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
-            "title",
-            "title_part",
-            "div_search_tag_end"
-        )
-
-        this.#autocomplete_tag_title.addCallback(async () => {
-
-            let item = this.#autocomplete_tag_title.get_item()
-            //showInfo("Found tag: " + item.title)
-            let dictionary_tag_type_id = item.id
-            let new_tag = {
-                dictionary_term_id: dictionary_term_id,
-                dictionary_tag_type_id: dictionary_tag_type_id
-            }
-
-            let tag_created = await post_entity("dictionary_tag", new_tag)
-            if (tag_created === null || tag_created === undefined) {
-                showError("Creating tag failed: " + item.title)
-                return
-            }
-            showInfo("New tag was assigned: " + item.title)
-            this.add_tag(item.title, tag_created.id)
-            //get_element("div_search_tag").style.display = "none"
-        })
-
-        let tags_result = await list_all_entities("dictionary_tag", "&dictionary_term_id=" + dictionary_term_id)
-        if (!tags_result) {
-            showError("Listing tags failed.")
-            return;
-        }
-        //showInfo("Found " + tags_result.length + " tags")
-        for (const dictionary_tag_json of tags_result) {
-
-            let tag_type = await read_entity("dictionary_tag_type", dictionary_tag_json.dictionary_tag_type_id)
-            if (!tag_type) {
-                showError("Loading tag type failed: " + dictionary_tag_json.dictionary_tag_type_id)
+        for (const item of items) {
+            let title = await this.loadTitle(item)
+            if(title === null || title === undefined) {
+                showError("Loading title failed for model: " + this.#model)
                 continue
             }
-            let title = tag_type.title
-
-            this.add_tag(title, dictionary_tag_json.id)
+            this.addItem(title, item.id);
         }
+        this.afterRender(dictionary_term_id);
+    }
+
+    async loadItems(dictionary_term_id) {
+        throw "Not implemented";
+    }
+
+    async loadTitle(item) {
+        throw "Not implemented";
+    }
+
+    addItem(title, id) {
+        throw "Not implemented";
+    }
+
+    afterRender(dictionary_term_id) {
+        // optional hook
+    }
+}
+
+class Tags extends AbstractTermSection{
+    #input = document.getElementById("input_search_tag")
+    #autocomplete = null
+
+    constructor() {
+        super("tag", "tags");
+    }
+
+    async loadItems(termId) {
+        return await list_all_entities(
+            "dictionary_tag",
+            "&dictionary_term_id=" + termId
+        );
+    }
+
+    afterRender(dictionary_term_id) {
+        get_element("div_search_tag").style.display = "none"
+        this.setupAutocomplete(dictionary_term_id);
 
         let button_add_tag = get_element("button_add_tag")
         button_add_tag.onclick = async () => {
             get_element("div_search_tag").style.display = "block"
-            let title = this.#input_search_tag.value
+            let title = this.#input.value
             if (title === "") {
                 return;
             }
@@ -783,8 +791,7 @@ class Tags {
                 return
             }
             showInfo("New tag was assigned: " + title)
-            this.add_tag(title, tag_created.id)
-            //get_element("div_search_tag").style.display = "none"
+            this.addItem(title, tag_created.id)
         }
         get_element("button_show_tags").onclick = () => {
             let url = "index.html?entity=dictionary_tag_type&action=list&dictionary_map_id=" + dictionary_app.get_selected_map_id()
@@ -792,10 +799,49 @@ class Tags {
         }
     }
 
-    add_tag(title, id) {
+    async loadTitle(item) {
+        let tag_type = await read_entity("dictionary_tag_type", item.dictionary_tag_type_id)
+        if (!tag_type) {
+            showError("Loading tag type failed: " + item.dictionary_tag_type_id)
+            return null
+        }
+        return tag_type.title
+    }
+
+    setupAutocomplete(termId) {
+        if (this.#autocomplete) this.#autocomplete.destroy();
+
+        this.#autocomplete = new Autocomplete(
+            this.#input,
+            1,
+            "dictionary_tag_type_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
+            "div_search_tag_end"
+        );
+
+        this.#autocomplete.addCallback(async () => {
+            const item = this.#autocomplete.get_item();
+            let new_tag = {
+                dictionary_term_id: termId,
+                dictionary_tag_type_id: item.id
+            }
+
+            let tag_created = await post_entity("dictionary_tag", new_tag);
+            if (tag_created === null || tag_created === undefined) {
+                showError("Creating tag failed: " + item.title)
+                return
+            }
+            showInfo("New tag was assigned: " + item.title)
+            this.addItem(item.title, tag_created.id)
+        });
+    }
+
+    addItem(title, id) {
         let div = document.createElement("div")
         div.classList.add("tag")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
         div.innerText = title
         let button = document.createElement("button")
         button.innerHTML = "&times;"
@@ -812,7 +858,7 @@ class Tags {
         }
         div.appendChild(button)
 
-        this.#input_search_tag.value = ""
+        this.#input.value = ""
     }
 }
 
@@ -822,14 +868,6 @@ class Flags {
     constructor() {
         this.#element = get_element("flags");
         this.#element.innerHTML = ""
-    }
-
-    show() {
-        this.#element.style.display = "block"
-    }
-
-    hide() {
-        this.#element.style.display = "none"
     }
 
     async render(dictionary_term_id) {
@@ -925,12 +963,6 @@ class Links {
     constructor() {
         this.#element = get_element("links");
         this.#element.innerHTML = ""
-    }
-    show() {
-        this.#element.style.display = "block"
-    }
-    hide() {
-        this.#element.style.display = "none"
     }
 
     async render(dictionary_term_id) {
@@ -1075,14 +1107,6 @@ class Notes {
     constructor() {
         this.#element = get_element("notes");
         this.#element.innerHTML = ""
-    }
-
-    show() {
-        this.#element.style.display = "block"
-    }
-
-    hide() {
-        this.#element.style.display = "none"
     }
 
     async render(dictionary_term_id) {
@@ -1284,14 +1308,6 @@ class Indexes {
         this.#element.innerHTML = ""
     }
 
-    show() {
-        this.#element.style.display = "block"
-    }
-
-    hide() {
-        this.#element.style.display = "none"
-    }
-
     async render(dictionary_term_id) {
         this.#element.innerHTML = ""
         get_element("div_search_index").style.display = "none"
@@ -1448,14 +1464,6 @@ class Sources {
         this.#element.innerHTML = ""
     }
 
-    show() {
-        this.#element.style.display = "block"
-    }
-
-    hide() {
-        this.#element.style.display = "none"
-    }
-
     async render(dictionary_term_id) {
         this.#element.innerHTML = ""
         get_element("div_search_source").style.display = "none"
@@ -1609,14 +1617,6 @@ class Aliases {
     constructor() {
         this.#element = get_element("aliases");
         this.#element.innerHTML = ""
-    }
-
-    show() {
-        this.#element.style.display = "block"
-    }
-
-    hide() {
-        this.#element.style.display = "none"
     }
 
     async render(dictionary_term_id) {
