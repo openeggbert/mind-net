@@ -75,7 +75,14 @@ namespace mindnet::plugins::dictionary::validators
                                                                            const Model& old_entity,
                                                                            const Model& new_entity) const
     {
-        return status_405_unsupported_operation;
+        auto from_term = find_dictionary_term(ctx, new_entity.from_dictionary_term_id);
+        if (!from_term.second.empty()) return {500, from_term.second};
+        auto map_id = from_term.first.dictionary_map_id;
+
+        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Write))
+            return {403, "You do not have permission to update this link."};
+
+        return ok_result;
     }
 
     OperationResult DictionaryLinkValidator::validate_delete_authorization(const RequestContext& ctx,
@@ -120,7 +127,7 @@ namespace mindnet::plugins::dictionary::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        return status_405_unsupported_operation;
+        return ok_result;
     }
 
     OperationResult DictionaryLinkValidator::validate_delete_integrity(const RequestContext& ctx,

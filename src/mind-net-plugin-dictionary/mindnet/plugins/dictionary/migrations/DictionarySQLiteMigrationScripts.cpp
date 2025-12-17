@@ -102,6 +102,7 @@ CREATE TABLE dictionary_link (
 
     from_dictionary_term_id INTEGER NOT NULL,
     to_dictionary_term_id INTEGER NOT NULL,
+    type INTEGER DEFAULT 0,
 
     CHECK(from_dictionary_term_id <> to_dictionary_term_id),
     UNIQUE(from_dictionary_term_id, to_dictionary_term_id),
@@ -216,7 +217,7 @@ CREATE TABLE dictionary_review (
     user_id INTEGER NOT NULL,
     dictionary_map_id INTEGER NOT NULL,
     dictionary_term_id INTEGER NOT NULL,
-    algorithm TEXT NOT NULL,
+    algorithm INTEGER NOT NULL,
 
     review_date DATETIME NOT NULL,
     grade INTEGER NOT NULL,
@@ -254,7 +255,7 @@ CREATE TABLE dictionary_source_type (
     edition TEXT,
     pages INTEGER,
     url TEXT,
-    type TEXT,
+    type INTEGER,
     note TEXT,
 
     UNIQUE(title, edition)

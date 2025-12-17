@@ -32,6 +32,7 @@
 #define MODEL DICTIONARY_LINK
 #define COLS columns::DictionaryLinkColumns
 #include "../columns/DictionaryLinkColumns.hpp"
+#include "mindnet/plugins/dictionary/enums/TermRelation.hpp"
 
 // ***** MACROS : END *****
 
@@ -43,21 +44,24 @@ namespace mindnet::plugins::dictionary::models
 
     inline const def DICTIONARY_LINK_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_rest_operations("crdl")
+        .set_all_rest_operations()
         .set_group("Dictionary", 100)
         .set_columns({
             coldef(COLS::FROM_DICTIONARY_TERM_ID, MANDATORY | READONLY).set_foreign_key("dictionary_term"),
             coldef(COLS::TO_DICTIONARY_TERM_ID, MANDATORY | READONLY).set_foreign_key("dictionary_term"),
+            coldef(COLS::TYPE).set_default_value(0).set_enum_definition(enums::term_relation_type_enum_definition())
         });
 
     struct Model : mindnet::model::BaseModel
     {
         identification from_dictionary_term_id;
         identification to_dictionary_term_id;
+        enums::TermRelationType type{0};
 
         static constexpr auto fields = std::make_tuple(
             &Model::from_dictionary_term_id,
-            &Model::to_dictionary_term_id
+            &Model::to_dictionary_term_id,
+            &Model::type
         );
 
         create_model_h_methods(Model, MODEL)
@@ -67,6 +71,7 @@ namespace mindnet::plugins::dictionary::models
             return id == other.id &&
                 from_dictionary_term_id == other.from_dictionary_term_id &&
                 to_dictionary_term_id == other.to_dictionary_term_id &&
+                type == other.type &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at;
         }

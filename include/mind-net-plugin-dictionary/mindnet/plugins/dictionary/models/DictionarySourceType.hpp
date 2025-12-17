@@ -69,7 +69,7 @@ namespace mindnet::plugins::dictionary::models
         int year{};
         string publisher;
         string edition;
-        string pages;
+        int pages;
         string url;
         enums::SourceType type{};
         string note;

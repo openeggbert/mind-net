@@ -42,5 +42,6 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* FROM_DICTIONARY_TERM_ID = "from_dictionary_term_id";
         static constexpr const char* TO_DICTIONARY_TERM_ID = "to_dictionary_term_id";
+        static constexpr const char* TYPE = "type";
     };
 }

@@ -46,7 +46,8 @@ namespace mindnet::model
     public:
         /**
          * Constructs a ModelDefinition with the given name
-         * @param name The name for the model
+         * @param enum_to_string_pointer_function_
+         * @param count
          */
 
         EnumDefinition(

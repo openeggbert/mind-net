@@ -1120,15 +1120,94 @@ class Links extends CrudSection {
         let div = document.createElement("div")
         div.classList.add("item")
         this._element.appendChild(div)
+
+        let spanElement = document.createElement("span")
+        div.appendChild(spanElement)
         let a = document.createElement("a")
         a.onclick = async () => {
             await dictionary_app.render(to_dictionary_term_id)
         }
         a.innerText = title
-        div.appendChild(a)
-        let button = document.createElement("button")
-        button.innerHTML = "🗑️ Delete"
-        button.onclick = () => {
+        spanElement.appendChild(a)
+        let span = document.createElement("span")
+        spanElement.appendChild(span)
+
+        function termRelationTypeToString(type) {
+            switch (type) {
+                case 0: return "Not defined";   // NotDefined
+                case 1: return "Is a";          // IsA
+                case 2: return "Part of";       // PartOf
+                case 3: return "Uses";          // Uses
+                case 4: return "Depends on";    // DependsOn
+                case 5: return "Implements";    // Implements
+                case 6: return "Related";       // Related
+                case 7: return "Contrasts";     // Contrasts
+                case 8: return "Alternative to";// AlternativeTo
+                default:
+                    return "Not defined";
+            }
+        }
+
+        function stringToTermRelationType(str) {
+            switch (str) {
+                case "Not defined":    return 0; // NotDefined
+                case "Is a":           return 1; // IsA
+                case "Part of":        return 2; // PartOf
+                case "Uses":           return 3; // Uses
+                case "Depends on":     return 4; // DependsOn
+                case "Implements":     return 5; // Implements
+                case "Related":        return 6; // Related
+                case "Contrasts":      return 7; // Contrasts
+                case "Alternative to": return 8; // AlternativeTo
+                default:
+                    return 0; // NotDefined
+            }
+        }
+
+        span.innerText = " (" + termRelationTypeToString(item.type) + ")"
+        span.style.color = "black"
+        span.style.marginLeft = "10px"
+
+        let div_buttons = document.createElement("div")
+
+        let edit_button = document.createElement("button")
+        edit_button.innerHTML = "📝 Edit"
+        edit_button.onclick = async () => {
+            let option = await chooseOption([
+                "Not defined",
+                "Is a",
+                "Part of",
+                "Uses",
+                "Depends on",
+                "Implements",
+                "Related",
+                "Contrasts",
+                "Alternative to"
+            ])
+            if(option === null || option === undefined) return
+            let type = stringToTermRelationType(option)
+
+            let read_link = await read_entity("dictionary_link", id)
+
+            let read = read_link !== null && read_link !== undefined
+            if (!read) {
+                showError("Reading link failed: " + title)
+            }
+            read_link.type = type
+            let updated = await put_entity("dictionary_link", id, read_link)
+            if(updated) {
+                showInfo("Updating link type to " + option + " was successful.");
+                span.innerText = " (" + option + ")"
+            } else {
+                showError("Updating link type to " + option + " failed.");
+            }
+        }
+        div_buttons.appendChild(edit_button)
+
+        let delete_button = document.createElement("button")
+        delete_button.style.marginLeft = "10px"
+        delete_button.innerHTML = "🗑️ Delete"
+        delete_button.onclick = () => {
             if (!confirm("Do you really want to delete this link?")) return;
             let link_deleted = delete_entity("dictionary_link", id)
             let deleted = link_deleted !== null && link_deleted !== undefined
@@ -1139,7 +1218,9 @@ class Links extends CrudSection {
                 showError("Deleting link failed: " + title)
             }
         }
-        div.appendChild(button)
+        div_buttons.appendChild(delete_button)
+
+        div.appendChild(div_buttons)
         this.clear_input_value()
     }
 }
