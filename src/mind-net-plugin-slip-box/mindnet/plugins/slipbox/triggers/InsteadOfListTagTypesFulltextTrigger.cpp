@@ -26,7 +26,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTagTypesSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindTagTypesSQLiteQuery.hpp"
 #include "mindnet/plugins/slipbox/models/TagTypeFulltext.hpp"
 
 #include "mindnet/util/Utils.hpp"
@@ -72,7 +72,7 @@ namespace mindnet::plugins::slipbox::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindTagTypes, req);
+            res = call_query(db::sqlite::queries::slipbox::QUERY_FindTagTypes, req);
 
             if (res.contains("error"))
             {

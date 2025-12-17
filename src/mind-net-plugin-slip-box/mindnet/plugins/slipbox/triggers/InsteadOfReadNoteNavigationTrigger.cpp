@@ -26,7 +26,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindPreviousAndNextNoteSQLiteQuery.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -57,7 +57,7 @@ namespace mindnet::plugins::slipbox::triggers
         identification next_note_id{};
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindPreviousAndNextNote, req);
+            res = call_query(db::sqlite::queries::slipbox::QUERY_FindPreviousAndNextNote, req);
 
             if (res.contains("error") && res.contains("exists") && res["exists"] == false)
             {

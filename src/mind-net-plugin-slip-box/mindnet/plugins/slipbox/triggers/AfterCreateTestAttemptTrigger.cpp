@@ -22,7 +22,7 @@
  */
 
 #include "mindnet/plugins/slipbox/triggers/AfterCreateTestAttemptTrigger.hpp"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetQuestionIdsSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/GetQuestionIdsSQLiteQuery.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Test.hpp"
@@ -85,7 +85,7 @@ namespace mindnet::plugins::slipbox::triggers
         std::string question_ids;
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_GetQuestionIds, req);
+            res = call_query(db::sqlite::queries::slipbox::QUERY_GetQuestionIds, req);
 
             if (res.contains("error"))
             {

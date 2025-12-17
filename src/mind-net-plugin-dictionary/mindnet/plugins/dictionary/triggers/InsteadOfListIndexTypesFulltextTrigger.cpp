@@ -21,13 +21,13 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySourceTypeFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryIndexTypeFulltextTrigger.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionarySourceTypesSQLiteQuery.hpp"
-#include "mindnet/plugins/dictionary/models/DictionarySourceTypeFulltext.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryIndexTypesSQLiteQuery.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryIndexTypeFulltext.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -35,19 +35,19 @@ namespace mindnet::plugins::dictionary::triggers
 {
     using_loggers()
 
-    InsteadOfListDictionarySourceTypeFulltextTrigger::InsteadOfListDictionarySourceTypeFulltextTrigger()
+    InsteadOfListDictionaryIndexTypeFulltextTrigger::InsteadOfListDictionaryIndexTypeFulltextTrigger()
         : Trigger(
-            "InsteadOfListDictionarySourceTypeFulltextTrigger",
-            "Calls custom sql for list source_type request",
+            "InsteadOfListDictionaryIndexTypeFulltextTrigger",
+            "Calls custom sql for list index_type request",
             1000,
             {essential::Crudl::List},
             api::TriggerPhase::InsteadOf,
-            "dictionary_source_type_fulltext"
+            "dictionary_index_type_fulltext"
         )
     {
     }
 
-    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListDictionarySourceTypeFulltextTrigger::
+    std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>>  InsteadOfListDictionaryIndexTypeFulltextTrigger::
     run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,
@@ -59,6 +59,8 @@ namespace mindnet::plugins::dictionary::triggers
         std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> result;
 
         nlohmann::json req;
+        auto dictionary_map_id = query_params.filters.at("dictionary_map_id");
+        req["dictionary_map_id"] = std::stoll(dictionary_map_id);
         auto title_part = query_params.filters.at("title_part");
         req["title_part"] = title_part;
         int page_size = query_params.page_size;
@@ -70,23 +72,22 @@ namespace mindnet::plugins::dictionary::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::dictionary::QUERY_FindDictionarySourceTypes, req);
+            res = call_query(db::sqlite::queries::dictionary::QUERY_FindDictionaryIndexTypes, req);
 
             if (res.contains("error"))
             {
                 std::vector<entity_fields> v0;
-                std::string error = res["error"];
-                result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(std::move(v0), {500, std::string("Internal server error. ") + error});
+                result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(std::move(v0), {500, "Internal server error."});
                 return result;
             }
 
             results = res["results"];
             info << res.dump() << commit;
-            info << "Query FindDictionarySources successful" << commit;
+            info << "Query FindDictionaryTags successful" << commit;
         }
         catch (std::exception& e)
         {
-            err << "Query FindDictionarySources failed " << e.what() << commit;
+            err << "Query FindDictionaryTags failed " << e.what() << commit;
             std::vector<entity_fields> v0;
             result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(std::move(v0), {500, "Internal server error."});
             return result;
@@ -94,13 +95,13 @@ namespace mindnet::plugins::dictionary::triggers
 
         for (auto& e:results)
         {
-            models::DictionarySourceTypeFulltext source_type_fulltext;
-            source_type_fulltext.set_id(e.first);
-            source_type_fulltext.dictionary_source_type_id = e.first;
-            source_type_fulltext.title = e.second;
-            source_type_fulltext.title_part = title_part;
-
-            auto values = source_type_fulltext.to_values();
+            models::DictionaryIndexTypeFulltext index_type_fulltext;
+            index_type_fulltext.set_id(e.first);
+            index_type_fulltext.dictionary_index_type_id = e.first;
+            index_type_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
+            index_type_fulltext.title_part = title_part;
+            index_type_fulltext.title = e.second;
+            auto values = index_type_fulltext.to_values();
             int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
             values[1] = now;
             values[2] = now;

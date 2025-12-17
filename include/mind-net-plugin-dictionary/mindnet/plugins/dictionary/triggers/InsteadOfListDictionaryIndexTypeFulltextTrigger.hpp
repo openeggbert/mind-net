@@ -21,30 +21,23 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
 #pragma once
 
-#include "mindnet/model/BaseColumns.hpp"
-#include "mindnet/essential/DatabaseType.hpp"
-#include "mindnet/model/ColumnType.hpp"
+#include "mindnet/api/Trigger.hpp"
 
-namespace mindnet::plugins::dictionary::columns
+namespace mindnet::plugins::dictionary::triggers
 {
-    struct DictionaryIndexTypeFulltextColumns : model::BaseColumns
+    class InsteadOfListDictionaryIndexTypeFulltextTrigger : public api::Trigger
     {
-        DictionaryIndexTypeFulltextColumns() = delete;
+    public:
+        InsteadOfListDictionaryIndexTypeFulltextTrigger();
 
-        DictionaryIndexTypeFulltextColumns(const DictionaryIndexTypeFulltextColumns&) = delete;
-        DictionaryIndexTypeFulltextColumns& operator=(const DictionaryIndexTypeFulltextColumns&) = delete;
-
-        static constexpr const char* MODEL_NAME = "dictionary_index_type_fulltext";
-
-        static constexpr const char* DICTIONARY_INDEX_TYPE_ID = "dictionary_index_type_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE_PART = "title_part";
-        static constexpr const char* TITLE = "title";
+        ~InsteadOfListDictionaryIndexTypeFulltextTrigger() override = default;
+        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            const orm::QueryParams& query_params) override;
     };
 }

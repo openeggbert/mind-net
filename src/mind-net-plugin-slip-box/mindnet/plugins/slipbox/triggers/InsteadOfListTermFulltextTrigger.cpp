@@ -26,7 +26,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindTermsSQLiteQuery.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -71,7 +71,7 @@ namespace mindnet::plugins::slipbox::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindTerms, req);
+            res = call_query(db::sqlite::queries::slipbox::QUERY_FindTerms, req);
 
             if (res.contains("error"))
             {

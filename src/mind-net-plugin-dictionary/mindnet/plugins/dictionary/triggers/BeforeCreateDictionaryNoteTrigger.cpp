@@ -26,7 +26,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryNote.hpp"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextDictionaryNotePositionSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindNextDictionaryNotePositionSQLiteQuery.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
 {
@@ -70,7 +70,7 @@ namespace mindnet::plugins::dictionary::triggers
         nlohmann::json res;
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindNextDictionaryNotePosition, req);
+            res = call_query(db::sqlite::queries::dictionary::QUERY_FindNextDictionaryNotePosition, req);
             i64 next_position = res["next_position"];
             new_note.position = next_position;
             auto v = new_note.to_values();

@@ -22,16 +22,17 @@
  */
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
 
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindPreviousAndNextNoteSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetQuestionIdsSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindTagTypesSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindNextSiblingOrderSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindNotesInMapSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindPreviousAndNextNoteSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/UpdateNotePathAndDepthSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindTermsSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindTagTypesSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/GetQuestionIdsSQLiteQuery.hpp"
+
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
-#include "mindnet/db/sqlite/queries/FindTermsSQLiteQuery.hpp"
+#include "mindnet/db/sqlite/queries/slipbox/FindTermsSQLiteQuery.hpp"
 #include "mindnet/plugins/slipbox/validators/CollectionValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/CollectionItemValidator.hpp"
 #include "mindnet/plugins/slipbox/validators/ContentValidator.hpp"
@@ -133,13 +134,13 @@ namespace mindnet::plugins::slipbox
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListTermFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListTagTypeFulltextTrigger>());
 
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::UpdateNotePathAndDepthSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNotesInMapSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindNextSiblingOrderSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindPreviousAndNextNoteSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::GetQuestionIdsSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTermsSQLiteQuery>());
-        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::FindTagTypesSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::UpdateNotePathAndDepthSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::FindNotesInMapSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::FindNextSiblingOrderSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::FindPreviousAndNextNoteSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::GetQuestionIdsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::FindTermsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::slipbox::FindTagTypesSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::slipbox::jobs::HtmlExportJob>());
         plugin->register_library_file("markdown-it.min.js");

@@ -26,7 +26,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTagTypesSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTagTypesSQLiteQuery.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTagTypeFulltext.hpp"
 
 #include "mindnet/util/Utils.hpp"
@@ -72,7 +72,7 @@ namespace mindnet::plugins::dictionary::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindDictionaryTagTypes, req);
+            res = call_query(db::sqlite::queries::dictionary::QUERY_FindDictionaryTagTypes, req);
 
             if (res.contains("error"))
             {

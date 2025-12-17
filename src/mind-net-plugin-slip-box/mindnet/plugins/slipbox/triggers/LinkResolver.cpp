@@ -27,7 +27,7 @@
 
 #include "mindnet/essential/ConsolePrinter.hpp"
 #include "mindnet/essential/Global.hpp"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNotesInMapSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindNotesInMapSQLiteQuery.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -67,7 +67,7 @@ namespace mindnet::plugins::slipbox::triggers
 
                 try
                 {
-                    nlohmann::json res = call(db::sqlite::queries::QUERY_FindNotesInMap, req);
+                    nlohmann::json res = call(db::sqlite::queries::slipbox::QUERY_FindNotesInMap, req);
 
                     // res["found_note_ids"] expected: {title: id}
                     for (auto& [title, id] : res.at("found_note_ids").items())

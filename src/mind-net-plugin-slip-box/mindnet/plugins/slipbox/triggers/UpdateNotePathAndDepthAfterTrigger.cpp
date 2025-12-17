@@ -23,7 +23,7 @@
 
 #include "mindnet/plugins/slipbox/triggers/UpdateNotePathAndDepthAfterTrigger.hpp"
 
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/UpdateNotePathAndDepthSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/UpdateNotePathAndDepthSQLiteQuery.hpp"
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/plugins/slipbox/models/Note.hpp"
@@ -76,7 +76,7 @@ namespace mindnet::plugins::slipbox::triggers
         nlohmann::json res;
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_UpdateNotePathAndDepth, req);
+            res = call_query(db::sqlite::queries::slipbox::QUERY_UpdateNotePathAndDepth, req);
             info << "Query UpdateNotePathAndDepth successful" << commit;
         }
         catch (std::string& e)

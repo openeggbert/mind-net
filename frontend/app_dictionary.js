@@ -1266,7 +1266,7 @@ class Notes {
 class Indexes {
     #element
     #input_search_index = document.getElementById("input_search_index")
-    #autocomplete_index_name = null
+    #autocomplete_index_title = null
 
     constructor() {
         this.#element = get_element("indexes");
@@ -1284,28 +1284,28 @@ class Indexes {
     async render(dictionary_term_id) {
         this.#element.innerHTML = ""
         get_element("div_search_index").style.display = "none"
-        if (this.#autocomplete_index_name !== null) {
-            this.#autocomplete_index_name.destroy()
-            this.#autocomplete_index_name = null
+        if (this.#autocomplete_index_title !== null) {
+            this.#autocomplete_index_title.destroy()
+            this.#autocomplete_index_title = null
         }
-        this.#autocomplete_index_name = new Autocomplete(
+        this.#autocomplete_index_title = new Autocomplete(
             this.#input_search_index,
             1,
-            "dictionary_index_fulltext",
-            "",
-            "name",
-            "name_part",
+            "dictionary_index_type_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
             "div_search_index_end"
         )
 
-        this.#autocomplete_index_name.addCallback(async () => {
+        this.#autocomplete_index_title.addCallback(async () => {
 
-            let item = this.#autocomplete_index_name.get_item()
+            let item = this.#autocomplete_index_title.get_item()
             showInfo("Found index: " + item.name)
-            let dictionary_index_id = item.id
+            let dictionary_index_type_id = item.id
             let new_index = {
-                dictionary_map_id: dictionary_app.get_selected_map_id(),
-                dictionary_term_id: dictionary_term_id,
+                dictionary_index_type_id: dictionary_index_type_id,
+                dictionary_term_id: dictionary_term_id
             }
 
             let index_created = await post_entity("dictionary_index", new_index)
@@ -1318,13 +1318,13 @@ class Indexes {
             //get_element("div_search_index").style.display = "none"
         })
 
-        let indexes_result = await list_all_entities("dictionary_index", "&dictionary_term_id=" + dictionary_term_id)
+        let indexes_result = await list_all_entities("dictionary_index", "&dictionary_term_id=" + dictionary_term_id + "&sort=position")
         if (!indexes_result) {
             showError("Listing indexes failed.")
             return;
         }
-        //showInfo("Found " + indexs_result.length + " indexs")
-        for (const dictionary_index_json of indexs_result) {
+        //showInfo("Found " + indexes_result.length + " indexes")
+        for (const dictionary_index_json of indexes_result) {
 
             let index_type = await read_entity("dictionary_index_type", dictionary_index_json.dictionary_index_type_id)
             if (!index_type) {
@@ -1345,9 +1345,8 @@ class Indexes {
             }
 
             let new_index_type = {
-                dictionary_term_id: dictionary_app.get_selected_map_id(),
-                title: title,
-                type: 0
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
+                title: title
             }
             let new_index_type_created = await post_entity("dictionary_index_type", new_index_type)
             if (!new_index_type_created) {
@@ -1368,9 +1367,9 @@ class Indexes {
             this.add_index(title, index_created.id)
             //get_element("div_search_index").style.display = "none"
         }
-        get_element("button_show_indexs").onclick = () => {
+        get_element("button_show_indexes").onclick = () => {
             let url = "index.html?entity=dictionary_index_type&action=list"
-            showWindowFrom("Show indexs", url)
+            showWindowFrom("Show indexes", url)
         }
     }
 
@@ -1389,22 +1388,22 @@ class Indexes {
         edit_button.innerHTML = "📝 Edit"
         edit_button.style.marginRight = "10px"
         edit_button.onclick = async () => {
-            const result = await chooseOption(["Source", "Source Type"]);
+            const result = await chooseOption(["Index", "Index Type"]);
             if (result === null || result === undefined) return
-            if (result === "Source") {
+            if (result === "Index") {
 
                 let url = "index.html?entity=dictionary_index&action=update&id=" + id
                 showWindowFrom("Editing Source", url)
 
             }
-            if (result === "Source Type") {
+            if (result === "Index Type") {
                 let read_index = await read_entity("dictionary_index", id)
                 if (read_index === null || read_index === undefined) {
                     showError("Reading index failed: " + title)
                 }
                 let url = "index.html?entity=dictionary_index_type&action=update&id=" + read_index.dictionary_index_type_id
                 showInfo(url)
-                showWindowFrom("Editing Source type", url)
+                showWindowFrom("Editing Index type", url)
             }
         }
         div_buttons.appendChild(edit_button)
@@ -1510,7 +1509,6 @@ class Sources {
             }
 
             let new_source_type = {
-                dictionary_term_id: dictionary_app.get_selected_map_id(),
                 title: title,
                 type: 0
             }

@@ -41,9 +41,9 @@
 #include "mindnet/plugins/core/validators/SuperAdminLogValidator.hpp"
 #include "mindnet/plugins/core/validators/JobEntryValidator.hpp"
 #include "mindnet/plugins/core/validators/JobRunValidator.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/CleanupSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/CleanupHistoryOrphansSQLiteQuery.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/VacuumSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/core/CleanupSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/core/CleanupHistoryOrphansSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/core/VacuumSQLiteQuery.hpp"
 
 namespace mindnet::plugins::core
 {
@@ -73,9 +73,9 @@ namespace mindnet::plugins::core
         plugin->register_job(std::make_shared<jobs::CleanupJob>());
         plugin->register_job(std::make_shared<jobs::CleanupHistoryOrphansJob>());
         plugin->register_job(std::make_shared<jobs::VacuumJob>());
-        plugin->register_query(std::make_shared<db::sqlite::queries::CleanupSQLiteQuery>());
-        plugin->register_query(std::make_shared<db::sqlite::queries::CleanupHistoryOrphansSQLiteQuery>());
-        plugin->register_query(std::make_shared<db::sqlite::queries::VacuumSQLiteQuery>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::core::CleanupSQLiteQuery>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::core::CleanupHistoryOrphansSQLiteQuery>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::core::VacuumSQLiteQuery>());
 
         plugin->close_for_changes();
         return plugin;

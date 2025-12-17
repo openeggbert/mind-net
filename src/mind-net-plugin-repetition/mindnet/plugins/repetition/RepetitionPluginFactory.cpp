@@ -34,7 +34,7 @@
 #include "mindnet/plugins/repetition/validators/R18PredictionLogValidator.hpp"
 
 #include "mindnet/plugins/repetition/migrations/RepetitionSQLiteMigrationScripts.hpp"
-#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/GetRSessionSelectedItemsSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/repetition/GetRSessionSelectedItemsSQLiteQuery.hpp"
 #include "mindnet/plugins/repetition/triggers/AfterUpdateContentSemanticVersionTrigger.hpp"
 #include "mindnet/plugins/repetition/triggers/RReviewAfterCreateTrigger.hpp"
 #include "mindnet/plugins/repetition/triggers/RSessionBeforeCreateTrigger.hpp"
@@ -69,7 +69,7 @@ namespace mindnet::plugins::repetition
         plugin->register_trigger(std::make_shared<triggers::AfterUpdateContentSemanticVersionTrigger>());
         plugin->register_trigger(std::make_shared<triggers::AfterCreateDeleteFlagRepetitionTrigger>());
 
-        plugin->register_query(std::make_shared<db::sqlite::queries::GetRSessionSelectedItemsSQLiteQuery>());
+        plugin->register_query(std::make_shared<db::sqlite::queries::repetition::GetRSessionSelectedItemsSQLiteQuery>());
         plugin->close_for_changes();
         return plugin;
     }

@@ -46,12 +46,12 @@ namespace mindnet::plugins::dictionary::validators
         return_if(ctx.role < mindnet::essential::UserRole::Editor,
                   403, "User does not have permission to modify dictionary indexes.")
 
-        auto index = dictionary::find_dictionary_index(ctx, entity.dictionary_index_type_id);
-        if (!index.second.empty()) return {400, index.second};
+        auto index_type = dictionary::find_dictionary_index_type(ctx, entity.dictionary_index_type_id);
+        if (!index_type.second.empty()) return {400, index_type.second};
 
         if (!dictionary::has_right_for_map(
                 ctx,
-                index.first.dictionary_map_id,
+                index_type.first.dictionary_map_id,
                 plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to create this index."};
@@ -64,12 +64,12 @@ namespace mindnet::plugins::dictionary::validators
         const RequestContext& ctx,
         const Model& entity) const
     {
-        auto index = dictionary::find_dictionary_index(ctx, entity.dictionary_index_type_id);
-        if (!index.second.empty()) return {400, index.second};
+        auto index_type = dictionary::find_dictionary_index_type(ctx, entity.dictionary_index_type_id);
+        if (!index_type.second.empty()) return {400, index_type.second};
 
         if (!dictionary::has_right_for_map(
                 ctx,
-                index.first.dictionary_map_id,
+                index_type.first.dictionary_map_id,
                 plugins::core::enums::SingleRight::Read))
         {
             return {403, "You do not have permission to read this index."};
@@ -83,12 +83,12 @@ namespace mindnet::plugins::dictionary::validators
         const Model& old_entity,
         const Model& new_entity) const
     {
-        auto index = dictionary::find_dictionary_index(ctx, new_entity.dictionary_index_type_id);
-        if (!index.second.empty()) return {400, index.second};
+        auto index_type = dictionary::find_dictionary_index_type(ctx, new_entity.dictionary_index_type_id);
+        if (!index_type.second.empty()) return {400, index_type.second};
 
         if (!dictionary::has_right_for_map(
                 ctx,
-                index.first.dictionary_map_id,
+                index_type.first.dictionary_map_id,
                 plugins::core::enums::SingleRight::Write))
         {
             return {403, "You do not have permission to update this index entry."};
@@ -101,12 +101,12 @@ namespace mindnet::plugins::dictionary::validators
         const RequestContext& ctx,
         const Model& entity) const
     {
-        auto index = dictionary::find_dictionary_index(ctx, entity.dictionary_index_type_id);
-        if (!index.second.empty()) return {400, index.second};
+        auto index_type = dictionary::find_dictionary_index_type(ctx, entity.dictionary_index_type_id);
+        if (!index_type.second.empty()) return {400, index_type.second};
 
         if (!dictionary::has_right_for_map(
                 ctx,
-                index.first.dictionary_map_id,
+                index_type.first.dictionary_map_id,
                 plugins::core::enums::SingleRight::Delete))
         {
             return {403, "You do not have permission to delete this index entry."};
@@ -122,7 +122,7 @@ namespace mindnet::plugins::dictionary::validators
         mandatory_filter(dictionary_index_id)
         auto dictionary_index_id = std::stoll(filter.at("dictionary_index_type_id"));
 
-        auto index = dictionary::find_dictionary_index(ctx, dictionary_index_id);
+        auto index = dictionary::find_dictionary_index_type(ctx, dictionary_index_id);
         if (index.second.empty()) return {400, index.second};
 
         if (!dictionary::has_right_for_map(

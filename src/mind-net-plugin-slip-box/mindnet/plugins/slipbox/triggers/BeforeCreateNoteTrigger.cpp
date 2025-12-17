@@ -27,7 +27,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/slipbox/models/Link.hpp"
 #include "mindnet/plugins/slipbox/models/Note.hpp"
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindNextSiblingOrderSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/slipbox/FindNextSiblingOrderSQLiteQuery.hpp"
 
 namespace mindnet::plugins::slipbox::triggers
 {
@@ -74,7 +74,7 @@ namespace mindnet::plugins::slipbox::triggers
         nlohmann::json res;
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindNextSiblingOrder, req);
+            res = call_query(db::sqlite::queries::slipbox::QUERY_FindNextSiblingOrder, req);
             i64 next_sibling_order = res["next_sibling_order"];
             new_note.sibling_order = next_sibling_order;
             auto v = new_note.to_values();

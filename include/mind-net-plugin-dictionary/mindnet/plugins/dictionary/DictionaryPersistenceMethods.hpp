@@ -77,5 +77,5 @@ namespace mindnet::plugins::dictionary
     gen_find_h(dictionary, DictionaryTermAlias, dictionary_term_alias)
     gen_find_h(dictionary, DictionaryTermVisit, dictionary_term_visit)
     gen_find_h(dictionary, DictionaryIndexType, dictionary_index_type)
-    gen_find_h(dictionary, DictionaryIndexType, dictionary_index)
+    gen_find_h(dictionary, DictionaryIndex, dictionary_index)
 }

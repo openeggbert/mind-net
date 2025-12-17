@@ -21,30 +21,25 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
 #pragma once
 
-#include "mindnet/model/BaseColumns.hpp"
-#include "mindnet/essential/DatabaseType.hpp"
-#include "mindnet/model/ColumnType.hpp"
+#include "mindnet/api/Query.hpp"
 
-namespace mindnet::plugins::dictionary::columns
+namespace mindnet::db::sqlite::queries::core
 {
-    struct DictionaryIndexTypeFulltextColumns : model::BaseColumns
+    const std::string QUERY_Cleanup = "Cleanup";
+
+    class CleanupSQLiteQuery : public api::Query
     {
-        DictionaryIndexTypeFulltextColumns() = delete;
+        static constexpr long long MILLISECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
 
-        DictionaryIndexTypeFulltextColumns(const DictionaryIndexTypeFulltextColumns&) = delete;
-        DictionaryIndexTypeFulltextColumns& operator=(const DictionaryIndexTypeFulltextColumns&) = delete;
+    public:
+        CleanupSQLiteQuery();
 
-        static constexpr const char* MODEL_NAME = "dictionary_index_type_fulltext";
+        ~CleanupSQLiteQuery() = default;
 
-        static constexpr const char* DICTIONARY_INDEX_TYPE_ID = "dictionary_index_type_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE_PART = "title_part";
-        static constexpr const char* TITLE = "title";
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method) override;
+
+    private:
     };
 }

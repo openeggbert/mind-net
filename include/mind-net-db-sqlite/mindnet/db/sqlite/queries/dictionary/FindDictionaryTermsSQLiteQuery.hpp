@@ -21,30 +21,23 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
 #pragma once
 
-#include "mindnet/model/BaseColumns.hpp"
-#include "mindnet/essential/DatabaseType.hpp"
-#include "mindnet/model/ColumnType.hpp"
+#include "mindnet/api/Query.hpp"
 
-namespace mindnet::plugins::dictionary::columns
+namespace mindnet::db::sqlite::queries::dictionary
 {
-    struct DictionaryIndexTypeFulltextColumns : model::BaseColumns
+    const std::string QUERY_FindDictionaryTerms = "FindDictionaryTerms";
+
+    class FindDictionaryTermsSQLiteQuery : public api::Query
     {
-        DictionaryIndexTypeFulltextColumns() = delete;
+    public:
+        FindDictionaryTermsSQLiteQuery();
 
-        DictionaryIndexTypeFulltextColumns(const DictionaryIndexTypeFulltextColumns&) = delete;
-        DictionaryIndexTypeFulltextColumns& operator=(const DictionaryIndexTypeFulltextColumns&) = delete;
+        ~FindDictionaryTermsSQLiteQuery() override = default;
 
-        static constexpr const char* MODEL_NAME = "dictionary_index_type_fulltext";
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method) override;
 
-        static constexpr const char* DICTIONARY_INDEX_TYPE_ID = "dictionary_index_type_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE_PART = "title_part";
-        static constexpr const char* TITLE = "title";
+    private:
     };
 }

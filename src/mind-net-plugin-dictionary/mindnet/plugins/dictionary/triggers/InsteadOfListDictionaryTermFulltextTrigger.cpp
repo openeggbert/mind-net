@@ -26,7 +26,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include <string>
 #include <vector>
-#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/FindDictionaryTermsSQLiteQuery.hpp"
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsSQLiteQuery.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -71,7 +71,7 @@ namespace mindnet::plugins::dictionary::triggers
 
         try
         {
-            res = call_query(db::sqlite::queries::QUERY_FindDictionaryTerms, req);
+            res = call_query(db::sqlite::queries::dictionary::QUERY_FindDictionaryTerms, req);
 
             if (res.contains("error"))
             {
