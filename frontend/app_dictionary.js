@@ -343,10 +343,10 @@ class TermContainer {
             new Tags(),
             new Flags(),
             new Links(),
-            // new Notes(),
-            // new Indexes(),
-            // new Sources(),
-            // new Aliases()
+            new Notes(),
+            new Indexes(),
+            new Sources(),
+            new Aliases()
         ]
 
         let term_container_h2 = get_element("term_container_h2")
@@ -1147,18 +1147,16 @@ class Links extends CrudSection {
 class Notes extends CrudSection {
 
     constructor() {
-        super("note", "notes");
-    }
-
-    async loadTitle(item) {
-        return item.title
-    }
-
-    async loadItems(dictionary_term_id) {
-        return await list_all_entities(
-            "dictionary_note",
-            "&dictionary_term_id=" + dictionary_term_id + "&sort=position"
-        )
+        super({
+            model: "note",
+            models: "notes",
+            table: "dictionary_note",
+            filter: termId => "&dictionary_term_id=" + termId + "&sort=position",
+            input: false,
+            resolveTitle: async item => {
+                return item.title
+            },
+        });
     }
 
     async afterRender(dictionary_term_id) {
@@ -1335,37 +1333,56 @@ class Notes extends CrudSection {
 }
 
 class Indexes extends CrudSection {
-    #input = document.getElementById("input_search_index")
-    #autocomplete = null
-
     constructor() {
-        super("index", "indexes");
-    }
+        super({
+            model: "index",
+            models: "indexes",
+            table: "dictionary_index",
+            filter: termId => "&dictionary_term_id=" + termId + "&sort=position",
+            input: true,
+            resolveTitle: async item => {
+                let index_type = await read_entity("dictionary_index_type", item.dictionary_index_type_id)
+                if (!index_type) {
+                    showError("Loading index type failed: " + item.dictionary_index_type_id)
+                    return null;
+                }
+                return index_type.title
+            },
+            createAutocomplete: input => {
+                return new Autocomplete(
+                    input,
+                    1,
+                    "dictionary_index_type_fulltext",
+                    "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+                    "title",
+                    "title_part",
+                    "div_search_index_end"
+                )
+            },
+            autocompleteCallback: async (item, termId) => {
+                showInfo("Found index: " + item.title)
+                let dictionary_index_type_id = item.id
+                let new_index = {
+                    dictionary_index_type_id: dictionary_index_type_id,
+                    dictionary_term_id: termId
+                }
 
-    async loadItems(dictionary_term_id) {
-        return await list_all_entities(
-            "dictionary_index",
-            "&dictionary_term_id=" + dictionary_term_id + "&sort=position"
-        )
-    }
-
-    async loadTitle(item) {
-        let index_type = await read_entity("dictionary_index_type", item.dictionary_index_type_id)
-        if (!index_type) {
-            showError("Loading index type failed: " + item.dictionary_index_type_id)
-            return null;
-        }
-        return index_type.title
+                let index_created = await post_entity("dictionary_index", new_index)
+                if (index_created === null || index_created === undefined) {
+                    showError("Creating index failed: " + item.title)
+                    return
+                }
+                showInfo("New index was assigned: " + item.title)
+                this.addItem(item.title, index_created.id)
+            }
+        });
     }
 
     async afterRender(dictionary_term_id) {
-        get_element("div_search_index").style.display = "none"
-        this.setupAutocomplete(dictionary_term_id)
-
         let button_add_index = get_element("button_add_index")
         button_add_index.onclick = async () => {
             get_element("div_search_index").style.display = "block"
-            let title = this.#input.value
+            let title = this.get_input_value()
             if (title === "") {
                 return;
             }
@@ -1396,38 +1413,6 @@ class Indexes extends CrudSection {
             let url = "index.html?entity=dictionary_index_type&action=list"
             showWindowFrom("Show indexes", url)
         }
-    }
-
-    setupAutocomplete(dictionary_term_id) {
-        if (this.#autocomplete) this.#autocomplete.destroy()
-        this.#autocomplete = new Autocomplete(
-            this.#input,
-            1,
-            "dictionary_index_type_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
-            "title",
-            "title_part",
-            "div_search_index_end"
-        )
-
-        this.#autocomplete.addCallback(async () => {
-
-            let item = this.#autocomplete.get_item()
-            showInfo("Found index: " + item.title)
-            let dictionary_index_type_id = item.id
-            let new_index = {
-                dictionary_index_type_id: dictionary_index_type_id,
-                dictionary_term_id: dictionary_term_id
-            }
-
-            let index_created = await post_entity("dictionary_index", new_index)
-            if (index_created === null || index_created === undefined) {
-                showError("Creating index failed: " + item.title)
-                return
-            }
-            showInfo("New index was assigned: " + item.title)
-            this.addItem(item.title, index_created.id)
-        })
     }
 
     addItem(title, id) {
@@ -1480,39 +1465,61 @@ class Indexes extends CrudSection {
         }
         div_buttons.appendChild(delete_button)
 
-        this.#input.value = ""
+        this.clear_input_value()
     }
 }
 
 class Sources extends CrudSection {
-    #input = document.getElementById("input_search_source")
-    #autocomplete = null
-
     constructor() {
-        super("source", "sources");
-    }
+        super({
+            model: "source",
+            models: "sources",
+            table: "dictionary_source",
+            filter: termId => "&dictionary_term_id=" + termId,
+            input: true,
+            resolveTitle: async item => {
+                let source_type = await read_entity("dictionary_source_type", item.dictionary_source_type_id)
+                if (!source_type) {
+                    showError("Loading source type failed: " + item.dictionary_source_type_id)
+                    return null
+                }
+                return source_type.title
+            },
+            createAutocomplete: input => {
+                return new Autocomplete(
+                    input,
+                    1,
+                    "dictionary_source_type_fulltext",
+                    "",
+                    "title",
+                    "title_part",
+                    "div_search_source_end"
+                )
+            },
+            autocompleteCallback: async (item, termId) => {
+                showInfo("Found source: " + item.title)
+                let dictionary_source_type_id = item.id
+                let new_source = {
+                    dictionary_term_id: termId,
+                    dictionary_source_type_id: dictionary_source_type_id
+                }
 
-    async loadItems(dictionary_term_id) {
-        return await list_all_entities("dictionary_source", "&dictionary_term_id=" + dictionary_term_id)
-    }
-
-    async loadTitle(item) {
-        let source_type = await read_entity("dictionary_source_type", item.dictionary_source_type_id)
-        if (!source_type) {
-            showError("Loading source type failed: " + item.dictionary_source_type_id)
-            return null
-        }
-        return source_type.title
+                let source_created = await post_entity("dictionary_source", new_source)
+                if (source_created === null || source_created === undefined) {
+                    showError("Creating source failed: " + item.title)
+                    return
+                }
+                showInfo("New source was assigned: " + item.title)
+                this.addItem(item.title, source_created.id)
+            }
+        });
     }
 
     async afterRender(dictionary_term_id) {
-        get_element("div_search_source").style.display = "none"
-        this.setupAutocomplete(dictionary_term_id);
-
         let button_add_source = get_element("button_add_source")
         button_add_source.onclick = async () => {
             get_element("div_search_source").style.display = "block"
-            let title = this.#input.value
+            let title = this.get_input_value()
             if (title === "") {
                 return;
             }
@@ -1543,38 +1550,6 @@ class Sources extends CrudSection {
             let url = "index.html?entity=dictionary_source_type&action=list"
             showWindowFrom("Show sources", url)
         }
-    }
-
-    setupAutocomplete(dictionary_term_id) {
-        if (this.#autocomplete) this.#autocomplete.destroy()
-        this.#autocomplete = new Autocomplete(
-            this.#input,
-            1,
-            "dictionary_source_type_fulltext",
-            "",
-            "title",
-            "title_part",
-            "div_search_source_end"
-        )
-
-        this.#autocomplete.addCallback(async () => {
-
-            let item = this.#autocomplete.get_item()
-            showInfo("Found source: " + item.title)
-            let dictionary_source_type_id = item.id
-            let new_source = {
-                dictionary_term_id: dictionary_term_id,
-                dictionary_source_type_id: dictionary_source_type_id
-            }
-
-            let source_created = await post_entity("dictionary_source", new_source)
-            if (source_created === null || source_created === undefined) {
-                showError("Creating source failed: " + item.title)
-                return
-            }
-            showInfo("New source was assigned: " + item.title)
-            this.addItem(item.title, source_created.id)
-        })
     }
 
     addItem(title, id) {
@@ -1627,22 +1602,23 @@ class Sources extends CrudSection {
         }
         div_buttons.appendChild(delete_button)
 
-        this.#input.value = ""
+        this.clear_input_value()
     }
 }
 
 
 class Aliases extends CrudSection {
     constructor() {
-        super("alias", "aliases");
-    }
-
-    async loadTitle(item) {
-        return item.alias
-    }
-
-    async loadItems(dictionary_term_id) {
-        return await list_all_entities("dictionary_term_alias", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
+        super({
+            model: "alias",
+            models: "aliases",
+            table: "dictionary_term_alias",
+            filter: termId => "&dictionary_term_id=" + termId + "&is_public=0" + "&user_id=" + getUserId(),
+            input: false,
+            resolveTitle: async item => {
+                return item.alias
+            },
+        });
     }
 
     async afterRender(dictionary_term_id) {
@@ -1664,9 +1640,7 @@ class Aliases extends CrudSection {
             }
             showInfo("New alias was assigned: " + title)
             this.addItem(title, alias_created.id)
-
         }
-
     }
 
     addItem(title, id) {
