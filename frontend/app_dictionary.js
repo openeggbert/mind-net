@@ -342,7 +342,7 @@ class TermContainer {
         this.#sections = [
             new Tags(),
             new Flags(),
-            // new Links(),
+            new Links(),
             // new Notes(),
             // new Indexes(),
             // new Sources(),
@@ -1020,35 +1020,57 @@ class Flags extends CrudSection {
 }
 
 class Links extends CrudSection {
-    #input = document.getElementById("input_search_link")
-    #autocomplete = null
-
     constructor() {
-        super("link", "links");
-    }
+        super({
+            model: "link",
+            models: "links",
+            table: "dictionary_link",
+            filter: termId => "&from_dictionary_term_id=" + termId,
+            input: true,
+            resolveTitle: async item => {
+                let another_dictionary_term = await read_entity("dictionary_term", item.to_dictionary_term_id)
+                if (!another_dictionary_term) {
+                    showError("Loading term failed: " + item.to_dictionary_term_id)
+                    return null
+                }
+                return another_dictionary_term.title
+            },
+            createAutocomplete: input => {
+                return new Autocomplete(
+                    input,
+                    1,
+                    "dictionary_term_fulltext",
+                    "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+                    "title",
+                    "title_part",
+                    "div_search_link_end"
+                )
+            },
+            autocompleteCallback: async (item, termId) => {
+                let another_dictionary_term_id = item.id
+                let new_link = {
+                    from_dictionary_term_id: termId,
+                    to_dictionary_term_id: another_dictionary_term_id
+                }
 
-    async loadItems(dictionary_term_id) {
-        return await list_all_entities("dictionary_link", "&from_dictionary_term_id=" + dictionary_term_id)
-    }
+                let link_created = await post_entity("dictionary_link", new_link)
+                if (link_created === null || link_created === undefined) {
+                    showError("Creating link failed: " + item.title)
+                    return
+                }
+                showInfo("New link was created: " + item.title)
+                this.addItem(item.title, link_created.id, link_created.to_dictionary_term_id)
+            }
 
-    async loadTitle(item) {
-        let another_dictionary_term = await read_entity("dictionary_term", item.to_dictionary_term_id)
-        if (!another_dictionary_term) {
-            showError("Loading term failed: " + item.to_dictionary_term_id)
-            return null
-        }
-        return another_dictionary_term.title
+        });
     }
 
     async afterRender(dictionary_term_id) {
-        get_element("div_search_link").style.display = "none"
-        this.setupAutocomplete(dictionary_term_id);
-
         let button_add_link = get_element("button_add_link")
         button_add_link.onclick = async () => {
             let was_hidden = get_element("div_search_link").style.display === "none"
             get_element("div_search_link").style.display = "block"
-            let title = this.#input.value
+            let title = this.get_input_value()
             if (title === "") {
                 if (!was_hidden) showWarn("Term title must not be empty")
                 return;
@@ -1093,36 +1115,6 @@ class Links extends CrudSection {
         }
     }
 
-    setupAutocomplete(dictionary_term_id) {
-        if (this.#autocomplete) this.#autocomplete.destroy()
-        this.#autocomplete = new Autocomplete(
-            this.#input,
-            1,
-            "dictionary_term_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
-            "title",
-            "title_part",
-            "div_search_link_end"
-        )
-
-        this.#autocomplete.addCallback(async () => {
-            let item = this.#autocomplete.get_item()
-            let another_dictionary_term_id = item.id
-            let new_link = {
-                from_dictionary_term_id: dictionary_term_id,
-                to_dictionary_term_id: another_dictionary_term_id
-            }
-
-            let link_created = await post_entity("dictionary_link", new_link)
-            if (link_created === null || link_created === undefined) {
-                showError("Creating link failed: " + item.title)
-                return
-            }
-            showInfo("New link was created: " + item.title)
-            this.addItem(item.title, link_created.id, link_created.to_dictionary_term_id)
-        })
-    }
-
     addItem(title, id, item) {
         let to_dictionary_term_id = item.to_dictionary_term_id
         let div = document.createElement("div")
@@ -1148,8 +1140,7 @@ class Links extends CrudSection {
             }
         }
         div.appendChild(button)
-
-        this.#input.value = ""
+        this.clear_input_value()
     }
 }
 
