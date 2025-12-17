@@ -711,6 +711,7 @@ class AbstractTermSection {
 
     async render(dictionary_term_id) {
         this.#reset();
+
         const items = await this.loadItems(dictionary_term_id);
         if(items === null || items === undefined) {
             showError("Listing " + this.#models + " failed.")
@@ -968,80 +969,37 @@ class Flags extends AbstractTermSection{
     }
 }
 
-class Links {
-    #element
-    #input_search_link = document.getElementById("input_search_link")
-    #autocomplete_link_title = null
+class Links extends AbstractTermSection{
+    #input = document.getElementById("input_search_link")
+    #autocomplete = null
     constructor() {
-        this.#element = get_element("links");
-        this.#element.innerHTML = ""
+        super("link", "links");
     }
 
-    async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
+    async loadItems(dictionary_term_id) {
+        return await list_all_entities("dictionary_link", "&from_dictionary_term_id=" + dictionary_term_id)
+    }
+
+    async loadTitle(item) {
+        let another_dictionary_term = await read_entity("dictionary_term", item.to_dictionary_term_id)
+        if (!another_dictionary_term) {
+            showError("Loading term failed: " + item.to_dictionary_term_id)
+            return null
+        }
+        return another_dictionary_term.title
+    }
+
+    async afterRender(dictionary_term_id) {
         get_element("div_search_link").style.display = "none"
-        if(this.#autocomplete_link_title !== null) {
-            this.#autocomplete_link_title.destroy()
-            this.#autocomplete_link_title = null
-        }
-        this.#autocomplete_link_title = new Autocomplete(
-            this.#input_search_link,
-            1,
-            "dictionary_term_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
-            "title",
-            "title_part",
-            "div_search_link_end"
-        )
+        this.setupAutocomplete(dictionary_term_id);
 
-        this.#autocomplete_link_title.addCallback(async () => {
-
-            let item = this.#autocomplete_link_title.get_item()
-            showInfo("Found link: " + item.title)
-            let another_dictionary_term_id = item.id
-            let new_link = {
-                from_dictionary_term_id: dictionary_term_id,
-                to_dictionary_term_id: another_dictionary_term_id
-            }
-
-            let link_created = await post_entity("dictionary_link", new_link)
-            if(link_created === null || link_created === undefined) {
-                showError("Creating link failed: " + item.title)
-                return
-            }
-            showInfo("New link was created: " + item.title)
-            this.add_link(item.title, link_created.id, link_created.to_dictionary_term_id)
-            //get_element("div_search_tag").style.display = "none"
-        })
-
-        let links_result = await list_all_entities("dictionary_link", "&from_dictionary_term_id=" + dictionary_term_id)
-        if(!links_result) {
-            showError("Listing links failed.")
-            return;
-        }
-        //showInfo("Found " + links_result.length + " links")
-        for (const dictionary_link_json of links_result) {
-
-            let another_dictionary_term = await read_entity("dictionary_term", dictionary_link_json.to_dictionary_term_id)
-            if(!another_dictionary_term) {
-                showError("Loading term failed: " + dictionary_link_json.to_dictionary_term_id)
-                continue
-            }
-            let title = another_dictionary_term.title
-
-            this.add_link(
-                title,
-                dictionary_link_json.id,
-                dictionary_link_json.to_dictionary_term_id
-            )
-        }
         let button_add_link = get_element("button_add_link")
         button_add_link.onclick = async () => {
             let was_hidden = get_element("div_search_link").style.display === "none"
             get_element("div_search_link").style.display = "block"
-            let title = this.#input_search_link.value
+            let title = this.#input.value
             if (title === "") {
-                if(!was_hidden) showWarn("Term title must not be empty")
+                if (!was_hidden) showWarn("Term title must not be empty")
                 return;
             }
 
@@ -1080,14 +1038,44 @@ class Links {
                 return
             }
             showInfo("New link was assigned: " + title)
-            this.add_link(title, link_created.id, link_created.to_dictionary_term_id)
-            //get_element("div_search_link").style.display = "none"
+            this.addItem(title, link_created.id, link_created.to_dictionary_term_id)
         }
     }
-    add_link(title, id, to_dictionary_term_id) {
+
+    setupAutocomplete(dictionary_term_id) {
+        if (this.#autocomplete) this.#autocomplete.destroy()
+        this.#autocomplete = new Autocomplete(
+            this.#input,
+            1,
+            "dictionary_term_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
+            "div_search_link_end"
+        )
+
+        this.#autocomplete.addCallback(async () => {
+            let item = this.#autocomplete.get_item()
+            let another_dictionary_term_id = item.id
+            let new_link = {
+                from_dictionary_term_id: dictionary_term_id,
+                to_dictionary_term_id: another_dictionary_term_id
+            }
+
+            let link_created = await post_entity("dictionary_link", new_link)
+            if (link_created === null || link_created === undefined) {
+                showError("Creating link failed: " + item.title)
+                return
+            }
+            showInfo("New link was created: " + item.title)
+            this.addItem(item.title, link_created.id, link_created.to_dictionary_term_id)
+        })
+    }
+    addItem(title, id, item) {
+        let to_dictionary_term_id = item.to_dictionary_term_id
         let div = document.createElement("div")
         div.classList.add("item")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
         let a = document.createElement("a")
         a.onclick = async () => {
             await dictionary_app.render(to_dictionary_term_id)
@@ -1109,7 +1097,7 @@ class Links {
         }
         div.appendChild(button)
 
-        this.#input_search_link.value = ""
+        this.#input.value = ""
     }
 }
 
