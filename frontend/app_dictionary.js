@@ -1471,9 +1471,9 @@ class Sources extends AbstractTermSection {
         return source_type.title
     }
 
-        async afterRender(dictionary_term_id) {
+    async afterRender(dictionary_term_id) {
         get_element("div_search_source").style.display = "none"
-            this.setupAutocomplete(dictionary_term_id);
+        this.setupAutocomplete(dictionary_term_id);
 
         let button_add_source = get_element("button_add_source")
         button_add_source.onclick = async () => {
