@@ -95,4 +95,6 @@ namespace mindnet::plugins::dictionary
     gen_find_cpp(dictionary, DictionaryTerm, dictionary_term, DICTIONARY_TERM)
     gen_find_cpp(dictionary, DictionaryTermAlias, dictionary_term_alias, DICTIONARY_TERM_ALIAS)
     gen_find_cpp(dictionary, DictionaryTermVisit, dictionary_term_visit, DICTIONARY_TERM_VISIT)
+    gen_find_cpp(dictionary, DictionaryIndexType, dictionary_index_type, DICTIONARY_INDEX_TYPE)
+    gen_find_cpp(dictionary, DictionaryIndex, dictionary_index, DICTIONARY_INDEX)
 }

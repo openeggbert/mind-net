@@ -45,6 +45,8 @@
 #include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermAlias.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermVisit.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryIndexType.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryIndex.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
@@ -74,4 +76,6 @@ namespace mindnet::plugins::dictionary
     gen_find_h(dictionary, DictionaryTerm, dictionary_term)
     gen_find_h(dictionary, DictionaryTermAlias, dictionary_term_alias)
     gen_find_h(dictionary, DictionaryTermVisit, dictionary_term_visit)
+    gen_find_h(dictionary, DictionaryIndexType, dictionary_index_type)
+    gen_find_h(dictionary, DictionaryIndexType, dictionary_index)
 }

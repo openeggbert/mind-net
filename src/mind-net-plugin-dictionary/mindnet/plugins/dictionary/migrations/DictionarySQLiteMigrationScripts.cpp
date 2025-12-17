@@ -351,5 +351,65 @@ CREATE INDEX idx_dictionary_term_alias_term
 )");
 
 
+        //
+        // V14 — dictionary_index_type
+        //
+        add_migration("V14__create_dictionary_index_type.sql", R"(
+CREATE TABLE dictionary_index_type (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_map_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    position INTEGER,
+
+    UNIQUE(dictionary_map_id, title),
+
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
+);
+
+CREATE INDEX idx_dictionary_index_type_map
+    ON dictionary_index_type(dictionary_map_id);
+
+CREATE INDEX idx_dictionary_index_type_position
+    ON dictionary_index_type(position);
+)");
+
+
+        //
+        // V15 — dictionary_index
+        //
+        add_migration("V15__create_dictionary_index.sql", R"(
+CREATE TABLE dictionary_index (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_index_type_id INTEGER NOT NULL,
+    dictionary_term_id INTEGER NOT NULL,
+
+    position INTEGER,
+
+    is_entry_point INTEGER NOT NULL DEFAULT 0 CHECK(is_entry_point IN (0, 1)),
+
+    UNIQUE(dictionary_index_type_id, dictionary_term_id),
+
+    FOREIGN KEY(dictionary_index_type_id) REFERENCES dictionary_index_type(id),
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
+);
+
+CREATE INDEX idx_dictionary_index_type
+    ON dictionary_index(dictionary_index_type_id);
+
+CREATE INDEX idx_dictionary_index_term
+    ON dictionary_index(dictionary_term_id);
+
+CREATE INDEX idx_dictionary_index_position
+    ON dictionary_index(dictionary_index_type_id, position);
+)");
+
+
     }
 }

@@ -337,6 +337,7 @@ class TermContainer {
     #links
     #notes
     #sources
+    #indexes
     #aliases
 
     constructor() {
@@ -345,6 +346,7 @@ class TermContainer {
         this.#flags = new Flags()
         this.#links = new Links()
         this.#notes = new Notes()
+        this.#indexes = new Indexes()
         this.#sources = new Sources()
         this.#aliases = new Aliases()
 
@@ -386,6 +388,7 @@ class TermContainer {
         attach_onclick_to_label("flags")
         attach_onclick_to_label("links")
         attach_onclick_to_label("notes")
+        attach_onclick_to_label("indexes")
         attach_onclick_to_label("sources")
         attach_onclick_to_label("aliases")
 
@@ -411,6 +414,7 @@ class TermContainer {
         this.#flags.render(dictionary_term_id)
         this.#links.render(dictionary_term_id)
         this.#notes.render(dictionary_term_id)
+        this.#indexes.render(dictionary_term_id)
         this.#sources.render(dictionary_term_id)
         this.#aliases.render(dictionary_term_id)
     }
@@ -1255,6 +1259,172 @@ class Notes {
         }
         div_buttons.appendChild(delete_button)
         div.appendChild(div_buttons)
+    }
+}
+
+
+class Indexes {
+    #element
+    #input_search_index = document.getElementById("input_search_index")
+    #autocomplete_index_name = null
+
+    constructor() {
+        this.#element = get_element("indexes");
+        this.#element.innerHTML = ""
+    }
+
+    show() {
+        this.#element.style.display = "block"
+    }
+
+    hide() {
+        this.#element.style.display = "none"
+    }
+
+    async render(dictionary_term_id) {
+        this.#element.innerHTML = ""
+        get_element("div_search_index").style.display = "none"
+        if (this.#autocomplete_index_name !== null) {
+            this.#autocomplete_index_name.destroy()
+            this.#autocomplete_index_name = null
+        }
+        this.#autocomplete_index_name = new Autocomplete(
+            this.#input_search_index,
+            1,
+            "dictionary_index_fulltext",
+            "",
+            "name",
+            "name_part",
+            "div_search_index_end"
+        )
+
+        this.#autocomplete_index_name.addCallback(async () => {
+
+            let item = this.#autocomplete_index_name.get_item()
+            showInfo("Found index: " + item.name)
+            let dictionary_index_id = item.id
+            let new_index = {
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
+                dictionary_term_id: dictionary_term_id,
+            }
+
+            let index_created = await post_entity("dictionary_index", new_index)
+            if (index_created === null || index_created === undefined) {
+                showError("Creating index failed: " + item.title)
+                return
+            }
+            showInfo("New index was assigned: " + item.title)
+            this.add_index(item.title, index_created.id)
+            //get_element("div_search_index").style.display = "none"
+        })
+
+        let indexes_result = await list_all_entities("dictionary_index", "&dictionary_term_id=" + dictionary_term_id)
+        if (!indexes_result) {
+            showError("Listing indexes failed.")
+            return;
+        }
+        //showInfo("Found " + indexs_result.length + " indexs")
+        for (const dictionary_index_json of indexs_result) {
+
+            let index_type = await read_entity("dictionary_index_type", dictionary_index_json.dictionary_index_type_id)
+            if (!index_type) {
+                showError("Loading index type failed: " + dictionary_index_json.dictionary_index_type_id)
+                continue
+            }
+            let title = index_type.title
+
+            this.add_index(title, dictionary_index_json.id)
+        }
+
+        let button_add_index = get_element("button_add_index")
+        button_add_index.onclick = async () => {
+            get_element("div_search_index").style.display = "block"
+            let title = this.#input_search_index.value
+            if (title === "") {
+                return;
+            }
+
+            let new_index_type = {
+                dictionary_term_id: dictionary_app.get_selected_map_id(),
+                title: title,
+                type: 0
+            }
+            let new_index_type_created = await post_entity("dictionary_index_type", new_index_type)
+            if (!new_index_type_created) {
+                showError("Creating new index type failed: " + title)
+                return
+            }
+            let new_index = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_index_type_id: new_index_type_created.id
+            }
+
+            let index_created = await post_entity("dictionary_index", new_index)
+            if (index_created === null || index_created === undefined) {
+                showError("Creating index failed: " + title)
+                return
+            }
+            showInfo("New index was assigned: " + title)
+            this.add_index(title, index_created.id)
+            //get_element("div_search_index").style.display = "none"
+        }
+        get_element("button_show_indexs").onclick = () => {
+            let url = "index.html?entity=dictionary_index_type&action=list"
+            showWindowFrom("Show indexs", url)
+        }
+    }
+
+    add_index(title, id) {
+        let div = document.createElement("div")
+        div.classList.add("item")
+        this.#element.appendChild(div)
+        let span = document.createElement("span")
+        span.innerText = title
+        div.appendChild(span)
+
+        let div_buttons = document.createElement("div")
+        div.appendChild(div_buttons)
+
+        let edit_button = document.createElement("button")
+        edit_button.innerHTML = "📝 Edit"
+        edit_button.style.marginRight = "10px"
+        edit_button.onclick = async () => {
+            const result = await chooseOption(["Source", "Source Type"]);
+            if (result === null || result === undefined) return
+            if (result === "Source") {
+
+                let url = "index.html?entity=dictionary_index&action=update&id=" + id
+                showWindowFrom("Editing Source", url)
+
+            }
+            if (result === "Source Type") {
+                let read_index = await read_entity("dictionary_index", id)
+                if (read_index === null || read_index === undefined) {
+                    showError("Reading index failed: " + title)
+                }
+                let url = "index.html?entity=dictionary_index_type&action=update&id=" + read_index.dictionary_index_type_id
+                showInfo(url)
+                showWindowFrom("Editing Source type", url)
+            }
+        }
+        div_buttons.appendChild(edit_button)
+
+        let delete_button = document.createElement("button")
+        delete_button.innerHTML = "🗑️ Delete"
+        delete_button.onclick = () => {
+            if (!confirm("Do you really want to delete this index?")) return;
+            let index_deleted = delete_entity("dictionary_index", id)
+            let deleted = index_deleted !== null && index_deleted !== undefined
+            if (deleted) {
+                showInfo("Source was successfully deleted: " + title)
+                div.remove()
+            } else {
+                showError("Deleting index failed: " + title)
+            }
+        }
+        div_buttons.appendChild(delete_button)
+
+        this.#input_search_index.value = ""
     }
 }
 

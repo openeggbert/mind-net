@@ -44,6 +44,9 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryTermValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryIndexTypeValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryIndexTypeFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryIndexValidator.hpp"
 #include "mindnet/plugins/dictionary/migrations/DictionarySQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermFulltextTrigger.hpp"
@@ -81,6 +84,10 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_source_type_fulltext, DictionarySourceTypeFulltext, DICTIONARY_SOURCE_TYPE_FULLTEXT)
+        REGISTER_MODEL(dictionary_index_type, DictionaryIndexType, DICTIONARY_INDEX_TYPE)
+        REGISTER_MODEL(dictionary_index_type_fulltext, DictionaryIndexTypeFulltext, DICTIONARY_INDEX_TYPE_FULLTEXT)
+        REGISTER_MODEL(dictionary_index, DictionaryIndex, DICTIONARY_INDEX)
+
 
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermFulltextTrigger>());

@@ -75,6 +75,7 @@ export class Autocomplete {
                 this.box.style.display = "none";
                 this.item = item;
                 this.#runCallbacks()
+                this.input.value = ""
             };
 
             this.box.appendChild(div);
