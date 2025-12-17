@@ -456,9 +456,15 @@ class TermContainer {
                 }
             }
 
-            let flags = await list_all_entities(
+            let tags = await list_all_entities(
+                "dictionary_tag",
+                "&dictionary_term_id=" + dictionary_term_id)
+            let private_flags = await list_all_entities(
                 "dictionary_flag",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+                "&is_public=0&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+            let public_flags = await list_all_entities(
+                "dictionary_flag",
+                "&is_public=1&dictionary_term_id=" + dictionary_term_id)
             let links1 = await list_all_entities(
                 "dictionary_link",
                 "&from_dictionary_term_id=" + dictionary_term_id)
@@ -468,29 +474,31 @@ class TermContainer {
             let notes = await list_all_entities(
                 "dictionary_note",
                 "&dictionary_term_id=" + dictionary_term_id)
-            let reviews = await list_all_entities(
-                "dictionary_review",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id" + getUserId())
+            let indexes = await list_all_entities(
+                "dictionary_index",
+                "&dictionary_term_id=" + dictionary_term_id)
             let sources = await list_all_entities(
                 "dictionary_source",
-                "&dictionary_term_id=" + dictionary_term_id)
-            let states4 = await list_all_entities(
-                "dictionary_state_4",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id" + getUserId())
-            let tags = await list_all_entities(
-                "dictionary_tag",
                 "&dictionary_term_id=" + dictionary_term_id)
             let aliases = await list_all_entities(
                 "dictionary_term_alias",
                 "&dictionary_term_id=" + dictionary_term_id)
             let visits = await list_all_entities(
                 "dictionary_term_visit",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id" + getUserId())
-            await delete_rows("dictionary_flag", flags)
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+            let reviews = await list_all_entities(
+                "dictionary_review",
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+            let states4 = await list_all_entities(
+                "dictionary_state_4",
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+            await delete_rows("dictionary_flag", private_flags)
+            await delete_rows("dictionary_flag", public_flags)
             await delete_rows("dictionary_link", links1)
             await delete_rows("dictionary_link", links2)
             await delete_rows("dictionary_note", notes)
             await delete_rows("dictionary_review", reviews)
+            await delete_rows("dictionary_index", indexes)
             await delete_rows("dictionary_source", sources)
             await delete_rows("dictionary_state_4", states4)
             await delete_rows("dictionary_tag", tags)
@@ -936,7 +944,7 @@ class Links {
             "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
             "title",
             "title_part",
-            "div_search_flag_end"
+            "div_search_link_end"
         )
 
         this.#autocomplete_link_title.addCallback(async () => {
