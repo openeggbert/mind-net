@@ -225,6 +225,7 @@ class DictionaryApp {
             showInfo("Found term: " + item.title)
             await this.#term_container.render(item.id)
             this.#term_container.show()
+            this.#input_search_term.value = ""
         })
         get_element("button_add_term").onclick = async () => {
             if (this.#input_search_term.value === "") {
@@ -246,10 +247,6 @@ class DictionaryApp {
 
         }
 
-        //todo remove me
-        // this.#term_container.render(1)
-        // sleep_for_seconds(2)
-        // this.#term_container.show()
     }
 
     refresh_autocomplete_term_title() {
@@ -259,7 +256,8 @@ class DictionaryApp {
             let item = this.#autocomplete_term_title.get_item()
             showInfo("Found term: " + item.title)
             await this.#term_container.show()
-            this.#term_container.render(item.id)
+            await this.#term_container.render(item.id)
+            this.#input_search_term.value = ""
         })
     }
 
@@ -423,6 +421,9 @@ class TermContainer {
         get_element("input_disambiguation").value = dictionary_term.disambiguation
         get_element("textarea_definition").innerText = dictionary_term.definition
 
+        let status = dictionary_term.status
+        get_element("select_status").selectedIndex = status
+
         let importance = dictionary_term.importance
         let difficulty = dictionary_term.difficulty
         let id1 = "input_importance_" + (importance === 1 ? "low" : (importance === 2 ? "medium" : "high"));
@@ -513,6 +514,8 @@ class TermContainer {
             new_term.title = get_element("input_title").value
             new_term.disambiguation = get_element("input_disambiguation").value
             new_term.definition = get_element("textarea_definition").value
+
+            new_term.status = get_element("select_status").selectedIndex
 
             let importance = 0
             let difficulty = 0

@@ -55,6 +55,7 @@ CREATE TABLE dictionary_term (
     title TEXT NOT NULL,
     disambiguation TEXT,
     definition TEXT,
+    status INTEGER NOT NULL,
     importance INTEGER NOT NULL,
     difficulty INTEGER NOT NULL,
 

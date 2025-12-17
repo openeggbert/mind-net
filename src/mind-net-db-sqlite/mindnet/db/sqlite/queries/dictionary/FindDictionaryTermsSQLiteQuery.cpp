@@ -64,7 +64,10 @@ namespace mindnet::db::sqlite::queries::dictionary
         int page_size = 20;
         int page_number = 1;
 
-        static std::string sql = "select id, title, disambiguation from dictionary_term where dictionary_map_id=? and title like ? limit ? offset ?";
+        bool random = title_part == "*";
+        static std::string sql_standard = "select id, title, disambiguation from dictionary_term where dictionary_map_id=? and title like ? limit ? offset ?";
+        static std::string sql_random = "select id, title, disambiguation from dictionary_term where dictionary_map_id=? order by random() limit ?";
+        std::string& sql = random? sql_random : sql_standard ;
 
         try
         {
@@ -76,12 +79,14 @@ namespace mindnet::db::sqlite::queries::dictionary
             essential::debug << "Looking up terms (id, title) for dictionary_map_id=" << dictionary_map_id << " and title_part=" << title_part << essential::commit;
 
             SQLite::Statement query(db, sql);
-            query.bind(1, dictionary_map_id);
+            int index = 0;
+            query.bind(++index, dictionary_map_id);
+            if (!random){
             std::string pattern = "%" + title_part + "%";
-            query.bind(2, pattern);
-            query.bind(3, page_size);
-            query.bind(4, (page_number - 1) * page_size);
-
+            query.bind(++index, pattern);
+        }
+            query.bind(++index, page_size);
+            if (!random) query.bind(++index, (page_number - 1) * page_size);
 
             std::vector<std::pair<identification, std::pair<std::string, std::string>>> results;
             while (query.executeStep())
