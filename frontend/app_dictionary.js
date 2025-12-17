@@ -337,12 +337,11 @@ class TermContainer {
 
     #sections = null
 
-
     constructor() {
         this.#element = get_element("term_container");
         this.#sections = [
             new Tags(),
-            // new Flags(),
+            new Flags(),
             // new Links(),
             // new Notes(),
             // new Indexes(),
@@ -917,7 +916,15 @@ class Tags extends CrudSection {
 
 class Flags extends CrudSection {
     constructor() {
-        super("flag", "flags");
+        super({
+            model: "flag",
+            models: "flags",
+            table: "dictionary_flag",
+            input: false,
+            resolveTitle: async item => {
+                return item.title
+            },
+        });
     }
 
     async loadItems(dictionary_term_id) {
@@ -972,10 +979,6 @@ class Flags extends CrudSection {
             this.addItem(title, flag_created.id, flag_created)
 
         }
-    }
-
-    async loadTitle(item) {
-        return item.title
     }
 
     addItem(title, id, item) {
