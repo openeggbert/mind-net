@@ -335,23 +335,20 @@ class TermContainer {
     #dictionary_term_json
     dictionary_term_id = 0
 
-    #tags
-    #flags
-    #links
-    #notes
-    #sources
-    #indexes
-    #aliases
+    #sections = null
+
 
     constructor() {
         this.#element = get_element("term_container");
-        this.#tags = new Tags()
-        this.#flags = new Flags()
-        this.#links = new Links()
-        this.#notes = new Notes()
-        this.#indexes = new Indexes()
-        this.#sources = new Sources()
-        this.#aliases = new Aliases()
+        this.#sections = [
+            new Tags(),
+            // new Flags(),
+            // new Links(),
+            // new Notes(),
+            // new Indexes(),
+            // new Sources(),
+            // new Aliases()
+        ]
 
         let term_container_h2 = get_element("term_container_h2")
         term_container_h2.style.backgroundColor = "rgba(213,215,221,0.6)"
@@ -388,13 +385,10 @@ class TermContainer {
             }
         }
 
-        attach_onclick_to_label("tags")
-        attach_onclick_to_label("flags")
-        attach_onclick_to_label("links")
-        attach_onclick_to_label("notes")
-        attach_onclick_to_label("indexes")
-        attach_onclick_to_label("sources")
-        attach_onclick_to_label("aliases")
+        this.#sections.forEach(section => {
+            let models = section.get_configuration().models
+            attach_onclick_to_label(models)
+        })
 
     }
 
@@ -414,13 +408,11 @@ class TermContainer {
         if (dictionary_term_id === 0) return;
 
         await this.render_term(dictionary_term_id);
-        this.#tags.render(dictionary_term_id)
-        this.#flags.render(dictionary_term_id)
-        this.#links.render(dictionary_term_id)
-        this.#notes.render(dictionary_term_id)
-        this.#indexes.render(dictionary_term_id)
-        this.#sources.render(dictionary_term_id)
-        this.#aliases.render(dictionary_term_id)
+        this.#sections.forEach(
+            section => {
+                section.render(dictionary_term_id)
+            }
+        )
     }
 
     async render_term(dictionary_term_id) {
@@ -683,17 +675,52 @@ class TermContainer {
     }
 }
 
-class AbstractTermSection {
-    #element;
-    #model
-    #models
+function defined(value) {
+    return value !== null && value !== undefined
+}
 
-    constructor(model, models) {
-        this.#model = model
-        this.#models = models
-        let container_id = this.#models
-        this.#element = get_element(container_id);
+class CrudConfiguration {
+    //string
+    model
+    //string
+    models
+    //string
+    table
+    //bool
+    filter
+    input
+    resolveTitle
+    createAutocomplete
+    autocompleteCallback
+}
+
+function validate_cfg(cfg) {
+    let to_be_validated = [
+        cfg.model, cfg.models, cfg.table, cfg.input, cfg.resolveTitle
+    ]
+    to_be_validated.forEach(e => {
+        if(!defined(e)) return false
+    })
+    return true
+}
+
+class CrudSection {
+    #cfg
+    #element;
+    #input= null
+    #autocomplete = null
+
+    constructor(cfg) {
+        if(!validate_cfg(cfg)) throw "Configuration is not valid for model: " + cfg.model
+        this.#cfg = cfg
+        this.#element = get_element(cfg.models);
+        this.#input = cfg.input ? get_element("input_search_" + this.#cfg.model) : null;
+        this.autocomplete = null;
         this.#reset()
+    }
+
+    get_configuration() {
+        return this.#cfg
     }
 
     #setVisible(visible) {
@@ -721,31 +748,33 @@ class AbstractTermSection {
 
         const items = await this.loadItems(dictionary_term_id);
         if (items === null || items === undefined) {
-            showError("Listing " + this.#models + " failed.")
+            showError("Listing " + this.#cfg.models + " failed.")
             return
         }
         for (const item of items) {
             if (item === null) throw "item is null"
             if (item === undefined) throw "item is undefined"
 
-            let title = await this.loadTitle(item)
+            let title = await this.#cfg.resolveTitle(item)
             if (title === null || title === undefined) {
-                alert(JSON.stringify(item))
-                alert("item.id=" + item.id)
-                showError("Loading title failed for model: " + this.#model + " and id " + item.id)
+                showError("Loading title failed for model: " + this.#cfg.model + " and id " + item.id)
                 continue
             }
             this.addItem(title, item.id, item);
         }
+        if(this.#cfg.input) get_element("div_search_" + this.#cfg.model).style.display = "none"
+        this.#setupAutocomplete(dictionary_term_id);
         this.afterRender(dictionary_term_id);
     }
 
     async loadItems(dictionary_term_id) {
-        throw "Not implemented";
-    }
+        let filter = this.#cfg.filter
+        if(filter === null || filter === undefined) throw "Not implemented";
 
-    async loadTitle(item) {
-        throw "Not implemented";
+        return await list_all_entities(
+            this.#cfg.table,
+            this.#cfg.filter(dictionary_term_id)
+        );
     }
 
     addItem(title, id, item) {
@@ -755,31 +784,81 @@ class AbstractTermSection {
     afterRender(dictionary_term_id) {
         // optional hook
     }
-}
-
-class Tags extends AbstractTermSection {
-    #input = document.getElementById("input_search_tag")
-    #autocomplete = null
-
-    constructor() {
-        super("tag", "tags");
+    get_input_value() {
+        return this.#input.value
+    }
+    clear_input_value() {
+        this.#input.value = ""
     }
 
-    async loadItems(dictionary_term_id) {
-        return await list_all_entities(
-            "dictionary_tag",
-            "&dictionary_term_id=" + dictionary_term_id
-        );
+    #setupAutocomplete(termId) {
+        if (!defined(this.#cfg.createAutocomplete)) return
+        if (!defined(this.#cfg.autocompleteCallback)) return
+
+        if (this.#autocomplete) this.#autocomplete.destroy();
+
+        this.#autocomplete = this.#cfg.createAutocomplete(this.#input)
+
+        this.#autocomplete.addCallback(async () => {
+            const item = this.#autocomplete.get_item();
+            if (!item) {
+                showWarn("Autocomplete returned null item");
+                return;
+            }
+            await this.#cfg.autocompleteCallback(item, termId)
+        });
+    }
+}
+
+class Tags extends CrudSection {
+    constructor() {
+        super({
+            model: "tag",
+            models: "tags",
+            table: "dictionary_tag",
+            filter: termId => "&dictionary_term_id=" + termId,
+            input: true,
+            resolveTitle: async item => {
+                let tag_type = await read_entity("dictionary_tag_type", item.dictionary_tag_type_id)
+                if (!tag_type) {
+                    showError("Loading tag type failed: " + item.dictionary_tag_type_id)
+                    return null
+                }
+                return tag_type.title
+            },
+            createAutocomplete: input => {
+                return new Autocomplete(
+                    input,
+                    1,
+                    "dictionary_tag_type_fulltext",
+                    "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+                    "title",
+                    "title_part",
+                    "div_search_tag_end"
+                )
+            },
+            autocompleteCallback: async (item, termId) => {
+                let new_tag = {
+                    dictionary_term_id: termId,
+                    dictionary_tag_type_id: item.id
+                }
+
+                let tag_created = await post_entity("dictionary_tag", new_tag);
+                if (tag_created === null || tag_created === undefined) {
+                    showError("Creating tag failed: " + item.title)
+                    return
+                }
+                showInfo("New tag was assigned: " + item.title)
+                this.addItem(item.title, tag_created.id)
+            }
+        });
     }
 
     afterRender(dictionary_term_id) {
-        get_element("div_search_tag").style.display = "none"
-        this.setupAutocomplete(dictionary_term_id);
-
         let button_add_tag = get_element("button_add_tag")
         button_add_tag.onclick = async () => {
             get_element("div_search_tag").style.display = "block"
-            let title = this.#input.value
+            let title = this.get_input_value()
             if (title === "") {
                 return;
             }
@@ -812,45 +891,6 @@ class Tags extends AbstractTermSection {
         }
     }
 
-    async loadTitle(item) {
-        let tag_type = await read_entity("dictionary_tag_type", item.dictionary_tag_type_id)
-        if (!tag_type) {
-            showError("Loading tag type failed: " + item.dictionary_tag_type_id)
-            return null
-        }
-        return tag_type.title
-    }
-
-    setupAutocomplete(termId) {
-        if (this.#autocomplete) this.#autocomplete.destroy();
-
-        this.#autocomplete = new Autocomplete(
-            this.#input,
-            1,
-            "dictionary_tag_type_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
-            "title",
-            "title_part",
-            "div_search_tag_end"
-        );
-
-        this.#autocomplete.addCallback(async () => {
-            const item = this.#autocomplete.get_item();
-            let new_tag = {
-                dictionary_term_id: termId,
-                dictionary_tag_type_id: item.id
-            }
-
-            let tag_created = await post_entity("dictionary_tag", new_tag);
-            if (tag_created === null || tag_created === undefined) {
-                showError("Creating tag failed: " + item.title)
-                return
-            }
-            showInfo("New tag was assigned: " + item.title)
-            this.addItem(item.title, tag_created.id)
-        });
-    }
-
     addItem(title, id, item) {
         let div = document.createElement("div")
         div.classList.add("tag")
@@ -858,9 +898,9 @@ class Tags extends AbstractTermSection {
         div.innerText = title
         let button = document.createElement("button")
         button.innerHTML = "&times;"
-        button.onclick = () => {
+        button.onclick = async () => {
             if (!confirm("Do you really want to delete this tag?")) return;
-            let tag_deleted = delete_entity("dictionary_tag", id)
+            let tag_deleted = await delete_entity("dictionary_tag", id)
             let deleted = tag_deleted !== null && tag_deleted !== undefined
             if (deleted) {
                 showInfo("Tag was successfully deleted: " + title)
@@ -871,11 +911,11 @@ class Tags extends AbstractTermSection {
         }
         div.appendChild(button)
 
-        this.#input.value = ""
+        this.clear_input_value()
     }
 }
 
-class Flags extends AbstractTermSection {
+class Flags extends CrudSection {
     constructor() {
         super("flag", "flags");
     }
@@ -976,7 +1016,7 @@ class Flags extends AbstractTermSection {
     }
 }
 
-class Links extends AbstractTermSection {
+class Links extends CrudSection {
     #input = document.getElementById("input_search_link")
     #autocomplete = null
 
@@ -1110,7 +1150,7 @@ class Links extends AbstractTermSection {
     }
 }
 
-class Notes extends AbstractTermSection {
+class Notes extends CrudSection {
 
     constructor() {
         super("note", "notes");
@@ -1300,7 +1340,7 @@ class Notes extends AbstractTermSection {
     }
 }
 
-class Indexes extends AbstractTermSection {
+class Indexes extends CrudSection {
     #input = document.getElementById("input_search_index")
     #autocomplete = null
 
@@ -1450,7 +1490,7 @@ class Indexes extends AbstractTermSection {
     }
 }
 
-class Sources extends AbstractTermSection {
+class Sources extends CrudSection {
     #input = document.getElementById("input_search_source")
     #autocomplete = null
 
@@ -1598,7 +1638,7 @@ class Sources extends AbstractTermSection {
 }
 
 
-class Aliases extends AbstractTermSection {
+class Aliases extends CrudSection {
     constructor() {
         super("alias", "aliases");
     }
