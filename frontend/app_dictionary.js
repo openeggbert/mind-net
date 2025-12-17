@@ -717,12 +717,17 @@ class AbstractTermSection {
             return
         }
         for (const item of items) {
+            if(item === null) throw "item is null"
+            if(item === undefined) throw "item is undefined"
+
             let title = await this.loadTitle(item)
             if(title === null || title === undefined) {
-                showError("Loading title failed for model: " + this.#model)
+                alert(JSON.stringify(item))
+                alert("item.id=" + item.id)
+                showError("Loading title failed for model: " + this.#model + " and id " + item.id)
                 continue
             }
-            this.addItem(title, item.id);
+            this.addItem(title, item.id, item);
         }
         this.afterRender(dictionary_term_id);
     }
@@ -735,7 +740,7 @@ class AbstractTermSection {
         throw "Not implemented";
     }
 
-    addItem(title, id) {
+    addItem(title, id, item) {
         throw "Not implemented";
     }
 
@@ -752,10 +757,10 @@ class Tags extends AbstractTermSection{
         super("tag", "tags");
     }
 
-    async loadItems(termId) {
+    async loadItems(dictionary_term_id) {
         return await list_all_entities(
             "dictionary_tag",
-            "&dictionary_term_id=" + termId
+            "&dictionary_term_id=" + dictionary_term_id
         );
     }
 
@@ -838,7 +843,7 @@ class Tags extends AbstractTermSection{
         });
     }
 
-    addItem(title, id) {
+    addItem(title, id, item) {
         let div = document.createElement("div")
         div.classList.add("tag")
         this._element.appendChild(div)
@@ -862,41 +867,44 @@ class Tags extends AbstractTermSection{
     }
 }
 
-class Flags {
-    #element
-
+class Flags extends AbstractTermSection{
     constructor() {
-        this.#element = get_element("flags");
-        this.#element.innerHTML = ""
+        super("flag", "flags");
     }
 
-    async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
+    async loadItems(dictionary_term_id) {
+        let result = []
         let private_flags_result = await list_all_entities("dictionary_flag", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
         if (!private_flags_result) {
             showError("Listing private flags failed.")
-            return;
+            return [];
+        } else {
+            private_flags_result.forEach(e => {
+                result.push(e)
+            })
+
         }
         let public_flags_result = await list_all_entities("dictionary_flag", "&dictionary_term_id=" + dictionary_term_id + "&is_public=1")
         if (!public_flags_result) {
             showError("Listing public flags failed.")
-            return;
+            return [];
+        } else {
+            let user_id = getUserId();
+            public_flags_result.forEach(e => {
+                if (e.user_id !== user_id) result.push(e)
+            });
         }
-        for (const e of private_flags_result) {
-            this.add_flag(e.title, e.id, false)
-        }
-        for (const e of public_flags_result) {
-            if (e.user_id === getUserId()) continue
-            this.add_flag(e.title, e.id, true)
-        }
+        return result;
+    }
 
+    afterRender(dictionary_term_id) {
         let button_add_flag = get_element("button_add_flag")
 
         let input_checkbox_public_flag = get_element("input_checkbox_public_flag")
         input_checkbox_public_flag.checked = false
 
         button_add_flag.onclick = async () => {
-            const title = prompt("Enter tag title");
+            const title = prompt("Enter flag title");
             if (title === null || title === "") return;
 
             let is_public = input_checkbox_public_flag.checked
@@ -913,17 +921,21 @@ class Flags {
                 return
             }
             showInfo("New flag was assigned: " + title)
-            this.add_flag(title, flag_created.id, is_public)
-            //get_element("div_search_tag").style.display = "none"
+            this.addItem(title, flag_created.id, flag_created)
 
         }
-
     }
 
-    add_flag(title, id, is_public = true) {
+    async loadTitle(item) {
+        return item.title
+    }
+
+    addItem(title, id, item) {
+        let is_public = item.is_public
+
         let div = document.createElement("div")
         div.classList.add("tag")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
         div.innerText = title
         div.style.backgroundColor = "#e0e0e0"
         div.style.color = "#2b2b2b"
