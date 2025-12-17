@@ -107,7 +107,7 @@ function makeDraggable(el) {
         const t = e.touches[0];
         startDrag(t.clientX, t.clientY);
         e.preventDefault();
-    }, { passive: false });
+    }, {passive: false});
 
 
     document.addEventListener('touchmove', e => {
@@ -360,7 +360,7 @@ class TermContainer {
         term_container_h2.style.borderBottom = "1px solid #dcdfe3"
 
         function attach_onclick_to_label(models) {
-            let label = get_element("label_"+models)
+            let label = get_element("label_" + models)
             label.style.cursor = "pointer"
             label.style.backgroundColor = "rgba(213,215,221,0.6)"
             label.style.color = "#2c3e50";
@@ -371,8 +371,8 @@ class TermContainer {
                 let current_display = container.style.display;
                 let shown = current_display === "block" || current_display === "";
                 container.style.display = shown ? "none" : "block"
-                let tmp_id = "label_"+models + "_tmp"
-                if(shown) {
+                let tmp_id = "label_" + models + "_tmp"
+                if (shown) {
                     let tmp_div = document.createElement("div")
                     let start = models.charAt(0).toUpperCase() + models.slice(1)
                     tmp_div.innerText = start + " are hidden. " + "Click \"" + start + ":\" to show them again."
@@ -387,6 +387,7 @@ class TermContainer {
 
             }
         }
+
         attach_onclick_to_label("tags")
         attach_onclick_to_label("flags")
         attach_onclick_to_label("links")
@@ -552,7 +553,7 @@ class TermContainer {
         }
         get_element("button_show_visited").onclick = async () => {
             let visits_result = await list_entities("dictionary_term_visit", "&user_id=" + getUserId() + "&sort=created_at&order=desc", 1, 100)
-            if(null_or_undefined(visits_result)) {
+            if (null_or_undefined(visits_result)) {
                 showError("Loading visits failed.")
                 return;
             }
@@ -590,7 +591,7 @@ class TermContainer {
 
                 let visited_term_id = entry.dictionary_term_id
 
-                if(!disambiguation_map.has(visited_term_id)) {
+                if (!disambiguation_map.has(visited_term_id)) {
                     let term = await read_entity("dictionary_term", visited_term_id)
                     if (term === null || term === undefined) {
                         showWarn("Loading dictionary_term with id " + visited_term_id + " failed.");
@@ -634,9 +635,9 @@ class TermContainer {
                         }
                     }
                     let finalTitle = title
-                    if(disambiguation_map.has(visited_term_id)) {
+                    if (disambiguation_map.has(visited_term_id)) {
                         let value = disambiguation_map.get(visited_term_id)
-                        if(value !== "") finalTitle = title + " (" + disambiguation_map.get(visited_term_id) + ")"
+                        if (value !== "") finalTitle = title + " (" + disambiguation_map.get(visited_term_id) + ")"
                     }
                     a.title = finalTitle
 
@@ -673,7 +674,7 @@ class TermContainer {
         let new_visit = {
             dictionary_term_id: dictionary_term_id,
             user_id: getUserId(),
-            dictionary_map_id : dictionary_app.get_selected_map_id()
+            dictionary_map_id: dictionary_app.get_selected_map_id()
         }
         let created_dictionary_term_visit = post_entity("dictionary_term_visit", new_visit)
         if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
@@ -698,8 +699,14 @@ class AbstractTermSection {
     #setVisible(visible) {
         this.#element.style.display = visible ? "block" : "none";
     }
-    show() { this.#setVisible(true); }
-    hide() { this.#setVisible(false); }
+
+    show() {
+        this.#setVisible(true);
+    }
+
+    hide() {
+        this.#setVisible(false);
+    }
 
     #reset() {
         this.#element.innerHTML = "";
@@ -713,16 +720,16 @@ class AbstractTermSection {
         this.#reset();
 
         const items = await this.loadItems(dictionary_term_id);
-        if(items === null || items === undefined) {
+        if (items === null || items === undefined) {
             showError("Listing " + this.#models + " failed.")
             return
         }
         for (const item of items) {
-            if(item === null) throw "item is null"
-            if(item === undefined) throw "item is undefined"
+            if (item === null) throw "item is null"
+            if (item === undefined) throw "item is undefined"
 
             let title = await this.loadTitle(item)
-            if(title === null || title === undefined) {
+            if (title === null || title === undefined) {
                 alert(JSON.stringify(item))
                 alert("item.id=" + item.id)
                 showError("Loading title failed for model: " + this.#model + " and id " + item.id)
@@ -750,7 +757,7 @@ class AbstractTermSection {
     }
 }
 
-class Tags extends AbstractTermSection{
+class Tags extends AbstractTermSection {
     #input = document.getElementById("input_search_tag")
     #autocomplete = null
 
@@ -868,7 +875,7 @@ class Tags extends AbstractTermSection{
     }
 }
 
-class Flags extends AbstractTermSection{
+class Flags extends AbstractTermSection {
     constructor() {
         super("flag", "flags");
     }
@@ -969,9 +976,10 @@ class Flags extends AbstractTermSection{
     }
 }
 
-class Links extends AbstractTermSection{
+class Links extends AbstractTermSection {
     #input = document.getElementById("input_search_link")
     #autocomplete = null
+
     constructor() {
         super("link", "links");
     }
@@ -1071,6 +1079,7 @@ class Links extends AbstractTermSection{
             this.addItem(item.title, link_created.id, link_created.to_dictionary_term_id)
         })
     }
+
     addItem(title, id, item) {
         let to_dictionary_term_id = item.to_dictionary_term_id
         let div = document.createElement("div")
@@ -1088,7 +1097,7 @@ class Links extends AbstractTermSection{
             if (!confirm("Do you really want to delete this link?")) return;
             let link_deleted = delete_entity("dictionary_link", id)
             let deleted = link_deleted !== null && link_deleted !== undefined
-            if(deleted) {
+            if (deleted) {
                 showInfo("Link was successfully deleted: " + title)
                 div.remove()
             } else {
@@ -1101,7 +1110,7 @@ class Links extends AbstractTermSection{
     }
 }
 
-class Notes extends AbstractTermSection{
+class Notes extends AbstractTermSection {
 
     constructor() {
         super("note", "notes");
@@ -1110,6 +1119,7 @@ class Notes extends AbstractTermSection{
     async loadTitle(item) {
         return item.title
     }
+
     async loadItems(dictionary_term_id) {
         return await list_all_entities(
             "dictionary_note",
@@ -1156,7 +1166,7 @@ class Notes extends AbstractTermSection{
             let note_details_exist = note_details !== null && note_details !== undefined;
 
             if (e.target.tagName === "BUTTON") {
-                if(note_details_exist) note_details.remove()
+                if (note_details_exist) note_details.remove()
                 return;
             }
 
@@ -1180,7 +1190,7 @@ class Notes extends AbstractTermSection{
                 content_changed = get_element(id_content).value !== read_note.content
 
                 unsaved_changes = title_changed || position_changed || content_changed
-                if(unsaved_changes) {
+                if (unsaved_changes) {
                     if (!confirm("Do you really want to collapse this note? Unsaved changes will be lost.")) return;
                 }
 
@@ -1202,7 +1212,7 @@ class Notes extends AbstractTermSection{
                 label.style.display = "inline-block"
                 label.style.marginTop = "10px"
                 label.style.marginRight = "10px"
-                label.style.minWidth= "100px"
+                label.style.minWidth = "100px"
                 note_details.appendChild(label)
             }
 
@@ -1235,9 +1245,9 @@ class Notes extends AbstractTermSection{
             let text_area_content = document.createElement("textarea")
             text_area_content.value = read_note.content
             text_area_content.style.width = "100%"
-            text_area_content.style.boxSizing= "border-box"
+            text_area_content.style.boxSizing = "border-box"
             text_area_content.id = id_content
-            text_area_content.style.height= "200px"
+            text_area_content.style.height = "200px"
 
             note_details.appendChild(text_area_content)
             note_details.appendChild(document.createElement("br"))
@@ -1290,75 +1300,38 @@ class Notes extends AbstractTermSection{
     }
 }
 
-class Indexes {
-    #element
-    #input_search_index = document.getElementById("input_search_index")
-    #autocomplete_index_title = null
+class Indexes extends AbstractTermSection {
+    #input = document.getElementById("input_search_index")
+    #autocomplete = null
 
     constructor() {
-        this.#element = get_element("indexes");
-        this.#element.innerHTML = ""
+        super("index", "indexes");
     }
 
-    async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
-        get_element("div_search_index").style.display = "none"
-        if (this.#autocomplete_index_title !== null) {
-            this.#autocomplete_index_title.destroy()
-            this.#autocomplete_index_title = null
-        }
-        this.#autocomplete_index_title = new Autocomplete(
-            this.#input_search_index,
-            1,
-            "dictionary_index_type_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
-            "title",
-            "title_part",
-            "div_search_index_end"
+    async loadItems(dictionary_term_id) {
+        return await list_all_entities(
+            "dictionary_index",
+            "&dictionary_term_id=" + dictionary_term_id + "&sort=position"
         )
+    }
 
-        this.#autocomplete_index_title.addCallback(async () => {
-
-            let item = this.#autocomplete_index_title.get_item()
-            showInfo("Found index: " + item.name)
-            let dictionary_index_type_id = item.id
-            let new_index = {
-                dictionary_index_type_id: dictionary_index_type_id,
-                dictionary_term_id: dictionary_term_id
-            }
-
-            let index_created = await post_entity("dictionary_index", new_index)
-            if (index_created === null || index_created === undefined) {
-                showError("Creating index failed: " + item.title)
-                return
-            }
-            showInfo("New index was assigned: " + item.title)
-            this.add_index(item.title, index_created.id)
-            //get_element("div_search_index").style.display = "none"
-        })
-
-        let indexes_result = await list_all_entities("dictionary_index", "&dictionary_term_id=" + dictionary_term_id + "&sort=position")
-        if (!indexes_result) {
-            showError("Listing indexes failed.")
-            return;
+    async loadTitle(item) {
+        let index_type = await read_entity("dictionary_index_type", item.dictionary_index_type_id)
+        if (!index_type) {
+            showError("Loading index type failed: " + item.dictionary_index_type_id)
+            return null;
         }
-        //showInfo("Found " + indexes_result.length + " indexes")
-        for (const dictionary_index_json of indexes_result) {
+        return index_type.title
+    }
 
-            let index_type = await read_entity("dictionary_index_type", dictionary_index_json.dictionary_index_type_id)
-            if (!index_type) {
-                showError("Loading index type failed: " + dictionary_index_json.dictionary_index_type_id)
-                continue
-            }
-            let title = index_type.title
-
-            this.add_index(title, dictionary_index_json.id)
-        }
+    async afterRender(dictionary_term_id) {
+        get_element("div_search_index").style.display = "none"
+        this.setupAutocomplete(dictionary_term_id)
 
         let button_add_index = get_element("button_add_index")
         button_add_index.onclick = async () => {
             get_element("div_search_index").style.display = "block"
-            let title = this.#input_search_index.value
+            let title = this.#input.value
             if (title === "") {
                 return;
             }
@@ -1383,8 +1356,7 @@ class Indexes {
                 return
             }
             showInfo("New index was assigned: " + title)
-            this.add_index(title, index_created.id)
-            //get_element("div_search_index").style.display = "none"
+            this.addItem(title, index_created.id)
         }
         get_element("button_show_indexes").onclick = () => {
             let url = "index.html?entity=dictionary_index_type&action=list"
@@ -1392,10 +1364,42 @@ class Indexes {
         }
     }
 
-    add_index(title, id) {
+    setupAutocomplete(dictionary_term_id) {
+        if (this.#autocomplete) this.#autocomplete.destroy()
+        this.#autocomplete = new Autocomplete(
+            this.#input,
+            1,
+            "dictionary_index_type_fulltext",
+            "&dictionary_map_id=" + dictionary_app.get_selected_map_id(),
+            "title",
+            "title_part",
+            "div_search_index_end"
+        )
+
+        this.#autocomplete.addCallback(async () => {
+
+            let item = this.#autocomplete.get_item()
+            showInfo("Found index: " + item.title)
+            let dictionary_index_type_id = item.id
+            let new_index = {
+                dictionary_index_type_id: dictionary_index_type_id,
+                dictionary_term_id: dictionary_term_id
+            }
+
+            let index_created = await post_entity("dictionary_index", new_index)
+            if (index_created === null || index_created === undefined) {
+                showError("Creating index failed: " + item.title)
+                return
+            }
+            showInfo("New index was assigned: " + item.title)
+            this.addItem(item.title, index_created.id)
+        })
+    }
+
+    addItem(title, id) {
         let div = document.createElement("div")
         div.classList.add("item")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
         let span = document.createElement("span")
         span.innerText = title
         div.appendChild(span)
@@ -1442,79 +1446,39 @@ class Indexes {
         }
         div_buttons.appendChild(delete_button)
 
-        this.#input_search_index.value = ""
+        this.#input.value = ""
     }
 }
 
-class Sources {
-    #element
-    #input_search_source = document.getElementById("input_search_source")
-    #autocomplete_source_title = null
+class Sources extends AbstractTermSection {
+    #input = document.getElementById("input_search_source")
+    #autocomplete = null
 
     constructor() {
-        this.#element = get_element("sources");
-        this.#element.innerHTML = ""
+        super("source", "sources");
     }
 
-    async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
+    async loadItems(dictionary_term_id) {
+        return await list_all_entities("dictionary_source", "&dictionary_term_id=" + dictionary_term_id)
+    }
+
+    async loadTitle(item) {
+        let source_type = await read_entity("dictionary_source_type", item.dictionary_source_type_id)
+        if (!source_type) {
+            showError("Loading source type failed: " + item.dictionary_source_type_id)
+            return null
+        }
+        return source_type.title
+    }
+
+        async afterRender(dictionary_term_id) {
         get_element("div_search_source").style.display = "none"
-        if (this.#autocomplete_source_title !== null) {
-            this.#autocomplete_source_title.destroy()
-            this.#autocomplete_source_title = null
-        }
-        this.#autocomplete_source_title = new Autocomplete(
-            this.#input_search_source,
-            1,
-            "dictionary_source_type_fulltext",
-            "",
-            "title",
-            "title_part",
-            "div_search_source_end"
-        )
-
-        this.#autocomplete_source_title.addCallback(async () => {
-
-            let item = this.#autocomplete_source_title.get_item()
-            showInfo("Found source: " + item.title)
-            let dictionary_source_type_id = item.id
-            let new_source = {
-                dictionary_term_id: dictionary_term_id,
-                dictionary_source_type_id: dictionary_source_type_id
-            }
-
-            let source_created = await post_entity("dictionary_source", new_source)
-            if (source_created === null || source_created === undefined) {
-                showError("Creating source failed: " + item.title)
-                return
-            }
-            showInfo("New source was assigned: " + item.title)
-            this.add_source(item.title, source_created.id)
-            //get_element("div_search_source").style.display = "none"
-        })
-
-        let sources_result = await list_all_entities("dictionary_source", "&dictionary_term_id=" + dictionary_term_id)
-        if (!sources_result) {
-            showError("Listing sources failed.")
-            return;
-        }
-        //showInfo("Found " + sources_result.length + " sources")
-        for (const dictionary_source_json of sources_result) {
-
-            let source_type = await read_entity("dictionary_source_type", dictionary_source_json.dictionary_source_type_id)
-            if (!source_type) {
-                showError("Loading source type failed: " + dictionary_source_json.dictionary_source_type_id)
-                continue
-            }
-            let title = source_type.title
-
-            this.add_source(title, dictionary_source_json.id)
-        }
+            this.setupAutocomplete(dictionary_term_id);
 
         let button_add_source = get_element("button_add_source")
         button_add_source.onclick = async () => {
             get_element("div_search_source").style.display = "block"
-            let title = this.#input_search_source.value
+            let title = this.#input.value
             if (title === "") {
                 return;
             }
@@ -1539,8 +1503,7 @@ class Sources {
                 return
             }
             showInfo("New source was assigned: " + title)
-            this.add_source(title, source_created.id)
-            //get_element("div_search_source").style.display = "none"
+            this.addItem(title, source_created.id)
         }
         get_element("button_show_sources").onclick = () => {
             let url = "index.html?entity=dictionary_source_type&action=list"
@@ -1548,10 +1511,42 @@ class Sources {
         }
     }
 
-    add_source(title, id) {
+    setupAutocomplete(dictionary_term_id) {
+        if (this.#autocomplete) this.#autocomplete.destroy()
+        this.#autocomplete = new Autocomplete(
+            this.#input,
+            1,
+            "dictionary_source_type_fulltext",
+            "",
+            "title",
+            "title_part",
+            "div_search_source_end"
+        )
+
+        this.#autocomplete.addCallback(async () => {
+
+            let item = this.#autocomplete.get_item()
+            showInfo("Found source: " + item.title)
+            let dictionary_source_type_id = item.id
+            let new_source = {
+                dictionary_term_id: dictionary_term_id,
+                dictionary_source_type_id: dictionary_source_type_id
+            }
+
+            let source_created = await post_entity("dictionary_source", new_source)
+            if (source_created === null || source_created === undefined) {
+                showError("Creating source failed: " + item.title)
+                return
+            }
+            showInfo("New source was assigned: " + item.title)
+            this.addItem(item.title, source_created.id)
+        })
+    }
+
+    addItem(title, id) {
         let div = document.createElement("div")
         div.classList.add("item")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
         let span = document.createElement("span")
         span.innerText = title
         div.appendChild(span)
@@ -1598,31 +1593,25 @@ class Sources {
         }
         div_buttons.appendChild(delete_button)
 
-        this.#input_search_source.value = ""
+        this.#input.value = ""
     }
 }
 
 
-class Aliases {
-    #element
-
+class Aliases extends AbstractTermSection {
     constructor() {
-        this.#element = get_element("aliases");
-        this.#element.innerHTML = ""
+        super("alias", "aliases");
     }
 
-    async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
-        let aliases_result = await list_all_entities("dictionary_term_alias", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
-        if (!aliases_result) {
-            showError("Listing private aliases failed.")
-            return;
-        }
+    async loadTitle(item) {
+        return item.alias
+    }
 
-        for (const e of aliases_result) {
-            this.add_alias(e.alias, e.id, false)
-        }
+    async loadItems(dictionary_term_id) {
+        return await list_all_entities("dictionary_term_alias", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
+    }
 
+    async afterRender(dictionary_term_id) {
         let button_add_alias = get_element("button_add_alias")
 
         button_add_alias.onclick = async () => {
@@ -1640,16 +1629,16 @@ class Aliases {
                 return
             }
             showInfo("New alias was assigned: " + title)
-            this.add_alias(title, alias_created.id)
+            this.addItem(title, alias_created.id)
 
         }
 
     }
 
-    add_alias(title, id) {
+    addItem(title, id) {
         let div = document.createElement("div")
         div.classList.add("tag")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
         div.innerText = title
         div.style.backgroundColor = "rgba(151,112,207,0.71)"
         div.style.color = "#2b2b2b"
