@@ -1101,29 +1101,24 @@ class Links extends AbstractTermSection{
     }
 }
 
-class Notes {
-    #element
+class Notes extends AbstractTermSection{
 
     constructor() {
-        this.#element = get_element("notes");
-        this.#element.innerHTML = ""
+        super("note", "notes");
     }
 
-    async render(dictionary_term_id) {
-        this.#element.innerHTML = ""
-        let notes_result = await list_all_entities("dictionary_note", "&dictionary_term_id=" + dictionary_term_id + "&sort=position")
-        if (!notes_result) {
-            showError("Listing notes failed.")
-            return;
-        }
+    async loadTitle(item) {
+        return item.title
+    }
+    async loadItems(dictionary_term_id) {
+        return await list_all_entities(
+            "dictionary_note",
+            "&dictionary_term_id=" + dictionary_term_id + "&sort=position"
+        )
+    }
 
-        for (const e of notes_result) {
-            this.add_note(e.title, e.id)
-        }
-
+    async afterRender(dictionary_term_id) {
         let button_add_note = get_element("button_add_note")
-
-
 
         button_add_note.onclick = async () => {
             const title = prompt("Enter note title");
@@ -1141,15 +1136,15 @@ class Notes {
                 return
             }
             showInfo("New note was created: " + title)
-            this.add_note(title, note_created.id)
+            this.addItem(title, note_created.id)
         }
 
     }
 
-    add_note(title, id) {
+    addItem(title, id) {
         let div = document.createElement("div")
         div.classList.add("item")
-        this.#element.appendChild(div)
+        this._element.appendChild(div)
 
         let span = document.createElement("span")
         span.innerText = title
@@ -1192,7 +1187,6 @@ class Notes {
                 note_details.remove()
                 return
             }
-
 
             note_details = document.createElement("div")
             note_details.id = div_id
@@ -1269,7 +1263,6 @@ class Notes {
 
         }
 
-
         let div_buttons = document.createElement("div")
         let edit_button = document.createElement("button")
         edit_button.innerHTML = "📝 Edit"
@@ -1296,7 +1289,6 @@ class Notes {
         div.appendChild(div_buttons)
     }
 }
-
 
 class Indexes {
     #element
