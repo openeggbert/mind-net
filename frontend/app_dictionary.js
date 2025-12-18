@@ -19,6 +19,11 @@ import {Autocomplete, null_or_undefined} from "./common.js";
 
 let wasDragged = false;
 let suppressPopstate = false;
+let debug = true
+
+function showDebug(msg) {
+    if(debug) showInfo("Debug: " + msg)
+}
 
 // ========================================
 // Markdown Renderer (syntax highlight + emoji)
@@ -461,9 +466,9 @@ class DictionaryApp {
             }
             // --- Title contains ---
             const titleLabel = make_label("Title contains:");
-            const titleInput = make_input();
-            titleInput.placeholder = "e.g. mutex, allocator, RAII";
-            form.appendChild(make_div(titleLabel, titleInput));
+            const titleContainsInput = make_input();
+            titleContainsInput.placeholder = "e.g. mutex, allocator, RAII";
+            form.appendChild(make_div(titleLabel, titleContainsInput));
 
             // --- Title starts with ---
             const titleStartsWithLabel = make_label("Title starts with:");
@@ -513,6 +518,7 @@ class DictionaryApp {
                 cb.value = i + 1;
                 cb.checked = true;
                 cb.style.marginLeft = "0"
+                cb.id = "difficulty_" + t.toLowerCase()
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
@@ -535,6 +541,7 @@ class DictionaryApp {
                 input.value = i + 1;
                 input.checked = true;
                 input.style.marginLeft = "0"
+                input.id = "importance_" + t.toLowerCase()
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
@@ -681,10 +688,11 @@ class DictionaryApp {
             searchBtn.onclick = () => {
                 showInfo("Advanced Search submitted (logic not implemented yet)");
                 console.log("Advanced search values:", {
-                    title: titleInput.value,
+                    title: titleContainsInput.value,
                     status: statusSelect.value
                 });
             };
+            buttonRow.appendChild(searchBtn);
 
             function make_button(text) {
                 const button = document.createElement("button");
@@ -697,7 +705,7 @@ class DictionaryApp {
             const resetBtn = make_button("♻ Reset");
 
             resetBtn.onclick = () => {
-                titleInput.value = "";
+                titleContainsInput.value = "";
                 titleStartsWithInput.value = ""
                 definitionInput.value = ""
                 statusSelect.selectedIndex = 0;
@@ -722,27 +730,226 @@ class DictionaryApp {
                 visitedSelect.selectedIndex = 0
                 updatedSelect.selectedIndex = 0
             }
+            buttonRow.appendChild(resetBtn);
+
+            let search_json = null
 
             const saveBtn = make_button("💾 Save");
-            saveBtn.onclick = () => {
+            saveBtn.onclick = async () => {
+                let search_already_exists = search_json !== null
+                let name = null
+                if (!search_already_exists) {
+                    name = prompt("Enter search name");
+                    if (name === null || name === undefined || name === "") name = formatDateTime(new Date(), true, true, true, false);
+                } else {
+                    name = search_json.name
+                }
+
+                let query_json = {
+                    title_contains: titleContainsInput.value,
+                    title_starts_with: titleStartsWithInput.value,
+                    definition_contains: definitionInput.value,
+                    status: Array
+                        .from(statusSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                    pinned_only: pinnedCheckbox.checked,
+                    difficulty_easy: get_element("difficulty_easy").checked,
+                    difficulty_medium: get_element("difficulty_medium").checked,
+                    difficulty_hard: get_element("difficulty_hard").checked,
+                    importance_low: get_element("importance_low").checked,
+                    importance_medium: get_element("importance_medium").checked,
+                    importance_high: get_element("importance_high").checked,
+                    tag: tag_autocomplete.get_item_id(),
+                    flag: flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title,
+                    link_from: link_from_autocomplete.get_item_id(),
+                    link_to: link_to_autocomplete.get_item_id(),
+                    note_contains: noteInput.value,
+                    index: index_autocomplete.get_item_id(),
+                    source: source_autocomplete.get_item_id(),
+                    alias: alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title,
+                    has: has_array
+                        .filter(e => get_element("has_" + e.toLowerCase()).checked)
+                        .map(e => e.toLowerCase())
+                        .join(","),
+                    visited: Array
+                        .from(visitedSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                    updated: Array
+                        .from(updatedSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                }
+
+                // alert(JSON.stringify(query_json, null, 2))
+
+                let is_public = false;
+
+                if(search_already_exists) {
+                    is_public = search_json.is_public === 1
+                } else {
+                    let is_public_option = await chooseOption(["Public", "Private"]);
+                    is_public = is_public_option === null || is_public_option === undefined ? false : is_public_option === "Public"
+                }
+
+                if (!search_already_exists) {
+                    let new_search = {
+                        user_id: getUserId(),
+                        dictionary_map_id: this.get_selected_map_id(),
+                        name: name,
+                        query_json: JSON.stringify(query_json),
+                        is_public: is_public ? 1 : 0
+                    }
+                    let new_search_created = await post_entity("dictionary_search", new_search)
+                    if (!defined(new_search_created)) {
+                        showError("Creating new search failed.")
+                        return
+                    } else {
+                        showInfo("New search was successfully created.")
+                        search_json = new_search_created
+                        unloadBtn.disabled = ""
+                        load_input.disabled = ""
+                        deleteBtn.disabled = ""
+
+                    }
+                }
+                if (search_already_exists) {
+                    search_json.query_json = JSON.stringify(query_json)
+
+                    let search_updated = await put_entity("dictionary_search", search_json.id, search_json)
+                    if (!defined(search_updated)) {
+                        showError("Updating search failed.")
+                        return
+                    } else {
+                        showInfo("Search was successfully updated.")
+                    }
+                }
+
 
             }
+            buttonRow.appendChild(saveBtn);
 
-            const loadUnloadBtn = make_button("📂 Load");
-            loadUnloadBtn.onclick = () => {
+            const DISABLED = "disabled"
+            const unloadBtn = make_button("📂 Unload");
+            unloadBtn.disabled = DISABLED
+            unloadBtn.onclick = () => {
+                let loaded = search_json !== null
+                if (!loaded) return
+                search_json = null
 
+                unloadBtn.disabled = DISABLED
+                load_input.disabled = ""
+                deleteBtn.disabled = DISABLED
             }
+            buttonRow.appendChild(unloadBtn);
+
+            const load_input = make_input()
+            buttonRow.appendChild(load_input)
+            load_input.id = "load_input"
+            load_input.placeholder = "Load a search"
+            load_input.style.marginLeft = "10px"
+            load_input.style.width = "150px"
+            let search_autocomplete = new Autocomplete(load_input, 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+            search_autocomplete.box_margin_left = "465px"
+            search_autocomplete.clear_after_click = false
+            make_close_button("search", load_input, search_autocomplete)
+            search_autocomplete.addCallback(async e => {
+                let old_search_id = search_json === null ? 0 : search_json.id
+                let new_search_id = search_autocomplete.get_item_id()
+                showDebug("old_search_id=" + old_search_id)
+                showDebug("new_search_id=" + new_search_id)
+                showDebug(JSON.stringify(search_autocomplete.get_item()))
+                let read_search = await read_entity("dictionary_search", new_search_id)
+                if (!defined(read_search)) {
+                    showError("Reading search failed: " + new_search_id)
+                    return
+                }
+                resetBtn.click()
+                let query = JSON.parse(read_search.query_json)
+                titleContainsInput.value = query.title_contains ?? ""
+                titleStartsWithInput.value = query.title_starts_with ?? ""
+                definitionInput.value = query.definition_contains ?? ""
+                let statuses = (query.status ?? "").split(",")
+                for (const option of statusSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = statuses.includes(option.innerText);
+                }
+                pinnedCheckbox.checked = query.pinned_only ?? false
+                get_element("difficulty_easy").checked = query.difficulty_easy ?? true
+                get_element("difficulty_medium").checked = query.difficulty_medium ?? true
+                get_element("difficulty_hard").checked = query.difficulty_hard ?? true
+                get_element("importance_low").checked = query.importance_low ?? true
+                get_element("importance_medium").checked = query.importance_medium ?? true
+                get_element("importance_high").checked = query.importance_high ?? true
+
+                if((query.tag ?? 0) !== 0) {
+                    let read_tag = await read_entity("dictionary_tag", query.tag)
+                    if(!defined(read_tag)) {
+                        showError("Reading tag failed: " + query.tag)
+                    } else {
+                        let read_tag_type = await read_entity("dictionary_tag_type", read_tag.dictionary_tag_type_id)
+                        if(!defined(read_tag_type)) {
+                            showError("Reading tag type failed: " + read_tag.dictionary_tag_type_id)
+                        } else {
+                            await tag_autocomplete.set_from_title(read_tag_type.title, query.tag)
+                        }
+                    }
+                }
+
+                if((query.flag ?? "") !== "") {
+                    await flag_autocomplete.set_from_title(query.flag)
+                }
+                if((query.link_from ?? 0) !== 0) {
+                    let read_term = await read_entity("dictionary_term", query.link_from)
+                    if(!defined(read_term)) {
+                        showError("Reading term failed: " + query.link_from)
+                    } else {
+                        await link_from_autocomplete.set_from_title(read_term.title, query.link_from)
+                    }
+                }
+
+                //     link_to: link_to_autocomplete.get_item_id(),
+                //     note_contains: noteInput.value,
+                //     index: index_autocomplete.get_item_id(),
+                //     source: source_autocomplete.get_item_id(),
+                //     alias: alias_autocomplete.get_item_id(),
+                //     has: has_array
+                //     .filter(e => get_element("has_" + e.toLowerCase()).checked)
+                //     .map(e => e.toLowerCase())
+                //     .join(","),
+                //     visited: Array
+                //     .from(visitedSelect.selectedOptions)
+                //     .map(opt => opt.innerText)
+                //     .join(","),
+                //     updated: Array
+                //     .from(updatedSelect.selectedOptions)
+                //     .map(opt => opt.innerText)
+                //     .join(","),
+
+                console.debug(JSON.stringify(read_search))
+                console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
+                deleteBtn.disabled = ""
+                unloadBtn.disabled = ""
+                search_json = read_search
+            })
 
             const deleteBtn = make_button("🗑 Delete");
-            deleteBtn.disabled = "disabled"
-            deleteBtn.onclick = () => {
-
+            deleteBtn.disabled = DISABLED
+            deleteBtn.onclick = async () => {
+                if (search_json === null) {
+                    // nothing to do
+                    return
+                }
+                let deleted = await delete_entity("dictionary_search", search_json.id)
+                if(!defined(deleted)) {
+                    showError("Deleting search failed: " + search_json.id + " " + search_json.name)
+                    return
+                }
+                search_json = null
+                deleteBtn.disabled = DISABLED
+                unloadBtn.disabled = DISABLED
             }
-
-            buttonRow.appendChild(searchBtn);
-            buttonRow.appendChild(resetBtn);
-            buttonRow.appendChild(saveBtn);
-            buttonRow.appendChild(loadUnloadBtn);
             buttonRow.appendChild(deleteBtn);
 
             form.appendChild(buttonRow);

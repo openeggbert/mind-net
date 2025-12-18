@@ -25,6 +25,7 @@ export class Autocomplete {
         this.input = input;
         this.title_column = title_column;
         this.item = null;
+        this.input_min_length = input_min_length
 
         this.fetcher = async query => {
             const qp = query_params + "&" + part_column + "=" + encodeURIComponent(query);
@@ -99,6 +100,29 @@ export class Autocomplete {
     }
     get_item() {
         return this.item;
+    }
+    get_item_id() {
+        return this.item === null ? 0 : this.item.id;
+    }
+    async set_from_title(title, id = 0) {
+        const items = await this.fetcher(title, this.input_min_length);
+        if(items.length === 0) return
+        let item = null;
+        if(id === 0) {
+            item = items[0]
+        } else {
+            for (const e of items) {
+                if(e.id === id) {
+                    item = e;
+                    break;
+                }
+            }
+        }
+        if(item === null) return
+
+        this.input.value = title;
+        this.item = item;
+        if(this.clear_after_click) this.input.value = ""
     }
     reset() {
         this.input.value = ""
