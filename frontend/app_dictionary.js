@@ -908,10 +908,30 @@ class DictionaryApp {
                         await link_from_autocomplete.set_from_title(read_term.title, query.link_from)
                     }
                 }
+                if((query.link_to ?? 0) !== 0) {
+                    let read_term = await read_entity("dictionary_term", query.link_to)
+                    if(!defined(read_term)) {
+                        showError("Reading term failed: " + query.link_to)
+                    } else {
+                        await link_to_autocomplete.set_from_title(read_term.title, query.link_to)
+                    }
+                }
+                noteInput.value = query.note_contains ?? ""
 
-                //     link_to: link_to_autocomplete.get_item_id(),
-                //     note_contains: noteInput.value,
-                //     index: index_autocomplete.get_item_id(),
+                if((query.index ?? 0) !== 0) {
+                    let read_index = await read_entity("dictionary_index", query.index)
+                    if(!defined(read_index)) {
+                        showError("Reading index failed: " + query.index)
+                    } else {
+                        let read_index_type = await read_entity("dictionary_index_type", read_index.dictionary_index_type_id)
+                        if(!defined(read_index_type)) {
+                            showError("Reading index type failed: " + read_index_type.dictionary_index_type_id)
+                        } else {
+                            await index_autocomplete.set_from_title(read_index_type.title, query.index)
+                        }
+                    }
+                }
+
                 //     source: source_autocomplete.get_item_id(),
                 //     alias: alias_autocomplete.get_item_id(),
                 //     has: has_array
