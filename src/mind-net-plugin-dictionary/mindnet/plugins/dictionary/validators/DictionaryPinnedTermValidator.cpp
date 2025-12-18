@@ -21,24 +21,24 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryPinnedTermValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryTermVisit.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryPinnedTerm.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
-#define Model DictionaryTermVisit
-#define MODEL DICTIONARY_TERM_VISIT
-#define model dictionary_term_visit
+#define Model DictionaryPinnedTerm
+#define MODEL DICTIONARY_PINNED_TERM
+#define model dictionary_pinned_term
 
 namespace mindnet::plugins::dictionary::validators
 {
-    using validators::DictionaryTermVisitValidator;
+    using validators::DictionaryPinnedTermValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult DictionaryTermVisitValidator::validate_create_authorization(
+    OperationResult DictionaryPinnedTermValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         auto dictionary_term = find_dictionary_term(ctx, entity.dictionary_term_id);
@@ -46,33 +46,33 @@ namespace mindnet::plugins::dictionary::validators
 
         if (!dictionary::has_right_for_map(ctx, dictionary_term.first.dictionary_map_id, plugins::core::enums::SingleRight::Write))
         {
-            return {403, "You do not have permission to create a TermVisit for this map."};
+            return {403, "You do not have permission to create a PinnedTerm for this map."};
         }
 
         return ok_result;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_read_authorization(
+    OperationResult DictionaryPinnedTermValidator::validate_read_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         if (entity.user_id != ctx.token.user_id)
         {
-            return {403, "You do not have permission to read a TermVisit for this map."};
+            return {403, "You do not have permission to read a PinnedTerm for this map."};
         }
         return ok_result;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_update_authorization(
+    OperationResult DictionaryPinnedTermValidator::validate_update_authorization(
         const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_delete_authorization(
+    OperationResult DictionaryPinnedTermValidator::validate_delete_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         if (ctx.token.user_id != entity.user_id)
-            return {403, "You do not have permission to delete this visit."};
+            return {403, "You do not have permission to delete this PinnedTerm."};
 
         auto term = find_dictionary_term(ctx, entity.dictionary_term_id);
         if (!term.second.empty()) return {500, term.second};
@@ -83,7 +83,7 @@ namespace mindnet::plugins::dictionary::validators
 
         return ok_result;    }
 
-    OperationResult DictionaryTermVisitValidator::validate_list_authorization(
+    OperationResult DictionaryPinnedTermValidator::validate_list_authorization(
         const RequestContext& ctx, const string_map& filter) const
     {
         mandatory_filter(user_id)
@@ -91,44 +91,44 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_create_integrity(
+    OperationResult DictionaryPinnedTermValidator::validate_create_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
         if (entity.user_id != ctx.token.user_id)
-            return {400, "dictionary_term_visit.user_id must be the same as your user id."};
+            return {400, "dictionary_pinned_term.user_id must be the same as your user id."};
         auto read_term = find_dictionary_term(ctx, entity.dictionary_term_id);
         if (!read_term.second.empty()) return {400, read_term.second};        
         if (entity.dictionary_map_id != read_term.first.dictionary_map_id)
-            return {400, "The dictionary_map_id of the term and term visit must be the same."};
+            return {400, "The dictionary_map_id of the term and pinned term must be the same."};
 
         return ok_result;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_read_integrity(
+    OperationResult DictionaryPinnedTermValidator::validate_read_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_update_integrity(
+    OperationResult DictionaryPinnedTermValidator::validate_update_integrity(
         const RequestContext& ctx, const Model& old_entity, const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_delete_integrity(
+    OperationResult DictionaryPinnedTermValidator::validate_delete_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult DictionaryTermVisitValidator::validate_list_integrity(
+    OperationResult DictionaryPinnedTermValidator::validate_list_integrity(
         const RequestContext& ctx, const string_map& filter) const
     {
         return ok_result;
     }
 
-    string DictionaryTermVisitValidator::get_model_name() const
+    string DictionaryPinnedTermValidator::get_model_name() const
     {
         return STRINGIFY(model);
     }

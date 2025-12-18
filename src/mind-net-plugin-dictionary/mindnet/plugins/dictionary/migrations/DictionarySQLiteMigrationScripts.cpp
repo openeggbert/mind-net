@@ -412,6 +412,31 @@ CREATE INDEX idx_dictionary_index_position
     ON dictionary_index(dictionary_index_type_id, position);
 )");
 
+        //
+        // V16 — dictionary_pinned_term
+        //
+        add_migration("V16__create_dictionary_pinned_term.sql", R"(
+CREATE TABLE dictionary_pinned_term (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_term_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
+
+    UNIQUE(dictionary_term_id, user_id),
+
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
+);
+
+CREATE INDEX idx_dictionary_pinned_term_term ON dictionary_pinned_term(dictionary_term_id);
+CREATE INDEX idx_dictionary_pinned_term_user ON dictionary_pinned_term(user_id);
+CREATE INDEX idx_dictionary_pinned_term_map ON dictionary_pinned_term(dictionary_map_id);
+)");
+
 
     }
 }

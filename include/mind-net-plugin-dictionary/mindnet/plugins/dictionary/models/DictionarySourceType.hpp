@@ -56,7 +56,7 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::YEAR, INTEGER),
             coldef(COLS::PUBLISHER),
             coldef(COLS::EDITION),
-            coldef(COLS::PAGES),
+            coldef(COLS::PAGES, INTEGER),
             coldef(COLS::URL),
             coldef(COLS::TYPE, INTEGER | MANDATORY).set_enum_definition(enums::source_type_to_enum_definition()),
             coldef(COLS::NOTE)
@@ -69,7 +69,7 @@ namespace mindnet::plugins::dictionary::models
         int year{};
         string publisher;
         string edition;
-        int pages;
+        int pages{0};
         string url;
         enums::SourceType type{};
         string note;

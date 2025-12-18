@@ -424,6 +424,14 @@ class TermContainer {
         let status = dictionary_term.status
         get_element("select_status").selectedIndex = status
 
+        let checkbox_pinned = get_element("checkbox_pinned")
+        let pinned_terms = await list_all_entities("dictionary_pinned_term", "&user_id=" + getUserId() + "&dictionary_term_id=" + dictionary_term_id)
+        if (!defined(pinned_terms)) {
+            showError("Loading pinned terms failed.")
+        } else {
+            checkbox_pinned.checked = pinned_terms.length > 0
+        }
+
         let importance = dictionary_term.importance
         let difficulty = dictionary_term.difficulty
         let id1 = "input_importance_" + (importance === 1 ? "low" : (importance === 2 ? "medium" : "high"));
@@ -514,6 +522,42 @@ class TermContainer {
             new_term.title = get_element("input_title").value
             new_term.disambiguation = get_element("input_disambiguation").value
             new_term.definition = get_element("textarea_definition").value
+
+            let checkbox_pinned = get_element("checkbox_pinned")
+            let pinned_now = checkbox_pinned.checked
+            let pinned_terms = await list_all_entities("dictionary_pinned_term", "&user_id=" + getUserId() + "&dictionary_term_id=" + dictionary_term_id)
+            if (!defined(pinned_terms)) {
+                showError("Loading pinned terms failed.")
+            } else {
+                let pinned_in_db = pinned_terms.length > 0
+                if(pinned_now !== pinned_in_db) {
+                    if(pinned_now) {
+                        let new_pinned_term = {
+                            dictionary_term_id: dictionary_term_id,
+                            user_id: getUserId(),
+                            dictionary_map_id: dictionary_app.get_selected_map_id()
+                        }
+                        let created = await post_entity("dictionary_pinned_term", new_pinned_term)
+                        if(defined(created)) {
+                            showInfo("New pinned term was successfully created.")
+                            checkbox_pinned.checked = true
+                        } else {
+                            showError("Creating new pinned term failed.")
+                        }
+                    }
+                    if(!pinned_now) {
+                        for (const e of pinned_terms) {
+                            let deleted = await delete_entity("dictionary_pinned_term", e.id)
+                            if(deleted) {
+                                showInfo("Pinned term was successfully deleted: " + e.id)
+                                checkbox_pinned.checked = false
+                            } else {
+                                showError("Deleting pinned term failed: " + e.id)
+                            }
+                        }
+                    }
+                }
+            }
 
             new_term.status = get_element("select_status").selectedIndex
 
