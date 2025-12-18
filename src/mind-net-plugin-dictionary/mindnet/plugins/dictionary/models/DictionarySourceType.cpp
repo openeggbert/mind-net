@@ -45,7 +45,7 @@ namespace mindnet::plugins::dictionary::models
             [this] { return test_at_most(year, 3000, DictionarySourceTypeColumns::YEAR); },
             [this] { return testt_between(publisher, 0, 128, DictionarySourceTypeColumns::PUBLISHER); },
             [this] { return testt_between(edition, 0, 64, DictionarySourceTypeColumns::EDITION); },
-            [this] { return test_at_least(pages, 1, DictionarySourceTypeColumns::PAGES); },
+            [this] { return test_at_least(pages, 0, DictionarySourceTypeColumns::PAGES); },
             [this] { return testt_between(url, 0, 256, DictionarySourceTypeColumns::URL); },
 
         };

@@ -23,14 +23,15 @@
 #pragma once
 
 #include <string>
+#include <utility>
 
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model DictionaryFlag
-#define MODEL DICTIONARY_FLAG
-#define COLS columns::DictionaryFlagColumns
-#include "../columns/DictionaryFlagColumns.hpp"
+#define Model DictionaryFlagFulltext
+#define MODEL DICTIONARY_FLAG_FULLTEXT
+#define COLS columns::DictionaryFlagFulltextColumns
+#include "../columns/DictionaryFlagFulltextColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -40,32 +41,29 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_FLAG_DEFINITION =
+    inline const def DICTIONARY_FLAG_FULLTEXT_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_group("Dictionary", 100)
-        .set_rest_operations("crdl").set_title_column(COLS::TITLE)
+        .set_rest_operations("l").set_title_column(COLS::ID)
+        .set_no_table(true)
+        .set_cache_enabled(false)
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::USER_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            //
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::TITLE_PART, MANDATORY | READONLY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
-            coldef(COLS::IS_PUBLIC, BOOL | READONLY).set_default_value(false),
         });
 
     struct Model : mindnet::model::BaseModel
     {
-        identification dictionary_term_id{0};
-        identification user_id{0};
-        identification dictionary_map_id{0};
-        std::string title;
-        bool is_public{false};
+        identification dictionary_map_id{};
+        std::string title_part{};
+        std::string title{};
 
         static constexpr auto fields = std::make_tuple(
-            &Model::dictionary_term_id,
-            &Model::user_id,
             &Model::dictionary_map_id,
-            &Model::title,
-            &Model::is_public
+            &Model::title_part,
+            &Model::title
         );
 
         create_model_h_methods(Model, MODEL)
@@ -73,11 +71,11 @@ namespace mindnet::plugins::dictionary::models
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                user_id == other.user_id && title == other.title &&
                 dictionary_map_id == other.dictionary_map_id &&
-                is_public == other.is_public &&
-                created_at == other.created_at && updated_at == other.updated_at;
+                title_part == other.title_part &&
+                title == other.title &&
+                created_at == other.created_at &&
+                updated_at == other.updated_at;
         }
     };
 }

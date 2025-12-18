@@ -41,6 +41,7 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* MODEL_NAME = "dictionary_term_alias";
 
         static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
+        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
         static constexpr const char* ALIAS = "alias";
     };
 }

@@ -14,12 +14,14 @@ export class Autocomplete {
     addCallback(fn) {
         this.#callbacks.push(fn);
     }
+    clear_after_click = true
+    box_margin_left = null
 
     #runCallbacks(...args) {
         this.#callbacks.forEach(fn => fn(...args));
     }
 
-    constructor(input, input_min_length, entity, query_params, title_column, part_column, insert_before_id = "button_add_term") {
+    constructor(input, input_min_length, entity, query_params, title_column, part_column, insert_after_id = "") {
         this.input = input;
         this.title_column = title_column;
         this.item = null;
@@ -34,7 +36,13 @@ export class Autocomplete {
         this.box.style.display = "none";
 
         if (input.parentNode) {
-            input.parentNode.insertBefore(this.box, get_element(insert_before_id));
+            if (insert_after_id === null || insert_after_id === undefined || insert_after_id === "") {
+                input.parentNode.appendChild(this.box);
+            } else {
+                let el = get_element(insert_after_id)
+                if(el === null) alert("el with id is null: " + insert_after_id)
+                el.after(this.box)
+            }
         }
 
         this.input_handler = debounce(() => {
@@ -75,9 +83,14 @@ export class Autocomplete {
                 this.box.style.display = "none";
                 this.item = item;
                 this.#runCallbacks()
-                this.input.value = ""
+                if(this.clear_after_click) this.input.value = ""
             };
 
+            if(this.box_margin_left !== null) {
+                this.box.style.marginLeft = this.box_margin_left
+            } else {
+                this.box.style.marginLeft = ""
+            }
             this.box.appendChild(div);
         });
 
@@ -85,6 +98,11 @@ export class Autocomplete {
     }
     get_item() {
         return this.item;
+    }
+    reset() {
+        this.input.value = ""
+        this.item = null
+        this.box.innerHTML = "";
     }
 
     destroy() {

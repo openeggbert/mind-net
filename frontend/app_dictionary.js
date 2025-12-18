@@ -408,6 +408,273 @@ class DictionaryApp {
             this.#term_container.show()
             this.#input_search_term.value = ""
         })
+
+        get_element("button_open_advanced_search").onclick = async () => {
+            clearWindow();
+
+            setWindowTitle("🔍 Advanced Search");
+
+            const content = getWindowContent();
+            content.style.height = "100%";
+
+            // ---------- FORM ----------
+            const form = document.createElement("form");
+            form.style.display = "flex";
+            form.style.flexDirection = "column";
+            form.style.gap = "12px";
+            form.style.padding = "10px";
+
+            function make_label(innerText = "", width = "200px") {
+                let label = document.createElement("label")
+                label.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
+                label.innerText = innerText
+                let div = document.createElement("div")
+                div.style.width = width
+                div.appendChild(label)
+                div.style.display="inline-block"
+                div.style.whiteSpace="nowrap"
+                return div
+            }
+            function make_input(type = "text") {
+                let input = document.createElement("input")
+                input.type = type;
+                if (type === "checkbox") {
+                    input.style.transform = "scale(2)"
+                    input.style.marginLeft = "10px"
+                    input.style.marginRight = "10px"
+                    input.style.textAlign = "left"
+                } else {
+                    input.style.width= "250px";
+                }
+                return input
+            }
+            function make_select() {
+                let select = document.createElement("select")
+                select.style.width= "250px";
+                return select
+            }
+            function make_div(label, element) {
+                let div = document.createElement("div")
+                div.appendChild(label)
+                div.appendChild(element)
+                return div
+            }
+            // --- Title contains ---
+            const titleLabel = make_label("Title contains:");
+            const titleInput = make_input();
+            titleInput.placeholder = "e.g. mutex, allocator, RAII";
+            form.appendChild(make_div(titleLabel, titleInput));
+
+            // --- Title starts with ---
+            const titleStartsWithLabel = make_label("Title starts with:");
+            const titleStartsWithInput = make_input();
+            titleStartsWithInput.placeholder = "e.g. mut, allo, C, K";
+            form.appendChild(make_div(titleStartsWithLabel, titleStartsWithInput));
+
+            // --- Definition contains ---
+            const definitionLabel = make_label("Definition contains:");
+            const definitionInput = make_input();
+            definitionInput.placeholder = "e.g. mutex, allocator, RAII";
+            form.appendChild(make_div(definitionLabel, definitionInput));
+
+            // --- Status ---
+            const statusLabel = make_label("Status:");
+            const statusSelect = make_select();
+            [
+                "Any",
+                "Not defined",
+                "Stub",
+                "Draft",
+                "Incomplete",
+                "Verified",
+                "Deprecated",
+                "Deleted"
+            ].forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                statusSelect.appendChild(opt);
+            });
+
+            form.appendChild(make_div(statusLabel, statusSelect));
+
+            // --- Pinned ---
+            const pinnedLabel = make_label("Pinned only:")
+            const pinnedCheckbox = make_input("checkbox")
+            form.appendChild(make_div(pinnedLabel, pinnedCheckbox))
+
+            // --- Difficulty ---
+            const diffLabel = make_label("Difficulty:");
+            const diffContainer = document.createElement("span");
+
+            ["Easy", "Medium", "Hard"].forEach((t, i) => {
+                const cb = make_input("checkbox");
+                cb.value = i + 1;
+                cb.checked = true;
+                cb.style.marginLeft = "0"
+
+                const l = make_label("", "auto");
+                l.style.marginRight = "10px";
+                l.style.marginLeft = "0"
+
+                l.appendChild(cb);
+                l.append(" " + t);
+
+                diffContainer.appendChild(l);
+            });
+
+            form.appendChild(make_div(diffLabel, diffContainer));
+
+            // --- Importance ---
+            const impLabel =make_label("Importance:");
+            const impContainer = document.createElement("span");
+
+            ["Low", "Medium", "High"].forEach((t, i) => {
+                const input = make_input("checkbox");
+                input.value = i + 1;
+                input.checked = true;
+                input.style.marginLeft = "0"
+
+                const l = make_label("", "auto");
+                l.style.marginRight = "10px";
+                l.style.marginLeft = "0"
+                l.appendChild(input);
+                l.append(" " + t);
+
+                impContainer.appendChild(l);
+            });
+
+            form.appendChild(make_div(impLabel,impContainer));
+
+            function make_close_button(model, input, autocomplete =null) {
+                let close_button = document.createElement("button")
+                close_button.innerHTML="&times;"
+                close_button.title = "Clear " + model
+                close_button.style.marginLeft = "10px"
+                close_button.onclick = (e) => {
+                    event.preventDefault();
+                    if(defined(autocomplete)) {
+                        autocomplete.reset()
+                    } else {
+                        input.value = ""
+                    }
+                }
+                input.after(close_button)
+            }
+
+            const tag_label = make_label("Tag: ")
+            const tag_input = make_input()
+            form.appendChild(make_div(tag_label, tag_input))
+            let tag_autocomplete = new Autocomplete(tag_input, 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            tag_autocomplete.clear_after_click = false
+            tag_autocomplete.box_margin_left = "200px"
+            make_close_button("tag", tag_input, tag_autocomplete)
+
+            const flag_label = make_label("Flag: ")
+            const flag_input = make_input()
+            form.appendChild(make_div(flag_label, flag_input))
+            let flag_autocomplete = new Autocomplete(flag_input, 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            flag_autocomplete.clear_after_click = false
+            flag_autocomplete.box_margin_left = "200px"
+            make_close_button("flag", flag_input, flag_autocomplete)
+
+            const link_from_label = make_label("Link from: ")
+            const link_from_input = make_input()
+            form.appendChild(make_div(link_from_label, link_from_input))
+            let link_from_autocomplete = new Autocomplete(link_from_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            link_from_autocomplete.clear_after_click = false
+            link_from_autocomplete.box_margin_left = "200px"
+            make_close_button("link from", link_from_input, link_from_autocomplete)
+
+            const link_to_label = make_label("Link to: ")
+            const link_to_input = make_input()
+            form.appendChild(make_div(link_to_label, link_to_input))
+            let link_to_autocomplete = new Autocomplete(link_to_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            link_to_autocomplete.clear_after_click = false
+            link_to_autocomplete.box_margin_left = "200px"
+            make_close_button("link to", link_to_input, link_to_autocomplete)
+
+            const noteLabel = make_label("Note contains:");
+            const noteInput = make_input();
+            noteInput.placeholder = "e.g. mutex, allocator, RAII";
+            form.appendChild(make_div(noteLabel, noteInput));
+            
+            const index_label = make_label("Index: ")
+            const index_input = make_input()
+            form.appendChild(make_div(index_label, index_input))
+            let index_autocomplete = new Autocomplete(index_input, 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            index_autocomplete.clear_after_click = false
+            index_autocomplete.box_margin_left = "200px"
+            make_close_button("index", index_input, index_autocomplete)
+            
+            const source_label = make_label("Source: ")
+            const source_input = make_input()
+            form.appendChild(make_div(source_label, source_input))
+            let source_autocomplete = new Autocomplete(source_input, 1, "dictionary_source_type_fulltext", "", "title", "title_part")
+            source_autocomplete.clear_after_click = false
+            source_autocomplete.box_margin_left = "200px"
+            make_close_button("source", source_input, source_autocomplete)
+            
+            const alias_label = make_label("Alias: ")
+            const alias_input = make_input()
+            form.appendChild(make_div(alias_label, alias_input))
+            let alias_autocomplete = new Autocomplete(alias_input, 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+            alias_autocomplete.clear_after_click = false
+            alias_autocomplete.box_margin_left = "200px"
+            make_close_button("alias", alias_input, alias_autocomplete)
+            
+            // --- Buttons ---
+            const buttonRow = document.createElement("span");
+
+            const searchBtn = document.createElement("button");
+            searchBtn.type = "button";
+            searchBtn.innerText = "🔍 Search";
+            searchBtn.classList.add("save-btn");
+
+            const resetBtn = document.createElement("button");
+            resetBtn.type = "button";
+            resetBtn.innerText = "♻ Reset";
+            resetBtn.style.height = "40px"
+            resetBtn.style.marginLeft = "20px"
+
+            resetBtn.onclick = () => {
+                titleInput.value = "";
+                titleStartsWithInput.value = ""
+                definitionInput.value = ""
+                statusSelect.selectedIndex = 0;
+                pinnedCheckbox.checked = false
+                form.querySelectorAll("input[type=checkbox]").forEach(cb =>
+                {
+                    if(cb !== pinnedCheckbox) cb.checked = true
+                })
+                tag_autocomplete.reset()
+                flag_autocomplete.reset()
+                link_from_autocomplete.reset()
+                link_to_autocomplete.reset()
+                noteInput.value = ""
+                index_autocomplete.reset()
+
+            };
+
+            searchBtn.onclick = () => {
+                showInfo("Advanced Search submitted (logic not implemented yet)");
+                console.log("Advanced search values:", {
+                    title: titleInput.value,
+                    status: statusSelect.value
+                });
+            };
+
+            buttonRow.appendChild(searchBtn);
+            buttonRow.appendChild(resetBtn);
+
+            form.appendChild(buttonRow);
+
+            // ---------- FINAL ----------
+            content.appendChild(form);
+
+            showWindow();
+        };
+
         get_element("button_add_term").onclick = async () => {
             if (this.#input_search_term.value === "") {
                 showError("Could not create term, the title must not be empty.");
@@ -1233,6 +1500,7 @@ class Flags extends CrudSection {
             let new_flag = {
                 dictionary_term_id: dictionary_term_id,
                 user_id: getUserId(),
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
                 title: title,
                 is_public: is_public ? 1 : 0
             }
@@ -1356,6 +1624,7 @@ class Links extends CrudSection {
 
             let new_flag = {
                 dictionary_term_id: term_created.id,
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
                 user_id: getUserId(),
                 title: "stub",
                 is_public: 1
@@ -1363,7 +1632,7 @@ class Links extends CrudSection {
 
             let flag_created = await post_entity("dictionary_flag", new_flag)
             if (flag_created === null || flag_created === undefined) {
-                showError("Creating tag failed: " + title)
+                showError("Creating flag failed: " + title)
                 return
             }
 
@@ -1989,6 +2258,7 @@ class Aliases extends CrudSection {
 
             let new_alias = {
                 dictionary_term_id: dictionary_term_id,
+                dictionary_map_id: dictionary_app.get_selected_map_id(),
                 alias: title
             }
 

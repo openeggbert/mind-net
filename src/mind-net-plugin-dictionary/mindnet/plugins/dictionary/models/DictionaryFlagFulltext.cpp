@@ -21,29 +21,28 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
-#pragma once
+#include "mindnet/plugins/dictionary/models/DictionaryFlagFulltext.hpp"
 
-#include "mindnet/model/BaseColumns.hpp"
-
-namespace mindnet::plugins::dictionary::columns
+namespace mindnet::plugins::dictionary::models
 {
-    struct DictionaryFlagColumns : model::BaseColumns
+    entity_fields DictionaryFlagFulltext::to_values() const
     {
-        DictionaryFlagColumns() = delete;
+        return serialize_fields(*this);
+    }
 
-        DictionaryFlagColumns(const DictionaryFlagColumns&) = delete;
-        DictionaryFlagColumns& operator=(const DictionaryFlagColumns&) = delete;
-
-        static constexpr const char* MODEL_NAME = "dictionary_flag";
-
-        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
-        static constexpr const char* USER_ID = "user_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE = "title";
-        static constexpr const char* IS_PUBLIC = "is_public";
+    void DictionaryFlagFulltext::from_values(const entity_fields& values)
+    {
+        deserialize_fields(*this, values);
     };
+
+    string DictionaryFlagFulltext::validate()
+    {
+        using columns::DictionaryFlagFulltextColumns;
+
+        validator_chain_vector list{
+            [this] { return test_ne(dictionary_map_id, 0, DictionaryFlagFulltextColumns::DICTIONARY_MAP_ID); },
+            [this] { return testt_between(title, 1, 64, DictionaryFlagFulltextColumns::TITLE); },
+        };
+        return util::ValidatorChain::run(list);
+    }
 }

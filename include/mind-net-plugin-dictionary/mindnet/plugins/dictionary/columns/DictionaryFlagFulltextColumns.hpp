@@ -28,22 +28,22 @@
 #pragma once
 
 #include "mindnet/model/BaseColumns.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/model/ColumnType.hpp"
 
 namespace mindnet::plugins::dictionary::columns
 {
-    struct DictionaryFlagColumns : model::BaseColumns
+    struct DictionaryFlagFulltextColumns : model::BaseColumns
     {
-        DictionaryFlagColumns() = delete;
+        DictionaryFlagFulltextColumns() = delete;
 
-        DictionaryFlagColumns(const DictionaryFlagColumns&) = delete;
-        DictionaryFlagColumns& operator=(const DictionaryFlagColumns&) = delete;
+        DictionaryFlagFulltextColumns(const DictionaryFlagFulltextColumns&) = delete;
+        DictionaryFlagFulltextColumns& operator=(const DictionaryFlagFulltextColumns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "dictionary_flag";
+        static constexpr const char* MODEL_NAME = "dictionary_flag_fulltext";
 
-        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
-        static constexpr const char* USER_ID = "user_id";
         static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
         static constexpr const char* TITLE = "title";
-        static constexpr const char* IS_PUBLIC = "is_public";
+        static constexpr const char* TITLE_PART = "title_part";
     };
 }

@@ -122,6 +122,13 @@ namespace mindnet::plugins::dictionary::validators
         {
             return {400, "Could not created flag. Your user id and the flag.user_id must be the same."};
         }
+        auto term = find_dictionary_term(ctx, entity.dictionary_term_id);
+        if (!term.second.empty()) return {500, term.second};
+
+        auto map_id = term.first.dictionary_map_id;
+        if (map_id != entity.dictionary_map_id)
+            return {400, "Could not created flag. The dictionary_term.dictionary_map_id and the flag.dictionary_map_id must be the same."};
+
         return ok_result;
     }
 

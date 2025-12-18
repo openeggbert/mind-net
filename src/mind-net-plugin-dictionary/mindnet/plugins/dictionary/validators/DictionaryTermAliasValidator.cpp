@@ -93,6 +93,14 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermAliasValidator::validate_create_integrity(
         const RequestContext& ctx, const Model& entity) const
     {
+        auto dictionary_term = find_dictionary_term(ctx, entity.dictionary_term_id);
+        if (!dictionary_term.second.empty()) return {500, dictionary_term.second};
+
+        if (dictionary_term.first.dictionary_map_id != entity.dictionary_map_id)
+        {
+            return {400, "Map ID of the term and alias must be the same."};
+        }
+
         return ok_result;
     }
 

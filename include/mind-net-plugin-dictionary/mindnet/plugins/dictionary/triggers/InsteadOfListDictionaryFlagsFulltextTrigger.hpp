@@ -21,29 +21,23 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
 #pragma once
 
-#include "mindnet/model/BaseColumns.hpp"
+#include "mindnet/api/Trigger.hpp"
 
-namespace mindnet::plugins::dictionary::columns
+namespace mindnet::plugins::dictionary::triggers
 {
-    struct DictionaryFlagColumns : model::BaseColumns
+    class InsteadOfListDictionaryFlagsFulltextTrigger : public api::Trigger
     {
-        DictionaryFlagColumns() = delete;
+    public:
+        InsteadOfListDictionaryFlagsFulltextTrigger();
 
-        DictionaryFlagColumns(const DictionaryFlagColumns&) = delete;
-        DictionaryFlagColumns& operator=(const DictionaryFlagColumns&) = delete;
-
-        static constexpr const char* MODEL_NAME = "dictionary_flag";
-
-        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
-        static constexpr const char* USER_ID = "user_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE = "title";
-        static constexpr const char* IS_PUBLIC = "is_public";
+        ~InsteadOfListDictionaryFlagsFulltextTrigger() override = default;
+        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            const orm::QueryParams& query_params) override;
     };
 }

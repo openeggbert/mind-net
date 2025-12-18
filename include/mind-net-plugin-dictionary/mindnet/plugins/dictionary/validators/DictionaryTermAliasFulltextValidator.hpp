@@ -21,29 +21,26 @@
  * THE SOFTWARE.
  */
 
-/**
- *
-* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
- */
 #pragma once
 
-#include "mindnet/model/BaseColumns.hpp"
+#include <memory>
 
-namespace mindnet::plugins::dictionary::columns
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermAliasFulltext.hpp"
+
+namespace mindnet::plugins::dictionary::validators
 {
-    struct DictionaryFlagColumns : model::BaseColumns
+    using api::RequestContext;
+    using mindnet::plugins::dictionary::models::DictionaryTermAliasFulltext;
+
+    class DictionaryTermAliasFulltextValidator : public api::ValidatorBase<DictionaryTermAliasFulltextValidator, DictionaryTermAliasFulltext>
     {
-        DictionaryFlagColumns() = delete;
+    public:
+        DictionaryTermAliasFulltextValidator() = default;
+        ~DictionaryTermAliasFulltextValidator() = default; // explicitly make it destructible
+        using Model = DictionaryTermAliasFulltext;
 
-        DictionaryFlagColumns(const DictionaryFlagColumns&) = delete;
-        DictionaryFlagColumns& operator=(const DictionaryFlagColumns&) = delete;
-
-        static constexpr const char* MODEL_NAME = "dictionary_flag";
-
-        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
-        static constexpr const char* USER_ID = "user_id";
-        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
-        static constexpr const char* TITLE = "title";
-        static constexpr const char* IS_PUBLIC = "is_public";
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }

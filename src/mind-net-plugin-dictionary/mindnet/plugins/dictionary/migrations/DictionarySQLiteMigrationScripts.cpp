@@ -192,6 +192,7 @@ CREATE TABLE dictionary_flag (
     updated_at DATETIME,
 
     dictionary_term_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     is_public INTEGER NOT NULL CHECK(is_public IN (0,1)),
@@ -199,11 +200,13 @@ CREATE TABLE dictionary_flag (
     UNIQUE(dictionary_term_id, user_id, title),
 
     FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
-    FOREIGN KEY(user_id) REFERENCES user(id)
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
 );
 
 CREATE INDEX idx_dictionary_flag_term ON dictionary_flag(dictionary_term_id);
 CREATE INDEX idx_dictionary_flag_user ON dictionary_flag(user_id);
+CREATE INDEX idx_dictionary_flag_map ON dictionary_flag(dictionary_map_id);
 )");
 
         //
@@ -341,17 +344,20 @@ CREATE TABLE dictionary_term_alias (
     updated_at DATETIME,
 
     dictionary_term_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
     alias TEXT NOT NULL,
 
     UNIQUE(dictionary_term_id, alias),
 
-    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
 );
 
 CREATE INDEX idx_dictionary_term_alias_term
     ON dictionary_term_alias(dictionary_term_id);
+CREATE INDEX idx_dictionary_term_alias_map
+    ON dictionary_term_alias(dictionary_map_id);
 )");
-
 
         //
         // V14 — dictionary_index_type

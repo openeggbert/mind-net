@@ -37,10 +37,19 @@
     <button id="button_add_map">➕ Add Map</button>
 
 
-    <label for="input_search_term">🔍 Search term:</label>
-    <button id="button_add_term" style="margin-bottom: 5px;">➕ Add Term</button>
-    <input type="text" id="input_search_term" placeholder="Start writing..."/>
+    <label for="input_search_term">
+        🔍 Search term
+        <button id="button_open_advanced_search"
+                style="margin-left:10px;">
+            🔍🔍 Advanced
+        </button>
+    </label>
+
+    <button id="button_add_term">➕ Add Term</button>
+
+    <input type="text" id="input_search_term"/>
     <div id="div_search_term_end"></div>
+
 
     <div id="term_container" style="margin-top:30px;">
         <!-- Input for term -->

@@ -28,8 +28,10 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryIndexTypesSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionarySourceTypesSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermMetricsSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryFlagsSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
+#include "mindnet/db/sqlite/queries/dictionary/FindDictionaryTermAliasesSQLiteQuery.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryFlagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryLinkValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryMapValidator.hpp"
@@ -52,6 +54,8 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryIndexTypeValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryIndexTypeFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryIndexValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryFlagFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermAliasFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/migrations/DictionarySQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermFulltextTrigger.hpp"
@@ -59,7 +63,9 @@
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryIndexTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySourceTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermMetricsTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryFlagsFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermAliasesFulltextTrigger.hpp"
 
 namespace mindnet::plugins::dictionary
 {
@@ -97,7 +103,8 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_index_type_fulltext, DictionaryIndexTypeFulltext, DICTIONARY_INDEX_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_source_type_fulltext, DictionarySourceTypeFulltext, DICTIONARY_SOURCE_TYPE_FULLTEXT)
-
+        REGISTER_MODEL(dictionary_flag_fulltext, DictionaryFlagFulltext, DICTIONARY_FLAG_FULLTEXT)
+        REGISTER_MODEL(dictionary_term_alias_fulltext, DictionaryTermAliasFulltext, DICTIONARY_TERM_ALIAS_FULLTEXT)
 
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermFulltextTrigger>());
@@ -105,6 +112,8 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySourceTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryIndexTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermMetricsTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryFlagsFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermAliasesFulltextTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindNextDictionaryNotePositionSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsSQLiteQuery>());
@@ -112,6 +121,8 @@ namespace mindnet::plugins::dictionary
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionarySourceTypesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryIndexTypesSQLiteQuery>());;
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermMetricsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryFlagsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermAliasesSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::DictionaryHtmlExportJob>());
 

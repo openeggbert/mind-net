@@ -6,10 +6,10 @@
 #include "mindnet/model/BaseModel.hpp"
 
 // ***** MACROS : START *****
-#define Model DictionaryTermAlias
-#define MODEL DICTIONARY_TERM_ALIAS
-#define COLS columns::DictionaryTermAliasColumns
-#include "../columns/DictionaryTermAliasColumns.hpp"
+#define Model DictionaryTermAliasFulltext
+#define MODEL DICTIONARY_TERM_ALIAS_FULLTEXT
+#define COLS columns::DictionaryTermAliasFulltextColumns
+#include "../columns/DictionaryTermAliasFulltextColumns.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::dictionary::models
@@ -18,29 +18,29 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_TERM_ALIAS_DEFINITION =
+    inline const def DICTIONARY_TERM_ALIAS_FULLTEXT_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
         .set_group("Dictionary", 210)
-        .set_rest_operations("crdl")
+        .set_rest_operations("l")
+        .set_no_table(true)
+        .set_cache_enabled(false)
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY)
-                .set_description("Primary dictionary term."),
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY)
                 .set_description("Map ID."),
-            coldef(COLS::ALIAS, MANDATORY | READONLY)
-                .set_description("Alias (alternative name) for the dictionary term."),
+            coldef(COLS::TITLE, MANDATORY | READONLY),
+            coldef(COLS::TITLE_PART, MANDATORY | READONLY)
         });
 
-    struct DictionaryTermAlias : mindnet::model::BaseModel
+    struct DictionaryTermAliasFulltext : mindnet::model::BaseModel
     {
-        identification dictionary_term_id{};
         identification dictionary_map_id{};
-        std::string alias{};
+        std::string title{};
+        std::string title_part{};
 
         static constexpr auto fields = std::make_tuple(
-            &Model::dictionary_term_id,
             &Model::dictionary_map_id,
-            &Model::alias
+            &Model::title,
+            &Model::title_part
         );
 
         create_model_h_methods(Model, MODEL)
@@ -48,9 +48,9 @@ namespace mindnet::plugins::dictionary::models
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                   dictionary_term_id == other.dictionary_term_id &&
                    dictionary_map_id == other.dictionary_map_id &&
-                   alias == other.alias &&
+                   title == other.title &&
+                   title_part == other.title_part &&
                    created_at == other.created_at &&
                    updated_at == other.updated_at;
         }
