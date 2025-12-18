@@ -666,8 +666,6 @@ class TermContainer {
                 }
             }
 
-
-
             let pinned_terms = await list_all_entities(
                 "dictionary_pinned_term",
                 "&dictionary_term_id=" + dictionary_term_id
@@ -709,6 +707,14 @@ class TermContainer {
             let states4 = await list_all_entities(
                 "dictionary_state_4",
                 "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+
+            dictionary_term.status = 6 //deleted
+            let updated = await put_entity("dictionary_term", dictionary_term_id, dictionary_term)
+            if(!defined(updated)) {
+                showError("Setting term status to Deleted failed.")
+                return;
+            }
+
             await delete_rows("dictionary_pinned_term", pinned_terms)
             await delete_rows("dictionary_flag", private_flags)
             await delete_rows("dictionary_flag", public_flags)

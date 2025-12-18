@@ -33,6 +33,9 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Critical
 - [ ] TASK Check operator== implementations for all models
 
+### Plugin Dictionary
+- [ ] New cron job: delete terms with status Deleted
+- 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
 - [ ] onclick textarea starts editing

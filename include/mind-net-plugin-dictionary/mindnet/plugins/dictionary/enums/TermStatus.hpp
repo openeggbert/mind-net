@@ -37,7 +37,8 @@ namespace mindnet::plugins::dictionary::enums
         Draft = 2,       // work in progress
         Incomplete = 3,  // usable, but missing parts
         Verified = 4,    // stable, reference knowledge
-        Deprecated = 5   // historical / do not use
+        Deprecated = 5,   // historical / do not use
+        Deleted = 6   // deleted
     };
 
     inline std::string term_status_to_string(TermStatus status)
@@ -57,6 +58,8 @@ namespace mindnet::plugins::dictionary::enums
             return "Verified";
         case TermStatus::Deprecated:
             return "Deprecated";
+        case TermStatus::Deleted:
+            return "Deleted";
 
         default:
             return "Not defined";
@@ -73,8 +76,8 @@ namespace mindnet::plugins::dictionary::enums
     {
         return mindnet::model::EnumDefinition{
             term_status_to_string,
-            6,
-            0, 1, 2, 3, 4, 5
+            7,
+            0, 1, 2, 3, 4, 5, 6
         };
     }
 }

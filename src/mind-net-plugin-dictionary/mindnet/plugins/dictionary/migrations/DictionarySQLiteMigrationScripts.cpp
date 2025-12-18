@@ -437,6 +437,35 @@ CREATE INDEX idx_dictionary_pinned_term_user ON dictionary_pinned_term(user_id);
 CREATE INDEX idx_dictionary_pinned_term_map ON dictionary_pinned_term(dictionary_map_id);
 )");
 
+        add_migration("V17__create_dictionary_search.sql", R"(
+CREATE TABLE dictionary_search (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    user_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
+
+    name TEXT NOT NULL,
+    description TEXT,
+
+    query_json TEXT NOT NULL,
+
+    is_public INTEGER NOT NULL DEFAULT 0,
+
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
+);
+
+CREATE INDEX idx_dictionary_search_user
+    ON dictionary_search(user_id);
+
+CREATE INDEX idx_dictionary_search_map
+    ON dictionary_search(dictionary_map_id);
+
+CREATE UNIQUE INDEX idx_dictionary_search_user_map_name
+    ON dictionary_search(user_id, dictionary_map_id, name);
+)");
 
     }
 }

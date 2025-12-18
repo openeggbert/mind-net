@@ -48,6 +48,7 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryPinnedTermValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermMetricValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionarySearchValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryIndexTypeValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryIndexTypeFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryIndexValidator.hpp"
@@ -90,6 +91,7 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_state_4, DictionaryState4, DICTIONARY_STATE_4)
         REGISTER_MODEL(dictionary_index_type, DictionaryIndexType, DICTIONARY_INDEX_TYPE)
         REGISTER_MODEL(dictionary_index, DictionaryIndex, DICTIONARY_INDEX)
+        REGISTER_MODEL(dictionary_search, DictionarySearch, DICTIONARY_SEARCH)
         REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
         REGISTER_MODEL(dictionary_term_metric, DictionaryTermMetric, DICTIONARY_TERM_METRIC)
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
