@@ -267,18 +267,33 @@ textarea {
 #term_container {
     display: none
 }
+#term_container_h2 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
 .container_box {
     /*border-top: 2px solid #ddd;*/
     padding: 5px;
-    margin: 15px 0 15px 0;
+    margin: 10px 0 10px 0;
 }
-fieldset {
+fieldset fieldset {
     border:none;
     margin:0;
     margin-top:10px;
     padding:0;
 }
-legend {
+/*fieldset fieldset * {*/
+/*    color: grey!important;*/
+/*    font-size: 70%!important;*/
+/*}*/
+
+fieldset fieldset legend {
+
+    padding:0;
+    padding-bottom:5px;
+    font-weight: bold;
+}
+fieldset legend {
     padding:0;
     padding-bottom:5px;
     font-weight: bold;

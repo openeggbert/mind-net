@@ -355,31 +355,49 @@ class TermContainer {
 
         function attach_onclick_to_label(models) {
             let label = get_element("label_" + models)
+            let container = get_element("container_" + models)
             label.style.cursor = "pointer"
             label.style.backgroundColor = "rgba(213,215,221,0.6)"
             label.style.color = "#2c3e50";
             label.style.borderBottom = "1px solid #dcdfe3"
             label.style.padding = "10px"
             label.onclick = () => {
-                let container = get_element("container_" + models)
                 let current_display = container.style.display;
                 let shown = current_display === "block" || current_display === "";
                 container.style.display = shown ? "none" : "block"
+                let containerParent = container.parentElement
                 let tmp_id = "label_" + models + "_tmp"
                 if (shown) {
-                    let tmp_div = document.createElement("div")
                     let start = models.charAt(0).toUpperCase() + models.slice(1)
-                    tmp_div.innerText = start + " are hidden. " + "Click \"" + start + ":\" to show them again."
+                    let text = start + " are hidden. " + "Click \"" + start + ":\" to show them."
 
-                    tmp_div.style.color = "grey"
-                    //tmp_div.style.fontStyle = "italic"
-                    tmp_div.id = tmp_id
-                    label.after(tmp_div)
+                    let tmp_span = document.createElement("span")
+                    tmp_span.innerText = text
+
+                    tmp_span.style.color = "grey"
+                    tmp_span.style.fontSize = "75%"
+                    tmp_span.style.fontWeight = "normal"
+                    tmp_span.id = tmp_id
+                    tmp_span.style.marginLeft= "10px"
+                    label.appendChild(tmp_span)
+                    containerParent.style.margin = "0px 0 0px 0"
+                    // label.style.display = "inline-block"
+                    label.style.whiteSpace = "nowrap"
                 } else {
                     get_element(tmp_id).remove()
+                    containerParent.style.margin = "10px 0 10px 0"
+                    // label.style.display = "block"
+                    label.style.whiteSpace = "normal"
                 }
 
             }
+
+            const array = ["flags", "indexes", "sources", "aliases"]
+            array.forEach(e=> {
+                if(models === e) {
+                    label.click()
+                }
+            })
         }
 
         this.#sections.forEach(section => {
@@ -460,6 +478,13 @@ class TermContainer {
                 }
             }
 
+
+
+            let pinned_terms = await list_all_entities(
+                "dictionary_pinned_term",
+                "&dictionary_term_id=" + dictionary_term_id
+                +"&user_id=" + getUserId()
+            )
             let tags = await list_all_entities(
                 "dictionary_tag",
                 "&dictionary_term_id=" + dictionary_term_id)
@@ -496,6 +521,7 @@ class TermContainer {
             let states4 = await list_all_entities(
                 "dictionary_state_4",
                 "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+            await delete_rows("dictionary_pinned_term", pinned_terms)
             await delete_rows("dictionary_flag", private_flags)
             await delete_rows("dictionary_flag", public_flags)
             await delete_rows("dictionary_link", links1)

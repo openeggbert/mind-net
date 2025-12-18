@@ -46,64 +46,79 @@
         <!-- Input for term -->
         <h2 id="term_container_h2">Term #123</h2>
 
-        <label for="input_title">✍ Title:</label>
-        <input type="text" id="input_title">
+        <style>
+            #highlighted{
+                border: 3px solid rgba(36,131,204,0.40);
+                border-radius: 8px;
+            }
+            /*#highlighted:hover{*/
+            /*    border: 3px solid rgba(36,131,204,0.40);*/
+            /*    border-radius: 12px;*/
+            /*}*/
+        </style>
+        <div id="highlighted" style="padding: 5px;">
+            <label for="input_title">✍ Title:</label>
+            <input type="text" id="input_title" style="width:95%">
 
-        <label for="input_disambiguation">🌀 Disambiguation:</label>
-        <input type="text" id="input_disambiguation" placeholder="Start writing..."/>
+            <label for="input_disambiguation">🌀 Disambiguation:</label>
+            <input type="text" style="width:95%" id="input_disambiguation" placeholder="Start writing..."/>
 
-        <label for="textarea_definition" style="margin-right:20px; display: inline;white-space: nowrap;">📖
-            Definition:</label>
-        <button id="button_edit_definition">✏️ Edit</button>
-        <button id="button_read_definition">📖 Read</button>
-        <textarea id="textarea_definition"></textarea>
-
-        <div>
-        <label for="select_status" style="display:inline;white-space: nowrap;">ℹ️ Status:</label>
-        <select name="select_status" id="select_status" style="max-width:250px; display:inline; margin-left:10px;">
-            <option value="0">Not defined</option>
-            <option value="1">Stub</option>
-            <option value="2">Draft</option>
-            <option value="3">Incomplete</option>
-            <option value="4">Verified</option>
-            <option value="5">Deprecated</option>
-        </select>
+            <label for="textarea_definition" style="margin-right:20px; display: inline;white-space: nowrap;width:90%">📖
+                Definition:</label>
+            <button id="button_edit_definition">✏️ Edit</button>
+            <button id="button_read_definition">📖 Read</button>
+            <textarea id="textarea_definition" style="width:95%"></textarea>
+            <div id="definition_preview" style="display:none"></div>
         </div>
 
-        <label for="checkbox_pinned" style="display:inline;white-space: nowrap;">📌 Pinned:</label>
-        <input type="checkbox" id="checkbox_pinned" style="transform: scale(2);margin-left:10px; margin-right:10px;" />
+        <fieldset id="metadata">
+            <legend>Metadata</legend>
+            <div>
+                <label for="select_status" style="display:inline;white-space: nowrap;">ℹ️ Status:</label>
+                <select name="select_status" id="select_status"
+                        style="max-width:250px; display:inline; margin-left:10px;">
+                    <option value="0">Not defined</option>
+                    <option value="1">Stub</option>
+                    <option value="2">Draft</option>
+                    <option value="3">Incomplete</option>
+                    <option value="4">Verified</option>
+                    <option value="5">Deprecated</option>
+                </select>
+            </div>
 
-        <fieldset>
-            <legend>🔥 Importance:</legend>
+            <label for="checkbox_pinned" style="display:inline;white-space: nowrap;">📌 Pinned:</label>
+            <input type="checkbox" id="checkbox_pinned"
+                   style="transform: scale(2);margin-left:10px; margin-right:10px;"/>
 
-            <input id="input_importance_low" type="radio" name="importance" value="1"><label
-                for="input_importance_low">Low</label>
-            <input id="input_importance_medium" type="radio" name="importance" value="2" checked="checked"><label
-                for="input_importance_medium">Medium</label>
-            <input id="input_importance_high" type="radio" name="importance" value="3"><label
-                for="input_importance_high">High</label>
+            <fieldset>
+                <label style="display: inline;white-space: nowrap;">🔥 Importance:</label>
+
+                <input id="input_importance_low" type="radio" name="importance" value="1"><label
+                    for="input_importance_low">Low</label>
+                <input id="input_importance_medium" type="radio" name="importance" value="2" checked="checked"><label
+                    for="input_importance_medium">Medium</label>
+                <input id="input_importance_high" type="radio" name="importance" value="3"><label
+                    for="input_importance_high">High</label>
+            </fieldset>
+
+
+            <fieldset>
+                <label style="display: inline;white-space: nowrap;">⭐ Difficulty:</label>
+
+                <input id="input_difficulty_easy" type="radio" name="difficulty" value="1"><label
+                    for="input_difficulty_easy">Easy</label>
+                <input id="input_difficulty_medium" type="radio" name="difficulty" value="2" checked="checked"><label
+                    for="input_difficulty_medium">Medium</label>
+                <input id="input_difficulty_hard" type="radio" name="difficulty" value="3"><label
+                    for="input_difficulty_hard">Hard</label>
+            </fieldset>
+            <button id="button_show_backlinks" style="margin-top:10px">🔁 Backlinks</button>
+            <button id="button_show_visited">👣 Visited</button>
         </fieldset>
-
-
-        <fieldset>
-            <legend>⭐ Difficulty:</legend>
-
-            <input id="input_difficulty_easy" type="radio" name="difficulty" value="1"><label
-                for="input_difficulty_easy">Easy</label>
-            <input id="input_difficulty_medium" type="radio" name="difficulty" value="2" checked="checked"><label
-                for="input_difficulty_medium">Medium</label>
-            <input id="input_difficulty_hard" type="radio" name="difficulty" value="3"><label
-                for="input_difficulty_hard">Hard</label>
-        </fieldset>
-
 
         <button id="button_delete_term" class="delete-btn">Delete</button>
         <!-- Save -->
         <button id="button_save_term" class="save-btn">Save</button>
-
-        <br>
-        <button id="button_show_backlinks">🔁 Backlinks</button>
-        <button id="button_show_visited">👣 Visited</button>
 
         <!-- Tags -->
         <div class="container_box">
@@ -226,7 +241,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Sources -->
         <div class="container_box">
             <label id="label_sources">📖 Sources:</label>
