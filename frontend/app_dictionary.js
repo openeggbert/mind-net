@@ -495,6 +495,7 @@ class DictionaryApp {
                 opt.innerText = t;
                 statusSelect.appendChild(opt);
             });
+            statusSelect.multiple = "multiple"
 
             form.appendChild(make_div(statusLabel, statusSelect));
 
@@ -526,7 +527,7 @@ class DictionaryApp {
             form.appendChild(make_div(diffLabel, diffContainer));
 
             // --- Importance ---
-            const impLabel =make_label("Importance:");
+            const impLabel = make_label("Importance:");
             const impContainer = document.createElement("span");
 
             ["Low", "Medium", "High"].forEach((t, i) => {
@@ -622,6 +623,52 @@ class DictionaryApp {
             alias_autocomplete.clear_after_click = false
             alias_autocomplete.box_margin_left = "200px"
             make_close_button("alias", alias_input, alias_autocomplete)
+
+            // --- Has ---
+            const hasLabel = make_label("Has:");
+            const hasContainer = document.createElement("span");
+
+            const has_array = ["Definition", "Tags", "Flags", "Links", "Notes", "Indexes", "Sources", "Aliases"]
+            has_array.forEach((t, i) => {
+                const cb = make_input("checkbox");
+                cb.value = i + 1;
+                cb.checked = false;
+                cb.style.marginLeft = "0"
+                cb.id= "has_" + t.toLowerCase()
+
+                const l = make_label("", "auto");
+                l.style.marginRight = "10px";
+                l.style.marginLeft = "0"
+                l.appendChild(cb);
+                l.append(" " + t);
+                l.style.fontSize = "80%"
+
+                hasContainer.appendChild(l);
+            });
+            form.appendChild(make_div(hasLabel, hasContainer));
+
+            // --- Visited ---
+            const visitedLabel = make_label("Visited:");
+            const visitedSelect = make_select()
+            const visited_updated_array = ["Any", "Today", "Last week", "Last month", "Last year", "Never"]
+            visited_updated_array.forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                visitedSelect.appendChild(opt);
+            });
+            form.appendChild(make_div(visitedLabel, visitedSelect));
+
+            // --- Updated ---
+            const updatedLabel = make_label("Updated:");
+            const updatedSelect = make_select()
+            visited_updated_array.forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                updatedSelect.appendChild(opt);
+            });
+            form.appendChild(make_div(updatedLabel, updatedSelect));
             
             // --- Buttons ---
             const buttonRow = document.createElement("span");
@@ -631,11 +678,23 @@ class DictionaryApp {
             searchBtn.innerText = "🔍 Search";
             searchBtn.classList.add("save-btn");
 
-            const resetBtn = document.createElement("button");
-            resetBtn.type = "button";
-            resetBtn.innerText = "♻ Reset";
-            resetBtn.style.height = "40px"
-            resetBtn.style.marginLeft = "20px"
+            searchBtn.onclick = () => {
+                showInfo("Advanced Search submitted (logic not implemented yet)");
+                console.log("Advanced search values:", {
+                    title: titleInput.value,
+                    status: statusSelect.value
+                });
+            };
+
+            function make_button(text) {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.innerText = text;
+                button.style.height = "40px"
+                button.style.marginLeft = "20px"
+                return button
+            }
+            const resetBtn = make_button("♻ Reset");
 
             resetBtn.onclick = () => {
                 titleInput.value = "";
@@ -645,7 +704,7 @@ class DictionaryApp {
                 pinnedCheckbox.checked = false
                 form.querySelectorAll("input[type=checkbox]").forEach(cb =>
                 {
-                    if(cb !== pinnedCheckbox) cb.checked = true
+                    if(cb !== pinnedCheckbox && !cb.id.startsWith("has_")) cb.checked = true
                 })
                 tag_autocomplete.reset()
                 flag_autocomplete.reset()
@@ -653,19 +712,38 @@ class DictionaryApp {
                 link_to_autocomplete.reset()
                 noteInput.value = ""
                 index_autocomplete.reset()
+                source_autocomplete.reset()
+                alias_autocomplete.reset()
+                has_array.forEach(e => {
+                    let id = "has_" + e.toLowerCase()
+                    let cb = get_element(id)
+                    cb.checked = false
+                })
+                visitedSelect.selectedIndex = 0
+                updatedSelect.selectedIndex = 0
+            }
 
-            };
+            const saveBtn = make_button("💾 Save");
+            saveBtn.onclick = () => {
 
-            searchBtn.onclick = () => {
-                showInfo("Advanced Search submitted (logic not implemented yet)");
-                console.log("Advanced search values:", {
-                    title: titleInput.value,
-                    status: statusSelect.value
-                });
-            };
+            }
+
+            const loadUnloadBtn = make_button("📂 Load");
+            loadUnloadBtn.onclick = () => {
+
+            }
+
+            const deleteBtn = make_button("🗑 Delete");
+            deleteBtn.disabled = "disabled"
+            deleteBtn.onclick = () => {
+
+            }
 
             buttonRow.appendChild(searchBtn);
             buttonRow.appendChild(resetBtn);
+            buttonRow.appendChild(saveBtn);
+            buttonRow.appendChild(loadUnloadBtn);
+            buttonRow.appendChild(deleteBtn);
 
             form.appendChild(buttonRow);
 

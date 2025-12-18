@@ -34,6 +34,7 @@ export class Autocomplete {
         this.box = document.createElement("div");
         this.box.className = "suggestions";
         this.box.style.display = "none";
+        this.box.style.zIndex = "1000"
 
         if (input.parentNode) {
             if (insert_after_id === null || insert_after_id === undefined || insert_after_id === "") {
