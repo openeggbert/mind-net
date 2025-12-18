@@ -47,10 +47,27 @@
         <h2 id="term_container_h2">Term #123</h2>
 
         <style>
-            #highlighted{
-                border: 3px solid rgba(36,131,204,0.40);
+            #highlighted {
+                border: 3px solid transparent;
                 border-radius: 8px;
             }
+
+            #highlighted:hover {
+                animation: highlight 4s ease forwards;
+            }
+
+            @keyframes highlight {
+                0% {
+                    border-color: rgba(36,131,204,0.40);
+                }
+                80% {
+                    border-color: rgba(36,131,204,0.40);
+                }
+                100% {
+                    border-color: transparent;
+                }
+            }
+
             /*#highlighted:hover{*/
             /*    border: 3px solid rgba(36,131,204,0.40);*/
             /*    border-radius: 12px;*/

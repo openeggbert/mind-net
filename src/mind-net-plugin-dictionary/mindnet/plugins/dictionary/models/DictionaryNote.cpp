@@ -42,7 +42,7 @@ namespace mindnet::plugins::dictionary::models
         validator_chain_vector list{
             [this] { return test_ne(dictionary_term_id, 0, DictionaryNoteColumns::DICTIONARY_TERM_ID); },
             [this] { return testt_between(title, 1, 256, DictionaryNoteColumns::TITLE); },
-            [this] { return testt_at_most(content, 1024, DictionaryNoteColumns::CONTENT); },
+            [this] { return testt_at_most(content, 10240, DictionaryNoteColumns::CONTENT); },
         };
         return util::ValidatorChain::run(list);
     }
