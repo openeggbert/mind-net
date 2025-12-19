@@ -101,8 +101,8 @@ namespace mindnet::plugins::dictionary::triggers
                 model.title = title;
                 model.disambiguation = dis;
 
-                if (!dis.empty())
-                    model.title += " (" + dis + ")";
+                // if (!dis.empty())
+                //     model.title += " (" + dis + ")";
 
                 auto values = model.to_values();
 

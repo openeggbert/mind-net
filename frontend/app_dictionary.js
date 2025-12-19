@@ -12,7 +12,7 @@ import {
     read_entity,
     setTitleCache
 } from "./api.js";
-import {chooseOption, formatDateTime, get_element, showError, showInfo, showWarn} from "./dom.js";
+import {chooseOption, formatDateTime, formatDateTimeHMS, get_element, showError, showInfo, showWarn} from "./dom.js";
 import {Autocomplete, null_or_undefined} from "./common.js";
 
 let wasDragged = false;
@@ -56,11 +56,20 @@ export function attachMarkdownEditor({
                                          buttonEdit,
                                          buttonRead
                                      }) {
+    textarea.parentNode
+        .querySelectorAll(".markdown_toolbar, .definition_md_rendered")
+        .forEach(e => e.remove());
+    {
+        let div_height_10px = get_element("div_height_10px")
+        if(defined(div_height_10px)) div_height_10px.remove()
+    }
+
     if (!textarea) throw "attachMarkdownEditor: textarea is required";
 
     textarea.style.marginTop = "10px;"
     let div = document.createElement("div")
     div.style.height = "10px"
+    div.id = "div_height_10px"
     buttonEdit.after(div)
     buttonRead.after(div)
 
@@ -222,12 +231,14 @@ export function attachMarkdownEditor({
     }
 
     // --- return handles (optional) ---
-    return {
+    const api = {
         renderMarkdown,
         editMarkdown,
         renderedDiv: rendered,
         toolbar
     };
+
+    return api;
 }
 
 // ========================================
@@ -413,6 +424,204 @@ class DictionaryApp {
         })
 
         get_element("button_open_advanced_search").onclick = async () => {
+
+            /*
+ * =====================================================================================
+ * TODO: OOP REFACTOR – SEARCH / ADVANCED SEARCH
+ * =====================================================================================
+ *
+ * CONTEXT:
+ * --------
+ * This file currently implements Search and Advanced Search as a large procedural
+ * block tightly coupled to DOM elements.
+ *
+ * The code WORKS and is feature-complete, but responsibilities are mixed:
+ *   - DOM access
+ *   - search state
+ *   - query_json construction
+ *   - REST execution
+ *   - result rendering
+ *   - paging logic
+ *   - load/save of searches
+ *
+ * This is intentional for initial development speed.
+ * The code is NOT a dead end and is fully refactorable later.
+ *
+ *
+ * CURRENT STRUCTURE (IMPORTANT – DO NOT DELETE):
+ * ----------------------------------------------
+ *
+ * 1) DOM is the implicit state holder
+ *    - All search values live in input/select/checkbox elements
+ *    - load_query_json_from_form() reads directly from DOM
+ *
+ * 2) query_json is built ad-hoc
+ *    - load_query_json_from_form()
+ *    - Must remain backward-compatible with backend
+ *
+ * 3) Execution is inline
+ *    - REST call to list_entities("dictionary_term_search", ...)
+ *    - paging logic mixed with UI code
+ *
+ * 4) Saved searches
+ *    - dictionary_search table stores query_json
+ *    - load/save logic is interleaved with UI updates
+ *
+ *
+ * PROBLEMS THIS CREATES:
+ * ---------------------
+ * - No explicit Search state object
+ * - Hard to test or reuse search logic
+ * - Difficult to add alternative UIs (CLI, preset search, API)
+ * - Refactoring later without guidance would be risky
+ *
+ *
+ * TARGET OOP DESIGN (EXPLICIT):
+ * ----------------------------
+ *
+ * The refactor MUST introduce the following core classes.
+ * Names are suggestions; responsibility boundaries are NOT optional.
+ *
+ *
+ * ------------------------------------------------------------------
+ * class SearchModel
+ * ------------------------------------------------------------------
+ * PURPOSE:
+ *   - Single source of truth for search state
+ *   - NO DOM access
+ *   - NO REST calls
+ *
+ * CONTENT:
+ *   - Fields correspond EXACTLY to query_json keys:
+ *       title_contains
+ *       title_starts_with
+ *       definition_contains
+ *       status
+ *       pinned_only
+ *       importance_low / medium / high
+ *       difficulty_easy / medium / hard
+ *       tag_id
+ *       flag_title
+ *       link_from_term_id
+ *       link_to_term_id
+ *       note_contains
+ *       index_id
+ *       source_id
+ *       alias_alias
+ *       has_items
+ *       visited
+ *       updated
+ *       sort
+ *       order
+ *
+ * METHODS:
+ *   - toJSON()
+ *       -> returns object identical to current query_json
+ *   - static fromJSON(json)
+ *       -> used when loading saved searches
+ *
+ * RULE:
+ *   - Backend contract MUST NOT change.
+ *
+ *
+ * ------------------------------------------------------------------
+ * class SearchForm
+ * ------------------------------------------------------------------
+ * PURPOSE:
+ *   - Encapsulate ALL DOM access related to search
+ *   - Translate DOM <-> SearchModel
+ *
+ * RESPONSIBILITIES:
+ *   - readModel(): SearchModel
+ *   - writeModel(model: SearchModel): void
+ *   - reset(): void
+ *
+ * MUST CONTAIN:
+ *   - References to input/select/checkbox elements
+ *
+ * MUST NOT:
+ *   - Call REST
+ *   - Render result tables
+ *
+ *
+ * ------------------------------------------------------------------
+ * class SearchExecutor
+ * ------------------------------------------------------------------
+ * PURPOSE:
+ *   - Execute search against backend
+ *
+ * INPUT:
+ *   - SearchModel
+ *   - paging parameters (page, pageSize)
+ *
+ * OUTPUT:
+ *   - { items, total_pages, total_items }
+ *
+ * IMPLEMENTATION:
+ *   - Wraps existing list_entities("dictionary_term_search", ...)
+ *
+ * NOTE:
+ *   - All paging math should live here or in a Pagination class
+ *
+ *
+ * ------------------------------------------------------------------
+ * OPTIONAL / LATER EXTRACTIONS:
+ * ------------------------------------------------------------------
+ *
+ * class SearchResultTable
+ *   - render(items)
+ *   - clear()
+ *
+ * class SearchPagination
+ *   - currentPage
+ *   - pageSize
+ *   - totalPages
+ *   - emits page change events
+ *
+ *
+ * REFACTOR STRATEGY (SAFE AND INCREMENTAL):
+ * ----------------------------------------
+ *
+ * STEP 1 (LOW RISK, HIGH VALUE):
+ *   - Extract load_query_json_from_form() into SearchModel.toJSON()
+ *   - Compare old vs new JSON with console diff
+ *
+ * STEP 2:
+ *   - Introduce SearchForm.readModel()
+ *   - Replace direct DOM reads in search button handler
+ *
+ * STEP 3:
+ *   - Introduce SearchExecutor
+ *   - Replace inline REST call
+ *
+ * STEP 4 (OPTIONAL):
+ *   - Extract result table rendering
+ *   - Extract pagination
+ *
+ *
+ * NON-GOALS (IMPORTANT):
+ * ---------------------
+ * - Do NOT introduce frameworks
+ * - Do NOT rewrite HTML structure
+ * - Do NOT change REST endpoints
+ * - Do NOT optimize prematurely
+ *
+ *
+ * FUTURE DEVELOPER NOTE:
+ * ---------------------
+ * You do NOT need to understand the entire file to refactor this.
+ *
+ * Start by locating:
+ *   1) where query_json is built
+ *   2) where list_entities(...) is called
+ *   3) where results are rendered
+ *
+ * Each of these maps directly to one class above.
+ *
+ * This refactor is mechanical, local, and safe.
+ * =====================================================================================
+ */
+
             clearWindow();
 
             setWindowTitle("🔍 Advanced Search");
@@ -459,10 +668,11 @@ class DictionaryApp {
                 return select
             }
 
-            function make_div(label, element) {
+            function make_div(label, element1, element2 = null) {
                 let div = document.createElement("div")
                 div.appendChild(label)
-                div.appendChild(element)
+                div.appendChild(element1)
+                if(element2 != null) div.appendChild(element2)
                 return div
             }
 
@@ -511,6 +721,28 @@ class DictionaryApp {
             const pinnedCheckbox = make_input("checkbox")
             form.appendChild(make_div(pinnedLabel, pinnedCheckbox))
 
+            // --- Importance ---
+            const impLabel = make_label("Importance:");
+            const impContainer = document.createElement("span");
+
+            ["Low", "Medium", "High"].forEach((t, i) => {
+                const input = make_input("checkbox");
+                input.value = i + 1;
+                input.checked = true;
+                input.style.marginLeft = "0"
+                input.id = "importance_" + t.toLowerCase()
+
+                const l = make_label("", "auto");
+                l.style.marginRight = "10px";
+                l.style.marginLeft = "0"
+                l.appendChild(input);
+                l.append(" " + t);
+
+                impContainer.appendChild(l);
+            });
+
+            form.appendChild(make_div(impLabel, impContainer));
+
             // --- Difficulty ---
             const diffLabel = make_label("Difficulty:");
             const diffContainer = document.createElement("span");
@@ -533,28 +765,6 @@ class DictionaryApp {
             });
 
             form.appendChild(make_div(diffLabel, diffContainer));
-
-            // --- Importance ---
-            const impLabel = make_label("Importance:");
-            const impContainer = document.createElement("span");
-
-            ["Low", "Medium", "High"].forEach((t, i) => {
-                const input = make_input("checkbox");
-                input.value = i + 1;
-                input.checked = true;
-                input.style.marginLeft = "0"
-                input.id = "importance_" + t.toLowerCase()
-
-                const l = make_label("", "auto");
-                l.style.marginRight = "10px";
-                l.style.marginLeft = "0"
-                l.appendChild(input);
-                l.append(" " + t);
-
-                impContainer.appendChild(l);
-            });
-
-            form.appendChild(make_div(impLabel, impContainer));
 
             function make_close_button(model, input, autocomplete = null) {
                 let close_button = document.createElement("button")
@@ -679,6 +889,29 @@ class DictionaryApp {
             });
             form.appendChild(make_div(updatedLabel, updatedSelect));
 
+            // --- Sort ---
+            const sortLabel = make_label("Sort:");
+            const sortSelect = make_select()
+            let sort_array = ["None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Random"]
+            sort_array.forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                sortSelect.appendChild(opt);
+            });
+            const orderSelect = make_select()
+            let order_array = ["Asc", "Desc"]
+            order_array.forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                orderSelect.appendChild(opt);
+            });
+            sortSelect.style.width = "150px"
+            orderSelect.style.width = "80px"
+            orderSelect.style.marginLeft = "20px"
+            form.appendChild(make_div(sortLabel, sortSelect, orderSelect));
+
             // --- Buttons ---
             const buttonRow = document.createElement("span");
 
@@ -688,10 +921,9 @@ class DictionaryApp {
             searchBtn.classList.add("save-btn");
 
             searchBtn.onclick = async () => {
-                showInfo("Advanced Search submitted (logic not implemented yet)");
+                let query_json = load_query_json_from_form()
                 console.log("Advanced search values:", {
-                    title: titleContainsInput.value,
-                    status: statusSelect.value
+                    query_json: query_json
                 });
 
                 let page_number = 5
@@ -702,7 +934,7 @@ class DictionaryApp {
                 }
 
                 let page_size = get_element("page_size_select").value
-                let query_json = load_query_json_from_form()
+
                 let list_term_searches = await list_entities(
                     "dictionary_term_search",
                     format_url_params(
@@ -717,11 +949,12 @@ class DictionaryApp {
                     showError("Listing search results failed.")
                     return
                 }
-                alert(JSON.stringify(list_term_searches))
+                // alert(JSON.stringify(list_term_searches))
                 let total_items = list_term_searches.total_items
                 let total_pages = list_term_searches.total_pages
                 get_element("span_pages_toolbar").style.display = "inline"
                 get_element("span_total_pages_count").innerText = total_pages
+                get_element("span_total_count_count").innerText = total_items
                 let items = list_term_searches.items
                 if (items.length === 0) {
                     showInfo("No search results.")
@@ -754,6 +987,7 @@ class DictionaryApp {
                     return td
                 }
 
+                let details = items.length === 0 ? false : get_element("details_checkbox").checked
                 let th_id = create_th("ID")
                 let th_title = create_th("Title")
                 let th_disambiguation = create_th("Disambiguation")
@@ -763,6 +997,25 @@ class DictionaryApp {
                 th_id.style.width = "50px"
                 th_title.style.minWidth = "200px"
                 th_disambiguation.style.minWidth = "200px"
+                let term_map = new Map()
+                if(details) {
+                    function append_th(text) {tr_th.appendChild(create_th(text))}
+                    append_th("Created at")
+                    append_th("Updated at")
+                    append_th("Status")
+                    append_th("Importance")
+                    append_th("Difficulty")
+                }
+                for(const item of items) {
+
+                    let term_id = item.id
+                    let read_term = await read_entity("dictionary_term", term_id)
+                    if(!defined) {
+                        showError("Reading term failed.")
+                        continue
+                    }
+                    term_map.set(term_id, read_term)
+                }
 
                 if(items.length === 0) {
                     let tr = document.createElement("tr")
@@ -803,6 +1056,44 @@ class DictionaryApp {
                     tr.appendChild(create_td(dictionary_term_id))
                     tr.appendChild(td_title)
                     tr.appendChild(create_td(disambiguation))
+                    if(details) {
+                        function append_td(text) {
+                            let td = create_td(text)
+                            td.innerText = text
+                            tr.appendChild(td)
+                        }
+
+                        let term = term_map.has(dictionary_term_id) ? term_map.get(dictionary_term_id) : null
+                        if(defined(term)) {
+                            function term_status_to_string(status) {
+                                switch (status) {
+                                    case 0:
+                                        return "Not defined";
+                                    case 1:
+                                        return "Stub";
+                                    case 2:
+                                        return "Draft";
+                                    case 3:
+                                        return "Incomplete";
+                                    case 4:
+                                        return "Verified";
+                                    case 5:
+                                        return "Deprecated";
+                                    case 6:
+                                        return "Deleted";
+                                    default:
+                                        return "Not defined";
+                                }
+                            }
+
+                            append_td(formatDateTimeHMS(term.created_at))
+                            append_td(formatDateTimeHMS(term.updated_at))
+                            append_td(term_status_to_string(term.status))
+                            append_td(term.importance === 1? "Low" : (term.importance === 2 ? "Medium" :" High"))
+                            append_td(term.difficulty === 1? "Easy" : (term.importance === 2 ? "Medium" :" Hard"))
+                        }
+
+                    }
                 })
 
             };
@@ -843,6 +1134,8 @@ class DictionaryApp {
                 })
                 visitedSelect.selectedIndex = 0
                 updatedSelect.selectedIndex = 0
+                sortSelect.selectedIndex = 0
+                orderSelect.selectedIndex = 0
             }
             buttonRow.appendChild(resetBtn);
 
@@ -858,12 +1151,12 @@ class DictionaryApp {
                         .map(opt => opt.innerText)
                         .join(","),
                     pinned_only: pinnedCheckbox.checked,
-                    difficulty_easy: get_element("difficulty_easy").checked,
-                    difficulty_medium: get_element("difficulty_medium").checked,
-                    difficulty_hard: get_element("difficulty_hard").checked,
                     importance_low: get_element("importance_low").checked,
                     importance_medium: get_element("importance_medium").checked,
                     importance_high: get_element("importance_high").checked,
+                    difficulty_easy: get_element("difficulty_easy").checked,
+                    difficulty_medium: get_element("difficulty_medium").checked,
+                    difficulty_hard: get_element("difficulty_hard").checked,
                     tag_id: tag_autocomplete.get_item_id(),
                     flag_title: flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title,
                     link_from_term_id: link_from_autocomplete.get_item_id(),
@@ -882,6 +1175,14 @@ class DictionaryApp {
                         .join(","),
                     updated: Array
                         .from(updatedSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                    sort: Array
+                        .from(sortSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                    order: Array
+                        .from(orderSelect.selectedOptions)
                         .map(opt => opt.innerText)
                         .join(","),
                 };
@@ -993,12 +1294,14 @@ class DictionaryApp {
                     option.selected = statuses.includes(option.innerText);
                 }
                 pinnedCheckbox.checked = query.pinned_only ?? false
-                get_element("difficulty_easy").checked = query.difficulty_easy ?? true
-                get_element("difficulty_medium").checked = query.difficulty_medium ?? true
-                get_element("difficulty_hard").checked = query.difficulty_hard ?? true
                 get_element("importance_low").checked = query.importance_low ?? true
                 get_element("importance_medium").checked = query.importance_medium ?? true
                 get_element("importance_high").checked = query.importance_high ?? true
+
+                get_element("difficulty_easy").checked = query.difficulty_easy ?? true
+                get_element("difficulty_medium").checked = query.difficulty_medium ?? true
+                get_element("difficulty_hard").checked = query.difficulty_hard ?? true
+
 
                 if ((query.tag_id ?? 0) !== 0) {
                     let read_tag = await read_entity("dictionary_tag", query.tag_id)
@@ -1090,6 +1393,16 @@ class DictionaryApp {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = updated === option.innerText;
                 }
+                let sort = query.sort ?? ""
+                for (const option of sortSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = sort === option.innerText;
+                }
+                let order = query.order ?? ""
+                for (const option of orderSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = order === option.innerText;
+                }
 
                 form.classList.remove("loading")
                 console.debug(JSON.stringify(read_search))
@@ -1135,6 +1448,16 @@ class DictionaryApp {
             page_size_select.style.display = "inline"
             page_size_select.style.width = "100px";
 
+            let details_label = document.createElement("label")
+            details_label.style.display = "inline"
+            details_label.innerText = "Details:"
+            details_label.style.marginRight = "10px"
+            details_label.style.marginLeft = "10px"
+            let details_checkbox = make_input("checkbox")
+            details_checkbox.id = "details_checkbox"
+            details_checkbox.style.display = "inline"
+            details_checkbox.style.transform = "scale(2)";
+
             function make_page_size_option(size) {
                 let option = document.createElement("option")
                 option.value = size
@@ -1157,6 +1480,7 @@ class DictionaryApp {
                 return el
             }
             content.appendChild(make_span(page_size_label, page_size_select))
+            content.appendChild(make_span(details_label, details_checkbox))
 
             content.appendChild(space)
             let resultTable = document.createElement("table")
@@ -1210,19 +1534,28 @@ class DictionaryApp {
             span_pages_toolbar.appendChild(button_next_page)
             span_pages_toolbar.appendChild(button_last_page)
 
-            let span_total_pages = document.createElement("span")
-            span_total_pages.style.color = "grey"
-            span_total_pages.id = "span_total_pages"
-            span_total_pages.style.marginLeft = "10px"
-            span_pages_toolbar.appendChild(span_total_pages)
+            let span_total = document.createElement("span")
+            span_total.style.color = "grey"
+            span_total.id = "span_total_pages"
+            span_total.style.marginLeft = "10px"
+            span_pages_toolbar.appendChild(span_total)
 
             let span_total_pages_text = document.createElement("span")
             span_total_pages_text.innerText = "Total pages: "
-            span_total_pages.appendChild(span_total_pages_text)
+            span_total.appendChild(span_total_pages_text)
 
             let span_total_pages_count = document.createElement("span")
             span_total_pages_count.id = "span_total_pages_count"
-            span_total_pages.appendChild(span_total_pages_count)
+            span_total.appendChild(span_total_pages_count)
+
+            let span_total_count_text = document.createElement("span")
+            span_total_count_text.innerText = "Total count: "
+            span_total_count_text.style.marginLeft = "10px"
+            span_total.appendChild(span_total_count_text)
+
+            let span_total_count_count = document.createElement("span")
+            span_total_count_count.id = "span_total_count_count"
+            span_total.appendChild(span_total_count_count)
 
             button_first_page.onclick = (e=> {input_page_number.value = 1; go_page_button.click()})
             button_prev_page.onclick = (e=> {
@@ -1237,7 +1570,7 @@ class DictionaryApp {
                 let last_page_number = Number(span_total_pages_count.innerText)
                 let current_page_number = Number(page_number)
 
-                if(last_page_number >= current_page_number) return
+                if(current_page_number >= last_page_number) return
                 input_page_number.value = String(current_page_number + 1)
                 go_page_button.click()
             })

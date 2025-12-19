@@ -44,6 +44,9 @@ export function formatDate(value){
 export function formatDateTimeHM(value){
     return formatDateTime(value, true, true, false, false);
 }
+export function formatDateTimeHMS(value){
+    return formatDateTime(value, true, true, true, false);
+}
 
 export function parseDateTimeToUnix(str) {
     if (!str) return 0;

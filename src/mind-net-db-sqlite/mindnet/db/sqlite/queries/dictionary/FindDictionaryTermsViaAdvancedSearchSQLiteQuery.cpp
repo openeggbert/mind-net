@@ -83,6 +83,23 @@ namespace mindnet::db::sqlite::queries::dictionary
             has_items = split_csv(q.value("has_items", ""));
             visited = q.value("visited", "Any");
             updated = q.value("updated", "Any");
+            order = q.value("order", "Asc");
+            if (order != "Asc" && order != "Desc") sort = "Asc";
+
+            sort =q.value("sort", "None");
+            std::vector sort_values = {"None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Random"};
+            {
+                bool sort_found = false;
+                for (string e: sort_values)
+                {
+                    if (e == sort)
+                    {
+                        sort_found = true;
+                        break;
+                    }
+                }
+                if (!sort_found) sort = "None";
+            }
         }
 
         // text filters
@@ -114,6 +131,8 @@ namespace mindnet::db::sqlite::queries::dictionary
         vector<string> has_items;
         string visited;
         string updated;
+        string sort;
+        string order = "Asc";
 
         std::string to_json() const
         {
@@ -159,6 +178,8 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["has_items"] = join_csv(has_items);
             q["visited"] = visited;
             q["updated"] = updated;
+            q["sort"] = sort;
+            q["order"] = order;
 
             return q.dump(2);
         }
@@ -241,71 +262,73 @@ namespace mindnet::db::sqlite::queries::dictionary
         int page_number = request.value("page_number", 1);
         int offset = (page_number - 1) * page_size;
 
-        std::string sql = "SELECT DISTINCT dt.id, dt.title, dt.disambiguation FROM dictionary_term dt ";
+        std::string sql_start_page= "SELECT DISTINCT dt.id, dt.title, dt.disambiguation FROM dictionary_term dt ";
+        std::string sql_start_count = "SELECT COUNT(*) FROM dictionary_term dt ";
+        std::string sql_current_page = sql_start_page;
         std::vector<BindValue> binders;
 
         bool first_where = true;
 
         // joins
         if (q.tag_id > 0)
-            sql += " JOIN dictionary_tag dtag ON dtag.dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_tag dtag ON dtag.dictionary_term_id = dt.id ";
 
         if (!q.flag_title.empty())
-            sql += " JOIN dictionary_flag df ON df.dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_flag df ON df.dictionary_term_id = dt.id ";
 
         if (!q.alias_alias.empty())
-            sql += " JOIN dictionary_term_alias da ON da.dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_term_alias da ON da.dictionary_term_id = dt.id ";
 
         if (q.link_from_term_id > 0)
-            sql += " JOIN dictionary_link dl_from ON dl_from.to_dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_link dl_from ON dl_from.to_dictionary_term_id = dt.id ";
 
         if (q.link_to_term_id > 0)
-            sql += " JOIN dictionary_link dl_to ON dl_to.from_dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_link dl_to ON dl_to.from_dictionary_term_id = dt.id ";
 
         if (!q.note_contains.empty())
-            sql += " JOIN dictionary_note dn ON dn.dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_note dn ON dn.dictionary_term_id = dt.id ";
 
         if (q.index_id > 0)
-            sql += " JOIN dictionary_index di ON di.dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_index di ON di.dictionary_term_id = dt.id ";
 
         if (q.source_id > 0)
-            sql += " JOIN dictionary_source ds ON ds.dictionary_term_id = dt.id ";
+            sql_current_page += " JOIN dictionary_source ds ON ds.dictionary_term_id = dt.id ";
 
         // pinned
         if (q.pinned_only)
         {
-            sql +=
+            sql_current_page +=
                 " JOIN dictionary_pinned_term dpt ON dpt.dictionary_term_id = dt.id ";
-            append_where(sql, first_where);
-            sql += "dpt.user_id = ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dpt.user_id = ?";
             binders.push_back(user_id);
         }
 
         // mandatory
-        append_where(sql, first_where);
-        sql += "dt.dictionary_map_id = ?";
+        append_where(sql_current_page, first_where);
+        sql_current_page += "dt.dictionary_map_id = ?";
         binders.push_back(dictionary_map_id);
 
         // title filters
         if (!q.title_contains.empty())
         {
-            append_where(sql, first_where);
-            sql += "dt.title LIKE ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dt.title LIKE ?";
             binders.push_back("%" + q.title_contains + "%");
         }
 
         if (!q.title_starts_with.empty())
         {
-            append_where(sql, first_where);
-            sql += "dt.title LIKE ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dt.title LIKE ?";
             binders.push_back(q.title_starts_with + "%");
         }
 
         // definition
         if (!q.definition_contains.empty())
         {
-            append_where(sql, first_where);
-            sql += "dt.definition LIKE ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dt.definition LIKE ?";
             binders.push_back("%" + q.definition_contains + "%");
         }
 
@@ -314,83 +337,83 @@ namespace mindnet::db::sqlite::queries::dictionary
         {
             auto def = plugins::dictionary::enums::term_status_to_enum_definition();
 
-            append_where(sql, first_where);
-            sql += "dt.status IN (";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dt.status IN (";
             for (size_t i = 0; i < q.statuses.size(); ++i)
             {
-                if (i) sql += ",";
-                sql += "?";
+                if (i) sql_current_page += ",";
+                sql_current_page += "?";
                 auto status = q.statuses[i];
                 auto status_int = def.get_value_as_int(status);
                 if (status_int == -1) continue;
                 binders.push_back(status_int);
             }
-            sql += ")";
+            sql_current_page += ")";
         }
 
         // difficulty
         if (!(q.difficulty_easy && q.difficulty_medium && q.difficulty_hard))
         {
-            append_where(sql, first_where);
-            sql += "dt.difficulty IN (";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dt.difficulty IN (";
             bool first = true;
             if (q.difficulty_easy)
             {
-                sql += "0";
+                sql_current_page += "1";
                 first = false;
             }
             if (q.difficulty_medium)
             {
-                if (!first) sql += ",";
-                sql += "1";
+                if (!first) sql_current_page += ",";
+                sql_current_page += "2";
                 first = false;
             }
             if (q.difficulty_hard)
             {
-                if (!first) sql += ",";
-                sql += "2";
+                if (!first) sql_current_page += ",";
+                sql_current_page += "3";
             }
-            sql += ")";
+            sql_current_page += ")";
         }
 
         // importance
         if (!(q.importance_low && q.importance_medium && q.importance_high))
         {
-            append_where(sql, first_where);
-            sql += "dt.importance IN (";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dt.importance IN (";
             bool first = true;
             if (q.importance_low)
             {
-                sql += "0";
+                sql_current_page += "1";
                 first = false;
             }
             if (q.importance_medium)
             {
-                if (!first) sql += ",";
-                sql += "1";
+                if (!first) sql_current_page += ",";
+                sql_current_page += "2";
                 first = false;
             }
             if (q.importance_high)
             {
-                if (!first) sql += ",";
-                sql += "2";
+                if (!first) sql_current_page += ",";
+                sql_current_page += "3";
             }
-            sql += ")";
+            sql_current_page += ")";
         }
 
         // tag
         if (q.tag_id > 0)
         {
-            append_where(sql, first_where);
-            sql += "dtag.dictionary_tag_type_id = ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dtag.dictionary_tag_type_id = ?";
             binders.push_back(q.tag_id);
         }
 
         // flag
         if (!q.flag_title.empty())
         {
-            append_where(sql, first_where);
-            sql += "df.title = ? AND df.user_id = ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "df.title = ? AND df.user_id = ?";
             binders.push_back(q.flag_title);
             binders.push_back(user_id);
         }
@@ -398,74 +421,118 @@ namespace mindnet::db::sqlite::queries::dictionary
         // alias
         if (!q.alias_alias.empty())
         {
-            append_where(sql, first_where);
-            sql += "da.alias LIKE ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "da.alias LIKE ?";
             binders.push_back("%" + q.alias_alias + "%");
         }
 
         // note
         if (!q.note_contains.empty())
         {
-            append_where(sql, first_where);
-            sql += "dn.content LIKE ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "dn.content LIKE ?";
             binders.push_back("%" + q.note_contains + "%");
         }
 
         // index
         if (q.index_id > 0)
         {
-            append_where(sql, first_where);
-            sql += "di.dictionary_index_type_id = ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "di.dictionary_index_type_id = ?";
             binders.push_back(q.index_id);
         }
 
         // source
         if (q.source_id > 0)
         {
-            append_where(sql, first_where);
-            sql += "ds.dictionary_source_type_id = ?";
+            append_where(sql_current_page, first_where);
+            sql_current_page += "ds.dictionary_source_type_id = ?";
             binders.push_back(q.source_id);
         }
 
-        sql += " ORDER BY dt.title ASC LIMIT ? OFFSET ?";
+        std::string sql_sort = "";
+        if (q.sort == "Title") sql_sort = "dt.title";
+        if (q.sort == "Created at") sql_sort = "dt.created_at";
+        if (q.sort == "Updated at") sql_sort = "dt.updated_at";
+        if (q.sort == "Status") sql_sort = "dt.status";
+        if (q.sort == "Difficulty") sql_sort = "dt.difficulty";
+        if (q.sort == "Importance") sql_sort = "dt.importance";
+        if (q.sort == "Random") sql_sort = "random()";
+        if (!sql_sort.empty())
+        {
+            sql_sort = " ORDER BY " + sql_sort + " " + q.order + " ";
+        }
+
+        static std::string sql_limit_offset = " LIMIT ? OFFSET ?";
+        
+        std::string sql_count;
 
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
-            SQLite::Statement stmt(db, sql);
 
-            int i = 0;
-            for (const BindValue& b: binders)
             {
-                switch (b.get_type())
+                sql_current_page += sql_sort;
+                sql_current_page += sql_limit_offset;
+                SQLite::Statement stmt(db, sql_current_page);
+
+                int i = 0;
+                for (const BindValue& b: binders)
                 {
-                case TEXT: stmt.bind(++i, b.get_text()); break;
-                case NUMBER: stmt.bind(++i, b.get_number()); break;
-                default: throw std::runtime_error(std::string("Unknown type: ") + std::to_string(b.get_type()));
+                    switch (b.get_type())
+                    {
+                    case TEXT: stmt.bind(++i, b.get_text()); break;
+                    case NUMBER: stmt.bind(++i, b.get_number()); break;
+                    default: throw std::runtime_error(std::string("Unknown type: ") + std::to_string(b.get_type()));
+                    }
+                }
+
+                stmt.bind(++i, page_size);
+                stmt.bind(++i, offset);
+
+                nlohmann::json arr = nlohmann::json::array();
+                while (stmt.executeStep())
+                {
+                    arr.push_back({
+                        {"id", stmt.getColumn(0).getInt()},
+                        {"title", stmt.getColumn(1).getString()},
+                        {"disambiguation", stmt.getColumn(2).getString()}
+                    });
+                }
+                response["results"] = arr;
+            }
+            sql_count = sql_current_page;
+            {
+                sql_count.erase(0, sql_start_page.size());
+                sql_count = sql_start_count + sql_count;
+                sql_count.erase(sql_count.size() - sql_limit_offset.size());
+
+                SQLite::Statement stmt(db, sql_count);
+
+                int i = 0;
+                for (const BindValue& b: binders)
+                {
+                    switch (b.get_type())
+                    {
+                    case TEXT: stmt.bind(++i, b.get_text()); break;
+                    case NUMBER: stmt.bind(++i, b.get_number()); break;
+                    default: throw std::runtime_error(std::string("Unknown type: ") + std::to_string(b.get_type()));
+                    }
+                }
+
+                nlohmann::json arr = nlohmann::json::array();
+                if (stmt.executeStep())
+                {
+                    response["total_items"] = stmt.getColumn(0).getInt();
                 }
             }
-
-            stmt.bind(++i, page_size);
-            stmt.bind(++i, offset);
-
-            nlohmann::json arr = nlohmann::json::array();
-            while (stmt.executeStep())
-            {
-                arr.push_back({
-                    {"id", stmt.getColumn(0).getInt()},
-                    {"title", stmt.getColumn(1).getString()},
-                    {"disambiguation", stmt.getColumn(2).getString()}
-                });
-            }
-
-            response["results"] = arr;
-            response["total_items"] = arr.size();
 
         }
         catch (const SQLite::Exception& e)
         {
             response["error"] = e.what();
-            response["sql"] = sql;
+            response["sql"] = sql_current_page;
+            response["sql2"] = sql_count;
         }
 
         return response;
