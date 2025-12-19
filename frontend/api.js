@@ -211,6 +211,19 @@ export async function apiFetch(url, options = {}) {
     }
 }
 
+export function format_url_params(...values) {
+    const max_index = values.length - 1;
+    let result = ""
+    for (let i = 0; i < values.length; i++) {
+        const key = values[i];
+        i++
+        if(i > max_index) break
+        const value = values[i]
+        result += "&" + key + "="
+        result += encodeURIComponent(value);
+    }
+    return result
+}
 export async function list_entities(entity, additional_params = "", page_number = 1, page_size = 20) {
     const url = new URL(`${API_BASE}/${entity}`);
 

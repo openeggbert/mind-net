@@ -29,10 +29,10 @@
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 // ***** MACROS : START *****
-#define Model DictionaryTermFulltext
-#define MODEL DICTIONARY_TERM_FULLTEXT
-#define COLS columns::DictionaryTermFulltextColumns
-#include "../columns/DictionaryTermFulltextColumns.hpp"
+#define Model DictionaryTermSearch
+#define MODEL DICTIONARY_TERM_SEARCH
+#define COLS columns::DictionaryTermSearchColumns
+#include "../columns/DictionaryTermSearchColumns.hpp"
 
 // ***** MACROS : END *****
 
@@ -42,7 +42,7 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_TERM_FULLTEXT_DEFINITION =
+    inline const def DICTIONARY_TERM_SEARCH_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_group("Dictionary #2", 100)
         .set_rest_operations("l").set_title_column(COLS::ID)
@@ -52,7 +52,6 @@ namespace mindnet::plugins::dictionary::models
             //
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::TITLE_PART, MANDATORY | READONLY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
             coldef(COLS::DISAMBIGUATION),
         });
@@ -61,14 +60,12 @@ namespace mindnet::plugins::dictionary::models
     {
         identification dictionary_term_id{};
         identification dictionary_map_id{};
-        std::string title_part{};
         std::string title{};
         std::string disambiguation{};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::dictionary_map_id,
-            &Model::title_part,
             &Model::title,
             &Model::disambiguation
         );
@@ -79,7 +76,7 @@ namespace mindnet::plugins::dictionary::models
         {
             return id == other.id &&
                 dictionary_map_id == other.dictionary_map_id &&
-                dictionary_term_id == other.dictionary_term_id && title_part == other.title_part
+                dictionary_term_id == other.dictionary_term_id
                 && title == other.title &&
                 disambiguation == other.disambiguation &&
                 created_at == other.created_at && updated_at == other.updated_at;

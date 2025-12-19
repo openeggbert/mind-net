@@ -119,8 +119,8 @@ namespace mindnet::api
         auto& model_name = model_definition.get_model_name();
         if (registered_models.contains(model_name))
         {
-            warn << "Model with name " << model_name << " is already registered" << commit;
-            return;
+            err << "Model with name " << model_name << " is already registered" << commit;
+            throw std::string("Model with name ") + model_name + " is already registered";
         }
         registered_models.insert(model_name);
         std::shared_ptr<IRepository> repository = repository_factory->create(model_definition);

@@ -64,8 +64,8 @@ namespace mindnet::plugins::dictionary::models
 
     struct Model : mindnet::model::BaseModel
     {
-        identification user_id;
-        identification dictionary_map_id;
+        identification user_id{0};
+        identification dictionary_map_id{0};
 
         std::string name;
         std::string description;

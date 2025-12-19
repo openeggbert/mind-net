@@ -43,7 +43,7 @@ namespace mindnet::plugins::dictionary::models
 
     inline const def DICTIONARY_SOURCE_TYPE_FULLTEXT_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_group("Dictionary", 100)
+        .set_group("Dictionary #2", 100)
         .set_rest_operations("l").set_title_column(COLS::ID)
         .set_no_table(true)
         .set_cache_enabled(false)

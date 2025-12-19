@@ -33,6 +33,7 @@
 #include "mindnet/api/PluginFactory.hpp"
 #include "mindnet/db/sqlite/queries/dictionary/FindDictionarySearchesSQLiteQuery.hpp"
 #include "mindnet/db/sqlite/queries/dictionary/FindDictionaryTermAliasesSQLiteQuery.hpp"
+#include "mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsViaAdvancedSearchSQLiteQuery.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryFlagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryLinkValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryMapValidator.hpp"
@@ -48,6 +49,7 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryTermAliasValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryTermSearchValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermVisitValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryPinnedTermValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermMetricValidator.hpp"
@@ -70,6 +72,7 @@
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySearchesFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermAliasesFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermSearchTrigger.hpp"
 
 namespace mindnet::plugins::dictionary
 {
@@ -89,21 +92,26 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_term, DictionaryTerm, DICTIONARY_TERM)
         REGISTER_MODEL(dictionary_link, DictionaryLink, DICTIONARY_LINK)
         REGISTER_MODEL(dictionary_flag, DictionaryFlag, DICTIONARY_FLAG)
-        REGISTER_MODEL(dictionary_tag_type, DictionaryTagType, DICTIONARY_TAG_TYPE)
         REGISTER_MODEL(dictionary_tag, DictionaryTag, DICTIONARY_TAG)
         REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
-        REGISTER_MODEL(dictionary_source_type, DictionarySourceType, DICTIONARY_SOURCE_TYPE)
+        REGISTER_MODEL(dictionary_index, DictionaryIndex, DICTIONARY_INDEX)
         REGISTER_MODEL(dictionary_source, DictionarySource, DICTIONARY_SOURCE)
-        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
+
         REGISTER_MODEL(dictionary_pinned_term, DictionaryPinnedTerm, DICTIONARY_PINNED_TERM)
         REGISTER_MODEL(dictionary_term_alias, DictionaryTermAlias, DICTIONARY_TERM_ALIAS)
+
+        REGISTER_MODEL(dictionary_tag_type, DictionaryTagType, DICTIONARY_TAG_TYPE)
+        REGISTER_MODEL(dictionary_index_type, DictionaryIndexType, DICTIONARY_INDEX_TYPE)
+        REGISTER_MODEL(dictionary_source_type, DictionarySourceType, DICTIONARY_SOURCE_TYPE)
+        REGISTER_MODEL(dictionary_search, DictionarySearch, DICTIONARY_SEARCH)
+
+        REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
+        REGISTER_MODEL(dictionary_term_metric, DictionaryTermMetric, DICTIONARY_TERM_METRIC)
         REGISTER_MODEL(dictionary_review, DictionaryReview, DICTIONARY_REVIEW)
         REGISTER_MODEL(dictionary_state_4, DictionaryState4, DICTIONARY_STATE_4)
-        REGISTER_MODEL(dictionary_index_type, DictionaryIndexType, DICTIONARY_INDEX_TYPE)
-        REGISTER_MODEL(dictionary_index, DictionaryIndex, DICTIONARY_INDEX)
-        REGISTER_MODEL(dictionary_search, DictionarySearch, DICTIONARY_SEARCH)
+
         REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
-        REGISTER_MODEL(dictionary_term_metric, DictionaryTermMetric, DICTIONARY_TERM_METRIC)
+        REGISTER_MODEL(dictionary_term_search, DictionaryTermSearch, DICTIONARY_TERM_SEARCH)
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_index_type_fulltext, DictionaryIndexTypeFulltext, DICTIONARY_INDEX_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_source_type_fulltext, DictionarySourceTypeFulltext, DICTIONARY_SOURCE_TYPE_FULLTEXT)
@@ -120,9 +128,11 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryFlagsFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermAliasesFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySearchesFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermSearchTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindNextDictionaryNotePositionSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsViaAdvancedSearchSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTagTypesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionarySourceTypesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryIndexTypesSQLiteQuery>());;

@@ -2,19 +2,17 @@
 // Imports & Globals
 // ========================================
 import {
-    delete_entity,
-    getTitleCache, getUserId,
-    list_all_entities, list_entities,
+    delete_entity, format_url_params,
+    getTitleCache,
+    getUserId,
+    list_all_entities,
+    list_entities,
     post_entity,
     put_entity,
     read_entity,
     setTitleCache
 } from "./api.js";
-import {
-    makeEnum, sleep_for_seconds, hide_element, hide_elements, get_element, set_value, copy_to_clipboard,
-    chooseOption, show_elements, show_or_hide_elements, show_or_hide_element, show_element, saveToLocalStorage,
-    formatDateTimeHM, formatDateTime, showInfo, showError, showWarn
-} from "./dom.js";
+import {chooseOption, formatDateTime, get_element, showError, showInfo, showWarn} from "./dom.js";
 import {Autocomplete, null_or_undefined} from "./common.js";
 
 let wasDragged = false;
@@ -22,7 +20,7 @@ let suppressPopstate = false;
 let debug = false
 
 function showDebug(msg) {
-    if(debug) showInfo("Debug: " + msg)
+    if (debug) showInfo("Debug: " + msg)
 }
 
 // ========================================
@@ -60,7 +58,7 @@ export function attachMarkdownEditor({
                                      }) {
     if (!textarea) throw "attachMarkdownEditor: textarea is required";
 
-    textarea.style.marginTop="10px;"
+    textarea.style.marginTop = "10px;"
     let div = document.createElement("div")
     div.style.height = "10px"
     buttonEdit.after(div)
@@ -74,7 +72,7 @@ export function attachMarkdownEditor({
     rendered.style.padding = "8px";
     rendered.style.background = "#e6e6c5";
     rendered.style.whiteSpace = "normal";
-    rendered.style.minHeight= "100px"
+    rendered.style.minHeight = "100px"
 
     rendered.style.maxHeight = "400px";
     rendered.style.overflowY = "auto";
@@ -217,7 +215,7 @@ export function attachMarkdownEditor({
     if (buttonEdit) buttonEdit.onclick = editMarkdown;
 
     // --- initial state: READ ---
-    if(textarea.value === "") {
+    if (textarea.value === "") {
         editMarkdown()
     } else {
         renderMarkdown();
@@ -436,10 +434,11 @@ class DictionaryApp {
                 let div = document.createElement("div")
                 div.style.width = width
                 div.appendChild(label)
-                div.style.display="inline-block"
-                div.style.whiteSpace="nowrap"
+                div.style.display = "inline-block"
+                div.style.whiteSpace = "nowrap"
                 return div
             }
+
             function make_input(type = "text") {
                 let input = document.createElement("input")
                 input.type = type;
@@ -449,21 +448,24 @@ class DictionaryApp {
                     input.style.marginRight = "10px"
                     input.style.textAlign = "left"
                 } else {
-                    input.style.width= "250px";
+                    input.style.width = "250px";
                 }
                 return input
             }
+
             function make_select() {
                 let select = document.createElement("select")
-                select.style.width= "250px";
+                select.style.width = "250px";
                 return select
             }
+
             function make_div(label, element) {
                 let div = document.createElement("div")
                 div.appendChild(label)
                 div.appendChild(element)
                 return div
             }
+
             // --- Title contains ---
             const titleLabel = make_label("Title contains:");
             const titleContainsInput = make_input();
@@ -552,16 +554,16 @@ class DictionaryApp {
                 impContainer.appendChild(l);
             });
 
-            form.appendChild(make_div(impLabel,impContainer));
+            form.appendChild(make_div(impLabel, impContainer));
 
-            function make_close_button(model, input, autocomplete =null) {
+            function make_close_button(model, input, autocomplete = null) {
                 let close_button = document.createElement("button")
-                close_button.innerHTML="&times;"
+                close_button.innerHTML = "&times;"
                 close_button.title = "Clear " + model
                 close_button.style.marginLeft = "10px"
                 close_button.onclick = (e) => {
                     event.preventDefault();
-                    if(defined(autocomplete)) {
+                    if (defined(autocomplete)) {
                         autocomplete.reset()
                     } else {
                         input.value = ""
@@ -606,7 +608,7 @@ class DictionaryApp {
             const noteInput = make_input();
             noteInput.placeholder = "e.g. mutex, allocator, RAII";
             form.appendChild(make_div(noteLabel, noteInput));
-            
+
             const index_label = make_label("Index: ")
             const index_input = make_input()
             form.appendChild(make_div(index_label, index_input))
@@ -614,7 +616,7 @@ class DictionaryApp {
             index_autocomplete.clear_after_click = false
             index_autocomplete.box_margin_left = "200px"
             make_close_button("index", index_input, index_autocomplete)
-            
+
             const source_label = make_label("Source: ")
             const source_input = make_input()
             form.appendChild(make_div(source_label, source_input))
@@ -622,7 +624,7 @@ class DictionaryApp {
             source_autocomplete.clear_after_click = false
             source_autocomplete.box_margin_left = "200px"
             make_close_button("source", source_input, source_autocomplete)
-            
+
             const alias_label = make_label("Alias: ")
             const alias_input = make_input()
             form.appendChild(make_div(alias_label, alias_input))
@@ -641,7 +643,7 @@ class DictionaryApp {
                 cb.value = i + 1;
                 cb.checked = false;
                 cb.style.marginLeft = "0"
-                cb.id= "has_" + t.toLowerCase()
+                cb.id = "has_" + t.toLowerCase()
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
@@ -676,7 +678,7 @@ class DictionaryApp {
                 updatedSelect.appendChild(opt);
             });
             form.appendChild(make_div(updatedLabel, updatedSelect));
-            
+
             // --- Buttons ---
             const buttonRow = document.createElement("span");
 
@@ -685,12 +687,103 @@ class DictionaryApp {
             searchBtn.innerText = "🔍 Search";
             searchBtn.classList.add("save-btn");
 
-            searchBtn.onclick = () => {
+            searchBtn.onclick = async () => {
                 showInfo("Advanced Search submitted (logic not implemented yet)");
                 console.log("Advanced search values:", {
                     title: titleContainsInput.value,
                     status: statusSelect.value
                 });
+
+                let page_number = 1
+                let page_size = 5
+                let query_json = load_query_json_from_form()
+                let list_term_searches = await list_entities(
+                    "dictionary_term_search",
+                    format_url_params(
+                        "dictionary_map_id", dictionary_app.get_selected_map_id(),
+                        "title", JSON.stringify(query_json)
+                    ),
+                    page_number,
+                    page_size
+                )
+                // alert(JSON.stringify(query_json))
+                if (!defined(list_term_searches)) {
+                    showError("Listing search results failed.")
+                    return
+                }
+                // alert(JSON.stringify(list_term_searches))
+                let items = list_term_searches.items
+                if (items.length === 0) {
+                    showInfo("No search results.")
+                }
+                let resultTable = get_element("resultTable")
+                resultTable.innerHTML = ""
+                resultTable.style.display = "block"
+                resultTable.style.marginBottom = "40px"
+                let space = get_element("space");
+                if (defined(space)) get_element("space").remove()
+
+                let tr_th = document.createElement("tr")
+                resultTable.appendChild(tr_th)
+
+                function create_th(text) {
+                    let th = document.createElement("th")
+                    th.innerText = text
+                    th.style.border = "1px solid black"
+                    th.style.backgroundColor = "#aaa"
+                    th.style.height = "40px"
+                    return th
+                }
+
+                function create_td(text) {
+                    let td = document.createElement("td");
+                    td.style.border = "1px solid black"
+                    td.innerText = text
+                    td.style.paddingLeft = "10px"
+                    td.style.height = "40px"
+                    return td
+                }
+
+                let th_id = create_th("ID")
+                let th_title = create_th("Title")
+                let th_disambiguation = create_th("Disambiguation")
+                tr_th.appendChild(th_id)
+                tr_th.appendChild(th_title)
+                tr_th.appendChild(th_disambiguation)
+                th_id.style.width = "50px"
+                th_title.style.minWidth = "200px"
+                th_disambiguation.style.minWidth = "200px"
+
+                items.forEach(e => {
+                    let tr = document.createElement("tr")
+                    tr.onmouseover = (e) => tr.style.backgroundColor = "rgba(101,181,237,0.34)"
+                    tr.onmouseleave = (e) => tr.style.backgroundColor = "white"
+                    resultTable.appendChild(tr)
+                    let dictionary_term_id = e.dictionary_term_id
+                    let title = e.title
+                    let disambiguation = e.disambiguation
+
+                    let td_title = create_td(title);
+                    td_title.innerText = ""
+                    let a = document.createElement("a")
+                    a.href = "#"
+                    a.title = title
+                    a.innerText = title
+                    td_title.appendChild(a)
+                    // a.onclick = (async e => {
+                    //     e.preventDefault()
+                    //     await this.render(dictionary_term_id)
+                    // })
+                    td_title.onclick = (async e => {
+                        await dictionary_app.render(dictionary_term_id)
+                        this.#term_container.show()
+                    })
+                    td_title.style.cursor = "pointer"
+                    tr.appendChild(create_td(dictionary_term_id))
+                    tr.appendChild(td_title)
+                    tr.appendChild(create_td(disambiguation))
+                })
+
             };
             buttonRow.appendChild(searchBtn);
 
@@ -702,6 +795,7 @@ class DictionaryApp {
                 button.style.marginLeft = "20px"
                 return button
             }
+
             const resetBtn = make_button("♻ Reset");
 
             resetBtn.onclick = () => {
@@ -710,9 +804,8 @@ class DictionaryApp {
                 definitionInput.value = ""
                 statusSelect.selectedIndex = 0;
                 pinnedCheckbox.checked = false
-                form.querySelectorAll("input[type=checkbox]").forEach(cb =>
-                {
-                    if(cb !== pinnedCheckbox && !cb.id.startsWith("has_")) cb.checked = true
+                form.querySelectorAll("input[type=checkbox]").forEach(cb => {
+                    if (cb !== pinnedCheckbox && !cb.id.startsWith("has_")) cb.checked = true
                 })
                 tag_autocomplete.reset()
                 flag_autocomplete.reset()
@@ -734,18 +827,8 @@ class DictionaryApp {
 
             let search_json = null
 
-            const saveBtn = make_button("💾 Save");
-            saveBtn.onclick = async () => {
-                let search_already_exists = search_json !== null
-                let name = null
-                if (!search_already_exists) {
-                    name = prompt("Enter search name");
-                    if (name === null || name === undefined || name === "") name = formatDateTime(new Date(), true, true, true, false);
-                } else {
-                    name = search_json.name
-                }
-
-                let query_json = {
+            function load_query_json_from_form() {
+                return {
                     title_contains: titleContainsInput.value,
                     title_starts_with: titleStartsWithInput.value,
                     definition_contains: definitionInput.value,
@@ -780,13 +863,27 @@ class DictionaryApp {
                         .from(updatedSelect.selectedOptions)
                         .map(opt => opt.innerText)
                         .join(","),
+                };
+            }
+
+            const saveBtn = make_button("💾 Save");
+            saveBtn.onclick = async () => {
+                let search_already_exists = search_json !== null
+                let name = null
+                if (!search_already_exists) {
+                    name = prompt("Enter search name");
+                    if (name === null || name === undefined || name === "") name = formatDateTime(new Date(), true, true, true, false);
+                } else {
+                    name = search_json.name
                 }
+
+                let query_json = load_query_json_from_form();
 
                 // alert(JSON.stringify(query_json, null, 2))
 
                 let is_public = false;
 
-                if(search_already_exists) {
+                if (search_already_exists) {
                     is_public = search_json.is_public === 1
                 } else {
                     let is_public_option = await chooseOption(["Public", "Private"]);
@@ -882,13 +979,13 @@ class DictionaryApp {
                 get_element("importance_medium").checked = query.importance_medium ?? true
                 get_element("importance_high").checked = query.importance_high ?? true
 
-                if((query.tag_id ?? 0) !== 0) {
+                if ((query.tag_id ?? 0) !== 0) {
                     let read_tag = await read_entity("dictionary_tag", query.tag_id)
-                    if(!defined(read_tag)) {
+                    if (!defined(read_tag)) {
                         showError("Reading tag failed: " + query.tag_id)
                     } else {
                         let read_tag_type = await read_entity("dictionary_tag_type", read_tag.dictionary_tag_type_id)
-                        if(!defined(read_tag_type)) {
+                        if (!defined(read_tag_type)) {
                             showError("Reading tag type failed: " + read_tag.dictionary_tag_type_id)
                         } else {
                             await tag_autocomplete.set_from_title(read_tag_type.title, query.tag_id)
@@ -896,20 +993,20 @@ class DictionaryApp {
                     }
                 }
 
-                if((query.flag_title ?? "") !== "") {
+                if ((query.flag_title ?? "") !== "") {
                     await flag_autocomplete.set_from_title(query.flag_title)
                 }
-                if((query.link_from_term_id ?? 0) !== 0) {
+                if ((query.link_from_term_id ?? 0) !== 0) {
                     let read_term = await read_entity("dictionary_term", query.link_from_term_id)
-                    if(!defined(read_term)) {
+                    if (!defined(read_term)) {
                         showError("Reading term failed: " + query.link_from_term_id)
                     } else {
                         await link_from_autocomplete.set_from_title(read_term.title, query.link_from_term_id)
                     }
                 }
-                if((query.link_to_term_id ?? 0) !== 0) {
+                if ((query.link_to_term_id ?? 0) !== 0) {
                     let read_term = await read_entity("dictionary_term", query.link_to_term_id)
-                    if(!defined(read_term)) {
+                    if (!defined(read_term)) {
                         showError("Reading term failed: " + query.link_to_term_id)
                     } else {
                         await link_to_autocomplete.set_from_title(read_term.title, query.link_to_term_id)
@@ -917,13 +1014,13 @@ class DictionaryApp {
                 }
                 noteInput.value = query.note_contains ?? ""
 
-                if((query.index_id ?? 0) !== 0) {
+                if ((query.index_id ?? 0) !== 0) {
                     let read_index = await read_entity("dictionary_index", query.index_id)
-                    if(!defined(read_index)) {
+                    if (!defined(read_index)) {
                         showError("Reading index failed: " + query.index_id)
                     } else {
                         let read_index_type = await read_entity("dictionary_index_type", read_index.dictionary_index_type_id)
-                        if(!defined(read_index_type)) {
+                        if (!defined(read_index_type)) {
                             showError("Reading index type failed: " + read_index_type.dictionary_index_type_id)
                         } else {
                             await index_autocomplete.set_from_title(read_index_type.title, query.index_id)
@@ -931,13 +1028,13 @@ class DictionaryApp {
                     }
                 }
 
-                if((query.source_id ?? 0) !== 0) {
+                if ((query.source_id ?? 0) !== 0) {
                     let read_source = await read_entity("dictionary_source", query.source_id)
-                    if(!defined(read_source)) {
+                    if (!defined(read_source)) {
                         showError("Reading source failed: " + query.source_id)
                     } else {
                         let read_source_type = await read_entity("dictionary_source_type", read_source.dictionary_source_type_id)
-                        if(!defined(read_source_type)) {
+                        if (!defined(read_source_type)) {
                             showError("Reading source type failed: " + read_source_type.dictionary_source_type_id)
                         } else {
                             await source_autocomplete.set_from_title(read_source_type.title, query.source_id)
@@ -945,7 +1042,7 @@ class DictionaryApp {
                     }
                 }
 
-                if((query.alias_alias ?? "") !== "") {
+                if ((query.alias_alias ?? "") !== "") {
                     await alias_autocomplete.set_from_title(query.alias_alias)
                 }
                 console.debug(JSON.stringify(query))
@@ -953,21 +1050,21 @@ class DictionaryApp {
 
                 (query.has_items ?? "")
                     .split(",")
-                    .forEach(e=> {
+                    .forEach(e => {
                         let id = "has_" + e.toLowerCase()
                         let el = get_element(id)
-                        if(el !== null) {
+                        if (el !== null) {
                             console.debug("id=" + id + ", el= " + el)
                             el.checked = true
                         }
                     })
 
-                let visited  = query.visited ?? ""
+                let visited = query.visited ?? ""
                 for (const option of visitedSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = visited === option.innerText;
                 }
-                let updated  = query.updated ?? ""
+                let updated = query.updated ?? ""
                 for (const option of updatedSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = updated === option.innerText;
@@ -989,7 +1086,7 @@ class DictionaryApp {
                     return
                 }
                 let deleted = await delete_entity("dictionary_search", search_json.id)
-                if(!defined(deleted)) {
+                if (!defined(deleted)) {
                     showError("Deleting search failed: " + search_json.id + " " + search_json.name)
                     return
                 }
@@ -1001,11 +1098,72 @@ class DictionaryApp {
 
             form.appendChild(buttonRow);
             let space = document.createElement("div")
-            space.style.height = "100px"
+            space.id = "space"
+            space.style.height = "50px"
 
             // ---------- FINAL ----------
             content.appendChild(form);
+
+            let page_size_label = document.createElement("label")
+            page_size_label.style.display = "inline"
+            page_size_label.innerText = "Items per page:"
+            page_size_label.style.marginRight = "10px"
+            page_size_label.style.marginLeft = "10px"
+            let page_size_select = make_select()
+            page_size_select.id = "page_size_select"
+            page_size_select.style.display = "inline"
+            page_size_select.style.width = "100px";
+
+            function make_page_size_option(size) {
+                let option = document.createElement("option")
+                option.value = size
+                option.innerText = size
+                page_size_select.appendChild(option)
+                return option
+            }
+            let page_size_option_5 = make_page_size_option(5)
+            let page_size_option_10 = make_page_size_option(10)
+            let page_size_option_20 = make_page_size_option(20)
+            let page_size_option_50 = make_page_size_option(50)
+            let page_size_option_100 = make_page_size_option(100)
+
+            function make_span(el1, el2) {
+                let el = document.createElement("span")
+                el.appendChild(el1)
+                el.appendChild(el2)
+                return el
+            }
+            content.appendChild(make_span(page_size_label, page_size_select))
+
             content.appendChild(space)
+            let resultTable = document.createElement("table")
+            resultTable.id = "resultTable"
+            resultTable.style.display = "none"
+            resultTable.style.margin = "10px"
+            resultTable.style.borderCollapse = "collapse";
+            content.appendChild(resultTable)
+            // resultTable.style.margin = "0 auto";
+            // resultTable.style.border = "1px solid black"
+
+            let input_page_number = make_input()
+            input_page_number.style.width = "100px"
+            input_page_number.style.marginLeft = "10px"
+            input_page_number.style.marginRight = "10px"
+            input_page_number.value = 1
+            let input_page_button = document.createElement("button")
+            input_page_button.innerText = "Go"
+            input_page_button.onclick = e=> {
+                searchBtn.click()
+            }
+            content.appendChild(input_page_number)
+            content.appendChild(input_page_button)
+            let span_total_pages = document.createElement("span")
+            span_total_pages.style.color = "grey"
+            span_total_pages.style.marginLeft = "10px"
+            span_total_pages.innerText = "Total pages: ?"
+            content.appendChild(span_total_pages)
+            content.style.padding = "5px"
+
 
             showWindow();
         };
@@ -1161,7 +1319,7 @@ class TermContainer {
                     tmp_span.style.fontSize = "75%"
                     tmp_span.style.fontWeight = "normal"
                     tmp_span.id = tmp_id
-                    tmp_span.style.marginLeft= "10px"
+                    tmp_span.style.marginLeft = "10px"
                     label.appendChild(tmp_span)
                     containerParent.style.margin = "0px 0 0px 0"
                     // label.style.display = "inline-block"
@@ -1176,8 +1334,8 @@ class TermContainer {
             }
 
             const array = ["flags", "indexes", "sources", "aliases"]
-            array.forEach(e=> {
-                if(models === e) {
+            array.forEach(e => {
+                if (models === e) {
                     label.click()
                 }
             })
@@ -1271,7 +1429,7 @@ class TermContainer {
             let pinned_terms = await list_all_entities(
                 "dictionary_pinned_term",
                 "&dictionary_term_id=" + dictionary_term_id
-                +"&user_id=" + getUserId()
+                + "&user_id=" + getUserId()
             )
             let tags = await list_all_entities(
                 "dictionary_tag",
@@ -1312,7 +1470,7 @@ class TermContainer {
 
             dictionary_term.status = 6 //deleted
             let updated = await put_entity("dictionary_term", dictionary_term_id, dictionary_term)
-            if(!defined(updated)) {
+            if (!defined(updated)) {
                 showError("Setting term status to Deleted failed.")
                 return;
             }
@@ -1352,25 +1510,25 @@ class TermContainer {
                 showError("Loading pinned terms failed.")
             } else {
                 let pinned_in_db = pinned_terms.length > 0
-                if(pinned_now !== pinned_in_db) {
-                    if(pinned_now) {
+                if (pinned_now !== pinned_in_db) {
+                    if (pinned_now) {
                         let new_pinned_term = {
                             dictionary_term_id: dictionary_term_id,
                             user_id: getUserId(),
                             dictionary_map_id: dictionary_app.get_selected_map_id()
                         }
                         let created = await post_entity("dictionary_pinned_term", new_pinned_term)
-                        if(defined(created)) {
+                        if (defined(created)) {
                             showInfo("New pinned term was successfully created.")
                             checkbox_pinned.checked = true
                         } else {
                             showError("Creating new pinned term failed.")
                         }
                     }
-                    if(!pinned_now) {
+                    if (!pinned_now) {
                         for (const e of pinned_terms) {
                             let deleted = await delete_entity("dictionary_pinned_term", e.id)
-                            if(deleted) {
+                            if (deleted) {
                                 showInfo("Pinned term was successfully deleted: " + e.id)
                                 checkbox_pinned.checked = false
                             } else {
@@ -1567,7 +1725,7 @@ function validate_cfg(cfg) {
         cfg.model, cfg.models, cfg.table, cfg.input, cfg.resolveTitle
     ]
     to_be_validated.forEach(e => {
-        if(!defined(e)) return false
+        if (!defined(e)) return false
     })
     return true
 }
@@ -1575,11 +1733,11 @@ function validate_cfg(cfg) {
 class CrudSection {
     #cfg
     #element;
-    #input= null
+    #input = null
     #autocomplete = null
 
     constructor(cfg) {
-        if(!validate_cfg(cfg)) throw "Configuration is not valid for model: " + cfg.model
+        if (!validate_cfg(cfg)) throw "Configuration is not valid for model: " + cfg.model
         this.#cfg = cfg
         this.#element = get_element(cfg.models);
         this.#input = cfg.input ? get_element("input_search_" + this.#cfg.model) : null;
@@ -1630,14 +1788,14 @@ class CrudSection {
             }
             this.addItem(title, item.id, item);
         }
-        if(this.#cfg.input) get_element("div_search_" + this.#cfg.model).style.display = "none"
+        if (this.#cfg.input) get_element("div_search_" + this.#cfg.model).style.display = "none"
         this.#setupAutocomplete(dictionary_term_id);
         this.afterRender(dictionary_term_id);
     }
 
     async loadItems(dictionary_term_id) {
         let filter = this.#cfg.filter
-        if(filter === null || filter === undefined) throw "Not implemented";
+        if (filter === null || filter === undefined) throw "Not implemented";
 
         return await list_all_entities(
             this.#cfg.table,
@@ -1652,9 +1810,11 @@ class CrudSection {
     afterRender(dictionary_term_id) {
         // optional hook
     }
+
     get_input_value() {
         return this.#input.value
     }
+
     clear_input_value() {
         this.#input.value = ""
     }
@@ -1949,6 +2109,7 @@ class Links extends CrudSection {
             let new_term = {
                 dictionary_map_id: dictionary_app.get_selected_map_id(),
                 title: title,
+                status: 1
             }
 
             let term_created = await post_entity("dictionary_term", new_term)
@@ -2005,15 +2166,24 @@ class Links extends CrudSection {
 
         function termRelationTypeToString(type) {
             switch (type) {
-                case 0: return "Not defined";   // NotDefined
-                case 1: return "Is a";          // IsA
-                case 2: return "Part of";       // PartOf
-                case 3: return "Uses";          // Uses
-                case 4: return "Depends on";    // DependsOn
-                case 5: return "Implements";    // Implements
-                case 6: return "Related";       // Related
-                case 7: return "Contrasts";     // Contrasts
-                case 8: return "Alternative to";// AlternativeTo
+                case 0:
+                    return "Not defined";   // NotDefined
+                case 1:
+                    return "Is a";          // IsA
+                case 2:
+                    return "Part of";       // PartOf
+                case 3:
+                    return "Uses";          // Uses
+                case 4:
+                    return "Depends on";    // DependsOn
+                case 5:
+                    return "Implements";    // Implements
+                case 6:
+                    return "Related";       // Related
+                case 7:
+                    return "Contrasts";     // Contrasts
+                case 8:
+                    return "Alternative to";// AlternativeTo
                 default:
                     return "Not defined";
             }
@@ -2021,15 +2191,24 @@ class Links extends CrudSection {
 
         function stringToTermRelationType(str) {
             switch (str) {
-                case "Not defined":    return 0; // NotDefined
-                case "Is a":           return 1; // IsA
-                case "Part of":        return 2; // PartOf
-                case "Uses":           return 3; // Uses
-                case "Depends on":     return 4; // DependsOn
-                case "Implements":     return 5; // Implements
-                case "Related":        return 6; // Related
-                case "Contrasts":      return 7; // Contrasts
-                case "Alternative to": return 8; // AlternativeTo
+                case "Not defined":
+                    return 0; // NotDefined
+                case "Is a":
+                    return 1; // IsA
+                case "Part of":
+                    return 2; // PartOf
+                case "Uses":
+                    return 3; // Uses
+                case "Depends on":
+                    return 4; // DependsOn
+                case "Implements":
+                    return 5; // Implements
+                case "Related":
+                    return 6; // Related
+                case "Contrasts":
+                    return 7; // Contrasts
+                case "Alternative to":
+                    return 8; // AlternativeTo
                 default:
                     return 0; // NotDefined
             }
@@ -2055,7 +2234,7 @@ class Links extends CrudSection {
                 "Contrasts",
                 "Alternative to"
             ])
-            if(option === null || option === undefined) return
+            if (option === null || option === undefined) return
             let type = stringToTermRelationType(option)
 
             let read_link = await read_entity("dictionary_link", id)
@@ -2066,7 +2245,7 @@ class Links extends CrudSection {
             }
             read_link.type = type
             let updated = await put_entity("dictionary_link", id, read_link)
-            if(updated) {
+            if (updated) {
                 showInfo("Updating link type to " + option + " was successful.");
                 span.innerText = " (" + option + ")"
             } else {
