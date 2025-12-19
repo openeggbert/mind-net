@@ -36,7 +36,7 @@ namespace mindnet::orm
         // pagination
         size_t page_number = 1; // default = first page
         size_t page_size = 20; // default = 20 items per page
-        size_t total_items = 0;
+        mutable size_t total_items = 0;
 
         // sorting
         std::optional<std::string> sort; // e.g. "created_at"

@@ -711,7 +711,7 @@ class DictionaryApp {
                     showError("Listing search results failed.")
                     return
                 }
-                // alert(JSON.stringify(list_term_searches))
+                alert(JSON.stringify(list_term_searches))
                 let items = list_term_searches.items
                 if (items.length === 0) {
                     showInfo("No search results.")

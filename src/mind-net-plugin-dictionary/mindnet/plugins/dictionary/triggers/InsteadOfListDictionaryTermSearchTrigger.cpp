@@ -85,6 +85,8 @@ namespace mindnet::plugins::dictionary::triggers
                                       api::OperationResult{500, "Internal server error"});
             }
 
+            int total_items = res["total_items"].get<i64>();
+            query_params.total_items = total_items;
             for (const auto& row : res["results"])
             {
                 models::DictionaryTermSearch model;

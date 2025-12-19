@@ -157,6 +157,16 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
 
     };
+    enum BindValueType
+    {
+        NUMBER, TEXT
+    };
+    struct BindValue
+    {
+        i64 number{0};
+        std::string text;
+        BindValueType type = TEXT;
+    };
 
     FindDictionaryTermsViaAdvancedSearchSQLiteQuery::FindDictionaryTermsViaAdvancedSearchSQLiteQuery()
         : Query(QUERY_FindDictionaryTermsViaAdvancedSearch,"FindDictionaryTermsViaAdvancedSearchSQLiteQuery", essential::DatabaseType::SQLite)
