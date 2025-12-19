@@ -80,7 +80,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             source_id = q.value("source_id", 0);
             alias_alias = q.value("alias_alias", "");
 
-            has_items = split_csv(q.value("has_items", ""));
+            missing_items = split_csv(q.value("missing_items", ""));
             visited = q.value("visited", "Any");
             updated = q.value("updated", "Any");
             order = q.value("order", "Asc");
@@ -128,7 +128,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         int source_id = 0;
         string alias_alias;
 
-        vector<string> has_items;
+        vector<string> missing_items;
         string visited;
         string updated;
         string sort;
@@ -175,7 +175,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["source_id"] = source_id;
             q["alias_alias"] = alias_alias;
 
-            q["has_items"] = join_csv(has_items);
+            q["missing_items"] = join_csv(missing_items);
             q["visited"] = visited;
             q["updated"] = updated;
             q["sort"] = sort;
@@ -449,6 +449,55 @@ namespace mindnet::db::sqlite::queries::dictionary
             sql_current_page += "ds.dictionary_source_type_id = ?";
             binders.push_back(q.source_id);
         }
+
+        // missing items
+        // missing items
+        if (!q.missing_items.empty())
+        {
+            // common NOT EXISTS patterns
+            static const std::unordered_map<std::string, std::string> missing_tables = {
+                {"notes",    "dictionary_note dn"},
+                {"aliases",  "dictionary_term_alias da"},
+                {"tags",     "dictionary_tag dtag"},
+                {"flags",    "dictionary_flag df"},
+                {"sources",  "dictionary_source ds"},
+                {"indexes",  "dictionary_index di"}
+            };
+
+            for (const auto& item : q.missing_items)
+            {
+                std::string condition;
+
+                // --- special cases ---
+                if (item == "definition")
+                {
+                    condition = "(dt.definition IS NULL OR dt.definition = '')";
+                }
+                else if (item == "links")
+                {
+                    condition =
+                        "NOT EXISTS (SELECT 1 FROM dictionary_link dl "
+                        "WHERE dl.from_dictionary_term_id = dt.id "
+                        "   OR dl.to_dictionary_term_id = dt.id)";
+                }
+                // --- generic NOT EXISTS ---
+                else if (auto it = missing_tables.find(item); it != missing_tables.end())
+                {
+                    condition =
+                        "NOT EXISTS (SELECT 1 FROM " + it->second +
+                        " WHERE " + it->second.substr(it->second.find(' ') + 1) +
+                        ".dictionary_term_id = dt.id)";
+                }
+
+                // append only if we really added a condition
+                if (!condition.empty())
+                {
+                    append_where(sql_current_page, first_where);
+                    sql_current_page += condition;
+                }
+            }
+        }
+
 
         std::string sql_sort = "";
         if (q.sort == "Title") sql_sort = "dt.title";

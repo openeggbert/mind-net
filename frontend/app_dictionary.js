@@ -508,7 +508,7 @@ class DictionaryApp {
  *       index_id
  *       source_id
  *       alias_alias
- *       has_items
+ *       missing_items
  *       visited
  *       updated
  *       sort
@@ -843,17 +843,17 @@ class DictionaryApp {
             alias_autocomplete.box_margin_left = "200px"
             make_close_button("alias", alias_input, alias_autocomplete)
 
-            // --- Has ---
-            const hasLabel = make_label("Has:");
-            const hasContainer = document.createElement("span");
+            // --- Missing items ---
+            const missingLabel = make_label("Missing:");
+            const missingContainer = document.createElement("span");
 
-            const has_array = ["Definition", "Tags", "Flags", "Links", "Notes", "Indexes", "Sources", "Aliases"]
-            has_array.forEach((t, i) => {
+            const missing_array = ["Definition", "Tags", "Flags", "Links", "Notes", "Indexes", "Sources", "Aliases"]
+            missing_array.forEach((t, i) => {
                 const cb = make_input("checkbox");
                 cb.value = i + 1;
                 cb.checked = false;
                 cb.style.marginLeft = "0"
-                cb.id = "has_" + t.toLowerCase()
+                cb.id = "missing_" + t.toLowerCase()
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
@@ -862,9 +862,9 @@ class DictionaryApp {
                 l.append(" " + t);
                 l.style.fontSize = "80%"
 
-                hasContainer.appendChild(l);
+                missingContainer.appendChild(l);
             });
-            form.appendChild(make_div(hasLabel, hasContainer));
+            form.appendChild(make_div(missingLabel, missingContainer));
 
             // --- Visited ---
             const visitedLabel = make_label("Visited:");
@@ -1117,7 +1117,7 @@ class DictionaryApp {
                 statusSelect.selectedIndex = 0;
                 pinnedCheckbox.checked = false
                 form.querySelectorAll("input[type=checkbox]").forEach(cb => {
-                    if (cb !== pinnedCheckbox && !cb.id.startsWith("has_")) cb.checked = true
+                    if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_")) cb.checked = true
                 })
                 tag_autocomplete.reset()
                 flag_autocomplete.reset()
@@ -1127,8 +1127,8 @@ class DictionaryApp {
                 index_autocomplete.reset()
                 source_autocomplete.reset()
                 alias_autocomplete.reset()
-                has_array.forEach(e => {
-                    let id = "has_" + e.toLowerCase()
+                missing_array.forEach(e => {
+                    let id = "missing_" + e.toLowerCase()
                     let cb = get_element(id)
                     cb.checked = false
                 })
@@ -1165,8 +1165,8 @@ class DictionaryApp {
                     index_id: index_autocomplete.get_item_id(),
                     source_id: source_autocomplete.get_item_id(),
                     alias_alias: alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title,
-                    has_items: has_array
-                        .filter(e => get_element("has_" + e.toLowerCase()).checked)
+                    missing_items: missing_array
+                        .filter(e => get_element("missing_" + e.toLowerCase()).checked)
                         .map(e => e.toLowerCase())
                         .join(","),
                     visited: Array
@@ -1370,12 +1370,12 @@ class DictionaryApp {
                     await alias_autocomplete.set_from_title(query.alias_alias)
                 }
                 console.debug(JSON.stringify(query))
-                console.debug("query.has=" + query.has_items);
+                console.debug("query.missing=" + query.missing_items);
 
-                (query.has_items ?? "")
+                (query.missing_items ?? "")
                     .split(",")
                     .forEach(e => {
-                        let id = "has_" + e.toLowerCase()
+                        let id = "missing_" + e.toLowerCase()
                         let el = get_element(id)
                         if (el !== null) {
                             console.debug("id=" + id + ", el= " + el)
