@@ -82,7 +82,7 @@ namespace mindnet::plugins::dictionary::triggers
             {
                 err << res.dump() << commit;
                 return std::make_pair(std::vector<entity_fields>{},
-                                      api::OperationResult{500, "Internal server error"});
+                                      api::OperationResult{500, std::string("Internal server error ") + res["error"].get<std::string>()});
             }
 
             int total_items = res["total_items"].get<i64>();

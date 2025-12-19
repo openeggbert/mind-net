@@ -130,6 +130,17 @@ namespace mindnet::model
             return enum_to_string_pointer_function(values[index]);
         }
 
+        int get_value_as_int(const std::string& text) const
+        {
+            for (int i = 0; i < value_count; ++i)
+            {
+                int value = get_value(i);
+                std::string str = get_value_as_string(value);
+                if (str == text) {return value;}
+            }
+            return -1;
+        }
+
         bool is_value_valid(const short value) const
         {
             for (int i = 0; i < value_count; ++i)

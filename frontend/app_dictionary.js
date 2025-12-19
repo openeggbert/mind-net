@@ -694,8 +694,14 @@ class DictionaryApp {
                     status: statusSelect.value
                 });
 
-                let page_number = 1
-                let page_size = 5
+                let page_number = 5
+                try {
+                    page_number = Number(input_page_number.value)
+                } catch {
+
+                }
+
+                let page_size = get_element("page_size_select").value
                 let query_json = load_query_json_from_form()
                 let list_term_searches = await list_entities(
                     "dictionary_term_search",
@@ -712,6 +718,10 @@ class DictionaryApp {
                     return
                 }
                 alert(JSON.stringify(list_term_searches))
+                let total_items = list_term_searches.total_items
+                let total_pages = list_term_searches.total_pages
+                get_element("span_pages_toolbar").style.display = "inline"
+                get_element("span_total_pages_count").innerText = total_pages
                 let items = list_term_searches.items
                 if (items.length === 0) {
                     showInfo("No search results.")
@@ -754,7 +764,18 @@ class DictionaryApp {
                 th_title.style.minWidth = "200px"
                 th_disambiguation.style.minWidth = "200px"
 
-                items.forEach(e => {
+                if(items.length === 0) {
+                    let tr = document.createElement("tr")
+                    tr.onmouseover = (e) => tr.style.backgroundColor = "rgba(101,181,237,0.34)"
+                    tr.onmouseleave = (e) => tr.style.backgroundColor = "white"
+                    resultTable.appendChild(tr)
+
+                    let td = create_td("No results found");
+                    td.colSpan = 3
+                    td.style.textAlign = "center"
+                    td.style.color = "grey"
+                    tr.appendChild(td)
+                } else items.forEach(e => {
                     let tr = document.createElement("tr")
                     tr.onmouseover = (e) => tr.style.backgroundColor = "rgba(101,181,237,0.34)"
                     tr.onmouseleave = (e) => tr.style.backgroundColor = "white"
@@ -1127,6 +1148,8 @@ class DictionaryApp {
             let page_size_option_50 = make_page_size_option(50)
             let page_size_option_100 = make_page_size_option(100)
 
+            page_size_select.selectedIndex = 1
+
             function make_span(el1, el2) {
                 let el = document.createElement("span")
                 el.appendChild(el1)
@@ -1145,23 +1168,86 @@ class DictionaryApp {
             // resultTable.style.margin = "0 auto";
             // resultTable.style.border = "1px solid black"
 
+            let span_pages_toolbar = document.createElement("span")
+            span_pages_toolbar.id = "span_pages_toolbar"
+            span_pages_toolbar.style.display = "none"
+
+            let button_first_page = document.createElement("button")
+            let button_prev_page = document.createElement("button")
+            let button_next_page = document.createElement("button")
+            let button_last_page = document.createElement("button")
+            button_first_page.innerText = "« First"
+            button_prev_page.innerText = "‹ Prev"
+            button_next_page.innerText = "Next ›"
+            button_last_page.innerText = "Last »"
+            button_first_page.style.margin = "5px"
+            button_prev_page.style.margin = "5px"
+            button_next_page.style.margin = "5px"
+            button_last_page.style.margin = "5px"
+
             let input_page_number = make_input()
-            input_page_number.style.width = "100px"
+            input_page_number.style.width = "50px"
             input_page_number.style.marginLeft = "10px"
             input_page_number.style.marginRight = "10px"
             input_page_number.value = 1
-            let input_page_button = document.createElement("button")
-            input_page_button.innerText = "Go"
-            input_page_button.onclick = e=> {
+            let go_page_button = document.createElement("button")
+            go_page_button.innerText = "Go"
+
+            input_page_number.addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        searchBtn.click()
+                    }
+                });
+
+            go_page_button.onclick = e=> {
                 searchBtn.click()
             }
-            content.appendChild(input_page_number)
-            content.appendChild(input_page_button)
+            span_pages_toolbar.appendChild(button_first_page)
+            span_pages_toolbar.appendChild(button_prev_page)
+            span_pages_toolbar.appendChild(input_page_number)
+            span_pages_toolbar.appendChild(go_page_button)
+            span_pages_toolbar.appendChild(button_next_page)
+            span_pages_toolbar.appendChild(button_last_page)
+
             let span_total_pages = document.createElement("span")
             span_total_pages.style.color = "grey"
+            span_total_pages.id = "span_total_pages"
             span_total_pages.style.marginLeft = "10px"
-            span_total_pages.innerText = "Total pages: ?"
-            content.appendChild(span_total_pages)
+            span_pages_toolbar.appendChild(span_total_pages)
+
+            let span_total_pages_text = document.createElement("span")
+            span_total_pages_text.innerText = "Total pages: "
+            span_total_pages.appendChild(span_total_pages_text)
+
+            let span_total_pages_count = document.createElement("span")
+            span_total_pages_count.id = "span_total_pages_count"
+            span_total_pages.appendChild(span_total_pages_count)
+
+            button_first_page.onclick = (e=> {input_page_number.value = 1; go_page_button.click()})
+            button_prev_page.onclick = (e=> {
+                let page_number = input_page_number.value
+                if(page_number === "1") return
+                input_page_number.value = page_number - 1
+                go_page_button.click()
+            })
+            button_next_page.onclick = (e=> {
+                let page_number = input_page_number.value
+
+                let last_page_number = Number(span_total_pages_count.innerText)
+                let current_page_number = Number(page_number)
+
+                if(last_page_number >= current_page_number) return
+                input_page_number.value = String(current_page_number + 1)
+                go_page_button.click()
+            })
+            button_last_page.onclick = (e=> {
+                let last_page = span_total_pages_count.innerText
+                input_page_number.value = last_page
+                go_page_button.click()
+            })
+            content.appendChild(span_pages_toolbar)
+
             content.style.padding = "5px"
 
 
