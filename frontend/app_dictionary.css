@@ -168,7 +168,7 @@ button:hover {
     background-color: #007bff;
     color: white;
     border: none;
-    margin: 20px 0;
+    margin: 5px 0;
     padding: 12px 24px;
     font-size: 16px;
     border-radius: 20px;
@@ -297,4 +297,9 @@ fieldset legend {
     padding:0;
     padding-bottom:5px;
     font-weight: bold;
+}
+
+.loading {
+    opacity: 0.4;
+    pointer-events: none;
 }

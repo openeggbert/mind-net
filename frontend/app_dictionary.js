@@ -19,7 +19,7 @@ import {Autocomplete, null_or_undefined} from "./common.js";
 
 let wasDragged = false;
 let suppressPopstate = false;
-let debug = true
+let debug = false
 
 function showDebug(msg) {
     if(debug) showInfo("Debug: " + msg)
@@ -760,15 +760,15 @@ class DictionaryApp {
                     importance_low: get_element("importance_low").checked,
                     importance_medium: get_element("importance_medium").checked,
                     importance_high: get_element("importance_high").checked,
-                    tag: tag_autocomplete.get_item_id(),
-                    flag: flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title,
-                    link_from: link_from_autocomplete.get_item_id(),
-                    link_to: link_to_autocomplete.get_item_id(),
+                    tag_id: tag_autocomplete.get_item_id(),
+                    flag_title: flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title,
+                    link_from_term_id: link_from_autocomplete.get_item_id(),
+                    link_to_term_id: link_to_autocomplete.get_item_id(),
                     note_contains: noteInput.value,
-                    index: index_autocomplete.get_item_id(),
-                    source: source_autocomplete.get_item_id(),
-                    alias: alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title,
-                    has: has_array
+                    index_id: index_autocomplete.get_item_id(),
+                    source_id: source_autocomplete.get_item_id(),
+                    alias_alias: alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title,
+                    has_items: has_array
                         .filter(e => get_element("has_" + e.toLowerCase()).checked)
                         .map(e => e.toLowerCase())
                         .join(","),
@@ -825,8 +825,6 @@ class DictionaryApp {
                         showInfo("Search was successfully updated.")
                     }
                 }
-
-
             }
             buttonRow.appendChild(saveBtn);
 
@@ -860,6 +858,7 @@ class DictionaryApp {
                 showDebug("old_search_id=" + old_search_id)
                 showDebug("new_search_id=" + new_search_id)
                 showDebug(JSON.stringify(search_autocomplete.get_item()))
+                form.classList.add("loading");
                 let read_search = await read_entity("dictionary_search", new_search_id)
                 if (!defined(read_search)) {
                     showError("Reading search failed: " + new_search_id)
@@ -883,70 +882,98 @@ class DictionaryApp {
                 get_element("importance_medium").checked = query.importance_medium ?? true
                 get_element("importance_high").checked = query.importance_high ?? true
 
-                if((query.tag ?? 0) !== 0) {
-                    let read_tag = await read_entity("dictionary_tag", query.tag)
+                if((query.tag_id ?? 0) !== 0) {
+                    let read_tag = await read_entity("dictionary_tag", query.tag_id)
                     if(!defined(read_tag)) {
-                        showError("Reading tag failed: " + query.tag)
+                        showError("Reading tag failed: " + query.tag_id)
                     } else {
                         let read_tag_type = await read_entity("dictionary_tag_type", read_tag.dictionary_tag_type_id)
                         if(!defined(read_tag_type)) {
                             showError("Reading tag type failed: " + read_tag.dictionary_tag_type_id)
                         } else {
-                            await tag_autocomplete.set_from_title(read_tag_type.title, query.tag)
+                            await tag_autocomplete.set_from_title(read_tag_type.title, query.tag_id)
                         }
                     }
                 }
 
-                if((query.flag ?? "") !== "") {
-                    await flag_autocomplete.set_from_title(query.flag)
+                if((query.flag_title ?? "") !== "") {
+                    await flag_autocomplete.set_from_title(query.flag_title)
                 }
-                if((query.link_from ?? 0) !== 0) {
-                    let read_term = await read_entity("dictionary_term", query.link_from)
+                if((query.link_from_term_id ?? 0) !== 0) {
+                    let read_term = await read_entity("dictionary_term", query.link_from_term_id)
                     if(!defined(read_term)) {
-                        showError("Reading term failed: " + query.link_from)
+                        showError("Reading term failed: " + query.link_from_term_id)
                     } else {
-                        await link_from_autocomplete.set_from_title(read_term.title, query.link_from)
+                        await link_from_autocomplete.set_from_title(read_term.title, query.link_from_term_id)
                     }
                 }
-                if((query.link_to ?? 0) !== 0) {
-                    let read_term = await read_entity("dictionary_term", query.link_to)
+                if((query.link_to_term_id ?? 0) !== 0) {
+                    let read_term = await read_entity("dictionary_term", query.link_to_term_id)
                     if(!defined(read_term)) {
-                        showError("Reading term failed: " + query.link_to)
+                        showError("Reading term failed: " + query.link_to_term_id)
                     } else {
-                        await link_to_autocomplete.set_from_title(read_term.title, query.link_to)
+                        await link_to_autocomplete.set_from_title(read_term.title, query.link_to_term_id)
                     }
                 }
                 noteInput.value = query.note_contains ?? ""
 
-                if((query.index ?? 0) !== 0) {
-                    let read_index = await read_entity("dictionary_index", query.index)
+                if((query.index_id ?? 0) !== 0) {
+                    let read_index = await read_entity("dictionary_index", query.index_id)
                     if(!defined(read_index)) {
-                        showError("Reading index failed: " + query.index)
+                        showError("Reading index failed: " + query.index_id)
                     } else {
                         let read_index_type = await read_entity("dictionary_index_type", read_index.dictionary_index_type_id)
                         if(!defined(read_index_type)) {
                             showError("Reading index type failed: " + read_index_type.dictionary_index_type_id)
                         } else {
-                            await index_autocomplete.set_from_title(read_index_type.title, query.index)
+                            await index_autocomplete.set_from_title(read_index_type.title, query.index_id)
                         }
                     }
                 }
 
-                //     source: source_autocomplete.get_item_id(),
-                //     alias: alias_autocomplete.get_item_id(),
-                //     has: has_array
-                //     .filter(e => get_element("has_" + e.toLowerCase()).checked)
-                //     .map(e => e.toLowerCase())
-                //     .join(","),
-                //     visited: Array
-                //     .from(visitedSelect.selectedOptions)
-                //     .map(opt => opt.innerText)
-                //     .join(","),
-                //     updated: Array
-                //     .from(updatedSelect.selectedOptions)
-                //     .map(opt => opt.innerText)
-                //     .join(","),
+                if((query.source_id ?? 0) !== 0) {
+                    let read_source = await read_entity("dictionary_source", query.source_id)
+                    if(!defined(read_source)) {
+                        showError("Reading source failed: " + query.source_id)
+                    } else {
+                        let read_source_type = await read_entity("dictionary_source_type", read_source.dictionary_source_type_id)
+                        if(!defined(read_source_type)) {
+                            showError("Reading source type failed: " + read_source_type.dictionary_source_type_id)
+                        } else {
+                            await source_autocomplete.set_from_title(read_source_type.title, query.source_id)
+                        }
+                    }
+                }
 
+                if((query.alias_alias ?? "") !== "") {
+                    await alias_autocomplete.set_from_title(query.alias_alias)
+                }
+                console.debug(JSON.stringify(query))
+                console.debug("query.has=" + query.has_items);
+
+                (query.has_items ?? "")
+                    .split(",")
+                    .forEach(e=> {
+                        let id = "has_" + e.toLowerCase()
+                        let el = get_element(id)
+                        if(el !== null) {
+                            console.debug("id=" + id + ", el= " + el)
+                            el.checked = true
+                        }
+                    })
+
+                let visited  = query.visited ?? ""
+                for (const option of visitedSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = visited === option.innerText;
+                }
+                let updated  = query.updated ?? ""
+                for (const option of updatedSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = updated === option.innerText;
+                }
+
+                form.classList.remove("loading")
                 console.debug(JSON.stringify(read_search))
                 console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
                 deleteBtn.disabled = ""
@@ -973,9 +1000,12 @@ class DictionaryApp {
             buttonRow.appendChild(deleteBtn);
 
             form.appendChild(buttonRow);
+            let space = document.createElement("div")
+            space.style.height = "100px"
 
             // ---------- FINAL ----------
             content.appendChild(form);
+            content.appendChild(space)
 
             showWindow();
         };
