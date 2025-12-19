@@ -45,7 +45,7 @@ namespace mindnet::plugins::core::validators
 
     OperationResult ApiLogValidator::validate_read_authorization(const RequestContext& ctx, const Model& entity) const
     {
-        if (ctx.role == mindnet::essential::UserRole::Admin) return ok_result;
+        if (ctx.role >= mindnet::essential::UserRole::Admin) return ok_result;
 
         // Users can read only their own logs
         return_if(entity.user_id != ctx.token.user_id,
