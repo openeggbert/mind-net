@@ -869,7 +869,7 @@ class DictionaryApp {
             // --- Visited ---
             const visitedLabel = make_label("Visited:");
             const visitedSelect = make_select()
-            const visited_updated_array = ["Any", "Today", "Last week", "Last month", "Last year", "Never"]
+            const visited_updated_array = ["Any","Last hour", "Last 3 hours","Today","Last week","Last month","Last year","Last 10 years","Not last hour", "Not Last 3 hours","Not Today","Not Last week","Not Last month","Not Last year","Not Last 10 years","Never"]
             visited_updated_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1

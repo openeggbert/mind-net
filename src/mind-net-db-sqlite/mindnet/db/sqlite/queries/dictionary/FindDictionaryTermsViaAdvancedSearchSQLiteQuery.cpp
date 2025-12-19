@@ -219,6 +219,14 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
     };
 
+    static i64 now_ms()
+    {
+        using namespace std::chrono;
+        return duration_cast<milliseconds>(
+            system_clock::now().time_since_epoch()
+        ).count();
+    }
+
     FindDictionaryTermsViaAdvancedSearchSQLiteQuery::FindDictionaryTermsViaAdvancedSearchSQLiteQuery()
         : Query(QUERY_FindDictionaryTermsViaAdvancedSearch, "FindDictionaryTermsViaAdvancedSearchSQLiteQuery",
                 essential::DatabaseType::SQLite)
@@ -451,7 +459,6 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
 
         // missing items
-        // missing items
         if (!q.missing_items.empty())
         {
             // common NOT EXISTS patterns
@@ -497,6 +504,123 @@ namespace mindnet::db::sqlite::queries::dictionary
                 }
             }
         }
+        static constexpr i64 MS_PER_HOUR = 60LL * 60 * 1000;
+        // visited
+        if (q.visited != "Any")
+        {
+            if (q.visited == "Never")
+            {
+                append_where(sql_current_page, first_where);
+                sql_current_page +=
+                    "NOT EXISTS (SELECT 1 FROM dictionary_term_visit dtv "
+                    "WHERE dtv.dictionary_term_id = dt.id "
+                    "AND dtv.user_id = ?)";
+                binders.push_back(user_id);
+            }
+            else
+            {
+                bool negated = q.visited.rfind("Not ", 0) == 0;
+                std::string base = negated ? q.visited.substr(4) : q.visited;
+
+                i64 threshold_ms = 0;
+                i64 now = now_ms();
+
+                if (base == "Last hour")
+                    threshold_ms = now - 1LL * MS_PER_HOUR;
+                else if (base == "Last 3 hours")
+                    threshold_ms = now - 3LL * MS_PER_HOUR;
+                else if (base == "Today")
+                    threshold_ms = now - 24LL * MS_PER_HOUR;
+                else if (base == "Last week")
+                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
+                else if (base == "Last month")
+                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
+                else if (base == "Last year")
+                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
+                else if (base == "Last 10 years")
+                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+
+                if (threshold_ms > 0)
+                {
+                    append_where(sql_current_page, first_where);
+
+                    if (!negated)
+                    {
+                        sql_current_page +=
+                            "EXISTS (SELECT 1 FROM dictionary_term_visit dtv "
+                            "WHERE dtv.dictionary_term_id = dt.id "
+                            "AND dtv.user_id = ? "
+                            "AND dtv.created_at >= ?)";
+                    }
+                    else
+                    {
+                        sql_current_page +=
+                            "NOT EXISTS (SELECT 1 FROM dictionary_term_visit dtv "
+                            "WHERE dtv.dictionary_term_id = dt.id "
+                            "AND dtv.user_id = ? "
+                            "AND dtv.created_at >= ?)";
+                    }
+
+                    binders.push_back(user_id);
+                    binders.push_back(threshold_ms);
+                }
+            }
+        }
+
+
+        // updated
+        if (q.updated != "Any")
+        {
+            if (q.updated == "Never")
+            {
+                append_where(sql_current_page, first_where);
+                sql_current_page +=
+                    "(dt.updated_at IS NULL OR dt.updated_at = dt.created_at)";
+            }
+            else
+            {
+                bool negated = q.updated.rfind("Not ", 0) == 0;
+                std::string base = negated ? q.updated.substr(4) : q.updated;
+
+                i64 threshold_ms = 0;
+                i64 now = now_ms();
+
+                if (base == "Last hour")
+                    threshold_ms = now - 1LL * MS_PER_HOUR;
+                else if (base == "Last 3 hours")
+                    threshold_ms = now - 3LL * MS_PER_HOUR;
+                else if (base == "Today")
+                    threshold_ms = now - 24LL * MS_PER_HOUR;
+                else if (base == "Last week")
+                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
+                else if (base == "Last month")
+                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
+                else if (base == "Last year")
+                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
+                else if (base == "Last 10 years")
+                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+
+                if (threshold_ms > 0)
+                {
+                    append_where(sql_current_page, first_where);
+
+                    if (!negated)
+                    {
+                        sql_current_page +=
+                            "dt.updated_at >= ?";
+                    }
+                    else
+                    {
+                        sql_current_page +=
+                            "(dt.updated_at < ? OR dt.updated_at IS NULL)";
+                    }
+
+                    binders.push_back(threshold_ms);
+                }
+            }
+        }
+
+
 
 
         std::string sql_sort = "";
