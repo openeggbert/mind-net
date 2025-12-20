@@ -60,6 +60,13 @@ namespace mindnet::plugins::slipbox::models
         identification created_by{};
         bool is_public{false};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::name,
+            &Model::description,
+            &Model::created_by,
+            &Model::is_public
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const MapCollection& other) const

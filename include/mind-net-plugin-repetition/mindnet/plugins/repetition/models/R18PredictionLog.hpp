@@ -62,6 +62,14 @@ namespace mindnet::plugins::repetition::models
         int actual_grade{};
         bool was_correct{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::note_id,
+            &Model::predicted_R_times_100,
+            &Model::actual_grade,
+            &Model::was_correct
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

@@ -30,7 +30,6 @@
 #include "ColumnDefinition.hpp"
 #include "ColumnType.hpp"
 #include "ModelDefinition.hpp"
-#include "mindnet/essential/DatabaseType.hpp"
 
 #include "mindnet/util/TestUtils.hpp"
 
@@ -52,21 +51,9 @@ friend std::ostream& operator<<(std::ostream& os, const Model & o)\
 \
 Model() = default;
 
-//
-#define def_helper_lambdas()\
-auto number = [&values, &i]\
-{\
-    return std::get<std::int64_t>(values[i++]);\
-};\
-auto boolean = [&number]\
-{\
-return number() != 0;\
-};\
-\
-auto text = [&values, &i]\
-{\
-    return std::get<std::string>(values[i++]);\
-};
+#define create_model_cpp_methods(Model) \
+entity_fields Model::to_values() const {return serialize_fields(*this);} \
+void Model::from_values(const entity_fields& values){deserialize_fields(*this, values);} \
 
 #define using_test_utils()\
 using util::ValidatorChain;
@@ -344,7 +331,7 @@ using member_type_t =
         else {
             static_assert(!sizeof(FieldType), "Unsupported type in deserialize_value");
         }
-        throw new std::runtime_error("Illegal state");
+        throw std::runtime_error("Illegal state");
     }
 
 }

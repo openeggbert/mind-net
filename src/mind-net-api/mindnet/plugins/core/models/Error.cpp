@@ -25,16 +25,7 @@
 
 namespace mindnet::plugins::core::models
 {
-    entity_fields Error::to_values() const
-    {
-        return serialize_fields(*this);
-    }
-
-    void Error::from_values(const entity_fields& values)
-    {
-        deserialize_fields(*this, values);
-    }
-
+    create_model_cpp_methods(Error)
     string Error::validate()
     {
         using columns::ErrorColumns;

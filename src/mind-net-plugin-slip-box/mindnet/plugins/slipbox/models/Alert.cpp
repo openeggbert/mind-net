@@ -25,57 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Alert::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(cast64(trigger_at));
-        result.push_back(cast64(last_triggered_at));
-        result.push_back(trigger_count);
-        result.push_back(cast64(snooze_until));
-        result.push_back(cast64(expires_at));
-        result.push_back(cast64(repeat_interval));
-        result.push_back(repeat_count);
-        result.push_back(cast64(repeat_until));
-        result.push_back(user_id);
-        result.push_back(note_id);
-        result.push_back(url);
-        result.push_back(title);
-        result.push_back(message);
-        result.push_back(cast64(status));
-        result.push_back(cast64(important));
-        result.push_back(cast64(channel));
-        return result;
-    }
-
-    void Alert::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        trigger_at = number();
-        last_triggered_at = number();
-        trigger_count = number();
-        snooze_until = number();
-        expires_at = number();
-        repeat_interval = static_cast<enums::AlertRepeatInterval>(number());
-        repeat_count = number();
-        repeat_until = number();
-        user_id = number();
-        note_id = number();
-        url = text();
-        title = text();
-        message = text();
-        status = static_cast<enums::AlertStatus>(number());
-        important = number();
-        channel = static_cast<enums::AlertChannel>(number());
-    }
+    create_model_cpp_methods(Alert)
 
     string Alert::validate()
     {

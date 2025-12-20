@@ -25,15 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields TermFulltext::to_values() const
-    {
-        return serialize_fields(*this);
-    }
-
-    void TermFulltext::from_values(const entity_fields& values)
-    {
-        deserialize_fields(*this, values);
-    }
+    create_model_cpp_methods(TermFulltext)
 
     string TermFulltext::validate()
     {

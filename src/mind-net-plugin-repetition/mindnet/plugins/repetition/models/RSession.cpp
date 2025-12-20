@@ -25,57 +25,7 @@
 
 namespace mindnet::plugins::repetition::models
 {
-    entity_fields RSession::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(user_id);
-        result.push_back(map_id);
-        result.push_back(map_collection_id);
-        result.push_back(cloned_from_session_id);
-        result.push_back(cast64(algorithm));
-        result.push_back(cast64(schedule));
-        result.push_back(cast64(scope));
-        result.push_back(description);
-        result.push_back(filter_eligible);
-        result.push_back(filter_under_note);
-        result.push_back(cast64(filter_date_from));
-        result.push_back(cast64(filter_date_to));
-        result.push_back(filter_tag);
-        result.push_back(filter_collection);
-        result.push_back(selected_items);
-        result.push_back(cast64(pinned));
-        return result;
-    }
-
-    void RSession::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        user_id = number();
-        map_id = number();
-        map_collection_id = number();
-        cloned_from_session_id = number();
-        algorithm = enums::int_to_repetition_algorithm(number());
-        schedule = enums::int_to_repetition_schedule(number());
-        scope = enums::int_to_repetition_scope(number());
-        description = text();
-        filter_eligible = boolean();
-        filter_under_note = number();
-        filter_date_from = number();
-        filter_date_to = number();
-        filter_tag = number();
-        filter_collection = number();
-        selected_items = text();
-        pinned = boolean();
-    };
+    create_model_cpp_methods(RSession)
 
     string RSession::validate()
     {

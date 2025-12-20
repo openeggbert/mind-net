@@ -63,10 +63,20 @@ namespace mindnet::plugins::slipbox::models
         identification test_id{};
         identification user_id{};
         int attempt_number{};
-        unixtime started_at;
-        unixtime finished_at;
+        unixtime started_at{};
+        unixtime finished_at{};
         int score_times_100{};
         std::string question_ids;
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::test_id,
+            &Model::user_id,
+            &Model::attempt_number,
+            &Model::started_at,
+            &Model::finished_at,
+            &Model::score_times_100,
+            &Model::question_ids
+        );
 
         create_model_h_methods(Model, MODEL)
 

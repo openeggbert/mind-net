@@ -25,48 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Map::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(name);
-        result.push_back(description);
-        result.push_back(category);
-        result.push_back(owner_id);
-        result.push_back(team_id);
-        result.push_back(cast64(owner_rights));
-        result.push_back(cast64(team_rights));
-        result.push_back(cast64(other_rights));
-        return result;
-    }
-
-    void Map::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        name = text();
-        description = text();
-        category = text();
-        owner_id = number();
-        try
-        {
-            team_id = number();
-        }
-        catch (const std::exception& e)
-        {
-            team_id = 0;
-        }
-        owner_rights = static_cast<core::enums::AccessRight>(number());
-        team_rights = static_cast<core::enums::AccessRight>(number());
-        other_rights = static_cast<core::enums::AccessRight>(number());
-    };
+    create_model_cpp_methods(Map)
 
     string Map::validate()
     {

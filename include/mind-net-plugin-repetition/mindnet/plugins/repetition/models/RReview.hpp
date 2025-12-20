@@ -81,6 +81,23 @@ namespace mindnet::plugins::repetition::models
         int answer_change_count{0};
         string details_json{"{}"};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::map_id,
+            &Model::r_session_id,
+            &Model::algorithm,
+            &Model::note_id,
+            &Model::review_date,
+            &Model::grade,
+            &Model::response_data,
+            &Model::notes,
+            &Model::started_at,
+            &Model::ended_at,
+            &Model::latency_ms,
+            &Model::answer_change_count,
+            &Model::details_json
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

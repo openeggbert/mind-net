@@ -25,33 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Property::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(map_id);
-        result.push_back(note_id);
-        result.push_back(key);
-        result.push_back(value);
-        return result;
-    }
-
-    void Property::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        map_id = number();
-        note_id = number();
-        key = text();
-        value = text();
-    };
+    create_model_cpp_methods(Property)
 
     string Property::validate()
     {

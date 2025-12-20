@@ -61,6 +61,13 @@ namespace mindnet::plugins::repetition::models
         int total{0};
         int correct{0};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::bin_log_t_times_100,
+            &Model::total,
+            &Model::correct
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

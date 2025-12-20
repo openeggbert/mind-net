@@ -69,6 +69,19 @@ namespace mindnet::plugins::core::models
         string configuration;
         unixtime last_run{0};
         unixtime next_run{0};
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::name,
+            &Model::description,
+            &Model::plugin_name,
+            &Model::cron_expression,
+            &Model::run_once_when_missed,
+            &Model::enabled,
+            &Model::configuration,
+            &Model::last_run,
+            &Model::next_run
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

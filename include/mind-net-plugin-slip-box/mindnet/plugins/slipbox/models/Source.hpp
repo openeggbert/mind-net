@@ -74,6 +74,18 @@ namespace mindnet::plugins::slipbox::models
         string url;
         enums::SourceType type{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::map_id,
+            &Model::title,
+            &Model::author,
+            &Model::year,
+            &Model::publisher,
+            &Model::edition,
+            &Model::pages,
+            &Model::url,
+            &Model::type
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

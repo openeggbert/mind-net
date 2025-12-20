@@ -79,6 +79,24 @@ namespace mindnet::plugins::core::models
         unixtime last_used_at{};
         string ip_address;
         string user_agent;
+        string allowed_operations;
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::token_hash,
+            &Model::token_purpose,
+            &Model::is_created_by_user,
+            &Model::name,
+            &Model::description,
+            &Model::issued_at,
+            &Model::expires_at,
+            &Model::is_revoked,
+            &Model::revoked_at,
+            &Model::last_used_at,
+            &Model::ip_address,
+            &Model::user_agent,
+            &Model::allowed_operations
+        );
 
         /**
  * Column: allowed_operations (TEXT)
@@ -110,8 +128,6 @@ namespace mindnet::plugins::core::models
  *   "rl project=crud task=rl"  → read/list globally, but full CRUD on projects,
  *                                 read/list on tasks
  */
-
-        string allowed_operations;
 
         create_model_h_methods(Model, MODEL)
 

@@ -57,8 +57,13 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        identification map_id;
+        identification map_id{};
         string title;
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::map_id,
+            &Model::title
+        );
 
         create_model_h_methods(Model, MODEL)
 

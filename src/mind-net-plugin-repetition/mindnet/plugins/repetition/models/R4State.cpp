@@ -25,15 +25,7 @@
 
 namespace mindnet::plugins::repetition::models
 {
-    entity_fields R4State::to_values() const
-    {
-        return serialize_fields(*this);
-    }
-
-    void R4State::from_values(const entity_fields& values)
-    {
-        deserialize_fields(*this, values);
-    }
+    create_model_cpp_methods(R4State)
 
     string R4State::validate()
     {

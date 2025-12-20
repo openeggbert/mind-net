@@ -25,15 +25,7 @@
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields DictionarySourceType::to_values() const
-    {
-        return serialize_fields(*this);
-    }
-
-    void DictionarySourceType::from_values(const entity_fields& values)
-    {
-        deserialize_fields(*this, values);
-    }
+    create_model_cpp_methods(DictionarySourceType)
 
     string DictionarySourceType::validate()
     {

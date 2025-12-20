@@ -25,15 +25,7 @@
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields DictionaryTermSearch::to_values() const
-    {
-        return serialize_fields(*this);
-    }
-
-    void DictionaryTermSearch::from_values(const entity_fields& values)
-    {
-        deserialize_fields(*this, values);
-    }
+    create_model_cpp_methods(DictionaryTermSearch)
 
     string DictionaryTermSearch::validate()
     {

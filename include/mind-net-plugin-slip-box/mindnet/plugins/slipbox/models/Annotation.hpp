@@ -68,6 +68,16 @@ namespace mindnet::plugins::slipbox::models
         std::string anchor_start_text;
         std::string anchor_end_text;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::note_id,
+            &Model::parent_annotation_id,
+            &Model::title,
+            &Model::content,
+            &Model::type,
+            &Model::anchor_start_text,
+            &Model::anchor_end_text
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

@@ -82,9 +82,9 @@ namespace mindnet::plugins::slipbox::models
         TaskStatus status{};
         bool important{false};
         bool as_soon_as_possible{false};
-        unixtime start_date;
-        unixtime due_date;
-        unixtime completed_at;
+        unixtime start_date{};
+        unixtime due_date{};
+        unixtime completed_at{};
         identification created_by{};
         identification owner_id{};
         identification assigned_to{};
@@ -95,6 +95,30 @@ namespace mindnet::plugins::slipbox::models
         identification parent_task_id{};
         identification blocked_by_task_id{};
         string related_tasks;
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::note_id,
+            &Model::project_id,
+            &Model::title,
+            &Model::description,
+            &Model::progress,
+            &Model::status,
+            &Model::important,
+            &Model::as_soon_as_possible,
+            &Model::start_date,
+            &Model::due_date,
+            &Model::completed_at,
+            &Model::created_by,
+            &Model::owner_id,
+            &Model::assigned_to,
+            &Model::category,
+            &Model::context,
+            &Model::tags,
+            &Model::is_public,
+            &Model::parent_task_id,
+            &Model::blocked_by_task_id,
+            &Model::related_tasks
+        );
 
         create_model_h_methods(Model, MODEL)
 

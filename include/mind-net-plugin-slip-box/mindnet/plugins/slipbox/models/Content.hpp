@@ -75,6 +75,16 @@ namespace mindnet::plugins::slipbox::models
         unixtime last_parsed_success_at{};
         unixtime last_parsed_fail_at{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::value,
+            &Model::format,
+            &Model::version,
+            &Model::semantic_version,
+            &Model::change_ratio,
+            &Model::last_parsed_success_at,
+            &Model::last_parsed_fail_at
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

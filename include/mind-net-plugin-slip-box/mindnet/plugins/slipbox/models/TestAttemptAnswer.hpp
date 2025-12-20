@@ -63,6 +63,13 @@ namespace mindnet::plugins::slipbox::models
         std::string user_answer;
         bool is_correct{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::test_attempt_id,
+            &Model::question_id,
+            &Model::user_answer,
+            &Model::is_correct
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

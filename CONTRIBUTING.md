@@ -54,7 +54,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition plugin - new configuration entries - selected_items_limit, session_lifetime_in_hours
 
 ### Backend
-- [ ] All occurrences of methods to_values(), from_values() must use serialize_fields() and deserialize_fields()
 - [ ] New table error
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
@@ -230,3 +229,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] add Tests to the web interfaces
 - [x] add Annotation to the web interfaces
 - [x] visit history
+- [x] All occurrences of methods to_values(), from_values() must use serialize_fields() and deserialize_fields()

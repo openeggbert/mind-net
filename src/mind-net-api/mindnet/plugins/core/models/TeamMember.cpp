@@ -25,37 +25,7 @@
 
 namespace mindnet::plugins::core::models
 {
-    entity_fields TeamMember::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(team_id);
-        result.push_back(user_id);
-        result.push_back(cast64(role));
-        result.push_back(cast64(status));
-        result.push_back(cast64(joined_at));
-        result.push_back(cast64(left_at));
-        return result;
-    }
-
-    void TeamMember::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        team_id = number();
-        user_id = number();
-        role = static_cast<mindnet::essential::UserRole>(number());
-        status = static_cast<essential::UserStatus>(number());
-        joined_at = number();
-        left_at = number();
-    };
+    create_model_cpp_methods(TeamMember)
 
     string TeamMember::validate()
     {

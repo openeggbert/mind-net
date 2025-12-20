@@ -62,6 +62,14 @@ namespace mindnet::plugins::core::models
         bool success{};
         string message{true};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::job_entry_id,
+            &Model::started_at,
+            &Model::finished_at,
+            &Model::success,
+            &Model::message
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

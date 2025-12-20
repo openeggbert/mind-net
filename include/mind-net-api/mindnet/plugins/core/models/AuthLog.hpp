@@ -82,6 +82,22 @@ namespace mindnet::plugins::core::models
         std::string error;
         bool success{false};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::ip_address,
+            &Model::user_agent,
+            &Model::endpoint,
+            &Model::method,
+            &Model::action,
+            &Model::entity_name,
+            &Model::entity_id,
+            &Model::parameters,
+            &Model::request_body,
+            &Model::status_code,
+            &Model::error,
+            &Model::success
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

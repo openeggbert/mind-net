@@ -25,15 +25,7 @@
 
 namespace mindnet::plugins::dictionary::models
 {
-    entity_fields DictionaryIndexTypeFulltext::to_values() const
-    {
-        return serialize_fields(*this);
-    }
-
-    void DictionaryIndexTypeFulltext::from_values(const entity_fields& values)
-    {
-        deserialize_fields(*this, values);
-    };
+    create_model_cpp_methods(DictionaryIndexTypeFulltext)
 
     string DictionaryIndexTypeFulltext::validate()
     {

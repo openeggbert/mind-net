@@ -25,33 +25,7 @@
 
 namespace mindnet::plugins::repetition::models
 {
-    entity_fields R18PerfAgg::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(user_id);
-        result.push_back(bin_log_t_times_100);
-        result.push_back(total);
-        result.push_back(correct);
-        return result;
-    }
-
-    void R18PerfAgg::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        user_id = number();
-        bin_log_t_times_100 = number();
-        total = number();
-        correct = number();
-    };
+    create_model_cpp_methods(R18PerfAgg)
 
     string R18PerfAgg::validate()
     {

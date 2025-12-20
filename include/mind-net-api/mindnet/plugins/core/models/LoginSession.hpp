@@ -72,6 +72,19 @@ namespace mindnet::plugins::core::models
         string ip_address;
         string user_agent;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::access_token_id,
+            &Model::refresh_token_id,
+            &Model::issued_at,
+            &Model::expires_at,
+            &Model::is_revoked,
+            &Model::revoked_at,
+            &Model::last_used_at,
+            &Model::ip_address,
+            &Model::user_agent
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

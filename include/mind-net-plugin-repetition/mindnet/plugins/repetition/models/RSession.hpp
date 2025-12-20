@@ -93,6 +93,25 @@ namespace mindnet::plugins::repetition::models
         string selected_items{"{}"};
         bool pinned{false};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::map_id,
+            &Model::map_collection_id,
+            &Model::cloned_from_session_id,
+            &Model::algorithm,
+            &Model::schedule,
+            &Model::scope,
+            &Model::description,
+            &Model::filter_eligible,
+            &Model::filter_under_note,
+            &Model::filter_date_from,
+            &Model::filter_date_to,
+            &Model::filter_tag,
+            &Model::filter_collection,
+            &Model::selected_items,
+            &Model::pinned
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

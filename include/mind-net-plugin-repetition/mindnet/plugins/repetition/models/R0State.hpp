@@ -71,6 +71,19 @@ namespace mindnet::plugins::repetition::models
         i64 last_seen_semantic_version{};
         bool content_modified_since_last_review{false};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::note_id,
+            &Model::eligible,
+            &Model::repetitions,
+            &Model::interval,
+            &Model::next_review,
+            &Model::last_review,
+            &Model::last_quality,
+            &Model::last_seen_semantic_version,
+            &Model::content_modified_since_last_review
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

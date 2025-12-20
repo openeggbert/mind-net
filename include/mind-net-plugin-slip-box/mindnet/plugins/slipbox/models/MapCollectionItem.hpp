@@ -59,6 +59,12 @@ namespace mindnet::plugins::slipbox::models
         identification map_id{};
         int position{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::map_collection_id,
+            &Model::map_id,
+            &Model::position
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const MapCollectionItem& other) const

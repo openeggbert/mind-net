@@ -68,6 +68,15 @@ namespace mindnet::plugins::core::models
         unixtime joined_at{};
         unixtime left_at{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::team_id,
+            &Model::user_id,
+            &Model::role,
+            &Model::status,
+            &Model::joined_at,
+            &Model::left_at
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

@@ -56,6 +56,11 @@ namespace mindnet::plugins::slipbox::models
         identification from_note_id{};
         string to_url;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::from_note_id,
+            &Model::to_url
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

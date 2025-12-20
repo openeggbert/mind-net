@@ -70,6 +70,17 @@ namespace mindnet::plugins::slipbox::models
         bool is_public{false};
         bool pinned{false};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::title,
+            &Model::content,
+            &Model::category,
+            &Model::due_at,
+            &Model::important,
+            &Model::is_public,
+            &Model::pinned
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

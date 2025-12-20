@@ -52,8 +52,13 @@ namespace mindnet::plugins::slipbox::models
 
     struct Model : mindnet::model::BaseModel
     {
-        identification note_id;
-        identification tag_type_id;
+        identification note_id{};
+        identification tag_type_id{};
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::note_id,
+            &Model::tag_type_id
+        );
 
         create_model_h_methods(Model, MODEL)
 

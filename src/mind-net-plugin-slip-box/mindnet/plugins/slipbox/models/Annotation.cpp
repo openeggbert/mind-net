@@ -25,42 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Annotation::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-
-        result.push_back(cast64(note_id));
-        result.push_back(cast64(parent_annotation_id));
-        result.push_back(title);
-        result.push_back(content);
-        result.push_back(static_cast<i64>(type));
-        result.push_back(anchor_start_text);
-        result.push_back(anchor_end_text);
-
-        return result;
-    }
-
-    void Annotation::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-
-        note_id = number();
-        parent_annotation_id = number();
-        title = text();
-        content = text();
-        type = static_cast<enums::AnnotationType>(number());
-        anchor_start_text = text();
-        anchor_end_text = text();
-    }
+    create_model_cpp_methods(Annotation)
 
     string Annotation::validate()
     {

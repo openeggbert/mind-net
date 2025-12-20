@@ -77,6 +77,17 @@ namespace mindnet::plugins::core::models
 
         unixtime last_login{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::username,
+            &Model::password_hash,
+            &Model::email,
+            &Model::display_name,
+            &Model::profile_text,
+            &Model::role,
+            &Model::status,
+            &Model::last_login
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

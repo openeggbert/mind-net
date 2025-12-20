@@ -25,55 +25,7 @@
 
 namespace mindnet::plugins::core::models
 {
-    entity_fields AccessToken::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        //
-        result.push_back(user_id);
-        result.push_back(token_hash);
-        result.push_back(cast64(token_purpose));
-        result.push_back(cast64(is_created_by_user));
-        result.push_back(name);
-        result.push_back(description);
-        result.push_back(cast64(issued_at));
-        result.push_back(cast64(expires_at));
-        result.push_back(cast64(is_revoked));
-        result.push_back(cast64(revoked_at));
-        result.push_back(cast64(last_used_at));
-        result.push_back(ip_address);
-        result.push_back(user_agent);
-        result.push_back(allowed_operations);
-        return result;
-    }
-
-    void AccessToken::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        //
-        user_id = number();
-        token_hash = text();
-        token_purpose = static_cast<enums::TokenPurpose>(number());
-        is_created_by_user = boolean();
-        name = text();
-        description = text();
-        issued_at = number();
-        expires_at = number();
-        is_revoked = boolean();
-        revoked_at = number();
-        last_used_at = number();
-        ip_address = text();
-        user_agent = text();
-        allowed_operations = text();
-    }
+    create_model_cpp_methods(AccessToken)
 
     string AccessToken::validate()
     {

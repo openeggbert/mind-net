@@ -67,6 +67,15 @@ namespace mindnet::plugins::core::models
         string data_json;
         string reason;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::user_id,
+            &Model::table_name,
+            &Model::record_id,
+            &Model::operation,
+            &Model::data_json,
+            &Model::reason
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

@@ -25,45 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Source::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        result.push_back(cast64(map_id));
-        result.push_back(title);
-        result.push_back(author);
-        result.push_back(cast64(year));
-        result.push_back(publisher);
-        result.push_back(edition);
-        result.push_back(pages);
-        result.push_back(url);
-        result.push_back(cast64(type));
-
-        return result;
-    }
-
-    void Source::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        //
-        map_id = number();
-        title = text();
-        author = text();
-        year = number();
-        publisher = text();
-        edition = text();
-        pages = text();
-        url = text();
-        type = static_cast<enums::SourceType>(number());
-    }
+    create_model_cpp_methods(Source)
 
     string Source::validate()
     {

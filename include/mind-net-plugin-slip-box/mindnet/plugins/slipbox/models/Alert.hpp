@@ -100,6 +100,25 @@ namespace mindnet::plugins::slipbox::models
         bool important{false};
         enums::AlertChannel channel{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::trigger_at,
+            &Model::last_triggered_at,
+            &Model::trigger_count,
+            &Model::snooze_until,
+            &Model::expires_at,
+            &Model::repeat_interval,
+            &Model::repeat_count,
+            &Model::repeat_until,
+            &Model::user_id,
+            &Model::note_id,
+            &Model::url,
+            &Model::title,
+            &Model::message,
+            &Model::status,
+            &Model::important,
+            &Model::channel
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

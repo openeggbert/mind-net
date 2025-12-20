@@ -61,6 +61,13 @@ namespace mindnet::plugins::slipbox::models
         string to_note_title;
         string label;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::from_note_id,
+            &Model::to_note_id,
+            &Model::to_note_title,
+            &Model::label
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

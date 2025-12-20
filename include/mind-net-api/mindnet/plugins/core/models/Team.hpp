@@ -63,6 +63,13 @@ namespace mindnet::plugins::core::models
         identification created_by{};
         identification leader_id{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::name,
+            &Model::description,
+            &Model::created_by,
+            &Model::leader_id
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

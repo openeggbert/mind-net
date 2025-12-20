@@ -25,43 +25,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Idea::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-        //
-        result.push_back(cast64(user_id));
-        result.push_back(title);
-        result.push_back(content);
-        result.push_back(category);
-        result.push_back(cast64(due_at));
-        result.push_back(important);
-        result.push_back(is_public);
-        result.push_back(pinned);
-        return result;
-    }
-
-    void Idea::from_values(const entity_fields& values)
-    {
-        int i = 0;
-
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-        //
-        user_id = number();
-        title = text();
-        content = text();
-        category = text();
-        due_at = number();
-        important = boolean();
-        is_public = boolean();
-        pinned = boolean();
-    }
+    create_model_cpp_methods(Idea)
 
     string Idea::validate()
     {

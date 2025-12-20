@@ -27,43 +27,7 @@
 
 namespace mindnet::plugins::slipbox::models
 {
-    entity_fields Test::to_values() const
-    {
-        entity_fields result;
-        result.push_back(id);
-        result.push_back(cast64(created_at));
-        result.push_back(cast64(updated_at));
-
-        result.push_back(under_note_id);
-        result.push_back(map_id);
-        result.push_back(title);
-        result.push_back(description);
-        result.push_back(time_limit_in_seconds);
-        result.push_back(answer_count_limit);
-        result.push_back(attempt_limit);
-        result.push_back(is_public);
-
-        return result;
-    }
-
-    void Test::from_values(const entity_fields& values)
-    {
-        int i = 0;
-        def_helper_lambdas()
-
-        set_id(number());
-        created_at = number();
-        updated_at = number();
-
-        under_note_id = number();
-        map_id = number();
-        title = text();
-        description = text();
-        time_limit_in_seconds = number();
-        answer_count_limit = number();
-        attempt_limit = number();
-        is_public = boolean();
-    }
+    create_model_cpp_methods(Test)
 
     string Test::validate()
     {

@@ -76,6 +76,18 @@ namespace mindnet::plugins::slipbox::models
         core::enums::AccessRight owner_rights{7};
         core::enums::AccessRight team_rights{7};
         core::enums::AccessRight other_rights{7};
+
+        static constexpr auto fields = std::make_tuple(
+            &Model::name,
+            &Model::description,
+            &Model::category,
+            &Model::owner_id,
+            &Model::team_id,
+            &Model::owner_rights,
+            &Model::team_rights,
+            &Model::other_rights
+        );
+
         [[nodiscard]] int owner_rights_int() const { return cast64(owner_rights); }
         [[nodiscard]] int team_rights_int() const { return cast64(team_rights); }
         [[nodiscard]] int other_rights_int() const { return cast64(other_rights); }

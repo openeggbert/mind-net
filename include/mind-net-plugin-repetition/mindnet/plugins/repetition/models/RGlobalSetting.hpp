@@ -55,6 +55,11 @@ namespace mindnet::plugins::repetition::models
         string key;
         string value;
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::key,
+            &Model::value
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

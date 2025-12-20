@@ -72,6 +72,17 @@ namespace mindnet::plugins::slipbox::models
         int attempt_limit{};
         bool is_public{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::under_note_id,
+            &Model::map_id,
+            &Model::title,
+            &Model::description,
+            &Model::time_limit_in_seconds,
+            &Model::answer_count_limit,
+            &Model::attempt_limit,
+            &Model::is_public
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const

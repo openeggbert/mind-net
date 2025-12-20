@@ -62,6 +62,12 @@ namespace mindnet::plugins::slipbox::models
         identification note_id{};
         int order_index{};
 
+        static constexpr auto fields = std::make_tuple(
+            &Model::collection_id,
+            &Model::note_id,
+            &Model::order_index
+        );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
