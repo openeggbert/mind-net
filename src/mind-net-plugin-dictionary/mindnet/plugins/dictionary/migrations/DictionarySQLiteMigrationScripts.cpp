@@ -456,6 +456,8 @@ CREATE TABLE dictionary_search (
 
     is_public INTEGER NOT NULL DEFAULT 0,
 
+    UNIQUE(dictionary_map_id,name),
+
     FOREIGN KEY(user_id) REFERENCES user(id),
     FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
 );

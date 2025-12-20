@@ -382,7 +382,6 @@ else {
     case 3: // ALL
         eligible_filter =
             "(\n"
-            "    -- pokud je note ve state tabulce → musí být eligible=1\n"
             "    EXISTS (\n"
             "        SELECT 1 FROM r" + std::to_string(algorithm) + "_state s2\n"
             "        WHERE s2.note_id = n.id\n"
@@ -390,7 +389,6 @@ else {
             "          AND s2.eligible = 1\n"
             "    )\n"
             "    OR\n"
-            "    -- pokud není ve state tabulce → musí mít repetition flag\n"
             "    (\n"
             "        NOT EXISTS (\n"
             "            SELECT 1 FROM r" + std::to_string(algorithm) + "_state s3\n"
