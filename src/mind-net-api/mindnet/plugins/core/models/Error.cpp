@@ -26,6 +26,7 @@
 namespace mindnet::plugins::core::models
 {
     create_model_cpp_methods(Error)
+
     string Error::validate()
     {
         using columns::ErrorColumns;
