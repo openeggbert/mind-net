@@ -72,6 +72,7 @@
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermMetricsTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryFlagsFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
+#include "mindnet/plugins/dictionary/triggers/DictionaryReviewAfterCreateTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySearchesFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermAliasesFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermSearchTrigger.hpp"
@@ -134,6 +135,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySearchesFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermSearchTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermsForReviewTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::DictionaryReviewAfterCreateTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindNextDictionaryNotePositionSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsSQLiteQuery>());
