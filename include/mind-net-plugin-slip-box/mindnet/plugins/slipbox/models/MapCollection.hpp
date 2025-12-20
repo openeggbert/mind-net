@@ -69,7 +69,7 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const MapCollection& other) const
+        bool operator==(const Model& other) const
         {
             return id == other.id &&
                 name == other.name &&

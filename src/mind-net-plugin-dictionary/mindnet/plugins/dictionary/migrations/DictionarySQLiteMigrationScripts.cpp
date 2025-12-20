@@ -319,9 +319,6 @@ CREATE TABLE dictionary_state_4 (
     last_review DATETIME,
     last_quality INTEGER,
 
-    last_seen_semantic_version INTEGER,
-    content_modified_since_last_review INTEGER NOT NULL CHECK(content_modified_since_last_review IN (0,1)),
-
     UNIQUE(user_id, dictionary_term_id),
 
     FOREIGN KEY(user_id) REFERENCES user(id),

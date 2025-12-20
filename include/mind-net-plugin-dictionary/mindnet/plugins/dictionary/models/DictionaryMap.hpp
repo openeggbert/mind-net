@@ -93,7 +93,7 @@ namespace mindnet::plugins::dictionary::models
         
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const DictionaryMap& other) const
+        bool operator==(const Model& other) const
         {
             return id == other.id && name == other.name && description == other.description && position == other.
                 position

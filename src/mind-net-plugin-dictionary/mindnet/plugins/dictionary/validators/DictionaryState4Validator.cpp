@@ -106,9 +106,6 @@ namespace mindnet::plugins::dictionary::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        return_if(new_entity.last_seen_semantic_version < old_entity.last_seen_semantic_version, 400,
-          "last_seen_semantic_version cannot decrease")
-
         return ok_result;
     }
 

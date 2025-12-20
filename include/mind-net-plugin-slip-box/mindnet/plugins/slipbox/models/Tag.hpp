@@ -62,7 +62,7 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Tag& other) const
+        bool operator==(const Model& other) const
         {
             return id == other.id && note_id == other.note_id && tag_type_id == other.tag_type_id &&
                 created_at == other.created_at && updated_at == other.updated_at;
