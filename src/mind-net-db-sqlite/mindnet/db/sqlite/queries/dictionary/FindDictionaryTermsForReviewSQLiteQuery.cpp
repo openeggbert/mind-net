@@ -159,8 +159,8 @@ ORDER BY RANDOM() LIMIT 100;
             is_due = true;
             is_new = true;
         }
-        bool is_all = is_due && is_new && is_not_due;
-        if (is_all)
+        bool include_new_due_and_not_due = is_due && is_new && is_not_due;
+        if (include_new_due_and_not_due)
         {
             is_due = false;
             is_new = false;
@@ -221,7 +221,7 @@ ORDER BY RANDOM() LIMIT 100;
                 response["sql_failed"] = SQL_NOT_DUE;
                 return response;
             }
-        if (is_all)
+        if (include_new_due_and_not_due)
             try
             {
                 std::vector<BindValue> bind_values;

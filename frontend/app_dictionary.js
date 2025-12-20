@@ -1227,6 +1227,7 @@ class DictionaryApp {
                     } else {
                         showInfo("New search was successfully created.")
                         search_json = new_search_created
+                        get_element("span_search_id_value").innerText = new_search_created.id
                         unloadBtn.disabled = ""
                         load_input.disabled = ""
                         deleteBtn.disabled = ""
@@ -1258,6 +1259,7 @@ class DictionaryApp {
                 unloadBtn.disabled = DISABLED
                 load_input.disabled = ""
                 deleteBtn.disabled = DISABLED
+                get_element("span_search_id_value").innerText = ""
             }
             buttonRow.appendChild(unloadBtn);
 
@@ -1410,6 +1412,7 @@ class DictionaryApp {
                 deleteBtn.disabled = ""
                 unloadBtn.disabled = ""
                 search_json = read_search
+                get_element("span_search_id_value").innerText = read_search.id
             })
 
             const deleteBtn = make_button("🗑 Delete");
@@ -1427,6 +1430,7 @@ class DictionaryApp {
                 search_json = null
                 deleteBtn.disabled = DISABLED
                 unloadBtn.disabled = DISABLED
+                get_element("span_search_id_value").innerText = ""
             }
             buttonRow.appendChild(deleteBtn);
 
@@ -1556,6 +1560,26 @@ class DictionaryApp {
             let span_total_count_count = document.createElement("span")
             span_total_count_count.id = "span_total_count_count"
             span_total.appendChild(span_total_count_count)
+
+
+            let span_search_id_text = document.createElement("span")
+            span_search_id_text.innerText = "Search ID: "
+            span_search_id_text.style.marginLeft = "10px"
+            span_total.appendChild(span_search_id_text)
+
+            let span_search_id_value = document.createElement("span")
+            span_search_id_value.id = "span_search_id_value"
+            span_search_id_value.style.color = "blue"
+            span_search_id_value.style.textDecoration = "underline"
+            span_search_id_value.style.cursor = "pointer"
+            span_search_id_value.onclick = (e=> {
+                // Copy the text inside the text field
+                navigator.clipboard.writeText(span_search_id_value.innerText);
+                showInfo("Search ID " + span_search_id_value.innerText + " was copied to clipboard.")
+            })
+            span_total.appendChild(span_search_id_value)
+
+
 
             button_first_page.onclick = (e=> {input_page_number.value = 1; go_page_button.click()})
             button_prev_page.onclick = (e=> {
