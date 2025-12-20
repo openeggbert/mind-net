@@ -391,12 +391,16 @@ namespace mindnet::plugins::dictionary::triggers
                 S_after = std::clamp(S_after, S_min, 1e6);
 
                 next_interval_days = std::clamp(next_interval_days, min_interval_days, 3650.0);
-                double difficulty_factor = 1.0;
-                enums::Difficulty difficulty = static_cast<enums::Difficulty>(term.difficulty);
-                if (difficulty == enums::Difficulty::Easy) difficulty_factor = 0.8;
-                if (difficulty == enums::Difficulty::Medium) difficulty_factor = 1.0;
-                if (difficulty == enums::Difficulty::Hard) difficulty_factor = 1.25;
-                next_interval_days = next_interval_days / difficulty_factor;
+
+                if (q >= 4)
+                {
+                    double difficulty_factor = 1.0;
+                    enums::Difficulty difficulty = static_cast<enums::Difficulty>(term.difficulty);
+                    if (difficulty == enums::Difficulty::Easy) difficulty_factor = 0.8;
+                    if (difficulty == enums::Difficulty::Medium) difficulty_factor = 1.0;
+                    if (difficulty == enums::Difficulty::Hard) difficulty_factor = 1.25;
+                    next_interval_days = next_interval_days / difficulty_factor;
+                }
 
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
