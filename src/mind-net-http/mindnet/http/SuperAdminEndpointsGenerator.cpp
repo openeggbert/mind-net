@@ -140,6 +140,9 @@ content: " (takes effect after restart) ";
       {environment}
     </select>
 
+    <label for="dev_mode">Dev Mode</label>
+    <input type="checkbox" id="dev_mode" name="dev_mode" {dev_mode}>
+
     <label for="host">Host<span class="restart_needed"></span></label>
     <input type="text" id="host" name="host" value="{host}">
 
@@ -208,7 +211,7 @@ content: " (takes effect after restart) ";
     <input type="number" id="read_cache_capacity_size" name="read_cache_capacity_size" value="{read_cache_capacity_size}" min="60" max="432000">
 
     <label for="read_cache_capacity_bytes">Read cache capacity in bytes (max)</label>
-    <input type="number" id="read_cache_capacity_bytes" name="read_cache_capacity_bytes" value="{read_cache_capacity_bytes}" min="60" max="432000">
+    <input type="number" id="read_cache_capacity_bytes" name="read_cache_capacity_bytes" value="{read_cache_capacity_bytes}" min="60" max="1073741824">
 
     <label class="checkbox">
     <input type="checkbox" id="schedule_restart" name="schedule_restart">

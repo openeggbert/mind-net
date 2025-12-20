@@ -180,9 +180,19 @@ namespace mindnet::plugins::core::models
 
         std::string create_message_for_user() const
         {
+            auto dev_mode = essential::g_configuration.dev_mode;
             auto status_msg = util::Utils::http_status_to_text(http_status);
             //return status_msg + ". ";
-            return "Error ID: " + human_identification;
+            std::string msg;
+            if (dev_mode)
+            {
+                msg = message;
+                if (!sql_query.empty()) msg += (" SQL: " + sql_query);
+                if (!exception_message.empty()) msg += (" Exception message: " + exception_message);
+                msg += " ";
+            }
+            msg = msg + "Error ID: " + human_identification;
+            return msg;
         }
         create_model_h_methods(ModelERROR, MODELERROR)
 

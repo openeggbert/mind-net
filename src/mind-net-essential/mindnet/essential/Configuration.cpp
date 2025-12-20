@@ -31,6 +31,7 @@
 #define save_enum(key) if_map_has(key) key = string_to_##key(map.at( #key));
 #define save_text(key) if_map_has(key) key = map.at( #key);
 #define save_number(key) if_map_has(key) key = std::stoi(map.at( #key));
+#define save_bool(key) if_map_has(key) key = string_to_bool(map.at( #key));
 
 namespace mindnet::essential
 {
@@ -74,8 +75,8 @@ namespace mindnet::essential
 
     bool string_to_bool(const std::string& str)
     {
-        if (str == "false") return false;
-        if (str == "true") return true;
+        if (str == "" || str == "false" || str == "0") return false;
+        if (str == "true" || str == "1" || str == "on") return true;
         throw std::runtime_error("Invalid boolean value: " + str);
     }
 
@@ -140,6 +141,7 @@ namespace mindnet::essential
         save_text(name)
         save_text(description)
         save_enum(environment)
+        save_bool(dev_mode)
         //
         save_number(port)
         save_number(frontend_port)
@@ -188,6 +190,7 @@ namespace mindnet::essential
 name={name}
 description={description}
 environment={environment}
+dev_mode={dev_mode}
 
 #Environment
 host={host}
@@ -301,6 +304,7 @@ read_cache_capacity_bytes={read_cache_capacity_bytes}
             fmt::arg("name", name),
             fmt::arg("description", description),
             fmt::arg("environment", environment_to_string(environment)),
+            fmt::arg("dev_mode", dev_mode ? "true" : "false"),
             //
             fmt::arg("host", host),
             fmt::arg("port", port),
@@ -374,6 +378,8 @@ read_cache_capacity_bytes={read_cache_capacity_bytes}
             g_configuration.environment,
             "environment"
         );
+
+        push_entry("dev_mode", g_configuration.dev_mode ? "checked" : "");
 
         auto db_to_str = [](DatabaseType e) { return database_type_to_string(e); };
 

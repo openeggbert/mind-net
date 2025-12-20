@@ -63,6 +63,7 @@ namespace mindnet::essential
         std::string name;
         std::string description;
         Environment environment{Environment::Production};
+        bool dev_mode{false};
         mutable unsigned short port{};
         mutable unsigned short frontend_port{};
         mutable std::string host{};
