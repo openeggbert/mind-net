@@ -26,6 +26,8 @@
 #include <memory>
 #include <string>
 #include <nlohmann/json.hpp>
+
+#include "ErrorHandler.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/api/SqliteGlobal.hpp"
 #include "mindnet/model/ModelDefinition.hpp"
@@ -55,7 +57,7 @@ namespace mindnet::api
         virtual ~Query() = default;
 
         virtual nlohmann::json call(
-            nlohmann::json& request, InvalidateMethod& invalidate_method
+            nlohmann::json& request, InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error
         ) = 0;
         //
         virtual const std::string& get_name() const { return name; }

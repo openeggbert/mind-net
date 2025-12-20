@@ -37,7 +37,7 @@ namespace mindnet::db::sqlite::queries::core
     {
     }
 
-    nlohmann::json VacuumSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method)
+    nlohmann::json VacuumSQLiteQuery::call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error)
     {
         nlohmann::json response;
         std::string vacuum_sql = "VACUUM";

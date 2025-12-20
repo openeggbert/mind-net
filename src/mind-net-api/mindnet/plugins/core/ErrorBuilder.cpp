@@ -42,7 +42,7 @@ namespace mindnet::plugins::core
     {
         std::array<uint8_t, 16> uuid{};
 
-        // 1️⃣ timestamp (Unix epoch ms, 48 bit)
+        // timestamp (Unix epoch ms, 48 bit)
         const auto now = std::chrono::time_point_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now()
         );
@@ -55,7 +55,7 @@ namespace mindnet::plugins::core
         uuid[4] = (ms >> 8) & 0xFF;
         uuid[5] = ms & 0xFF;
 
-        // 2️⃣ random part
+        // random part
         static thread_local std::mt19937_64 rng{ std::random_device{}() };
         uint64_t r1 = rng();
         uint64_t r2 = rng();
@@ -127,12 +127,14 @@ namespace mindnet::plugins::core
         return std::format("{:%Y%m%d}", ymd);
     }
 
-    std::string generate_public_id()
+    static const std::string MN_ERR_ = "MN-ERR-";
+    std::string generate_human_identification()
     {
         string random_string = generate_code_6();
         string today = today_yyyymmdd();
-        return "MN-ERR-" + today + "-" + random_string;
+        return MN_ERR_ + today + "-" + random_string;
     }
+
     ErrorBuilder::ErrorBuilder(
             const std::string& message,
             enums::ErrorSeverity s,
@@ -185,7 +187,7 @@ namespace mindnet::plugins::core
 
     ErrorBuilder& ErrorBuilder::request(std::string id)
     {
-        model_.request_id = id;
+        model_.request_identification = id;
         return *this;
     }
 
@@ -212,7 +214,7 @@ namespace mindnet::plugins::core
         if (model_.http_status == 0)
             model_.http_status = 500;
 
-        model_.public_id = generate_public_id();
+        model_.human_identification = generate_human_identification();
         model_.uuid = generate_uuid_v7();
 
         model_.mindnet_version = STRINGIFY(MIND_NET_VERSION);

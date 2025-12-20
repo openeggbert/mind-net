@@ -22,6 +22,7 @@
  */
 
 #pragma once
+#include "ErrorHandler.hpp"
 #include "IService.hpp"
 #include "PluginRegistry.hpp"
 #include "TriggerRegistry.hpp"
@@ -48,6 +49,29 @@ namespace mindnet::api
         };
     };
 
+    class ErrorHandlerImpl : public ErrorHandler
+    {
+    public:
+        ErrorHandlerImpl(const DbPtr& db) : db_(db)
+        {
+
+        }
+
+        ErrorHandlerResult report_error(plugins::core::models::Error& error) override
+        {
+            auto values = error.to_values();
+            auto now = util::Utils::current_unix_timestamp_ms();
+            values[1] = now;
+            values[2] = now;
+            auto result = db_->create(plugins::core::models::ERROR_DEFINITION, system_token, values);
+            return {result.first, result.second.error, result.second.status};
+        }
+
+        DbPtr db_;
+        AccessTokenContext system_token{true};
+
+    };
+
     class Service : public api::IService
     {
     private:
@@ -59,6 +83,7 @@ namespace mindnet::api
         std::map<string, JobPtr> job_map;
         cronq::CronSchedulerPtr cron_scheduler;
         InvalidateMethodImpl invalidate_method;
+        ErrorHandlerImpl error_handler;
 
     public:
         Service(const api::DbPtr& db_ptr, const api::PluginRegistryPtr& plugin_registry);

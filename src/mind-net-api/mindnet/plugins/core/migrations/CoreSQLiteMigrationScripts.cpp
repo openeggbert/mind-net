@@ -352,5 +352,91 @@ CREATE TABLE job_run (
         add_migration("V13__alter_table_job_entry_add_column_configuration.sql", R"(
 ALTER TABLE job_entry ADD configuration TEXT;
 )");
+
+    	add_migration("V14__create_error.sql", R"(
+CREATE TABLE error (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    /* identity */
+    human_identification TEXT NOT NULL,
+    uuid TEXT NOT NULL,
+
+    /* classification */
+    severity INTEGER NOT NULL,
+    http_status INTEGER,
+
+    /* origin & layer */
+    origin INTEGER,
+    layer INTEGER,
+
+    /* system location */
+    plugin TEXT,
+    operation INTEGER,
+
+    /* code location */
+    cpp_namespace TEXT,
+    cpp_class TEXT,
+    cpp_symbol TEXT,
+
+    /* technical context */
+    sql_query TEXT,
+
+    /* request / user context */
+    user_id INTEGER,
+    request_identification TEXT,
+
+    /* payload */
+    message TEXT NOT NULL,
+    exception_type TEXT,
+    exception_message TEXT,
+
+    /* lifecycle */
+    handled BOOLEAN NOT NULL DEFAULT 0,
+
+    /* versioning */
+    mindnet_version TEXT,
+
+    FOREIGN KEY(user_id) REFERENCES user(id)
+);
+
+-- identity
+CREATE UNIQUE INDEX idx_error_human_identification ON error(human_identification);
+CREATE UNIQUE INDEX idx_error_uuid ON error(uuid);
+
+-- lifecycle / triage
+CREATE INDEX idx_error_handled_created_at
+    ON error(handled, created_at);
+
+-- classification
+CREATE INDEX idx_error_severity
+    ON error(severity);
+
+CREATE INDEX idx_error_http_status
+    ON error(http_status);
+
+-- origin / layer
+CREATE INDEX idx_error_origin
+    ON error(origin);
+
+CREATE INDEX idx_error_layer
+    ON error(layer);
+
+-- request / user
+CREATE INDEX idx_error_user_id
+    ON error(user_id);
+
+CREATE INDEX idx_error_request_identification
+    ON error(request_identification);
+
+-- plugin / operation
+CREATE INDEX idx_error_plugin
+    ON error(plugin);
+
+CREATE INDEX idx_error_operation
+    ON error(operation);
+)");
+
     }
 }

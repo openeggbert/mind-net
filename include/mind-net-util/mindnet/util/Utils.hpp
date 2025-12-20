@@ -72,6 +72,8 @@ namespace mindnet::util
             bool upper_case = true,
             bool symbols = true);
 
+        static std::string http_status_to_text(int status);
+
         template <typename K, typename V>
         struct MapDiff
         {

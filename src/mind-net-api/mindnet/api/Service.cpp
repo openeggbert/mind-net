@@ -49,7 +49,8 @@ namespace mindnet::api
         plugin_registry_ptr(plugin_registry_ptr_),
         trigger_registry_ptr(std::make_shared<api::TriggerRegistry>()),
         cron_scheduler(std::make_shared<api::cronq::CronScheduler>()),
-        invalidate_method({db_})
+        invalidate_method({db_}),
+        error_handler({db_})
     {
         info << "[SERVICE] Ctor this=" << (void*)this
             << " cron_scheduler=" << (void*)cron_scheduler.get()
@@ -197,9 +198,24 @@ namespace mindnet::api
             err << "There is no query with name: " << query_name << commit;
             throw std::runtime_error("There is no query with name: " + query_name);
         }
-        SQLITE_LOCK_GUARD();
-        auto& query = query_map[query_name];
-        return query->call(request, invalidate_method);
+        plugins::core::models::OptionalError optional_error;
+        std::optional<nlohmann::json> result;
+        {
+            SQLITE_LOCK_GUARD();
+            auto& query = query_map[query_name];
+
+            nlohmann::json result_json = query->call(request, invalidate_method, optional_error);
+            result.emplace(result_json);
+        }
+        if (optional_error.has_value())
+        {
+            error_handler.report_error(optional_error.value());
+        }
+        if (!result.has_value())
+        {
+            throw std::runtime_error("Result is empty.");
+        }
+        return result.value();
     }
 
     static constexpr int MAX_TRIGGER_DEPTH = 32;

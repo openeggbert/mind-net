@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "mindnet/api/ErrorHandler.hpp"
 #include "mindnet/api/Query.hpp"
 
 namespace mindnet::db::sqlite::queries::dictionary
@@ -36,7 +37,7 @@ namespace mindnet::db::sqlite::queries::dictionary
 
         ~FindDictionaryTermsViaAdvancedSearchSQLiteQuery() override = default;
 
-        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method) override;
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error) override;
 
     private:
     };

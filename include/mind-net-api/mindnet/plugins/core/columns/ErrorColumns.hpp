@@ -45,7 +45,7 @@ namespace mindnet::plugins::core::columns
          * ------------------------------------------------------------------
          * External and internal identification of the error record
          */
-        static constexpr const char* PUBLIC_ID = "public_id"; // Human-readable error ID (shown to user)
+        static constexpr const char* HUMAN_IDENTIFICATION = "human_identification"; // Human-readable error ID (shown to user)
         static constexpr const char* UUID = "uuid"; // Internal unique identifier (e.g. UUIDv7)
 
         /* ------------------------------------------------------------------
@@ -96,7 +96,7 @@ namespace mindnet::plugins::core::columns
          * Context of the request and the user
          */
         static constexpr const char* USER_ID = "user_id";
-        static constexpr const char* REQUEST_ID = "request_id"; // Request correlation / tracing ID
+        static constexpr const char* REQUEST_IDENTIFICATION = "request_identification"; // Request correlation / tracing ID
 
         /* ------------------------------------------------------------------
          * Payload

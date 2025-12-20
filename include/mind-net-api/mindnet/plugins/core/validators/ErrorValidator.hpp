@@ -23,21 +23,24 @@
 
 #pragma once
 
-#include "mindnet/api/Query.hpp"
+#include <memory>
 
-namespace mindnet::db::sqlite::queries::dictionary
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/core/models/Error.hpp"
+
+namespace mindnet::plugins::core::validators
 {
-    const std::string QUERY_FindDictionaryTermAliases = "FindDictionaryTermAliases";
+    using api::RequestContext;
+    using mindnet::plugins::core::models::Error;
 
-    class FindDictionaryTermAliasesSQLiteQuery : public api::Query
+    class ErrorValidator : public api::ValidatorBase<ErrorValidator, Error>
     {
     public:
-        FindDictionaryTermAliasesSQLiteQuery();
+        ErrorValidator() = default;
+        ~ErrorValidator() = default; // explicitly make it destructible
+        using Model = Error;
 
-        ~FindDictionaryTermAliasesSQLiteQuery() override = default;
-
-        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error) override;
-
-    private:
+        create_method_prototypes_for_ValidatorBase(Model)
     };
 }

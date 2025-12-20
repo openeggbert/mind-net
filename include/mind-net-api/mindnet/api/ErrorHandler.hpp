@@ -23,21 +23,31 @@
 
 #pragma once
 
-#include "mindnet/api/Query.hpp"
+#include <functional>
+#include <memory>
 
-namespace mindnet::db::sqlite::queries::dictionary
+#include "AccessTokenContext.hpp"
+#include "OperationResult.hpp"
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/essential/Helper.hpp"
+#include "mindnet/util/triple.hpp"
+#include "mindnet/plugins/core/models/Error.hpp"
+
+// 🔐 Validator as a Security Gate
+// Validator does more than just check data — it acts as protection against unauthorized access:
+//
+// Authentication: Is the user logged in?
+// Authorization: Does the user have the right to read/modify the given entity?
+// Integrity: Does the operation preserve the system’s logic?
+// Consistency: Are key dependencies present (e.g., a parent note)?
+
+namespace mindnet::api
 {
-    const std::string QUERY_FindDictionaryTermAliases = "FindDictionaryTermAliases";
-
-    class FindDictionaryTermAliasesSQLiteQuery : public api::Query
+    using ErrorHandlerResult = util::triple<identification, std::string, int>;
+    class ErrorHandler
     {
     public:
-        FindDictionaryTermAliasesSQLiteQuery();
-
-        ~FindDictionaryTermAliasesSQLiteQuery() override = default;
-
-        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error) override;
-
-    private:
+        virtual ~ErrorHandler() = default;
+        virtual ErrorHandlerResult report_error(plugins::core::models::Error& error) = 0;
     };
 }

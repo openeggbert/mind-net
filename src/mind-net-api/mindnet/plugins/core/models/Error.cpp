@@ -21,23 +21,41 @@
  * THE SOFTWARE.
  */
 
-#pragma once
+#include "mindnet/plugins/core/models/Error.hpp"
 
-#include "mindnet/api/Query.hpp"
-
-namespace mindnet::db::sqlite::queries::dictionary
+namespace mindnet::plugins::core::models
 {
-    const std::string QUERY_FindDictionaryTermAliases = "FindDictionaryTermAliases";
-
-    class FindDictionaryTermAliasesSQLiteQuery : public api::Query
+    entity_fields Error::to_values() const
     {
-    public:
-        FindDictionaryTermAliasesSQLiteQuery();
+        return serialize_fields(*this);
+    }
 
-        ~FindDictionaryTermAliasesSQLiteQuery() override = default;
+    void Error::from_values(const entity_fields& values)
+    {
+        deserialize_fields(*this, values);
+    }
 
-        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error) override;
+    string Error::validate()
+    {
+        using columns::ErrorColumns;
 
-    private:
-    };
+        validator_chain_vector list{
+            // message is mandatory
+            [this]
+            {
+                return testt_not_empty(message, ErrorColumns::MESSAGE);
+            },
+
+            // http status: either unset (0) or valid HTTP range
+            [this]
+            {   return test_true(
+                    http_status == 0 ? true : (http_status >= 100 && http_status <= 599),
+                    "HTTP status must be in range 100–599"
+                );
+            }
+        };
+
+        return util::ValidatorChain::run(list);
+    }
+
 }

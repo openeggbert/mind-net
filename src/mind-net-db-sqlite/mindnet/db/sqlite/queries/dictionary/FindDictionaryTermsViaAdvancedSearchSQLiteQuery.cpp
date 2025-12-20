@@ -28,9 +28,12 @@
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 #include "mindnet/essential/Global.hpp"
+#include "mindnet/plugins/core/ErrorBuilder.hpp"
+#include "mindnet/plugins/core/models/Error.hpp"
 
 namespace mindnet::db::sqlite::queries::dictionary
 {
+    static const std::string CPP_NAMESPACE = "mindnet::db::sqlite::queries::dictionary";
     using std::string;
     using std::vector;
 
@@ -245,11 +248,12 @@ namespace mindnet::db::sqlite::queries::dictionary
             sql += " AND ";
         }
     }
-
+    static const std::string CPP_CLASS = "FindDictionaryTermsViaAdvancedSearchSQLiteQuery";
     nlohmann::json FindDictionaryTermsViaAdvancedSearchSQLiteQuery::call(
         nlohmann::json& request,
-        api::InvalidateMethod& invalidate_method)
+        api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error)
     {
+        static const std::string CPP_SYMBOL = "call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error)";
         nlohmann::json response;
 
         if (!request.contains("user_id"))
@@ -620,9 +624,6 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
         }
 
-
-
-
         std::string sql_sort = "";
         if (q.sort == "Title") sql_sort = "dt.title";
         if (q.sort == "Created at") sql_sort = "dt.created_at";
@@ -703,9 +704,26 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
         catch (const SQLite::Exception& e)
         {
-            response["error"] = e.what();
             response["sql"] = sql_current_page;
             response["sql2"] = sql_count;
+            plugins::core::models::Error error = plugins::core::ErrorBuilder(
+                "FindDictionaryTermsViaAdvancedSearchSQLiteQuery failed",
+                plugins::core::enums::ErrorSeverity::Error,
+                plugins::core::enums::ErrorOrigin::Trigger,
+                plugins::core::enums::ExecutionLayer::Db)
+            .plugin("dictionary")
+            .operation(essential::Crudl::List)
+            .cpp(
+                CPP_NAMESPACE,
+                CPP_CLASS,
+                CPP_SYMBOL
+                )
+            .sql(sql_current_page + "; " + sql_count)
+            .user(user_id)
+            .exception(e)
+            .build();
+            optional_error.emplace(error);
+            response["error"] = error.create_message_for_user();
         }
 
         return response;

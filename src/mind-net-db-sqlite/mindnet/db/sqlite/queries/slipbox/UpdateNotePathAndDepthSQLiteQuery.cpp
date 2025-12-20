@@ -37,7 +37,7 @@ namespace mindnet::db::sqlite::queries::slipbox
     }
 
     nlohmann::json UpdateNotePathAndDepthSQLiteQuery::call(
-        nlohmann::json& request, api::InvalidateMethod& invalidate_method
+        nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error
     )
     {
         if (!request.contains("note_id"))

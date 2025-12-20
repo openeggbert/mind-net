@@ -35,7 +35,8 @@ namespace mindnet::db::sqlite::queries::dictionary
     }
 
     nlohmann::json FindDictionaryTagTypesSQLiteQuery::call(nlohmann::json& request,
-                                                            api::InvalidateMethod& invalidate_method)
+    api::InvalidateMethod& invalidate_method,
+plugins::core::models::OptionalError& optional_error)
     {
         nlohmann::json response;
 

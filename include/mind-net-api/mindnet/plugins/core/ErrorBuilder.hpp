@@ -38,7 +38,7 @@ namespace mindnet::plugins::core
     using std::string;
     static std::string generate_uuid_v7();
     //MN-ERR-20251219-4F9C7A
-    static std::string generate_public_id();
+    static std::string generate_human_identification();
 
     class ErrorBuilder
     {
