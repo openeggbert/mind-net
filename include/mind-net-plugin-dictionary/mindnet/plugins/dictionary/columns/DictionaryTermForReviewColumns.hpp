@@ -42,11 +42,12 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* DICTIONARY_TERM_ID   = "dictionary_term_id";
         static constexpr const char* DICTIONARY_MAP_ID    = "dictionary_map_id";
-        static constexpr const char* DICTIONARY_USER_ID    = "dictionary_user_id";
+        static constexpr const char* DICTIONARY_USER_ID   = "dictionary_user_id";
         static constexpr const char* DICTIONARY_SEARCH_ID = "dictionary_search_id";
 
         static constexpr const char* TITLE           = "title";
         static constexpr const char* DISAMBIGUATION  = "disambiguation";
+        static constexpr const char* DEFINITION      = "definition";
 
         static constexpr const char* ALGORITHM       = "algorithm";
         static constexpr const char* DUE             = "due";
