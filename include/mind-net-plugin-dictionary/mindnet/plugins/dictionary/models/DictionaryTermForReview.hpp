@@ -44,14 +44,14 @@ namespace mindnet::plugins::dictionary::models
 
     inline const def DICTIONARY_TERM_FOR_REVIEW_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_group("Dictionary", 200)
-        .set_rest_operations("rl").set_title_column(COLS::TITLE)
+        .set_group("Dictionary #2", 200)
+        .set_rest_operations("l").set_title_column(COLS::TITLE)
         .set_no_table(true)
         .set_cache_enabled(false)
         .set_columns({
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY),
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY | READONLY),
-            coldef(COLS::DICTIONARY_USER_ID, MANDATORY | FOREIGN_KEY | READONLY),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY),
             coldef(COLS::DICTIONARY_SEARCH_ID, FOREIGN_KEY | READONLY),
 
             coldef(COLS::TITLE, MANDATORY | READONLY),
@@ -59,16 +59,17 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DEFINITION, READONLY),
 
             coldef(COLS::ALGORITHM, INTEGER | READONLY),
-            coldef(COLS::IS_DUE, BOOL | READONLY),
-            coldef(COLS::IS_NEW, BOOL | READONLY),
-            coldef(COLS::IS_NOT_DUE, BOOL | READONLY),
+            coldef(COLS::IS_DUE, BOOL | READONLY).set_default_value(true),
+            coldef(COLS::IS_NEW, BOOL | READONLY).set_default_value(true),
+            coldef(COLS::IS_NOT_DUE, BOOL | READONLY).set_default_value(false),
+            coldef(COLS::INCLUDE_EMPTY_DEFINITION, BOOL | READONLY).set_default_value(false),
         });
 
     struct Model : mindnet::model::BaseModel
     {
         identification dictionary_term_id{};
         identification dictionary_map_id{};
-        identification dictionary_user_id{};
+        identification user_id{};
         identification dictionary_search_id{};
 
         string title;
@@ -79,11 +80,12 @@ namespace mindnet::plugins::dictionary::models
         bool is_due{false};
         bool is_new{false};
         bool is_not_due{false};
+        bool include_empty_definition{false};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::dictionary_map_id,
-            &Model::dictionary_user_id,
+            &Model::user_id,
             &Model::dictionary_search_id,
             &Model::title,
             &Model::disambiguation,
@@ -91,7 +93,8 @@ namespace mindnet::plugins::dictionary::models
             &Model::algorithm,
             &Model::is_due,
             &Model::is_new,
-            &Model::is_not_due
+            &Model::is_not_due,
+            &Model::include_empty_definition
         );
 
         create_model_h_methods(Model, MODEL)
@@ -101,7 +104,7 @@ namespace mindnet::plugins::dictionary::models
             return id == other.id &&
                 dictionary_term_id == other.dictionary_term_id &&
                 dictionary_map_id == other.dictionary_map_id &&
-                dictionary_user_id == other.dictionary_user_id &&
+                user_id == other.user_id &&
                 dictionary_search_id == other.dictionary_search_id &&
                 title == other.title &&
                 disambiguation == other.disambiguation &&
@@ -110,6 +113,7 @@ namespace mindnet::plugins::dictionary::models
                 is_due == other.is_due &&
                 is_new == other.is_new &&
                 is_not_due == other.is_not_due &&
+                include_empty_definition == other.include_empty_definition &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at;
         }

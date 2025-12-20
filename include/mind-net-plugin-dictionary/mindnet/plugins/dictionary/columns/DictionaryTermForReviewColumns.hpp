@@ -42,7 +42,7 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* DICTIONARY_TERM_ID   = "dictionary_term_id";
         static constexpr const char* DICTIONARY_MAP_ID    = "dictionary_map_id";
-        static constexpr const char* DICTIONARY_USER_ID   = "dictionary_user_id";
+        static constexpr const char* USER_ID   = "user_id";
         static constexpr const char* DICTIONARY_SEARCH_ID = "dictionary_search_id";
 
         static constexpr const char* TITLE           = "title";
@@ -53,6 +53,7 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* IS_DUE             = "is_due";
         static constexpr const char* IS_NEW             = "is_new";
         static constexpr const char* IS_NOT_DUE         = "is_not_due";
+        static constexpr const char* INCLUDE_EMPTY_DEFINITION = "include_empty_definition";
 
     };
 }

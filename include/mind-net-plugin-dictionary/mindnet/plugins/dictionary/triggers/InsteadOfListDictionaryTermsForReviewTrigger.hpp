@@ -21,19 +21,24 @@
  * THE SOFTWARE.
  */
 
+#pragma once
+
+#include "mindnet/api/Trigger.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermForReview.hpp"
 
-namespace mindnet::plugins::dictionary::models
+namespace mindnet::plugins::dictionary::triggers
 {
-    create_model_cpp_methods(DictionaryTermForReview)
-
-    string DictionaryTermForReview::validate()
+    class InsteadOfListDictionaryTermsForReviewTrigger : public api::Trigger
     {
-        using columns::DictionaryTermForReviewColumns;
+    public:
+        InsteadOfListDictionaryTermsForReviewTrigger();
 
-        validator_chain_vector list{
-            [this] { return test_true(is_due || is_new || is_not_due, "At least one of is_due, is_new, is_not_due must be true"); },
-        };
-        return util::ValidatorChain::run(list);
-    }
+        ~InsteadOfListDictionaryTermsForReviewTrigger() override = default;
+        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            const orm::QueryParams& query_params) override;
+    };
 }

@@ -21,19 +21,23 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/DictionaryTermForReview.hpp"
+#pragma once
 
-namespace mindnet::plugins::dictionary::models
+#include "mindnet/api/Query.hpp"
+
+namespace mindnet::db::sqlite::queries::dictionary
 {
-    create_model_cpp_methods(DictionaryTermForReview)
+    const std::string QUERY_FindDictionaryTermsForReview = "FindDictionaryTermsForReview";
 
-    string DictionaryTermForReview::validate()
+    class FindDictionaryTermsForReviewSQLiteQuery : public api::Query
     {
-        using columns::DictionaryTermForReviewColumns;
+    public:
+        FindDictionaryTermsForReviewSQLiteQuery();
 
-        validator_chain_vector list{
-            [this] { return test_true(is_due || is_new || is_not_due, "At least one of is_due, is_new, is_not_due must be true"); },
-        };
-        return util::ValidatorChain::run(list);
-    }
+        ~FindDictionaryTermsForReviewSQLiteQuery() override = default;
+
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error) override;
+
+    private:
+    };
 }

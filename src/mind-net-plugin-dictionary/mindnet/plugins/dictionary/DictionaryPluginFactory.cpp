@@ -33,6 +33,7 @@
 #include "mindnet/api/PluginFactory.hpp"
 #include "mindnet/db/sqlite/queries/dictionary/FindDictionarySearchesSQLiteQuery.hpp"
 #include "mindnet/db/sqlite/queries/dictionary/FindDictionaryTermAliasesSQLiteQuery.hpp"
+#include "mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsForReviewSQLiteQuery.hpp"
 #include "mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsViaAdvancedSearchSQLiteQuery.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryFlagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryLinkValidator.hpp"
@@ -74,6 +75,7 @@
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySearchesFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermAliasesFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermSearchTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermsForReviewTrigger.hpp"
 
 namespace mindnet::plugins::dictionary
 {
@@ -131,6 +133,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermAliasesFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySearchesFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermSearchTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermsForReviewTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindNextDictionaryNotePositionSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsSQLiteQuery>());
@@ -142,6 +145,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryFlagsSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermAliasesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionarySearchesSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsForReviewSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::DictionaryHtmlExportJob>());
 
