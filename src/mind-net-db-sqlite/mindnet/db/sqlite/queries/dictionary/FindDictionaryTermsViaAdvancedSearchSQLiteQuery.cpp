@@ -96,9 +96,12 @@ namespace mindnet::db::sqlite::queries::dictionary
             alias_alias = q.value("alias_alias", "");
 
             missing_items = split_csv(q.value("missing_items", ""));
-            visited = q.value("visited", "Any");
+
+            created = q.value("created", "Any");
             updated = q.value("updated", "Any");
+            visited = q.value("visited", "Any");
             reviewed = q.value("reviewed", "Any");
+
             order = q.value("order", "Asc");
             if (order != "Asc" && order != "Desc") sort = "Asc";
 
@@ -145,8 +148,9 @@ namespace mindnet::db::sqlite::queries::dictionary
         string alias_alias;
 
         vector<string> missing_items;
-        string visited;
+        string created;
         string updated;
+        string visited;
         string reviewed;
         string sort;
         string order = "Asc";
@@ -193,8 +197,9 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["alias_alias"] = alias_alias;
 
             q["missing_items"] = join_csv(missing_items);
-            q["visited"] = visited;
+            q["created"] = created;
             q["updated"] = updated;
+            q["visited"] = visited;
             q["reviewed"] = reviewed;
             q["sort"] = sort;
             q["order"] = order;
@@ -524,6 +529,112 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
         }
         static constexpr i64 MS_PER_HOUR = 60LL * 60 * 1000;
+
+        // created
+        if (q.created != "Any")
+        {
+            if (q.created == "Never")
+            {
+                append_where(sql_current_page, first_where);
+                sql_current_page +=
+                    "(dt.created_at IS NULL OR dt.created_at = dt.created_at)";
+            }
+            else
+            {
+                bool negated = q.created.rfind("Not ", 0) == 0;
+                std::string base = negated ? q.created.substr(4) : q.created;
+                if (negated) capitalize_first(base);
+
+                i64 threshold_ms = 0;
+                i64 now = now_ms();
+
+                if (base == "Last hour")
+                    threshold_ms = now - 1LL * MS_PER_HOUR;
+                else if (base == "Last 3 hours")
+                    threshold_ms = now - 3LL * MS_PER_HOUR;
+                else if (base == "Today")
+                    threshold_ms = now - 24LL * MS_PER_HOUR;
+                else if (base == "Last week")
+                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
+                else if (base == "Last month")
+                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
+                else if (base == "Last year")
+                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
+                else if (base == "Last 10 years")
+                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+
+                if (threshold_ms > 0)
+                {
+                    append_where(sql_current_page, first_where);
+
+                    if (!negated)
+                    {
+                        sql_current_page +=
+                            "dt.created_at >= ?";
+                    }
+                    else
+                    {
+                        sql_current_page +=
+                            "(dt.created_at < ? OR dt.created_at IS NULL)";
+                    }
+
+                    binders.push_back(threshold_ms);
+                }
+            }
+        }
+        // updated
+        if (q.updated != "Any")
+        {
+            if (q.updated == "Never")
+            {
+                append_where(sql_current_page, first_where);
+                sql_current_page +=
+                    "(dt.updated_at IS NULL OR dt.updated_at = dt.created_at)";
+            }
+            else
+            {
+                bool negated = q.updated.rfind("Not ", 0) == 0;
+                std::string base = negated ? q.updated.substr(4) : q.updated;
+                if (negated) capitalize_first(base);
+
+                i64 threshold_ms = 0;
+                i64 now = now_ms();
+
+                if (base == "Last hour")
+                    threshold_ms = now - 1LL * MS_PER_HOUR;
+                else if (base == "Last 3 hours")
+                    threshold_ms = now - 3LL * MS_PER_HOUR;
+                else if (base == "Today")
+                    threshold_ms = now - 24LL * MS_PER_HOUR;
+                else if (base == "Last week")
+                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
+                else if (base == "Last month")
+                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
+                else if (base == "Last year")
+                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
+                else if (base == "Last 10 years")
+                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+
+                if (threshold_ms > 0)
+                {
+                    append_where(sql_current_page, first_where);
+
+                    if (!negated)
+                    {
+                        sql_current_page +=
+                            "dt.updated_at >= ?";
+                    }
+                    else
+                    {
+                        sql_current_page +=
+                            "(dt.updated_at < ? OR dt.updated_at IS NULL)";
+                    }
+
+                    binders.push_back(threshold_ms);
+                }
+            }
+        }
+
         // visited
         if (q.visited != "Any")
         {
@@ -582,59 +693,6 @@ namespace mindnet::db::sqlite::queries::dictionary
                     }
 
                     binders.push_back(user_id);
-                    binders.push_back(threshold_ms);
-                }
-            }
-        }
-
-        // updated
-        if (q.updated != "Any")
-        {
-            if (q.updated == "Never")
-            {
-                append_where(sql_current_page, first_where);
-                sql_current_page +=
-                    "(dt.updated_at IS NULL OR dt.updated_at = dt.created_at)";
-            }
-            else
-            {
-                bool negated = q.updated.rfind("Not ", 0) == 0;
-                std::string base = negated ? q.updated.substr(4) : q.updated;
-                if (negated) capitalize_first(base);
-
-                i64 threshold_ms = 0;
-                i64 now = now_ms();
-
-                if (base == "Last hour")
-                    threshold_ms = now - 1LL * MS_PER_HOUR;
-                else if (base == "Last 3 hours")
-                    threshold_ms = now - 3LL * MS_PER_HOUR;
-                else if (base == "Today")
-                    threshold_ms = now - 24LL * MS_PER_HOUR;
-                else if (base == "Last week")
-                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
-                else if (base == "Last month")
-                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
-                else if (base == "Last year")
-                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
-                else if (base == "Last 10 years")
-                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
-
-                if (threshold_ms > 0)
-                {
-                    append_where(sql_current_page, first_where);
-
-                    if (!negated)
-                    {
-                        sql_current_page +=
-                            "dt.updated_at >= ?";
-                    }
-                    else
-                    {
-                        sql_current_page +=
-                            "(dt.updated_at < ? OR dt.updated_at IS NULL)";
-                    }
-
                     binders.push_back(threshold_ms);
                 }
             }

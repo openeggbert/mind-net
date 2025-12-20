@@ -866,24 +866,25 @@ class DictionaryApp {
             });
             form.appendChild(make_div(missingLabel, missingContainer));
 
-            // --- Visited ---
-            const visitedLabel = make_label("Visited:");
-            const visitedSelect = make_select()
-            const visited_updated_reviewed_array = [
+            const created_updated_visited_reviewed_array = [
                 "Any","Last hour", "Last 3 hours","Today","Last week","Last month","Last year","Last 10 years",
                 "Not last hour", "Not last 3 hours","Not today","Not last week","Not last month","Not last year","Not last 10 years","Never"]
-            visited_updated_reviewed_array.forEach((t, i) => {
+
+            // --- Created ---
+            const createdLabel = make_label("Created:");
+            const createdSelect = make_select()
+            created_updated_visited_reviewed_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1
                 opt.innerText = t;
-                visitedSelect.appendChild(opt);
+                createdSelect.appendChild(opt);
             });
-            form.appendChild(make_div(visitedLabel, visitedSelect));
+            form.appendChild(make_div(createdLabel, createdSelect));
 
             // --- Updated ---
             const updatedLabel = make_label("Updated:");
             const updatedSelect = make_select()
-            visited_updated_reviewed_array.forEach((t, i) => {
+            created_updated_visited_reviewed_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1
                 opt.innerText = t;
@@ -891,17 +892,28 @@ class DictionaryApp {
             });
             form.appendChild(make_div(updatedLabel, updatedSelect));
 
+            // --- Visited ---
+            const visitedLabel = make_label("Visited:");
+            const visitedSelect = make_select()
+            created_updated_visited_reviewed_array.forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                visitedSelect.appendChild(opt);
+            });
+            form.appendChild(make_div(visitedLabel, visitedSelect));
+
             // --- Reviewed ---
             const reviewedLabel = make_label("Reviewed:");
             const reviewedSelect = make_select()
-            visited_updated_reviewed_array.forEach((t, i) => {
+            created_updated_visited_reviewed_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1
                 opt.innerText = t;
                 reviewedSelect.appendChild(opt);
             });
             form.appendChild(make_div(reviewedLabel, reviewedSelect));
-            
+
             // --- Sort ---
             const sortLabel = make_label("Sort:");
             const sortSelect = make_select()
@@ -1145,8 +1157,9 @@ class DictionaryApp {
                     let cb = get_element(id)
                     cb.checked = false
                 })
-                visitedSelect.selectedIndex = 0
+                createdSelect.selectedIndex = 0
                 updatedSelect.selectedIndex = 0
+                visitedSelect.selectedIndex = 0
                 reviewedSelect.selectedIndex = 0
                 sortSelect.selectedIndex = 0
                 orderSelect.selectedIndex = 0
@@ -1183,12 +1196,16 @@ class DictionaryApp {
                         .filter(e => get_element("missing_" + e.toLowerCase()).checked)
                         .map(e => e.toLowerCase())
                         .join(","),
-                    visited: Array
-                        .from(visitedSelect.selectedOptions)
+                    created: Array
+                        .from(createdSelect.selectedOptions)
                         .map(opt => opt.innerText)
                         .join(","),
                     updated: Array
                         .from(updatedSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                    visited: Array
+                        .from(visitedSelect.selectedOptions)
                         .map(opt => opt.innerText)
                         .join(","),
                     reviewed: Array
@@ -1403,15 +1420,20 @@ class DictionaryApp {
                         }
                     })
 
-                let visited = query.visited ?? ""
-                for (const option of visitedSelect.options) {
+                let created = query.created ?? ""
+                for (const option of createdSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
-                    option.selected = visited === option.innerText;
+                    option.selected = created === option.innerText;
                 }
                 let updated = query.updated ?? ""
                 for (const option of updatedSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = updated === option.innerText;
+                }
+                let visited = query.visited ?? ""
+                for (const option of visitedSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = visited === option.innerText;
                 }
                 let reviewed = query.reviewed ?? ""
                 for (const option of reviewedSelect.options) {
