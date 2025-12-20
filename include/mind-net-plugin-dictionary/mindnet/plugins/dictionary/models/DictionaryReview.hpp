@@ -49,8 +49,9 @@ namespace mindnet::plugins::dictionary::models
         .set_columns({
             coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
             coldef(COLS::DICTIONARY_MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::ALGORITHM, MANDATORY | READONLY).set_enum_definition(
-                enums::repetition_algorithm_to_enum_definition()),
+            coldef(COLS::ALGORITHM, MANDATORY | READONLY)
+            .set_enum_definition(enums::repetition_algorithm_to_enum_definition())
+            .set_default_value(18),
             coldef(COLS::DICTIONARY_TERM_ID, FOREIGN_KEY | READONLY),
             coldef(COLS::REVIEW_DATE, DATETIME | READONLY),
             coldef(COLS::GRADE, INTEGER | READONLY),

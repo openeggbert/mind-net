@@ -30,6 +30,7 @@
 #include "mindnet/plugins/core/models/AuthLog.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryReview.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
 #include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
@@ -215,6 +216,18 @@ namespace mindnet::plugins::dictionary::triggers
         // ============================================================
         // --- tunable safety caps (user/global settings) ---
 
+        auto read_term = run_read(models::DICTIONARY_TERM_DEFINITION, token, review.dictionary_term_id, stack_depth);
+        if (read_term.second.ko())
+        {
+            validation_result.status = 500;
+            validation_result.error = read_term.second.error;
+            err << "Reading dictionary_term record failed for id " << state_record_id
+                << read_term.second.error << commit;
+            return;
+        }
+        models::DictionaryTerm term;
+        term.from_values(read_term.first);
+
         model::JSON details_json;
 
         switch (review.algorithm)
@@ -378,6 +391,12 @@ namespace mindnet::plugins::dictionary::triggers
                 S_after = std::clamp(S_after, S_min, 1e6);
 
                 next_interval_days = std::clamp(next_interval_days, min_interval_days, 3650.0);
+                double difficulty_factor = 1.0;
+                enums::Difficulty difficulty = static_cast<enums::Difficulty>(term.difficulty);
+                if (difficulty == enums::Difficulty::Easy) difficulty_factor = 0.8;
+                if (difficulty == enums::Difficulty::Medium) difficulty_factor = 1.0;
+                if (difficulty == enums::Difficulty::Hard) difficulty_factor = 1.25;
+                next_interval_days = next_interval_days / difficulty_factor;
 
                 r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
                 r18_state.lapses = lapses;
