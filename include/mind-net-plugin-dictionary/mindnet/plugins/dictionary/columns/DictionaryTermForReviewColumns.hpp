@@ -50,9 +50,9 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* DEFINITION      = "definition";
 
         static constexpr const char* ALGORITHM       = "algorithm";
-        static constexpr const char* DUE             = "due";
-        static constexpr const char* NEW             = "new";
-        static constexpr const char* NOT_DUE         = "not_due";
+        static constexpr const char* IS_DUE             = "is_due";
+        static constexpr const char* IS_NEW             = "is_new";
+        static constexpr const char* IS_NOT_DUE         = "is_not_due";
 
     };
 }

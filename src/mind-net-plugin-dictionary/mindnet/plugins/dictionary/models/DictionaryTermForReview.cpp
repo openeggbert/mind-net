@@ -21,26 +21,14 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermForReview.hpp"
 
 namespace mindnet::plugins::dictionary::models
 {
-    create_model_cpp_methods(DictionaryState4)
+    create_model_cpp_methods(DictionaryTermForReview)
 
-    string DictionaryState4::validate()
+    string DictionaryTermForReview::validate()
     {
-        using columns::DictionaryState4Columns;
-
-        validator_chain_vector list{
-            [this] { return test_at_least(repetitions, 0, DictionaryState4Columns::REPETITIONS); },
-            [this] { return test_at_least(interval, 1, DictionaryState4Columns::INTERVAL); },
-            [this] { return test_between(ef_times_100, 100, 500, DictionaryState4Columns::EF_TIMES_100); },
-            [this]
-            {
-                return test_between(correction_factor_times_100, 0, 110, DictionaryState4Columns::CORRECTION_FACTOR_TIMES_100);
-            },
-            [this] { return test_between(last_quality, 0, 5, DictionaryState4Columns::LAST_QUALITY); },
-        };
-        return util::ValidatorChain::run(list);
+        return "";
     }
 }
