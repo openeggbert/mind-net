@@ -31,21 +31,21 @@
 
 namespace mindnet::plugins::dictionary::columns
 {
-    struct DictionaryState4Columns : model::BaseColumns
+    struct DictionaryState18Columns : model::BaseColumns
     {
-        DictionaryState4Columns() = delete;
+        DictionaryState18Columns() = delete;
 
-        DictionaryState4Columns(const DictionaryState4Columns&) = delete;
-        DictionaryState4Columns& operator=(const DictionaryState4Columns&) = delete;
+        DictionaryState18Columns(const DictionaryState18Columns&) = delete;
+        DictionaryState18Columns& operator=(const DictionaryState18Columns&) = delete;
 
-        static constexpr const char* MODEL_NAME = "dictionary_state_4";
+        static constexpr const char* MODEL_NAME = "dictionary_state_18";
 
         static constexpr const char* USER_ID = "user_id";
         static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
+        static constexpr const char* STABILITY_TIMES_100 = "stability_times_100";
+        static constexpr const char* LAST_INTERVAL_TIMES_100 = "last_interval_times_100";
         static constexpr const char* REPETITIONS = "repetitions";
-        static constexpr const char* INTERVAL = "interval";
-        static constexpr const char* EF_TIMES_100 = "ef_times_100";
-        static constexpr const char* CORRECTION_FACTOR_TIMES_100 = "correction_factor_times_100";
+        static constexpr const char* LAPSES = "lapses";
         static constexpr const char* NEXT_REVIEW = "next_review";
         static constexpr const char* LAST_REVIEW = "last_review";
         static constexpr const char* LAST_QUALITY = "last_quality";

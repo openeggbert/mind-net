@@ -31,13 +31,14 @@ namespace mindnet::db::sqlite::queries::dictionary
     static const std::string SQL_DUE = R"(
 SELECT t.id AS term_id
 FROM dictionary_term t
-JOIN dictionary_state_4 s ON s.dictionary_term_id = t.id
+JOIN dictionary_state_18 s ON s.dictionary_term_id = t.id
 AND t.dictionary_map_id = ?
 WHERE s.user_id = ?
   AND s.next_review <= ? --now_ms
   AND (? = 1 OR TRIM(t.definition) <> '')
 
 AND t.dictionary_map_id = ?
+AND t.status != 6 -- Deleted
 
 ORDER BY RANDOM() LIMIT 100;
 )";
@@ -45,7 +46,7 @@ ORDER BY RANDOM() LIMIT 100;
     static const std::string SQL_NEW = R"(
 SELECT t.id AS term_id
 FROM dictionary_term t
-LEFT JOIN dictionary_state_4 s
+LEFT JOIN dictionary_state18 s
   ON s.dictionary_term_id = t.id AND s.user_id = ?
 AND t.dictionary_map_id = ?
 WHERE s.dictionary_term_id IS NULL
@@ -53,6 +54,7 @@ WHERE s.dictionary_term_id IS NULL
   AND (? = 1 OR TRIM(t.definition) <> '')
 
 AND t.dictionary_map_id = ?
+AND t.status != 6 -- Deleted
 
 ORDER BY RANDOM() LIMIT 100;
 )";
@@ -60,13 +62,14 @@ ORDER BY RANDOM() LIMIT 100;
     static const std::string SQL_NOT_DUE = R"(
 SELECT t.id AS term_id
 FROM dictionary_term t
-JOIN dictionary_state_4 s ON s.dictionary_term_id = t.id
+JOIN dictionary_state_18 s ON s.dictionary_term_id = t.id
 AND t.dictionary_map_id = ?
 WHERE s.user_id = ?
   AND s.next_review > ? --now_ms
   AND (? = 1 OR TRIM(t.definition) <> '')
 
 AND t.dictionary_map_id = ?
+AND t.status != 6 -- Deleted
 
 ORDER BY RANDOM() LIMIT 100;
 )";
@@ -79,6 +82,7 @@ WHERE
     (? = 1 OR TRIM(t.definition) <> '')
 
 AND t.dictionary_map_id = ?
+AND t.status != 6 -- Deleted
 
 ORDER BY RANDOM() LIMIT 100;
 )";
@@ -145,8 +149,8 @@ ORDER BY RANDOM() LIMIT 100;
 
         identification dictionary_map_id = request["dictionary_map_id"];
         identification user_id = request["user_id"];
-        identification algorithm = request.value("algorithm", 4);
-        if (algorithm != 4)
+        identification algorithm = request.value("algorithm", 18);
+        if (algorithm != 18)
             throw std::invalid_argument("Unsupported algorithm: " + std::to_string(algorithm));
 
         bool is_due = request.value("is_due", 0);

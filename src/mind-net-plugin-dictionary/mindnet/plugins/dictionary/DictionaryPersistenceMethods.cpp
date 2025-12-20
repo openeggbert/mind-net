@@ -88,7 +88,7 @@ namespace mindnet::plugins::dictionary
     gen_find_cpp(dictionary, DictionaryReview, dictionary_review, DICTIONARY_REVIEW)
     gen_find_cpp(dictionary, DictionarySource, dictionary_source, DICTIONARY_SOURCE)
     gen_find_cpp(dictionary, DictionarySourceType, dictionary_source_type, DICTIONARY_SOURCE_TYPE)
-    gen_find_cpp(dictionary, DictionaryState4, dictionary_state_4, DICTIONARY_STATE_4)
+    gen_find_cpp(dictionary, DictionaryState18, dictionary_state_18, DICTIONARY_STATE_18)
     gen_find_cpp(dictionary, DictionaryTagType, dictionary_tag_type, DICTIONARY_TAG_TYPE)
     gen_find_cpp(dictionary, DictionaryTag, dictionary_tag, DICTIONARY_TAG)
     gen_find_cpp(dictionary, DictionaryLink, dictionary_link, DICTIONARY_LINK)

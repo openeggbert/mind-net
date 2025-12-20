@@ -116,6 +116,8 @@ namespace mindnet::api
             return;
         }
 
+        int definition_column_count = model_definition.get_column_count();
+
         auto& model_name = model_definition.get_model_name();
         if (registered_models.contains(model_name))
         {

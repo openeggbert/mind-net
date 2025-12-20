@@ -24,7 +24,7 @@
 #pragma once
 
 #include "mindnet/api/Trigger.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
 {

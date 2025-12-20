@@ -32,7 +32,7 @@
 #include "BaseColumns.hpp"
 #include "CustomAction.hpp"
 #include "mindnet/model/ModelTypeDefs.hpp"
-
+// todo : creeate ModelDefinition.cpp
 namespace mindnet::model
 {
     using std::string;
@@ -347,6 +347,10 @@ namespace mindnet::model
         void update_entity_field(entity_fields& fields, const char* column_name, std::string value) const
         {
             fields[get_column_index(column_name)] = value;
+        }
+        bool validate_column_count(const entity_fields& fields) const
+        {
+            return fields.size() == get_column_count();
         }
     };
 }

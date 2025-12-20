@@ -21,26 +21,23 @@
  * THE SOFTWARE.
  */
 
-#pragma once
+#include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 
-#include <memory>
-
-#include "mindnet/essential/DatabaseType.hpp"
-#include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
-
-namespace mindnet::plugins::dictionary::validators
+namespace mindnet::plugins::dictionary::models
 {
-    using api::RequestContext;
-    using mindnet::plugins::dictionary::models::DictionaryState4;
+    create_model_cpp_methods(DictionaryState18)
 
-    class DictionaryState4Validator : public api::ValidatorBase<DictionaryState4Validator, DictionaryState4>
+    string DictionaryState18::validate()
     {
-    public:
-        DictionaryState4Validator() = default;
-        ~DictionaryState4Validator() = default; // explicitly make it destructible
-        using Model = DictionaryState4;
+        using columns::DictionaryState18Columns;
 
-        create_method_prototypes_for_ValidatorBase(Model)
-    };
+        validator_chain_vector list{
+            [this] { return test_at_least(stability_times_100, 0, DictionaryState18Columns::STABILITY_TIMES_100); },
+            [this] { return test_at_least(last_interval_times_100, 0, DictionaryState18Columns::LAST_INTERVAL_TIMES_100); },
+            [this] { return test_at_least(repetitions, 0, DictionaryState18Columns::REPETITIONS); },
+            [this] { return test_at_least(lapses, 0, DictionaryState18Columns::LAPSES); },
+            [this] { return test_between(last_quality, 0, 5, DictionaryState18Columns::LAST_QUALITY); },
+        };
+        return util::ValidatorChain::run(list);
+    }
 }

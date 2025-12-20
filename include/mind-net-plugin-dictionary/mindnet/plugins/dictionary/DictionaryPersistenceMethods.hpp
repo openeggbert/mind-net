@@ -39,7 +39,7 @@
 #include "mindnet/plugins/dictionary/models/DictionaryReview.hpp"
 #include "mindnet/plugins/dictionary/models/DictionarySource.hpp"
 #include "mindnet/plugins/dictionary/models/DictionarySourceType.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTag.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTagType.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
@@ -70,7 +70,7 @@ namespace mindnet::plugins::dictionary
     gen_find_h(dictionary, DictionaryReview, dictionary_review)
     gen_find_h(dictionary, DictionarySource, dictionary_source)
     gen_find_h(dictionary, DictionarySourceType, dictionary_source_type)
-    gen_find_h(dictionary, DictionaryState4, dictionary_state4)
+    gen_find_h(dictionary, DictionaryState18, dictionary_state18)
     gen_find_h(dictionary, DictionaryTag, dictionary_tag)
     gen_find_h(dictionary, DictionaryTagType, dictionary_tag_type)
     gen_find_h(dictionary, DictionaryTerm, dictionary_term)

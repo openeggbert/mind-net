@@ -21,24 +21,24 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/DictionaryState4Validator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryState18Validator.hpp"
 
 #include "mindnet/essential/Global.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
-#define Model DictionaryState4
-#define MODEL DICTIONARY_STATE_4
-#define model dictionary_state_4
+#define Model DictionaryState18
+#define MODEL DICTIONARY_STATE_18
+#define model dictionary_state_18
 
 namespace mindnet::plugins::dictionary::validators
 {
-    using validators::DictionaryState4Validator;
+    using validators::DictionaryState18Validator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult DictionaryState4Validator::validate_create_authorization(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_create_authorization(const RequestContext& ctx,
                                                                            const Model& entity) const
     {
         // User can only create states for themselves
@@ -49,7 +49,7 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_read_authorization(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_read_authorization(const RequestContext& ctx,
                                                                          const Model& entity) const
     {
         // Users can only read their own states
@@ -60,14 +60,14 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_update_authorization(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_update_authorization(const RequestContext& ctx,
                                                                            const Model& old_entity,
                                                                            const Model& new_entity) const
     {
         return status_405_unsupported_operation
     }
 
-    OperationResult DictionaryState4Validator::validate_delete_authorization(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_delete_authorization(const RequestContext& ctx,
                                                                            const Model& entity) const
     {
         if (ctx.token.user_id != entity.user_id)
@@ -76,7 +76,7 @@ namespace mindnet::plugins::dictionary::validators
         }
         return ok_result;    }
 
-    OperationResult DictionaryState4Validator::validate_list_authorization(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_list_authorization(const RequestContext& ctx,
                                                                          const string_map& filter) const
     {
         mandatory_filter(user_id)
@@ -90,38 +90,38 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_create_integrity(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_create_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_read_integrity(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_read_integrity(const RequestContext& ctx,
                                                                      const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_update_integrity(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_update_integrity(const RequestContext& ctx,
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_delete_integrity(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_delete_integrity(const RequestContext& ctx,
                                                                        const Model& entity) const
     {
         return ok_result;
     }
 
-    OperationResult DictionaryState4Validator::validate_list_integrity(const RequestContext& ctx,
+    OperationResult DictionaryState18Validator::validate_list_integrity(const RequestContext& ctx,
                                                                      const string_map& filter) const
     {
         return ok_result;
     }
 
-    string DictionaryState4Validator::get_model_name() const
+    string DictionaryState18Validator::get_model_name() const
     {
         return STRINGIFY(model);
     }

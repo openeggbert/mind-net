@@ -81,6 +81,7 @@ namespace mindnet::api
         api::AccessTokenContext& token,
         entity_fields& fields)
     {
+        if (!def.validate_column_count(fields)) return {-1, {500, "Invalid size of entity_fields."}};
         SQLITE_LOCK_GUARD()
         string error;
         int newId = get_repository(def.get_model_name())->create(fields, error);
@@ -122,6 +123,7 @@ namespace mindnet::api
         {
             return {{}, {500, error}};
         }
+        if (!def.validate_column_count(ef)) return {{}, {500, "Invalid size of entity_fields."}};
 
         // 3) Save to cache
         if (READ_CACHE_ENABLED&& def
@@ -147,6 +149,7 @@ namespace mindnet::api
         identification id, entity_fields& fields
     )
     {
+        if (!def.validate_column_count(fields)) return {500, "Invalid size of entity_fields."};
         SQLITE_LOCK_GUARD()
         string error;
         get_repository(def.get_model_name())->update(id, fields, error);
@@ -227,6 +230,11 @@ namespace mindnet::api
         else
         {
             items = repo->list(query_params, error);
+            for (auto& item : items)
+            {
+                if (!def.validate_column_count(item))
+                    return {{}, {500, "Invalid size of entity_fields."}};
+            }
         }
         if (error.empty())
         {

@@ -27,10 +27,10 @@
 #include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
 
 // ***** MACROS : START *****
-#define Model DictionaryState4
-#define MODEL DICTIONARY_STATE_4
-#define COLS columns::DictionaryState4Columns
-#include "../columns/DictionaryState4Columns.hpp"
+#define Model DictionaryState18
+#define MODEL DICTIONARY_STATE_18
+#define COLS columns::DictionaryState18Columns
+#include "../columns/DictionaryState18Columns.hpp"
 
 // ***** MACROS : END *****
 
@@ -40,7 +40,7 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_STATE_4_DEFINITION =
+    inline const def DICTIONARY_STATE_18_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_group("Dictionary", 100)
         .set_title_column(COLS::DICTIONARY_TERM_ID)
@@ -50,57 +50,60 @@ namespace mindnet::plugins::dictionary::models
         coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
         coldef(COLS::DICTIONARY_TERM_ID, FOREIGN_KEY | MANDATORY | READONLY),
 
+        coldef(COLS::STABILITY_TIMES_100, INTEGER).set_default_value(100),
+        coldef(COLS::LAST_INTERVAL_TIMES_100, INTEGER).set_default_value(0),
         coldef(COLS::REPETITIONS, INTEGER).set_default_value(0),
-        coldef(COLS::INTERVAL, INTEGER).set_default_value(1),
-        coldef(COLS::EF_TIMES_100, INTEGER).set_default_value(250),
-        coldef(COLS::CORRECTION_FACTOR_TIMES_100, INTEGER).set_default_value(100),
-
+        coldef(COLS::LAPSES, INTEGER).set_default_value(0),
         coldef(COLS::NEXT_REVIEW, DATETIME),
         coldef(COLS::LAST_REVIEW, DATETIME),
         coldef(COLS::LAST_QUALITY, INTEGER).set_default_value(0),
-      
         });
 
-    struct Model : mindnet::model::BaseModel
+    struct DictionaryState18 : mindnet::model::BaseModel
     {
         identification user_id{};
         identification dictionary_term_id{};
-        int repetitions{};
-        int interval{1};
-        int ef_times_100{250};
-        int correction_factor_times_100{100};
+        int stability_times_100{100};
+        int last_interval_times_100{0};
+        int repetitions{0};
+        int lapses{0};
         unixtime next_review;
         unixtime last_review;
-        int last_quality{};
+        int last_quality{0};
 
         static constexpr auto fields = std::make_tuple(
             &Model::user_id,
             &Model::dictionary_term_id,
+            &Model::stability_times_100,
+            &Model::last_interval_times_100,
             &Model::repetitions,
-            &Model::interval,
-            &Model::ef_times_100,
-            &Model::correction_factor_times_100,
+            &Model::lapses,
             &Model::next_review,
             &Model::last_review,
             &Model::last_quality
         );
+
         create_model_h_methods(Model, MODEL)
 
         bool operator==(const Model& other) const
         {
             return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                repetitions == other.repetitions &&
-                interval == other.interval &&
-                ef_times_100 == other.ef_times_100 &&
-                correction_factor_times_100 == other.correction_factor_times_100 &&
-                next_review == other.next_review &&
-                last_review == other.last_review &&
-                last_quality == other.last_quality;
+                   created_at == other.created_at &&
+                   updated_at == other.updated_at &&
+
+                   user_id == other.user_id &&
+                   dictionary_term_id == other.dictionary_term_id &&
+
+                   stability_times_100 == other.stability_times_100 &&
+                   last_interval_times_100 == other.last_interval_times_100 &&
+                   repetitions == other.repetitions &&
+                   lapses == other.lapses &&
+
+                   next_review == other.next_review &&
+                   last_review == other.last_review &&
+                   last_quality == other.last_quality;
         }
+
     };
 }
 #undef Model

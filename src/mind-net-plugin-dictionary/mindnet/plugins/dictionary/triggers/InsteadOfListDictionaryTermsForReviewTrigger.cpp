@@ -28,10 +28,10 @@
 #include <vector>
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsForReviewSQLiteQuery.hpp"
 #include "mindnet/plugins/dictionary/models/DictionarySearch.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermSearch.hpp"
-#include "mindnet/plugins/dictionary/validators/DictionaryState4Validator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryState18Validator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermSearchValidator.hpp"
 
 #include "mindnet/util/Utils.hpp"
@@ -96,13 +96,13 @@ namespace mindnet::plugins::dictionary::triggers
             return result;
         }
         req["user_id"] = user_id;
-        int algorithm = f.contains("algorithm") ? stoll(f.at("algorithm")) : 4;
-        if (algorithm != 4)
+        int algorithm = f.contains("algorithm") ? stoll(f.at("algorithm")) : 18;
+        if (algorithm != 18)
         {
-            err << "Query FindDictionaryTermsForReview failed: algorithm != 4" << commit;
+            err << "Query FindDictionaryTermsForReview failed: algorithm != 18" << commit;
             std::vector<entity_fields> v0;
             result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(
-                std::move(v0), {400, "Bad request. algorithm != 4"});
+                std::move(v0), {400, "Bad request. algorithm != 18"});
             return result;
         }
         req["algorithm"] = algorithm;
@@ -241,33 +241,33 @@ namespace mindnet::plugins::dictionary::triggers
                     auto& disambiguation = dictionary_term_search.disambiguation;
 
                     {
-                        std::optional<models::DictionaryState4> optional_dictionary_state_4;
+                        std::optional<models::DictionaryState18> optional_dictionary_state_18;
 
                         if (!include_new_due_and_not_due)
                         {
                             state_params.add_filter("dictionary_term_id", term_id);
-                            const auto& list_states = run_list(models::DICTIONARY_STATE_4_DEFINITION, ctx, state_params,
+                            const auto& list_states = run_list(models::DICTIONARY_STATE_18_DEFINITION, ctx, state_params,
                                                                stack_depth);
                             if (!list_states.second)
                             {
-                                err << "Listing dictionary_state_4 failed " << list_states.second.error << commit;
+                                err << "Listing dictionary_state_18 failed " << list_states.second.error << commit;
                                 std::vector<entity_fields> v0;
                                 result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(
-                                    std::move(v0), {500, "Internal server error. Listing dictionary_state_4 failed"});
+                                    std::move(v0), {500, "Internal server error. Listing dictionary_state_18 failed"});
                                 return result;
                             }
                             if (!list_states.first.empty())
                             {
-                                models::DictionaryState4 dictionary_state_4;
-                                dictionary_state_4.from_values(list_states.first[0]);
-                                optional_dictionary_state_4.emplace(dictionary_state_4);
+                                models::DictionaryState18 dictionary_state_18;
+                                dictionary_state_18.from_values(list_states.first[0]);
+                                optional_dictionary_state_18.emplace(dictionary_state_18);
                             }
                         }
 
-                        if (!is_new && !optional_dictionary_state_4.has_value()) continue;
-                        if (optional_dictionary_state_4.has_value())
+                        if (!is_new && !optional_dictionary_state_18.has_value()) continue;
+                        if (optional_dictionary_state_18.has_value())
                         {
-                            unixtime next_review = optional_dictionary_state_4.value().next_review;
+                            unixtime next_review = optional_dictionary_state_18.value().next_review;
                             if (next_review < now && ! is_due) continue;
                             if (next_review > now && ! is_not_due) continue;
                         }

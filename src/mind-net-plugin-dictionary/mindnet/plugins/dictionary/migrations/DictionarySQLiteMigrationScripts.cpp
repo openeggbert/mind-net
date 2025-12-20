@@ -301,8 +301,8 @@ CREATE INDEX idx_dictionary_source_type
         //
         // V12 — dictionary_state_4
         //
-        add_migration("V12__create_dictionary_state_4.sql", R"(
-CREATE TABLE dictionary_state_4 (
+        add_migration("V12__create_dictionary_state_18.sql", R"(
+CREATE TABLE dictionary_state_18 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at DATETIME,
     updated_at DATETIME,
@@ -310,25 +310,24 @@ CREATE TABLE dictionary_state_4 (
     user_id INTEGER NOT NULL,
     dictionary_term_id INTEGER NOT NULL,
 
-    repetitions INTEGER NOT NULL DEFAULT 0,
-    interval INTEGER NOT NULL DEFAULT 0,
-    ef_times_100 INTEGER NOT NULL DEFAULT 250,
-    correction_factor_times_100 INTEGER NOT NULL DEFAULT 100,
-
+    stability_times_100 INTEGER DEFAULT 100,    -- S
+	last_interval_times_100 INTEGER DEFAULT 0,  -- last interval (days)
+    repetitions INTEGER DEFAULT 0,
+    lapses INTEGER DEFAULT 0,
     next_review DATETIME,
     last_review DATETIME,
-    last_quality INTEGER,
+    last_quality INTEGER DEFAULT 0,
 
-    UNIQUE(user_id, dictionary_term_id),
+    UNIQUE (user_id, dictionary_term_id),
 
-    FOREIGN KEY(user_id) REFERENCES user(id),
-    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id)
+    FOREIGN KEY (dictionary_term_id) REFERENCES dictionary_term(id),
+    FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
-CREATE INDEX idx_dictionary_state_user
-    ON dictionary_state_4(user_id);
-CREATE INDEX idx_dictionary_state_term
-    ON dictionary_state_4(dictionary_term_id);
+CREATE INDEX idx_dictionary_state_18_user
+    ON dictionary_state_18(user_id);
+CREATE INDEX idx_dictionary_state_18_term
+    ON dictionary_state_18(dictionary_term_id);
 )");
 
         //

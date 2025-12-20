@@ -31,11 +31,23 @@
 #include "mindnet/plugins/core/ErrorBuilder.hpp"
 #include "mindnet/plugins/core/models/Error.hpp"
 
+#include <cctype>
+
 namespace mindnet::db::sqlite::queries::dictionary
 {
     static const std::string CPP_NAMESPACE = "mindnet::db::sqlite::queries::dictionary";
     using std::string;
     using std::vector;
+
+    void capitalize_first(std::string& s)
+    {
+        if (!s.empty())
+        {
+            s[0] = static_cast<char>(std::toupper(
+                static_cast<unsigned char>(s[0])
+            ));
+        }
+    }
 
     struct SearchQuery
     {
@@ -528,6 +540,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             {
                 bool negated = q.visited.rfind("Not ", 0) == 0;
                 std::string base = negated ? q.visited.substr(4) : q.visited;
+                if (negated) capitalize_first(base);
 
                 i64 threshold_ms = 0;
                 i64 now = now_ms();
@@ -587,6 +600,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             {
                 bool negated = q.updated.rfind("Not ", 0) == 0;
                 std::string base = negated ? q.updated.substr(4) : q.updated;
+                if (negated) capitalize_first(base);
 
                 i64 threshold_ms = 0;
                 i64 now = now_ms();
@@ -633,7 +647,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             {
                 append_where(sql_current_page, first_where);
                 sql_current_page +=
-                    "NOT EXISTS (SELECT 1 FROM dictionary_state_4 dtv "
+                    "NOT EXISTS (SELECT 1 FROM dictionary_state_18 dtv "
                     "WHERE dtv.dictionary_term_id = dt.id "
                     "AND dtv.user_id = ?)";
                 binders.push_back(user_id);
@@ -642,6 +656,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             {
                 bool negated = q.reviewed.rfind("Not ", 0) == 0;
                 std::string base = negated ? q.reviewed.substr(4) : q.reviewed;
+                if (negated) capitalize_first(base);
 
                 i64 threshold_ms = 0;
                 i64 now = now_ms();
@@ -668,7 +683,7 @@ namespace mindnet::db::sqlite::queries::dictionary
                     if (!negated)
                     {
                         sql_current_page +=
-                            "EXISTS (SELECT 1 FROM dictionary_state_4 dtv "
+                            "EXISTS (SELECT 1 FROM dictionary_state_18 dtv "
                             "WHERE dtv.dictionary_term_id = dt.id "
                             "AND dtv.user_id = ? "
                             "AND dtv.updated_at >= ?)";
@@ -676,7 +691,7 @@ namespace mindnet::db::sqlite::queries::dictionary
                     else
                     {
                         sql_current_page +=
-                            "NOT EXISTS (SELECT 1 FROM dictionary_state_4 dtv "
+                            "NOT EXISTS (SELECT 1 FROM dictionary_state_18 dtv "
                             "WHERE dtv.dictionary_term_id = dt.id "
                             "AND dtv.user_id = ? "
                             "AND dtv.updated_at >= ?)";

@@ -42,7 +42,7 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryReviewValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionarySourceTypeValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionarySourceValidator.hpp"
-#include "mindnet/plugins/dictionary/validators/DictionaryState4Validator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryState18Validator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagTypeValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagTypeFulltextValidator.hpp"
@@ -112,7 +112,7 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
         REGISTER_MODEL(dictionary_term_metric, DictionaryTermMetric, DICTIONARY_TERM_METRIC)
         REGISTER_MODEL(dictionary_review, DictionaryReview, DICTIONARY_REVIEW)
-        REGISTER_MODEL(dictionary_state_4, DictionaryState4, DICTIONARY_STATE_4)
+        REGISTER_MODEL(dictionary_state_18, DictionaryState18, DICTIONARY_STATE_18)
 
         REGISTER_MODEL(dictionary_term_fulltext, DictionaryTermFulltext, DICTIONARY_TERM_FULLTEXT)
         REGISTER_MODEL(dictionary_term_for_review, DictionaryTermForReview, DICTIONARY_TERM_FOR_REVIEW)

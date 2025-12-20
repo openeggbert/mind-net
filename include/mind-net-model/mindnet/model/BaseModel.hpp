@@ -34,6 +34,11 @@
 #include "mindnet/util/TestUtils.hpp"
 
 #define create_model_h_methods(Model, MODEL)\
+int get_field_count()\
+        {\
+            return std::tuple_size_v<decltype(fields)>;\
+        }\
+\
 [[nodiscard]] const def& get_model_definition() const override\
         {\
             return XPASTE(MODEL,_DEFINITION);\

@@ -29,7 +29,7 @@
 #include "mindnet/api/AccessTokenContext.hpp"
 #include "mindnet/plugins/core/models/AuthLog.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryReview.hpp"
-#include "mindnet/plugins/dictionary/models/DictionaryState4.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 #include "mindnet/util/Utils.hpp"
 
 namespace mindnet::plugins::dictionary::triggers
@@ -53,7 +53,7 @@ namespace mindnet::plugins::dictionary::triggers
     bool is_algorithm_supported(
         api::OperationResult& validation_result,
         const dictionary::models::DictionaryReview& review
-        )
+    )
     {
         switch (review.algorithm)
         {
@@ -61,10 +61,10 @@ namespace mindnet::plugins::dictionary::triggers
         //     break;
         // case enums::RepetitionAlgorithm::Repetition2:
         //     break;
-        case enums::RepetitionAlgorithm::Repetition4:
-            break;
-        // case enums::RepetitionAlgorithm::Repetition18:
+        // case enums::RepetitionAlgorithm::Repetition4:
         //     break;
+        case enums::RepetitionAlgorithm::Repetition18:
+            break;
         default:
             {
                 validation_result = {400, "Unsupported algorithm."};
@@ -74,7 +74,31 @@ namespace mindnet::plugins::dictionary::triggers
         return true;
     }
 
-    static const constexpr double EF_MAX = 2.6;
+    namespace params {
+        inline constexpr double B                = 1.1;
+        inline constexpr double R_TARGET          = 0.82;
+        inline constexpr double R_OPT             = 0.75;
+        inline constexpr double ALPHA             = 0.5;
+        inline constexpr double BETA              = 1.05;
+        inline constexpr double GAMMA             = 0.2;
+        inline constexpr double DELTA             = 0.4;
+        inline constexpr double K_OVER            = 0.55;
+        inline constexpr double S_MIN             = 8.0;
+        inline constexpr double SHORT_RETRY       = 0.02;
+        inline constexpr double T0                = 0.2;
+        inline constexpr double R_INFTY            = 0.02;
+        inline constexpr double FATIGUE_LAMBDA    = 0.1;
+        inline constexpr double THETA             = 1.0;
+        inline constexpr double G_OVER_MAX        = 4.0;
+        inline constexpr double S_DAMP            = 8000.0;
+        inline constexpr double MAX_GAIN          = 2.0;
+        inline constexpr double INTERVAL_SCALE    = 2.2;
+        inline constexpr double GROWTH_CAP        = 5.0;
+        inline constexpr double MIN_INTERVAL_DAYS = 1.0;
+        inline constexpr double EF_MAX            = 2.6;
+
+        inline constexpr double MAX_INTERVAL_DAYS = 1825.0;
+    }
 
     void DictionaryReviewAfterCreateTrigger::run_before_or_after(
         mindnet::essential::Crudl operation,
@@ -110,12 +134,12 @@ namespace mindnet::plugins::dictionary::triggers
         params.add_filter("user_id", review.user_id);
         params.add_filter("dictionary_term_id", review.dictionary_term_id);
 
-        auto& state_def = models::DICTIONARY_STATE_4_DEFINITION;
+        auto& state_def = models::DICTIONARY_STATE_18_DEFINITION;
         auto list_result = run_list(state_def, token, params, stack_depth);
         if (list_result.second.ko())
         {
-            action_result.status = 500;
-            action_result.error = list_result.second.error;
+            validation_result.status = 500;
+            validation_result.error = list_result.second.error;
             err << "Listing table " << state_def.get_model_name() << " failed for user_id " << review.user_id
                 << " and dictionary_term_id " << review.dictionary_term_id << list_result.second.error << std::endl;
             return;
@@ -134,16 +158,16 @@ namespace mindnet::plugins::dictionary::triggers
 
             switch (review.algorithm)
             {
-            case enums::RepetitionAlgorithm::Repetition4:
+            case enums::RepetitionAlgorithm::Repetition18:
                 {
-                    models::DictionaryState4 state;
+                    models::DictionaryState18 state;
                     state.user_id = review.user_id;
                     state.dictionary_term_id = review.dictionary_term_id;
 
+                    state.stability_times_100 = 800;
+                    state.last_interval_times_100 = 0;
                     state.repetitions = 0;
-                    state.interval = 1;
-                    state.ef_times_100 = 250;
-                    state.correction_factor_times_100 = 100;
+                    state.lapses = 0;
 
                     state.next_review = 0;
                     state.last_review = 0;
@@ -161,10 +185,11 @@ namespace mindnet::plugins::dictionary::triggers
 
             if (create_result.second.ko())
             {
-                action_result.status = 500;
-                action_result.error = create_result.second.error;
+                validation_result.status = 500;
+                validation_result.error = create_result.second.error;
                 err << "Creating new state table " << state_def.get_model_name() << " failed for user_id " <<
-                    review.user_id << " and dictionary_term_id " << review.dictionary_term_id << " " << create_result.second.error <<
+                    review.user_id << " and dictionary_term_id " << review.dictionary_term_id << " " << create_result.
+                    second.error <<
                     commit;
                 return;
             }
@@ -190,106 +215,210 @@ namespace mindnet::plugins::dictionary::triggers
         // ============================================================
         // --- tunable safety caps (user/global settings) ---
 
-        const int MAX_INTERVAL_DAYS = 3650;
-
         model::JSON details_json;
 
         switch (review.algorithm)
         {
-
-        case enums::RepetitionAlgorithm::Repetition4:
+        case enums::RepetitionAlgorithm::Repetition18:
             {
-                auto read_r4_state = run_read(state_def, token, state_record_id, stack_depth);
-                if (read_r4_state.second.ko())
+                auto read_r18_state = run_read(state_def, token, state_record_id, stack_depth);
+                if (read_r18_state.second.ko())
                 {
-                    action_result.status = 500;
-                    action_result.error = read_r4_state.second.error;
-                    err << "Reading r4_state record failed for id " << state_record_id
-                        << read_r4_state.second.error << commit;
+                    validation_result.status = 500;
+                    validation_result.error = read_r18_state.second.error;
+                    err << "Reading r18_state record failed for id " << state_record_id
+                        << read_r18_state.second.error << commit;
                     return;
                 }
 
-                models::DictionaryState4 r4_state;
-                r4_state.from_values(read_r4_state.first);
-
-                // Correction Factor tuning
-                constexpr double CF_GAIN = 0.025;
-                // default gentler than 0.05
-                constexpr double CF_MIN = 0.9;
-                constexpr double CF_MAX = 1.1;
+                models::DictionaryState18 r18_state;
+                r18_state.from_values(read_r18_state.first);
 
                 const int q = std::clamp(review.grade, 0, 5);
+                bool was_correct = q >= 3;
 
-                double ef = r4_state.ef_times_100 / 100.0;
-                double cf = r4_state.correction_factor_times_100 / 100.0;
-                int reps = r4_state.repetitions;
-                int interval = r4_state.interval;
+                // =======================
+                // Model parameters (SM-18)
+                // =======================
 
-                if (q < 3)
+                const double b                = params::B;
+                const double R_target         = params::R_TARGET;
+                const double R_opt            = params::R_OPT;
+                const double alpha            = params::ALPHA;
+                const double beta             = params::BETA;
+                const double gamma            = params::GAMMA;
+                const double delta            = params::DELTA;
+                const double k_over           = params::K_OVER;
+                const double S_min            = params::S_MIN;
+                const double short_retry      = params::SHORT_RETRY;
+                const double t0               = params::T0;
+                const double R_inf            = params::R_INFTY;
+                const double fatigue_lambda   = params::FATIGUE_LAMBDA;
+                const double theta            = params::THETA;
+                const double G_OVER_MAX       = params::G_OVER_MAX;
+                const double S_DAMP           = params::S_DAMP;
+                const double MAX_GAIN         = params::MAX_GAIN;
+                double interval_scale         = params::INTERVAL_SCALE;
+                const double min_interval_days= params::MIN_INTERVAL_DAYS;
+
+                if (r18_state.stability_times_100 < S_min * 100.0)
                 {
-                    // failure → reset
-                    reps = 0;
-                    interval = 1;
-                    cf = 1.0;
+                    r18_state.stability_times_100 = S_min * 100.0;
+                }
+                double S = r18_state.stability_times_100 / 100.0;
+                int reps = r18_state.repetitions;
+                int lapses = r18_state.lapses;
+
+                // --- deterministic time based on review_date
+                const double now_ms = static_cast<double>(
+                    review.review_date > 0 ? review.review_date : util::Utils::current_unix_timestamp_ms());
+
+                // --- protection for first review
+                double elapsed_days = 0.0;
+                if (r18_state.last_review > 0)
+                {
+                    elapsed_days = std::max(
+                        0.0, (now_ms - static_cast<double>(r18_state.last_review)) / MILLISECONDS_PER_DAY);
                 }
                 else
                 {
-                    // update correction factor
-                    cf = 1.0 + (q - 3) * CF_GAIN;
-                    if (cf < CF_MIN) cf = CF_MIN;
-                    if (cf > CF_MAX) cf = CF_MAX;
-
-                    // update easiness factor (SM-2 formula) + clamp
-                    ef = ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
-                    if (ef < 1.3) ef = 1.3;
-                    if (ef > EF_MAX) ef = EF_MAX;
-
-                    if (reps == 0)
-                        interval = 1;
-                    else if (reps == 1)
-                        interval = 6;
-                    else
-                        interval = static_cast<int>(std::round(interval * ef * cf));
-
-                    reps += 1;
+                    // fallback: use previous intervals or small seed
+                    elapsed_days = (r18_state.last_interval_times_100 > 0)
+                                       ? static_cast<double>(r18_state.last_interval_times_100) / 100.0
+                                       : 0.1;
                 }
 
-                // --- clamp interval globally ---
-                if (interval < 1) interval = 1;
-                if (interval > MAX_INTERVAL_DAYS) interval = MAX_INTERVAL_DAYS;
-
-                // save back
-                r4_state.repetitions = reps;
-                r4_state.interval = interval;
-                r4_state.ef_times_100 = static_cast<int>(std::round(ef * 100.0));
-                r4_state.correction_factor_times_100 = static_cast<int>(std::round(cf * 100.0));
-                r4_state.last_quality = q;
-                r4_state.last_review = review.review_date;
-                r4_state.next_review = util::Utils::current_unix_timestamp_ms() + interval * MILLISECONDS_PER_DAY;
-
-                auto new_values = r4_state.to_values();
-                auto r4_state_update = run_update(state_def, token, state_record_id, new_values, stack_depth);
-
-                if (r4_state_update.ko())
+                // =======================
+                // New retrievability with offset and asymptote
+                // =======================
+                auto retrievability = [&](double t, double Sval)
                 {
-                    action_result.status = 500;
-                    action_result.error = r4_state_update.error;
-                    err << "Updating state 4 record failed for id " << state_record_id
-                        << r4_state_update.error << commit;
+                    if (Sval <= 1e-9) Sval = 1e-9;
+                    double x = (t + t0) / Sval;
+                    double base = std::exp(-std::pow(std::max(0.0, x), b));
+                    return R_inf + (1.0 - R_inf) * base;
+                };
+
+                auto interval_for_target = [&](double Sval, double Rval)
+                {
+                    double val = Sval * std::pow(-std::log(std::max(1e-9, Rval)), 1.0 / b);
+                    return std::clamp(val, 0.1, 3650.0);
+                };
+
+                // =======================
+                // Compute retrievability and overdue
+                // =======================
+                double R_now = retrievability(elapsed_days, S);
+                details_json["R_now"] = R_now;
+                double I_opt = interval_for_target(S, R_opt);
+                double overdue = std::max(0.0, elapsed_days / std::max(1e-9, I_opt) - 1.0);
+
+                double g_over = 1.0 + k_over * overdue;
+
+                g_over = std::clamp(g_over, 0.0, G_OVER_MAX);
+                // =======================
+                // Stability (with user sensitivity)
+                // =======================
+                double S_before = S;
+                double S_after = S_before;
+
+                if (q >= 3)
+                {
+                    double gain = alpha * 1.1
+                        * std::pow((1.0 - R_now), beta)
+                        * g_over;
+
+                    double damp = 1.0 / (1.0 + std::pow(S_before / std::max(1e-9, S_DAMP), 0.5));
+                    gain *= damp;
+
+                    gain = std::clamp(gain, 0.0, MAX_GAIN);
+
+                    double user_factor = std::pow(theta, 0.5);
+                    S_after = S_before * (1.0 + gain * user_factor);
+                }
+
+                else
+                {
+                    double loss = gamma * std::pow(R_now, delta);
+                    S_after = std::max(S_min, S_before * (1.0 - loss));
+                    lapses += 1;
+                    reps = 0;
+                }
+
+                // =======================
+                // Adaptive interval with fatigue penalty
+                // =======================
+                auto fatigue = [&](double t) { return std::max(0.0, 1.0 - std::exp(-t / 2.0)); };
+
+                double base_interval = interval_for_target(S_after, R_target);
+
+                // fatigue only for wrong answers
+                double fatigue_multiplier = (q < 3)
+                                                ? (1.0 + fatigue_lambda * fatigue(elapsed_days))
+                                                : 1.0;
+
+                double next_interval_days = (q >= 3)
+                                                ? base_interval * fatigue_multiplier
+                                                : short_retry;
+
+                next_interval_days *= interval_scale;
+
+                if (q >= 3 && r18_state.last_interval_times_100 > 0)
+                {
+                    const double growth_cap = params::GROWTH_CAP; // OK
+                    double last_days = r18_state.last_interval_times_100 / 100.0;
+                    next_interval_days = std::min(next_interval_days, last_days * growth_cap);
+                }
+
+                // =======================
+                // Update state
+                // =======================
+
+                if (!std::isfinite(S_after)) S_after = std::max(S_min, 1.0);
+                S_after = std::clamp(S_after, S_min, 1e6);
+
+                next_interval_days = std::clamp(next_interval_days, min_interval_days, 3650.0);
+
+                r18_state.repetitions = reps + (q >= 3 ? 1 : 0);
+                r18_state.lapses = lapses;
+                r18_state.last_quality = q;
+                r18_state.last_review = (int64_t)now_ms;
+                r18_state.stability_times_100 = (int)std::round(S_after * 100.0);
+                r18_state.last_interval_times_100 = (int)std::round(next_interval_days * 100.0);
+                r18_state.next_review = (int64_t)(now_ms + next_interval_days * MILLISECONDS_PER_DAY);
+
+                // =======================
+                // Write to database
+                // =======================
+                auto new_values = r18_state.to_values();
+                auto r18_state_update = run_update(state_def, token, state_record_id, new_values, stack_depth);
+
+                if (r18_state_update.ko())
+                {
+                    validation_result.status = 500;
+                    validation_result.error = r18_state_update.error;
+                    err << "Updating r18_state record failed for id " << state_record_id
+                        << r18_state_update.error << commit;
                     return;
                 }
 
-                debug << "SM4 review for dictionary_term_id=" << review.dictionary_term_id
+                debug << "SM18+ review for dictionary_term_id=" << review.dictionary_term_id
                     << " q=" << q
-                    << " reps=" << reps
-                    << " ef=" << ef
-                    << " cf=" << cf
-                    << " interval=" << interval << "d"
+                    << " reps=" << r18_state.repetitions
+                    << " S_before=" << S_before
+                    << " S_after=" << S_after
+                    << " R_now=" << R_now
+                    << " interval=" << next_interval_days << "d"
+                    << " overdue=" << overdue
+                    << " fatigue_lambda=" << fatigue_lambda
+                    << " theta=" << theta
                     << commit;
-            };
-            break;
 
-
+                {
+                    double R_pred = R_now; // retrievability before review
+                    int R_pred_times_100 = (int)(R_pred * 100.0);
+                }
+            }
         }
 
         if (!details_json.empty())
