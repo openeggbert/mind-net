@@ -869,8 +869,8 @@ class DictionaryApp {
             // --- Visited ---
             const visitedLabel = make_label("Visited:");
             const visitedSelect = make_select()
-            const visited_updated_array = ["Any","Last hour", "Last 3 hours","Today","Last week","Last month","Last year","Last 10 years","Not last hour", "Not Last 3 hours","Not Today","Not Last week","Not Last month","Not Last year","Not Last 10 years","Never"]
-            visited_updated_array.forEach((t, i) => {
+            const visited_updated_reviewed_array = ["Any","Last hour", "Last 3 hours","Today","Last week","Last month","Last year","Last 10 years","Not last hour", "Not Last 3 hours","Not Today","Not Last week","Not Last month","Not Last year","Not Last 10 years","Never"]
+            visited_updated_reviewed_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1
                 opt.innerText = t;
@@ -881,7 +881,7 @@ class DictionaryApp {
             // --- Updated ---
             const updatedLabel = make_label("Updated:");
             const updatedSelect = make_select()
-            visited_updated_array.forEach((t, i) => {
+            visited_updated_reviewed_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1
                 opt.innerText = t;
@@ -889,6 +889,17 @@ class DictionaryApp {
             });
             form.appendChild(make_div(updatedLabel, updatedSelect));
 
+            // --- Reviewed ---
+            const reviewedLabel = make_label("Reviewed:");
+            const reviewedSelect = make_select()
+            visited_updated_reviewed_array.forEach((t, i) => {
+                const opt = document.createElement("option");
+                opt.value = i - 1; // Any = -1
+                opt.innerText = t;
+                reviewedSelect.appendChild(opt);
+            });
+            form.appendChild(make_div(reviewedLabel, reviewedSelect));
+            
             // --- Sort ---
             const sortLabel = make_label("Sort:");
             const sortSelect = make_select()
@@ -1134,6 +1145,7 @@ class DictionaryApp {
                 })
                 visitedSelect.selectedIndex = 0
                 updatedSelect.selectedIndex = 0
+                reviewedSelect.selectedIndex = 0
                 sortSelect.selectedIndex = 0
                 orderSelect.selectedIndex = 0
             }
@@ -1175,6 +1187,10 @@ class DictionaryApp {
                         .join(","),
                     updated: Array
                         .from(updatedSelect.selectedOptions)
+                        .map(opt => opt.innerText)
+                        .join(","),
+                    reviewed: Array
+                        .from(reviewedSelect.selectedOptions)
                         .map(opt => opt.innerText)
                         .join(","),
                     sort: Array
@@ -1394,6 +1410,11 @@ class DictionaryApp {
                 for (const option of updatedSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = updated === option.innerText;
+                }
+                let reviewed = query.reviewed ?? ""
+                for (const option of reviewedSelect.options) {
+                    console.debug("option.innerText=" + option.innerText)
+                    option.selected = reviewed === option.innerText;
                 }
                 let sort = query.sort ?? ""
                 for (const option of sortSelect.options) {

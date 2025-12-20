@@ -86,6 +86,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             missing_items = split_csv(q.value("missing_items", ""));
             visited = q.value("visited", "Any");
             updated = q.value("updated", "Any");
+            reviewed = q.value("reviewed", "Any");
             order = q.value("order", "Asc");
             if (order != "Asc" && order != "Desc") sort = "Asc";
 
@@ -134,6 +135,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         vector<string> missing_items;
         string visited;
         string updated;
+        string reviewed;
         string sort;
         string order = "Asc";
 
@@ -181,6 +183,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["missing_items"] = join_csv(missing_items);
             q["visited"] = visited;
             q["updated"] = updated;
+            q["reviewed"] = reviewed;
             q["sort"] = sort;
             q["order"] = order;
 
@@ -571,7 +574,6 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
         }
 
-
         // updated
         if (q.updated != "Any")
         {
@@ -619,6 +621,68 @@ namespace mindnet::db::sqlite::queries::dictionary
                             "(dt.updated_at < ? OR dt.updated_at IS NULL)";
                     }
 
+                    binders.push_back(threshold_ms);
+                }
+            }
+        }
+
+        // reviewed
+        if (q.reviewed != "Any")
+        {
+            if (q.reviewed == "Never")
+            {
+                append_where(sql_current_page, first_where);
+                sql_current_page +=
+                    "NOT EXISTS (SELECT 1 FROM dictionary_state_4 dtv "
+                    "WHERE dtv.dictionary_term_id = dt.id "
+                    "AND dtv.user_id = ?)";
+                binders.push_back(user_id);
+            }
+            else
+            {
+                bool negated = q.reviewed.rfind("Not ", 0) == 0;
+                std::string base = negated ? q.reviewed.substr(4) : q.reviewed;
+
+                i64 threshold_ms = 0;
+                i64 now = now_ms();
+
+                if (base == "Last hour")
+                    threshold_ms = now - 1LL * MS_PER_HOUR;
+                else if (base == "Last 3 hours")
+                    threshold_ms = now - 3LL * MS_PER_HOUR;
+                else if (base == "Today")
+                    threshold_ms = now - 24LL * MS_PER_HOUR;
+                else if (base == "Last week")
+                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
+                else if (base == "Last month")
+                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
+                else if (base == "Last year")
+                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
+                else if (base == "Last 10 years")
+                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+
+                if (threshold_ms > 0)
+                {
+                    append_where(sql_current_page, first_where);
+
+                    if (!negated)
+                    {
+                        sql_current_page +=
+                            "EXISTS (SELECT 1 FROM dictionary_state_4 dtv "
+                            "WHERE dtv.dictionary_term_id = dt.id "
+                            "AND dtv.user_id = ? "
+                            "AND dtv.updated_at >= ?)";
+                    }
+                    else
+                    {
+                        sql_current_page +=
+                            "NOT EXISTS (SELECT 1 FROM dictionary_state_4 dtv "
+                            "WHERE dtv.dictionary_term_id = dt.id "
+                            "AND dtv.user_id = ? "
+                            "AND dtv.updated_at >= ?)";
+                    }
+
+                    binders.push_back(user_id);
                     binders.push_back(threshold_ms);
                 }
             }
