@@ -886,18 +886,24 @@ class DictionaryApp {
  * This refactor is mechanical, local, and safe.
  * =====================================================================================
  */
+            function canConvertToNumber(text) {
+                return Number.isFinite(Number(text));
+            }
 
             function enumValue(EnumObj, value) {
+
+                let final_value = canConvertToNumber(value) ? Number(value) : value
+
                 // number → search by id
-                if (typeof value === "number") {
-                    return Object.values(EnumObj).find(v => v.id === value) ?? null;
+                if (typeof final_value === "number") {
+                    return Object.values(EnumObj).find(v => v.id === final_value) ?? null;
                 }
 
                 // text → key (LOW) or label ("Low")
-                if (typeof value === "string") {
+                if (typeof final_value === "string") {
                     return (
-                        EnumObj[value] ??
-                        Object.values(EnumObj).find(v => v.label === value) ??
+                        EnumObj[final_value] ??
+                        Object.values(EnumObj).find(v => v.label === final_value) ??
                         null
                     );
                 }
@@ -911,6 +917,12 @@ class DictionaryApp {
                     id: value.id,
                     label: value.label
                 }));
+            }
+            function gen_enum_id(text, instance) {
+                return text + "_" + instance.id
+            }
+            function find_by_enum_id(text, instance) {
+                return get_element(gen_enum_id(text, instance))
             }
 
             function humanizeEnumKey(str) {
@@ -978,6 +990,12 @@ class DictionaryApp {
                 NotLast10Years:    { id: 27,  label: "Not last 10 years" },
 
                 Never:             { id: 100, label: "Never" },
+            });
+
+            const RepetitionMode = Object.freeze({
+                Due:         { id: 1, label: "Due" },
+                NotDue:      { id: 2, label: "Not Due" },
+                Never:       { id: 3, label: "Never" },
             });
 
             const Sort = Object.freeze({
@@ -1243,7 +1261,7 @@ class DictionaryApp {
                 input.value = e.id;
                 input.checked = true;
                 input.style.marginLeft = "0"
-                input.id = "importance_" + e.label
+                input.id = "importance_" + e.id
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
@@ -1264,7 +1282,7 @@ class DictionaryApp {
                 cb.value = e.id;
                 cb.checked = true;
                 cb.style.marginLeft = "0"
-                cb.id = "difficulty_" + e.label
+                cb.id = "difficulty_" + e.id
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
@@ -1278,7 +1296,8 @@ class DictionaryApp {
 
             form.appendChild(make_div(diffLabel, diffContainer));
 
-            function make_close_button(model, input, autocomplete = null) {
+            class CloseButton {
+                constructor(model, input, autocomplete = null) {
                 let close_button = document.createElement("button")
                 close_button.innerHTML = "&times;"
                 close_button.title = "Clear " + model
@@ -1291,7 +1310,7 @@ class DictionaryApp {
                         input.value = ""
                     }
                 }
-                input.after(close_button)
+                input.after(close_button)}
             }
 
             const tag_label = make_label("Tag: ")
@@ -1300,7 +1319,7 @@ class DictionaryApp {
             let tag_autocomplete = new Autocomplete(tag_input, 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             tag_autocomplete.clear_after_click = false
             tag_autocomplete.box_margin_left = "200px"
-            make_close_button("tag", tag_input, tag_autocomplete)
+            new CloseButton("tag", tag_input, tag_autocomplete)
 
             const flag_label = make_label("Flag: ")
             const flag_input = make_input()
@@ -1308,7 +1327,7 @@ class DictionaryApp {
             let flag_autocomplete = new Autocomplete(flag_input, 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             flag_autocomplete.clear_after_click = false
             flag_autocomplete.box_margin_left = "200px"
-            make_close_button("flag", flag_input, flag_autocomplete)
+            new CloseButton("flag", flag_input, flag_autocomplete)
 
             const link_from_label = make_label("Link from: ")
             const link_from_input = make_input()
@@ -1316,7 +1335,7 @@ class DictionaryApp {
             let link_from_autocomplete = new Autocomplete(link_from_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_from_autocomplete.clear_after_click = false
             link_from_autocomplete.box_margin_left = "200px"
-            make_close_button("link from", link_from_input, link_from_autocomplete)
+            new CloseButton("link from", link_from_input, link_from_autocomplete)
 
             const link_to_label = make_label("Link to: ")
             const link_to_input = make_input()
@@ -1324,7 +1343,7 @@ class DictionaryApp {
             let link_to_autocomplete = new Autocomplete(link_to_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_to_autocomplete.clear_after_click = false
             link_to_autocomplete.box_margin_left = "200px"
-            make_close_button("link to", link_to_input, link_to_autocomplete)
+            new CloseButton("link to", link_to_input, link_to_autocomplete)
 
             const noteLabel = make_label("Note contains:");
             const noteInput = make_input();
@@ -1337,7 +1356,7 @@ class DictionaryApp {
             let index_autocomplete = new Autocomplete(index_input, 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             index_autocomplete.clear_after_click = false
             index_autocomplete.box_margin_left = "200px"
-            make_close_button("index", index_input, index_autocomplete)
+            new CloseButton("index", index_input, index_autocomplete)
 
             const source_label = make_label("Source: ")
             const source_input = make_input()
@@ -1345,7 +1364,7 @@ class DictionaryApp {
             let source_autocomplete = new Autocomplete(source_input, 1, "dictionary_source_type_fulltext", "", "title", "title_part")
             source_autocomplete.clear_after_click = false
             source_autocomplete.box_margin_left = "200px"
-            make_close_button("source", source_input, source_autocomplete)
+            new CloseButton("source", source_input, source_autocomplete)
 
             const alias_label = make_label("Alias: ")
             const alias_input = make_input()
@@ -1353,25 +1372,24 @@ class DictionaryApp {
             let alias_autocomplete = new Autocomplete(alias_input, 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             alias_autocomplete.clear_after_click = false
             alias_autocomplete.box_margin_left = "200px"
-            make_close_button("alias", alias_input, alias_autocomplete)
+            new CloseButton("alias", alias_input, alias_autocomplete)
 
             // --- Missing items ---
             const missingLabel = make_label("Missing:");
             const missingContainer = document.createElement("span");
 
-            const missing_array = ["Definition", "Tags", "Flags", "Links", "Notes", "Indexes", "Sources", "Aliases"]
-            missing_array.forEach((t, i) => {
+            enumValues(DictionaryItem).forEach(e => {
                 const cb = make_input("checkbox");
-                cb.value = i + 1;
+                cb.value = e.id;
                 cb.checked = false;
                 cb.style.marginLeft = "0"
-                cb.id = "missing_" + t.toLowerCase()
+                cb.id = "missing_" + e.id
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
                 l.style.marginLeft = "0"
                 l.appendChild(cb);
-                l.append(" " + t);
+                l.append(" " + e.label);
                 l.style.fontSize = "80%"
 
                 missingContainer.appendChild(l);
@@ -1382,36 +1400,34 @@ class DictionaryApp {
             const hasLabel = make_label("Has:");
             const hasContainer = document.createElement("span");
 
-            const has_array = ["Definition", "Tags", "Flags", "Links", "Notes", "Indexes", "Sources", "Aliases"]
-            has_array.forEach((t, i) => {
+
+            enumValues(DictionaryItem).forEach(e => {
                 const cb = make_input("checkbox");
-                cb.value = i + 1;
+                cb.value = e.id;
                 cb.checked = false;
                 cb.style.marginLeft = "0"
-                cb.id = "has_" + t.toLowerCase()
+                cb.id = "has_" + e.id
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
                 l.style.marginLeft = "0"
                 l.appendChild(cb);
-                l.append(" " + t);
+                l.append(" " + e.label);
                 l.style.fontSize = "80%"
 
                 hasContainer.appendChild(l);
             });
             form.appendChild(make_div(hasLabel, hasContainer));
 
-            const created_updated_visited_reviewed_array = [
-                "Any","Last hour", "Last 3 hours","Today","Last week","Last month","Last year","Last 10 years",
-                "Not last hour", "Not last 3 hours","Not today","Not last week","Not last month","Not last year","Not last 10 years","Never"]
+            const time_range_array = enumValues(TimeRange)
 
             // --- Created ---
             const createdLabel = make_label("Created:");
             const createdSelect = make_select()
-            created_updated_visited_reviewed_array.forEach((t, i) => {
+            time_range_array.forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id;
+                opt.innerText = e.label;
                 createdSelect.appendChild(opt);
             });
             form.appendChild(make_div(createdLabel, createdSelect));
@@ -1419,10 +1435,10 @@ class DictionaryApp {
             // --- Updated ---
             const updatedLabel = make_label("Updated:");
             const updatedSelect = make_select()
-            created_updated_visited_reviewed_array.forEach((t, i) => {
+            time_range_array.forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id;
+                opt.innerText = e.label;
                 updatedSelect.appendChild(opt);
             });
             form.appendChild(make_div(updatedLabel, updatedSelect));
@@ -1430,10 +1446,10 @@ class DictionaryApp {
             // --- Visited ---
             const visitedLabel = make_label("Visited:");
             const visitedSelect = make_select()
-            created_updated_visited_reviewed_array.forEach((t, i) => {
+            time_range_array.forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id;
+                opt.innerText = e.label;
                 visitedSelect.appendChild(opt);
             });
             form.appendChild(make_div(visitedLabel, visitedSelect));
@@ -1441,10 +1457,10 @@ class DictionaryApp {
             // --- Reviewed ---
             const reviewedLabel = make_label("Reviewed:");
             const reviewedSelect = make_select()
-            created_updated_visited_reviewed_array.forEach((t, i) => {
+            time_range_array.forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id;
+                opt.innerText = e.label;
                 reviewedSelect.appendChild(opt);
             });
             form.appendChild(make_div(reviewedLabel, reviewedSelect));
@@ -1452,19 +1468,18 @@ class DictionaryApp {
             // --- Repetition ---
             const repLabel = make_label("Repetition:");
             const repContainer = document.createElement("span");
-            ["Due", "Not due", "Never"].forEach((t, i) => {
+            enumValues(RepetitionMode).forEach(e => {
                 const input = make_input("checkbox");
-                input.value = i + 1;
+                input.value = e.id;
                 input.checked = true;
                 input.style.marginLeft = "0"
-                input.id = "repetition_" + t.toLowerCase()
-                if(t === "Not due") input.id = "repetition_not_due"
+                input.id = "repetition_" + e.id
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
                 l.style.marginLeft = "0"
                 l.appendChild(input);
-                l.append(" " + t);
+                l.append(" " + e.label);
 
                 repContainer.appendChild(l);
             });
@@ -1473,19 +1488,19 @@ class DictionaryApp {
             // --- Sort ---
             const sortLabel = make_label("Sort:");
             const sortSelect = make_select()
-            let sort_array = ["None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Next review", "Random"]
-            sort_array.forEach((t, i) => {
+            enumValues(Sort).forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id;
+                opt.innerText = e.label;
                 sortSelect.appendChild(opt);
             });
+
             const orderSelect = make_select()
-            let order_array = ["Asc", "Desc"]
-            order_array.forEach((t, i) => {
+
+            enumValues(Order).forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id;
+                opt.innerText = e.label;
                 orderSelect.appendChild(opt);
             });
             sortSelect.style.width = "150px"
@@ -1502,7 +1517,7 @@ class DictionaryApp {
             searchBtn.classList.add("save-btn");
 
             searchBtn.onclick = async () => {
-                let query_json = load_query_model_from_form().to_json
+                let query_json = load_query_model_from_form().to_json()
                 console.log("Advanced search values:", {
                     query_json: query_json
                 });
@@ -1668,32 +1683,11 @@ class DictionaryApp {
 
                         let term = term_map.has(dictionary_term_id) ? term_map.get(dictionary_term_id) : null
                         if(defined(term)) {
-                            function term_status_to_string(status) {
-                                switch (status) {
-                                    case 0:
-                                        return "Not defined";
-                                    case 1:
-                                        return "Stub";
-                                    case 2:
-                                        return "Draft";
-                                    case 3:
-                                        return "Incomplete";
-                                    case 4:
-                                        return "Verified";
-                                    case 5:
-                                        return "Deprecated";
-                                    case 6:
-                                        return "Deleted";
-                                    default:
-                                        return "Not defined";
-                                }
-                            }
-
                             append_td(formatDateTimeHMS(term.created_at))
                             append_td(formatDateTimeHMS(term.updated_at))
-                            append_td(term_status_to_string(term.status))
-                            append_td(term.importance === 1? "Low" : (term.importance === 2 ? "Medium" :" High"))
-                            append_td(term.difficulty === 1? "Easy" : (term.importance === 2 ? "Medium" :" Hard"))
+                            append_td(humanizeEnumKey(enumValue(TermStatus, term.status).label))
+                            append_td(enumValue(Importance, term.importance).label)
+                            append_td(enumValue(Difficulty, term.difficulty).label)
                             //if(!repetition_all)
                             {
                                 if (state_map.has(dictionary_term_id)) {
@@ -1728,9 +1722,12 @@ class DictionaryApp {
                 definitionInput.value = ""
                 statusSelect.selectedIndex = 0;
                 pinnedCheckbox.checked = false
-                form.querySelectorAll("input[type=checkbox]").forEach(cb => {
-                    if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
-                })
+                form
+                    .querySelectorAll("input[type=checkbox]")
+                    .forEach(cb => {
+                            if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
+                        }
+                    )
                 tag_autocomplete.reset()
                 flag_autocomplete.reset()
                 link_from_autocomplete.reset()
@@ -1739,13 +1736,13 @@ class DictionaryApp {
                 index_autocomplete.reset()
                 source_autocomplete.reset()
                 alias_autocomplete.reset()
-                missing_array.forEach(e => {
-                    let id = "missing_" + e.toLowerCase()
+                enumValues(DictionaryItem).forEach(e => {
+                    let id = "missing_" + e.id
                     let cb = get_element(id)
                     cb.checked = false
                 })
-                has_array.forEach(e => {
-                    let id = "has_" + e.toLowerCase()
+                enumValues(DictionaryItem).forEach(e => {
+                    let id = "has_" + e.id
                     let cb = get_element(id)
                     cb.checked = false
                 })
@@ -1763,63 +1760,63 @@ class DictionaryApp {
             function load_query_model_from_form() {
                 const m = new SearchModel();
 
-                    m.title_contains = titleContainsInput.value
-                    m.title_starts_with= titleStartsWithInput.value
-                    m.definition_contains = definitionInput.value
-                    m.statuses = Array
-                        .from(statusSelect.selectedOptions)
-                        .map(opt => enumValue(TermStatus, opt.value))
-                    m.pinned_only= pinnedCheckbox.checked
-                    m.importance_low= get_element("importance_low").checked
-                    m.importance_medium= get_element("importance_medium").checked
-                    m.importance_high= get_element("importance_high").checked
-                    m.difficulty_easy= get_element("difficulty_easy").checked
-                    m.difficulty_medium= get_element("difficulty_medium").checked
-                    m.difficulty_hard= get_element("difficulty_hard").checked
-                    m.tag_id= tag_autocomplete.get_item_id()
-                    m.flag_title= flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title
-                    m.link_from_term_id= link_from_autocomplete.get_item_id()
-                    m.link_to_term_id= link_to_autocomplete.get_item_id()
-                    m.note_contains= noteInput.value
-                    m.index_id= index_autocomplete.get_item_id()
-                    m.source_id= source_autocomplete.get_item_id()
-                    m.alias_alias= alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title
-                    m.missing_items= missing_array
-                        .map(e => get_element("missing_" + e.toLowerCase()))
-                        .filter(e => e.checked)
-                        .map(e => get_element("missing_" + e.toLowerCase()._enum_id))
-                    m.has_items= has_array
-                    .map(e => get_element("has_" + e.toLowerCase()))
-                        .filter(e => e.checked)
-                        .map(e => get_element("has_" + e.toLowerCase()._enum_id))
-                    m.created= Array
-                        .from(createdSelect.selectedOptions)
-                        .map(opt => opt.value)
-                        .map(e => enumValue(TimeRange, e))[0]
-                    m.updated= Array
-                        .from(updatedSelect.selectedOptions)
-                        .map(opt => opt.value)
-                        .map(e => enumValue(TimeRange, e))[0]
-                    m.visited= Array
-                        .from(visitedSelect.selectedOptions)
-                        .map(opt => opt.value)
-                        .map(e => enumValue(TimeRange, e))[0]
-                    m.reviewed= Array
-                        .from(reviewedSelect.selectedOptions)
-                        .map(opt => opt.value)
-                        .map(e => enumValue(TimeRange, e))[0]
-                    m.repetition_due= get_element("repetition_due").checked
-                    m.repetition_not_due= get_element("repetition_not_due").checked
-                    m.repetition_never= get_element("repetition_never").checked
-                    m.sort= Array
-                        .from(sortSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(",")
-                    m.order= Array
-                        .from(orderSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(",")
+                m.title_contains = titleContainsInput.value
+                m.title_starts_with = titleStartsWithInput.value
+                m.definition_contains = definitionInput.value
+                m.statuses = Array
+                    .from(statusSelect.selectedOptions)
+                    .map(opt => {
+                        let result = enumValue(TermStatus, opt.value)
+                        return result
+                        }
+                    )
+                m.pinned_only = pinnedCheckbox.checked
+                m.importance_low = get_element(gen_enum_id("importance", Importance.Low)).checked
+                m.importance_medium = get_element(gen_enum_id("importance", Importance.Medium)).checked
+                m.importance_high = get_element(gen_enum_id("importance", Importance.High)).checked
 
+                m.difficulty_easy = get_element(gen_enum_id("difficulty", Difficulty.Easy)).checked
+                m.difficulty_medium = get_element(gen_enum_id("difficulty", Difficulty.Medium)).checked
+                m.difficulty_hard = get_element(gen_enum_id("difficulty", Difficulty.Hard)).checked
+
+                m.tag_id = tag_autocomplete.get_item_id()
+                m.flag_title = flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title
+                m.link_from_term_id = link_from_autocomplete.get_item_id()
+                m.link_to_term_id = link_to_autocomplete.get_item_id()
+                m.note_contains = noteInput.value
+                m.index_id = index_autocomplete.get_item_id()
+                m.source_id = source_autocomplete.get_item_id()
+                m.alias_alias = alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title
+                m.missing_items = enumValues(DictionaryItem)
+                    .filter(e => find_by_enum_id("missing", e).checked)
+                m.has_items = enumValues(DictionaryItem)
+                    .filter(e => find_by_enum_id("has", e).checked)
+                m.created = Array
+                    .from(createdSelect.selectedOptions)
+                    .map(opt => opt.value)
+                    .map(e => enumValue(TimeRange, e))[0]
+                m.updated = Array
+                    .from(updatedSelect.selectedOptions)
+                    .map(opt => opt.value)
+                    .map(e => enumValue(TimeRange, e))[0]
+                m.visited = Array
+                    .from(visitedSelect.selectedOptions)
+                    .map(opt => opt.value)
+                    .map(e => enumValue(TimeRange, e))[0]
+                m.reviewed = Array
+                    .from(reviewedSelect.selectedOptions)
+                    .map(opt => opt.value)
+                    .map(e => enumValue(TimeRange, e))[0]
+                m.repetition_due = find_by_enum_id("repetition", RepetitionMode.Due).checked
+                m.repetition_not_due = find_by_enum_id("repetition", RepetitionMode.NotDue).checked
+                m.repetition_never = find_by_enum_id("repetition", RepetitionMode.Never).checked
+
+                m.sort = Array
+                    .from(sortSelect.selectedOptions)
+                    .map(opt => enumValue(Sort, opt.value))[0]
+                m.order = Array
+                    .from(orderSelect.selectedOptions)
+                    .map(opt => enumValue(Order, opt.value))[0]
 
                 return m
             }
@@ -1908,7 +1905,7 @@ class DictionaryApp {
             let search_autocomplete = new Autocomplete(load_input, 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             search_autocomplete.box_margin_left = "465px"
             search_autocomplete.clear_after_click = false
-            make_close_button("search", load_input, search_autocomplete)
+            new CloseButton("search", load_input, search_autocomplete)
             search_autocomplete.addCallback(async e => {
                 let old_search_id = search_json === null ? 0 : search_json.id
                 let new_search_id = search_autocomplete.get_item_id()
