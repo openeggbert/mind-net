@@ -887,6 +887,265 @@ class DictionaryApp {
  * =====================================================================================
  */
 
+            function enumValue(EnumObj, value) {
+                // number → search by id
+                if (typeof value === "number") {
+                    return Object.values(EnumObj).find(v => v.id === value) ?? null;
+                }
+
+                // text → key (LOW) or label ("Low")
+                if (typeof value === "string") {
+                    return (
+                        EnumObj[value] ??
+                        Object.values(EnumObj).find(v => v.label === value) ??
+                        null
+                    );
+                }
+
+                return null;
+            }
+
+            function enumValues(EnumObj) {
+                return Object.entries(EnumObj).map(([key, value]) => ({
+                    key,
+                    id: value.id,
+                    label: value.label
+                }));
+            }
+
+            function humanizeEnumKey(str) {
+                if (typeof str !== "string") return str;
+
+                return str
+                    // space between lowercase and uppercase letter
+                    .replace(/([a-z])([A-Z])/g, "$1 $2")
+                    // space between abbreviation and word (HTTPServer → HTTP Server)
+                    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+                    // first letter uppercase, rest lowercase
+                    .replace(/^./, c => c.toUpperCase());
+            }
+
+            const TermStatus = Object.freeze({
+                Any: { id: -1, label: "Any" },
+                NotDefined: { id: 0, label: "NotDefined" },
+
+                Stub:       { id: 1, label: "Stub" },        // placeholder, title or one sentence
+                Draft:      { id: 2, label: "Draft" },       // work in progress
+                Incomplete: { id: 3, label: "Incomplete" },  // usable, but missing parts
+                Verified:   { id: 4, label: "Verified" },    // stable, reference knowledge
+                Deprecated: { id: 5, label: "Deprecated" },  // historical / do not use
+                Deleted:    { id: 6, label: "Deleted" }      // deleted
+            });
+
+            const Importance = Object.freeze({
+                Low:   { id: 1, label: "Low" },
+                Medium:{ id: 2, label: "Medium" },
+                High:  { id: 3, label: "High" },
+            });
+            const Difficulty = Object.freeze({
+                Easy:   { id: 1, label: "Easy" },
+                Medium:{ id: 2, label: "Medium" },
+                Hard:  { id: 3, label: "Hard" },
+            });
+            const DictionaryItem = Object.freeze({
+                Definition: { id: 1, label: "Definition" },
+                Tags:       { id: 2, label: "Tags" },
+                Flags:      { id: 3, label: "Flags" },
+                Links:      { id: 4, label: "Links" },
+                Notes:      { id: 5, label: "Notes" },
+                Indexes:    { id: 6, label: "Indexes" },
+                Sources:    { id: 7, label: "Sources" },
+                Aliases:    { id: 8, label: "Aliases" },
+            });
+
+            const TimeRange = Object.freeze({
+                Any:               { id: 0,   label: "Any" },
+
+                LastHour:          { id: 1,   label: "Last hour" },
+                Last3Hours:        { id: 2,   label: "Last 3 hours" },
+                Today:             { id: 3,   label: "Today" },
+                LastWeek:          { id: 4,   label: "Last week" },
+                LastMonth:         { id: 5,   label: "Last month" },
+                LastYear:          { id: 6,   label: "Last year" },
+                Last10Years:       { id: 7,   label: "Last 10 years" },
+
+                NotLastHour:       { id: 21,  label: "Not last hour" },
+                NotLast3Hours:     { id: 22,  label: "Not last 3 hours" },
+                NotToday:          { id: 23,  label: "Not today" },
+                NotLastWeek:       { id: 24,  label: "Not last week" },
+                NotLastMonth:      { id: 25,  label: "Not last month" },
+                NotLastYear:       { id: 26,  label: "Not last year" },
+                NotLast10Years:    { id: 27,  label: "Not last 10 years" },
+
+                Never:             { id: 100, label: "Never" },
+            });
+
+            const Sort = Object.freeze({
+                None:        { id: 0, label: "None" },
+                Title:       { id: 1, label: "Title" },
+                CreatedAt:   { id: 2, label: "Created at" },
+                UpdatedAt:   { id: 3, label: "Updated at" },
+                Status:      { id: 11, label: "Status" },
+                Difficulty:  { id: 12, label: "Difficulty" },
+                Importance:  { id: 13, label: "Importance" },
+                NextReview:  { id: 14, label: "Next review" },
+                Random:      { id: 30, label: "Random" },
+            });
+
+            const Order = Object.freeze({
+                None: { id: 0, label: "None" },
+                Asc: { id: 1, label: "Asc" },
+                Desc:       { id: 2, label: "Desc" },
+            });
+
+            class SearchModel {
+                constructor() {
+                    this.title_contains = "";
+                    this.title_starts_with = "";
+                    this.definition_contains = "";
+                    this.statuses = [];
+                    this.pinned_only = false;
+                    this.importance_low = true
+                    this.importance_medium = true
+                    this.importance_high = true
+                    this.difficulty_easy = true
+                    this.difficulty_medium = true
+                    this.difficulty_hard = true
+                    this.tag_id = 0
+                    this.flag_title = ""
+                    this.link_from_term_id = 0
+                    this.link_to_term_id = 0
+                    this.note_contains = ""
+                    this.index_id = 0
+                    this.source_id = 0
+                    this.alias_alias = ""
+                    this.missing_items = []
+                    this.has_items = []
+                    this.created = TimeRange.Any
+                    this.updated = TimeRange.Any
+                    this.visited = TimeRange.Any
+                    this.reviewed = TimeRange.Any
+                    this.repetition_due = true
+                    this.repetition_not_due = false
+                    this.repetition_never = true
+                    this.sort = Sort.None
+                    this.order = Order.None
+                    // …
+                }
+
+                reset() {
+                    const def = new SearchModel();
+                    Object.assign(this, def);
+                }
+
+                to_json() {
+                    return {
+                        title_contains: this.title_contains,
+                        title_starts_with: this.title_starts_with,
+                        definition_contains: this.definition_contains,
+
+                        statuses: this.statuses.map(e=>{return e.id}),
+                        pinned_only: this.pinned_only,
+
+                        importance_low: this.importance_low,
+                        importance_medium: this.importance_medium,
+                        importance_high: this.importance_high,
+
+                        difficulty_easy: this.difficulty_easy,
+                        difficulty_medium: this.difficulty_medium,
+                        difficulty_hard: this.difficulty_hard,
+
+                        tag_id: this.tag_id,
+                        flag_title: this.flag_title,
+
+                        link_from_term_id: this.link_from_term_id,
+                        link_to_term_id: this.link_to_term_id,
+
+                        note_contains: this.note_contains,
+                        index_id: this.index_id,
+                        source_id: this.source_id,
+                        alias_alias: this.alias_alias,
+
+                        missing_items: this.missing_items.map(e=>{return e.id}),
+                        has_items: this.has_items.map(e=>{return e.id}),
+
+                        created: enumValue(TimeRange, this.created)?.id ?? TimeRange.Any.id,
+                        updated: enumValue(TimeRange, this.updated)?.id ?? TimeRange.Any.id,
+                        visited: enumValue(TimeRange, this.visited)?.id ?? TimeRange.Any.id,
+                        reviewed: enumValue(TimeRange, this.reviewed)?.id ?? TimeRange.Any.id,
+
+                        repetition_due: this.repetition_due,
+                        repetition_not_due: this.repetition_not_due,
+                        repetition_never: this.repetition_never,
+
+                        sort: this.sort === null ? Sort.None.id: this.sort.id,
+                        order: this.order === null ? Sort.None.id : this.order.id
+                    };
+                }
+                from_json(json) {
+                    if (!json || typeof json !== "object") {
+                        this.reset();
+                        return;
+                    }
+
+                    this.title_contains = json.title_contains ?? "";
+                    this.title_starts_with = json.title_starts_with ?? "";
+                    this.definition_contains = json.definition_contains ?? "";
+
+                    this.statuses = Array.isArray(json.statuses)
+                        ? json.statuses
+                            .map(id => enumValue(TermStatus, id))
+                            .filter(Boolean)
+                        : [];
+
+                    this.pinned_only = !!json.pinned_only;
+
+                    this.importance_low = json.importance_low ?? true;
+                    this.importance_medium = json.importance_medium ?? true;
+                    this.importance_high = json.importance_high ?? true;
+
+                    this.difficulty_easy = json.difficulty_easy ?? true;
+                    this.difficulty_medium = json.difficulty_medium ?? true;
+                    this.difficulty_hard = json.difficulty_hard ?? true;
+
+                    this.tag_id = json.tag_id ?? 0;
+                    this.flag_title = json.flag_title ?? "";
+
+                    this.link_from_term_id = json.link_from_term_id ?? 0;
+                    this.link_to_term_id = json.link_to_term_id ?? 0;
+
+                    this.note_contains = json.note_contains ?? "";
+                    this.index_id = json.index_id ?? 0;
+                    this.source_id = json.source_id ?? 0;
+                    this.alias_alias = json.alias_alias ?? "";
+
+                    this.missing_items = Array.isArray(json.missing_items)
+                        ? json.missing_items
+                            .map(id => enumValue(DictionaryItem, id))
+                            .filter(Boolean)
+                        : [];
+
+                    this.has_items = Array.isArray(json.has_items)
+                        ? json.has_items
+                            .map(id => enumValue(DictionaryItem, id))
+                            .filter(Boolean)
+                        : [];
+
+                    this.created  = enumValue(TimeRange, json.created)  ?? TimeRange.Any;
+                    this.updated  = enumValue(TimeRange, json.updated)  ?? TimeRange.Any;
+                    this.visited  = enumValue(TimeRange, json.visited)  ?? TimeRange.Any;
+                    this.reviewed = enumValue(TimeRange, json.reviewed) ?? TimeRange.Any;
+
+                    this.repetition_due = json.repetition_due ?? true;
+                    this.repetition_not_due = json.repetition_not_due ?? false;
+                    this.repetition_never = json.repetition_never ?? true;
+
+                    this.sort = json.sort === null ? Sort.None : enumValue(Sort, json.sort)
+                    this.order = json.order === null ? Order.None : enumValue(Order, json.order);
+                }
+
+            }
+
             clearWindow();
             setWindowTitle("🔍 Advanced Search");
 
@@ -961,22 +1220,13 @@ class DictionaryApp {
             // --- Status ---
             const statusLabel = make_label("Status:");
             const statusSelect = make_select();
-            [
-                "Any",
-                "Not defined",
-                "Stub",
-                "Draft",
-                "Incomplete",
-                "Verified",
-                "Deprecated",
-                "Deleted"
-            ].forEach((t, i) => {
+            enumValues(TermStatus).forEach(e => {
                 const opt = document.createElement("option");
-                opt.value = i - 1; // Any = -1
-                opt.innerText = t;
+                opt.value = e.id; // Any = -1
+                opt.innerText = humanizeEnumKey(e.label);
                 statusSelect.appendChild(opt);
             });
-            statusSelect.multiple = "multiple"
+            statusSelect.multiple = true
 
             form.appendChild(make_div(statusLabel, statusSelect));
 
@@ -988,18 +1238,18 @@ class DictionaryApp {
             // --- Importance ---
             const impLabel = make_label("Importance:");
             const impContainer = document.createElement("span");
-            ["Low", "Medium", "High"].forEach((t, i) => {
+            enumValues(Importance).forEach(e => {
                 const input = make_input("checkbox");
-                input.value = i + 1;
+                input.value = e.id;
                 input.checked = true;
                 input.style.marginLeft = "0"
-                input.id = "importance_" + t.toLowerCase()
+                input.id = "importance_" + e.label
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
                 l.style.marginLeft = "0"
                 l.appendChild(input);
-                l.append(" " + t);
+                l.append(" " + e.label);
 
                 impContainer.appendChild(l);
             });
@@ -1009,19 +1259,19 @@ class DictionaryApp {
             const diffLabel = make_label("Difficulty:");
             const diffContainer = document.createElement("span");
 
-            ["Easy", "Medium", "Hard"].forEach((t, i) => {
+            enumValues(Difficulty).forEach(e => {
                 const cb = make_input("checkbox");
-                cb.value = i + 1;
+                cb.value = e.id;
                 cb.checked = true;
                 cb.style.marginLeft = "0"
-                cb.id = "difficulty_" + t.toLowerCase()
+                cb.id = "difficulty_" + e.label
 
                 const l = make_label("", "auto");
                 l.style.marginRight = "10px";
                 l.style.marginLeft = "0"
 
                 l.appendChild(cb);
-                l.append(" " + t);
+                l.append(" " + e.label);
 
                 diffContainer.appendChild(l);
             });
@@ -1252,7 +1502,7 @@ class DictionaryApp {
             searchBtn.classList.add("save-btn");
 
             searchBtn.onclick = async () => {
-                let query_json = load_query_json_from_form()
+                let query_json = load_query_model_from_form().to_json
                 console.log("Advanced search values:", {
                     query_json: query_json
                 });
@@ -1510,66 +1760,68 @@ class DictionaryApp {
 
             let search_json = null
 
-            function load_query_json_from_form() {
-                return {
-                    title_contains: titleContainsInput.value,
-                    title_starts_with: titleStartsWithInput.value,
-                    definition_contains: definitionInput.value,
-                    status: Array
+            function load_query_model_from_form() {
+                const m = new SearchModel();
+
+                    m.title_contains = titleContainsInput.value
+                    m.title_starts_with= titleStartsWithInput.value
+                    m.definition_contains = definitionInput.value
+                    m.statuses = Array
                         .from(statusSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(","),
-                    pinned_only: pinnedCheckbox.checked,
-                    importance_low: get_element("importance_low").checked,
-                    importance_medium: get_element("importance_medium").checked,
-                    importance_high: get_element("importance_high").checked,
-                    difficulty_easy: get_element("difficulty_easy").checked,
-                    difficulty_medium: get_element("difficulty_medium").checked,
-                    difficulty_hard: get_element("difficulty_hard").checked,
-                    tag_id: tag_autocomplete.get_item_id(),
-                    flag_title: flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title,
-                    link_from_term_id: link_from_autocomplete.get_item_id(),
-                    link_to_term_id: link_to_autocomplete.get_item_id(),
-                    note_contains: noteInput.value,
-                    index_id: index_autocomplete.get_item_id(),
-                    source_id: source_autocomplete.get_item_id(),
-                    alias_alias: alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title,
-                    missing_items: missing_array
-                        .filter(e => get_element("missing_" + e.toLowerCase()).checked)
-                        .map(e => e.toLowerCase())
-                        .join(","),
-                    has_items: has_array
-                        .filter(e => get_element("has_" + e.toLowerCase()).checked)
-                        .map(e => e.toLowerCase())
-                        .join(","),
-                    created: Array
+                        .map(opt => enumValue(TermStatus, opt.value))
+                    m.pinned_only= pinnedCheckbox.checked
+                    m.importance_low= get_element("importance_low").checked
+                    m.importance_medium= get_element("importance_medium").checked
+                    m.importance_high= get_element("importance_high").checked
+                    m.difficulty_easy= get_element("difficulty_easy").checked
+                    m.difficulty_medium= get_element("difficulty_medium").checked
+                    m.difficulty_hard= get_element("difficulty_hard").checked
+                    m.tag_id= tag_autocomplete.get_item_id()
+                    m.flag_title= flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title
+                    m.link_from_term_id= link_from_autocomplete.get_item_id()
+                    m.link_to_term_id= link_to_autocomplete.get_item_id()
+                    m.note_contains= noteInput.value
+                    m.index_id= index_autocomplete.get_item_id()
+                    m.source_id= source_autocomplete.get_item_id()
+                    m.alias_alias= alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title
+                    m.missing_items= missing_array
+                        .map(e => get_element("missing_" + e.toLowerCase()))
+                        .filter(e => e.checked)
+                        .map(e => get_element("missing_" + e.toLowerCase()._enum_id))
+                    m.has_items= has_array
+                    .map(e => get_element("has_" + e.toLowerCase()))
+                        .filter(e => e.checked)
+                        .map(e => get_element("has_" + e.toLowerCase()._enum_id))
+                    m.created= Array
                         .from(createdSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(","),
-                    updated: Array
+                        .map(opt => opt.value)
+                        .map(e => enumValue(TimeRange, e))[0]
+                    m.updated= Array
                         .from(updatedSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(","),
-                    visited: Array
+                        .map(opt => opt.value)
+                        .map(e => enumValue(TimeRange, e))[0]
+                    m.visited= Array
                         .from(visitedSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(","),
-                    reviewed: Array
+                        .map(opt => opt.value)
+                        .map(e => enumValue(TimeRange, e))[0]
+                    m.reviewed= Array
                         .from(reviewedSelect.selectedOptions)
-                        .map(opt => opt.innerText)
-                        .join(","),
-                    repetition_due: get_element("repetition_due").checked,
-                    repetition_not_due: get_element("repetition_not_due").checked,
-                    repetition_never: get_element("repetition_never").checked,
-                    sort: Array
+                        .map(opt => opt.value)
+                        .map(e => enumValue(TimeRange, e))[0]
+                    m.repetition_due= get_element("repetition_due").checked
+                    m.repetition_not_due= get_element("repetition_not_due").checked
+                    m.repetition_never= get_element("repetition_never").checked
+                    m.sort= Array
                         .from(sortSelect.selectedOptions)
                         .map(opt => opt.innerText)
-                        .join(","),
-                    order: Array
+                        .join(",")
+                    m.order= Array
                         .from(orderSelect.selectedOptions)
                         .map(opt => opt.innerText)
-                        .join(","),
-                };
+                        .join(",")
+
+
+                return m
             }
 
             const saveBtn = make_button("💾 Save");
@@ -1583,7 +1835,7 @@ class DictionaryApp {
                     name = search_json.name
                 }
 
-                let query_json = load_query_json_from_form();
+                let query_json = load_query_model_from_form().to_json();
 
                 // alert(JSON.stringify(query_json, null, 2))
 

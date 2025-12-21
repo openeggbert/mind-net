@@ -31,8 +31,8 @@ namespace mindnet::orm
 {
     enum class Order
     {
-        Asc,
-        Desc,
+        Asc = 1,
+        Desc = 2,
     };
 
     inline string order_to_string(const Order& order)
