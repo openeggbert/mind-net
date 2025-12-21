@@ -198,26 +198,35 @@ namespace mindnet::plugins::dictionary::triggers
             dictionary_search.from_values(read_dictionary_search.first);
             string query_json = dictionary_search.query_json;
 
-            orm::QueryParams query_params_search;
-            query_params_search.add_filter("dictionary_map_id", dictionary_map_id);
-            query_params_search.add_filter("title", query_json);
-            query_params_search.page_size = 100;
+            auto query_json_parsed = nlohmann::json::parse(query_json);
 
-            orm::QueryParams state_params;
-            state_params.add_filter("user_id", user_id);
+            if (!(is_due & is_not_due && is_never))
+            {
+                query_json_parsed["repetition_due"] = is_due;
+                query_json_parsed["repetition_not_due"] = is_not_due;
+                query_json_parsed["repetition_never"] = is_never;
+            }
+            if (!include_empty_definition)
+            {
+                std::string has_items = query_json_parsed["has_items"];
+                query_json_parsed["has_items"] = has_items + ",Definition";
+            }
+            query_json = query_json_parsed.dump();
+
+            orm::QueryParams query_params_dictionary_term_search;
+            query_params_dictionary_term_search.add_filter("dictionary_map_id", dictionary_map_id);
+            query_params_dictionary_term_search.add_filter("title", query_json);
+            query_params_dictionary_term_search.page_size = 100;
+            query_params_dictionary_term_search.page_number = 1;
 
             auto now = util::Utils::current_unix_timestamp_ms();
 
             static const constexpr int MAX_COUNT_OF_TERM_IDS = 100;
-            for (int page_number = 1; page_number <= 10; page_number++)
             {
-                if (term_ids.size() >= MAX_COUNT_OF_TERM_IDS) break;
-                query_params_search.page_number = page_number;
-
                 auto list_dictionary_term_search = run_list(
                     models::DICTIONARY_TERM_SEARCH_DEFINITION,
                     ctx,
-                    query_params_search,
+                    query_params_dictionary_term_search,
                     stack_depth);
 
                 if (!list_dictionary_term_search.second)
@@ -229,7 +238,7 @@ namespace mindnet::plugins::dictionary::triggers
                         std::move(v0), {500, "Internal server error. Listing dictionary_term_search failed."});
                     return result;
                 }
-                if (list_dictionary_term_search.first.empty()) break;
+
                 for (auto& dictionary_term_search_values : list_dictionary_term_search.first)
                 {
                     if (term_ids.size() >= MAX_COUNT_OF_TERM_IDS) break;
@@ -241,37 +250,6 @@ namespace mindnet::plugins::dictionary::triggers
                     auto& disambiguation = dictionary_term_search.disambiguation;
 
                     {
-                        std::optional<models::DictionaryState18> optional_dictionary_state_18;
-
-                        if (!include_new_due_and_not_due)
-                        {
-                            state_params.add_filter("dictionary_term_id", term_id);
-                            const auto& list_states = run_list(models::DICTIONARY_STATE_18_DEFINITION, ctx, state_params,
-                                                               stack_depth);
-                            if (!list_states.second)
-                            {
-                                err << "Listing dictionary_state_18 failed " << list_states.second.error << commit;
-                                std::vector<entity_fields> v0;
-                                result = std::make_pair<std::vector<entity_fields>, api::OperationResult>(
-                                    std::move(v0), {500, "Internal server error. Listing dictionary_state_18 failed"});
-                                return result;
-                            }
-                            if (!list_states.first.empty())
-                            {
-                                models::DictionaryState18 dictionary_state_18;
-                                dictionary_state_18.from_values(list_states.first[0]);
-                                optional_dictionary_state_18.emplace(dictionary_state_18);
-                            }
-                        }
-
-                        if (!is_never && !optional_dictionary_state_18.has_value()) continue;
-                        if (optional_dictionary_state_18.has_value())
-                        {
-                            unixtime next_review = optional_dictionary_state_18.value().next_review;
-                            if (next_review < now && ! is_due) continue;
-                            if (next_review > now && ! is_not_due) continue;
-                        }
-
                         const auto& read_term = run_read(models::DICTIONARY_TERM_DEFINITION, ctx, term_id, stack_depth);
                         if (!read_term.second)
                         {

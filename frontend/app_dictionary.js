@@ -853,7 +853,6 @@ class DictionaryApp {
  */
 
             clearWindow();
-
             setWindowTitle("🔍 Advanced Search");
 
             const content = getWindowContent();
