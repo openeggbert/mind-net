@@ -2,7 +2,7 @@
 // Imports & Globals
 // ========================================
 import {
-    delete_entity, format_url_params,
+    delete_entity,
     getTitleCache,
     getUserId,
     list_all_entities,
@@ -408,10 +408,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     await init_dom();
 });
 
-
 export const Entities = Object.freeze({
 
     dictionary_map: Object.freeze({
+        table_name: "dictionary_map",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -428,6 +429,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_term: Object.freeze({
+        table_name: "dictionary_term",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -443,6 +446,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_term_visit: Object.freeze({
+        table_name: "dictionary_term_visit",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -453,6 +458,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_link: Object.freeze({
+        table_name: "dictionary_link",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -463,6 +470,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_note: Object.freeze({
+        table_name: "dictionary_note",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -474,6 +483,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_tag_type: Object.freeze({
+        table_name: "dictionary_tag_type",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -483,6 +494,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_tag: Object.freeze({
+        table_name: "dictionary_tag",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -492,6 +505,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_flag: Object.freeze({
+        table_name: "dictionary_flag",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -505,6 +520,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_review: Object.freeze({
+        table_name: "dictionary_review",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -526,6 +543,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_source_type: Object.freeze({
+        table_name: "dictionary_source_type",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -542,6 +561,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_source: Object.freeze({
+        table_name: "dictionary_source",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -554,6 +575,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_state_18: Object.freeze({
+        table_name: "dictionary_state_18",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -572,6 +595,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_term_alias: Object.freeze({
+        table_name: "dictionary_term_alias",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -582,6 +607,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_index_type: Object.freeze({
+        table_name: "dictionary_index_type",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -593,6 +620,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_index: Object.freeze({
+        table_name: "dictionary_index",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -605,6 +634,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_pinned_term: Object.freeze({
+        table_name: "dictionary_pinned_term",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -615,6 +646,8 @@ export const Entities = Object.freeze({
     }),
 
     dictionary_search: Object.freeze({
+        table_name: "dictionary_search",
+
         id: "id",
         created_at: "created_at",
         updated_at: "updated_at",
@@ -628,6 +661,7 @@ export const Entities = Object.freeze({
         is_public: "is_public"
     })
 });
+
 
 class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
@@ -2248,49 +2282,84 @@ class TermContainer {
                 }
             }
 
+            let table = null;
+
+            table = Entities.dictionary_pinned_term
             let pinned_terms = await list_all_entities(
-                Entities.dictionary_pinned_term,
+                table,
                 new QueryParams()
                     .add_user_id()
-                    .add(Entities.dictionary_pinned_term.dictionary_term_id, dictionary_term_id)
+                    .add(table.dictionary_term_id, dictionary_term_id)
                     .build()
             )
+
+            table = Entities.dictionary_tag
             let tags = await list_all_entities(
-                Entities.dictionary_tag,
-                "&dictionary_term_id=" + dictionary_term_id)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_flag
             let private_flags = await list_all_entities(
-                Entities.dictionary_flag,
-                "&is_public=0&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
+                table,
+                new QueryParams()
+                    .add(table.is_public, 0)
+                    .add(table.dictionary_term_id, dictionary_term_id)
+                    .add_user_id()
+                    .build())
+
+            table = Entities.dictionary_flag
             let public_flags = await list_all_entities(
-                Entities.dictionary_flag,
-                "&is_public=1&dictionary_term_id=" + dictionary_term_id)
-            let links1 = await list_all_entities(
-                Entities.dictionary_link,
-                "&from_dictionary_term_id=" + dictionary_term_id)
-            let links2 = await list_all_entities(
-                Entities.dictionary_link,
-                "&to_dictionary_term_id=" + dictionary_term_id)
+                table,
+                new QueryParams()
+                    .add(table.is_public, 1)
+                    .add(table.dictionary_term_id, dictionary_term_id)
+                    .build()
+            )
+
+            table = Entities.dictionary_link
+            let links_from = await list_all_entities(
+                table,
+                new QueryParams(table.from_dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_link
+            let links_to = await list_all_entities(
+                table,
+                new QueryParams(table.to_dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_note
             let notes = await list_all_entities(
-                Entities.dictionary_note,
-                "&dictionary_term_id=" + dictionary_term_id)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_index
             let indexes = await list_all_entities(
-                Entities.dictionary_index,
-                "&dictionary_term_id=" + dictionary_term_id)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_source
             let sources = await list_all_entities(
-                Entities.dictionary_source,
-                "&dictionary_term_id=" + dictionary_term_id)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_term_alias
             let aliases = await list_all_entities(
-                Entities.dictionary_term_alias,
-                "&dictionary_term_id=" + dictionary_term_id)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+
+            table = Entities.dictionary_term_visit
             let visits = await list_all_entities(
-                Entities.dictionary_term_visit,
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+
+            table = Entities.dictionary_review
             let reviews = await list_all_entities(
-                Entities.dictionary_review,
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+
+            table = Entities.dictionary_state_18
             let states_18 = await list_all_entities(
-                Entities.dictionary_state_18,
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
 
             dictionary_term.status = 6 //deleted
             let updated = await put_entity(Entities.dictionary_term, dictionary_term_id, dictionary_term)
@@ -2302,8 +2371,8 @@ class TermContainer {
             await delete_rows(Entities.dictionary_pinned_term, pinned_terms)
             await delete_rows(Entities.dictionary_flag, private_flags)
             await delete_rows(Entities.dictionary_flag, public_flags)
-            await delete_rows(Entities.dictionary_link, links1)
-            await delete_rows(Entities.dictionary_link, links2)
+            await delete_rows(Entities.dictionary_link, links_from)
+            await delete_rows(Entities.dictionary_link, links_to)
             await delete_rows(Entities.dictionary_note, notes)
             await delete_rows(Entities.dictionary_review, reviews)
             await delete_rows(Entities.dictionary_index, indexes)
@@ -2329,7 +2398,13 @@ class TermContainer {
 
             let checkbox_pinned = get_element("checkbox_pinned")
             let pinned_now = checkbox_pinned.checked
-            let pinned_terms = await list_all_entities(Entities.dictionary_pinned_term, "&user_id=" + USER_ID + "&dictionary_term_id=" + dictionary_term_id)
+            let pinned_terms = await list_all_entities(
+                Entities.dictionary_pinned_term,
+                new QueryParams()
+                    .add(Entities.dictionary_pinned_term.dictionary_term_id, dictionary_term_id)
+                    .add_user_id()
+                    .build()
+            )
             if (!defined(pinned_terms)) {
                 showError("Loading pinned terms failed.")
             } else {
@@ -2790,7 +2865,14 @@ class Flags extends CrudSection {
 
     async loadItems(dictionary_term_id) {
         let result = []
-        let private_flags_result = await list_all_entities(Entities.dictionary_flag, "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + USER_ID)
+        let private_flags_result = await list_all_entities(
+            Entities.dictionary_flag,
+            new QueryParams()
+                .add(Entities.dictionary_flag.dictionary_term_id, dictionary_term_id)
+                .add(Entities.dictionary_flag.is_public, 0)
+                .add_user_id()
+                .build()
+        )
         if (!private_flags_result) {
             showError("Listing private flags failed.")
             return [];
@@ -2800,7 +2882,13 @@ class Flags extends CrudSection {
             })
 
         }
-        let public_flags_result = await list_all_entities(Entities.dictionary_flag, "&dictionary_term_id=" + dictionary_term_id + "&is_public=1")
+        let public_flags_result = await list_all_entities(
+            Entities.dictionary_flag,
+            new QueryParams()
+                .add(Entities.dictionary_flag.dictionary_term_id, dictionary_term_id)
+                .add(Entities.dictionary_flag.is_public, 1)
+                .build()
+        )
         if (!public_flags_result) {
             showError("Listing public flags failed.")
             return [];

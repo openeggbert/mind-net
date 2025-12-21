@@ -256,8 +256,24 @@ export class QueryParams {
 //     }
 //     return result
 // }
+
+export function resolveTableName(entity) {
+    if (typeof entity === "string") {
+        return entity;
+    }
+
+    if (typeof entity === "object" && entity !== null) {
+        if (typeof entity.table_name === "string") {
+            return entity.table_name;
+        }
+        throw new Error("Entity object has no table_name");
+    }
+
+    throw new Error(`Invalid entity type: ${typeof entity}`);
+}
+
 export async function list_entities(entity, additional_params = "", page_number = 1, page_size = 20) {
-    const url = new URL(`${API_BASE}/${entity}`);
+    const url = new URL(`${API_BASE}/${resolveTableName(entity)}`);
 
     url.searchParams.set("page_number", page_number.toString());
     url.searchParams.set("page_size", page_size.toString());
@@ -301,7 +317,7 @@ export async function list_all_entities(entity, additional_params = "") {
 }
 
 export async function read_entity(entity, id) {
-    const url = new URL(`${API_BASE}/${entity}/${id}`);
+    const url = new URL(`${API_BASE}/${resolveTableName(entity)}/${id}`);
 
     return await apiFetch(url.toString(),
         {
@@ -313,7 +329,7 @@ export async function read_entity(entity, id) {
 }
 
 export async function delete_entity(entity, id) {
-    const url = new URL(`${API_BASE}/${entity}/${id}`);
+    const url = new URL(`${API_BASE}/${resolveTableName(entity)}/${id}`);
 
     return await apiFetch(url.toString(),
         {
@@ -326,7 +342,7 @@ export async function put_entity(model_name, id, json) {
     if(id === undefined) {
         throw "id required";
     }
-    const url = new URL(`${API_BASE}/${model_name}/${id}`);
+    const url = new URL(`${API_BASE}/${resolveTableName(resolveTableName(model_name))}/${id}`);
     return await apiFetch(url.toString(), {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
@@ -336,7 +352,7 @@ export async function put_entity(model_name, id, json) {
 }
 
 export async function post_entity(model_name, json) {
-    const url = new URL(`${API_BASE}/${model_name}`);
+    const url = new URL(`${API_BASE}/${resolveTableName(resolveTableName(model_name))}`);
     return await apiFetch(url.toString(), {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -345,7 +361,7 @@ export async function post_entity(model_name, json) {
 }
 
 export function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 * 1000) { // cache for 24 hours
-    const key = `titlecache:${entityName}:${entityId}`;
+    const key = `titlecache:${resolveTableName(entityName)}:${entityId}`;
     localStorage.setItem(key, JSON.stringify({
         value,
         expires: Date.now() + ttlMs
@@ -353,7 +369,7 @@ export function setTitleCache(entityName, entityId, value, ttlMs = 24 * 60 * 60 
 }
 
 export function getTitleCache(entityName, entityId) {
-    const key = `titlecache:${entityName}:${entityId}`;
+    const key = `titlecache:${resolveTableName(entityName)}:${entityId}`;
     const raw = localStorage.getItem(key);
     if (!raw) return null;
     try {
