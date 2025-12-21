@@ -968,7 +968,7 @@ class DictionaryApp {
             // --- Sort ---
             const sortLabel = make_label("Sort:");
             const sortSelect = make_select()
-            let sort_array = ["None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Random"]
+            let sort_array = ["None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Next review", "Random"]
             sort_array.forEach((t, i) => {
                 const opt = document.createElement("option");
                 opt.value = i - 1; // Any = -1

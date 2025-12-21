@@ -111,7 +111,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             if (order != "Asc" && order != "Desc") sort = "Asc";
 
             sort =q.value("sort", "None");
-            std::vector sort_values = {"None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Random"};
+            std::vector sort_values = {"None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Next review", "Random"};
             {
                 bool sort_found = false;
                 for (string e: sort_values)
@@ -342,6 +342,14 @@ namespace mindnet::db::sqlite::queries::dictionary
 
         if (q.source_id > 0)
             sql_current_page += " JOIN dictionary_source ds ON ds.dictionary_term_id = dt.id ";
+
+        bool sort_next_review = q.sort.find("Next review") != string::npos;
+        if (sort_next_review)
+        {
+            sql_current_page += " LEFT JOIN dictionary_state_18 state ON state.dictionary_term_id = dt.id ";
+            sql_current_page += " AND state.user_id = ? ";
+            binders.push_back(user_id);
+        }
 
         // pinned
         if (q.pinned_only)
@@ -913,6 +921,7 @@ NOT EXISTS (
         if (q.sort == "Status") sql_sort = "dt.status";
         if (q.sort == "Difficulty") sql_sort = "dt.difficulty";
         if (q.sort == "Importance") sql_sort = "dt.importance";
+        if (q.sort == "Next review") sql_sort = "coalesce(state.next_review, 18446744073709551615)";
         if (q.sort == "Random") sql_sort = "random()";
         if (!sql_sort.empty())
         {
