@@ -81,6 +81,9 @@ namespace mindnet::api
         api::AccessTokenContext& token,
         entity_fields& fields)
     {
+        //created_at and updated_at should be the same during the creation
+        fields[2] = fields[1];
+
         if (!def.validate_column_count(fields)) return {-1, {500, "Invalid size of entity_fields."}};
         SQLITE_LOCK_GUARD()
         string error;

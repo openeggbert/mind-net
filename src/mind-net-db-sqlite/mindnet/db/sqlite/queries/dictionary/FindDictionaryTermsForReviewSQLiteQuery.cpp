@@ -22,124 +22,141 @@
  */
 
 #include "../../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsForReviewSQLiteQuery.hpp"
+
 #include <SQLiteCpp/SQLiteCpp.h>
+
 #include "mindnet/db/sqlite/SqliteFileName.hpp"
 #include "mindnet/essential/DatabaseType.hpp"
 
 namespace mindnet::db::sqlite::queries::dictionary
 {
+    // -------------------------------------------------------------------------
+    // SQL QUERIES
+    // -------------------------------------------------------------------------
+
     static const std::string SQL_DUE = R"(
-SELECT t.id AS term_id
+SELECT t.id
 FROM dictionary_term t
-JOIN dictionary_state_18 s ON s.dictionary_term_id = t.id
-AND t.dictionary_map_id = ?
-WHERE s.user_id = ?
-  AND s.next_review <= ? --now_ms
-  AND (? = 1 OR TRIM(t.definition) <> '')
-
-AND t.dictionary_map_id = ?
-AND t.status != 6 -- Deleted
-
-ORDER BY RANDOM() LIMIT 100;
-)";
-
-    static const std::string SQL_NEW = R"(
-SELECT t.id AS term_id
-FROM dictionary_term t
-LEFT JOIN dictionary_state18 s
-  ON s.dictionary_term_id = t.id AND s.user_id = ?
-AND t.dictionary_map_id = ?
-WHERE s.dictionary_term_id IS NULL
-
-  AND (? = 1 OR TRIM(t.definition) <> '')
-
-AND t.dictionary_map_id = ?
-AND t.status != 6 -- Deleted
-
-ORDER BY RANDOM() LIMIT 100;
+JOIN dictionary_state_18 s
+  ON s.dictionary_term_id = t.id
+WHERE
+    t.dictionary_map_id = ?
+AND s.user_id = ?
+AND s.next_review <= ?
+AND t.status != 6
+AND (? = 1 OR TRIM(t.definition) <> '')
+ORDER BY RANDOM()
+LIMIT 100;
 )";
 
     static const std::string SQL_NOT_DUE = R"(
-SELECT t.id AS term_id
+SELECT t.id
 FROM dictionary_term t
-JOIN dictionary_state_18 s ON s.dictionary_term_id = t.id
-AND t.dictionary_map_id = ?
-WHERE s.user_id = ?
-  AND s.next_review > ? --now_ms
-  AND (? = 1 OR TRIM(t.definition) <> '')
+JOIN dictionary_state_18 s
+  ON s.dictionary_term_id = t.id
+WHERE
+    t.dictionary_map_id = ?
+AND s.user_id = ?
+AND s.next_review > ?
+AND t.status != 6
+AND (? = 1 OR TRIM(t.definition) <> '')
+ORDER BY RANDOM()
+LIMIT 100;
+)";
 
-AND t.dictionary_map_id = ?
-AND t.status != 6 -- Deleted
-
-ORDER BY RANDOM() LIMIT 100;
+    static const std::string SQL_NEVER = R"(
+SELECT t.id
+FROM dictionary_term t
+WHERE
+    t.dictionary_map_id = ?
+AND t.status != 6
+AND (? = 1 OR TRIM(t.definition) <> '')
+AND NOT EXISTS (
+    SELECT 1
+    FROM dictionary_state_18 s
+    WHERE s.dictionary_term_id = t.id
+      AND s.user_id = ?
+)
+ORDER BY RANDOM()
+LIMIT 100;
 )";
 
     static const std::string SQL_ALL = R"(
-SELECT t.id AS term_id
+SELECT t.id
 FROM dictionary_term t
-
 WHERE
-    (? = 1 OR TRIM(t.definition) <> '')
-
-AND t.dictionary_map_id = ?
-AND t.status != 6 -- Deleted
-
-ORDER BY RANDOM() LIMIT 100;
+    t.dictionary_map_id = ?
+AND t.status != 6
+AND (? = 1 OR TRIM(t.definition) <> '')
+ORDER BY RANDOM()
+LIMIT 100;
 )";
+
     static constexpr int MAX_COUNT_OF_TERMS = 100;
 
-    using BindValue = std::variant<std::string, i64>;
+    using BindValue = std::variant<i64, std::string>;
+
+    // -------------------------------------------------------------------------
+    // CTOR
+    // -------------------------------------------------------------------------
 
     FindDictionaryTermsForReviewSQLiteQuery::FindDictionaryTermsForReviewSQLiteQuery()
-        : Query(QUERY_FindDictionaryTermsForReview, "Returns term ids for repetition session",
-                essential::DatabaseType::SQLite)
+        : Query(
+            QUERY_FindDictionaryTermsForReview,
+            "Returns term ids for SuperMemo 18 review session",
+            essential::DatabaseType::SQLite)
     {
     }
 
-    void execute_sql_query(
+    // -------------------------------------------------------------------------
+    // HELPER
+    // -------------------------------------------------------------------------
+
+    static void execute_sql_query(
         const std::string& sql,
-        const string& request_string,
+        const std::string& request_dump,
         std::vector<identification>& term_ids,
         const std::vector<BindValue>& bind_values)
     {
         SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
-        db.exec("PRAGMA foreign_keys = ON;");
-        db.exec("PRAGMA journal_mode=WAL;");
 
         essential::debug << sql << essential::commit;
-        essential::debug << "Executing =" << request_string << essential::commit;
+        essential::debug << "Request = " << request_dump << essential::commit;
+
         SQLite::Statement stmt(db, sql);
-        int i = 0;
-        for (auto& v : bind_values)
+
+        int index = 0;
+        for (const auto& v : bind_values)
         {
-            if (holds_alternative<std::string>(v))
+            if (std::holds_alternative<i64>(v))
             {
-                std::string s = std::get<std::string>(v);
-                stmt.bind(++i, s);
-            }
-            else if (holds_alternative<i64>(v))
-            {
-                i64 n = std::get<i64>(v);
-                stmt.bind(++i, n);
+                stmt.bind(++index, std::get<i64>(v));
             }
             else
             {
-                throw std::runtime_error("Unsupported variant.");
+                stmt.bind(++index, std::get<std::string>(v));
             }
         }
 
         while (stmt.executeStep())
         {
             term_ids.push_back(stmt.getColumn(0).getInt());
-            if (term_ids.size() >= MAX_COUNT_OF_TERMS) break;
+            if (term_ids.size() >= MAX_COUNT_OF_TERMS)
+                break;
         }
     }
 
-    nlohmann::json FindDictionaryTermsForReviewSQLiteQuery::call(nlohmann::json& request,
-                                                                 api::InvalidateMethod& invalidate_method,
-                                                                 plugins::core::models::OptionalError& optional_error)
+    // -------------------------------------------------------------------------
+    // CALL
+    // -------------------------------------------------------------------------
+
+    nlohmann::json FindDictionaryTermsForReviewSQLiteQuery::call(
+        nlohmann::json& request,
+        api::InvalidateMethod&,
+        plugins::core::models::OptionalError&)
     {
         nlohmann::json response;
+
         if (!request.contains("dictionary_map_id"))
             throw std::invalid_argument("Mandatory key dictionary_map_id is missing");
         if (!request.contains("user_id"))
@@ -149,98 +166,95 @@ ORDER BY RANDOM() LIMIT 100;
 
         identification dictionary_map_id = request["dictionary_map_id"];
         identification user_id = request["user_id"];
-        identification algorithm = request.value("algorithm", 18);
+        identification algorithm = request["algorithm"];
+
         if (algorithm != 18)
             throw std::invalid_argument("Unsupported algorithm: " + std::to_string(algorithm));
 
-        bool is_due = request.value("is_due", 0);
-        bool is_new = request.value("is_new", 0);
-        bool is_not_due = request.value("is_not_due", 0);
-        bool include_empty_definition = request.value("include_empty_definition", 0);
+        bool is_due = request.value("is_due", false);
+        bool is_not_due = request.value("is_not_due", false);
+        bool is_never = request.value("is_never", false);
+        bool include_empty_definition = request.value("include_empty_definition", false);
 
-        if (!(is_due || is_new || is_not_due))
+        // default: due + new
+        if (!(is_due || is_not_due || is_never))
         {
             is_due = true;
-            is_new = true;
-        }
-        bool include_new_due_and_not_due = is_due && is_new && is_not_due;
-        if (include_new_due_and_not_due)
-        {
-            is_due = false;
-            is_new = false;
-            is_not_due = false;
+            is_never = true;
         }
 
-        long long now_ms = std::time(nullptr) * 1000LL;
-        string request_string = request.dump();
-        // --- Execute SQL query ---
+        bool select_all = is_due && is_not_due && is_never;
+
+        const i64 now_ms = static_cast<i64>(std::time(nullptr)) * 1000LL;
+        const std::string request_dump = request.dump();
+
         std::vector<identification> term_ids;
-        if (is_due)
-            try
+
+        try
+        {
+            if (select_all)
             {
-                std::vector<BindValue> bind_values;
-                bind_values.push_back(dictionary_map_id);
-                bind_values.push_back(user_id);
-                bind_values.push_back(now_ms);
-                bind_values.push_back(include_empty_definition? 1 : 0);
-                bind_values.push_back(dictionary_map_id);
-                execute_sql_query(SQL_DUE,request_string,term_ids,bind_values);
+                execute_sql_query(
+                    SQL_ALL,
+                    request_dump,
+                    term_ids,
+                    {
+                        dictionary_map_id,
+                        include_empty_definition ? 1LL : 0LL
+                    });
             }
-            catch (SQLite::Exception& e)
+            else
             {
-                response["error"] = e.what();
-                response["sql_failed"] = SQL_DUE;
-                return response;
+                if (is_due)
+                {
+                    execute_sql_query(
+                        SQL_DUE,
+                        request_dump,
+                        term_ids,
+                        {
+                            dictionary_map_id,
+                            user_id,
+                            now_ms,
+                            include_empty_definition ? 1LL : 0LL
+                        });
+                }
+
+                if (is_never)
+                {
+                    execute_sql_query(
+                        SQL_NEVER,
+                        request_dump,
+                        term_ids,
+                        {
+                            dictionary_map_id,
+                            include_empty_definition ? 1LL : 0LL,
+                            user_id
+                        });
+                }
+
+                if (is_not_due)
+                {
+                    execute_sql_query(
+                        SQL_NOT_DUE,
+                        request_dump,
+                        term_ids,
+                        {
+                            dictionary_map_id,
+                            user_id,
+                            now_ms,
+                            include_empty_definition ? 1LL : 0LL
+                        });
+                }
             }
-        if (is_new)
-            try
-            {
-                std::vector<BindValue> bind_values;
-                bind_values.push_back(user_id);
-                bind_values.push_back(dictionary_map_id);
-                bind_values.push_back(include_empty_definition? 1 : 0);
-                bind_values.push_back(dictionary_map_id);
-                execute_sql_query(SQL_NEW, request_string,term_ids,bind_values);
-            }
-            catch (SQLite::Exception& e)
-            {
-                response["error"] = e.what();
-                response["sql_failed"] = SQL_NEW;
-                return response;
-            }
-        if (is_not_due)
-            try
-            {
-                std::vector<BindValue> bind_values;
-                bind_values.push_back(dictionary_map_id);
-                bind_values.push_back(user_id);
-                bind_values.push_back(now_ms);
-                bind_values.push_back(include_empty_definition? 1 : 0);
-                bind_values.push_back(dictionary_map_id);
-                execute_sql_query(SQL_NOT_DUE,request_string,term_ids,bind_values);
-            }
-            catch (SQLite::Exception& e)
-            {
-                response["error"] = e.what();
-                response["sql_failed"] = SQL_NOT_DUE;
-                return response;
-            }
-        if (include_new_due_and_not_due)
-            try
-            {
-                std::vector<BindValue> bind_values;
-                bind_values.push_back(include_empty_definition? 1 : 0);
-                bind_values.push_back(dictionary_map_id);
-                execute_sql_query(SQL_ALL,request_string,term_ids,bind_values);
-            }
-            catch (SQLite::Exception& e)
-            {
-                response["error"] = e.what();
-                response["sql_failed"] = SQL_ALL;
-                return response;
-            }
+        }
+        catch (const SQLite::Exception& e)
+        {
+            response["error"] = e.what();
+            return response;
+        }
 
         response["term_ids"] = term_ids;
         return response;
     }
-}
+
+} // namespace

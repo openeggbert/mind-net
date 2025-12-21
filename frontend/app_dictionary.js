@@ -12,7 +12,16 @@ import {
     read_entity,
     setTitleCache
 } from "./api.js";
-import {chooseOption, formatDateTime, formatDateTimeHMS, get_element, showError, showInfo, showWarn} from "./dom.js";
+import {
+    chooseOption,
+    formatDateTime,
+    formatDateTimeHM,
+    formatDateTimeHMS,
+    get_element,
+    showError,
+    showInfo,
+    showWarn
+} from "./dom.js";
 import {Autocomplete, null_or_undefined} from "./common.js";
 
 let wasDragged = false;
@@ -724,7 +733,6 @@ class DictionaryApp {
             // --- Importance ---
             const impLabel = make_label("Importance:");
             const impContainer = document.createElement("span");
-
             ["Low", "Medium", "High"].forEach((t, i) => {
                 const input = make_input("checkbox");
                 input.value = i + 1;
@@ -740,7 +748,6 @@ class DictionaryApp {
 
                 impContainer.appendChild(l);
             });
-
             form.appendChild(make_div(impLabel, impContainer));
 
             // --- Difficulty ---
@@ -937,6 +944,27 @@ class DictionaryApp {
             });
             form.appendChild(make_div(reviewedLabel, reviewedSelect));
 
+            // --- Repetition ---
+            const repLabel = make_label("Repetition:");
+            const repContainer = document.createElement("span");
+            ["Due", "Not due", "Never"].forEach((t, i) => {
+                const input = make_input("checkbox");
+                input.value = i + 1;
+                input.checked = true;
+                input.style.marginLeft = "0"
+                input.id = "repetition_" + t.toLowerCase()
+                if(t === "Not due") input.id = "repetition_not_due"
+
+                const l = make_label("", "auto");
+                l.style.marginRight = "10px";
+                l.style.marginLeft = "0"
+                l.appendChild(input);
+                l.append(" " + t);
+
+                repContainer.appendChild(l);
+            });
+            form.appendChild(make_div(repLabel, repContainer));
+
             // --- Sort ---
             const sortLabel = make_label("Sort:");
             const sortSelect = make_select()
@@ -1044,15 +1072,26 @@ class DictionaryApp {
                 tr_th.appendChild(th_disambiguation)
                 th_id.style.width = "50px"
                 th_title.style.minWidth = "200px"
-                th_disambiguation.style.minWidth = "200px"
+                th_disambiguation.style.minWidth = "100px"
                 let term_map = new Map()
+                let state_map = new Map()
+
+                let repetition_all =
+                    get_element("repetition_due").checked === true &&
+                    get_element("repetition_not_due").checked === true &&
+                    get_element("repetition_never").checked === true
                 if(details) {
-                    function append_th(text) {tr_th.appendChild(create_th(text))}
+                    function append_th(text) {
+                        let th = create_th(text)
+                        tr_th.appendChild(th)
+                    }
                     append_th("Created at")
                     append_th("Updated at")
                     append_th("Status")
                     append_th("Importance")
                     append_th("Difficulty")
+                    //if(!repetition_all)
+                        append_th("Next review")
                 }
                 for(const item of items) {
 
@@ -1063,6 +1102,17 @@ class DictionaryApp {
                         continue
                     }
                     term_map.set(term_id, read_term)
+                    //if(!repetition_all)
+                    {
+                        let list_states = await list_all_entities(
+                            "dictionary_state_18",
+                            format_url_params(
+                                "dictionary_term_id", term_id,
+                                "user_id", getUserId()
+                            )
+                            )
+                        if(defined(list_states) && list_states.length > 0) state_map.set(term_id, list_states[0])
+                    }
                 }
 
                 if(items.length === 0) {
@@ -1139,6 +1189,15 @@ class DictionaryApp {
                             append_td(term_status_to_string(term.status))
                             append_td(term.importance === 1? "Low" : (term.importance === 2 ? "Medium" :" High"))
                             append_td(term.difficulty === 1? "Easy" : (term.importance === 2 ? "Medium" :" Hard"))
+                            //if(!repetition_all)
+                            {
+                                if (state_map.has(dictionary_term_id)) {
+                                    append_td(formatDateTimeHM(state_map.get(dictionary_term_id).next_review))
+
+                                } else {
+                                    append_td("---")
+                                }
+                            }
                         }
 
                     }
@@ -1244,6 +1303,9 @@ class DictionaryApp {
                         .from(reviewedSelect.selectedOptions)
                         .map(opt => opt.innerText)
                         .join(","),
+                    repetition_due: get_element("repetition_due").checked,
+                    repetition_not_due: get_element("repetition_not_due").checked,
+                    repetition_never: get_element("repetition_never").checked,
                     sort: Array
                         .from(sortSelect.selectedOptions)
                         .map(opt => opt.innerText)
@@ -1371,7 +1433,6 @@ class DictionaryApp {
                 get_element("difficulty_medium").checked = query.difficulty_medium ?? true
                 get_element("difficulty_hard").checked = query.difficulty_hard ?? true
 
-
                 if ((query.tag_id ?? 0) !== 0) {
                     let read_tag = await read_entity("dictionary_tag", query.tag_id)
                     if (!defined(read_tag)) {
@@ -1483,6 +1544,11 @@ class DictionaryApp {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = reviewed === option.innerText;
                 }
+
+                get_element("repetition_due").checked = query.repetition_due ?? true
+                get_element("repetition_not_due").checked = query.repetition_not_due ?? true
+                get_element("repetition_never").checked = query.repetition_never ?? true
+                
                 let sort = query.sort ?? ""
                 for (const option of sortSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
@@ -1549,6 +1615,7 @@ class DictionaryApp {
             details_checkbox.id = "details_checkbox"
             details_checkbox.style.display = "inline"
             details_checkbox.style.transform = "scale(2)";
+            details_checkbox.checked = screen.width > 1200
 
             function make_page_size_option(size) {
                 let option = document.createElement("option")
@@ -1649,7 +1716,6 @@ class DictionaryApp {
             span_total_count_count.id = "span_total_count_count"
             span_total.appendChild(span_total_count_count)
 
-
             let span_search_id_text = document.createElement("span")
             span_search_id_text.innerText = "Search ID: "
             span_search_id_text.style.marginLeft = "10px"
@@ -1666,8 +1732,6 @@ class DictionaryApp {
                 showInfo("Search ID " + span_search_id_value.innerText + " was copied to clipboard.")
             })
             span_total.appendChild(span_search_id_value)
-
-
 
             button_first_page.onclick = (e=> {input_page_number.value = 1; go_page_button.click()})
             button_prev_page.onclick = (e=> {

@@ -60,8 +60,8 @@ namespace mindnet::plugins::dictionary::models
 
             coldef(COLS::ALGORITHM, INTEGER | READONLY),
             coldef(COLS::IS_DUE, BOOL | READONLY).set_default_value(true),
-            coldef(COLS::IS_NEW, BOOL | READONLY).set_default_value(true),
             coldef(COLS::IS_NOT_DUE, BOOL | READONLY).set_default_value(false),
+            coldef(COLS::IS_NEVER, BOOL | READONLY).set_default_value(true),
             coldef(COLS::INCLUDE_EMPTY_DEFINITION, BOOL | READONLY).set_default_value(false),
         });
 
@@ -78,7 +78,7 @@ namespace mindnet::plugins::dictionary::models
 
         int algorithm{};
         bool is_due{false};
-        bool is_new{false};
+        bool is_never{false};
         bool is_not_due{false};
         bool include_empty_definition{false};
 
@@ -92,7 +92,7 @@ namespace mindnet::plugins::dictionary::models
             &Model::definition,
             &Model::algorithm,
             &Model::is_due,
-            &Model::is_new,
+            &Model::is_never,
             &Model::is_not_due,
             &Model::include_empty_definition
         );
@@ -111,7 +111,7 @@ namespace mindnet::plugins::dictionary::models
                 definition == other.definition &&
                 algorithm == other.algorithm &&
                 is_due == other.is_due &&
-                is_new == other.is_new &&
+                is_never == other.is_never &&
                 is_not_due == other.is_not_due &&
                 include_empty_definition == other.include_empty_definition &&
                 created_at == other.created_at &&

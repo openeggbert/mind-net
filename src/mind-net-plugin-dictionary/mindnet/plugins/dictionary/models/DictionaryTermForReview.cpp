@@ -32,7 +32,7 @@ namespace mindnet::plugins::dictionary::models
         using columns::DictionaryTermForReviewColumns;
 
         validator_chain_vector list{
-            [this] { return test_true(is_due || is_new || is_not_due, "At least one of is_due, is_new, is_not_due must be true"); },
+            [this] { return test_true(is_due || is_never || is_not_due, "At least one of is_due, is_never, is_not_due must be true"); },
         };
         return util::ValidatorChain::run(list);
     }

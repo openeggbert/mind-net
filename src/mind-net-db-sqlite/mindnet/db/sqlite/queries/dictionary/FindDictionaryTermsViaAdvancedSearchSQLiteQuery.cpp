@@ -103,6 +103,10 @@ namespace mindnet::db::sqlite::queries::dictionary
             visited = q.value("visited", "Any");
             reviewed = q.value("reviewed", "Any");
 
+            repetition_due = q.value("repetition_due", true);
+            repetition_not_due = q.value("repetition_not_due", true);
+            repetition_never = q.value("repetition_never", true);
+
             order = q.value("order", "Asc");
             if (order != "Asc" && order != "Desc") sort = "Asc";
 
@@ -154,6 +158,11 @@ namespace mindnet::db::sqlite::queries::dictionary
         string updated;
         string visited;
         string reviewed;
+
+        bool repetition_due;
+        bool repetition_not_due;
+        bool repetition_never;
+
         string sort;
         string order = "Asc";
 
@@ -204,6 +213,11 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["updated"] = updated;
             q["visited"] = visited;
             q["reviewed"] = reviewed;
+
+            q["repetition_due"] = repetition_due;
+            q["repetition_not_due"] = repetition_not_due;
+            q["repetition_never"] = repetition_never;
+
             q["sort"] = sort;
             q["order"] = order;
 
@@ -226,7 +240,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         BindValue(i64 v) : number(v), type(NUMBER)
         {
         }
-        BindValue(std::string v) : text(v), type(TEXT)
+        BindValue(const std::string& v) : text(v), type(TEXT)
         {
         }
         const i64& get_number() const
@@ -813,7 +827,86 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
         }
 
-        std::string sql_sort = "";
+        auto now_ms = util::Utils::current_unix_timestamp_ms();
+        bool require_definition =
+            std::find(q.has_items.begin(), q.has_items.end(), "definition")
+                != q.has_items.end();
+
+        // repetition
+        if (!(q.repetition_due && q.repetition_not_due && q.repetition_never))
+        {
+            append_where(sql_current_page, first_where);
+            sql_current_page += " ( ";
+
+            bool first_rep = true;
+
+            auto add_or = [&]()
+            {
+                if (!first_rep)
+                    sql_current_page += " OR ";
+                first_rep = false;
+            };
+
+            // -------- due --------
+            if (q.repetition_due)
+            {
+                add_or();
+                sql_current_page += R"(
+EXISTS (
+    SELECT 1
+    FROM dictionary_state_18 s
+    WHERE s.dictionary_term_id = dt.id
+      AND s.user_id = ?
+      AND s.next_review <= ?
+)
+)";
+                binders.push_back(user_id);
+                binders.push_back(now_ms);
+            }
+
+            // -------- not due --------
+            if (q.repetition_not_due)
+            {
+                add_or();
+                sql_current_page += R"(
+EXISTS (
+    SELECT 1
+    FROM dictionary_state_18 s
+    WHERE s.dictionary_term_id = dt.id
+      AND s.user_id = ?
+      AND s.next_review > ?
+)
+)";
+                binders.push_back(user_id);
+                binders.push_back(now_ms);
+            }
+
+            // -------- never --------
+            if (q.repetition_never)
+            {
+                add_or();
+                sql_current_page += R"(
+NOT EXISTS (
+    SELECT 1
+    FROM dictionary_state_18 s
+    WHERE s.dictionary_term_id = dt.id
+      AND s.user_id = ?
+)
+)";
+                binders.push_back(user_id);
+            }
+
+            sql_current_page += " ) ";
+
+            // optional: require definition
+            if (require_definition)
+            {
+                append_where(sql_current_page, first_where);
+                sql_current_page += " TRIM(dt.definition) <> '' ";
+            }
+        }
+
+        std::string sql_sort;
         if (q.sort == "Title") sql_sort = "dt.title";
         if (q.sort == "Created at") sql_sort = "dt.created_at";
         if (q.sort == "Updated at") sql_sort = "dt.updated_at";
@@ -830,6 +923,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         
         std::string sql_count;
 
+        essential::debug << "###sql_current_page### " + sql_current_page << essential::commit;
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);

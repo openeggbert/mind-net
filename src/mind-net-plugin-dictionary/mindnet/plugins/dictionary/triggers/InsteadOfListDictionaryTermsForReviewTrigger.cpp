@@ -74,14 +74,14 @@ namespace mindnet::plugins::dictionary::triggers
         bool search = dictionary_search_id != 0;
 
         bool is_due = f.contains("is_due") ? stoll(f.at("is_due")) : false;
-        bool is_new = f.contains("is_new") ? stoll(f.at("is_new")) : false;
+        bool is_never = f.contains("is_never") ? stoll(f.at("is_never")) : false;
         bool is_not_due = f.contains("is_not_due") ? stoll(f.at("is_not_due")) : false;
-        if (!is_due && !is_new && !is_not_due)
+        if (!is_due && !is_never && !is_not_due)
         {
             is_due = true;
-            is_new = true;
+            is_never = true;
         }
-        bool include_new_due_and_not_due = is_due && is_new && is_not_due;
+        bool include_new_due_and_not_due = is_due && is_never && is_not_due;
         bool include_empty_definition = f.contains("include_empty_definition")
                                             ? stoll(f.at("include_empty_definition"))
                                             : false;
@@ -107,7 +107,7 @@ namespace mindnet::plugins::dictionary::triggers
         }
         req["algorithm"] = algorithm;
         req["is_due"] = is_due;
-        req["is_new"] = is_new;
+        req["is_never"] = is_never;
         req["is_not_due"] = is_not_due;
         req["include_empty_definition"] = include_empty_definition;
 
@@ -163,7 +163,7 @@ namespace mindnet::plugins::dictionary::triggers
                     term_for_review.definition = term.definition;
                     term_for_review.algorithm = algorithm;
                     term_for_review.is_due = is_due;
-                    term_for_review.is_new = is_new;
+                    term_for_review.is_due = is_never;
                     term_for_review.is_not_due = is_not_due;
                     term_for_review.include_empty_definition = include_empty_definition;
 
@@ -264,7 +264,7 @@ namespace mindnet::plugins::dictionary::triggers
                             }
                         }
 
-                        if (!is_new && !optional_dictionary_state_18.has_value()) continue;
+                        if (!is_never && !optional_dictionary_state_18.has_value()) continue;
                         if (optional_dictionary_state_18.has_value())
                         {
                             unixtime next_review = optional_dictionary_state_18.value().next_review;
@@ -298,7 +298,7 @@ namespace mindnet::plugins::dictionary::triggers
                         term_for_review.definition = term.definition;
                         term_for_review.algorithm = algorithm;
                         term_for_review.is_due = is_due;
-                        term_for_review.is_new = is_new;
+                        term_for_review.is_due = is_never;
                         term_for_review.is_not_due = is_not_due;
                         term_for_review.include_empty_definition = include_empty_definition;
 

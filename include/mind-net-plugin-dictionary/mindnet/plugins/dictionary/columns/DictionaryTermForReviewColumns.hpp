@@ -51,8 +51,8 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* ALGORITHM       = "algorithm";
         static constexpr const char* IS_DUE             = "is_due";
-        static constexpr const char* IS_NEW             = "is_new";
         static constexpr const char* IS_NOT_DUE         = "is_not_due";
+        static constexpr const char* IS_NEVER             = "is_never";
         static constexpr const char* INCLUDE_EMPTY_DEFINITION = "include_empty_definition";
 
     };
