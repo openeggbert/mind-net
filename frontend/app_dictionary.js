@@ -866,6 +866,29 @@ class DictionaryApp {
             });
             form.appendChild(make_div(missingLabel, missingContainer));
 
+            // --- Has items ---
+            const hasLabel = make_label("Has:");
+            const hasContainer = document.createElement("span");
+
+            const has_array = ["Definition", "Tags", "Flags", "Links", "Notes", "Indexes", "Sources", "Aliases"]
+            has_array.forEach((t, i) => {
+                const cb = make_input("checkbox");
+                cb.value = i + 1;
+                cb.checked = false;
+                cb.style.marginLeft = "0"
+                cb.id = "has_" + t.toLowerCase()
+
+                const l = make_label("", "auto");
+                l.style.marginRight = "10px";
+                l.style.marginLeft = "0"
+                l.appendChild(cb);
+                l.append(" " + t);
+                l.style.fontSize = "80%"
+
+                hasContainer.appendChild(l);
+            });
+            form.appendChild(make_div(hasLabel, hasContainer));
+
             const created_updated_visited_reviewed_array = [
                 "Any","Last hour", "Last 3 hours","Today","Last week","Last month","Last year","Last 10 years",
                 "Not last hour", "Not last 3 hours","Not today","Not last week","Not last month","Not last year","Not last 10 years","Never"]
@@ -1142,7 +1165,7 @@ class DictionaryApp {
                 statusSelect.selectedIndex = 0;
                 pinnedCheckbox.checked = false
                 form.querySelectorAll("input[type=checkbox]").forEach(cb => {
-                    if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_")) cb.checked = true
+                    if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
                 })
                 tag_autocomplete.reset()
                 flag_autocomplete.reset()
@@ -1154,6 +1177,11 @@ class DictionaryApp {
                 alias_autocomplete.reset()
                 missing_array.forEach(e => {
                     let id = "missing_" + e.toLowerCase()
+                    let cb = get_element(id)
+                    cb.checked = false
+                })
+                has_array.forEach(e => {
+                    let id = "has_" + e.toLowerCase()
                     let cb = get_element(id)
                     cb.checked = false
                 })
@@ -1194,6 +1222,10 @@ class DictionaryApp {
                     alias_alias: alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title,
                     missing_items: missing_array
                         .filter(e => get_element("missing_" + e.toLowerCase()).checked)
+                        .map(e => e.toLowerCase())
+                        .join(","),
+                    has_items: has_array
+                        .filter(e => get_element("has_" + e.toLowerCase()).checked)
                         .map(e => e.toLowerCase())
                         .join(","),
                     created: Array
@@ -1418,7 +1450,18 @@ class DictionaryApp {
                             console.debug("id=" + id + ", el= " + el)
                             el.checked = true
                         }
-                    })
+                    });
+
+                (query.has_items ?? "")
+                    .split(",")
+                    .forEach(e => {
+                        let id = "has_" + e.toLowerCase()
+                        let el = get_element(id)
+                        if (el !== null) {
+                            console.debug("id=" + id + ", el= " + el)
+                            el.checked = true
+                        }
+                    });
 
                 let created = query.created ?? ""
                 for (const option of createdSelect.options) {

@@ -96,6 +96,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             alias_alias = q.value("alias_alias", "");
 
             missing_items = split_csv(q.value("missing_items", ""));
+            has_items = split_csv(q.value("has_items", ""));
 
             created = q.value("created", "Any");
             updated = q.value("updated", "Any");
@@ -148,6 +149,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         string alias_alias;
 
         vector<string> missing_items;
+        vector<string> has_items;
         string created;
         string updated;
         string visited;
@@ -155,7 +157,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         string sort;
         string order = "Asc";
 
-        std::string to_json() const
+        [[nodiscard]] std::string to_json() const
         {
             using json = nlohmann::json;
 
@@ -197,6 +199,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["alias_alias"] = alias_alias;
 
             q["missing_items"] = join_csv(missing_items);
+            q["has_items"] = join_csv(has_items);
             q["created"] = created;
             q["updated"] = updated;
             q["visited"] = visited;
@@ -528,6 +531,55 @@ namespace mindnet::db::sqlite::queries::dictionary
                 }
             }
         }
+
+        // has items
+        if (!q.has_items.empty())
+        {
+            // common EXISTS patterns
+            static const std::unordered_map<std::string, std::string> has_tables = {
+                {"notes",    "dictionary_note dn"},
+                {"aliases",  "dictionary_term_alias da"},
+                {"tags",     "dictionary_tag dtag"},
+                {"flags",    "dictionary_flag df"},
+                {"sources",  "dictionary_source ds"},
+                {"indexes",  "dictionary_index di"}
+            };
+
+            for (const auto& item : q.has_items)
+            {
+                std::string condition;
+
+                // --- special cases ---
+                if (item == "definition")
+                {
+                    condition = "(dt.definition IS NOT NULL AND dt.definition != '')";
+                }
+                else if (item == "links")
+                {
+                    condition =
+                        "EXISTS (SELECT 1 FROM dictionary_link dl "
+                        "WHERE dl.from_dictionary_term_id = dt.id "
+                        "   OR dl.to_dictionary_term_id = dt.id)";
+                }
+                // --- generic EXISTS ---
+                else if (auto it = has_tables.find(item); it != has_tables.end())
+                {
+                    const std::string& table = it->second;
+                    const std::string alias = table.substr(table.find(' ') + 1);
+
+                    condition =
+                        "EXISTS (SELECT 1 FROM " + table +
+                        " WHERE " + alias + ".dictionary_term_id = dt.id)";
+                }
+
+                if (!condition.empty())
+                {
+                    append_where(sql_current_page, first_where);
+                    sql_current_page += condition;
+                }
+            }
+        }
+
         static constexpr i64 MS_PER_HOUR = 60LL * 60 * 1000;
 
         // created
