@@ -97,9 +97,9 @@ export class SearchModel {
             has_items: this.has_items.map(e=>{return e.id}),
 
             created: this.created.id,
-            updated: enumValue(TimeRange, this.updated)?.id ?? TimeRange.Any.id,
-            visited: enumValue(TimeRange, this.visited)?.id ?? TimeRange.Any.id,
-            reviewed: enumValue(TimeRange, this.reviewed)?.id ?? TimeRange.Any.id,
+            updated: this.updated.id,
+            visited: this.visited.id,
+            reviewed: this.reviewed.id,
 
             repetition_due: this.repetition_due,
             repetition_not_due: this.repetition_not_due,
