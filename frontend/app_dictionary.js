@@ -487,7 +487,6 @@ class DictionaryApp {
             const hasLabel = new Label("Has:");
             const hasContainer = new Span();
 
-
             enumValues(DictionaryItem).forEach(e => {
                 const cb = make_input("checkbox");
                 cb.value = e.id;
@@ -605,6 +604,7 @@ class DictionaryApp {
 
             searchBtn.onclick = async () => {
                 let query_json = load_query_model_from_form().to_json()
+
                 console.log("Advanced search values:", {
                     query_json: query_json
                 });

@@ -96,7 +96,7 @@ export class SearchModel {
             missing_items: this.missing_items.map(e=>{return e.id}),
             has_items: this.has_items.map(e=>{return e.id}),
 
-            created: enumValue(TimeRange, this.created)?.id ?? TimeRange.Any.id,
+            created: this.created.id,
             updated: enumValue(TimeRange, this.updated)?.id ?? TimeRange.Any.id,
             visited: enumValue(TimeRange, this.visited)?.id ?? TimeRange.Any.id,
             reviewed: enumValue(TimeRange, this.reviewed)?.id ?? TimeRange.Any.id,
