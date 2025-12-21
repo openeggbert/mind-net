@@ -8,7 +8,7 @@ import {
     list_all_entities,
     list_entities,
     post_entity,
-    put_entity,
+    put_entity, QueryParams,
     read_entity,
     setTitleCache
 } from "./api.js";
@@ -27,6 +27,7 @@ import {Autocomplete, null_or_undefined} from "./common.js";
 let wasDragged = false;
 let suppressPopstate = false;
 let debug = false
+let USER_ID = getUserId()
 
 function showDebug(msg) {
     if (debug) showInfo("Debug: " + msg)
@@ -408,7 +409,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-export const Tables = Object.freeze({
+export const Entities = Object.freeze({
 
     dictionary_map: Object.freeze({
         id: "id",
@@ -1233,10 +1234,10 @@ class DictionaryApp {
 
                 let list_term_searches = await list_entities(
                     "dictionary_term_search",
-                    format_url_params(
-                        "dictionary_map_id", dictionary_app.get_selected_map_id(),
-                        "title", JSON.stringify(query_json)
-                    ),
+                    new QueryParams()
+                        .add("dictionary_map_id", dictionary_app.get_selected_map_id())
+                        .add("title", JSON.stringify(query_json))
+                        .build(),
                     page_number,
                     page_size
                 )
@@ -1316,7 +1317,7 @@ class DictionaryApp {
                 for(const item of items) {
 
                     let term_id = item.id
-                    let read_term = await read_entity("dictionary_term", term_id)
+                    let read_term = await read_entity(Entities.dictionary_term, term_id)
                     if(!defined) {
                         showError("Reading term failed.")
                         continue
@@ -1325,11 +1326,11 @@ class DictionaryApp {
                     //if(!repetition_all)
                     {
                         let list_states = await list_all_entities(
-                            "dictionary_state_18",
-                            format_url_params(
-                                "dictionary_term_id", term_id,
-                                "user_id", getUserId()
-                            )
+                            Entities.dictionary_state_18,
+                            new QueryParams()
+                                .add(Entities.dictionary_state_18.dictionary_term_id, term_id)
+                                .add_user_id()
+                                .build()
                             )
                         if(defined(list_states) && list_states.length > 0) state_map.set(term_id, list_states[0])
                     }
@@ -1563,13 +1564,13 @@ class DictionaryApp {
 
                 if (!search_already_exists) {
                     let new_search = {
-                        user_id: getUserId(),
+                        user_id: USER_ID,
                         dictionary_map_id: this.get_selected_map_id(),
                         name: name,
                         query_json: JSON.stringify(query_json),
                         is_public: is_public ? 1 : 0
                     }
-                    let new_search_created = await post_entity("dictionary_search", new_search)
+                    let new_search_created = await post_entity(Entities.dictionary_search, new_search)
                     if (!defined(new_search_created)) {
                         showError("Creating new search failed.")
                         return
@@ -1586,7 +1587,7 @@ class DictionaryApp {
                 if (search_already_exists) {
                     search_json.query_json = JSON.stringify(query_json)
 
-                    let search_updated = await put_entity("dictionary_search", search_json.id, search_json)
+                    let search_updated = await put_entity(Entities.dictionary_search, search_json.id, search_json)
                     if (!defined(search_updated)) {
                         showError("Updating search failed.")
                         return
@@ -1629,7 +1630,7 @@ class DictionaryApp {
                 showDebug("new_search_id=" + new_search_id)
                 showDebug(JSON.stringify(search_autocomplete.get_item()))
                 form.classList.add("loading");
-                let read_search = await read_entity("dictionary_search", new_search_id)
+                let read_search = await read_entity(Entities.dictionary_search, new_search_id)
                 if (!defined(read_search)) {
                     showError("Reading search failed: " + new_search_id)
                     return
@@ -1654,11 +1655,11 @@ class DictionaryApp {
                 get_element("difficulty_hard").checked = query.difficulty_hard ?? true
 
                 if ((query.tag_id ?? 0) !== 0) {
-                    let read_tag = await read_entity("dictionary_tag", query.tag_id)
+                    let read_tag = await read_entity(Entities.dictionary_tag, query.tag_id)
                     if (!defined(read_tag)) {
                         showError("Reading tag failed: " + query.tag_id)
                     } else {
-                        let read_tag_type = await read_entity("dictionary_tag_type", read_tag.dictionary_tag_type_id)
+                        let read_tag_type = await read_entity(Entities.dictionary_tag_type, read_tag.dictionary_tag_type_id)
                         if (!defined(read_tag_type)) {
                             showError("Reading tag type failed: " + read_tag.dictionary_tag_type_id)
                         } else {
@@ -1671,7 +1672,7 @@ class DictionaryApp {
                     await flag_autocomplete.set_from_title(query.flag_title)
                 }
                 if ((query.link_from_term_id ?? 0) !== 0) {
-                    let read_term = await read_entity("dictionary_term", query.link_from_term_id)
+                    let read_term = await read_entity(Entities.dictionary_term, query.link_from_term_id)
                     if (!defined(read_term)) {
                         showError("Reading term failed: " + query.link_from_term_id)
                     } else {
@@ -1679,7 +1680,7 @@ class DictionaryApp {
                     }
                 }
                 if ((query.link_to_term_id ?? 0) !== 0) {
-                    let read_term = await read_entity("dictionary_term", query.link_to_term_id)
+                    let read_term = await read_entity(Entities.dictionary_term, query.link_to_term_id)
                     if (!defined(read_term)) {
                         showError("Reading term failed: " + query.link_to_term_id)
                     } else {
@@ -1689,11 +1690,11 @@ class DictionaryApp {
                 noteInput.value = query.note_contains ?? ""
 
                 if ((query.index_id ?? 0) !== 0) {
-                    let read_index = await read_entity("dictionary_index", query.index_id)
+                    let read_index = await read_entity(Entities.dictionary_index, query.index_id)
                     if (!defined(read_index)) {
                         showError("Reading index failed: " + query.index_id)
                     } else {
-                        let read_index_type = await read_entity("dictionary_index_type", read_index.dictionary_index_type_id)
+                        let read_index_type = await read_entity(Entities.dictionary_index_type, read_index.dictionary_index_type_id)
                         if (!defined(read_index_type)) {
                             showError("Reading index type failed: " + read_index_type.dictionary_index_type_id)
                         } else {
@@ -1703,11 +1704,11 @@ class DictionaryApp {
                 }
 
                 if ((query.source_id ?? 0) !== 0) {
-                    let read_source = await read_entity("dictionary_source", query.source_id)
+                    let read_source = await read_entity(Entities.dictionary_source, query.source_id)
                     if (!defined(read_source)) {
                         showError("Reading source failed: " + query.source_id)
                     } else {
-                        let read_source_type = await read_entity("dictionary_source_type", read_source.dictionary_source_type_id)
+                        let read_source_type = await read_entity(Entities.dictionary_source_type, read_source.dictionary_source_type_id)
                         if (!defined(read_source_type)) {
                             showError("Reading source type failed: " + read_source_type.dictionary_source_type_id)
                         } else {
@@ -1796,7 +1797,7 @@ class DictionaryApp {
                     // nothing to do
                     return
                 }
-                let deleted = await delete_entity("dictionary_search", search_json.id)
+                let deleted = await delete_entity(Entities.dictionary_search, search_json.id)
                 if (!defined(deleted)) {
                     showError("Deleting search failed: " + search_json.id + " " + search_json.name)
                     return
@@ -1992,7 +1993,7 @@ class DictionaryApp {
                 dictionary_map_id: this.select_map.get_selected_map_id(),
                 title: this.#input_search_term.value,
             }
-            let new_term_created = await post_entity("dictionary_term", new_term)
+            let new_term_created = await post_entity(Entities.dictionary_term, new_term)
             if (new_term_created === null) {
                 showError("Creating new term failed.")
                 return;
@@ -2032,7 +2033,7 @@ class SelectMap {
     #map = new Map();
 
     async list_maps_from_backend() {
-        return await list_all_entities("dictionary_map", "&sort=position");
+        return await list_all_entities(Entities.dictionary_map, new QueryParams().sort(Entities.dictionary_map.position).build());
     }
 
     constructor() {
@@ -2051,13 +2052,13 @@ class SelectMap {
             let new_map = {
                 name: name,
                 description: "",
-                owner_id: getUserId(),
+                owner_id: USER_ID,
                 team_id: 0,
                 owner_rights: 7,
                 team_rights: 0,
                 other_rights: 0
             }
-            let new_map_created = await post_entity("dictionary_map", new_map)
+            let new_map_created = await post_entity(Entities.dictionary_map, new_map)
 
             if (new_map_created === null) return
             this.add_map(new_map_created.id, new_map_created.name)
@@ -2188,7 +2189,7 @@ class TermContainer {
 
     async render_term(dictionary_term_id) {
         this.dictionary_term_id = dictionary_term_id
-        let dictionary_term = await read_entity("dictionary_term", dictionary_term_id)
+        let dictionary_term = await read_entity(Entities.dictionary_term, dictionary_term_id)
         this.#dictionary_term_json = dictionary_term
         get_element("term_container_h2").innerText = "Term #" + dictionary_term.id
         get_element("input_title").value = dictionary_term.title
@@ -2206,7 +2207,13 @@ class TermContainer {
         get_element("select_status").selectedIndex = status
 
         let checkbox_pinned = get_element("checkbox_pinned")
-        let pinned_terms = await list_all_entities("dictionary_pinned_term", "&user_id=" + getUserId() + "&dictionary_term_id=" + dictionary_term_id)
+        let pinned_terms = await list_all_entities(
+            Entities.dictionary_pinned_term,
+            new QueryParams()
+                .add_user_id()
+                .add(Entities.dictionary_pinned_term.dictionary_term_id, dictionary_term_id)
+                .build()
+        )
         if (!defined(pinned_terms)) {
             showError("Loading pinned terms failed.")
         } else {
@@ -2242,68 +2249,70 @@ class TermContainer {
             }
 
             let pinned_terms = await list_all_entities(
-                "dictionary_pinned_term",
-                "&dictionary_term_id=" + dictionary_term_id
-                + "&user_id=" + getUserId()
+                Entities.dictionary_pinned_term,
+                new QueryParams()
+                    .add_user_id()
+                    .add(Entities.dictionary_pinned_term.dictionary_term_id, dictionary_term_id)
+                    .build()
             )
             let tags = await list_all_entities(
-                "dictionary_tag",
+                Entities.dictionary_tag,
                 "&dictionary_term_id=" + dictionary_term_id)
             let private_flags = await list_all_entities(
-                "dictionary_flag",
-                "&is_public=0&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+                Entities.dictionary_flag,
+                "&is_public=0&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
             let public_flags = await list_all_entities(
-                "dictionary_flag",
+                Entities.dictionary_flag,
                 "&is_public=1&dictionary_term_id=" + dictionary_term_id)
             let links1 = await list_all_entities(
-                "dictionary_link",
+                Entities.dictionary_link,
                 "&from_dictionary_term_id=" + dictionary_term_id)
             let links2 = await list_all_entities(
-                "dictionary_link",
+                Entities.dictionary_link,
                 "&to_dictionary_term_id=" + dictionary_term_id)
             let notes = await list_all_entities(
-                "dictionary_note",
+                Entities.dictionary_note,
                 "&dictionary_term_id=" + dictionary_term_id)
             let indexes = await list_all_entities(
-                "dictionary_index",
+                Entities.dictionary_index,
                 "&dictionary_term_id=" + dictionary_term_id)
             let sources = await list_all_entities(
-                "dictionary_source",
+                Entities.dictionary_source,
                 "&dictionary_term_id=" + dictionary_term_id)
             let aliases = await list_all_entities(
-                "dictionary_term_alias",
+                Entities.dictionary_term_alias,
                 "&dictionary_term_id=" + dictionary_term_id)
             let visits = await list_all_entities(
-                "dictionary_term_visit",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+                Entities.dictionary_term_visit,
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
             let reviews = await list_all_entities(
-                "dictionary_review",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
-            let states4 = await list_all_entities(
-                "dictionary_state_4",
-                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + getUserId())
+                Entities.dictionary_review,
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
+            let states_18 = await list_all_entities(
+                Entities.dictionary_state_18,
+                "&dictionary_term_id=" + dictionary_term_id + "&user_id=" + USER_ID)
 
             dictionary_term.status = 6 //deleted
-            let updated = await put_entity("dictionary_term", dictionary_term_id, dictionary_term)
+            let updated = await put_entity(Entities.dictionary_term, dictionary_term_id, dictionary_term)
             if (!defined(updated)) {
                 showError("Setting term status to Deleted failed.")
                 return;
             }
 
-            await delete_rows("dictionary_pinned_term", pinned_terms)
-            await delete_rows("dictionary_flag", private_flags)
-            await delete_rows("dictionary_flag", public_flags)
-            await delete_rows("dictionary_link", links1)
-            await delete_rows("dictionary_link", links2)
-            await delete_rows("dictionary_note", notes)
-            await delete_rows("dictionary_review", reviews)
-            await delete_rows("dictionary_index", indexes)
-            await delete_rows("dictionary_source", sources)
-            await delete_rows("dictionary_state_4", states4)
-            await delete_rows("dictionary_tag", tags)
-            await delete_rows("dictionary_term_alias", aliases)
-            await delete_rows("dictionary_term_visit", visits)
-            let delete_dictionary_term = await delete_entity("dictionary_term", dictionary_term_id)
+            await delete_rows(Entities.dictionary_pinned_term, pinned_terms)
+            await delete_rows(Entities.dictionary_flag, private_flags)
+            await delete_rows(Entities.dictionary_flag, public_flags)
+            await delete_rows(Entities.dictionary_link, links1)
+            await delete_rows(Entities.dictionary_link, links2)
+            await delete_rows(Entities.dictionary_note, notes)
+            await delete_rows(Entities.dictionary_review, reviews)
+            await delete_rows(Entities.dictionary_index, indexes)
+            await delete_rows(Entities.dictionary_source, sources)
+            await delete_rows(Entities.dictionary_state_18, states_18)
+            await delete_rows(Entities.dictionary_tag, tags)
+            await delete_rows(Entities.dictionary_term_alias, aliases)
+            await delete_rows(Entities.dictionary_term_visit, visits)
+            let delete_dictionary_term = await delete_entity(Entities.dictionary_term, dictionary_term_id)
             if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
                 showInfo("Deleted dictionary term: " + dictionary_term.title)
                 this.hide()
@@ -2320,7 +2329,7 @@ class TermContainer {
 
             let checkbox_pinned = get_element("checkbox_pinned")
             let pinned_now = checkbox_pinned.checked
-            let pinned_terms = await list_all_entities("dictionary_pinned_term", "&user_id=" + getUserId() + "&dictionary_term_id=" + dictionary_term_id)
+            let pinned_terms = await list_all_entities(Entities.dictionary_pinned_term, "&user_id=" + USER_ID + "&dictionary_term_id=" + dictionary_term_id)
             if (!defined(pinned_terms)) {
                 showError("Loading pinned terms failed.")
             } else {
@@ -2329,10 +2338,10 @@ class TermContainer {
                     if (pinned_now) {
                         let new_pinned_term = {
                             dictionary_term_id: dictionary_term_id,
-                            user_id: getUserId(),
+                            user_id: USER_ID,
                             dictionary_map_id: dictionary_app.get_selected_map_id()
                         }
-                        let created = await post_entity("dictionary_pinned_term", new_pinned_term)
+                        let created = await post_entity(Entities.dictionary_pinned_term, new_pinned_term)
                         if (defined(created)) {
                             showInfo("New pinned term was successfully created.")
                             checkbox_pinned.checked = true
@@ -2342,7 +2351,7 @@ class TermContainer {
                     }
                     if (!pinned_now) {
                         for (const e of pinned_terms) {
-                            let deleted = await delete_entity("dictionary_pinned_term", e.id)
+                            let deleted = await delete_entity(Entities.dictionary_pinned_term, e.id)
                             if (deleted) {
                                 showInfo("Pinned term was successfully deleted: " + e.id)
                                 checkbox_pinned.checked = false
@@ -2372,7 +2381,7 @@ class TermContainer {
             if (input_difficulty_hard.checked) difficulty = 3
             new_term.importance = importance
             new_term.difficulty = difficulty
-            let updated = put_entity("dictionary_term", dictionary_term_id, new_term)
+            let updated = put_entity(Entities.dictionary_term, dictionary_term_id, new_term)
             if (updated !== null && updated !== undefined) {
                 showInfo("Dictionary term was successfully updated.")
                 this.#dictionary_term_json = new_term
@@ -2385,7 +2394,15 @@ class TermContainer {
             showWindowFrom("Backlinks", url)
         }
         get_element("button_show_visited").onclick = async () => {
-            let visits_result = await list_entities("dictionary_term_visit", "&user_id=" + getUserId() + "&sort=created_at&order=desc", 1, 100)
+            let visits_result = await list_entities(
+                Entities.dictionary_term_visit,
+                new QueryParams()
+                    .add("user_id", USER_ID)
+                    .sort("created_at", "desc")
+                    .build(),
+                1,
+                100
+            )
             if (null_or_undefined(visits_result)) {
                 showError("Loading visits failed.")
                 return;
@@ -2425,7 +2442,7 @@ class TermContainer {
                 let visited_term_id = entry.dictionary_term_id
 
                 if (!disambiguation_map.has(visited_term_id)) {
-                    let term = await read_entity("dictionary_term", visited_term_id)
+                    let term = await read_entity(Entities.dictionary_term, visited_term_id)
                     if (term === null || term === undefined) {
                         showWarn("Loading dictionary_term with id " + visited_term_id + " failed.");
                         disambiguation_map.set(visited_term_id, "")
@@ -2454,17 +2471,17 @@ class TermContainer {
                 let a = document.createElement("a");
                 a.href = "?";
                 {
-                    let title = getTitleCache("dictionary_term", visited_term_id)
+                    let title = getTitleCache(Entities.dictionary_term, visited_term_id)
                     if (title === null || title === undefined) {
 
                         let x = entry.id
-                        let note_ = await read_entity("dictionary_term", x)
+                        let note_ = await read_entity(Entities.dictionary_term, x)
                         if (note_ === null) {
                             showWarn("Loading dictionary_term with id " + x + " failed.");
                             title = "Unknown (#" + x + ")"
                         } else {
                             title = note_.title
-                            setTitleCache("dictionary_term", x, title);
+                            setTitleCache(Entities.dictionary_term, x, title);
                         }
                     }
                     let finalTitle = title
@@ -2489,7 +2506,7 @@ class TermContainer {
             let button = document.createElement("button")
             button.innerText = "Show all visits"
             button.onclick = () => {
-                let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + getUserId()
+                let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + USER_ID
                 showWindowFrom("All visits", url)
             }
             button.style.margin = "20px;"
@@ -2506,10 +2523,10 @@ class TermContainer {
         }
         let new_visit = {
             dictionary_term_id: dictionary_term_id,
-            user_id: getUserId(),
+            user_id: USER_ID,
             dictionary_map_id: dictionary_app.get_selected_map_id()
         }
-        let created_dictionary_term_visit = post_entity("dictionary_term_visit", new_visit)
+        let created_dictionary_term_visit = post_entity(Entities.dictionary_term_visit, new_visit)
         if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
             showError("Creating new term visit failed.")
         }
@@ -2662,7 +2679,7 @@ class Tags extends CrudSection {
             filter: termId => "&dictionary_term_id=" + termId,
             input: true,
             resolveTitle: async item => {
-                let tag_type = await read_entity("dictionary_tag_type", item.dictionary_tag_type_id)
+                let tag_type = await read_entity(Entities.dictionary_tag_type, item.dictionary_tag_type_id)
                 if (!tag_type) {
                     showError("Loading tag type failed: " + item.dictionary_tag_type_id)
                     return null
@@ -2686,7 +2703,7 @@ class Tags extends CrudSection {
                     dictionary_tag_type_id: item.id
                 }
 
-                let tag_created = await post_entity("dictionary_tag", new_tag);
+                let tag_created = await post_entity(Entities.dictionary_tag, new_tag);
                 if (tag_created === null || tag_created === undefined) {
                     showError("Creating tag failed: " + item.title)
                     return
@@ -2710,7 +2727,7 @@ class Tags extends CrudSection {
                 dictionary_map_id: dictionary_app.get_selected_map_id(),
                 title: title
             }
-            let new_tag_type_created = await post_entity("dictionary_tag_type", new_tag_type)
+            let new_tag_type_created = await post_entity(Entities.dictionary_tag_type, new_tag_type)
             if (!new_tag_type_created) {
                 showError("Creating new tag type failed: " + title)
                 return
@@ -2720,7 +2737,7 @@ class Tags extends CrudSection {
                 dictionary_tag_type_id: new_tag_type_created.id
             }
 
-            let tag_created = await post_entity("dictionary_tag", new_tag)
+            let tag_created = await post_entity(Entities.dictionary_tag, new_tag)
             if (tag_created === null || tag_created === undefined) {
                 showError("Creating tag failed: " + title)
                 return
@@ -2743,7 +2760,7 @@ class Tags extends CrudSection {
         button.innerHTML = "&times;"
         button.onclick = async () => {
             if (!confirm("Do you really want to delete this tag?")) return;
-            let tag_deleted = await delete_entity("dictionary_tag", id)
+            let tag_deleted = await delete_entity(Entities.dictionary_tag, id)
             let deleted = tag_deleted !== null && tag_deleted !== undefined
             if (deleted) {
                 showInfo("Tag was successfully deleted: " + title)
@@ -2773,7 +2790,7 @@ class Flags extends CrudSection {
 
     async loadItems(dictionary_term_id) {
         let result = []
-        let private_flags_result = await list_all_entities("dictionary_flag", "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + getUserId())
+        let private_flags_result = await list_all_entities(Entities.dictionary_flag, "&dictionary_term_id=" + dictionary_term_id + "&is_public=0" + "&user_id=" + USER_ID)
         if (!private_flags_result) {
             showError("Listing private flags failed.")
             return [];
@@ -2783,12 +2800,12 @@ class Flags extends CrudSection {
             })
 
         }
-        let public_flags_result = await list_all_entities("dictionary_flag", "&dictionary_term_id=" + dictionary_term_id + "&is_public=1")
+        let public_flags_result = await list_all_entities(Entities.dictionary_flag, "&dictionary_term_id=" + dictionary_term_id + "&is_public=1")
         if (!public_flags_result) {
             showError("Listing public flags failed.")
             return [];
         } else {
-            let user_id = getUserId();
+            let user_id = USER_ID;
             public_flags_result.forEach(e => {
                 if (e.user_id !== user_id) result.push(e)
             });
@@ -2809,13 +2826,13 @@ class Flags extends CrudSection {
             let is_public = input_checkbox_public_flag.checked
             let new_flag = {
                 dictionary_term_id: dictionary_term_id,
-                user_id: getUserId(),
+                user_id: USER_ID,
                 dictionary_map_id: dictionary_app.get_selected_map_id(),
                 title: title,
                 is_public: is_public ? 1 : 0
             }
 
-            let flag_created = await post_entity("dictionary_flag", new_flag)
+            let flag_created = await post_entity(Entities.dictionary_flag, new_flag)
             if (flag_created === null || flag_created === undefined) {
                 showError("Creating flag failed: " + title)
                 return
@@ -2843,7 +2860,7 @@ class Flags extends CrudSection {
         button.innerHTML = "&times;"
         button.onclick = async () => {
             if (!confirm("Do you really want to delete this flag?")) return;
-            let flag_deleted = await delete_entity("dictionary_flag", id)
+            let flag_deleted = await delete_entity(Entities.dictionary_flag, id)
             let deleted = flag_deleted !== null && flag_deleted !== undefined
             if (deleted) {
                 showInfo("Flag was successfully deleted: " + title)
@@ -2873,7 +2890,7 @@ class Links extends CrudSection {
             filter: termId => "&from_dictionary_term_id=" + termId,
             input: true,
             resolveTitle: async item => {
-                let another_dictionary_term = await read_entity("dictionary_term", item.to_dictionary_term_id)
+                let another_dictionary_term = await read_entity(Entities.dictionary_term, item.to_dictionary_term_id)
                 if (!another_dictionary_term) {
                     showError("Loading term failed: " + item.to_dictionary_term_id)
                     return null
@@ -2898,7 +2915,7 @@ class Links extends CrudSection {
                     to_dictionary_term_id: another_dictionary_term_id
                 }
 
-                let link_created = await post_entity("dictionary_link", new_link)
+                let link_created = await post_entity(Entities.dictionary_link, new_link)
                 if (link_created === null || link_created === undefined) {
                     showError("Creating link failed: " + item.title)
                     return
@@ -2927,7 +2944,7 @@ class Links extends CrudSection {
                 status: 1
             }
 
-            let term_created = await post_entity("dictionary_term", new_term)
+            let term_created = await post_entity(Entities.dictionary_term, new_term)
             if (term_created === null || term_created === undefined) {
                 showError("Creating term failed: " + title)
                 return
@@ -2936,12 +2953,12 @@ class Links extends CrudSection {
             let new_flag = {
                 dictionary_term_id: term_created.id,
                 dictionary_map_id: dictionary_app.get_selected_map_id(),
-                user_id: getUserId(),
+                user_id: USER_ID,
                 title: "stub",
                 is_public: 1
             }
 
-            let flag_created = await post_entity("dictionary_flag", new_flag)
+            let flag_created = await post_entity(Entities.dictionary_flag, new_flag)
             if (flag_created === null || flag_created === undefined) {
                 showError("Creating flag failed: " + title)
                 return
@@ -2952,7 +2969,7 @@ class Links extends CrudSection {
                 to_dictionary_term_id: term_created.id
             }
 
-            let link_created = await post_entity("dictionary_link", new_link)
+            let link_created = await post_entity(Entities.dictionary_link, new_link)
             if (link_created === null || link_created === undefined) {
                 showError("Creating link failed: " + title)
                 return
@@ -3052,14 +3069,14 @@ class Links extends CrudSection {
             if (option === null || option === undefined) return
             let type = stringToTermRelationType(option)
 
-            let read_link = await read_entity("dictionary_link", id)
+            let read_link = await read_entity(Entities.dictionary_link, id)
 
             let read = read_link !== null && read_link !== undefined
             if (!read) {
                 showError("Reading link failed: " + title)
             }
             read_link.type = type
-            let updated = await put_entity("dictionary_link", id, read_link)
+            let updated = await put_entity(Entities.dictionary_link, id, read_link)
             if (updated) {
                 showInfo("Updating link type to " + option + " was successful.");
                 span.innerText = " (" + option + ")"
@@ -3074,7 +3091,7 @@ class Links extends CrudSection {
         delete_button.innerHTML = "🗑️ Delete"
         delete_button.onclick = () => {
             if (!confirm("Do you really want to delete this link?")) return;
-            let link_deleted = delete_entity("dictionary_link", id)
+            let link_deleted = delete_entity(Entities.dictionary_link, id)
             let deleted = link_deleted !== null && link_deleted !== undefined
             if (deleted) {
                 showInfo("Link was successfully deleted: " + title)
@@ -3118,7 +3135,7 @@ class Notes extends CrudSection {
                 position: 0
             }
 
-            let note_created = await post_entity("dictionary_note", new_note)
+            let note_created = await post_entity(Entities.dictionary_note, new_note)
             if (note_created === null || note_created === undefined) {
                 showError("Creating note failed: " + title)
                 return
@@ -3152,7 +3169,7 @@ class Notes extends CrudSection {
             let id_position = "input_note_position_" + id
             let id_content = "text_area_content_" + id
 
-            let read_note = await read_entity("dictionary_note", id)
+            let read_note = await read_entity(Entities.dictionary_note, id)
             if (read_note === null || read_note === undefined) {
                 showError("Loading note failed: " + title)
                 return;
@@ -3251,7 +3268,7 @@ class Notes extends CrudSection {
                 read_note.title = input_title.value
                 read_note.position = input_position.value
                 read_note.content = text_area_content.value
-                let updated = await put_entity("dictionary_note", read_note.id, read_note)
+                let updated = await put_entity(Entities.dictionary_note, read_note.id, read_note)
                 if (updated === null || updated === undefined) {
                     showError("Updating note failed: " + read_note.title)
                     return
@@ -3275,7 +3292,7 @@ class Notes extends CrudSection {
         delete_button.innerHTML = "🗑️ Delete"
         delete_button.onclick = async () => {
             if (!confirm("Do you really want to delete this note?")) return;
-            let note_deleted = await delete_entity("dictionary_note", id)
+            let note_deleted = await delete_entity(Entities.dictionary_note, id)
             let deleted = note_deleted !== null && note_deleted !== undefined
             if (deleted) {
                 showInfo("Note was successfully deleted: " + title)
@@ -3298,7 +3315,7 @@ class Indexes extends CrudSection {
             filter: termId => "&dictionary_term_id=" + termId + "&sort=position",
             input: true,
             resolveTitle: async item => {
-                let index_type = await read_entity("dictionary_index_type", item.dictionary_index_type_id)
+                let index_type = await read_entity(Entities.dictionary_index_type, item.dictionary_index_type_id)
                 if (!index_type) {
                     showError("Loading index type failed: " + item.dictionary_index_type_id)
                     return null;
@@ -3324,7 +3341,7 @@ class Indexes extends CrudSection {
                     dictionary_term_id: termId
                 }
 
-                let index_created = await post_entity("dictionary_index", new_index)
+                let index_created = await post_entity(Entities.dictionary_index, new_index)
                 if (index_created === null || index_created === undefined) {
                     showError("Creating index failed: " + item.title)
                     return
@@ -3348,7 +3365,7 @@ class Indexes extends CrudSection {
                 dictionary_map_id: dictionary_app.get_selected_map_id(),
                 title: title
             }
-            let new_index_type_created = await post_entity("dictionary_index_type", new_index_type)
+            let new_index_type_created = await post_entity(Entities.dictionary_index_type, new_index_type)
             if (!new_index_type_created) {
                 showError("Creating new index type failed: " + title)
                 return
@@ -3358,7 +3375,7 @@ class Indexes extends CrudSection {
                 dictionary_index_type_id: new_index_type_created.id
             }
 
-            let index_created = await post_entity("dictionary_index", new_index)
+            let index_created = await post_entity(Entities.dictionary_index, new_index)
             if (index_created === null || index_created === undefined) {
                 showError("Creating index failed: " + title)
                 return
@@ -3396,7 +3413,7 @@ class Indexes extends CrudSection {
 
             }
             if (result === "Index Type") {
-                let read_index = await read_entity("dictionary_index", id)
+                let read_index = await read_entity(Entities.dictionary_index, id)
                 if (read_index === null || read_index === undefined) {
                     showError("Reading index failed: " + title)
                 }
@@ -3411,7 +3428,7 @@ class Indexes extends CrudSection {
         delete_button.innerHTML = "🗑️ Delete"
         delete_button.onclick = () => {
             if (!confirm("Do you really want to delete this index?")) return;
-            let index_deleted = delete_entity("dictionary_index", id)
+            let index_deleted = delete_entity(Entities.dictionary_index, id)
             let deleted = index_deleted !== null && index_deleted !== undefined
             if (deleted) {
                 showInfo("Source was successfully deleted: " + title)
@@ -3435,7 +3452,7 @@ class Sources extends CrudSection {
             filter: termId => "&dictionary_term_id=" + termId,
             input: true,
             resolveTitle: async item => {
-                let source_type = await read_entity("dictionary_source_type", item.dictionary_source_type_id)
+                let source_type = await read_entity(Entities.dictionary_source_type, item.dictionary_source_type_id)
                 if (!source_type) {
                     showError("Loading source type failed: " + item.dictionary_source_type_id)
                     return null
@@ -3461,7 +3478,7 @@ class Sources extends CrudSection {
                     dictionary_source_type_id: dictionary_source_type_id
                 }
 
-                let source_created = await post_entity("dictionary_source", new_source)
+                let source_created = await post_entity(Entities.dictionary_source, new_source)
                 if (source_created === null || source_created === undefined) {
                     showError("Creating source failed: " + item.title)
                     return
@@ -3485,7 +3502,7 @@ class Sources extends CrudSection {
                 title: title,
                 type: 0
             }
-            let new_source_type_created = await post_entity("dictionary_source_type", new_source_type)
+            let new_source_type_created = await post_entity(Entities.dictionary_source_type, new_source_type)
             if (!new_source_type_created) {
                 showError("Creating new source type failed: " + title)
                 return
@@ -3495,7 +3512,7 @@ class Sources extends CrudSection {
                 dictionary_source_type_id: new_source_type_created.id
             }
 
-            let source_created = await post_entity("dictionary_source", new_source)
+            let source_created = await post_entity(Entities.dictionary_source, new_source)
             if (source_created === null || source_created === undefined) {
                 showError("Creating source failed: " + title)
                 return
@@ -3533,7 +3550,7 @@ class Sources extends CrudSection {
 
             }
             if (result === "Source Type") {
-                let read_source = await read_entity("dictionary_source", id)
+                let read_source = await read_entity(Entities.dictionary_source, id)
                 if (read_source === null || read_source === undefined) {
                     showError("Reading source failed: " + title)
                 }
@@ -3548,7 +3565,7 @@ class Sources extends CrudSection {
         delete_button.innerHTML = "🗑️ Delete"
         delete_button.onclick = () => {
             if (!confirm("Do you really want to delete this source?")) return;
-            let source_deleted = delete_entity("dictionary_source", id)
+            let source_deleted = delete_entity(Entities.dictionary_source, id)
             let deleted = source_deleted !== null && source_deleted !== undefined
             if (deleted) {
                 showInfo("Source was successfully deleted: " + title)
@@ -3570,7 +3587,7 @@ class Aliases extends CrudSection {
             model: "alias",
             models: "aliases",
             table: "dictionary_term_alias",
-            filter: termId => "&dictionary_term_id=" + termId + "&is_public=0" + "&user_id=" + getUserId(),
+            filter: termId => "&dictionary_term_id=" + termId + "&is_public=0" + "&user_id=" + USER_ID,
             input: false,
             resolveTitle: async item => {
                 return item.alias
@@ -3591,7 +3608,7 @@ class Aliases extends CrudSection {
                 alias: title
             }
 
-            let alias_created = await post_entity("dictionary_term_alias", new_alias)
+            let alias_created = await post_entity(Entities.dictionary_term_alias, new_alias)
             if (alias_created === null || alias_created === undefined) {
                 showError("Creating alias failed: " + title)
                 return
@@ -3613,7 +3630,7 @@ class Aliases extends CrudSection {
         button.innerHTML = "&times;"
         button.onclick = async () => {
             if (!confirm("Do you really want to delete this alias?")) return;
-            let alias_deleted = await delete_entity("dictionary_term_alias", id)
+            let alias_deleted = await delete_entity(Entities.dictionary_term_alias, id)
             let deleted = alias_deleted !== null && alias_deleted !== undefined
             if (deleted) {
                 showInfo("Alias was successfully deleted: " + title)

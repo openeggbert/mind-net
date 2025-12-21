@@ -211,19 +211,51 @@ export async function apiFetch(url, options = {}) {
     }
 }
 
-export function format_url_params(...values) {
-    const max_index = values.length - 1;
-    let result = ""
-    for (let i = 0; i < values.length; i++) {
-        const key = values[i];
-        i++
-        if(i > max_index) break
-        const value = values[i]
-        result += "&" + key + "="
-        result += encodeURIComponent(value);
+export class QueryParams {
+    #params = new Map();
+
+    constructor(key = null, value = null) {
+        if(key) this.add(key, value)
     }
-    return result
+    add(key, value = null) {
+        if (value !== null && value !== undefined && value !== "") {
+            this.#params.set(key, value);
+        }
+        return this;
+    }
+    add_user_id() {
+        this.add("user_id", getUserId())
+        return this
+    }
+
+    sort(sort, order = null) {
+        this.add("sort", sort);
+        if (order) this.add("order", order);
+        return this;
+    }
+
+    build() {
+        return "&" + [...this.#params.entries()]
+            .map(([k, v]) =>
+                `${encodeURIComponent(k)}=${encodeURIComponent(v)}`
+            )
+            .join("&");
+    }
 }
+
+// export function format_url_params(...values) {
+//     const max_index = values.length - 1;
+//     let result = ""
+//     for (let i = 0; i < values.length; i++) {
+//         const key = values[i];
+//         i++
+//         if(i > max_index) break
+//         const value = values[i]
+//         result += "&" + key + "="
+//         result += encodeURIComponent(value);
+//     }
+//     return result
+// }
 export async function list_entities(entity, additional_params = "", page_number = 1, page_size = 20) {
     const url = new URL(`${API_BASE}/${entity}`);
 
