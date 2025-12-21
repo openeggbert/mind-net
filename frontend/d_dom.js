@@ -17,7 +17,25 @@ export class DomElement {
         return this.element.id
     }
 
+    #find_node(child, string_too = true) {
+        if(child instanceof Node){
+            return child
+        }
+
+        if(child instanceof DomElement){
+            return child.element
+        }
+        if(string_too && (String(typeof child)) === "string"){
+            return child.element
+        }
+        throw new Error("Unsupported object type: " + typeof child)
+    }
     appendChild(child) {
-        this.element.appendChild(child)
+        this.element.appendChild(this.#find_node(child))
+        return this
+    }
+    append(child) {
+        this.element.append(this.#find_node(child, true))
+        return this
     }
 }

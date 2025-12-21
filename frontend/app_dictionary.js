@@ -247,16 +247,23 @@ class DictionaryApp {
 
             const form = new Form().set_id("form_search")
 
-            function make_label(innerText = "", width = "200px") {
-                let label = document.createElement("label")
-                label.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
-                label.innerText = innerText
-                let div = document.createElement("div")
-                div.style.width = width
-                div.appendChild(label)
-                div.style.display = "inline-block"
-                div.style.whiteSpace = "nowrap"
-                return div
+            class Label extends DomElement {
+                constructor(innerText = "", width = "200px") {
+                    super("div")
+
+                    let l = DomElement.create_element("label")
+                    l.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
+                    l.innerText = innerText
+                    if(l.innerText.size > 0) {
+                        let last_character = l.innerText.at(-1)
+                        if(last_character !== ":") l.innerText = innerText + ": "
+                    }
+
+                    this.style.width = width
+                    this.appendChild(l)
+                    this.style.display = "inline-block"
+                    this.style.whiteSpace = "nowrap"
+                }
             }
 
             function make_input(type = "text") {
@@ -279,34 +286,45 @@ class DictionaryApp {
                 return select
             }
 
-            function make_div(label, element1, element2 = null) {
-                let div = document.createElement("div")
-                div.appendChild(label)
-                div.appendChild(element1)
-                if(element2 != null) div.appendChild(element2)
-                return div
+            class Div extends DomElement {
+                constructor(element1, element2 = null, element3 = null) {
+                    super("div")
+
+                    if (element1 != null) this.appendChild(element1)
+                    if (element2) this.appendChild(element2)
+                    if (element3) this.appendChild(element2)
+                }
+            }
+            class Span extends DomElement {
+                constructor(element1 = null, element2 = null, element3 = null) {
+                    super("span")
+
+                    if (element1) this.appendChild(element1)
+                    if (element2) this.appendChild(element2)
+                    if (element3) this.appendChild(element2)
+                }
             }
 
             // --- Title contains ---
-            const titleLabel = make_label("Title contains:");
+            const titleLabel = new Label("Title contains");
             const titleContainsInput = make_input();
             titleContainsInput.placeholder = "e.g. mutex, allocator, RAII";
-            form.appendChild(make_div(titleLabel, titleContainsInput));
+            form.appendChild(new Div(titleLabel, titleContainsInput));
 
             // --- Title starts with ---
-            const titleStartsWithLabel = make_label("Title starts with:");
+            const titleStartsWithLabel = new Label("Title starts with:");
             const titleStartsWithInput = make_input();
             titleStartsWithInput.placeholder = "e.g. mut, allo, C, K";
-            form.appendChild(make_div(titleStartsWithLabel, titleStartsWithInput));
+            form.appendChild(new Div(titleStartsWithLabel, titleStartsWithInput));
 
             // --- Definition contains ---
-            const definitionLabel = make_label("Definition contains:");
+            const definitionLabel = new Label("Definition contains:");
             const definitionInput = make_input();
             definitionInput.placeholder = "e.g. mutex, allocator, RAII";
-            form.appendChild(make_div(definitionLabel, definitionInput));
+            form.appendChild(new Div(definitionLabel, definitionInput));
 
             // --- Status ---
-            const statusLabel = make_label("Status:");
+            const statusLabel = new Label("Status:");
             const statusSelect = make_select();
             enumValues(TermStatus).forEach(e => {
                 const opt = document.createElement("option");
@@ -316,55 +334,54 @@ class DictionaryApp {
             });
             statusSelect.multiple = true
 
-            form.appendChild(make_div(statusLabel, statusSelect));
+            form.appendChild(new Div(statusLabel, statusSelect));
 
             // --- Pinned ---
-            const pinnedLabel = make_label("Pinned only:")
+            const pinnedLabel = new Label("Pinned only:")
             const pinnedCheckbox = make_input("checkbox")
-            form.appendChild(make_div(pinnedLabel, pinnedCheckbox))
+            form.appendChild(new Div(pinnedLabel, pinnedCheckbox))
 
             // --- Importance ---
-            const impLabel = make_label("Importance:");
-            const impContainer = document.createElement("span");
+            const impLabel = new Label("Importance:");
+            const impContainer = new Span();
             enumValues(Importance).forEach(e => {
                 const input = make_input("checkbox");
                 input.value = e.id;
                 input.checked = true;
-                input.style.marginLeft = "0"
+                input.style.marginLeft = "10px";
                 input.id = "importance_" + e.id
 
-                const l = make_label("", "auto");
+                const l = new Label("", "auto");
                 l.style.marginRight = "10px";
-                l.style.marginLeft = "0"
-                l.appendChild(input);
-                l.append(" " + e.label);
+                l.style.marginLeft = "10px";
+                l.element.innerText = e.label
 
+                impContainer.appendChild(input);
                 impContainer.appendChild(l);
             });
-            form.appendChild(make_div(impLabel, impContainer));
+            form.appendChild(new Div(impLabel, impContainer));
 
             // --- Difficulty ---
-            const diffLabel = make_label("Difficulty:");
-            const diffContainer = document.createElement("span");
+            const diffLabel = new Label("Difficulty:");
+            const diffContainer = new Span();
 
             enumValues(Difficulty).forEach(e => {
                 const cb = make_input("checkbox");
                 cb.value = e.id;
                 cb.checked = true;
-                cb.style.marginLeft = "0"
+                cb.style.marginLeft = "10px";
                 cb.id = "difficulty_" + e.id
 
-                const l = make_label("", "auto");
+                const l = new Label("", "auto");
                 l.style.marginRight = "10px";
-                l.style.marginLeft = "0"
+                l.style.marginLeft = "10px";
+                l.element.innerText = e.label
 
-                l.appendChild(cb);
-                l.append(" " + e.label);
-
+                diffContainer.appendChild(cb);
                 diffContainer.appendChild(l);
             });
 
-            form.appendChild(make_div(diffLabel, diffContainer));
+            form.appendChild(new Div(diffLabel, diffContainer));
 
             class CloseButton {
                 constructor(model, input, autocomplete = null) {
@@ -383,116 +400,116 @@ class DictionaryApp {
                 input.after(close_button)}
             }
 
-            const tag_label = make_label("Tag: ")
+            const tag_label = new Label("Tag: ")
             const tag_input = make_input()
-            form.appendChild(make_div(tag_label, tag_input))
+            form.appendChild(new Div(tag_label, tag_input))
             let tag_autocomplete = new Autocomplete(tag_input, 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             tag_autocomplete.clear_after_click = false
             tag_autocomplete.box_margin_left = "200px"
             new CloseButton("tag", tag_input, tag_autocomplete)
 
-            const flag_label = make_label("Flag: ")
+            const flag_label = new Label("Flag: ")
             const flag_input = make_input()
-            form.appendChild(make_div(flag_label, flag_input))
+            form.appendChild(new Div(flag_label, flag_input))
             let flag_autocomplete = new Autocomplete(flag_input, 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             flag_autocomplete.clear_after_click = false
             flag_autocomplete.box_margin_left = "200px"
             new CloseButton("flag", flag_input, flag_autocomplete)
 
-            const link_from_label = make_label("Link from: ")
+            const link_from_label = new Label("Link from: ")
             const link_from_input = make_input()
-            form.appendChild(make_div(link_from_label, link_from_input))
+            form.appendChild(new Div(link_from_label, link_from_input))
             let link_from_autocomplete = new Autocomplete(link_from_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_from_autocomplete.clear_after_click = false
             link_from_autocomplete.box_margin_left = "200px"
             new CloseButton("link from", link_from_input, link_from_autocomplete)
 
-            const link_to_label = make_label("Link to: ")
+            const link_to_label = new Label("Link to: ")
             const link_to_input = make_input()
-            form.appendChild(make_div(link_to_label, link_to_input))
+            form.appendChild(new Div(link_to_label, link_to_input))
             let link_to_autocomplete = new Autocomplete(link_to_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_to_autocomplete.clear_after_click = false
             link_to_autocomplete.box_margin_left = "200px"
             new CloseButton("link to", link_to_input, link_to_autocomplete)
 
-            const noteLabel = make_label("Note contains:");
+            const noteLabel = new Label("Note contains:");
             const noteInput = make_input();
             noteInput.placeholder = "e.g. mutex, allocator, RAII";
-            form.appendChild(make_div(noteLabel, noteInput));
+            form.appendChild(new Div(noteLabel, noteInput));
 
-            const index_label = make_label("Index: ")
+            const index_label = new Label("Index: ")
             const index_input = make_input()
-            form.appendChild(make_div(index_label, index_input))
+            form.appendChild(new Div(index_label, index_input))
             let index_autocomplete = new Autocomplete(index_input, 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             index_autocomplete.clear_after_click = false
             index_autocomplete.box_margin_left = "200px"
             new CloseButton("index", index_input, index_autocomplete)
 
-            const source_label = make_label("Source: ")
+            const source_label = new Label("Source: ")
             const source_input = make_input()
-            form.appendChild(make_div(source_label, source_input))
+            form.appendChild(new Div(source_label, source_input))
             let source_autocomplete = new Autocomplete(source_input, 1, "dictionary_source_type_fulltext", "", "title", "title_part")
             source_autocomplete.clear_after_click = false
             source_autocomplete.box_margin_left = "200px"
             new CloseButton("source", source_input, source_autocomplete)
 
-            const alias_label = make_label("Alias: ")
+            const alias_label = new Label("Alias: ")
             const alias_input = make_input()
-            form.appendChild(make_div(alias_label, alias_input))
+            form.appendChild(new Div(alias_label, alias_input))
             let alias_autocomplete = new Autocomplete(alias_input, 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             alias_autocomplete.clear_after_click = false
             alias_autocomplete.box_margin_left = "200px"
             new CloseButton("alias", alias_input, alias_autocomplete)
 
             // --- Missing items ---
-            const missingLabel = make_label("Missing:");
-            const missingContainer = document.createElement("span");
+            const missingLabel = new Label("Missing:");
+            const missingContainer = new Span();
 
             enumValues(DictionaryItem).forEach(e => {
                 const cb = make_input("checkbox");
                 cb.value = e.id;
                 cb.checked = false;
-                cb.style.marginLeft = "0"
+                cb.style.marginLeft = "5px";
                 cb.id = "missing_" + e.id
 
-                const l = make_label("", "auto");
+                const l = new Label("", "auto");
                 l.style.marginRight = "10px";
-                l.style.marginLeft = "0"
-                l.appendChild(cb);
-                l.append(" " + e.label);
+                l.style.marginLeft = "5px";
+                l.element.innerText = e.label
                 l.style.fontSize = "80%"
 
+                missingContainer.appendChild(cb);
                 missingContainer.appendChild(l);
             });
-            form.appendChild(make_div(missingLabel, missingContainer));
+            form.appendChild(new Div(missingLabel, missingContainer));
 
             // --- Has items ---
-            const hasLabel = make_label("Has:");
-            const hasContainer = document.createElement("span");
+            const hasLabel = new Label("Has:");
+            const hasContainer = new Span();
 
 
             enumValues(DictionaryItem).forEach(e => {
                 const cb = make_input("checkbox");
                 cb.value = e.id;
                 cb.checked = false;
-                cb.style.marginLeft = "0"
+                cb.style.marginLeft = "5px";
                 cb.id = "has_" + e.id
 
-                const l = make_label("", "auto");
+                const l = new Label("", "auto");
                 l.style.marginRight = "10px";
-                l.style.marginLeft = "0"
-                l.appendChild(cb);
-                l.append(" " + e.label);
+                l.style.marginLeft = "5px";
+                l.element.innerText = e.label
                 l.style.fontSize = "80%"
 
+                hasContainer.appendChild(cb);
                 hasContainer.appendChild(l);
             });
-            form.appendChild(make_div(hasLabel, hasContainer));
+            form.appendChild(new Div(hasLabel, hasContainer));
 
             const time_range_array = enumValues(TimeRange)
 
             // --- Created ---
-            const createdLabel = make_label("Created:");
+            const createdLabel = new Label("Created:");
             const createdSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -500,10 +517,10 @@ class DictionaryApp {
                 opt.innerText = e.label;
                 createdSelect.appendChild(opt);
             });
-            form.appendChild(make_div(createdLabel, createdSelect));
+            form.appendChild(new Div(createdLabel, createdSelect));
 
             // --- Updated ---
-            const updatedLabel = make_label("Updated:");
+            const updatedLabel = new Label("Updated:");
             const updatedSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -511,10 +528,10 @@ class DictionaryApp {
                 opt.innerText = e.label;
                 updatedSelect.appendChild(opt);
             });
-            form.appendChild(make_div(updatedLabel, updatedSelect));
+            form.appendChild(new Div(updatedLabel, updatedSelect));
 
             // --- Visited ---
-            const visitedLabel = make_label("Visited:");
+            const visitedLabel = new Label("Visited:");
             const visitedSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -522,10 +539,10 @@ class DictionaryApp {
                 opt.innerText = e.label;
                 visitedSelect.appendChild(opt);
             });
-            form.appendChild(make_div(visitedLabel, visitedSelect));
+            form.appendChild(new Div(visitedLabel, visitedSelect));
 
             // --- Reviewed ---
-            const reviewedLabel = make_label("Reviewed:");
+            const reviewedLabel = new Label("Reviewed:");
             const reviewedSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -533,11 +550,11 @@ class DictionaryApp {
                 opt.innerText = e.label;
                 reviewedSelect.appendChild(opt);
             });
-            form.appendChild(make_div(reviewedLabel, reviewedSelect));
+            form.appendChild(new Div(reviewedLabel, reviewedSelect));
 
             // --- Repetition ---
-            const repLabel = make_label("Repetition:");
-            const repContainer = document.createElement("span");
+            const repLabel = new Label("Repetition:");
+            const repContainer = new Span();
             enumValues(RepetitionMode).forEach(e => {
                 const input = make_input("checkbox");
                 input.value = e.id;
@@ -545,18 +562,18 @@ class DictionaryApp {
                 input.style.marginLeft = "0"
                 input.id = "repetition_" + e.id
 
-                const l = make_label("", "auto");
+                const l = new Label("", "auto");
                 l.style.marginRight = "10px";
                 l.style.marginLeft = "0"
                 l.appendChild(input);
-                l.append(" " + e.label);
+                l.element.append(" " + e.label);
 
                 repContainer.appendChild(l);
             });
-            form.appendChild(make_div(repLabel, repContainer));
+            form.appendChild(new Div(repLabel, repContainer));
 
             // --- Sort ---
-            const sortLabel = make_label("Sort:");
+            const sortLabel = new Label("Sort:");
             const sortSelect = make_select()
             enumValues(Sort).forEach(e => {
                 const opt = document.createElement("option");
@@ -576,10 +593,10 @@ class DictionaryApp {
             sortSelect.style.width = "150px"
             orderSelect.style.width = "80px"
             orderSelect.style.marginLeft = "20px"
-            form.appendChild(make_div(sortLabel, sortSelect, orderSelect));
+            form.appendChild(new Div(sortLabel, sortSelect, orderSelect));
 
             // --- Buttons ---
-            const buttonRow = document.createElement("span");
+            const buttonRow = new Span();
 
             const searchBtn = document.createElement("button");
             searchBtn.type = "button";
