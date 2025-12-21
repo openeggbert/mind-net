@@ -292,7 +292,7 @@ class DictionaryApp {
 
                     if (element1 != null) this.appendChild(element1)
                     if (element2) this.appendChild(element2)
-                    if (element3) this.appendChild(element2)
+                    if (element3) this.appendChild(element3)
                 }
             }
             class Span extends DomElement {
@@ -301,7 +301,7 @@ class DictionaryApp {
 
                     if (element1) this.appendChild(element1)
                     if (element2) this.appendChild(element2)
-                    if (element3) this.appendChild(element2)
+                    if (element3) this.appendChild(element3)
                 }
             }
 
