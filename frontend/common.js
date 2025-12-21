@@ -144,3 +144,7 @@ export class Autocomplete {
 export function null_or_undefined(value) {
     return value === null || value === undefined;
 }
+
+export function defined(value) {
+    return value !== null && value !== undefined
+}

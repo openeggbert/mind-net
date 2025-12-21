@@ -30,6 +30,7 @@
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/core/ErrorBuilder.hpp"
 #include "mindnet/plugins/core/models/Error.hpp"
+#include "mindnet/essential/EnumUtils.hpp"
 
 #include <cctype>
 
@@ -49,25 +50,170 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
     }
 
-    struct SearchQuery
+#define TERM_STATUS_LIST(X, ENUM_NAME) \
+X(Any,        -1, ENUM_NAME)       \
+X(NotDefined,  0, ENUM_NAME)       \
+\
+X(Stub,        1, ENUM_NAME)       \
+X(Draft,       2, ENUM_NAME)       \
+X(Incomplete,  3, ENUM_NAME)       \
+X(Verified,    4, ENUM_NAME)       \
+X(Deprecated,  5, ENUM_NAME)       \
+X(Deleted,     6, ENUM_NAME)
+
+    DECLARE_ENUM(TermStatus, term_status, TERM_STATUS_LIST)
+
+#define IMPORTANCE_LIST(X, ENUM_NAME) \
+X(Low,    1, ENUM_NAME)           \
+X(Medium, 2, ENUM_NAME)           \
+X(High,   3, ENUM_NAME)
+
+    DECLARE_ENUM(Importance, importance, IMPORTANCE_LIST)
+
+#define DIFFICULTY_LIST(X, ENUM_NAME) \
+X(Easy,   1, ENUM_NAME)           \
+X(Medium, 2, ENUM_NAME)           \
+X(Hard,   3, ENUM_NAME)
+
+    DECLARE_ENUM(Difficulty, difficulty, DIFFICULTY_LIST)
+
+#define DICTIONARY_ITEM_LIST(X, ENUM_NAME) \
+X(Definition, 1, ENUM_NAME)            \
+X(Tags,       2, ENUM_NAME)            \
+X(Flags,      3, ENUM_NAME)            \
+X(Links,      4, ENUM_NAME)            \
+X(Notes,      5, ENUM_NAME)            \
+X(Indexes,    6, ENUM_NAME)            \
+X(Sources,    7, ENUM_NAME)            \
+X(Aliases,    8, ENUM_NAME)
+
+    DECLARE_ENUM(DictionaryItem, dictionary_item, DICTIONARY_ITEM_LIST)
+
+#define TIME_RANGE_LIST(X, ENUM_NAME)        \
+X(Any,            0,   ENUM_NAME)       \
+\
+X(LastHour,       1,   ENUM_NAME)       \
+X(Last3Hours,     2,   ENUM_NAME)       \
+X(Last24Hours,          3,   ENUM_NAME)       \
+X(LastWeek,       4,   ENUM_NAME)       \
+X(LastMonth,      5,   ENUM_NAME)       \
+X(LastYear,       6,   ENUM_NAME)       \
+X(Last10Years,    7,   ENUM_NAME)       \
+\
+X(NotLastHour,    21,  ENUM_NAME)       \
+X(NotLast3Hours,  22,  ENUM_NAME)       \
+X(NotLast24Hours,       23,  ENUM_NAME)       \
+X(NotLastWeek,    24,  ENUM_NAME)       \
+X(NotLastMonth,   25,  ENUM_NAME)       \
+X(NotLastYear,    26,  ENUM_NAME)       \
+X(NotLast10Years, 27,  ENUM_NAME)       \
+\
+X(Never,          100, ENUM_NAME)
+
+    DECLARE_ENUM(TimeRange, time_range, TIME_RANGE_LIST)
+
+    TimeRange make_absolute_time_range(TimeRange tr)
     {
-        SearchQuery(const std::string& json_string)
+        switch (tr)
+        {
+        case TimeRange::NotLastHour: return TimeRange::LastHour;
+        case TimeRange::NotLast3Hours: return TimeRange::Last3Hours;
+        case TimeRange::NotLast24Hours: return TimeRange::Last24Hours;
+        case TimeRange::NotLastWeek: return TimeRange::LastWeek;
+        case TimeRange::NotLastMonth: return TimeRange::LastMonth;
+        case TimeRange::NotLastYear: return TimeRange::LastYear;
+        case TimeRange::NotLast10Years: return TimeRange::Last10Years;
+
+        default:
+            return tr; // Any, Never, Last*
+        }
+    }
+
+    static constexpr i64 MS_PER_HOUR = 60LL * 60 * 1000;
+
+    i64 threshold_from_time_range(TimeRange tr, i64 now)
+    {
+        tr = make_absolute_time_range(tr);
+
+        switch (tr)
+        {
+        case TimeRange::LastHour:
+            return now - 1LL * MS_PER_HOUR;
+
+        case TimeRange::Last3Hours:
+            return now - 3LL * MS_PER_HOUR;
+
+        case TimeRange::Last24Hours:
+            return now - 24LL * MS_PER_HOUR;
+
+        case TimeRange::LastWeek:
+            return now - 7LL * 24 * MS_PER_HOUR;
+
+        case TimeRange::LastMonth:
+            return now - 30LL * 24 * MS_PER_HOUR;
+
+        case TimeRange::LastYear:
+            return now - 365LL * 24 * MS_PER_HOUR;
+
+        case TimeRange::Last10Years:
+            return now - 3650LL * 24 * MS_PER_HOUR;
+
+        default:
+            return 0; // Any, Never
+        }
+    }
+
+    bool is_negative_time_range(TimeRange tr)
+    {
+        switch (tr)
+        {
+        case TimeRange::NotLastHour:
+        case TimeRange::NotLast3Hours:
+        case TimeRange::NotLast24Hours:
+        case TimeRange::NotLastWeek:
+        case TimeRange::NotLastMonth:
+        case TimeRange::NotLastYear:
+        case TimeRange::NotLast10Years:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+
+#define REPETITION_MODE_LIST(X, ENUM_NAME) \
+X(Due,     1, ENUM_NAME)               \
+X(NotDue,  2, ENUM_NAME)               \
+X(Never,   3, ENUM_NAME)
+
+    DECLARE_ENUM(RepetitionMode, repetition_mode, REPETITION_MODE_LIST)
+
+#define SORT_LIST(X, ENUM_NAME)        \
+X(None,        0,  ENUM_NAME)     \
+X(Title,       1,  ENUM_NAME)     \
+X(CreatedAt,   2,  ENUM_NAME)     \
+X(UpdatedAt,   3,  ENUM_NAME)     \
+X(Status,      11, ENUM_NAME)     \
+X(Difficulty,  12, ENUM_NAME)     \
+X(Importance,  13, ENUM_NAME)     \
+X(NextReview,  14, ENUM_NAME)     \
+X(Random,      30, ENUM_NAME)
+
+    DECLARE_ENUM(Sort, sort, SORT_LIST)
+
+#define ORDER_LIST(X, ENUM_NAME) \
+X(None, 0, ENUM_NAME)        \
+X(Asc,  1, ENUM_NAME)        \
+X(Desc, 2, ENUM_NAME)
+
+    DECLARE_ENUM(Order, order, ORDER_LIST)
+
+    struct SearchModel
+    {
+        SearchModel(const std::string& json_string)
         {
             using json = nlohmann::json;
             json q = json::parse(json_string);
-
-            auto split_csv = [](const std::string& s)
-            {
-                std::vector<std::string> out;
-                std::stringstream ss(s);
-                std::string item;
-                while (std::getline(ss, item, ','))
-                {
-                    if (!item.empty())
-                        out.push_back(item);
-                }
-                return out;
-            };
 
             // text filters
             title_contains = q.value("title_contains", "");
@@ -75,7 +221,10 @@ namespace mindnet::db::sqlite::queries::dictionary
             definition_contains = q.value("definition_contains", "Any");
 
             // enums / multi-selects serialized as comma-separated values
-            statuses = split_csv(q.value("status", ""));
+            for (auto& e : q.at("statuses").get<std::vector<int>>())
+            {
+                statuses.push_back(int_to_term_status(e));
+            }
             pinned_only = q.value("pinned_only", false);
 
             difficulty_easy = q.value("difficulty_easy", true);
@@ -95,13 +244,15 @@ namespace mindnet::db::sqlite::queries::dictionary
             source_id = q.value("source_id", 0);
             alias_alias = q.value("alias_alias", "");
 
-            missing_items = split_csv(q.value("missing_items", ""));
-            has_items = split_csv(q.value("has_items", ""));
+            for (auto& e : q.at("missing_items").get<std::vector<int>>())
+                missing_items.push_back(int_to_dictionary_item(e));
+            for (auto& e : q.at("has_items").get<std::vector<int>>())
+                has_items.push_back(int_to_dictionary_item(e));
 
-            created = q.value("created", "Any");
-            updated = q.value("updated", "Any");
-            visited = q.value("visited", "Any");
-            reviewed = q.value("reviewed", "Any");
+            created = int_to_time_range(q.at("created").get<int>());
+            updated = int_to_time_range(q.at("updated").get<int>());
+            visited = int_to_time_range(q.at("visited").get<int>());
+            reviewed = int_to_time_range(q.at("reviewed").get<int>());
 
             repetition_due = q.value("repetition_due", true);
             repetition_not_due = q.value("repetition_not_due", true);
@@ -112,23 +263,8 @@ namespace mindnet::db::sqlite::queries::dictionary
                 repetition_due = true;
                 repetition_never = true;
             }
-            order = q.value("order", "Asc");
-            if (order != "Asc" && order != "Desc") sort = "Asc";
-
-            sort =q.value("sort", "None");
-            std::vector sort_values = {"None", "Title", "Created at", "Updated at", "Status", "Difficulty", "Importance", "Next review", "Random"};
-            {
-                bool sort_found = false;
-                for (string e: sort_values)
-                {
-                    if (e == sort)
-                    {
-                        sort_found = true;
-                        break;
-                    }
-                }
-                if (!sort_found) sort = "None";
-            }
+            order = int_to_order(q.at("order").get<int>());
+            sort = int_to_sort(q.at("sort").get<int>());
         }
 
         // text filters
@@ -137,7 +273,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         string definition_contains;
 
         // enums / multi-selects serialized as comma-separated values
-        vector<string> statuses;
+        vector<TermStatus> statuses;
         bool pinned_only = false;
 
         bool difficulty_easy = false;
@@ -157,19 +293,19 @@ namespace mindnet::db::sqlite::queries::dictionary
         int source_id = 0;
         string alias_alias;
 
-        vector<string> missing_items;
-        vector<string> has_items;
-        string created;
-        string updated;
-        string visited;
-        string reviewed;
+        vector<DictionaryItem> missing_items;
+        vector<DictionaryItem> has_items;
+        TimeRange created = TimeRange::Any;
+        TimeRange updated = TimeRange::Any;
+        TimeRange visited = TimeRange::Any;
+        TimeRange reviewed = TimeRange::Any;
 
         bool repetition_due;
         bool repetition_not_due;
         bool repetition_never;
 
-        string sort;
-        string order = "Asc";
+        Sort sort = Sort::None;
+        Order order = Order::None;
 
         [[nodiscard]] std::string to_json() const
         {
@@ -192,7 +328,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["title_starts_with"] = title_starts_with;
             q["definition_contains"] = definition_contains;
 
-            q["status"] = join_csv(statuses);
+            q["statuses"] = statuses;
             q["pinned_only"] = pinned_only;
 
             q["difficulty_easy"] = difficulty_easy;
@@ -212,8 +348,8 @@ namespace mindnet::db::sqlite::queries::dictionary
             q["source_id"] = source_id;
             q["alias_alias"] = alias_alias;
 
-            q["missing_items"] = join_csv(missing_items);
-            q["has_items"] = join_csv(has_items);
+            q["missing_items"] = missing_items;
+            q["has_items"] = has_items;
             q["created"] = created;
             q["updated"] = updated;
             q["visited"] = visited;
@@ -241,30 +377,35 @@ namespace mindnet::db::sqlite::queries::dictionary
         i64 number{0};
         std::string text;
         BindValueType type = TEXT;
+
     public:
         BindValue(i64 v) : number(v), type(NUMBER)
         {
         }
+
         BindValue(const std::string& v) : text(v), type(TEXT)
         {
         }
-        const i64& get_number() const
+
+        [[nodiscard]] const i64& get_number() const
         {
             if (type != NUMBER) throw std::runtime_error("This method cannot be called. The type is not number.");
             return number;
         }
-        const std::string& get_text() const
+
+        [[nodiscard]] const std::string& get_text() const
         {
             if (type != TEXT) throw std::runtime_error("This method cannot be called. The type is not text.");
             return text;
         }
-        const BindValueType& get_type() const
+
+        [[nodiscard]] const BindValueType& get_type() const
         {
             return type;
         }
     };
 
-    static i64 now_ms()
+    static i64 get_now_ms()
     {
         using namespace std::chrono;
         return duration_cast<milliseconds>(
@@ -290,12 +431,15 @@ namespace mindnet::db::sqlite::queries::dictionary
             sql += " AND ";
         }
     }
+
     static const std::string CPP_CLASS = "FindDictionaryTermsViaAdvancedSearchSQLiteQuery";
+
     nlohmann::json FindDictionaryTermsViaAdvancedSearchSQLiteQuery::call(
         nlohmann::json& request,
         api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error)
     {
-        static const std::string CPP_SYMBOL = "call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error)";
+        static const std::string CPP_SYMBOL =
+            "call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error)";
         nlohmann::json response;
 
         if (!request.contains("user_id"))
@@ -309,173 +453,172 @@ namespace mindnet::db::sqlite::queries::dictionary
         if (!request.contains("query_json"))
             throw std::invalid_argument("Mandatory key query_json is missing");
 
-        SearchQuery q(request["query_json"]);
+        SearchModel q(request["query_json"]);
         essential::debug << q.to_json() << essential::commit;
 
         int page_size = request.value("page_size", 20);
         int page_number = request.value("page_number", 1);
         int offset = (page_number - 1) * page_size;
+        i64 now_ms = get_now_ms();
 
-        std::string sql_start_page= "SELECT DISTINCT dt.id, dt.title, dt.disambiguation FROM dictionary_term dt ";
+        std::string sql_start_page = "SELECT DISTINCT dt.id, dt.title, dt.disambiguation FROM dictionary_term dt ";
         std::string sql_start_count = "SELECT COUNT(*) FROM dictionary_term dt ";
-        std::string sql_current_page = sql_start_page;
+        std::string sql_where_and_joins;
         std::vector<BindValue> binders;
 
         bool first_where = true;
 
         // joins
         if (q.tag_id > 0)
-            sql_current_page += " JOIN dictionary_tag dtag ON dtag.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_tag dtag ON dtag.dictionary_term_id = dt.id ";
 
         if (!q.flag_title.empty())
-            sql_current_page += " JOIN dictionary_flag df ON df.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_flag df ON df.dictionary_term_id = dt.id ";
 
         if (!q.alias_alias.empty())
-            sql_current_page += " JOIN dictionary_term_alias da ON da.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_term_alias da ON da.dictionary_term_id = dt.id ";
 
         if (q.link_from_term_id > 0)
-            sql_current_page += " JOIN dictionary_link dl_from ON dl_from.to_dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_link dl_from ON dl_from.to_dictionary_term_id = dt.id ";
 
         if (q.link_to_term_id > 0)
-            sql_current_page += " JOIN dictionary_link dl_to ON dl_to.from_dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_link dl_to ON dl_to.from_dictionary_term_id = dt.id ";
 
         if (!q.note_contains.empty())
-            sql_current_page += " JOIN dictionary_note dn ON dn.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_note dn ON dn.dictionary_term_id = dt.id ";
 
         if (q.index_id > 0)
-            sql_current_page += " JOIN dictionary_index di ON di.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_index di ON di.dictionary_term_id = dt.id ";
 
         if (q.source_id > 0)
-            sql_current_page += " JOIN dictionary_source ds ON ds.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " JOIN dictionary_source ds ON ds.dictionary_term_id = dt.id ";
 
-        bool sort_next_review = q.sort.find("Next review") != string::npos;
+        bool sort_next_review = q.sort == Sort::NextReview;
         if (sort_next_review)
         {
-            sql_current_page += " LEFT JOIN dictionary_state_18 state ON state.dictionary_term_id = dt.id ";
-            sql_current_page += " AND state.user_id = ? ";
+            sql_where_and_joins += " LEFT JOIN dictionary_state_18 state ON state.dictionary_term_id = dt.id ";
+            sql_where_and_joins += " AND state.user_id = ? ";
             binders.push_back(user_id);
         }
 
         // pinned
         if (q.pinned_only)
         {
-            sql_current_page +=
+            sql_where_and_joins +=
                 " JOIN dictionary_pinned_term dpt ON dpt.dictionary_term_id = dt.id ";
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dpt.user_id = ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dpt.user_id = ?";
             binders.push_back(user_id);
         }
 
         // mandatory
-        append_where(sql_current_page, first_where);
-        sql_current_page += "dt.dictionary_map_id = ?";
+        append_where(sql_where_and_joins, first_where);
+        sql_where_and_joins += "dt.dictionary_map_id = ?";
         binders.push_back(dictionary_map_id);
 
         // title filters
         if (!q.title_contains.empty())
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dt.title LIKE ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.title LIKE ?";
             binders.push_back("%" + q.title_contains + "%");
         }
 
         if (!q.title_starts_with.empty())
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dt.title LIKE ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.title LIKE ?";
             binders.push_back(q.title_starts_with + "%");
         }
 
         // definition
         if (!q.definition_contains.empty())
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dt.definition LIKE ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.definition LIKE ?";
             binders.push_back("%" + q.definition_contains + "%");
         }
 
         // status
-        if (!q.statuses.empty() && !(q.statuses.size() == 1 && q.statuses[0] == "Any"))
+        if (!q.statuses.empty() && !(q.statuses.size() == 1 && q.statuses[0] == TermStatus::Any))
         {
-            auto def = plugins::dictionary::enums::term_status_to_enum_definition();
-
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dt.status IN (";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.status IN (";
             for (size_t i = 0; i < q.statuses.size(); ++i)
             {
-                if (i) sql_current_page += ",";
-                sql_current_page += "?";
+                if (i) sql_where_and_joins += ",";
+                sql_where_and_joins += "?";
                 auto status = q.statuses[i];
-                auto status_int = def.get_value_as_int(status);
+                auto status_int = term_status_to_int(status);
                 if (status_int == -1) continue;
                 binders.push_back(status_int);
             }
-            sql_current_page += ")";
+            sql_where_and_joins += ")";
         }
 
         // difficulty
         if (!(q.difficulty_easy && q.difficulty_medium && q.difficulty_hard))
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dt.difficulty IN (";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.difficulty IN (";
             bool first = true;
             if (q.difficulty_easy)
             {
-                sql_current_page += "1";
+                sql_where_and_joins += std::to_string(difficulty_to_int(Difficulty::Easy));
                 first = false;
             }
             if (q.difficulty_medium)
             {
-                if (!first) sql_current_page += ",";
-                sql_current_page += "2";
+                if (!first) sql_where_and_joins += ",";
+                sql_where_and_joins += std::to_string(difficulty_to_int(Difficulty::Medium));
                 first = false;
             }
             if (q.difficulty_hard)
             {
-                if (!first) sql_current_page += ",";
-                sql_current_page += "3";
+                if (!first) sql_where_and_joins += ",";
+                sql_where_and_joins += std::to_string(difficulty_to_int(Difficulty::Hard));
             }
-            sql_current_page += ")";
+            sql_where_and_joins += ")";
         }
 
         // importance
         if (!(q.importance_low && q.importance_medium && q.importance_high))
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dt.importance IN (";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.importance IN (";
             bool first = true;
             if (q.importance_low)
             {
-                sql_current_page += "1";
+                sql_where_and_joins += std::to_string(importance_to_int(Importance::Low));
                 first = false;
             }
             if (q.importance_medium)
             {
-                if (!first) sql_current_page += ",";
-                sql_current_page += "2";
+                if (!first) sql_where_and_joins += ",";
+                sql_where_and_joins += std::to_string(importance_to_int(Importance::Medium));
                 first = false;
             }
             if (q.importance_high)
             {
-                if (!first) sql_current_page += ",";
-                sql_current_page += "3";
+                if (!first) sql_where_and_joins += ",";
+                sql_where_and_joins += std::to_string(importance_to_int(Importance::High));
             }
-            sql_current_page += ")";
+            sql_where_and_joins += ")";
         }
 
         // tag
         if (q.tag_id > 0)
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dtag.dictionary_tag_type_id = ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dtag.dictionary_tag_type_id = ?";
             binders.push_back(q.tag_id);
         }
 
         // flag
         if (!q.flag_title.empty())
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "df.title = ? AND df.user_id = ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "df.title = ? AND df.user_id = ?";
             binders.push_back(q.flag_title);
             binders.push_back(user_id);
         }
@@ -483,58 +626,59 @@ namespace mindnet::db::sqlite::queries::dictionary
         // alias
         if (!q.alias_alias.empty())
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "da.alias LIKE ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "da.alias LIKE ?";
             binders.push_back("%" + q.alias_alias + "%");
         }
 
         // note
         if (!q.note_contains.empty())
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "dn.content LIKE ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dn.content LIKE ?";
             binders.push_back("%" + q.note_contains + "%");
         }
 
         // index
         if (q.index_id > 0)
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "di.dictionary_index_type_id = ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "di.dictionary_index_type_id = ?";
             binders.push_back(q.index_id);
         }
 
         // source
         if (q.source_id > 0)
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += "ds.dictionary_source_type_id = ?";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "ds.dictionary_source_type_id = ?";
             binders.push_back(q.source_id);
         }
+
+        static const std::unordered_map<DictionaryItem, std::string> dictionary_item_tables = {
+            {DictionaryItem::Notes, "dictionary_note dn"},
+            {DictionaryItem::Aliases, "dictionary_term_alias da"},
+            {DictionaryItem::Tags, "dictionary_tag dtag"},
+            {DictionaryItem::Flags, "dictionary_flag df"},
+            {DictionaryItem::Sources, "dictionary_source ds"},
+            {DictionaryItem::Indexes, "dictionary_index di"}
+        };
 
         // missing items
         if (!q.missing_items.empty())
         {
             // common NOT EXISTS patterns
-            static const std::unordered_map<std::string, std::string> missing_tables = {
-                {"notes",    "dictionary_note dn"},
-                {"aliases",  "dictionary_term_alias da"},
-                {"tags",     "dictionary_tag dtag"},
-                {"flags",    "dictionary_flag df"},
-                {"sources",  "dictionary_source ds"},
-                {"indexes",  "dictionary_index di"}
-            };
 
             for (const auto& item : q.missing_items)
             {
                 std::string condition;
 
                 // --- special cases ---
-                if (item == "definition")
+                if (item == DictionaryItem::Definition)
                 {
                     condition = "(dt.definition IS NULL OR dt.definition = '')";
                 }
-                else if (item == "links")
+                else if (item == DictionaryItem::Links)
                 {
                     condition =
                         "NOT EXISTS (SELECT 1 FROM dictionary_link dl "
@@ -542,7 +686,7 @@ namespace mindnet::db::sqlite::queries::dictionary
                         "   OR dl.to_dictionary_term_id = dt.id)";
                 }
                 // --- generic NOT EXISTS ---
-                else if (auto it = missing_tables.find(item); it != missing_tables.end())
+                else if (auto it = dictionary_item_tables.find(item); it != dictionary_item_tables.end())
                 {
                     condition =
                         "NOT EXISTS (SELECT 1 FROM " + it->second +
@@ -553,8 +697,8 @@ namespace mindnet::db::sqlite::queries::dictionary
                 // append only if we really added a condition
                 if (!condition.empty())
                 {
-                    append_where(sql_current_page, first_where);
-                    sql_current_page += condition;
+                    append_where(sql_where_and_joins, first_where);
+                    sql_where_and_joins += condition;
                 }
             }
         }
@@ -563,25 +707,17 @@ namespace mindnet::db::sqlite::queries::dictionary
         if (!q.has_items.empty())
         {
             // common EXISTS patterns
-            static const std::unordered_map<std::string, std::string> has_tables = {
-                {"notes",    "dictionary_note dn"},
-                {"aliases",  "dictionary_term_alias da"},
-                {"tags",     "dictionary_tag dtag"},
-                {"flags",    "dictionary_flag df"},
-                {"sources",  "dictionary_source ds"},
-                {"indexes",  "dictionary_index di"}
-            };
 
             for (const auto& item : q.has_items)
             {
                 std::string condition;
 
                 // --- special cases ---
-                if (item == "definition")
+                if (item == DictionaryItem::Definition)
                 {
                     condition = "(dt.definition IS NOT NULL AND dt.definition != '')";
                 }
-                else if (item == "links")
+                else if (item == DictionaryItem::Links)
                 {
                     condition =
                         "EXISTS (SELECT 1 FROM dictionary_link dl "
@@ -589,7 +725,7 @@ namespace mindnet::db::sqlite::queries::dictionary
                         "   OR dl.to_dictionary_term_id = dt.id)";
                 }
                 // --- generic EXISTS ---
-                else if (auto it = has_tables.find(item); it != has_tables.end())
+                else if (auto it = dictionary_item_tables.find(item); it != dictionary_item_tables.end())
                 {
                     const std::string& table = it->second;
                     const std::string alias = table.substr(table.find(' ') + 1);
@@ -601,59 +737,39 @@ namespace mindnet::db::sqlite::queries::dictionary
 
                 if (!condition.empty())
                 {
-                    append_where(sql_current_page, first_where);
-                    sql_current_page += condition;
+                    append_where(sql_where_and_joins, first_where);
+                    sql_where_and_joins += condition;
                 }
             }
         }
 
-        static constexpr i64 MS_PER_HOUR = 60LL * 60 * 1000;
-
         // created
-        if (q.created != "Any")
+        if (q.created != TimeRange::Any)
         {
-            if (q.created == "Never")
+            if (q.created == TimeRange::Never)
             {
-                append_where(sql_current_page, first_where);
-                sql_current_page +=
-                    "(dt.created_at IS NULL OR dt.created_at = dt.created_at)";
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins +=
+                    "(dt.created_at IS NULL)";
             }
             else
             {
-                bool negated = q.created.rfind("Not ", 0) == 0;
-                std::string base = negated ? q.created.substr(4) : q.created;
-                if (negated) capitalize_first(base);
+                bool negated = is_negative_time_range(q.created);
 
-                i64 threshold_ms = 0;
-                i64 now = now_ms();
-
-                if (base == "Last hour")
-                    threshold_ms = now - 1LL * MS_PER_HOUR;
-                else if (base == "Last 3 hours")
-                    threshold_ms = now - 3LL * MS_PER_HOUR;
-                else if (base == "Today")
-                    threshold_ms = now - 24LL * MS_PER_HOUR;
-                else if (base == "Last week")
-                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
-                else if (base == "Last month")
-                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
-                else if (base == "Last year")
-                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
-                else if (base == "Last 10 years")
-                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+                i64 threshold_ms = threshold_from_time_range(q.created, now_ms);
 
                 if (threshold_ms > 0)
                 {
-                    append_where(sql_current_page, first_where);
+                    append_where(sql_where_and_joins, first_where);
 
                     if (!negated)
                     {
-                        sql_current_page +=
+                        sql_where_and_joins +=
                             "dt.created_at >= ?";
                     }
                     else
                     {
-                        sql_current_page +=
+                        sql_where_and_joins +=
                             "(dt.created_at < ? OR dt.created_at IS NULL)";
                     }
 
@@ -662,50 +778,30 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
         }
         // updated
-        if (q.updated != "Any")
+        if (q.updated != TimeRange::Any)
         {
-            if (q.updated == "Never")
+            if (q.updated == TimeRange::Never)
             {
-                append_where(sql_current_page, first_where);
-                sql_current_page +=
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins +=
                     "(dt.updated_at IS NULL OR dt.updated_at = dt.created_at)";
             }
             else
             {
-                bool negated = q.updated.rfind("Not ", 0) == 0;
-                std::string base = negated ? q.updated.substr(4) : q.updated;
-                if (negated) capitalize_first(base);
-
-                i64 threshold_ms = 0;
-                i64 now = now_ms();
-
-                if (base == "Last hour")
-                    threshold_ms = now - 1LL * MS_PER_HOUR;
-                else if (base == "Last 3 hours")
-                    threshold_ms = now - 3LL * MS_PER_HOUR;
-                else if (base == "Today")
-                    threshold_ms = now - 24LL * MS_PER_HOUR;
-                else if (base == "Last week")
-                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
-                else if (base == "Last month")
-                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
-                else if (base == "Last year")
-                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
-                else if (base == "Last 10 years")
-                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+                bool negated = is_negative_time_range(q.updated);
+                i64 threshold_ms = threshold_from_time_range(q.updated, now_ms);
 
                 if (threshold_ms > 0)
                 {
-                    append_where(sql_current_page, first_where);
+                    append_where(sql_where_and_joins, first_where);
 
                     if (!negated)
                     {
-                        sql_current_page +=
-                            "dt.updated_at >= ?";
+                        sql_where_and_joins += "dt.updated_at >= ?";
                     }
                     else
                     {
-                        sql_current_page +=
+                        sql_where_and_joins +=
                             "(dt.updated_at < ? OR dt.updated_at IS NULL)";
                     }
 
@@ -715,12 +811,12 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
 
         // visited
-        if (q.visited != "Any")
+        if (q.visited != TimeRange::Any)
         {
-            if (q.visited == "Never")
+            if (q.visited == TimeRange::Never)
             {
-                append_where(sql_current_page, first_where);
-                sql_current_page +=
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins +=
                     "NOT EXISTS (SELECT 1 FROM dictionary_term_visit dtv "
                     "WHERE dtv.dictionary_term_id = dt.id "
                     "AND dtv.user_id = ?)";
@@ -728,35 +824,16 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
             else
             {
-                bool negated = q.visited.rfind("Not ", 0) == 0;
-                std::string base = negated ? q.visited.substr(4) : q.visited;
-                if (negated) capitalize_first(base);
-
-                i64 threshold_ms = 0;
-                i64 now = now_ms();
-
-                if (base == "Last hour")
-                    threshold_ms = now - 1LL * MS_PER_HOUR;
-                else if (base == "Last 3 hours")
-                    threshold_ms = now - 3LL * MS_PER_HOUR;
-                else if (base == "Today")
-                    threshold_ms = now - 24LL * MS_PER_HOUR;
-                else if (base == "Last week")
-                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
-                else if (base == "Last month")
-                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
-                else if (base == "Last year")
-                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
-                else if (base == "Last 10 years")
-                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+                bool negated = is_negative_time_range(q.visited);
+                i64 threshold_ms = threshold_from_time_range(q.visited, now_ms);
 
                 if (threshold_ms > 0)
                 {
-                    append_where(sql_current_page, first_where);
+                    append_where(sql_where_and_joins, first_where);
 
                     if (!negated)
                     {
-                        sql_current_page +=
+                        sql_where_and_joins +=
                             "EXISTS (SELECT 1 FROM dictionary_term_visit dtv "
                             "WHERE dtv.dictionary_term_id = dt.id "
                             "AND dtv.user_id = ? "
@@ -764,7 +841,7 @@ namespace mindnet::db::sqlite::queries::dictionary
                     }
                     else
                     {
-                        sql_current_page +=
+                        sql_where_and_joins +=
                             "NOT EXISTS (SELECT 1 FROM dictionary_term_visit dtv "
                             "WHERE dtv.dictionary_term_id = dt.id "
                             "AND dtv.user_id = ? "
@@ -778,60 +855,41 @@ namespace mindnet::db::sqlite::queries::dictionary
         }
 
         // reviewed
-        if (q.reviewed != "Any")
+        if (q.reviewed != TimeRange::Any)
         {
-            if (q.reviewed == "Never")
+            if (q.reviewed == TimeRange::Never)
             {
-                append_where(sql_current_page, first_where);
-                sql_current_page +=
-                    "NOT EXISTS (SELECT 1 FROM dictionary_state_18 dtv "
-                    "WHERE dtv.dictionary_term_id = dt.id "
-                    "AND dtv.user_id = ?)";
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins +=
+                    "NOT EXISTS (SELECT 1 FROM dictionary_state_18 ds "
+                    "WHERE ds.dictionary_term_id = dt.id "
+                    "AND ds.user_id = ?)";
                 binders.push_back(user_id);
             }
             else
             {
-                bool negated = q.reviewed.rfind("Not ", 0) == 0;
-                std::string base = negated ? q.reviewed.substr(4) : q.reviewed;
-                if (negated) capitalize_first(base);
-
-                i64 threshold_ms = 0;
-                i64 now = now_ms();
-
-                if (base == "Last hour")
-                    threshold_ms = now - 1LL * MS_PER_HOUR;
-                else if (base == "Last 3 hours")
-                    threshold_ms = now - 3LL * MS_PER_HOUR;
-                else if (base == "Today")
-                    threshold_ms = now - 24LL * MS_PER_HOUR;
-                else if (base == "Last week")
-                    threshold_ms = now - 7LL * 24 * MS_PER_HOUR;
-                else if (base == "Last month")
-                    threshold_ms = now - 30LL * 24 * MS_PER_HOUR;
-                else if (base == "Last year")
-                    threshold_ms = now - 365LL * 24 * MS_PER_HOUR;
-                else if (base == "Last 10 years")
-                    threshold_ms = now - 3650LL * 24 * MS_PER_HOUR;
+                bool negated = is_negative_time_range(q.reviewed);
+                i64 threshold_ms = threshold_from_time_range(q.reviewed, now_ms);
 
                 if (threshold_ms > 0)
                 {
-                    append_where(sql_current_page, first_where);
+                    append_where(sql_where_and_joins, first_where);
 
                     if (!negated)
                     {
-                        sql_current_page +=
-                            "EXISTS (SELECT 1 FROM dictionary_state_18 dtv "
-                            "WHERE dtv.dictionary_term_id = dt.id "
-                            "AND dtv.user_id = ? "
-                            "AND dtv.updated_at >= ?)";
+                        sql_where_and_joins +=
+                            "EXISTS (SELECT 1 FROM dictionary_state_18 ds "
+                            "WHERE ds.dictionary_term_id = dt.id "
+                            "AND ds.user_id = ? "
+                            "AND ds.updated_at >= ?)";
                     }
                     else
                     {
-                        sql_current_page +=
-                            "NOT EXISTS (SELECT 1 FROM dictionary_state_18 dtv "
-                            "WHERE dtv.dictionary_term_id = dt.id "
-                            "AND dtv.user_id = ? "
-                            "AND dtv.updated_at >= ?)";
+                        sql_where_and_joins +=
+                            "NOT EXISTS (SELECT 1 FROM dictionary_state_18 ds "
+                            "WHERE ds.dictionary_term_id = dt.id "
+                            "AND ds.user_id = ? "
+                            "AND ds.updated_at >= ?)";
                     }
 
                     binders.push_back(user_id);
@@ -840,23 +898,28 @@ namespace mindnet::db::sqlite::queries::dictionary
             }
         }
 
-        auto now_ms = util::Utils::current_unix_timestamp_ms();
-        bool require_definition =
-            std::find(q.has_items.begin(), q.has_items.end(), "definition")
-                != q.has_items.end();
+        bool require_definition = false;
+        for (auto& e : q.has_items)
+        {
+            if (e == DictionaryItem::Definition)
+            {
+                require_definition = true;
+                break;
+            }
+        }
 
         // repetition
         if (!(q.repetition_due && q.repetition_not_due && q.repetition_never))
         {
-            append_where(sql_current_page, first_where);
-            sql_current_page += " ( ";
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += " ( ";
 
             bool first_rep = true;
 
             auto add_or = [&]()
             {
                 if (!first_rep)
-                    sql_current_page += " OR ";
+                    sql_where_and_joins += " OR ";
                 first_rep = false;
             };
 
@@ -864,7 +927,7 @@ namespace mindnet::db::sqlite::queries::dictionary
             if (q.repetition_due)
             {
                 add_or();
-                sql_current_page += R"(
+                sql_where_and_joins += R"(
 EXISTS (
     SELECT 1
     FROM dictionary_state_18 s
@@ -881,7 +944,7 @@ EXISTS (
             if (q.repetition_not_due)
             {
                 add_or();
-                sql_current_page += R"(
+                sql_where_and_joins += R"(
 EXISTS (
     SELECT 1
     FROM dictionary_state_18 s
@@ -898,7 +961,7 @@ EXISTS (
             if (q.repetition_never)
             {
                 add_or();
-                sql_current_page += R"(
+                sql_where_and_joins += R"(
 NOT EXISTS (
     SELECT 1
     FROM dictionary_state_18 s
@@ -909,51 +972,91 @@ NOT EXISTS (
                 binders.push_back(user_id);
             }
 
-            sql_current_page += " ) ";
+            sql_where_and_joins += " ) ";
 
             // optional: require definition
             if (require_definition)
             {
-                append_where(sql_current_page, first_where);
-                sql_current_page += " TRIM(dt.definition) <> '' ";
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins += " TRIM(dt.definition) <> '' ";
             }
         }
 
         std::string sql_sort;
-        if (q.sort == "Title") sql_sort = "dt.title";
-        if (q.sort == "Created at") sql_sort = "dt.created_at";
-        if (q.sort == "Updated at") sql_sort = "dt.updated_at";
-        if (q.sort == "Status") sql_sort = "dt.status";
-        if (q.sort == "Difficulty") sql_sort = "dt.difficulty";
-        if (q.sort == "Importance") sql_sort = "dt.importance";
-        if (q.sort == "Next review") sql_sort = "coalesce(state.next_review, 18446744073709551615)";
-        if (q.sort == "Random") sql_sort = "random()";
+        switch (q.sort)
+        {
+        case Sort::Title:
+            sql_sort = "dt.title";
+            break;
+
+        case Sort::CreatedAt:
+            sql_sort = "dt.created_at";
+            break;
+
+        case Sort::UpdatedAt:
+            sql_sort = "dt.updated_at";
+            break;
+
+        case Sort::Status:
+            sql_sort = "dt.status";
+            break;
+
+        case Sort::Difficulty:
+            sql_sort = "dt.difficulty";
+            break;
+
+        case Sort::Importance:
+            sql_sort = "dt.importance";
+            break;
+
+        case Sort::NextReview:
+            sql_sort = "coalesce(state.next_review, 18446744073709551615)";
+            break;
+
+        case Sort::Random:
+            sql_sort = "random()";
+            break;
+
+        case Sort::None:
+        default:
+            break;
+        }
+
         if (!sql_sort.empty())
         {
-            sql_sort = " ORDER BY " + sql_sort + " " + q.order + " ";
+            sql_sort = " ORDER BY " + sql_sort;
+            if (q.sort != Sort::Random && q.order != Order::None)
+            {
+                sql_sort += " ";
+                sql_sort += order_to_string(q.order);
+            }
         }
 
         static std::string sql_limit_offset = " LIMIT ? OFFSET ?";
-        
+
+        std::string sql_page;
         std::string sql_count;
 
-        essential::debug << "###sql_current_page### " + sql_current_page << essential::commit;
+        essential::debug << "###sql_current_page### " + sql_where_and_joins << essential::commit;
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
 
             {
-                sql_current_page += sql_sort;
-                sql_current_page += sql_limit_offset;
-                SQLite::Statement stmt(db, sql_current_page);
+                sql_page = sql_start_page + sql_where_and_joins;
+                sql_page += sql_sort;
+                sql_page += sql_limit_offset;
+                SQLite::Statement stmt(db, sql_page);
 
                 int i = 0;
-                for (const BindValue& b: binders)
+                for (const BindValue& b : binders)
                 {
                     switch (b.get_type())
                     {
-                    case TEXT: stmt.bind(++i, b.get_text()); break;
-                    case NUMBER: stmt.bind(++i, b.get_number()); break;
+                    case TEXT: stmt.bind(++i, b.get_text());
+                        break;
+                    case NUMBER: stmt.bind(++i, b.get_number());
+                        break;
                     default: throw std::runtime_error(std::string("Unknown type: ") + std::to_string(b.get_type()));
                     }
                 }
@@ -972,21 +1075,21 @@ NOT EXISTS (
                 }
                 response["results"] = arr;
             }
-            sql_count = sql_current_page;
+
             {
-                sql_count.erase(0, sql_start_page.size());
-                sql_count = sql_start_count + sql_count;
-                sql_count.erase(sql_count.size() - sql_limit_offset.size());
+                sql_count = sql_start_count + sql_where_and_joins;
 
                 SQLite::Statement stmt(db, sql_count);
 
                 int i = 0;
-                for (const BindValue& b: binders)
+                for (const BindValue& b : binders)
                 {
                     switch (b.get_type())
                     {
-                    case TEXT: stmt.bind(++i, b.get_text()); break;
-                    case NUMBER: stmt.bind(++i, b.get_number()); break;
+                    case TEXT: stmt.bind(++i, b.get_text());
+                        break;
+                    case NUMBER: stmt.bind(++i, b.get_number());
+                        break;
                     default: throw std::runtime_error(std::string("Unknown type: ") + std::to_string(b.get_type()));
                     }
                 }
@@ -997,28 +1100,27 @@ NOT EXISTS (
                     response["total_items"] = stmt.getColumn(0).getInt();
                 }
             }
-
         }
         catch (const SQLite::Exception& e)
         {
-            response["sql"] = sql_current_page;
-            response["sql2"] = sql_count;
+            response["sql_page"] = sql_page;
+            response["sql_count"] = sql_count;
             plugins::core::models::Error error = plugins::core::ErrorBuilder(
-                "FindDictionaryTermsViaAdvancedSearchSQLiteQuery failed",
-                plugins::core::enums::ErrorSeverity::Error,
-                plugins::core::enums::ErrorOrigin::Trigger,
-                plugins::core::enums::ExecutionLayer::Db)
-            .plugin("dictionary")
-            .operation(essential::Crudl::List)
-            .cpp(
-                CPP_NAMESPACE,
-                CPP_CLASS,
-                CPP_SYMBOL
-                )
-            .sql(sql_current_page + "; " + sql_count)
-            .user(user_id)
-            .exception(e)
-            .build();
+                                                     "FindDictionaryTermsViaAdvancedSearchSQLiteQuery failed",
+                                                     plugins::core::enums::ErrorSeverity::Error,
+                                                     plugins::core::enums::ErrorOrigin::Trigger,
+                                                     plugins::core::enums::ExecutionLayer::Db)
+                                                 .plugin("dictionary")
+                                                 .operation(essential::Crudl::List)
+                                                 .cpp(
+                                                     CPP_NAMESPACE,
+                                                     CPP_CLASS,
+                                                     CPP_SYMBOL
+                                                 )
+                                                 .sql(sql_where_and_joins + "; " + sql_count)
+                                                 .user(user_id)
+                                                 .exception(e)
+                                                 .build();
             optional_error.emplace(error);
             response["error"] = error.create_message_for_user();
         }

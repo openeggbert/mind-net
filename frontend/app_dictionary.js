@@ -4,7 +4,6 @@
 import {
     delete_entity,
     getTitleCache,
-    getUserId,
     list_all_entities,
     list_entities,
     post_entity,
@@ -22,646 +21,25 @@ import {
     showInfo,
     showWarn
 } from "./dom.js";
-import {Autocomplete, null_or_undefined} from "./common.js";
-
-let wasDragged = false;
-let suppressPopstate = false;
-let debug = false
-let USER_ID = getUserId()
+import {Autocomplete, defined, null_or_undefined} from "./common.js";
+import {attachMarkdownEditor} from "./d_markdown.js";
+import {Entities} from "./d_entities.js";
+import {
+    TermStatus, Importance, Difficulty, DictionaryItem, TimeRange, RepetitionMode, Sort, Order,
+    enumValue, enumValues, gen_enum_id, find_by_enum_id, humanizeEnumKey
+} from "./d_enums.js";
+import {debug, USER_ID} from "./d_globals.js";
+import {getWindowContent, setWindowTitle, clearWindow, makeDraggable, showWindowFrom} from "./d_window.js";
+import {SearchModel} from "./d_search.js";
+import {DomElement} from "./d_dom.js";
 
 function showDebug(msg) {
     if (debug) showInfo("Debug: " + msg)
 }
 
-// ========================================
-// Markdown Renderer (syntax highlight + emoji)
-// ========================================
-const md = window.markdownit({
-    html: false,
-    linkify: true,
-    typographer: true,
-    highlight: function (str, lang) {
-        if (lang && window.hljs.getLanguage(lang)) {
-            try {
-                return '<pre class="hljs"><code>' +
-                    window.hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
-                    '</code></pre>';
-            } catch (__) {
-            }
-        }
-        return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
-    }
-});
-
-// plugin for emoji (:smile:, :rocket:, etc.)
-md.use(window.markdownitEmoji);
-
-// configure highlight.js appearance
-window.hljs.configure({languages: ['cpp', 'js', 'json', 'html', 'sql', 'python']});
-
-// MD
-
-export function attachMarkdownEditor({
-                                         textarea,
-                                         buttonEdit,
-                                         buttonRead
-                                     }) {
-    textarea.parentNode
-        .querySelectorAll(".markdown_toolbar, .definition_md_rendered")
-        .forEach(e => e.remove());
-    {
-        let div_height_10px = get_element("div_height_10px")
-        if(defined(div_height_10px)) div_height_10px.remove()
-    }
-
-    if (!textarea) throw "attachMarkdownEditor: textarea is required";
-
-    textarea.style.marginTop = "10px;"
-    let div = document.createElement("div")
-    div.style.height = "10px"
-    div.id = "div_height_10px"
-    buttonEdit.after(div)
-    buttonRead.after(div)
-
-    // --- create rendered markdown div ---
-    const rendered = document.createElement("div");
-    rendered.className = "definition_md_rendered";
-    rendered.style.display = "none";
-    rendered.style.border = "1px solid #ccc";
-    rendered.style.padding = "8px";
-    rendered.style.background = "#e6e6c5";
-    rendered.style.whiteSpace = "normal";
-    rendered.style.minHeight = "100px"
-
-    rendered.style.maxHeight = "400px";
-    rendered.style.overflowY = "auto";
-
-    textarea.parentNode.insertBefore(rendered, textarea.nextSibling);
-
-    // --- toolbar ---
-    const toolbar = document.createElement("div");
-    toolbar.className = "markdown_toolbar";
-    toolbar.style.display = "none";
-    toolbar.style.gap = "4px";
-    toolbar.style.marginBottom = "6px";
-
-    const buttons = [
-        {
-            html: "<strong>B</strong>",
-            title: "Bold",
-            before: "**",
-            after: "**"
-        },
-        {
-            html: "<em>I</em>",
-            title: "Italic",
-            before: "*",
-            after: "*"
-        },
-        {
-            html: "<u>U</u>",
-            title: "Underline",
-            before: "__",
-            after: "__"
-        },
-        {
-            html: "<span style='font-weight:500'>P</span>",
-            title: "Paragraph",
-            before: "\n\n",
-            after: ""
-        },
-        {
-            html: "<span style='font-weight:700'>H1</span>",
-            title: "Heading 1",
-            before: "# ",
-            after: ""
-        },
-        {
-            html: "<span style='font-weight:600'>H2</span>",
-            title: "Heading 2",
-            before: "## ",
-            after: ""
-        },
-        {
-            html: "<span style='font-weight:500'>H3</span>",
-            title: "Heading 3",
-            before: "### ",
-            after: ""
-        },
-        {
-            html: "<span>• List</span>",
-            title: "List item",
-            before: "- ",
-            after: ""
-        },
-        {
-            html: "<code>{ }</code>",
-            title: "Inline code",
-            before: "`",
-            after: "`"
-        },
-        {
-            html: "<code>```</code>",
-            title: "Code block",
-            before: "```\n",
-            after: "\n```"
-        },
-        {
-            html: "<span style='font-style:italic'>❝</span>",
-            title: "Quote",
-            before: "> ",
-            after: ""
-        },
-        {
-            html: "<span style='text-decoration:underline'>Link</span>",
-            title: "Link",
-            before: "[",
-            after: "](url)"
-        },
-        {
-            html: "<span style='letter-spacing:2px'>—</span>",
-            title: "Divider",
-            before: "\n---\n",
-            after: ""
-        }
-    ];
-
-
-    function insertMarkdown(before, after) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selected = textarea.value.substring(start, end);
-        const text = before + selected + after;
-        textarea.setRangeText(text, start, end, "end");
-        textarea.focus();
-    }
-
-    buttons.forEach(cfg => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.title = cfg.title;
-        btn.className = "markdown-btn";
-        btn.innerHTML = cfg.html;
-        btn.onclick = () => insertMarkdown(cfg.before, cfg.after);
-        toolbar.appendChild(btn);
-    });
-
-
-    textarea.parentNode.insertBefore(toolbar, textarea);
-
-    // --- modes ---
-    function renderMarkdown() {
-        rendered.innerHTML = md.render(textarea.value || "");
-        textarea.style.display = "none";
-        toolbar.style.display = "none";
-        rendered.style.display = "block";
-
-        if (buttonEdit) buttonEdit.style.display = "inline-block";
-        if (buttonRead) buttonRead.style.display = "none";
-    }
-
-    function editMarkdown() {
-        rendered.style.display = "none";
-        textarea.style.display = "block";
-        toolbar.style.display = "flex";
-
-        if (buttonEdit) buttonEdit.style.display = "none";
-        if (buttonRead) buttonRead.style.display = "inline-block";
-    }
-
-    // --- wire buttons ---
-    if (buttonRead) buttonRead.onclick = renderMarkdown;
-    if (buttonEdit) buttonEdit.onclick = editMarkdown;
-
-    // --- initial state: READ ---
-    if (textarea.value === "") {
-        editMarkdown()
-    } else {
-        renderMarkdown();
-    }
-
-    // --- return handles (optional) ---
-    const api = {
-        renderMarkdown,
-        editMarkdown,
-        renderedDiv: rendered,
-        toolbar
-    };
-
-    return api;
-}
-
-// ========================================
-// Window
-// ========================================
-
-function makeDraggable(el) {
-    const header = el.querySelector('.window_container-header');
-    let offsetX = 0, offsetY = 0, dragging = false;
-
-    function startDrag(x, y, ev) {
-        // stop fake drags
-        if (ev && ev.buttons !== 1) return;
-
-        console.log("START DRAG", {display: el.style.display, left: el.style.left, top: el.style.top});
-
-        if (el.style.display === "none") return;
-
-        const rect = el.getBoundingClientRect();
-        dragging = true;
-        wasDragged = true;
-
-        offsetX = x - rect.left;
-        offsetY = y - rect.top;
-
-        el.style.position = "fixed";
-        el.style.transform = "none";
-    }
-
-
-    function doDrag(x, y, ev) {
-        if (document.body._forceStopDragging) {
-            dragging = false;
-            document.body._forceStopDragging = false;
-            return;
-        }
-        if (!dragging) return;
-        if (ev && ev.buttons !== 1) {
-            dragging = false;
-            return;
-        }
-        el.style.left = `${x - offsetX}px`;
-        el.style.top = `${y - offsetY}px`;
-    }
-
-
-    function stopDrag() {
-        console.log("STOP DRAG");
-        dragging = false;
-    }
-
-    // --- Mouse support ---
-    header.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY, e));
-    document.addEventListener('mousemove', e => doDrag(e.clientX, e.clientY, e));
-    document.addEventListener('mouseup', stopDrag);
-
-    // --- Touch support ---
-    header.addEventListener('touchstart', e => {
-        if (e.target.closest('.window-close')) return;
-
-        const t = e.touches[0];
-        startDrag(t.clientX, t.clientY);
-        e.preventDefault();
-    }, {passive: false});
-
-
-    document.addEventListener('touchmove', e => {
-        const t = e.touches[0];
-        doDrag(t.clientX, t.clientY);
-    }, {passive: false});
-
-    document.addEventListener('touchend', stopDrag);
-}
-
-
-window.closeWindow = closeWindow;
-
-
-export function closeWindow() {
-    const win = document.getElementById('window_container');
-
-    console.log("CLOSE WINDOW before", {
-        display: win.style.display,
-        left: win.style.left,
-        top: win.style.top,
-        transform: win.style.transform
-    });
-
-    wasDragged = false;
-    win.hidden = true;
-
-    win.style.display = 'none';
-    win.style.left = "";
-    win.style.top = "";
-    win.style.transform = "translate(-50%, -50%)";
-    win.style.position = "fixed";
-
-    setTimeout(() => win.hidden = false, 50);
-}
-
-export function showWindow() {
-    const win = document.getElementById("window_container");
-    document.body._forceStopDragging = true;
-
-    win.style.display = "block";
-    win.style.position = "fixed";
-    win.style.left = "50%";
-    win.style.top = "50%";
-    win.style.transform = "translate(-50%, -50%)";
-
-    requestAnimationFrame(() => {
-        const rect = win.getBoundingClientRect();
-
-        win.style.setProperty("--win-init-w", rect.width + "px");
-        win.style.setProperty("--win-init-h", rect.height + "px");
-
-        if (!wasDragged) {
-            win.style.left = "calc(50% - (var(--win-init-w) / 2))";
-            win.style.top = "calc(50% - (var(--win-init-h) / 2))";
-            win.style.transform = "none";
-        }
-    });
-}
-
-window.showWindow = showWindow;
-export const clearWindow = () => document.getElementById("window_container_content").innerHTML = "";
-window.clearWindow = clearWindow;
-export const setWindowTitle = title => document.getElementById("window_container_title").innerText = title;
-export const getWindowContent = () => document.getElementById("window_container_content");
-export const setWindowContent = text => getWindowContent().textContent = text;
-
-export function setWindowContentByUrl(url) {
-    clearWindow();
-    let iframe = document.createElement("iframe");
-    iframe.src = url;
-    iframe.scroling = "no"
-    iframe.style.display = "block";
-    iframe.style.width = "100%";
-    iframe.style.height = "100%";
-
-    getWindowContent().appendChild(iframe);
-    getWindowContent().style.height = "100%";
-}
-
-export function showWindowFrom(title, url) {
-    clearWindow()
-    setWindowTitle(title)
-    if (url === undefined) {
-        alert("url is required");
-        return;
-    }
-    setWindowContentByUrl(url)
-    showWindow();
-}
-
 document.addEventListener('DOMContentLoaded', async () => {
     await init_dom();
 });
-
-export const Entities = Object.freeze({
-
-    dictionary_map: Object.freeze({
-        table_name: "dictionary_map",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        name: "name",
-        description: "description",
-        position: "position",
-
-        owner_id: "owner_id",
-        team_id: "team_id",
-        owner_rights: "owner_rights",
-        team_rights: "team_rights",
-        other_rights: "other_rights"
-    }),
-
-    dictionary_term: Object.freeze({
-        table_name: "dictionary_term",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_map_id: "dictionary_map_id",
-        title: "title",
-        disambiguation: "disambiguation",
-        definition: "definition",
-
-        status: "status",
-        importance: "importance",
-        difficulty: "difficulty"
-    }),
-
-    dictionary_term_visit: Object.freeze({
-        table_name: "dictionary_term_visit",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        user_id: "user_id",
-        dictionary_map_id: "dictionary_map_id"
-    }),
-
-    dictionary_link: Object.freeze({
-        table_name: "dictionary_link",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        from_dictionary_term_id: "from_dictionary_term_id",
-        to_dictionary_term_id: "to_dictionary_term_id",
-        type: "type"
-    }),
-
-    dictionary_note: Object.freeze({
-        table_name: "dictionary_note",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        title: "title",
-        content: "content",
-        position: "position"
-    }),
-
-    dictionary_tag_type: Object.freeze({
-        table_name: "dictionary_tag_type",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_map_id: "dictionary_map_id",
-        title: "title"
-    }),
-
-    dictionary_tag: Object.freeze({
-        table_name: "dictionary_tag",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        dictionary_tag_type_id: "dictionary_tag_type_id"
-    }),
-
-    dictionary_flag: Object.freeze({
-        table_name: "dictionary_flag",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        dictionary_map_id: "dictionary_map_id",
-        user_id: "user_id",
-
-        title: "title",
-        is_public: "is_public"
-    }),
-
-    dictionary_review: Object.freeze({
-        table_name: "dictionary_review",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        user_id: "user_id",
-        dictionary_map_id: "dictionary_map_id",
-        dictionary_term_id: "dictionary_term_id",
-
-        algorithm: "algorithm",
-        review_date: "review_date",
-        grade: "grade",
-
-        started_at: "started_at",
-        ended_at: "ended_at",
-        latency_ms: "latency_ms",
-
-        answer_change_count: "answer_change_count",
-        details_json: "details_json"
-    }),
-
-    dictionary_source_type: Object.freeze({
-        table_name: "dictionary_source_type",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        title: "title",
-        author: "author",
-        year: "year",
-        publisher: "publisher",
-        edition: "edition",
-        pages: "pages",
-        url: "url",
-        type: "type",
-        note: "note"
-    }),
-
-    dictionary_source: Object.freeze({
-        table_name: "dictionary_source",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        dictionary_source_type_id: "dictionary_source_type_id",
-
-        page: "page",
-        note: "note"
-    }),
-
-    dictionary_state_18: Object.freeze({
-        table_name: "dictionary_state_18",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        user_id: "user_id",
-        dictionary_term_id: "dictionary_term_id",
-
-        stability_times_100: "stability_times_100",
-        last_interval_times_100: "last_interval_times_100",
-        repetitions: "repetitions",
-        lapses: "lapses",
-
-        next_review: "next_review",
-        last_review: "last_review",
-        last_quality: "last_quality"
-    }),
-
-    dictionary_term_alias: Object.freeze({
-        table_name: "dictionary_term_alias",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        dictionary_map_id: "dictionary_map_id",
-        alias: "alias"
-    }),
-
-    dictionary_index_type: Object.freeze({
-        table_name: "dictionary_index_type",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_map_id: "dictionary_map_id",
-        title: "title",
-        description: "description",
-        position: "position"
-    }),
-
-    dictionary_index: Object.freeze({
-        table_name: "dictionary_index",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_index_type_id: "dictionary_index_type_id",
-        dictionary_term_id: "dictionary_term_id",
-
-        position: "position",
-        is_entry_point: "is_entry_point"
-    }),
-
-    dictionary_pinned_term: Object.freeze({
-        table_name: "dictionary_pinned_term",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        dictionary_term_id: "dictionary_term_id",
-        user_id: "user_id",
-        dictionary_map_id: "dictionary_map_id"
-    }),
-
-    dictionary_search: Object.freeze({
-        table_name: "dictionary_search",
-
-        id: "id",
-        created_at: "created_at",
-        updated_at: "updated_at",
-
-        user_id: "user_id",
-        dictionary_map_id: "dictionary_map_id",
-
-        name: "name",
-        description: "description",
-        query_json: "query_json",
-        is_public: "is_public"
-    })
-});
-
 
 class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
@@ -746,47 +124,6 @@ class DictionaryApp {
  *
  * The refactor MUST introduce the following core classes.
  * Names are suggestions; responsibility boundaries are NOT optional.
- *
- *
- * ------------------------------------------------------------------
- * class SearchModel
- * ------------------------------------------------------------------
- * PURPOSE:
- *   - Single source of truth for search state
- *   - NO DOM access
- *   - NO REST calls
- *
- * CONTENT:
- *   - Fields correspond EXACTLY to query_json keys:
- *       title_contains
- *       title_starts_with
- *       definition_contains
- *       status
- *       pinned_only
- *       importance_low / medium / high
- *       difficulty_easy / medium / hard
- *       tag_id
- *       flag_title
- *       link_from_term_id
- *       link_to_term_id
- *       note_contains
- *       index_id
- *       source_id
- *       alias_alias
- *       missing_items
- *       visited
- *       updated
- *       sort
- *       order
- *
- * METHODS:
- *   - toJSON()
- *       -> returns object identical to current query_json
- *   - static fromJSON(json)
- *       -> used when loading saved searches
- *
- * RULE:
- *   - Backend contract MUST NOT change.
  *
  *
  * ------------------------------------------------------------------
@@ -886,283 +223,6 @@ class DictionaryApp {
  * This refactor is mechanical, local, and safe.
  * =====================================================================================
  */
-            function canConvertToNumber(text) {
-                return Number.isFinite(Number(text));
-            }
-
-            function enumValue(EnumObj, value) {
-
-                let final_value = canConvertToNumber(value) ? Number(value) : value
-
-                // number → search by id
-                if (typeof final_value === "number") {
-                    return Object.values(EnumObj).find(v => v.id === final_value) ?? null;
-                }
-
-                // text → key (LOW) or label ("Low")
-                if (typeof final_value === "string") {
-                    return (
-                        EnumObj[final_value] ??
-                        Object.values(EnumObj).find(v => v.label === final_value) ??
-                        null
-                    );
-                }
-
-                return null;
-            }
-
-            function enumValues(EnumObj) {
-                return Object.entries(EnumObj).map(([key, value]) => ({
-                    key,
-                    id: value.id,
-                    label: value.label
-                }));
-            }
-            function gen_enum_id(text, instance) {
-                return text + "_" + instance.id
-            }
-            function find_by_enum_id(text, instance) {
-                return get_element(gen_enum_id(text, instance))
-            }
-
-            function humanizeEnumKey(str) {
-                if (typeof str !== "string") return str;
-
-                return str
-                    // space between lowercase and uppercase letter
-                    .replace(/([a-z])([A-Z])/g, "$1 $2")
-                    // space between abbreviation and word (HTTPServer → HTTP Server)
-                    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
-                    // first letter uppercase, rest lowercase
-                    .replace(/^./, c => c.toUpperCase());
-            }
-
-            const TermStatus = Object.freeze({
-                Any: { id: -1, label: "Any" },
-                NotDefined: { id: 0, label: "NotDefined" },
-
-                Stub:       { id: 1, label: "Stub" },        // placeholder, title or one sentence
-                Draft:      { id: 2, label: "Draft" },       // work in progress
-                Incomplete: { id: 3, label: "Incomplete" },  // usable, but missing parts
-                Verified:   { id: 4, label: "Verified" },    // stable, reference knowledge
-                Deprecated: { id: 5, label: "Deprecated" },  // historical / do not use
-                Deleted:    { id: 6, label: "Deleted" }      // deleted
-            });
-
-            const Importance = Object.freeze({
-                Low:   { id: 1, label: "Low" },
-                Medium:{ id: 2, label: "Medium" },
-                High:  { id: 3, label: "High" },
-            });
-            const Difficulty = Object.freeze({
-                Easy:   { id: 1, label: "Easy" },
-                Medium:{ id: 2, label: "Medium" },
-                Hard:  { id: 3, label: "Hard" },
-            });
-            const DictionaryItem = Object.freeze({
-                Definition: { id: 1, label: "Definition" },
-                Tags:       { id: 2, label: "Tags" },
-                Flags:      { id: 3, label: "Flags" },
-                Links:      { id: 4, label: "Links" },
-                Notes:      { id: 5, label: "Notes" },
-                Indexes:    { id: 6, label: "Indexes" },
-                Sources:    { id: 7, label: "Sources" },
-                Aliases:    { id: 8, label: "Aliases" },
-            });
-
-            const TimeRange = Object.freeze({
-                Any:               { id: 0,   label: "Any" },
-
-                LastHour:          { id: 1,   label: "Last hour" },
-                Last3Hours:        { id: 2,   label: "Last 3 hours" },
-                Today:             { id: 3,   label: "Today" },
-                LastWeek:          { id: 4,   label: "Last week" },
-                LastMonth:         { id: 5,   label: "Last month" },
-                LastYear:          { id: 6,   label: "Last year" },
-                Last10Years:       { id: 7,   label: "Last 10 years" },
-
-                NotLastHour:       { id: 21,  label: "Not last hour" },
-                NotLast3Hours:     { id: 22,  label: "Not last 3 hours" },
-                NotToday:          { id: 23,  label: "Not today" },
-                NotLastWeek:       { id: 24,  label: "Not last week" },
-                NotLastMonth:      { id: 25,  label: "Not last month" },
-                NotLastYear:       { id: 26,  label: "Not last year" },
-                NotLast10Years:    { id: 27,  label: "Not last 10 years" },
-
-                Never:             { id: 100, label: "Never" },
-            });
-
-            const RepetitionMode = Object.freeze({
-                Due:         { id: 1, label: "Due" },
-                NotDue:      { id: 2, label: "Not Due" },
-                Never:       { id: 3, label: "Never" },
-            });
-
-            const Sort = Object.freeze({
-                None:        { id: 0, label: "None" },
-                Title:       { id: 1, label: "Title" },
-                CreatedAt:   { id: 2, label: "Created at" },
-                UpdatedAt:   { id: 3, label: "Updated at" },
-                Status:      { id: 11, label: "Status" },
-                Difficulty:  { id: 12, label: "Difficulty" },
-                Importance:  { id: 13, label: "Importance" },
-                NextReview:  { id: 14, label: "Next review" },
-                Random:      { id: 30, label: "Random" },
-            });
-
-            const Order = Object.freeze({
-                None: { id: 0, label: "None" },
-                Asc: { id: 1, label: "Asc" },
-                Desc:       { id: 2, label: "Desc" },
-            });
-
-            class SearchModel {
-                constructor() {
-                    this.title_contains = "";
-                    this.title_starts_with = "";
-                    this.definition_contains = "";
-                    this.statuses = [];
-                    this.pinned_only = false;
-                    this.importance_low = true
-                    this.importance_medium = true
-                    this.importance_high = true
-                    this.difficulty_easy = true
-                    this.difficulty_medium = true
-                    this.difficulty_hard = true
-                    this.tag_id = 0
-                    this.flag_title = ""
-                    this.link_from_term_id = 0
-                    this.link_to_term_id = 0
-                    this.note_contains = ""
-                    this.index_id = 0
-                    this.source_id = 0
-                    this.alias_alias = ""
-                    this.missing_items = []
-                    this.has_items = []
-                    this.created = TimeRange.Any
-                    this.updated = TimeRange.Any
-                    this.visited = TimeRange.Any
-                    this.reviewed = TimeRange.Any
-                    this.repetition_due = true
-                    this.repetition_not_due = false
-                    this.repetition_never = true
-                    this.sort = Sort.None
-                    this.order = Order.None
-                    // …
-                }
-
-                reset() {
-                    const def = new SearchModel();
-                    Object.assign(this, def);
-                }
-
-                to_json() {
-                    return {
-                        title_contains: this.title_contains,
-                        title_starts_with: this.title_starts_with,
-                        definition_contains: this.definition_contains,
-
-                        statuses: this.statuses.map(e=>{return e.id}),
-                        pinned_only: this.pinned_only,
-
-                        importance_low: this.importance_low,
-                        importance_medium: this.importance_medium,
-                        importance_high: this.importance_high,
-
-                        difficulty_easy: this.difficulty_easy,
-                        difficulty_medium: this.difficulty_medium,
-                        difficulty_hard: this.difficulty_hard,
-
-                        tag_id: this.tag_id,
-                        flag_title: this.flag_title,
-
-                        link_from_term_id: this.link_from_term_id,
-                        link_to_term_id: this.link_to_term_id,
-
-                        note_contains: this.note_contains,
-                        index_id: this.index_id,
-                        source_id: this.source_id,
-                        alias_alias: this.alias_alias,
-
-                        missing_items: this.missing_items.map(e=>{return e.id}),
-                        has_items: this.has_items.map(e=>{return e.id}),
-
-                        created: enumValue(TimeRange, this.created)?.id ?? TimeRange.Any.id,
-                        updated: enumValue(TimeRange, this.updated)?.id ?? TimeRange.Any.id,
-                        visited: enumValue(TimeRange, this.visited)?.id ?? TimeRange.Any.id,
-                        reviewed: enumValue(TimeRange, this.reviewed)?.id ?? TimeRange.Any.id,
-
-                        repetition_due: this.repetition_due,
-                        repetition_not_due: this.repetition_not_due,
-                        repetition_never: this.repetition_never,
-
-                        sort: this.sort === null ? Sort.None.id: this.sort.id,
-                        order: this.order === null ? Sort.None.id : this.order.id
-                    };
-                }
-                from_json(json) {
-                    if (!json || typeof json !== "object") {
-                        this.reset();
-                        return;
-                    }
-
-                    this.title_contains = json.title_contains ?? "";
-                    this.title_starts_with = json.title_starts_with ?? "";
-                    this.definition_contains = json.definition_contains ?? "";
-
-                    this.statuses = Array.isArray(json.statuses)
-                        ? json.statuses
-                            .map(id => enumValue(TermStatus, id))
-                            .filter(Boolean)
-                        : [];
-
-                    this.pinned_only = !!json.pinned_only;
-
-                    this.importance_low = json.importance_low ?? true;
-                    this.importance_medium = json.importance_medium ?? true;
-                    this.importance_high = json.importance_high ?? true;
-
-                    this.difficulty_easy = json.difficulty_easy ?? true;
-                    this.difficulty_medium = json.difficulty_medium ?? true;
-                    this.difficulty_hard = json.difficulty_hard ?? true;
-
-                    this.tag_id = json.tag_id ?? 0;
-                    this.flag_title = json.flag_title ?? "";
-
-                    this.link_from_term_id = json.link_from_term_id ?? 0;
-                    this.link_to_term_id = json.link_to_term_id ?? 0;
-
-                    this.note_contains = json.note_contains ?? "";
-                    this.index_id = json.index_id ?? 0;
-                    this.source_id = json.source_id ?? 0;
-                    this.alias_alias = json.alias_alias ?? "";
-
-                    this.missing_items = Array.isArray(json.missing_items)
-                        ? json.missing_items
-                            .map(id => enumValue(DictionaryItem, id))
-                            .filter(Boolean)
-                        : [];
-
-                    this.has_items = Array.isArray(json.has_items)
-                        ? json.has_items
-                            .map(id => enumValue(DictionaryItem, id))
-                            .filter(Boolean)
-                        : [];
-
-                    this.created  = enumValue(TimeRange, json.created)  ?? TimeRange.Any;
-                    this.updated  = enumValue(TimeRange, json.updated)  ?? TimeRange.Any;
-                    this.visited  = enumValue(TimeRange, json.visited)  ?? TimeRange.Any;
-                    this.reviewed = enumValue(TimeRange, json.reviewed) ?? TimeRange.Any;
-
-                    this.repetition_due = json.repetition_due ?? true;
-                    this.repetition_not_due = json.repetition_not_due ?? false;
-                    this.repetition_never = json.repetition_never ?? true;
-
-                    this.sort = json.sort === null ? Sort.None : enumValue(Sort, json.sort)
-                    this.order = json.order === null ? Order.None : enumValue(Order, json.order);
-                }
-
-            }
 
             clearWindow();
             setWindowTitle("🔍 Advanced Search");
@@ -1171,11 +231,21 @@ class DictionaryApp {
             content.style.height = "100%";
 
             // ---------- FORM ----------
-            const form = document.createElement("form");
-            form.style.display = "flex";
-            form.style.flexDirection = "column";
-            form.style.gap = "12px";
-            form.style.padding = "10px";
+
+            class Form extends DomElement{
+                constructor() {
+                    super("form")
+
+                    let s = this.style
+                    s.display = "flex";
+                    s.flexDirection = "column";
+                    s.gap = "12px";
+                    s.padding = "10px";
+                }
+
+            }
+
+            const form = new Form().set_id("form_search")
 
             function make_label(innerText = "", width = "200px") {
                 let label = document.createElement("label")
@@ -1597,9 +667,9 @@ class DictionaryApp {
                 let state_map = new Map()
 
                 let repetition_all =
-                    get_element("repetition_due").checked === true &&
-                    get_element("repetition_not_due").checked === true &&
-                    get_element("repetition_never").checked === true
+                    find_by_enum_id("repetition", RepetitionMode.Due).checked === true &&
+                    find_by_enum_id("repetition", RepetitionMode.NotDue).checked === true &&
+                    find_by_enum_id("repetition", RepetitionMode.Never).checked === true
                 if(details) {
                     function append_th(text) {
                         let th = create_th(text)
@@ -1722,7 +792,7 @@ class DictionaryApp {
                 definitionInput.value = ""
                 statusSelect.selectedIndex = 0;
                 pinnedCheckbox.checked = false
-                form
+                form.element
                     .querySelectorAll("input[type=checkbox]")
                     .forEach(cb => {
                             if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
@@ -1912,7 +982,7 @@ class DictionaryApp {
                 showDebug("old_search_id=" + old_search_id)
                 showDebug("new_search_id=" + new_search_id)
                 showDebug(JSON.stringify(search_autocomplete.get_item()))
-                form.classList.add("loading");
+                form.element.classList.add("loading");
                 let read_search = await read_entity(Entities.dictionary_search, new_search_id)
                 if (!defined(read_search)) {
                     showError("Reading search failed: " + new_search_id)
@@ -2064,7 +1134,7 @@ class DictionaryApp {
                     option.selected = order === option.innerText;
                 }
 
-                form.classList.remove("loading")
+                form.element.classList.remove("loading")
                 console.debug(JSON.stringify(read_search))
                 console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
                 deleteBtn.disabled = ""
@@ -2098,7 +1168,7 @@ class DictionaryApp {
             space.style.height = "50px"
 
             // ---------- FINAL ----------
-            content.appendChild(form);
+            content.appendChild(form.element);
 
             let page_size_label = document.createElement("label")
             page_size_label.style.display = "inline"
@@ -2262,7 +1332,6 @@ class DictionaryApp {
             content.appendChild(span_pages_toolbar)
 
             content.style.padding = "5px"
-
 
             showWindow();
         };
@@ -2857,9 +1926,7 @@ class TermContainer {
     }
 }
 
-function defined(value) {
-    return value !== null && value !== undefined
-}
+
 
 class CrudConfiguration {
     //string
@@ -3917,7 +2984,6 @@ class Sources extends CrudSection {
     }
 }
 
-
 class Aliases extends CrudSection {
     constructor() {
         super({
@@ -3987,7 +3053,6 @@ class Aliases extends CrudSection {
         div.appendChild(button)
     }
 }
-
 
 let dictionary_app = null
 
