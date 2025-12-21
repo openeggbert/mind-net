@@ -107,6 +107,11 @@ namespace mindnet::db::sqlite::queries::dictionary
             repetition_not_due = q.value("repetition_not_due", true);
             repetition_never = q.value("repetition_never", true);
 
+            if (!repetition_due && !repetition_not_due && !repetition_never)
+            {
+                repetition_due = true;
+                repetition_never = true;
+            }
             order = q.value("order", "Asc");
             if (order != "Asc" && order != "Desc") sort = "Asc";
 

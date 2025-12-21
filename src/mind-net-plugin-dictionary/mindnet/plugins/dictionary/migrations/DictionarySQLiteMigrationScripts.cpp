@@ -297,7 +297,6 @@ CREATE INDEX idx_dictionary_source_type
 )");
 
 
-
         //
         // V12 — dictionary_state_4
         //
@@ -470,6 +469,5 @@ CREATE INDEX idx_dictionary_search_map
 CREATE UNIQUE INDEX idx_dictionary_search_user_map_name
     ON dictionary_search(user_id, dictionary_map_id, name);
 )");
-
     }
 }
