@@ -68,7 +68,7 @@ namespace mindnet::plugins::slipbox::models
         validator_chain_vector list{
             [this] { return test_ne(note_id, 0, FlagColumns::NOTE_ID); },
             [this] { return testt_not_empty(title, FlagColumns::TITLE); },
-            [this, &is_flag_title_valid_result] { return test_true(is_flag_title_valid_result.empty(), "Tag type is not valid: " + is_flag_title_valid_result); },
+            [this, &is_flag_title_valid_result] { return test_true(is_flag_title_valid_result.empty(), "Flagg is not valid: " + is_flag_title_valid_result); },
 
         };
         return util::ValidatorChain::run(list);

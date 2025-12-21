@@ -40,7 +40,7 @@ namespace mindnet::plugins::dictionary::models
             [this] { return test_ne(user_id, 0, DictionaryFlagColumns::USER_ID); },
             [this] { return test_ne(dictionary_map_id, 0, DictionaryFlagColumns::DICTIONARY_MAP_ID); },
             [this] { return testt_not_empty(title, DictionaryFlagColumns::TITLE); },
-            [&is_flag_title_valid_result] { return test_true(is_flag_title_valid_result.empty(), "Tag type is not valid: " + is_flag_title_valid_result); },
+            [&is_flag_title_valid_result] { return test_true(is_flag_title_valid_result.empty(), "Flag is not valid: " + is_flag_title_valid_result); },
 
         };
         return util::ValidatorChain::run(list);
