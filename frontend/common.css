@@ -101,7 +101,6 @@
 }
 #markdown_preview h3 { font-size: 1.3em; }
 
-/* Odkazy */
 #markdown_preview a {
     color: #0366d6;
     text-decoration: none;
@@ -231,19 +230,15 @@ a.note-wanted, a.note-unknown {
 
 .window_container {
     position: fixed;
-    top: 50%;
-    left: 50%;
     width: 50%;
     height: 50%;
     min-width: 400px;
-    min-height: 600px;
+    min-height: 400px;
     background: white;
     /*border-radius: 8px;*/
     /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);*/
     border: 2px solid #ddd;
-    transform: translate(-50%, -50%);
     padding: 0px;
-    display: none;
     z-index: 1000;
     resize: both;
     overflow: auto;
@@ -264,6 +259,42 @@ a.note-wanted, a.note-unknown {
 .window_container header:hover {
     background: #224b83;
 }
+
+.window_container-content {
+    padding: 10px;
+    height: calc(100% - 30px);
+    overflow: auto;
+}
+
+.window-close {
+    background-color: #ddd;
+    border: none;
+    color: #000000;
+    font-size: 14px;
+    cursor: pointer;
+}
+.window-close:hover{
+    background-color: #ccc;
+}
+
+.window_container header {
+    background: #648daa;
+    color: #222;
+}
+
+.window_container.active header {
+    background: #1d3557;
+    color: white;
+}
+
+.window_container.active header:hover {
+    background: #224b83;
+}
+
+
+
+
+
 
 /*
 Source - https://stackoverflow.com/a

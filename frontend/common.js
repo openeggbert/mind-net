@@ -12,6 +12,7 @@ function debounce(fn, delay) {
 
 export class Autocomplete {
     #callbacks = [];
+    #items_map = new Map()
     addCallback(fn) {
         this.#callbacks.push(fn);
     }
@@ -57,7 +58,7 @@ export class Autocomplete {
         this.input.addEventListener("input", this.input_handler);
     }
 
-    async search(q, input_min_length = 3) {
+    async search(q, input_min_length = 3, show_box = true) {
         if (q.length < input_min_length) {
             this.box.style.display = "none";
             this.box.innerHTML = "";
@@ -65,10 +66,10 @@ export class Autocomplete {
         }
 
         const items = await this.fetcher(q);
-        this.render(items);
+        this.render(items, show_box);
     }
 
-    render(items) {
+    render(items, show_box = true) {
         console.log("Started rendering items: " + items.length)
         this.box.innerHTML = "";
 
@@ -77,12 +78,15 @@ export class Autocomplete {
             return;
         }
 
+        let i = 0
+        this.#items_map.clear()
         items.forEach(item => {
             const div = document.createElement("div");
             div.className = "suggestion-item";
             let title = item[this.title_column]
             div.textContent = title;
 
+            this.#items_map.set(i, div)
             div.onclick = () => {
                 this.input.value = title;
                 this.box.style.display = "none";
@@ -97,9 +101,16 @@ export class Autocomplete {
                 this.box.style.marginLeft = ""
             }
             this.box.appendChild(div);
+            i++
         });
 
-        this.box.style.display = "block";
+        if(show_box) this.box.style.display = "block";
+    }
+    set_selected_item(index) {
+        if(!this.#items_map.has(index)) {
+            return;
+        }
+        this.#items_map.get(index).click()
     }
     get_item() {
         return this.item;

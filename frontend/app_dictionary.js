@@ -19,7 +19,7 @@ import {
     get_element,
     showError,
     showInfo,
-    showWarn
+    showWarn, sleep_for_seconds
 } from "./dom.js";
 import {Autocomplete, defined, null_or_undefined} from "./common.js";
 import {attachMarkdownEditor} from "./d_markdown.js";
@@ -29,7 +29,10 @@ import {
     enumValue, enumValues, gen_enum_id, find_by_enum_id, humanizeEnumKey
 } from "./d_enums.js";
 import {debug, USER_ID} from "./d_globals.js";
-import {getWindowContent, setWindowTitle, clearWindow, makeDraggable, showWindowFrom} from "./d_window.js";
+import {
+    showWindowFrom,
+    VirtualWindow
+} from "./d_window.js";
 import {SearchModel} from "./d_search.js";
 import {
     Checkbox,
@@ -44,7 +47,7 @@ import {
     Span,
     ValueElement
 } from "./d_dom.js";
-import {_10PX} from "./d_styles.js";
+import {_10PX, _5PX} from "./d_styles.js";
 import {Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
 
 function showDebug(msg) {
@@ -238,10 +241,17 @@ class DictionaryApp {
  * =====================================================================================
  */
 
-            clearWindow();
-            setWindowTitle("🔍 Advanced Search");
+            const search_window = new VirtualWindow({
+                title: "🔍 Advanced Search",
+                width: screen.width > 1000 ? 1000 :screen.width - 100,
+                height: 600
+            });
 
-            const content = getWindowContent();
+            const content = new Div()
+            search_window.set_content(content.element());
+            search_window.show();
+
+
             content.style.height = "100%";
 
             // ---------- FORM ----------
@@ -482,7 +492,7 @@ class DictionaryApp {
 
             // --- Repetition ---
             const repLabel = new Label("Repetition");
-            const repContainer = new Span();
+            const repContainer = new Span().styles().marginLeft(_10PX).end();
             enumValues(RepetitionMode).forEach(e => {
                 const cb = new Checkbox()
                     .set_value(e.id)
@@ -495,8 +505,10 @@ class DictionaryApp {
 
                 const l = new Label("", "auto")
                     .css({
-                        marginRight: "10px",
-                        marginLeft: 0
+                        marginRight: _10PX,
+                        marginLeft: 0,
+                        paddingLeft: _5PX,
+                        paddingRight: _5PX
                     })
                 l.set_text(" " + e.label);
 
@@ -516,9 +528,9 @@ class DictionaryApp {
             enumValues(Order).forEach(e => {
                 orderSelect.add_option(new EnumOption(e));
             });
-            sortSelect.style.width = "150px"
-            orderSelect.style.width = "80px"
-            orderSelect.style.marginLeft = "20px"
+            sortSelect.style().width = "150px"
+            orderSelect.style().width = "80px"
+            orderSelect.style().marginLeft = "20px"
             form.appendChild(new Div(sortLabel, sortSelect, orderSelect));
 
             // --- Buttons ---
@@ -528,6 +540,21 @@ class DictionaryApp {
             searchBtn.type = "button";
             searchBtn.innerText = "🔍 Search";
             searchBtn.classList.add("save-btn");
+            // const winBtn = document.createElement("button");
+            // winBtn.type = "button";
+            // winBtn.innerText = "win";
+            //
+            // winBtn.onclick = async e => {
+            //     const win = new VirtualWindow({
+            //         title: "Advanced Search",
+            //         width: 600,
+            //         height: 400
+            //     });
+            //     win.show();
+            //     await sleep_for_seconds(3)
+            //     win.resize(800, 800)
+            // };
+            // form.appendChild(winBtn);
 
             class ProgressBar extends Div {
                 #fill;
@@ -698,6 +725,9 @@ class DictionaryApp {
                     progress = Number((done + (details ? 0.5 : 1.0)) / item_count * 100).toFixed()
                     progress_bar.set_progress(progress)
 
+                    document
+                        .getElementById("span_pages_toolbar")
+                        .scrollIntoView({ behavior: "smooth" });
                     done++
                 }
 
@@ -1318,8 +1348,6 @@ class DictionaryApp {
             content.appendChild(span_pages_toolbar.element())
 
             content.style.padding = "5px"
-
-            showWindow();
         };
 
         get_element("button_add_term").onclick = async () => {
@@ -1338,6 +1366,13 @@ class DictionaryApp {
             }
             showInfo("Created new term: " + new_term_created.title)
             await this.#term_container.render(new_term_created.id)
+            this.#term_container.show()
+        }
+        get_element("button_find_random_term").onclick = async () => {
+            await this.#autocomplete_term_title.search("*", 1, true)
+
+            this.#autocomplete_term_title.set_selected_item(0)
+            //await this.#term_container.render(this.#autocomplete_term_title.get_item_id())
             this.#term_container.show()
         }
     }
@@ -1771,6 +1806,30 @@ class TermContainer {
             showWindowFrom("Backlinks", url)
         }
         get_element("button_show_visited").onclick = async () => {
+            let win = new VirtualWindow({
+                title: "Term Visit History (Last 100)",
+                width: 800,
+                height: 600,
+            })
+
+            win.show()
+            let content = new Div()
+
+            let button = document.createElement("button")
+            button.innerText = "Show all visits"
+            button.onclick = () => {
+                let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + USER_ID
+                showWindowFrom("All visits", url)
+            }
+            button.style.margin = "20px;"
+            button.style.textAlign = "center"
+
+            content.appendChild(button)
+
+            let table = document.createElement("table");
+            content.appendChild(table);
+            win.set_content(content.element())
+
             let visits_result = await list_entities(
                 Entities.dictionary_term_visit,
                 new QueryParams()
@@ -1787,7 +1846,7 @@ class TermContainer {
             let visits = visits_result.items
             const disambiguation_map = new Map()
 
-            let table = document.createElement("table");
+
             table.style.borderCollapse = "collapse";
             table.style.margin = "0 auto";
             let tr_first = document.createElement("tr");
@@ -1878,24 +1937,6 @@ class TermContainer {
                 td_title.appendChild(a)
                 td_timestamp.innerText = formatDateTime(entry.created_at, true, true, true)
             }
-            clearWindow()
-
-            let button = document.createElement("button")
-            button.innerText = "Show all visits"
-            button.onclick = () => {
-                let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + USER_ID
-                showWindowFrom("All visits", url)
-            }
-            button.style.margin = "20px;"
-            button.style.textAlign = "center"
-
-            getWindowContent().appendChild(button)
-
-            getWindowContent().appendChild(table);
-            getWindowContent().style.height = "100%";
-            setWindowTitle("Term Visit History (Last 100)")
-
-            showWindow()
 
         }
         let new_visit = {
@@ -3042,7 +3083,4 @@ let dictionary_app = null
 
 async function init_dom() {
     dictionary_app = new DictionaryApp()
-
-    const win = document.getElementById('window_container');
-    makeDraggable(win);
 }
