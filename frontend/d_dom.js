@@ -693,6 +693,12 @@ export class Select extends DomElement {
         this.element().selectedIndex = index
         return this
     }
+    set_selected_index_to_0() {
+        return this.set_selected_index(0)
+    }
+    set_no_selected_index() {
+        return this.set_selected_index(-1)
+    }
     options() {
         return this.element().options
     }

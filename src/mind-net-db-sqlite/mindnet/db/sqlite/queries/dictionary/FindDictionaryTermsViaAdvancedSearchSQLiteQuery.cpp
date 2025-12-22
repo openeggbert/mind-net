@@ -223,6 +223,7 @@ X(Desc, 2, ENUM_NAME)
             // enums / multi-selects serialized as comma-separated values
             for (auto& e : q.at("statuses").get<std::vector<int>>())
             {
+                if (e == -1) continue; //Any
                 statuses.push_back(int_to_term_status(e));
             }
             pinned_only = q.value("pinned_only", false);

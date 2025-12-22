@@ -608,7 +608,7 @@ class DictionaryApp {
 
                 }
 
-                let page_size = get_element("page_size_select").value
+                let page_size = find_dom_element("page_size_select").element().value
 
                 let list_term_searches = await list_entities(
                     "dictionary_term_search",
@@ -818,12 +818,12 @@ class DictionaryApp {
                 titleContainsInput.clear_value()
                 titleStartsWithInput.clear_value()
                 definitionInput.clear_value()
-                statusSelect.selectedIndex = 0;
+                statusSelect.set_no_selected_index()
                 pinnedCheckbox.uncheck()
                 form.element()
                     .querySelectorAll("input[type=checkbox]")
                     .forEach(cb => {
-                            if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
+                            if (cb !== pinnedCheckbox.element() && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
                         }
                     )
                 tag_autocomplete.reset()
@@ -841,12 +841,12 @@ class DictionaryApp {
                     find_by_enum_id("has", e)._object.uncheck()
 
                 })
-                createdSelect.selectedIndex = 0
-                updatedSelect.selectedIndex = 0
-                visitedSelect.selectedIndex = 0
-                reviewedSelect.selectedIndex = 0
-                sortSelect.selectedIndex = 0
-                orderSelect.selectedIndex = 0
+                createdSelect.set_selected_index_to_0()
+                updatedSelect.set_selected_index_to_0()
+                visitedSelect.set_selected_index_to_0()
+                reviewedSelect.set_selected_index_to_0()
+                sortSelect.set_selected_index_to_0()
+                orderSelect.set_selected_index_to_0()
             }
             buttonRow.appendChild(resetBtn);
 

@@ -71,7 +71,7 @@ export class SearchModel {
             title_starts_with: this.title_starts_with,
             definition_contains: this.definition_contains,
 
-            statuses: this.statuses.map(e=>{return e.id}),
+            statuses: this.statuses.length === 1 && this.statuses[0] === -1 ? [] : this.statuses.map(e=>{return e.id}),
             pinned_only: this.pinned_only,
 
             importance_low: this.importance_low,
