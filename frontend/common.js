@@ -1,5 +1,6 @@
 import {list_all_entities, read_entity} from "./api.js";
 import {get_element} from "./dom.js";
+import {Input} from "./d_dom.js";
 
 function debounce(fn, delay) {
     let timer = null;
@@ -22,7 +23,7 @@ export class Autocomplete {
     }
 
     constructor(input, input_min_length, entity, query_params, title_column, part_column, insert_after_id = "") {
-        this.input = input;
+        this.input = input instanceof Input ? input.element : input;
         this.title_column = title_column;
         this.item = null;
         this.input_min_length = input_min_length
@@ -45,6 +46,8 @@ export class Autocomplete {
                 if(el === null) alert("el with id is null: " + insert_after_id)
                 el.after(this.box)
             }
+        } else {
+            throw new Error("input.parentNode === null")
         }
 
         this.input_handler = debounce(() => {
@@ -67,6 +70,7 @@ export class Autocomplete {
     }
 
     render(items) {
+        console.log("Started rendering items: " + items.length)
         this.box.innerHTML = "";
 
         if (!items || items.length === 0) {

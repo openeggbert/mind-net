@@ -31,7 +31,9 @@ import {
 import {debug, USER_ID} from "./d_globals.js";
 import {getWindowContent, setWindowTitle, clearWindow, makeDraggable, showWindowFrom} from "./d_window.js";
 import {SearchModel} from "./d_search.js";
-import {DomElement} from "./d_dom.js";
+import {Checkbox, Div, DomElement, Form, Input, Label, Span} from "./d_dom.js";
+import {_10PX} from "./d_styles.js";
+import {Color, Cursor, Display, TextDecoration} from "./d_styles_enums.js";
 
 function showDebug(msg) {
     if (debug) showInfo("Debug: " + msg)
@@ -232,53 +234,8 @@ class DictionaryApp {
 
             // ---------- FORM ----------
 
-            class Form extends DomElement{
-                constructor() {
-                    super("form")
-
-                    let s = this.style
-                    s.display = "flex";
-                    s.flexDirection = "column";
-                    s.gap = "12px";
-                    s.padding = "10px";
-                }
-
-            }
-
             const form = new Form().set_id("form_search")
-
-            class Label extends DomElement {
-                constructor(innerText = "", width = "200px") {
-                    super("div")
-
-                    let l = DomElement.create_element("label")
-                    l.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
-                    l.innerText = innerText
-                    if(l.innerText.size > 0) {
-                        let last_character = l.innerText.at(-1)
-                        if(last_character !== ":") l.innerText = innerText + ": "
-                    }
-
-                    this.style.width = width
-                    this.appendChild(l)
-                    this.style.display = "inline-block"
-                    this.style.whiteSpace = "nowrap"
-                }
-            }
-
-            function make_input(type = "text") {
-                let input = document.createElement("input")
-                input.type = type;
-                if (type === "checkbox") {
-                    input.style.transform = "scale(2)"
-                    input.style.marginLeft = "10px"
-                    input.style.marginRight = "10px"
-                    input.style.textAlign = "left"
-                } else {
-                    input.style.width = "250px";
-                }
-                return input
-            }
+            content.appendChild(form.element);
 
             function make_select() {
                 let select = document.createElement("select")
@@ -286,45 +243,23 @@ class DictionaryApp {
                 return select
             }
 
-            class Div extends DomElement {
-                constructor(element1, element2 = null, element3 = null) {
-                    super("div")
-
-                    if (element1 != null) this.appendChild(element1)
-                    if (element2) this.appendChild(element2)
-                    if (element3) this.appendChild(element3)
-                }
-            }
-            class Span extends DomElement {
-                constructor(element1 = null, element2 = null, element3 = null) {
-                    super("span")
-
-                    if (element1) this.appendChild(element1)
-                    if (element2) this.appendChild(element2)
-                    if (element3) this.appendChild(element3)
-                }
-            }
-
             // --- Title contains ---
             const titleLabel = new Label("Title contains");
-            const titleContainsInput = make_input();
-            titleContainsInput.placeholder = "e.g. mutex, allocator, RAII";
+            const titleContainsInput = new Input().set_placeholder("e.g. mutex, allocator, RAII");
             form.appendChild(new Div(titleLabel, titleContainsInput));
 
             // --- Title starts with ---
-            const titleStartsWithLabel = new Label("Title starts with:");
-            const titleStartsWithInput = make_input();
-            titleStartsWithInput.placeholder = "e.g. mut, allo, C, K";
+            const titleStartsWithLabel = new Label("Title starts with");
+            const titleStartsWithInput = new Input().set_placeholder("e.g. mut, allo, C, K");
             form.appendChild(new Div(titleStartsWithLabel, titleStartsWithInput));
 
             // --- Definition contains ---
-            const definitionLabel = new Label("Definition contains:");
-            const definitionInput = make_input();
-            definitionInput.placeholder = "e.g. mutex, allocator, RAII";
+            const definitionLabel = new Label("Definition contains");
+            const definitionInput = new Input().set_placeholder("e.g. mutex, allocator, RAII")
             form.appendChild(new Div(definitionLabel, definitionInput));
 
             // --- Status ---
-            const statusLabel = new Label("Status:");
+            const statusLabel = new Label("Status");
             const statusSelect = make_select();
             enumValues(TermStatus).forEach(e => {
                 const opt = document.createElement("option");
@@ -337,48 +272,50 @@ class DictionaryApp {
             form.appendChild(new Div(statusLabel, statusSelect));
 
             // --- Pinned ---
-            const pinnedLabel = new Label("Pinned only:")
-            const pinnedCheckbox = make_input("checkbox")
+            const pinnedLabel = new Label("Pinned only")
+            const pinnedCheckbox = new Checkbox()
             form.appendChild(new Div(pinnedLabel, pinnedCheckbox))
 
             // --- Importance ---
-            const impLabel = new Label("Importance:");
+            const impLabel = new Label("Importance");
             const impContainer = new Span();
-            enumValues(Importance).forEach(e => {
-                const input = make_input("checkbox");
-                input.value = e.id;
-                input.checked = true;
-                input.style.marginLeft = "10px";
-                input.id = "importance_" + e.id
+            enumValues(Importance).forEach(importance_enum_value => {
+                const cb = new Checkbox()
+                    .set_value(importance_enum_value.id)
+                    .check()
+                    .set_id(gen_enum_id("importance", importance_enum_value))
+                    .css({marginLeft: "10px"})
 
-                const l = new Label("", "auto");
-                l.style.marginRight = "10px";
-                l.style.marginLeft = "10px";
-                l.element.innerText = e.label
+                const l = new Label("", "auto")
+                    .css({
+                        marginRight: "10px",
+                        marginLeft: "10px"
 
-                impContainer.appendChild(input);
-                impContainer.appendChild(l);
+                    })
+                    .set_text(importance_enum_value.label)
+
+                impContainer.append_many(cb, l);
             });
             form.appendChild(new Div(impLabel, impContainer));
 
             // --- Difficulty ---
-            const diffLabel = new Label("Difficulty:");
+            const diffLabel = new Label("Difficulty");
             const diffContainer = new Span();
 
-            enumValues(Difficulty).forEach(e => {
-                const cb = make_input("checkbox");
-                cb.value = e.id;
-                cb.checked = true;
-                cb.style.marginLeft = "10px";
-                cb.id = "difficulty_" + e.id
+            enumValues(Difficulty).forEach(difficulty_enum_value => {
+                const cb = new Checkbox()
+                    .set_value(difficulty_enum_value.id)
+                    .check()
+                    .set_id(gen_enum_id("difficulty", difficulty_enum_value))
+                    .css({marginLeft: "10px"})
+                const l = new Label("", "auto")
+                    .css({
+                    marginRight: "10px",
+                    marginLeft: "10px"
 
-                const l = new Label("", "auto");
-                l.style.marginRight = "10px";
-                l.style.marginLeft = "10px";
-                l.element.innerText = e.label
-
-                diffContainer.appendChild(cb);
-                diffContainer.appendChild(l);
+                })
+                    .set_text(difficulty_enum_value.label)
+                diffContainer.append_many(cb, l);
             });
 
             form.appendChild(new Div(diffLabel, diffContainer));
@@ -394,121 +331,123 @@ class DictionaryApp {
                     if (defined(autocomplete)) {
                         autocomplete.reset()
                     } else {
-                        input.value = ""
+                        input.clear_value()
                     }
                 }
-                input.after(close_button)}
+                input.insert_after(close_button)}
             }
 
-            const tag_label = new Label("Tag: ")
-            const tag_input = make_input()
+            const tag_label = new Label("Tag")
+            const tag_input = new Input()
             form.appendChild(new Div(tag_label, tag_input))
-            let tag_autocomplete = new Autocomplete(tag_input, 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let tag_autocomplete = new Autocomplete(tag_input.element, 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             tag_autocomplete.clear_after_click = false
             tag_autocomplete.box_margin_left = "200px"
             new CloseButton("tag", tag_input, tag_autocomplete)
 
-            const flag_label = new Label("Flag: ")
-            const flag_input = make_input()
+            const flag_label = new Label("Flag")
+            const flag_input = new Input()
             form.appendChild(new Div(flag_label, flag_input))
-            let flag_autocomplete = new Autocomplete(flag_input, 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let flag_autocomplete = new Autocomplete(flag_input.element, 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             flag_autocomplete.clear_after_click = false
             flag_autocomplete.box_margin_left = "200px"
             new CloseButton("flag", flag_input, flag_autocomplete)
 
-            const link_from_label = new Label("Link from: ")
-            const link_from_input = make_input()
+            const link_from_label = new Label("Link from")
+            const link_from_input = new Input()
             form.appendChild(new Div(link_from_label, link_from_input))
-            let link_from_autocomplete = new Autocomplete(link_from_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let link_from_autocomplete = new Autocomplete(link_from_input.element, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_from_autocomplete.clear_after_click = false
             link_from_autocomplete.box_margin_left = "200px"
             new CloseButton("link from", link_from_input, link_from_autocomplete)
 
-            const link_to_label = new Label("Link to: ")
-            const link_to_input = make_input()
+            const link_to_label = new Label("Link to")
+            const link_to_input = new Input()
             form.appendChild(new Div(link_to_label, link_to_input))
-            let link_to_autocomplete = new Autocomplete(link_to_input, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let link_to_autocomplete = new Autocomplete(link_to_input.element, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_to_autocomplete.clear_after_click = false
             link_to_autocomplete.box_margin_left = "200px"
             new CloseButton("link to", link_to_input, link_to_autocomplete)
 
-            const noteLabel = new Label("Note contains:");
-            const noteInput = make_input();
+            const noteLabel = new Label("Note contains");
+            const noteInput = new Input();
             noteInput.placeholder = "e.g. mutex, allocator, RAII";
             form.appendChild(new Div(noteLabel, noteInput));
 
-            const index_label = new Label("Index: ")
-            const index_input = make_input()
+            const index_label = new Label("Index")
+            const index_input = new Input()
             form.appendChild(new Div(index_label, index_input))
-            let index_autocomplete = new Autocomplete(index_input, 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let index_autocomplete = new Autocomplete(index_input.element, 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             index_autocomplete.clear_after_click = false
             index_autocomplete.box_margin_left = "200px"
             new CloseButton("index", index_input, index_autocomplete)
 
-            const source_label = new Label("Source: ")
-            const source_input = make_input()
+            const source_label = new Label("Source")
+            const source_input = new Input()
             form.appendChild(new Div(source_label, source_input))
-            let source_autocomplete = new Autocomplete(source_input, 1, "dictionary_source_type_fulltext", "", "title", "title_part")
+            let source_autocomplete = new Autocomplete(source_input.element, 1, "dictionary_source_type_fulltext", "", "title", "title_part")
             source_autocomplete.clear_after_click = false
             source_autocomplete.box_margin_left = "200px"
             new CloseButton("source", source_input, source_autocomplete)
 
-            const alias_label = new Label("Alias: ")
-            const alias_input = make_input()
+            const alias_label = new Label("Alias")
+            const alias_input = new Input()
             form.appendChild(new Div(alias_label, alias_input))
-            let alias_autocomplete = new Autocomplete(alias_input, 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+            let alias_autocomplete = new Autocomplete(alias_input.element, 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             alias_autocomplete.clear_after_click = false
             alias_autocomplete.box_margin_left = "200px"
             new CloseButton("alias", alias_input, alias_autocomplete)
 
             // --- Missing items ---
-            const missingLabel = new Label("Missing:");
+            const missingLabel = new Label("Missing");
             const missingContainer = new Span();
 
             enumValues(DictionaryItem).forEach(e => {
-                const cb = make_input("checkbox");
-                cb.value = e.id;
-                cb.checked = false;
-                cb.style.marginLeft = "5px";
-                cb.id = "missing_" + e.id
+                const cb = new Checkbox()
+                    .set_value(e.id)
+                    .uncheck()
+                    .css({marginLeft :"5px"})
+                    .set_id(gen_enum_id("missing", e))
 
-                const l = new Label("", "auto");
-                l.style.marginRight = "10px";
-                l.style.marginLeft = "5px";
-                l.element.innerText = e.label
-                l.style.fontSize = "80%"
+                const l = new Label("", "auto").set_text(e.label)
+                    .css({
+                        marginRight : "10px",
+                        marginLeft : "5px",
+                        fontSize : "80%"
+                    })
 
-                missingContainer.appendChild(cb);
-                missingContainer.appendChild(l);
+                missingContainer.append_many(cb, l);
             });
             form.appendChild(new Div(missingLabel, missingContainer));
 
             // --- Has items ---
-            const hasLabel = new Label("Has:");
+            const hasLabel = new Label("Has");
             const hasContainer = new Span();
 
             enumValues(DictionaryItem).forEach(e => {
-                const cb = make_input("checkbox");
-                cb.value = e.id;
-                cb.checked = false;
-                cb.style.marginLeft = "5px";
-                cb.id = "has_" + e.id
+                let id_ = gen_enum_id("has", e)
 
-                const l = new Label("", "auto");
-                l.style.marginRight = "10px";
-                l.style.marginLeft = "5px";
-                l.element.innerText = e.label
-                l.style.fontSize = "80%"
+                const cb = new Checkbox()
+                    .set_value(e.id)
+                    .uncheck()
+                    .css({marginLeft :"5px"})
+                    .set_id(id_)
 
-                hasContainer.appendChild(cb);
-                hasContainer.appendChild(l);
+                const l = new Label("", "auto").set_text(e.label)
+                    .css({
+                        marginRight : "10px",
+                        marginLeft : "5px",
+                        fontSize : "80%"
+                    })
+
+                hasContainer.append_many(cb, l);
             });
             form.appendChild(new Div(hasLabel, hasContainer));
 
             const time_range_array = enumValues(TimeRange)
 
             // --- Created ---
-            const createdLabel = new Label("Created:");
+            const createdLabel = new Label("Created");
             const createdSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -519,7 +458,7 @@ class DictionaryApp {
             form.appendChild(new Div(createdLabel, createdSelect));
 
             // --- Updated ---
-            const updatedLabel = new Label("Updated:");
+            const updatedLabel = new Label("Updated");
             const updatedSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -530,7 +469,7 @@ class DictionaryApp {
             form.appendChild(new Div(updatedLabel, updatedSelect));
 
             // --- Visited ---
-            const visitedLabel = new Label("Visited:");
+            const visitedLabel = new Label("Visited");
             const visitedSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -541,7 +480,7 @@ class DictionaryApp {
             form.appendChild(new Div(visitedLabel, visitedSelect));
 
             // --- Reviewed ---
-            const reviewedLabel = new Label("Reviewed:");
+            const reviewedLabel = new Label("Reviewed");
             const reviewedSelect = make_select()
             time_range_array.forEach(e => {
                 const opt = document.createElement("option");
@@ -552,22 +491,26 @@ class DictionaryApp {
             form.appendChild(new Div(reviewedLabel, reviewedSelect));
 
             // --- Repetition ---
-            const repLabel = new Label("Repetition:");
+            const repLabel = new Label("Repetition");
             const repContainer = new Span();
             enumValues(RepetitionMode).forEach(e => {
-                const input = make_input("checkbox");
-                input.value = e.id;
-                input.checked = true;
-                input.style.marginLeft = "0"
-                input.id = "repetition_" + e.id
+                const cb = new Checkbox()
+                    .set_value(e.id)
+                    .check()
+                    .css({
+                        marginLeft : "0"
+                    })
+                    .set_id(gen_enum_id("repetition", e))
 
-                const l = new Label("", "auto");
-                l.style.marginRight = "10px";
-                l.style.marginLeft = "0"
-                l.appendChild(input);
-                l.element.append(" " + e.label);
 
-                repContainer.appendChild(l);
+                const l = new Label("", "auto")
+                    .css({
+                        marginRight: "10px",
+                        marginLeft: 0
+                    })
+                l.set_text(" " + e.label);
+
+                repContainer.append_many(cb, l);
             });
             form.appendChild(new Div(repLabel, repContainer));
 
@@ -611,7 +554,7 @@ class DictionaryApp {
 
                 let page_number = 5
                 try {
-                    page_number = Number(input_page_number.value)
+                    page_number = Number(input_page_number.get_value())
                 } catch {
 
                 }
@@ -635,10 +578,11 @@ class DictionaryApp {
                 // alert(JSON.stringify(list_term_searches))
                 let total_items = list_term_searches.total_items
                 let total_pages = list_term_searches.total_pages
+
                 get_element("span_pages_toolbar").style.display = "inline"
-                get_element("span_total_pages_count").innerText = total_pages
-                get_element("span_total_count_count").innerText = total_items
-                let items = list_term_searches.items
+                get_element("span_total_pages_count")._object.set_text(total_pages)
+                get_element("span_total_count_count")._object.set_text(total_items)
+                    let items = list_term_searches.items
                 if (items.length === 0) {
                     showInfo("No search results.")
                 }
@@ -647,7 +591,7 @@ class DictionaryApp {
                 resultTable.style.display = "block"
                 resultTable.style.marginBottom = "40px"
                 let space = get_element("space");
-                if (defined(space)) get_element("space").remove()
+                if (defined(space)) get_element("space")._object.remove_element()
 
                 let tr_th = document.createElement("tr")
                 resultTable.appendChild(tr_th)
@@ -670,7 +614,7 @@ class DictionaryApp {
                     return td
                 }
 
-                let details = items.length === 0 ? false : get_element("details_checkbox").checked
+                let details = items.length === 0 ? false : get_element("details_checkbox")._object.is_checked()
                 let th_id = create_th("ID")
                 let th_title = create_th("Title")
                 let th_disambiguation = create_th("Disambiguation")
@@ -804,11 +748,11 @@ class DictionaryApp {
             const resetBtn = make_button("♻ Reset");
 
             resetBtn.onclick = () => {
-                titleContainsInput.value = "";
-                titleStartsWithInput.value = ""
-                definitionInput.value = ""
+                titleContainsInput.clear_value()
+                titleStartsWithInput.clear_value()
+                definitionInput.clear_value()
                 statusSelect.selectedIndex = 0;
-                pinnedCheckbox.checked = false
+                pinnedCheckbox.uncheck()
                 form.element
                     .querySelectorAll("input[type=checkbox]")
                     .forEach(cb => {
@@ -819,19 +763,16 @@ class DictionaryApp {
                 flag_autocomplete.reset()
                 link_from_autocomplete.reset()
                 link_to_autocomplete.reset()
-                noteInput.value = ""
+                noteInput.clear_value()
                 index_autocomplete.reset()
                 source_autocomplete.reset()
                 alias_autocomplete.reset()
                 enumValues(DictionaryItem).forEach(e => {
-                    let id = "missing_" + e.id
-                    let cb = get_element(id)
-                    cb.checked = false
+                    find_by_enum_id("missing", e)._object.uncheck()
                 })
                 enumValues(DictionaryItem).forEach(e => {
-                    let id = "has_" + e.id
-                    let cb = get_element(id)
-                    cb.checked = false
+                    find_by_enum_id("has", e)._object.uncheck()
+
                 })
                 createdSelect.selectedIndex = 0
                 updatedSelect.selectedIndex = 0
@@ -847,9 +788,9 @@ class DictionaryApp {
             function load_query_model_from_form() {
                 const m = new SearchModel();
 
-                m.title_contains = titleContainsInput.value
-                m.title_starts_with = titleStartsWithInput.value
-                m.definition_contains = definitionInput.value
+                m.title_contains = titleContainsInput.get_value()
+                m.title_starts_with = titleStartsWithInput.get_value()
+                m.definition_contains = definitionInput.get_value()
                 m.statuses = Array
                     .from(statusSelect.selectedOptions)
                     .map(opt => {
@@ -857,27 +798,27 @@ class DictionaryApp {
                         return result
                         }
                     )
-                m.pinned_only = pinnedCheckbox.checked
-                m.importance_low = get_element(gen_enum_id("importance", Importance.Low)).checked
-                m.importance_medium = get_element(gen_enum_id("importance", Importance.Medium)).checked
-                m.importance_high = get_element(gen_enum_id("importance", Importance.High)).checked
+                m.pinned_only = pinnedCheckbox.is_checked()
+                m.importance_low = find_by_enum_id("importance", Importance.Low)._object.is_checked()
+                m.importance_medium = find_by_enum_id("importance", Importance.Medium)._object.is_checked()
+                m.importance_high = find_by_enum_id("importance", Importance.High)._object.is_checked()
 
-                m.difficulty_easy = get_element(gen_enum_id("difficulty", Difficulty.Easy)).checked
-                m.difficulty_medium = get_element(gen_enum_id("difficulty", Difficulty.Medium)).checked
-                m.difficulty_hard = get_element(gen_enum_id("difficulty", Difficulty.Hard)).checked
+                m.difficulty_easy = find_by_enum_id("difficulty", Difficulty.Easy)._object.is_checked()
+                m.difficulty_medium = find_by_enum_id("difficulty", Difficulty.Medium)._object.is_checked()
+                m.difficulty_hard = find_by_enum_id("difficulty", Difficulty.Hard)._object.is_checked()
 
                 m.tag_id = tag_autocomplete.get_item_id()
                 m.flag_title = flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title
                 m.link_from_term_id = link_from_autocomplete.get_item_id()
                 m.link_to_term_id = link_to_autocomplete.get_item_id()
-                m.note_contains = noteInput.value
+                m.note_contains = noteInput.get_value()
                 m.index_id = index_autocomplete.get_item_id()
                 m.source_id = source_autocomplete.get_item_id()
                 m.alias_alias = alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title
                 m.missing_items = enumValues(DictionaryItem)
-                    .filter(e => find_by_enum_id("missing", e).checked)
+                    .filter(e => find_by_enum_id("missing", e)._object.is_checked())
                 m.has_items = enumValues(DictionaryItem)
-                    .filter(e => find_by_enum_id("has", e).checked)
+                    .filter(e => find_by_enum_id("has", e)._object.is_checked())
                 m.created = Array
                     .from(createdSelect.selectedOptions)
                     .map(opt => opt.value)
@@ -894,9 +835,9 @@ class DictionaryApp {
                     .from(reviewedSelect.selectedOptions)
                     .map(opt => opt.value)
                     .map(e => enumValue(TimeRange, e))[0]
-                m.repetition_due = find_by_enum_id("repetition", RepetitionMode.Due).checked
-                m.repetition_not_due = find_by_enum_id("repetition", RepetitionMode.NotDue).checked
-                m.repetition_never = find_by_enum_id("repetition", RepetitionMode.Never).checked
+                m.repetition_due = find_by_enum_id("repetition", RepetitionMode.Due)._object.is_checked()
+                m.repetition_not_due = find_by_enum_id("repetition", RepetitionMode.NotDue)._object.is_checked()
+                m.repetition_never = find_by_enum_id("repetition", RepetitionMode.Never)._object.is_checked()
 
                 m.sort = Array
                     .from(sortSelect.selectedOptions)
@@ -947,7 +888,7 @@ class DictionaryApp {
                     } else {
                         showInfo("New search was successfully created.")
                         search_json = new_search_created
-                        get_element("span_search_id_value").innerText = new_search_created.id
+                        get_element("span_search_id_value")._object.set_text(new_search_created.id)
                         unloadBtn.disabled = ""
                         load_input.disabled = ""
                         deleteBtn.disabled = ""
@@ -968,30 +909,34 @@ class DictionaryApp {
             }
             buttonRow.appendChild(saveBtn);
 
-            const DISABLED = "disabled"
             const unloadBtn = make_button("📂 Unload");
-            unloadBtn.disabled = DISABLED
+            unloadBtn.disabled = true
             unloadBtn.onclick = () => {
                 let loaded = search_json !== null
                 if (!loaded) return
                 search_json = null
 
-                unloadBtn.disabled = DISABLED
+                unloadBtn.disabled = true
                 load_input.disabled = ""
-                deleteBtn.disabled = DISABLED
-                get_element("span_search_id_value").innerText = ""
+                deleteBtn.disabled = true
+                get_element("span_search_id_value")._object.clear_text()
             }
             buttonRow.appendChild(unloadBtn);
 
-            const load_input = make_input()
+            const load_input = new Input()
+                .set_id("load_input")
+                .set_placeholder("Load a search")
+                .css({
+                    marginLeft : "10px",
+                    width : "150px"
+                })
+
             buttonRow.appendChild(load_input)
-            load_input.id = "load_input"
-            load_input.placeholder = "Load a search"
-            load_input.style.marginLeft = "10px"
-            load_input.style.width = "150px"
-            let search_autocomplete = new Autocomplete(load_input, 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+
+            let search_autocomplete = new Autocomplete(load_input.element, 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             search_autocomplete.box_margin_left = "465px"
             search_autocomplete.clear_after_click = false
+
             new CloseButton("search", load_input, search_autocomplete)
             search_autocomplete.addCallback(async e => {
                 let old_search_id = search_json === null ? 0 : search_json.id
@@ -1007,22 +952,22 @@ class DictionaryApp {
                 }
                 resetBtn.click()
                 let query = JSON.parse(read_search.query_json)
-                titleContainsInput.value = query.title_contains ?? ""
-                titleStartsWithInput.value = query.title_starts_with ?? ""
-                definitionInput.value = query.definition_contains ?? ""
+                titleContainsInput.set_value(query.title_contains ?? "")
+                titleStartsWithInput.set_value(query.title_starts_with ?? "")
+                definitionInput.set_value(query.definition_contains ?? "")
                 let statuses = (query.status ?? "").split(",")
                 for (const option of statusSelect.options) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = statuses.includes(option.innerText);
                 }
-                pinnedCheckbox.checked = query.pinned_only ?? false
-                get_element("importance_low").checked = query.importance_low ?? true
-                get_element("importance_medium").checked = query.importance_medium ?? true
-                get_element("importance_high").checked = query.importance_high ?? true
+                pinnedCheckbox.set_checked(query.pinned_only ?? false)
+                find_by_enum_id("importance", Importance.Low)._object.set_checked(query.importance_low ?? true)
+                find_by_enum_id("importance", Importance.Medium)._object.set_checked(query.importance_medium ?? true)
+                find_by_enum_id("importance", Importance.High)._object.set_checked(query.importance_high ?? true)
 
-                get_element("difficulty_easy").checked = query.difficulty_easy ?? true
-                get_element("difficulty_medium").checked = query.difficulty_medium ?? true
-                get_element("difficulty_hard").checked = query.difficulty_hard ?? true
+                find_by_enum_id("difficulty", Difficulty.Easy)._object.set_checked(query.difficulty_easy ?? true)
+                find_by_enum_id("difficulty", Difficulty.Medium)._object.set_checked(query.difficulty_medium ?? true)
+                find_by_enum_id("difficulty", Difficulty.Hard)._object.set_checked(query.difficulty_hard ?? true)
 
                 if ((query.tag_id ?? 0) !== 0) {
                     let read_tag = await read_entity(Entities.dictionary_tag, query.tag_id)
@@ -1057,7 +1002,7 @@ class DictionaryApp {
                         await link_to_autocomplete.set_from_title(read_term.title, query.link_to_term_id)
                     }
                 }
-                noteInput.value = query.note_contains ?? ""
+                noteInput.set_value(query.note_contains ?? "")
 
                 if ((query.index_id ?? 0) !== 0) {
                     let read_index = await read_entity(Entities.dictionary_index, query.index_id)
@@ -1093,26 +1038,14 @@ class DictionaryApp {
                 console.debug(JSON.stringify(query))
                 console.debug("query.missing=" + query.missing_items);
 
-                (query.missing_items ?? "")
-                    .split(",")
+                (query.missing_items ?? [])
                     .forEach(e => {
-                        let id = "missing_" + e.toLowerCase()
-                        let el = get_element(id)
-                        if (el !== null) {
-                            console.debug("id=" + id + ", el= " + el)
-                            el.checked = true
-                        }
+                        find_by_enum_id("missing", e)._object.check()
                     });
 
-                (query.has_items ?? "")
-                    .split(",")
+                (query.has_items ?? [])
                     .forEach(e => {
-                        let id = "has_" + e.toLowerCase()
-                        let el = get_element(id)
-                        if (el !== null) {
-                            console.debug("id=" + id + ", el= " + el)
-                            el.checked = true
-                        }
+                        find_by_enum_id("has", e)._object.check()
                     });
 
                 let created = query.created ?? ""
@@ -1136,9 +1069,9 @@ class DictionaryApp {
                     option.selected = reviewed === option.innerText;
                 }
 
-                get_element("repetition_due").checked = query.repetition_due ?? true
-                get_element("repetition_not_due").checked = query.repetition_not_due ?? true
-                get_element("repetition_never").checked = query.repetition_never ?? true
+                find_by_enum_id("repetition", RepetitionMode.Due)._object.set_checked(query.repetition_due ?? true)
+                find_by_enum_id("repetition", RepetitionMode.NotDue)._object.set_checked(query.repetition_not_due ?? true)
+                find_by_enum_id("repetition", RepetitionMode.Never)._object.set_checked(query.repetition_never ?? true)
                 
                 let sort = query.sort ?? ""
                 for (const option of sortSelect.options) {
@@ -1157,11 +1090,11 @@ class DictionaryApp {
                 deleteBtn.disabled = ""
                 unloadBtn.disabled = ""
                 search_json = read_search
-                get_element("span_search_id_value").innerText = read_search.id
+                get_element("span_search_id_value")._object.set_text(read_search.id)
             })
 
             const deleteBtn = make_button("🗑 Delete");
-            deleteBtn.disabled = DISABLED
+            deleteBtn.disabled = true
             deleteBtn.onclick = async () => {
                 if (search_json === null) {
                     // nothing to do
@@ -1173,40 +1106,43 @@ class DictionaryApp {
                     return
                 }
                 search_json = null
-                deleteBtn.disabled = DISABLED
-                unloadBtn.disabled = DISABLED
-                get_element("span_search_id_value").innerText = ""
+                deleteBtn.disabled = true
+                unloadBtn.disabled = true
+                get_element("span_search_id_value").clear_text()
             }
             buttonRow.appendChild(deleteBtn);
 
             form.appendChild(buttonRow);
-            let space = document.createElement("div")
-            space.id = "space"
-            space.style.height = "50px"
+            let space = new Div().set_id("space").css({height: "50px"})
 
             // ---------- FINAL ----------
-            content.appendChild(form.element);
 
-            let page_size_label = document.createElement("label")
-            page_size_label.style.display = "inline"
-            page_size_label.innerText = "Items per page:"
-            page_size_label.style.marginRight = "10px"
-            page_size_label.style.marginLeft = "10px"
+            let page_size_label = new Label("Items per page")
+                .css({
+                    display: Display.Inline.label,
+                    marginRight: "10px",
+                    marginLeft: "10px"
+                })
+
             let page_size_select = make_select()
             page_size_select.id = "page_size_select"
             page_size_select.style.display = "inline"
             page_size_select.style.width = "100px";
 
-            let details_label = document.createElement("label")
-            details_label.style.display = "inline"
-            details_label.innerText = "Details:"
-            details_label.style.marginRight = "10px"
-            details_label.style.marginLeft = "10px"
-            let details_checkbox = make_input("checkbox")
-            details_checkbox.id = "details_checkbox"
-            details_checkbox.style.display = "inline"
-            details_checkbox.style.transform = "scale(2)";
-            details_checkbox.checked = screen.width > 1200
+            let details_label = new Label("Details")
+                .css({
+                    display: Display.Inline.label,
+                    marginRight: "10px",
+                    marginLeft: "10px"
+                })
+            let details_checkbox = new Checkbox()
+                .set_id("details_checkbox")
+                .css({
+                    display:Display.Inline.label,
+                    transform: "scale(2)"
+                })
+
+            details_checkbox.set_checked(screen.width > 1200)
 
             function make_page_size_option(size) {
                 let option = document.createElement("option")
@@ -1223,16 +1159,10 @@ class DictionaryApp {
 
             page_size_select.selectedIndex = 1
 
-            function make_span(el1, el2) {
-                let el = document.createElement("span")
-                el.appendChild(el1)
-                el.appendChild(el2)
-                return el
-            }
-            content.appendChild(make_span(page_size_label, page_size_select))
-            content.appendChild(make_span(details_label, details_checkbox))
+            content.appendChild(new Span(page_size_label, page_size_select).element)
+            content.appendChild(new Span(details_label, details_checkbox).element)
 
-            content.appendChild(space)
+            content.appendChild(space.element)
             let resultTable = document.createElement("table")
             resultTable.id = "resultTable"
             resultTable.style.display = "none"
@@ -1242,9 +1172,9 @@ class DictionaryApp {
             // resultTable.style.margin = "0 auto";
             // resultTable.style.border = "1px solid black"
 
-            let span_pages_toolbar = document.createElement("span")
-            span_pages_toolbar.id = "span_pages_toolbar"
-            span_pages_toolbar.style.display = "none"
+            let span_pages_toolbar = new Span()
+                .set_id("span_pages_toolbar")
+                .hide()
 
             let button_first_page = document.createElement("button")
             let button_prev_page = document.createElement("button")
@@ -1259,15 +1189,18 @@ class DictionaryApp {
             button_next_page.style.margin = "5px"
             button_last_page.style.margin = "5px"
 
-            let input_page_number = make_input()
-            input_page_number.style.width = "50px"
-            input_page_number.style.marginLeft = "10px"
-            input_page_number.style.marginRight = "10px"
-            input_page_number.value = 1
+            let input_page_number = new Input()
+                .set_value(1)
+                .styles
+                .width("50px")
+                .marginLeft("10px")
+                .marginRight("10px")
+                .end()
+
             let go_page_button = document.createElement("button")
             go_page_button.innerText = "Go"
 
-            input_page_number.addEventListener("keydown", (e) => {
+            input_page_number.on("keydown", (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
                         searchBtn.click()
@@ -1277,76 +1210,82 @@ class DictionaryApp {
             go_page_button.onclick = e=> {
                 searchBtn.click()
             }
-            span_pages_toolbar.appendChild(button_first_page)
-            span_pages_toolbar.appendChild(button_prev_page)
-            span_pages_toolbar.appendChild(input_page_number)
-            span_pages_toolbar.appendChild(go_page_button)
-            span_pages_toolbar.appendChild(button_next_page)
-            span_pages_toolbar.appendChild(button_last_page)
+            span_pages_toolbar.append_many(
+                button_first_page,
+                button_prev_page,
+                input_page_number,
+                go_page_button,
+                button_next_page,
+                button_last_page)
 
-            let span_total = document.createElement("span")
-            span_total.style.color = "grey"
-            span_total.id = "span_total_pages"
-            span_total.style.marginLeft = "10px"
+            let span_total = new Span()
+                .set_id("span_total_pages")
+                .styles.color(Color.Gray).marginLeft(_10PX).end()
+
             span_pages_toolbar.appendChild(span_total)
 
-            let span_total_pages_text = document.createElement("span")
-            span_total_pages_text.innerText = "Total pages: "
+            let span_total_pages_text = new Span().set_text("Total pages: ")
             span_total.appendChild(span_total_pages_text)
 
-            let span_total_pages_count = document.createElement("span")
-            span_total_pages_count.id = "span_total_pages_count"
+            let span_total_pages_count = new Span().set_id("span_total_pages_count")
             span_total.appendChild(span_total_pages_count)
 
-            let span_total_count_text = document.createElement("span")
-            span_total_count_text.innerText = "Total count: "
-            span_total_count_text.style.marginLeft = "10px"
+            let span_total_count_text = new Span()
+                .set_text("Total count: ")
+                .styles.marginLeft("10px").end()
+
             span_total.appendChild(span_total_count_text)
 
-            let span_total_count_count = document.createElement("span")
-            span_total_count_count.id = "span_total_count_count"
+            let span_total_count_count = new Span().set_id("span_total_count_count")
             span_total.appendChild(span_total_count_count)
 
-            let span_search_id_text = document.createElement("span")
-            span_search_id_text.innerText = "Search ID: "
-            span_search_id_text.style.marginLeft = "10px"
+            let span_search_id_text = new Span()
+                .set_text("Search ID: ").styles.marginLeft(_10PX).end()
+
             span_total.appendChild(span_search_id_text)
 
-            let span_search_id_value = document.createElement("span")
-            span_search_id_value.id = "span_search_id_value"
-            span_search_id_value.style.color = "blue"
-            span_search_id_value.style.textDecoration = "underline"
-            span_search_id_value.style.cursor = "pointer"
-            span_search_id_value.onclick = (e=> {
+            let span_search_id_value = new Span()
+            .set_id("span_search_id_value")
+                .styles
+                .color(Color.Blue)
+                .textDecoration(TextDecoration.Underline)
+                .cursor(Cursor.Pointer)
+                .end()
+                .on("click", e=> {
                 // Copy the text inside the text field
-                navigator.clipboard.writeText(span_search_id_value.innerText);
-                showInfo("Search ID " + span_search_id_value.innerText + " was copied to clipboard.")
+                navigator.clipboard.writeText(span_search_id_value.get_text());
+                showInfo("Search ID " + span_search_id_value.get_text() + " was copied to clipboard.")
             })
+
             span_total.appendChild(span_search_id_value)
 
-            button_first_page.onclick = (e=> {input_page_number.value = 1; go_page_button.click()})
+            button_first_page.onclick = (e=> {
+                let current_page_number = input_page_number.get_value()
+                if(current_page_number === "1") {showWarn("This is already the first page"); return}
+                input_page_number.set_value(1); go_page_button.click()
+            })
             button_prev_page.onclick = (e=> {
-                let page_number = input_page_number.value
-                if(page_number === "1") return
-                input_page_number.value = page_number - 1
+                let current_page_number = input_page_number.get_value()
+                if(current_page_number === "1") {showWarn("This is the first page"); return}
+                input_page_number.set_value(current_page_number - 1)
                 go_page_button.click()
             })
             button_next_page.onclick = (e=> {
-                let page_number = input_page_number.value
+                let current_page_number = input_page_number.get_value_as_number()
+                let last_page_number = span_total_pages_count.get_text_as_number()
 
-                let last_page_number = Number(span_total_pages_count.innerText)
-                let current_page_number = Number(page_number)
-
-                if(current_page_number >= last_page_number) return
-                input_page_number.value = String(current_page_number + 1)
+                if(current_page_number >= last_page_number) {showWarn("This is the last page"); return}
+                input_page_number.set_value(String(current_page_number + 1))
                 go_page_button.click()
             })
             button_last_page.onclick = (e=> {
-                let last_page = span_total_pages_count.innerText
-                input_page_number.value = last_page
+                let last_page = span_total_pages_count.get_text()
+                let current_page_number = input_page_number.get_value()
+                if(current_page_number === last_page) {showWarn("This is already the last page"); return}
+                input_page_number.set_value(last_page)
                 go_page_button.click()
             })
-            content.appendChild(span_pages_toolbar)
+            content.appendChild(span_pages_toolbar.element)
 
             content.style.padding = "5px"
 
@@ -1370,9 +1309,7 @@ class DictionaryApp {
             showInfo("Created new term: " + new_term_created.title)
             await this.#term_container.render(new_term_created.id)
             this.#term_container.show()
-
         }
-
     }
 
     refresh_autocomplete_term_title() {

@@ -33,8 +33,22 @@ export function enumValues(EnumObj) {
     }));
 }
 export function gen_enum_id(text, instance) {
-    return text + "_" + instance.id
+    if (instance === null || instance === undefined) {
+        throw new Error("gen_enum_id: instance is null or undefined");
+    }
+
+    const id =
+        typeof instance === "object"
+            ? instance.id
+            : instance;
+
+    if (id === undefined) {
+        throw new Error("gen_enum_id: invalid instance");
+    }
+
+    return `${text}_${id}`;
 }
+
 export function find_by_enum_id(text, instance) {
     return get_element(gen_enum_id(text, instance))
 }

@@ -1,3 +1,6 @@
+import {Styles} from "./d_styles.js";
+import {Display} from "./d_styles_enums.js";
+
 /**
  * DomElement
  * ==========
@@ -92,9 +95,15 @@ export class DomElement {
          * Back-reference from DOM to wrapper.
          * Useful for debugging or introspection.
          */
-        this.element.element_object = this;
+        this.element._object = this;
+
+        this.styles = new Styles(this)
     }
 
+    remove_element() {
+        this.element.remove();
+        return this
+    }
     /**
      * Set element id.
      *
@@ -187,6 +196,17 @@ export class DomElement {
         this.element.textContent = text;
         return this;
     }
+    clear_text() {
+        return this.set_text("")
+    }
+    get_text() {
+        return this.element.textContent
+    }
+
+    get_text_as_number() {
+        return Number(this.get_text())
+    }
+
 
     /**
      * Set innerHTML.
@@ -212,6 +232,11 @@ export class DomElement {
     css(styles) {
         Object.assign(this.element.style, styles);
         return this;
+        // new DomElement("div").css({
+        //     width: "100px",
+        //     margin: "10px"
+        // });
+
     }
 
     /**
@@ -417,5 +442,173 @@ export class DomElement {
             console.warn("DomElement not attached:", this.element);
         }
         return this;
+    }
+
+    #original_display
+    hide() {
+        let s = this.element.style;
+        this.#original_display = s.display
+        s.display = Display.None.label
+        return this
+    }
+    show() {
+        this.element.style = this.#original_display;
+        return this
+    }
+
+    focus() {
+        this.element.focus();
+        return this;
+    }
+
+    blur() {
+        this.element.blur();
+        return this;
+    }
+
+    parent() {
+        return this.element.parentElement;
+    }
+
+    children() {
+        return Array.from(this.element.children);
+    }
+
+    describe() {
+        return {
+            tag: this.element.tagName,
+            id: this.element.id,
+            classes: [...this.element.classList],
+            attached: this.element.isConnected
+        };
+    }
+    assert_type(tag) {
+        if (this.element.tagName.toLowerCase() !== tag.toLowerCase()) {
+            console.warn(`Expected <${tag}>, got <${this.element.tagName}>`, this.element);
+        }
+        return this;
+    }
+
+}
+
+export class Form extends DomElement{
+    constructor() {
+        super("form")
+
+        this.css({
+            display: Display.Flex.label,
+            flexDirection: "column",
+            gap: "12px",
+            padding: "10px"
+        })
+    }
+
+}
+
+export class Label extends DomElement {
+    constructor(innerText = "", width = "200px") {
+        super("div")
+
+        let l = DomElement.create_element("label")
+        l.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
+        l.innerText = innerText
+        if(l.innerText.size > 0) {
+            let last_character = l.innerText.at(-1)
+            if(last_character !== ":") l.innerText = innerText + ": "
+        }
+
+        this.appendChild(l)
+        this.css({
+            width : width,
+            display : "inline-block",
+            whiteSpace : "nowrap",
+        })
+
+    }
+}
+
+export const InputType = Object.freeze({
+    Text: { id: 0, label: "text" },
+    Checkbox: { id: 1, label: "checkbox" },
+});
+
+export class ValueElement extends DomElement {
+    set_value(value) {
+        this.element.value = value
+        return this
+    }
+    clear_value() {
+        return this.set_value("")
+    }
+    get_value() {
+        return this.element.value
+    }
+    get_value_as_number() {
+        return Number(this.get_value())
+    }
+}
+
+export class Input extends ValueElement
+{
+    constructor(input_type = InputType.Text)
+    {
+        super("input")
+        this.element.type = input_type.label;
+        if (input_type === InputType.Checkbox) {
+            this.css({
+                transform : "scale(2)",
+                marginLeft : "10px",
+                marginRight : "10px",
+                textAlign : "left",
+            })
+        } else {
+            this.css({width: "250px"})
+        }
+    }
+    set_placeholder(text) {
+        this.element.placeholder = text
+        return this
+    }
+    get_placeholder() {
+        return this.element.placeholder
+    }
+
+}
+export class Checkbox extends Input{
+    constructor() {
+        super(InputType.Checkbox);
+    }
+    is_checked() {
+        return this.element.checked
+    }
+    set_checked(value) {
+        this.element.checked = value
+        return this
+    }
+    check() {
+        this.set_checked(true)
+        return this
+    }
+
+    uncheck() {
+        this.set_checked(false)
+        return this
+    }
+}
+
+class DivSpan extends DomElement {
+    constructor(tag, ...children) {
+        super(tag);
+        this.append_many(...children);
+    }
+}
+export class Div extends DivSpan {
+    constructor(...children) {
+        super("div", ...children)
+    }
+}
+export class Span extends DivSpan {
+    constructor(...children) {
+        super("span", ...children)
     }
 }

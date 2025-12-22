@@ -163,6 +163,8 @@ namespace mindnet::plugins::dictionary
         plugin->register_library_file("d_window.js");
         plugin->register_library_file("d_search.js");
         plugin->register_library_file("d_dom.js");
+        plugin->register_library_file("d_styles.js");
+        plugin->register_library_file("d_styles_enums.js");
 
         plugin->close_for_changes();
         return plugin;
