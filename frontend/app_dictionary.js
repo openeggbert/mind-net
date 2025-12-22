@@ -31,9 +31,21 @@ import {
 import {debug, USER_ID} from "./d_globals.js";
 import {getWindowContent, setWindowTitle, clearWindow, makeDraggable, showWindowFrom} from "./d_window.js";
 import {SearchModel} from "./d_search.js";
-import {Checkbox, Div, DomElement, Form, Input, Label, Span} from "./d_dom.js";
+import {
+    Checkbox,
+    Div,
+    DomElement,
+    EnumOption,
+    find_dom_element,
+    Form,
+    Input,
+    Label,
+    Select,
+    Span,
+    ValueElement
+} from "./d_dom.js";
 import {_10PX} from "./d_styles.js";
-import {Color, Cursor, Display, TextDecoration} from "./d_styles_enums.js";
+import {Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
 
 function showDebug(msg) {
     if (debug) showInfo("Debug: " + msg)
@@ -235,13 +247,7 @@ class DictionaryApp {
             // ---------- FORM ----------
 
             const form = new Form().set_id("form_search")
-            content.appendChild(form.element);
-
-            function make_select() {
-                let select = document.createElement("select")
-                select.style.width = "250px";
-                return select
-            }
+            content.appendChild(form.element());
 
             // --- Title contains ---
             const titleLabel = new Label("Title contains");
@@ -260,14 +266,10 @@ class DictionaryApp {
 
             // --- Status ---
             const statusLabel = new Label("Status");
-            const statusSelect = make_select();
+            const statusSelect = new Select().multiple();
             enumValues(TermStatus).forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id; // Any = -1
-                opt.innerText = humanizeEnumKey(e.label);
-                statusSelect.appendChild(opt);
+                statusSelect.add_option(new EnumOption(e));
             });
-            statusSelect.multiple = true
 
             form.appendChild(new Div(statusLabel, statusSelect));
 
@@ -340,7 +342,7 @@ class DictionaryApp {
             const tag_label = new Label("Tag")
             const tag_input = new Input()
             form.appendChild(new Div(tag_label, tag_input))
-            let tag_autocomplete = new Autocomplete(tag_input.element, 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let tag_autocomplete = new Autocomplete(tag_input.element(), 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             tag_autocomplete.clear_after_click = false
             tag_autocomplete.box_margin_left = "200px"
             new CloseButton("tag", tag_input, tag_autocomplete)
@@ -348,7 +350,7 @@ class DictionaryApp {
             const flag_label = new Label("Flag")
             const flag_input = new Input()
             form.appendChild(new Div(flag_label, flag_input))
-            let flag_autocomplete = new Autocomplete(flag_input.element, 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let flag_autocomplete = new Autocomplete(flag_input.element(), 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             flag_autocomplete.clear_after_click = false
             flag_autocomplete.box_margin_left = "200px"
             new CloseButton("flag", flag_input, flag_autocomplete)
@@ -356,7 +358,7 @@ class DictionaryApp {
             const link_from_label = new Label("Link from")
             const link_from_input = new Input()
             form.appendChild(new Div(link_from_label, link_from_input))
-            let link_from_autocomplete = new Autocomplete(link_from_input.element, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let link_from_autocomplete = new Autocomplete(link_from_input.element(), 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_from_autocomplete.clear_after_click = false
             link_from_autocomplete.box_margin_left = "200px"
             new CloseButton("link from", link_from_input, link_from_autocomplete)
@@ -364,7 +366,7 @@ class DictionaryApp {
             const link_to_label = new Label("Link to")
             const link_to_input = new Input()
             form.appendChild(new Div(link_to_label, link_to_input))
-            let link_to_autocomplete = new Autocomplete(link_to_input.element, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let link_to_autocomplete = new Autocomplete(link_to_input.element(), 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             link_to_autocomplete.clear_after_click = false
             link_to_autocomplete.box_margin_left = "200px"
             new CloseButton("link to", link_to_input, link_to_autocomplete)
@@ -377,7 +379,7 @@ class DictionaryApp {
             const index_label = new Label("Index")
             const index_input = new Input()
             form.appendChild(new Div(index_label, index_input))
-            let index_autocomplete = new Autocomplete(index_input.element, 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
+            let index_autocomplete = new Autocomplete(index_input.element(), 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
             index_autocomplete.clear_after_click = false
             index_autocomplete.box_margin_left = "200px"
             new CloseButton("index", index_input, index_autocomplete)
@@ -385,7 +387,7 @@ class DictionaryApp {
             const source_label = new Label("Source")
             const source_input = new Input()
             form.appendChild(new Div(source_label, source_input))
-            let source_autocomplete = new Autocomplete(source_input.element, 1, "dictionary_source_type_fulltext", "", "title", "title_part")
+            let source_autocomplete = new Autocomplete(source_input.element(), 1, "dictionary_source_type_fulltext", "", "title", "title_part")
             source_autocomplete.clear_after_click = false
             source_autocomplete.box_margin_left = "200px"
             new CloseButton("source", source_input, source_autocomplete)
@@ -393,7 +395,7 @@ class DictionaryApp {
             const alias_label = new Label("Alias")
             const alias_input = new Input()
             form.appendChild(new Div(alias_label, alias_input))
-            let alias_autocomplete = new Autocomplete(alias_input.element, 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+            let alias_autocomplete = new Autocomplete(alias_input.element(), 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             alias_autocomplete.clear_after_click = false
             alias_autocomplete.box_margin_left = "200px"
             new CloseButton("alias", alias_input, alias_autocomplete)
@@ -448,45 +450,33 @@ class DictionaryApp {
 
             // --- Created ---
             const createdLabel = new Label("Created");
-            const createdSelect = make_select()
+            const createdSelect = new Select()
             time_range_array.forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id;
-                opt.innerText = e.label;
-                createdSelect.appendChild(opt);
+                createdSelect.add_option(new EnumOption(e));
             });
             form.appendChild(new Div(createdLabel, createdSelect));
 
             // --- Updated ---
             const updatedLabel = new Label("Updated");
-            const updatedSelect = make_select()
+            const updatedSelect = new Select()
             time_range_array.forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id;
-                opt.innerText = e.label;
-                updatedSelect.appendChild(opt);
+                updatedSelect.add_option(new EnumOption(e));
             });
             form.appendChild(new Div(updatedLabel, updatedSelect));
 
             // --- Visited ---
             const visitedLabel = new Label("Visited");
-            const visitedSelect = make_select()
+            const visitedSelect = new Select()
             time_range_array.forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id;
-                opt.innerText = e.label;
-                visitedSelect.appendChild(opt);
+                visitedSelect.add_option(new EnumOption(e));
             });
             form.appendChild(new Div(visitedLabel, visitedSelect));
 
             // --- Reviewed ---
             const reviewedLabel = new Label("Reviewed");
-            const reviewedSelect = make_select()
+            const reviewedSelect = new Select()
             time_range_array.forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id;
-                opt.innerText = e.label;
-                reviewedSelect.appendChild(opt);
+                reviewedSelect.add_option(new EnumOption(e));
             });
             form.appendChild(new Div(reviewedLabel, reviewedSelect));
 
@@ -516,21 +506,15 @@ class DictionaryApp {
 
             // --- Sort ---
             const sortLabel = new Label("Sort:");
-            const sortSelect = make_select()
+            const sortSelect = new Select()
             enumValues(Sort).forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id;
-                opt.innerText = e.label;
-                sortSelect.appendChild(opt);
+                sortSelect.add_option(new EnumOption(e));
             });
 
-            const orderSelect = make_select()
+            const orderSelect = new Select()
 
             enumValues(Order).forEach(e => {
-                const opt = document.createElement("option");
-                opt.value = e.id;
-                opt.innerText = e.label;
-                orderSelect.appendChild(opt);
+                orderSelect.add_option(new EnumOption(e));
             });
             sortSelect.style.width = "150px"
             orderSelect.style.width = "80px"
@@ -544,6 +528,45 @@ class DictionaryApp {
             searchBtn.type = "button";
             searchBtn.innerText = "🔍 Search";
             searchBtn.classList.add("save-btn");
+
+            class ProgressBar extends Div {
+                #fill;
+                #loading_data_progress;
+
+                constructor() {
+                    super();
+
+                    this.add_class("progress");
+
+                    this.#fill = new Div()
+                        .add_class("progress-fill");
+
+                    this.append(this.#fill);
+
+                    this.#loading_data_progress = new Span().set_text("0%")
+                        this.styles()
+                        .background("#ddd").padding("0").textAlign(TextAlign.Center)
+                        .end()
+                    let progress_row = new Div()
+                        .styles().margin(_10PX).marginTop("-40px").marginBottom("20px").end()
+                        .append_many(new Span().set_text("Loading data: "),this.#loading_data_progress)
+                    this.appendChild(progress_row)
+                }
+
+                set_progress(value) {
+                    value = Math.max(0, Math.min(100, value));
+                    this.#fill.element().style.width = value + "%";
+                    this.#loading_data_progress.set_text(value + "%")
+                    return this;
+                }
+                reset() {
+                    this.set_progress(0)
+                    return this;
+                }
+            }
+
+            let progress_bar = new ProgressBar()
+                .hide()
 
             searchBtn.onclick = async () => {
                 let query_json = load_query_model_from_form().to_json()
@@ -575,23 +598,26 @@ class DictionaryApp {
                     showError("Listing search results failed.")
                     return
                 }
+                showInfo("Finished: list_term_searches")
                 // alert(JSON.stringify(list_term_searches))
                 let total_items = list_term_searches.total_items
                 let total_pages = list_term_searches.total_pages
 
-                get_element("span_pages_toolbar").style.display = "inline"
-                get_element("span_total_pages_count")._object.set_text(total_pages)
-                get_element("span_total_count_count")._object.set_text(total_items)
+                find_dom_element("span_pages_toolbar").show(Display.Block)
+                find_dom_element("span_total_pages_count").set_text(total_pages)
+                find_dom_element("span_total_count_count").set_text(total_items)
                     let items = list_term_searches.items
                 if (items.length === 0) {
                     showInfo("No search results.")
                 }
                 let resultTable = get_element("resultTable")
+                progress_bar.reset()
+                progress_bar.show()
                 resultTable.innerHTML = ""
-                resultTable.style.display = "block"
+                resultTable.style.display = "none"
                 resultTable.style.marginBottom = "40px"
                 let space = get_element("space");
-                if (defined(space)) get_element("space")._object.remove_element()
+                if (defined(space)) find_dom_element("space").remove_element()
 
                 let tr_th = document.createElement("tr")
                 resultTable.appendChild(tr_th)
@@ -614,7 +640,7 @@ class DictionaryApp {
                     return td
                 }
 
-                let details = items.length === 0 ? false : get_element("details_checkbox")._object.is_checked()
+                let details = items.length === 0 ? false : find_dom_element("details_checkbox").is_checked()
                 let th_id = create_th("ID")
                 let th_title = create_th("Title")
                 let th_disambiguation = create_th("Disambiguation")
@@ -644,6 +670,8 @@ class DictionaryApp {
                     //if(!repetition_all)
                         append_th("Next review")
                 }
+                const item_count = items.length
+                let done = 0.0
                 for(const item of items) {
 
                     let term_id = item.id
@@ -653,7 +681,10 @@ class DictionaryApp {
                         continue
                     }
                     term_map.set(term_id, read_term)
-                    //if(!repetition_all)
+
+                    let progress = Number((done + (details ? 0.5 : 1.0)) / item_count * 100).toFixed()
+                    progress_bar.set_progress(progress)
+                    if(details)
                     {
                         let list_states = await list_all_entities(
                             Entities.dictionary_state_18,
@@ -664,6 +695,10 @@ class DictionaryApp {
                             )
                         if(defined(list_states) && list_states.length > 0) state_map.set(term_id, list_states[0])
                     }
+                    progress = Number((done + (details ? 0.5 : 1.0)) / item_count * 100).toFixed()
+                    progress_bar.set_progress(progress)
+
+                    done++
                 }
 
                 if(items.length === 0) {
@@ -733,6 +768,9 @@ class DictionaryApp {
                     }
                 })
 
+                resultTable.style.display = "block"
+                progress_bar.hide()
+
             };
             buttonRow.appendChild(searchBtn);
 
@@ -753,7 +791,7 @@ class DictionaryApp {
                 definitionInput.clear_value()
                 statusSelect.selectedIndex = 0;
                 pinnedCheckbox.uncheck()
-                form.element
+                form.element()
                     .querySelectorAll("input[type=checkbox]")
                     .forEach(cb => {
                             if (cb !== pinnedCheckbox && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
@@ -792,7 +830,7 @@ class DictionaryApp {
                 m.title_starts_with = titleStartsWithInput.get_value()
                 m.definition_contains = definitionInput.get_value()
                 m.statuses = Array
-                    .from(statusSelect.selectedOptions)
+                    .from(statusSelect.selectedOptions())
                     .map(opt => {
                         let result = enumValue(TermStatus, opt.value)
                         return result
@@ -820,19 +858,19 @@ class DictionaryApp {
                 m.has_items = enumValues(DictionaryItem)
                     .filter(e => find_by_enum_id("has", e)._object.is_checked())
                 m.created = Array
-                    .from(createdSelect.selectedOptions)
+                    .from(createdSelect.selectedOptions())
                     .map(opt => opt.value)
                     .map(e => enumValue(TimeRange, e))[0]
                 m.updated = Array
-                    .from(updatedSelect.selectedOptions)
+                    .from(updatedSelect.selectedOptions())
                     .map(opt => opt.value)
                     .map(e => enumValue(TimeRange, e))[0]
                 m.visited = Array
-                    .from(visitedSelect.selectedOptions)
+                    .from(visitedSelect.selectedOptions())
                     .map(opt => opt.value)
                     .map(e => enumValue(TimeRange, e))[0]
                 m.reviewed = Array
-                    .from(reviewedSelect.selectedOptions)
+                    .from(reviewedSelect.selectedOptions())
                     .map(opt => opt.value)
                     .map(e => enumValue(TimeRange, e))[0]
                 m.repetition_due = find_by_enum_id("repetition", RepetitionMode.Due)._object.is_checked()
@@ -840,10 +878,10 @@ class DictionaryApp {
                 m.repetition_never = find_by_enum_id("repetition", RepetitionMode.Never)._object.is_checked()
 
                 m.sort = Array
-                    .from(sortSelect.selectedOptions)
+                    .from(sortSelect.selectedOptions())
                     .map(opt => enumValue(Sort, opt.value))[0]
                 m.order = Array
-                    .from(orderSelect.selectedOptions)
+                    .from(orderSelect.selectedOptions())
                     .map(opt => enumValue(Order, opt.value))[0]
 
                 return m
@@ -888,7 +926,7 @@ class DictionaryApp {
                     } else {
                         showInfo("New search was successfully created.")
                         search_json = new_search_created
-                        get_element("span_search_id_value")._object.set_text(new_search_created.id)
+                        find_dom_element("span_search_id_value").set_text(new_search_created.id)
                         unloadBtn.disabled = ""
                         load_input.disabled = ""
                         deleteBtn.disabled = ""
@@ -919,7 +957,7 @@ class DictionaryApp {
                 unloadBtn.disabled = true
                 load_input.disabled = ""
                 deleteBtn.disabled = true
-                get_element("span_search_id_value")._object.clear_text()
+                find_dom_element("span_search_id_value").clear_text()
             }
             buttonRow.appendChild(unloadBtn);
 
@@ -933,7 +971,7 @@ class DictionaryApp {
 
             buttonRow.appendChild(load_input)
 
-            let search_autocomplete = new Autocomplete(load_input.element, 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
+            let search_autocomplete = new Autocomplete(load_input.element(), 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
             search_autocomplete.box_margin_left = "465px"
             search_autocomplete.clear_after_click = false
 
@@ -944,7 +982,7 @@ class DictionaryApp {
                 showDebug("old_search_id=" + old_search_id)
                 showDebug("new_search_id=" + new_search_id)
                 showDebug(JSON.stringify(search_autocomplete.get_item()))
-                form.element.classList.add("loading");
+                form.element().classList.add("loading");
                 let read_search = await read_entity(Entities.dictionary_search, new_search_id)
                 if (!defined(read_search)) {
                     showError("Reading search failed: " + new_search_id)
@@ -956,7 +994,7 @@ class DictionaryApp {
                 titleStartsWithInput.set_value(query.title_starts_with ?? "")
                 definitionInput.set_value(query.definition_contains ?? "")
                 let statuses = (query.status ?? "").split(",")
-                for (const option of statusSelect.options) {
+                for (const option of statusSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = statuses.includes(option.innerText);
                 }
@@ -1049,22 +1087,22 @@ class DictionaryApp {
                     });
 
                 let created = query.created ?? ""
-                for (const option of createdSelect.options) {
+                for (const option of createdSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = created === option.innerText;
                 }
                 let updated = query.updated ?? ""
-                for (const option of updatedSelect.options) {
+                for (const option of updatedSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = updated === option.innerText;
                 }
                 let visited = query.visited ?? ""
-                for (const option of visitedSelect.options) {
+                for (const option of visitedSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = visited === option.innerText;
                 }
                 let reviewed = query.reviewed ?? ""
-                for (const option of reviewedSelect.options) {
+                for (const option of reviewedSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = reviewed === option.innerText;
                 }
@@ -1074,23 +1112,23 @@ class DictionaryApp {
                 find_by_enum_id("repetition", RepetitionMode.Never)._object.set_checked(query.repetition_never ?? true)
                 
                 let sort = query.sort ?? ""
-                for (const option of sortSelect.options) {
+                for (const option of sortSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = sort === option.innerText;
                 }
                 let order = query.order ?? ""
-                for (const option of orderSelect.options) {
+                for (const option of orderSelect.options()) {
                     console.debug("option.innerText=" + option.innerText)
                     option.selected = order === option.innerText;
                 }
 
-                form.element.classList.remove("loading")
+                form.element().classList.remove("loading")
                 console.debug(JSON.stringify(read_search))
                 console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
                 deleteBtn.disabled = ""
                 unloadBtn.disabled = ""
                 search_json = read_search
-                get_element("span_search_id_value")._object.set_text(read_search.id)
+                find_dom_element("span_search_id_value").set_text(read_search.id)
             })
 
             const deleteBtn = make_button("🗑 Delete");
@@ -1108,7 +1146,7 @@ class DictionaryApp {
                 search_json = null
                 deleteBtn.disabled = true
                 unloadBtn.disabled = true
-                get_element("span_search_id_value").clear_text()
+                find_dom_element("span_search_id_value").clear_text()
             }
             buttonRow.appendChild(deleteBtn);
 
@@ -1118,57 +1156,49 @@ class DictionaryApp {
             // ---------- FINAL ----------
 
             let page_size_label = new Label("Items per page")
-                .css({
-                    display: Display.Inline.label,
-                    marginRight: "10px",
-                    marginLeft: "10px"
-                })
+                .styles()
+                .display(Display.Inline)
+                .marginRight(_10PX)
+                .marginLeft(_10PX)
+                .end()
 
-            let page_size_select = make_select()
-            page_size_select.id = "page_size_select"
-            page_size_select.style.display = "inline"
-            page_size_select.style.width = "100px";
+            let page_size_select = new Select()
+                .set_id("page_size_select")
+                .styles().display(Display.Inline).width("100px").end()
+                .add_options(
+                    new Option("5", "5"),
+                    new Option("10", "10"),
+                    new Option("20", "20"),
+                    new Option("50", "50"),
+                    new Option("100", "100"))
+                .set_selected_index(1)
+
+            content.appendChild(new Span(page_size_label, page_size_select).element())
 
             let details_label = new Label("Details")
-                .css({
-                    display: Display.Inline.label,
-                    marginRight: "10px",
-                    marginLeft: "10px"
-                })
+                .styles()
+                .display(Display.Inline)
+                .marginRight(_10PX)
+                .marginLeft(_10PX)
+                .end()
             let details_checkbox = new Checkbox()
                 .set_id("details_checkbox")
-                .css({
-                    display:Display.Inline.label,
-                    transform: "scale(2)"
-                })
+                .set_checked(screen.width > 1200)
+                .styles()
+                .display(Display.Inline)
+                .transform("scale(2)")
+                .end()
 
-            details_checkbox.set_checked(screen.width > 1200)
+            content.appendChild(new Span(details_label, details_checkbox).element())
 
-            function make_page_size_option(size) {
-                let option = document.createElement("option")
-                option.value = size
-                option.innerText = size
-                page_size_select.appendChild(option)
-                return option
-            }
-            let page_size_option_5 = make_page_size_option(5)
-            let page_size_option_10 = make_page_size_option(10)
-            let page_size_option_20 = make_page_size_option(20)
-            let page_size_option_50 = make_page_size_option(50)
-            let page_size_option_100 = make_page_size_option(100)
-
-            page_size_select.selectedIndex = 1
-
-            content.appendChild(new Span(page_size_label, page_size_select).element)
-            content.appendChild(new Span(details_label, details_checkbox).element)
-
-            content.appendChild(space.element)
+            content.appendChild(space.element())
             let resultTable = document.createElement("table")
             resultTable.id = "resultTable"
             resultTable.style.display = "none"
             resultTable.style.margin = "10px"
             resultTable.style.borderCollapse = "collapse";
             content.appendChild(resultTable)
+            content.appendChild(progress_bar.element())
             // resultTable.style.margin = "0 auto";
             // resultTable.style.border = "1px solid black"
 
@@ -1191,7 +1221,7 @@ class DictionaryApp {
 
             let input_page_number = new Input()
                 .set_value(1)
-                .styles
+                .styles()
                 .width("50px")
                 .marginLeft("10px")
                 .marginRight("10px")
@@ -1220,7 +1250,7 @@ class DictionaryApp {
 
             let span_total = new Span()
                 .set_id("span_total_pages")
-                .styles.color(Color.Gray).marginLeft(_10PX).end()
+                .styles().color(Color.Gray).marginLeft(_10PX).end()
 
             span_pages_toolbar.appendChild(span_total)
 
@@ -1232,7 +1262,7 @@ class DictionaryApp {
 
             let span_total_count_text = new Span()
                 .set_text("Total count: ")
-                .styles.marginLeft("10px").end()
+                .styles().marginLeft("10px").end()
 
             span_total.appendChild(span_total_count_text)
 
@@ -1240,13 +1270,13 @@ class DictionaryApp {
             span_total.appendChild(span_total_count_count)
 
             let span_search_id_text = new Span()
-                .set_text("Search ID: ").styles.marginLeft(_10PX).end()
+                .set_text("Search ID: ").styles().marginLeft(_10PX).end()
 
             span_total.appendChild(span_search_id_text)
 
             let span_search_id_value = new Span()
             .set_id("span_search_id_value")
-                .styles
+                .styles()
                 .color(Color.Blue)
                 .textDecoration(TextDecoration.Underline)
                 .cursor(Cursor.Pointer)
@@ -1285,7 +1315,7 @@ class DictionaryApp {
                 input_page_number.set_value(last_page)
                 go_page_button.click()
             })
-            content.appendChild(span_pages_toolbar.element)
+            content.appendChild(span_pages_toolbar.element())
 
             content.style.padding = "5px"
 

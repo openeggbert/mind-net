@@ -264,3 +264,57 @@ a.note-wanted, a.note-unknown {
 .window_container header:hover {
     background: #224b83;
 }
+
+/*
+Source - https://stackoverflow.com/a
+Posted by Elangovan, modified by community. See post 'Timeline' for change history
+Retrieved 2025-12-22, License - CC BY-SA 4.0
+*/
+
+.blink_text
+{
+    animation:1s blinker linear infinite;
+    -webkit-animation:1s blinker linear infinite;
+    -moz-animation:1s blinker linear infinite;
+    color: grey;
+}
+
+@-moz-keyframes blinker
+{
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes blinker
+{
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+@keyframes blinker
+{
+    0% { opacity: 1.0; }
+    50% { opacity: 0.0; }
+    100% { opacity: 1.0; }
+}
+
+
+
+.progress {
+    width: 100%;
+    max-width: 1000px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 50px;
+    width: 0%;
+    background: #7ddc7d;
+    transition: width 0.25s ease;
+    box-sizing: border-box;
+}
+

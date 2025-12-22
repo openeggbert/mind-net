@@ -5,7 +5,7 @@ export class Styles {
     #style
     constructor(dom_element) {
         this.#dom_element = dom_element
-        this.#style = this.#dom_element.style
+        this.#style = this.#dom_element.style()
     }
 
     #resolve_value(value) {
@@ -27,12 +27,26 @@ export class Styles {
         this.#style[key] = this.#resolve_value(value)
         return this
     }
-    marginLeft(value) {return this.#set("marginLeft", value)}
+    marginTop(value) {return this.#set("marginTop", value)}
     marginRight(value) {return this.#set("marginRight", value)}
+    marginBottom(value) {return this.#set("marginBottom", value)}
+    marginLeft(value) {return this.#set("marginLeft", value)}
+    paddingTop(value) {return this.#set("paddingTop", value)}
+    paddingRight(value) {return this.#set("paddingRight", value)}
+    paddingBottom(value) {return this.#set("paddingBottom", value)}
+    paddingLeft(value) {return this.#set("paddingLeft", value)}
+    margin(value) {return this.#set("margin", value)}
+    padding(value) {return this.#set("padding", value)}
     color(value) {return this.#set("color", value)}
+    background(value) {
+        return this.#set("background", value)
+    }
     width(value) {return this.#set("width", value)}
     textDecoration(value) {return this.#set("textDecoration", value)}
     cursor(value) {return this.#set("cursor", value)}
+    display(value) {return this.#set("display", value)}
+    transform(value) {return this.#set("transform", value)}
+    textAlign(value) {return this.#set("textAlign", value)}
     end() {
         return this.#dom_element
     }

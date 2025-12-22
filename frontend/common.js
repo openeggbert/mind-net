@@ -23,7 +23,7 @@ export class Autocomplete {
     }
 
     constructor(input, input_min_length, entity, query_params, title_column, part_column, insert_after_id = "") {
-        this.input = input instanceof Input ? input.element : input;
+        this.input = input instanceof Input ? input.element() : input;
         this.title_column = title_column;
         this.item = null;
         this.input_min_length = input_min_length
@@ -56,7 +56,6 @@ export class Autocomplete {
 
         this.input.addEventListener("input", this.input_handler);
     }
-
 
     async search(q, input_min_length = 3) {
         if (q.length < input_min_length) {

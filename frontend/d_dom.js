@@ -1,5 +1,49 @@
 import {Styles} from "./d_styles.js";
 import {Display} from "./d_styles_enums.js";
+import {get_element} from "./dom.js";
+
+export const Event = Object.freeze({
+    // mouse events
+    Click:        { id: 0,  label: "click" },
+    DblClick:     { id: 1,  label: "dblclick" },
+    MouseDown:    { id: 2,  label: "mousedown" },
+    MouseUp:      { id: 3,  label: "mouseup" },
+    MouseMove:    { id: 4,  label: "mousemove" },
+    MouseEnter:   { id: 5,  label: "mouseenter" },
+    MouseLeave:   { id: 6,  label: "mouseleave" },
+    MouseOver:    { id: 7,  label: "mouseover" },
+    MouseOut:     { id: 8,  label: "mouseout" },
+    ContextMenu:  { id: 9,  label: "contextmenu" },
+
+    // keyboard events
+    KeyDown:      { id: 10, label: "keydown" },
+    KeyUp:        { id: 11, label: "keyup" },
+    KeyPress:     { id: 12, label: "keypress" }, // deprecated, ale občas se hodí
+
+    // form / input
+    Input:        { id: 13, label: "input" },
+    Change:       { id: 14, label: "change" },
+    Submit:       { id: 15, label: "submit" },
+    Focus:        { id: 16, label: "focus" },
+    Blur:         { id: 17, label: "blur" },
+
+    // touch
+    TouchStart:   { id: 18, label: "touchstart" },
+    TouchMove:    { id: 19, label: "touchmove" },
+    TouchEnd:     { id: 20, label: "touchend" },
+
+    // drag & drop
+    DragStart:    { id: 21, label: "dragstart" },
+    DragOver:     { id: 22, label: "dragover" },
+    Drop:         { id: 23, label: "drop" },
+    DragEnd:      { id: 24, label: "dragend" },
+
+    // window / lifecycle
+    Load:         { id: 25, label: "load" },
+    DOMContentLoaded:{ id: 26, label: "DOMContentLoaded" },
+    Resize:       { id: 27, label: "resize" },
+    Scroll:       { id: 28, label: "scroll" },
+});
 
 /**
  * DomElement
@@ -59,6 +103,9 @@ import {Display} from "./d_styles_enums.js";
  * container.append(button);
  */
 export class DomElement {
+    #element
+    #style
+    #styles
 
     /**
      * Create a native DOM element.
@@ -82,26 +129,36 @@ export class DomElement {
          *
          * @type {HTMLElement}
          */
-        this.element = DomElement.create_element(name);
+        this.#element = DomElement.create_element(name);
 
         /**
          * Direct reference to element.style for convenience.
          *
          * @type {CSSStyleDeclaration}
          */
-        this.style = this.element.style;
+        this.#style = this.#element.style;
 
         /**
          * Back-reference from DOM to wrapper.
          * Useful for debugging or introspection.
          */
-        this.element._object = this;
+        this.#element._object = this;
 
-        this.styles = new Styles(this)
+        this.#styles = new Styles(this)
+    }
+
+    element() {
+        return this.#element
+    }
+    style() {
+        return this.#element.style
+    }
+    styles() {
+        return this.#styles
     }
 
     remove_element() {
-        this.element.remove();
+        this.#element.remove();
         return this
     }
     /**
@@ -111,7 +168,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     set_id(id) {
-        this.element.id = id;
+        this.#element.id = id;
         return this;
     }
 
@@ -121,7 +178,7 @@ export class DomElement {
      * @returns {string}
      */
     get_id() {
-        return this.element.id;
+        return this.#element.id;
     }
 
     /**
@@ -143,7 +200,7 @@ export class DomElement {
         }
 
         if (child instanceof DomElement) {
-            return child.element;
+            return child.#element;
         }
 
         if (string_too && typeof child === "string") {
@@ -160,7 +217,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     appendChild(child) {
-        this.element.appendChild(this.#find_node(child));
+        this.#element.appendChild(this.#find_node(child));
         return this;
     }
 
@@ -171,7 +228,9 @@ export class DomElement {
      * @returns {DomElement}
      */
     append(child) {
-        this.element.append(this.#find_node(child, true));
+        console.log("append " + JSON.stringify(child))
+        if(this.#find_node(child, true).id === "progress-fill") console.log("calling for fill_search")
+        this.#element.append(this.#find_node(child, true));
         return this;
     }
 
@@ -193,14 +252,14 @@ export class DomElement {
      * @returns {DomElement}
      */
     set_text(text) {
-        this.element.textContent = text;
+        this.#element.textContent = text;
         return this;
     }
     clear_text() {
         return this.set_text("")
     }
     get_text() {
-        return this.element.textContent
+        return this.#element.textContent
     }
 
     get_text_as_number() {
@@ -219,7 +278,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     set_html_unsafe(html) {
-        this.element.innerHTML = html;
+        this.#element.innerHTML = html;
         return this;
     }
 
@@ -230,7 +289,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     css(styles) {
-        Object.assign(this.element.style, styles);
+        Object.assign(this.#element.style, styles);
         return this;
         // new DomElement("div").css({
         //     width: "100px",
@@ -245,7 +304,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     clear() {
-        this.element.replaceChildren();
+        this.#element.replaceChildren();
         return this;
     }
 
@@ -258,7 +317,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     on(event, handler, options) {
-        this.element.addEventListener(event, handler, options);
+        this.#element.addEventListener(event, handler, options);
         return this;
     }
 
@@ -271,7 +330,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     once(event, handler, options) {
-        this.element.addEventListener(event, handler, { ...options, once: true });
+        this.#element.addEventListener(event, handler, { ...options, once: true });
         return this;
     }
 
@@ -284,7 +343,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     off(event, handler, options) {
-        this.element.removeEventListener(event, handler, options);
+        this.#element.removeEventListener(event, handler, options);
         return this;
     }
 
@@ -297,11 +356,11 @@ export class DomElement {
      */
     set_attr(name, value) {
         if (value === false || value === null || value === undefined) {
-            this.element.removeAttribute(name);
+            this.#element.removeAttribute(name);
         } else if (value === true) {
-            this.element.setAttribute(name, "");
+            this.#element.setAttribute(name, "");
         } else {
-            this.element.setAttribute(name, String(value));
+            this.#element.setAttribute(name, String(value));
         }
         return this;
     }
@@ -313,7 +372,7 @@ export class DomElement {
      * @returns {string|null}
      */
     attr(name) {
-        return this.element.getAttribute(name);
+        return this.#element.getAttribute(name);
     }
 
     /**
@@ -323,7 +382,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     remove_attr(name) {
-        this.element.removeAttribute(name);
+        this.#element.removeAttribute(name);
         return this;
     }
 
@@ -335,7 +394,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     data(key, value) {
-        this.element.dataset[key] = value;
+        this.#element.dataset[key] = value;
         return this;
     }
 
@@ -346,7 +405,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     add_class(cls) {
-        this.element.classList.add(cls);
+        this.#element.classList.add(cls);
         return this;
     }
 
@@ -357,7 +416,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     remove_class(cls) {
-        this.element.classList.remove(cls);
+        this.#element.classList.remove(cls);
         return this;
     }
 
@@ -369,7 +428,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     toggle_class(cls, force) {
-        this.element.classList.toggle(cls, force);
+        this.#element.classList.toggle(cls, force);
         return this;
     }
 
@@ -379,8 +438,8 @@ export class DomElement {
      * @param {Node|DomElement} node
      */
     replace_with(node) {
-        this.element.replaceWith(
-            node instanceof DomElement ? node.element : node
+        this.#element.replaceWith(
+            node instanceof DomElement ? node.#element : node
         );
     }
 
@@ -391,8 +450,8 @@ export class DomElement {
      * @returns {DomElement}
      */
     insert_before(node) {
-        this.element.before(
-            node instanceof DomElement ? node.element : node
+        this.#element.before(
+            node instanceof DomElement ? node.#element : node
         );
         return this;
     }
@@ -404,8 +463,8 @@ export class DomElement {
      * @returns {DomElement}
      */
     insert_after(node) {
-        this.element.after(
-            node instanceof DomElement ? node.element : node
+        this.#element.after(
+            node instanceof DomElement ? node.#element : node
         );
         return this;
     }
@@ -428,7 +487,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     debug_label(label) {
-        this.element.dataset.debug = label;
+        this.#element.dataset.debug = label;
         return this;
     }
 
@@ -438,59 +497,74 @@ export class DomElement {
      * @returns {DomElement}
      */
     assert_attached() {
-        if (!this.element.isConnected) {
-            console.warn("DomElement not attached:", this.element);
+        if (!this.#element.isConnected) {
+            console.warn("DomElement not attached:", this.#element);
         }
         return this;
     }
 
-    #original_display
+    #original_display = null
     hide() {
-        let s = this.element.style;
+        let s = this.#element.style;
         this.#original_display = s.display
         s.display = Display.None.label
         return this
     }
-    show() {
-        this.element.style = this.#original_display;
+    show(d = null) {
+        if(d) {
+            this.styles().display(d);
+            return this
+        }
+        if(this.#original_display){
+            this.styles().display(this.#original_display);
+            return this
+        }
+        this.styles().display(Display.Block)
         return this
     }
 
     focus() {
-        this.element.focus();
+        this.#element.focus();
         return this;
     }
 
     blur() {
-        this.element.blur();
+        this.#element.blur();
         return this;
     }
 
     parent() {
-        return this.element.parentElement;
+        return this.#element.parentElement;
     }
 
     children() {
-        return Array.from(this.element.children);
+        return Array.from(this.#element.children);
     }
 
     describe() {
         return {
-            tag: this.element.tagName,
-            id: this.element.id,
-            classes: [...this.element.classList],
-            attached: this.element.isConnected
+            tag: this.#element.tagName,
+            id: this.#element.id,
+            classes: [...this.#element.classList],
+            attached: this.#element.isConnected
         };
     }
     assert_type(tag) {
-        if (this.element.tagName.toLowerCase() !== tag.toLowerCase()) {
-            console.warn(`Expected <${tag}>, got <${this.element.tagName}>`, this.element);
+        if (this.#element.tagName.toLowerCase() !== tag.toLowerCase()) {
+            console.warn(`Expected <${tag}>, got <${this.#element.tagName}>`, this.element);
         }
         return this;
     }
-
 }
 
+export function find_dom_element(id) {
+    let el = get_element(id)
+    if(!el) return null
+    let _object = el["_object"]
+
+    if(!_object) return null
+    return el._object
+}
 export class Form extends DomElement{
     constructor() {
         super("form")
@@ -534,14 +608,14 @@ export const InputType = Object.freeze({
 
 export class ValueElement extends DomElement {
     set_value(value) {
-        this.element.value = value
+        this.element().value = value
         return this
     }
     clear_value() {
         return this.set_value("")
     }
     get_value() {
-        return this.element.value
+        return this.element().value
     }
     get_value_as_number() {
         return Number(this.get_value())
@@ -553,7 +627,7 @@ export class Input extends ValueElement
     constructor(input_type = InputType.Text)
     {
         super("input")
-        this.element.type = input_type.label;
+        this.element().type = input_type.label;
         if (input_type === InputType.Checkbox) {
             this.css({
                 transform : "scale(2)",
@@ -566,11 +640,11 @@ export class Input extends ValueElement
         }
     }
     set_placeholder(text) {
-        this.element.placeholder = text
+        this.element().placeholder = text
         return this
     }
     get_placeholder() {
-        return this.element.placeholder
+        return this.element().placeholder
     }
 
 }
@@ -579,10 +653,10 @@ export class Checkbox extends Input{
         super(InputType.Checkbox);
     }
     is_checked() {
-        return this.element.checked
+        return this.element().checked
     }
     set_checked(value) {
-        this.element.checked = value
+        this.element().checked = value
         return this
     }
     check() {
@@ -593,6 +667,52 @@ export class Checkbox extends Input{
     uncheck() {
         this.set_checked(false)
         return this
+    }
+}
+
+export class Select extends DomElement {
+    constructor() {
+        super("select");
+        this.styles().width("250px")
+    }
+
+    multiple() {
+        this.element().multiple = true
+        return this
+    }
+
+    add_option(option) {
+        this.appendChild(option)
+        return this
+    }
+    add_options(...options) {
+        options.forEach(o => this.add_option(o));
+        return this;
+    }
+    set_selected_index(index) {
+        this.element().selectedIndex = index
+        return this
+    }
+    options() {
+        return this.element().options
+    }
+    selectedOptions() {
+        return this.element().selectedOptions
+    }
+}
+
+export class Option extends ValueElement {
+    constructor(value = null, text = null) {
+        super("option");
+        if(value) this.set_value(value)
+        if(text) this.set_text(text)
+        if(value && text === null) this.set_text(value)
+    }
+}
+
+export class EnumOption extends Option {
+    constructor(enum_instance) {
+        super(enum_instance.id, enum_instance.label);
     }
 }
 
