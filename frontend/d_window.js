@@ -260,4 +260,25 @@ export function showWindowFrom(title, url) {
     win.set_content_padding(0)
     win.show()
 
+    iframe.addEventListener("load", () => {
+        const iframeDoc = iframe.contentDocument;
+        const titleEl = iframeDoc.querySelector("title");
+
+        if (!titleEl) return;
+
+        const observer = new MutationObserver(() => {
+            console.log("New title:", iframeDoc.title);
+
+            onIframeTitleChanged(iframeDoc.title);
+        });
+
+        observer.observe(titleEl, {
+            childList: true
+        });
+    });
+
+    function onIframeTitleChanged(newTitle) {
+        console.log("Title was change:", newTitle);
+        win.set_title(newTitle)
+    }
 }

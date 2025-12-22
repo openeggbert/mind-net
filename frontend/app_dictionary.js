@@ -1375,6 +1375,10 @@ class DictionaryApp {
             //await this.#term_container.render(this.#autocomplete_term_title.get_item_id())
             this.#term_container.show()
         }
+        get_element("button_new_session").onclick = async () => {
+            let url = "app_dictionary.html"
+            showWindowFrom("Dictionary - App", url)
+        }
     }
 
     refresh_autocomplete_term_title() {
@@ -1561,6 +1565,7 @@ class TermContainer {
     async render_term(dictionary_term_id) {
         this.dictionary_term_id = dictionary_term_id
         let dictionary_term = await read_entity(Entities.dictionary_term, dictionary_term_id)
+        document.title = "Dictionary - App - " + dictionary_term.title
         this.#dictionary_term_json = dictionary_term
         get_element("term_container_h2").innerText = "Term #" + dictionary_term.id
         get_element("input_title").value = dictionary_term.title
