@@ -1,3 +1,7 @@
+// ========================================
+// Globals
+// ========================================
+
 import {getUserId} from "./api.js";
 
 let wasDragged = false;

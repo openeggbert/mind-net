@@ -165,7 +165,7 @@ namespace mindnet::plugins::core
         return *this;
     }
 
-    ErrorBuilder& ErrorBuilder::cpp(string cpp_namespace, string cpp_class, string cpp_symbol)
+    ErrorBuilder& ErrorBuilder::cpp(const string& cpp_namespace, const string& cpp_class, const string& cpp_symbol)
     {
         model_.cpp_namespace = cpp_namespace;
         model_.cpp_class = cpp_class;

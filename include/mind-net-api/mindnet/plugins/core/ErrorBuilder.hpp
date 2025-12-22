@@ -54,7 +54,7 @@ namespace mindnet::plugins::core
         ErrorBuilder& plugin(std::string v);
         ErrorBuilder& operation(essential::Crudl o);
 
-        ErrorBuilder& cpp(string cpp_namespace, string cpp_class, string cpp_symbol);
+        ErrorBuilder& cpp(const string& cpp_namespace, const string& cpp_class, const string& cpp_symbol);
         ErrorBuilder& sql(std::string sql);
 
         ErrorBuilder& user(identification id);

@@ -178,7 +178,7 @@ namespace mindnet::plugins::core::models
             &ModelERROR::mindnet_version
         );
 
-        std::string create_message_for_user() const
+        [[nodiscard]] std::string create_message_for_user() const
         {
             auto dev_mode = essential::g_configuration.dev_mode;
             auto status_msg = util::Utils::http_status_to_text(http_status);
