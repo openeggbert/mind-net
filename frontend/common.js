@@ -70,7 +70,7 @@ export class Autocomplete {
     }
 
     render(items, show_box = true) {
-        console.log("Started rendering items: " + items.length)
+        console.log("Started rendering items: " + items.length + " show_box=" + show_box)
         this.box.innerHTML = "";
 
         if (!items || items.length === 0) {
@@ -142,6 +142,7 @@ export class Autocomplete {
         this.input.value = ""
         this.item = null
         this.box.innerHTML = "";
+        this.box.style.display = "none"
     }
 
     destroy() {

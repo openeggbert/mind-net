@@ -251,7 +251,6 @@ class DictionaryApp {
             search_window.set_content(content.element());
             search_window.show();
 
-
             content.style.height = "100%";
 
             // ---------- FORM ----------
