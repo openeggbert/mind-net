@@ -130,6 +130,7 @@ export function showToast(message, timeout = 3000, type = "info") {
     const toast = document.createElement("div");
     toast.className = `toast ${type}`;
     toast.textContent = message;
+    container.style.zIndex = "10000"
     container.appendChild(toast);
 
     requestAnimationFrame(() => toast.classList.add("show"));

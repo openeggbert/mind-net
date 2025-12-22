@@ -3,8 +3,8 @@
 // Window
 // ========================================
 
-import {Div} from "./d_dom.js";
-import {showError} from "./dom.js";
+import {Div, Span} from "./d_dom.js";
+import {showError, showInfo} from "./dom.js";
 
 let activeWindow = null;
 let topZ = 1000;
@@ -22,18 +22,32 @@ export function bringToFront(win) {
     win._setActive(true);
 }
 
+function get_inner_width() {
+    return window.innerWidth;
+}   function get_inner_height() {
+    return window.innerHeight
+}
 
 export class VirtualWindow {
     #root;
     #header;
     #title;
     #content;
+    #minimize;
+    #minimized = false;
+    #restore;
+    #restoreWidth = "800px";
+    #restoreHeight = "600px";
     #close;
     #userPositioned = false;
+    #lastTapTime = 0;
+    #maximized = false
 
     #dragging = false;
     #offX = 0;
     #offY = 0;
+    #restoreLeft;
+    #restoreTop;
 
     constructor({
                     title = "Window",
@@ -69,7 +83,40 @@ export class VirtualWindow {
         this.#close.textContent = "✖";
         this.#close.onclick = () => this.hide();
 
-        this.#header.append(this.#title, this.#close);
+        this.#minimize = document.createElement("button");
+        this.#minimize.className = "window-minimize";
+        this.#minimize.textContent = "➖";
+        this.#minimize.style.marginRight = "10px"
+        this.#minimize.onclick = () => this.minimize();
+
+        this.#restore = document.createElement("button");
+        this.#restore.className = "window-restore";
+        this.#restore.textContent = "🗖";
+        this.#restore.style.marginRight = "10px"
+        this.#restore.style.display = "none"
+        this.#restore.onclick = () => this.restore();
+
+        // mouse
+        this.#header.addEventListener("dblclick", e => {
+            e.preventDefault();
+            this.toggle_maximize();
+        });
+
+// touch
+        this.#header.addEventListener("touchend", e => {
+            const now = Date.now();
+            const delta = now - this.#lastTapTime;
+
+            if (delta > 0 && delta < 300) {
+                e.preventDefault();
+                this.toggle_maximize();
+                this.#lastTapTime = 0;
+            } else {
+                this.#lastTapTime = now;
+            }
+        });
+
+        this.#header.append(this.#title, new Span(this.#minimize, this.#restore, this.#close).element());
 
         // ===============================
         // Content
@@ -100,6 +147,7 @@ export class VirtualWindow {
             const offY = e.clientY - rect.top;
 
             const move = ev => {
+                if(this.#maximized && !this.#minimized) return
                 this.#root.style.left = (ev.clientX - offX) + "px";
                 this.#root.style.top  = (ev.clientY - offY) + "px";
             };
@@ -125,6 +173,77 @@ export class VirtualWindow {
     // ===============================
     // Public API
     // ===============================
+
+    minimize() {
+        if (this.#minimized) return;
+
+        this.#minimize.style.display = "none";
+        this.#restore.style.display = "inline";
+
+        const s = this.#root.style;
+        this.#restoreWidth = s.width;
+        this.#restoreHeight = s.height;
+        this.#restoreLeft =this.#root.style.left
+        this.#restoreTop =this.#root.style.top
+
+        this.#root.style.resize = "none";
+
+        this.resize_from_strings("fit-content", "38px");
+
+        this.#minimized = true;
+    }
+
+    toggle_maximize() {
+        let maximized = this.#maximized
+
+        if(maximized) {
+            showInfo("Going to restore")
+            this.restore()
+        } else {
+            showInfo("Going to maximize")
+            this.maximize()
+        }
+    }
+    maximize() {
+        if (this.#minimized) return;
+        if (this.#maximized) return;
+
+        const s = this.#root.style;
+        this.#restoreWidth = s.width;
+        this.#restoreHeight = s.height;
+        this.#restoreLeft =this.#root.style.left
+        this.#restoreTop =this.#root.style.top
+
+        this.#root.style.left = "0"
+        this.#root.style.top = "0"
+        this.#root.style.resize = "none";
+
+        this.resize(get_inner_width(), get_inner_height());
+        this.#maximized = true
+    }
+
+    restore() {
+        if (!(this.#minimized || this.#maximized)) return;
+
+        this.#minimize.style.display = "inline";
+        this.#restore.style.display = "none";
+
+        this.resize_from_strings(this.#restoreWidth, this.#restoreHeight);
+
+        this.#root.style.resize = "both";
+
+        this.#root.style.left = this.#restoreLeft
+        this.#root.style.top = this.#restoreTop
+
+
+        if(this.#maximized && !this.#minimized) {
+            this.#maximized = false;
+        }
+        if(this.#maximized && this.#minimized) {
+            this.#root.style.resize = "none";
+        }
+        if(this.#minimized) this.#minimized = false;
+    }
 
     _setActive(active) {
         this.#root.classList.toggle("active", active);
@@ -199,6 +318,11 @@ export class VirtualWindow {
     resize(width, height) {
         if (width !== null) this.#root.style.width = width + "px";
         if (height !== null) this.#root.style.height = height + "px";
+        return this;
+    }
+    resize_from_strings(width, height) {
+        if (width !== null) this.#root.style.width = width;
+        if (height !== null) this.#root.style.height = height;
         return this;
     }
 
