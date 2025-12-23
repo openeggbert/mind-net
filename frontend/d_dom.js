@@ -858,6 +858,10 @@ export class Button extends DomElement {
         this.element().type = type.label
         return this
     }
+    click() {
+        this.element().click()
+        return this
+    }
 }
 
 export class EnumOption extends Option {

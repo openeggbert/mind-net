@@ -841,7 +841,7 @@ class DictionaryApp {
                 search_json = null
 
                 unloadBtn.disabled = true
-                load_input.disabled = ""
+                load_input.disabled = false
                 deleteBtn.disabled = true
                 find_dom_element("span_search_id_value").clear_text()
             }
@@ -989,8 +989,8 @@ class DictionaryApp {
                 search_form.remove_class("loading")
                 console.debug(JSON.stringify(read_search))
                 console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
-                deleteBtn.disabled = ""
-                unloadBtn.disabled = ""
+                deleteBtn.disabled = false
+                unloadBtn.disabled = false
                 search_json = read_search
                 find_dom_element("span_search_id_value").set_text(read_search.id)
             })
