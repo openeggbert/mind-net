@@ -4,7 +4,7 @@ import {
     enumValue, enumValues, gen_enum_id, find_by_enum_id, humanizeEnumKey
 } from "./d_enums.js";
 import {Autocomplete, defined} from "./common.js";
-import {Button, Div, EventType, Input, Label} from "./d_dom.js";
+import {Button, Div, EventType, Input, Label, Span} from "./d_dom.js";
 import {_10PX} from "./d_styles.js";
 import {showInfo} from "./dom.js";
 
@@ -286,4 +286,55 @@ function updateBoxVisibility(box) {
     }
 }
 
+export class FormRow extends Div {
+    constructor(label_text, control) {
+        super(new Label(label_text), control);
+        this.add_class("form-row")
+    }
+}
+
+
+export class FormRowAutocomplete extends FormRow {
+    static #create_container(label, input) {
+        return new Span(
+            input,
+            new Div()
+                .set_id("search_end_" + label.toLowerCase())
+        )
+            .css({
+                position: "relative"
+            })
+    }
+
+    #autocomplete
+
+    constructor(win, form, label, entity, query_params = "", input = new Input()) {
+        super(
+            label,
+            FormRowAutocomplete.#create_container(label, input)
+        );
+        this.input = input
+        form.appendChild(this)
+        this.#autocomplete = new SearchAutocomplete(
+            win,
+            label.toLowerCase(),
+            input.element(),
+            1,
+            entity,
+            query_params)
+    }
+    get_title() {
+        return this.#autocomplete.get_item() === null ? "" : this.autocomplete.get_item().title
+    }
+    reset() {
+        this.#autocomplete.reset()
+    }
+    get_item_id() {
+        return this.#autocomplete.get_item_id()
+    }
+    async set_from_title(title, id) {
+        await this.#autocomplete.set_from_title(title, id)
+    }
+
+}
 

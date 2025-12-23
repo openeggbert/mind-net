@@ -33,7 +33,7 @@ import {
     showWindowFrom,
     VirtualWindow
 } from "./d_window.js";
-import {SearchAutocomplete, SearchModel} from "./d_search.js";
+import {FormRow, FormRowAutocomplete, SearchAutocomplete, SearchModel} from "./d_search.js";
 import {
     Checkbox,
     Div,
@@ -258,12 +258,6 @@ class DictionaryApp {
             const form = new Form().set_id("form_search")
             content.appendChild(form.element());
 
-            class FormRow extends Div {
-                constructor(label_text, control) {
-                    super(new Label(label_text), control);
-                    this.add_class("form-row")
-                }
-            }
             // --- Title contains ---
             const titleContainsInput = new Input().set_placeholder("e.g. mutex, allocator, RAII");
             form.appendChild(new FormRow("Title contains", titleContainsInput));
@@ -329,66 +323,6 @@ class DictionaryApp {
 
             form.appendChild(new FormRow("Difficulty", diffContainer));
 
-            class CloseButton {
-                constructor(model, input, autocomplete = null) {
-                    let close_button = document.createElement("button")
-                    close_button.innerHTML = "&times;"
-                    close_button.title = "Clear " + model
-                    close_button.style.marginLeft = "10px"
-                    close_button.onclick = (e) => {
-                        event.preventDefault();
-                        if (defined(autocomplete)) {
-                            autocomplete.reset()
-                        } else {
-                            input.clear_value()
-                        }
-                    }
-                    input.insert_after(close_button)}
-            }
-
-            class FormRowAutocomplete extends FormRow {
-                static #create_container(label, input) {
-                    return new Span(
-                        input,
-                        new Div()
-                            .set_id("search_end_" + label.toLowerCase())
-                    )
-                        .css({
-                            position: "relative"
-                        })
-                }
-
-                #autocomplete
-
-                constructor(win, form, label, entity, query_params = "", input = new Input()) {
-                    super(
-                        label,
-                        FormRowAutocomplete.#create_container(label, input)
-                    );
-                    this.input = input
-                    form.appendChild(this)
-                    this.#autocomplete = new SearchAutocomplete(
-                        win,
-                        label.toLowerCase(),
-                        input.element(),
-                        1,
-                        entity,
-                        query_params)
-                }
-                get_title() {
-                    return this.#autocomplete.get_item() === null ? "" : this.autocomplete.get_item().title
-                }
-                reset() {
-                    this.#autocomplete.reset()
-                }
-                get_item_id() {
-                    return this.#autocomplete.get_item_id()
-                }
-                async set_from_title(title, id) {
-                    await this.#autocomplete.set_from_title(title, id)
-                }
-
-            }
             const tag_control = new FormRowAutocomplete(
                 search_window,
                 form,
