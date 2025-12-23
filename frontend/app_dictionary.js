@@ -39,15 +39,15 @@ import {
     Checkbox,
     Div,
     EnumOption, EventType,
-    find_dom_element,
+    find_dom_element, find_enum,
     Form,
     Input,
     Label,
     Select,
-    Span
+    Span, Table
 } from "./d_dom.js";
-import {_10PX, _20PX, _5PX} from "./d_styles.js";
-import {Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
+import {_10PX, _20PX, _40PX, _5PX} from "./d_styles.js";
+import {BorderCollapse, Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
 
 function showDebug(msg) {
     if (debug) showInfo("Debug: " + msg)
@@ -502,12 +502,11 @@ class DictionaryApp {
                 if (items.length === 0) {
                     showInfo("No search results.")
                 }
-                let resultTable = get_element("resultTable")
-                progress_bar.reset()
-                progress_bar.show()
-                resultTable.innerHTML = ""
-                resultTable.style.display = "none"
-                resultTable.style.marginBottom = "40px"
+                progress_bar.reset().show()
+                let resultTable = find_dom_element("resultTable")
+                    .clear_html()
+                    .hide()
+                    .styles().marginBottom(_40PX).end()
                 let space = get_element("space");
                 if (defined(space)) find_dom_element("space").remove_element()
 
@@ -519,7 +518,7 @@ class DictionaryApp {
                     th.innerText = text
                     th.style.border = "1px solid black"
                     th.style.backgroundColor = "#aaa"
-                    th.style.height = "40px"
+                    th.style.height = _40PX
                     return th
                 }
 
@@ -527,8 +526,8 @@ class DictionaryApp {
                     let td = document.createElement("td");
                     td.style.border = "1px solid black"
                     td.innerText = text
-                    td.style.paddingLeft = "10px"
-                    td.style.height = "40px"
+                    td.style.paddingLeft = _10PX
+                    td.style.height = _40PX
                     return td
                 }
 
@@ -607,7 +606,7 @@ class DictionaryApp {
                     resultTable.appendChild(tr)
 
                     tr_th.remove()
-                    resultTable.style.border = ""
+                    resultTable.styles().border().end()
 
                     let td = create_td("No results found");
                     td.colSpan = 4
@@ -670,7 +669,7 @@ class DictionaryApp {
                     }
                 })
 
-                resultTable.style.display = "block"
+                resultTable.show(Display.Block)
                 progress_bar.hide()
 
             });
@@ -900,19 +899,16 @@ class DictionaryApp {
                 titleContainsInput.set_value(query.title_contains ?? "")
                 titleStartsWithInput.set_value(query.title_starts_with ?? "")
                 definitionInput.set_value(query.definition_contains ?? "")
-                let statuses = (query.status ?? "").split(",")
-                for (const option of statusSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = statuses.includes(option.innerText);
-                }
+                statusSelect.set_selected_values(query.statuses)
                 pinnedCheckbox.set_checked(query.pinned_only ?? false)
-                find_by_enum_id("importance", Importance.Low)._object.set_checked(query.importance_low ?? true)
-                find_by_enum_id("importance", Importance.Medium)._object.set_checked(query.importance_medium ?? true)
-                find_by_enum_id("importance", Importance.High)._object.set_checked(query.importance_high ?? true)
 
-                find_by_enum_id("difficulty", Difficulty.Easy)._object.set_checked(query.difficulty_easy ?? true)
-                find_by_enum_id("difficulty", Difficulty.Medium)._object.set_checked(query.difficulty_medium ?? true)
-                find_by_enum_id("difficulty", Difficulty.Hard)._object.set_checked(query.difficulty_hard ?? true)
+                find_enum("importance", Importance.Low).set_checked(query.importance_low ?? true)
+                find_enum("importance", Importance.Medium).set_checked(query.importance_medium ?? true)
+                find_enum("importance", Importance.High).set_checked(query.importance_high ?? true)
+
+                find_enum("difficulty", Difficulty.Easy).set_checked(query.difficulty_easy ?? true)
+                find_enum("difficulty", Difficulty.Medium).set_checked(query.difficulty_medium ?? true)
+                find_enum("difficulty", Difficulty.Hard).set_checked(query.difficulty_hard ?? true)
 
                 if ((query.tag_id ?? 0) !== 0) {
                     let read_tag = await read_entity(Entities.dictionary_tag, query.tag_id)
@@ -985,51 +981,27 @@ class DictionaryApp {
 
                 (query.missing_items ?? [])
                     .forEach(e => {
-                        find_by_enum_id("missing", e)._object.check()
+                        find_enum("missing", e).check()
                     });
 
                 (query.has_items ?? [])
                     .forEach(e => {
-                        find_by_enum_id("has", e)._object.check()
+                        find_enum("has", e).check()
                     });
 
-                let created = query.created ?? ""
-                for (const option of createdSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = created === option.innerText;
-                }
-                let updated = query.updated ?? ""
-                for (const option of updatedSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = updated === option.innerText;
-                }
-                let visited = query.visited ?? ""
-                for (const option of visitedSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = visited === option.innerText;
-                }
-                let reviewed = query.reviewed ?? ""
-                for (const option of reviewedSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = reviewed === option.innerText;
-                }
+                createdSelect.set_selected_value(query.created)
+                updatedSelect.set_selected_value(query.updated)
+                visitedSelect.set_selected_value(query.visited)
+                reviewedSelect.set_selected_value(query.reviewed)
 
-                find_by_enum_id("repetition", RepetitionMode.Due)._object.set_checked(query.repetition_due ?? true)
-                find_by_enum_id("repetition", RepetitionMode.NotDue)._object.set_checked(query.repetition_not_due ?? true)
-                find_by_enum_id("repetition", RepetitionMode.Never)._object.set_checked(query.repetition_never ?? true)
-                
-                let sort = query.sort ?? ""
-                for (const option of sortSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = sort === option.innerText;
-                }
-                let order = query.order ?? ""
-                for (const option of orderSelect.options()) {
-                    console.debug("option.innerText=" + option.innerText)
-                    option.selected = order === option.innerText;
-                }
+                find_enum("repetition", RepetitionMode.Due).set_checked(query.repetition_due ?? true)
+                find_enum("repetition", RepetitionMode.NotDue).set_checked(query.repetition_not_due ?? true)
+                find_enum("repetition", RepetitionMode.Never).set_checked(query.repetition_never ?? true)
 
-                form.element().classList.remove("loading")
+                sortSelect.set_selected_value(query.sort)
+                orderSelect.set_selected_value(query.order)
+
+                form.remove_class("loading")
                 console.debug(JSON.stringify(read_search))
                 console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
                 deleteBtn.disabled = ""
@@ -1099,15 +1071,15 @@ class DictionaryApp {
             content.appendChild(new Span(details_label, details_checkbox).element())
 
             content.appendChild(space.element())
-            let resultTable = document.createElement("table")
-            resultTable.id = "resultTable"
-            resultTable.style.display = "none"
-            resultTable.style.margin = "10px"
-            resultTable.style.borderCollapse = "collapse";
+            let resultTable = new Table()
+                .set_id("resultTable")
+                .styles()
+                .display(Display.None)
+                .margin(_10PX)
+                .borderCollapse(BorderCollapse.Collapse)
+                .end()
             content.appendChild(resultTable)
             content.appendChild(progress_bar.element())
-            // resultTable.style.margin = "0 auto";
-            // resultTable.style.border = "1px solid black"
 
             let span_pages_toolbar = new Span()
                 .set_id("span_pages_toolbar")

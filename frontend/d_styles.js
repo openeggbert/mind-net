@@ -3,6 +3,9 @@ import {Cursor} from "./d_styles_enums.js";
 export const _5PX  = "5px"
 export const _10PX = "10px"
 export const _20PX = "20px"
+export const _40PX = "40px"
+export const _50PX = "50px"
+export const _100PX = "100px"
 
 export class Styles {
     #dom_element
@@ -144,6 +147,12 @@ export class Styles {
     transitionDuration(value) { return this.#set("transitionDuration", value) }
     transitionTimingFunction(value) { return this.#set("transitionTimingFunction", value) }
     opacity(value = 1.0) { return this.#set("opacity", value) }
+
+    /* =========================
+     * OTHER
+     * ========================= */
+    borderCollapse(value) { return this.#set("borderCollapse", value) }
+
 
     /* =========================
      * END

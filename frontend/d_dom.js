@@ -1,6 +1,7 @@
 import {Styles} from "./d_styles.js";
 import {Display} from "./d_styles_enums.js";
 import {get_element} from "./dom.js";
+import {gen_enum_id} from "./d_enums.js";
 
 export const EventType = Object.freeze({
     // mouse events
@@ -289,6 +290,11 @@ export class DomElement {
         return this;
     }
 
+    clear_html() {
+        return this.set_html_unsafe("")
+    }
+
+
     /**
      * Apply multiple CSS styles at once.
      *
@@ -310,7 +316,7 @@ export class DomElement {
      *
      * @returns {DomElement}
      */
-    clear() {
+    clear_children() {
         this.#element.replaceChildren();
         return this;
     }
@@ -516,6 +522,7 @@ export class DomElement {
     #original_display = null
     hide() {
         let s = this.#element.style;
+        if(s.display === Display.None.label) return this
         this.#original_display = s.display
         s.display = Display.None.label
         return this
@@ -574,6 +581,9 @@ export function find_dom_element(id) {
 
     if(!_object) return null
     return el._object
+}
+export function find_enum(text, instance) {
+    return find_dom_element(gen_enum_id(text, instance))
 }
 export class Form extends DomElement{
     constructor() {
@@ -703,11 +713,24 @@ export class Select extends DomElement {
         this.element().selectedIndex = index
         return this
     }
+
     set_selected_index_to_0() {
         return this.set_selected_index(0)
     }
     set_no_selected_index() {
         return this.set_selected_index(-1)
+    }
+
+    set_selected_values(values) {
+        for (const option of this.options()) {
+            option.selected = values.includes(Number(option.value));
+        }
+    }
+    set_selected_value(value) {
+        for (const option of this.options()) {
+            if(value !== (Number(option.value))) continue
+            option.selected = true
+        }
     }
     options() {
         return this.element().options
