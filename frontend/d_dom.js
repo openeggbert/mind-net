@@ -53,6 +53,11 @@ export const ButtonType = Object.freeze({
     Button:    { id: 2,  label: "button" },
 });
 
+export const ActionType = Object.freeze({
+    // mouse events
+    Reset:    { id: 0,  label: "reset" },
+});
+
 /**
  * DomElement
  * ==========
@@ -114,6 +119,7 @@ export class DomElement {
     #element
     #style
     #styles
+    #action_handlers = new Map()
 
     /**
      * Create a native DOM element.
@@ -153,6 +159,45 @@ export class DomElement {
         this.#element._object = this;
 
         this.#styles = new Styles(this)
+    }
+
+    #get_handler_key(action) {
+        return typeof action === "object" ? action.label : action
+    }
+    add_action_handler(action, handler) {
+        let key = this.#get_handler_key(action)
+        this.#action_handlers.set(key, handler)
+        return this
+    }
+    has_action_handler(action) {
+        let key = this.#get_handler_key(action)
+        return this.#action_handlers.has(key)
+    }
+    is_missing_action_handler(action) {
+        let key = this.#get_handler_key(action)
+        return !this.#action_handlers.has(key)
+    }
+    get_action_handler(action) {
+        let key = this.#get_handler_key(action)
+        return this.#action_handlers.get(key) ?? null
+    }
+    remove_action_handler(action)
+    {
+        let key = this.#get_handler_key(action)
+        this.#action_handlers.delete(key)
+        return this
+    }
+    execute_action(action, ...args) {
+        let key = this.#get_handler_key(action)
+        console.log(`Going to execute action: ${key}`)
+        const fn = this.#action_handlers.get(key)
+        if (!fn) return false
+        console.log(`Action was found: ${key}`)
+        return fn(this, ...args)
+    }
+
+    set_default_values() {
+        return this.execute_action(ActionType.Reset)
     }
 
     element() {
@@ -213,6 +258,10 @@ export class DomElement {
 
         if (string_too && typeof child === "string") {
             return document.createTextNode(child);
+        }
+
+        if (typeof child === "function") {
+            throw new Error("Function passed as DOM child. Did you forget to call .end()?");
         }
 
         throw new Error("Unsupported object type: " + typeof child);
@@ -642,27 +691,31 @@ export class ValueElement extends DomElement {
     }
 }
 
-export class Input extends ValueElement
-{
-    constructor(input_type = InputType.Text)
-    {
+export class Input extends ValueElement {
+    constructor(input_type = InputType.Text) {
         super("input")
         this.element().type = input_type.label;
         if (input_type === InputType.Checkbox) {
             this.css({
-                transform : "scale(2)",
-                marginLeft : "10px",
-                marginRight : "10px",
-                textAlign : "left",
+                transform: "scale(2)",
+                marginLeft: "10px",
+                marginRight: "10px",
+                textAlign: "left",
             })
         } else {
             this.css({width: "250px"})
         }
+        this.add_action_handler(ActionType.Reset, (self, ...args) => {
+            self.clear_value();
+            return true;
+        });
     }
+
     set_placeholder(text) {
         this.element().placeholder = text
         return this
     }
+
     get_placeholder() {
         return this.element().placeholder
     }
@@ -671,6 +724,7 @@ export class Input extends ValueElement
 export class Checkbox extends Input{
     constructor() {
         super(InputType.Checkbox);
+        this.add_action_handler(ActionType.Reset, (self, ...args)=>{self.uncheck(); return true;});
     }
     is_checked() {
         return this.element().checked
@@ -694,6 +748,10 @@ export class Select extends DomElement {
     constructor() {
         super("select");
         this.styles().width("250px")
+        this.add_action_handler(ActionType.Reset, (self, ...args) => {
+            self.set_selected_index_to_0();
+            return true;
+        });
     }
 
     multiple() {

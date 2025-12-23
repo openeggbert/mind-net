@@ -4,7 +4,7 @@ import {
     enumValue, enumValues, gen_enum_id, find_by_enum_id, humanizeEnumKey
 } from "./d_enums.js";
 import {Autocomplete, defined} from "./common.js";
-import {Button, Div, EventType, Input, Label, Span} from "./d_dom.js";
+import {ActionType, Button, Div, EventType, Form, Input, Label, Span} from "./d_dom.js";
 import {_10PX} from "./d_styles.js";
 import {showInfo} from "./dom.js";
 
@@ -261,13 +261,44 @@ function runWhileShown(el, callback) {
     return () => running = false; // optional destroy
 }
 
+export class SearchForm extends Form {
+    #controls = []
+    constructor() {
+        super();
+        this
+            .set_id("form_search")
+    }
+    add_control(control) {
+        super.appendChild(control)
+        this.#controls.push(control)
+        this.add_action_handler(ActionType.Reset, (self, ...args) => {
+            let success = true
+            this.#controls.forEach(e=>{
+                let success_e = e.set_default_values()
+                if(!success_e) success = false
+            })
+            return success
+        })
+
+    }
+    appendChild(child) {
+        throw new Error("Function appendChild is not supported. Use add_control instead.")
+    }
+
+}
 export class FormRow extends Div {
     constructor(label_text, control) {
         super(new Label(label_text), control);
         this.add_class("form-row")
+        this.set_id("form-row_" + label_text.toLowerCase())
+        this.control = control
+        this.add_action_handler(ActionType.Reset, (self, ...args) => {self.control.set_default_values(); return true;})
+
+    }
+    get_control() {
+        return this.control
     }
 }
-
 
 export class FormRowAutocomplete extends FormRow {
     static #create_container(label, input) {
@@ -283,13 +314,13 @@ export class FormRowAutocomplete extends FormRow {
 
     #autocomplete
 
-    constructor(win, form, label, entity, query_params = "", input = new Input()) {
+    constructor(win, search_form, label, entity, query_params = "", input = new Input()) {
         super(
             label,
             FormRowAutocomplete.#create_container(label, input)
         );
         this.input = input
-        form.appendChild(this)
+        search_form.add_control(this)
         this.#autocomplete = new SearchAutocomplete(
             win,
             label.toLowerCase(),
