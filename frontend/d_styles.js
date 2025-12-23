@@ -1,3 +1,5 @@
+import {Cursor} from "./d_styles_enums.js";
+
 export const _5PX  = "5px"
 export const _10PX = "10px"
 export const _20PX = "20px"
@@ -13,6 +15,7 @@ export class Styles {
 
     #resolve_value(value) {
         if (typeof value === "string") return value
+        if (typeof value === "number") return value
 
         if (typeof value === "object" && value !== null) {
             if (typeof value.label === "string") return value.label
@@ -30,17 +33,17 @@ export class Styles {
     /* =========================
      * BOX MODEL
      * ========================= */
-    margin(value) { return this.#set("margin", value) }
-    marginTop(value) { return this.#set("marginTop", value) }
-    marginRight(value) { return this.#set("marginRight", value) }
-    marginBottom(value) { return this.#set("marginBottom", value) }
-    marginLeft(value) { return this.#set("marginLeft", value) }
+    margin(value = 0) { return this.#set("margin", value) }
+    marginTop(value = 0) { return this.#set("marginTop", value) }
+    marginRight(value = 0) { return this.#set("marginRight", value) }
+    marginBottom(value = 0) { return this.#set("marginBottom", value) }
+    marginLeft(value = 0) { return this.#set("marginLeft", value) }
 
-    padding(value) { return this.#set("padding", value) }
-    paddingTop(value) { return this.#set("paddingTop", value) }
-    paddingRight(value) { return this.#set("paddingRight", value) }
-    paddingBottom(value) { return this.#set("paddingBottom", value) }
-    paddingLeft(value) { return this.#set("paddingLeft", value) }
+    padding(value = 0) { return this.#set("padding", value) }
+    paddingTop(value = 0) { return this.#set("paddingTop", value) }
+    paddingRight(value = 0) { return this.#set("paddingRight", value) }
+    paddingBottom(value = 0) { return this.#set("paddingBottom", value) }
+    paddingLeft(value = 0) { return this.#set("paddingLeft", value) }
 
     boxSizing(value) { return this.#set("boxSizing", value) }
 
@@ -58,20 +61,20 @@ export class Styles {
      * POSITIONING
      * ========================= */
     position(value) { return this.#set("position", value) }
-    top(value) { return this.#set("top", value) }
-    right(value) { return this.#set("right", value) }
-    bottom(value) { return this.#set("bottom", value) }
-    left(value) { return this.#set("left", value) }
+    top(value = 0) { return this.#set("top", value) }
+    right(value = 0) { return this.#set("right", value) }
+    bottom(value = 0) { return this.#set("bottom", value) }
+    left(value = 0) { return this.#set("left", value) }
     zIndex(value) { return this.#set("zIndex", value) }
 
     /* =========================
      * DISPLAY & LAYOUT
      * ========================= */
-    display(value) { return this.#set("display", value) }
-    overflow(value) { return this.#set("overflow", value) }
-    overflowX(value) { return this.#set("overflowX", value) }
-    overflowY(value) { return this.#set("overflowY", value) }
-    visibility(value) { return this.#set("visibility", value) }
+    display(value = "block") { return this.#set("display", value) }
+    overflow(value = 0) { return this.#set("overflow", value) }
+    overflowX(value = 0) { return this.#set("overflowX", value) }
+    overflowY(value = 0) { return this.#set("overflowY", value) }
+    visibility(value = "visible") { return this.#set("visibility", value) }
 
     /* =========================
      * FLEXBOX
@@ -97,10 +100,10 @@ export class Styles {
     /* =========================
      * TEXT
      * ========================= */
-    color(value) { return this.#set("color", value) }
+    color(value = "black") { return this.#set("color", value) }
     fontFamily(value) { return this.#set("fontFamily", value) }
-    fontSize(value) { return this.#set("fontSize", value) }
-    fontWeight(value) { return this.#set("fontWeight", value) }
+    fontSize(value = "100%") { return this.#set("fontSize", value) }
+    fontWeight(value = "normal") { return this.#set("fontWeight", value) }
     lineHeight(value) { return this.#set("lineHeight", value) }
     letterSpacing(value) { return this.#set("letterSpacing", value) }
     textAlign(value) { return this.#set("textAlign", value) }
@@ -121,7 +124,7 @@ export class Styles {
     /* =========================
      * BORDER & EFFECTS
      * ========================= */
-    border(value) { return this.#set("border", value) }
+    border(value = "") { return this.#set("border", value) }
     borderRadius(value) { return this.#set("borderRadius", value) }
     boxShadow(value) { return this.#set("boxShadow", value) }
     outline(value) { return this.#set("outline", value) }
@@ -129,7 +132,7 @@ export class Styles {
     /* =========================
      * INTERACTION
      * ========================= */
-    cursor(value) { return this.#set("cursor", value) }
+    cursor(value = Cursor.None) { return this.#set("cursor", value) }
     pointerEvents(value) { return this.#set("pointerEvents", value) }
     userSelect(value) { return this.#set("userSelect", value) }
 
@@ -140,7 +143,7 @@ export class Styles {
     transition(value) { return this.#set("transition", value) }
     transitionDuration(value) { return this.#set("transitionDuration", value) }
     transitionTimingFunction(value) { return this.#set("transitionTimingFunction", value) }
-    opacity(value) { return this.#set("opacity", value) }
+    opacity(value = 1.0) { return this.#set("opacity", value) }
 
     /* =========================
      * END

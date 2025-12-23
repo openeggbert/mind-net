@@ -35,9 +35,10 @@ import {
 } from "./d_window.js";
 import {FormRow, FormRowAutocomplete, SearchAutocomplete, SearchModel} from "./d_search.js";
 import {
+    Button, ButtonType,
     Checkbox,
     Div,
-    EnumOption,
+    EnumOption, EventType,
     find_dom_element,
     Form,
     Input,
@@ -45,7 +46,7 @@ import {
     Select,
     Span
 } from "./d_dom.js";
-import {_10PX, _5PX} from "./d_styles.js";
+import {_10PX, _20PX, _5PX} from "./d_styles.js";
 import {Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
 
 function showDebug(msg) {
@@ -253,26 +254,27 @@ class DictionaryApp {
             const form = new Form().set_id("form_search")
             content.appendChild(form.element());
 
-            // --- Title contains ---
             const titleContainsInput = new Input().set_placeholder("e.g. mutex, allocator, RAII");
             form.appendChild(new FormRow("Title contains", titleContainsInput));
 
-            // --- Title starts with ---
             const titleStartsWithInput = new Input().set_placeholder("e.g. mut, allo, C, K");
             form.appendChild(new FormRow("Title starts with", titleStartsWithInput));
 
-            // --- Definition contains ---
             const definitionInput = new Input().set_placeholder("e.g. mutex, allocator, RAII")
             form.appendChild(new FormRow("Definition contains", definitionInput));
 
-            // --- Status ---
-            const statusSelect = new Select().multiple();
-            enumValues(TermStatus).forEach(e => {
-                statusSelect.add_option(new EnumOption(e));
-            });
+            class EnumSelect extends Select {
+                constructor(enum_object) {
+                    super();
+                    enumValues(enum_object).forEach(e => {
+                        this.add_option(new EnumOption(e));
+                    });
+                }
+            }
+            const statusSelect = new EnumSelect(TermStatus).multiple();
+
             form.appendChild(new FormRow("Status", statusSelect));
 
-            // --- Pinned ---
             const pinnedCheckbox = new Checkbox()
             form.appendChild(new FormRow("Pinned only", pinnedCheckbox))
 
@@ -345,86 +347,58 @@ class DictionaryApp {
             form.appendChild(make_item_form_row("Missing"));
             form.appendChild(make_item_form_row("Has"));
 
-            const time_range_array = enumValues(TimeRange)
+            class TimeRangeSelect extends EnumSelect {
+                constructor() {
+                    super(TimeRange);
+                }
+            }
 
-            // --- Created ---
-            const createdSelect = new Select()
-            time_range_array.forEach(e => {
-                createdSelect.add_option(new EnumOption(e));
-            });
+            const createdSelect = new TimeRangeSelect()
             form.appendChild(new FormRow("Created", createdSelect));
 
-            // --- Updated ---
-            const updatedSelect = new Select()
-            time_range_array.forEach(e => {
-                updatedSelect.add_option(new EnumOption(e));
-            });
+            const updatedSelect = new TimeRangeSelect()
             form.appendChild(new FormRow("Updated", updatedSelect));
 
-            // --- Visited ---
-            const visitedSelect = new Select()
-            time_range_array.forEach(e => {
-                visitedSelect.add_option(new EnumOption(e));
-            });
+            const visitedSelect = new TimeRangeSelect()
             form.appendChild(new FormRow("Visited", visitedSelect));
 
-            // --- Reviewed ---
-            const reviewedSelect = new Select()
-            time_range_array.forEach(e => {
-                reviewedSelect.add_option(new EnumOption(e));
-            });
+            const reviewedSelect = new TimeRangeSelect()
             form.appendChild(new FormRow("Reviewed", reviewedSelect));
 
-            // --- Repetition ---
             const repContainer = new Span().styles().marginLeft(_10PX).end();
             enumValues(RepetitionMode).forEach(e => {
                 const cb = new Checkbox()
                     .set_value(e.id)
                     .check()
-                    .css({
-                        marginLeft : "0"
-                    })
+                    .styles().marginLeft().end()
                     .set_id(gen_enum_id("repetition", e))
 
-
                 const l = new Label("", "auto")
-                    .css({
-                        marginRight: _10PX,
-                        marginLeft: 0,
-                        paddingLeft: _5PX,
-                        paddingRight: _5PX
-                    })
-                l.set_text(" " + e.label);
+                    .styles()
+                        .marginRight(_10PX)
+                        .marginLeft()
+                        .paddingLeft(_5PX)
+                        .paddingRight(_5PX)
+                        .end()
+                    .set_text(" " + e.label);
 
                 repContainer.append_many(cb, l);
             });
             form.appendChild(new FormRow("Repetition", repContainer));
 
             // --- Sort ---
-            const sortLabel = new Label("Sort:");
-            const sortSelect = new Select()
-            enumValues(Sort).forEach(e => {
-                sortSelect.add_option(new EnumOption(e));
-            });
-
-            const orderSelect = new Select()
-
-            enumValues(Order).forEach(e => {
-                orderSelect.add_option(new EnumOption(e));
-            });
-            sortSelect.style().width = "150px"
-            orderSelect.style().width = "80px"
-            orderSelect.style().marginLeft = "20px"
-            form.appendChild(new Div(sortLabel, sortSelect, orderSelect));
+            const sortSelect = new EnumSelect(Sort).styles().width("150px").end()
+            const orderSelect = new EnumSelect(Order).styles().width("80px").marginLeft("20px").end()
+            form.appendChild(new FormRow("Sort", new Span(sortSelect, orderSelect)));
 
             // --- Buttons ---
             const buttonRow = new Span();
             form.appendChild(buttonRow);
 
-            const searchBtn = document.createElement("button");
-            searchBtn.type = "button";
-            searchBtn.innerText = "🔍 Search";
-            searchBtn.classList.add("save-btn");
+            const searchBtn = new Button("🔍 Search")
+                .set_type(ButtonType.Button)
+                .add_class("save-btn")
+
             // const winBtn = document.createElement("button");
             // winBtn.type = "button";
             // winBtn.innerText = "win";
@@ -461,7 +435,7 @@ class DictionaryApp {
                         .background("#ddd").padding("0").textAlign(TextAlign.Center)
                         .end()
                     let progress_row = new Div()
-                        .styles().margin(_10PX).marginTop("-40px").marginBottom("20px").end()
+                        .styles().margin(_10PX).marginTop("-40px").marginBottom(_20PX).end()
                         .append_many(new Span().set_text("Loading data: "),this.#loading_data_progress)
                     this.appendChild(progress_row)
                 }
@@ -469,7 +443,6 @@ class DictionaryApp {
                 set_progress(value) {
                     value = Math.max(0, Math.min(100, value));
 
-                    let remains = (100.0 - value) / 100.0
                     let now = Date.now()
                     let elapsed_seconds = (now - this.#start_time) / 1000
                     let remains_seconds = Number(elapsed_seconds / (Number(value) / (100.0 - value))).toFixed()
@@ -487,7 +460,7 @@ class DictionaryApp {
             let progress_bar = new ProgressBar()
                 .hide()
 
-            searchBtn.onclick = async () => {
+            searchBtn.on(EventType.Click.label, async () => {
                 let query_json = load_query_model_from_form().to_json()
 
                 console.log("Advanced search values:", {
@@ -638,9 +611,8 @@ class DictionaryApp {
 
                     let td = create_td("No results found");
                     td.colSpan = 4
-                    td.style.textAlign = "center"
+                    td.style.textAlign = "left"
                     td.style.color = "grey"
-                    td.style.width = "400px"
                     td.style.border = ""
                     tr.appendChild(td)
                 } else items.forEach(e => {
@@ -701,7 +673,7 @@ class DictionaryApp {
                 resultTable.style.display = "block"
                 progress_bar.hide()
 
-            };
+            });
             buttonRow.appendChild(searchBtn);
 
             function make_button(text) {

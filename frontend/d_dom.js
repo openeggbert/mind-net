@@ -45,6 +45,13 @@ export const EventType = Object.freeze({
     Scroll:       { id: 28, label: "scroll" },
 });
 
+export const ButtonType = Object.freeze({
+    // mouse events
+    Submit:    { id: 0,  label: "submit" },
+    Reset:     { id: 1,  label: "reset" },
+    Button:    { id: 2,  label: "button" },
+});
+
 /**
  * DomElement
  * ==========
@@ -317,7 +324,10 @@ export class DomElement {
      * @returns {DomElement}
      */
     on(event, handler, options) {
-        this.#element.addEventListener(event, handler, options);
+        this.#element.addEventListener(
+            event,
+            handler,
+            options);
         return this;
     }
 
@@ -728,6 +738,11 @@ export class Button extends DomElement {
     get_title() {
         return this.element().title
     }
+    set_type(type) {
+        console.log(type.label)
+        this.element().type = type.label
+        return this
+    }
 }
 
 export class EnumOption extends Option {
@@ -750,5 +765,11 @@ export class Div extends DivSpan {
 export class Span extends DivSpan {
     constructor(...children) {
         super("span", ...children)
+    }
+}
+
+export class Table extends DomElement {
+    constructor() {
+        super("table");
     }
 }
