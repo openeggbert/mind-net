@@ -109,7 +109,7 @@ function makeDraggable(el) {
         const t = e.touches[0];
         startDrag(t.clientX, t.clientY);
         e.preventDefault();
-    }, { passive: false });
+    }, {passive: false});
     document.addEventListener('touchmove', e => {
         const t = e.touches[0];
         doDrag(t.clientX, t.clientY);
@@ -838,7 +838,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         get_element("show_parent").style.display = shown ? "inline-block" : "none";
 
         let button_hint_btn = get_element("button_hint_btn");
-        if(button_hint_btn !== null) button_hint_btn.style.display = shown ? "inline-block" : "none";
+        if (button_hint_btn !== null) button_hint_btn.style.display = shown ? "inline-block" : "none";
 
 
     }
@@ -1188,8 +1188,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     }
                 }
                 let retrievibility = null
-                if(r18 && details_json !== null && details_json !== undefined) {
-                    if(details_json.R_now !== null && details_json.R_now !== undefined) {
+                if (r18 && details_json !== null && details_json !== undefined) {
+                    if (details_json.R_now !== null && details_json.R_now !== undefined) {
                         retrievibility = details_json.R_now
                     }
                 }
@@ -1200,15 +1200,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             <div class="info" id="result">
             📅 Next review : ${state === null ? "?" : formatDateTimeHM(state.next_review)}<br>
             🔢 Repetitions: ${state === null ? "?" : state.repetitions}<br>
-            <span id="result_stability" style="display:none">📈 Stability: ${state === null || !r18 ? "?" : (state.stability_times_100 /100).toFixed(2)}</span>            
+            <span id="result_stability" style="display:none">📈 Stability: ${state === null || !r18 ? "?" : (state.stability_times_100 / 100).toFixed(2)}</span>            
             <span id="result_retrievibility" style="display:none">📈 Retrievibility: ${state === null || !r18 || retrievibility === null ? "?" : (retrievibility).toFixed(2)}</span>
             </div>
             <button id="btn_next_note">Next Note</button>
             <button id="btn_test_note">Test</button>
             
         `;
-                    if(r18) get_element("result_stability").style.display = "block";
-                    if(r18 && retrievibility !== null) get_element("result_retrievibility").style.display = "block";
+                    if (r18) get_element("result_stability").style.display = "block";
+                    if (r18 && retrievibility !== null) get_element("result_retrievibility").style.display = "block";
 
                     get_element("btn_next_note").onclick = () => resolve();
                     get_element("btn_test_note").onclick = async () => {

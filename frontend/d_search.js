@@ -75,7 +75,9 @@ export class SearchModel {
             title_starts_with: this.title_starts_with,
             definition_contains: this.definition_contains,
 
-            statuses: this.statuses.length === 1 && this.statuses[0] === -1 ? [] : this.statuses.map(e=>{return e.id}),
+            statuses: this.statuses.length === 1 && this.statuses[0] === -1 ? [] : this.statuses.map(e => {
+                return e.id
+            }),
             pinned_only: this.pinned_only,
 
             importance_low: this.importance_low,
@@ -97,8 +99,12 @@ export class SearchModel {
             source_id: this.source_id,
             alias_alias: this.alias_alias,
 
-            missing_items: this.missing_items.map(e=>{return e.id}),
-            has_items: this.has_items.map(e=>{return e.id}),
+            missing_items: this.missing_items.map(e => {
+                return e.id
+            }),
+            has_items: this.has_items.map(e => {
+                return e.id
+            }),
 
             created: this.created.id,
             updated: this.updated.id,
@@ -109,10 +115,11 @@ export class SearchModel {
             repetition_not_due: this.repetition_not_due,
             repetition_never: this.repetition_never,
 
-            sort: this.sort === null ? Sort.None.id: this.sort.id,
+            sort: this.sort === null ? Sort.None.id : this.sort.id,
             order: this.order === null ? Sort.None.id : this.order.id
         };
     }
+
     from_json(json) {
         if (!json || typeof json !== "object") {
             this.reset();
@@ -162,9 +169,9 @@ export class SearchModel {
                 .filter(Boolean)
             : [];
 
-        this.created  = enumValue(TimeRange, json.created)  ?? TimeRange.Any;
-        this.updated  = enumValue(TimeRange, json.updated)  ?? TimeRange.Any;
-        this.visited  = enumValue(TimeRange, json.visited)  ?? TimeRange.Any;
+        this.created = enumValue(TimeRange, json.created) ?? TimeRange.Any;
+        this.updated = enumValue(TimeRange, json.updated) ?? TimeRange.Any;
+        this.visited = enumValue(TimeRange, json.visited) ?? TimeRange.Any;
         this.reviewed = enumValue(TimeRange, json.reviewed) ?? TimeRange.Any;
 
         this.repetition_due = json.repetition_due ?? true;
@@ -232,8 +239,8 @@ export class SearchAutocomplete extends Autocomplete {
             let boxY = Number(b.y)
             let winY = this.win.top()
 
-            let wHeight = Number(this.win.height().slice(0,-2))
-            let wTop = Number(this.win.top().slice(0,-2))
+            let wHeight = Number(this.win.height().slice(0, -2))
+            let wTop = Number(this.win.top().slice(0, -2))
             let wBottom = wHeight + wTop
 
             // showInfo(wHeight + " " + wTop + " " + wBottom + " " + this.win.top())
@@ -263,38 +270,46 @@ function runWhileShown(el, callback) {
 
 export class SearchForm extends Form {
     #controls = []
+
     constructor() {
         super();
         this
             .set_id("form_search")
     }
+
     add_control(control) {
         super.appendChild(control)
         this.#controls.push(control)
         this.add_action_handler(ActionType.Reset, (self, ...args) => {
             let success = true
-            this.#controls.forEach(e=>{
+            this.#controls.forEach(e => {
                 let success_e = e.set_default_values()
-                if(!success_e) success = false
+                if (!success_e) success = false
             })
             return success
         })
 
     }
+
     appendChild(child) {
         throw new Error("Function appendChild is not supported. Use add_control instead.")
     }
 
 }
+
 export class FormRow extends Div {
     constructor(label_text, control) {
         super(new Label(label_text), control);
         this.add_class("form-row")
         this.set_id("form-row_" + label_text.toLowerCase())
         this.control = control
-        this.add_action_handler(ActionType.Reset, (self, ...args) => {self.control.set_default_values(); return true;})
+        this.add_action_handler(ActionType.Reset, (self, ...args) => {
+            self.control.set_default_values();
+            return true;
+        })
 
     }
+
     get_control() {
         return this.control
     }
@@ -329,15 +344,19 @@ export class FormRowAutocomplete extends FormRow {
             entity,
             query_params)
     }
+
     get_title() {
         return this.#autocomplete.get_item() === null ? "" : this.autocomplete.get_item().title
     }
+
     reset() {
         this.#autocomplete.reset()
     }
+
     get_item_id() {
         return this.#autocomplete.get_item_id()
     }
+
     async set_from_title(title, id) {
         await this.#autocomplete.set_from_title(title, id)
     }

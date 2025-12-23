@@ -137,7 +137,7 @@ export function renderAuthStatus() {
 
     document.getElementById("logoutBtn").onclick = async () => {
         let result = await logout();
-        if(result) {
+        if (result) {
             showToast("👋 Logged out", 3000, "info");
         } else {
             showError("Logged out failed");

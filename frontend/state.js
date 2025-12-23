@@ -27,18 +27,34 @@ export const getTotalPages = () => _state.totalPages;
 
 
 // setters
-export const setEntities = (value) => { _state.entities = value; };
-export const setEntityLabels = (value) => { _state.entityLabels = value; };
-export const setActions = (value) => { _state.actions = value; };
-export const setEntitySchemas = (value) => { _state.entitySchemas = value; };
-export const setSelectedEntity = (value) => { _state.selectedEntity = value; };
-export const setSelectedAction = (value) => { _state.selectedAction = value; };
-export const setSelectedActionId = (value) => { _state.selectedActionId = value; };
-export const setCurrentPage = (value) => { _state.currentPage = value; };
+export const setEntities = (value) => {
+    _state.entities = value;
+};
+export const setEntityLabels = (value) => {
+    _state.entityLabels = value;
+};
+export const setActions = (value) => {
+    _state.actions = value;
+};
+export const setEntitySchemas = (value) => {
+    _state.entitySchemas = value;
+};
+export const setSelectedEntity = (value) => {
+    _state.selectedEntity = value;
+};
+export const setSelectedAction = (value) => {
+    _state.selectedAction = value;
+};
+export const setSelectedActionId = (value) => {
+    _state.selectedActionId = value;
+};
+export const setCurrentPage = (value) => {
+    _state.currentPage = value;
+};
 export const setPageSize = (value) => {
-    if(value < 5 ) value = 5;
+    if (value < 5) value = 5;
     _state.pageSize = value;
-    localStorage.setItem("pageSize",value); // persist
+    localStorage.setItem("pageSize", value); // persist
 };
 export const setTotalPages = (value) => {
     _state.totalPages = value;

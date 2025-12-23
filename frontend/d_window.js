@@ -1,4 +1,3 @@
-
 // ========================================
 // Window
 // ========================================
@@ -155,7 +154,7 @@ export class VirtualWindow {
 
             const move = ev => {
 
-                if(this.#maximized && !this.#minimized) return
+                if (this.#maximized && !this.#minimized) return
                 this.#root.style.left = (ev.clientX - offX) + "px";
                 const newTop = clampTop(ev.clientY - offY);
                 this.#root.style.top = newTop + "px";
@@ -199,8 +198,8 @@ export class VirtualWindow {
         const s = this.#root.style;
         this.#restoreWidth = s.width;
         this.#restoreHeight = s.height;
-        this.#restoreLeft =this.#root.style.left
-        this.#restoreTop =this.#root.style.top
+        this.#restoreLeft = this.#root.style.left
+        this.#restoreTop = this.#root.style.top
 
         this.#root.style.resize = "none";
 
@@ -212,7 +211,7 @@ export class VirtualWindow {
     toggle_maximize() {
         let maximized = this.#maximized
 
-        if(maximized) {
+        if (maximized) {
             //showInfo("Going to restore")
             this.restore()
         } else {
@@ -220,6 +219,7 @@ export class VirtualWindow {
             this.maximize()
         }
     }
+
     maximize() {
         if (this.#minimized) return;
         if (this.#maximized) return;
@@ -227,8 +227,8 @@ export class VirtualWindow {
         const s = this.#root.style;
         this.#restoreWidth = s.width;
         this.#restoreHeight = s.height;
-        this.#restoreLeft =this.#root.style.left
-        this.#restoreTop =this.#root.style.top
+        this.#restoreLeft = this.#root.style.left
+        this.#restoreTop = this.#root.style.top
 
         this.#root.style.left = "0"
         this.#root.style.top = "0"
@@ -252,13 +252,13 @@ export class VirtualWindow {
         const restoreTop = parseInt(this.#restoreTop ?? "0", 10);
         this.#root.style.top = clampTop(restoreTop) + "px";
 
-        if(this.#maximized && !this.#minimized) {
+        if (this.#maximized && !this.#minimized) {
             this.#maximized = false;
         }
-        if(this.#maximized && this.#minimized) {
+        if (this.#maximized && this.#minimized) {
             this.#root.style.resize = "none";
         }
-        if(this.#minimized) this.#minimized = false;
+        if (this.#minimized) this.#minimized = false;
     }
 
     _setActive(active) {
@@ -301,7 +301,7 @@ export class VirtualWindow {
         const rect = this.#root.getBoundingClientRect();
 
         this.#root.style.left = rect.left + "px";
-        this.#root.style.top  = rect.top  + "px";
+        this.#root.style.top = rect.top + "px";
 
         this.#root.style.transform = "none";
     }
@@ -309,6 +309,7 @@ export class VirtualWindow {
     left() {
         return this.#root.style.left
     }
+
     top() {
         return this.#root.style.top
     }
@@ -316,12 +317,15 @@ export class VirtualWindow {
     right() {
         return this.#root.style.right
     }
+
     bottom() {
         return this.#root.style.top
     }
+
     height() {
         return this.#root.style.height
     }
+
     width() {
         return this.#root.style.width
     }
@@ -329,6 +333,7 @@ export class VirtualWindow {
     destroy() {
         this.#root.remove();
     }
+
     close() {
         this.hide()
         this.destroy()
@@ -357,6 +362,7 @@ export class VirtualWindow {
         if (height !== null) this.#root.style.height = height + "px";
         return this;
     }
+
     resize_from_strings(width, height) {
         if (width !== null) this.#root.style.width = width;
         if (height !== null) this.#root.style.height = height;
@@ -413,7 +419,7 @@ export function showWindowFrom(title, url) {
     iframe.style.display = "block";
     iframe.style.width = "100%";
     iframe.style.height = "100%";
-    iframe.style.border="0"
+    iframe.style.border = "0"
     iframe.style.padding = "0"
     iframe.style.margin = "0"
 

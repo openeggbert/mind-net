@@ -17,7 +17,7 @@ export async function loadModelDefinition() {
     const cached = localStorage.getItem(CACHE_KEY);
 
     if (cached) {
-        const { timestamp, data } = JSON.parse(cached);
+        const {timestamp, data} = JSON.parse(cached);
         if (now - timestamp < CACHE_TTL_MS) {
             console.log("Using cached model_definition");
             return data;
@@ -29,7 +29,7 @@ export async function loadModelDefinition() {
     if (!resp.ok) throw new Error("Error loading model_definition");
     const data = await resp.json();
 
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ timestamp: now, data }));
+    localStorage.setItem(CACHE_KEY, JSON.stringify({timestamp: now, data}));
     return data;
 }
 
@@ -39,7 +39,7 @@ export async function loadApplications() {
 
     if (cached) {
         try {
-            const { timestamp, data } = JSON.parse(cached);
+            const {timestamp, data} = JSON.parse(cached);
             if (now - timestamp < APPS_CACHE_TTL_MS) {
                 console.log("Using cached applications");
                 return data;
@@ -56,7 +56,7 @@ export async function loadApplications() {
     const json = await resp.json();
 
     const data = json.items || [];
-    localStorage.setItem(APPS_CACHE_KEY, JSON.stringify({ timestamp: now, data }));
+    localStorage.setItem(APPS_CACHE_KEY, JSON.stringify({timestamp: now, data}));
     return data;
 }
 
@@ -71,12 +71,13 @@ export function getUserId() {
 }
 
 export function setUserId(userid) {
-    if(userid === null){
+    if (userid === null) {
         localStorage.removeItem(USER_ID);
     } else {
-    localStorage.setItem(USER_ID, userid);
+        localStorage.setItem(USER_ID, userid);
     }
 }
+
 export function getAccessToken() {
     return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
@@ -85,8 +86,7 @@ export function setAccessToken(token, expires_at = null) {
     if (token) {
         localStorage.setItem(ACCESS_TOKEN_KEY, token);
         localStorage.setItem(ACCESS_TOKEN_EXPIRES_AT_KEY, expires_at);
-    }
-    else {
+    } else {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
         localStorage.removeItem(ACCESS_TOKEN_EXPIRES_AT_KEY);
     }
@@ -100,8 +100,7 @@ export function setRefreshToken(token, expires_at = null) {
     if (token) {
         localStorage.setItem(REFRESH_TOKEN_KEY, token);
         localStorage.setItem(REFRESH_TOKEN_EXPIRES_AT_KEY, expires_at);
-    }
-    else {
+    } else {
         localStorage.removeItem(REFRESH_TOKEN_KEY);
         localStorage.removeItem(REFRESH_TOKEN_EXPIRES_AT_KEY);
     }
@@ -215,14 +214,16 @@ export class QueryParams {
     #params = new Map();
 
     constructor(key = null, value = null) {
-        if(key) this.add(key, value)
+        if (key) this.add(key, value)
     }
+
     add(key, value = null) {
         if (value !== null && value !== undefined && value !== "") {
             this.#params.set(key, value);
         }
         return this;
     }
+
     add_user_id() {
         this.add("user_id", getUserId())
         return this
@@ -324,7 +325,6 @@ export async function read_entity(entity, id) {
             method: "GET",
             headers: {"Content-Type": "application/json"},
         }
-
     );
 }
 
@@ -339,7 +339,7 @@ export async function delete_entity(entity, id) {
 }
 
 export async function put_entity(model_name, id, json) {
-    if(id === undefined) {
+    if (id === undefined) {
         throw "id required";
     }
     const url = new URL(`${API_BASE}/${resolveTableName(resolveTableName(model_name))}/${id}`);

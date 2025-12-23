@@ -6,8 +6,6 @@ import {renderCrudMenu, renderEntityNav, selectAction} from "./navigation.js";
 import {contentArea, entityNav, entityTitle, getQueryParams} from "./dom.js"
 
 
-
-
 // ========================================
 // 9. Initialization
 // ========================================

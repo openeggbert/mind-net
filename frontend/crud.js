@@ -19,11 +19,6 @@ import {filterColumnsForForm, toLabel} from "./schemas.js";
 import {selectAction, changePage} from "./navigation.js";
 
 
-
-
-
-
-
 export async function renderEntityForm(entity, data = {}, errors = {}) {
     const schema = getEntitySchemas()[entity];
     if (!schema) return;
@@ -48,7 +43,7 @@ export async function renderEntityForm(entity, data = {}, errors = {}) {
         const errHtml = hasErr ? `<div class="field-error">${errors[f.name]}</div>` : '';
 
         if (f.enum) {
-            html += `<div class="form-row ${hasErr?'has-error':''}">
+            html += `<div class="form-row ${hasErr ? 'has-error' : ''}">
             <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
             <select id="${f.name}" name="${f.name}" ${f.required ? 'required' : ''}>
                 ${Object.entries(f.enum).map(([v, l]) => `<option value="${v}" ${data[f.name] == v ? 'selected' : ''}>${l}</option>`).join('')}
@@ -60,7 +55,7 @@ export async function renderEntityForm(entity, data = {}, errors = {}) {
 
         if (f.type === 'checkbox') {
             const checked = (data[f.name] === 1 || data[f.name] === '1' || data[f.name] === true);
-            html += `<div class="form-row ${hasErr?'has-error':''}">
+            html += `<div class="form-row ${hasErr ? 'has-error' : ''}">
             <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
             <input type="checkbox" id="${f.name}" name="${f.name}" ${checked ? 'checked' : ''}>
             ${errHtml}
@@ -75,7 +70,7 @@ export async function renderEntityForm(entity, data = {}, errors = {}) {
             if (!isNaN(value)) value = formatDateTime(Number(value));
         }
 
-        html += `<div class="form-row ${hasErr?'has-error':''}">
+        html += `<div class="form-row ${hasErr ? 'has-error' : ''}">
         <label for="${f.name}" ${titleAttr}>${toLabel(f.name)}${f.required ? ' <span style="color:red;font-weight:bold;">*</span>' : ''}</label>
         <input type="${type}" id="${f.name}" name="${f.name}" value="${value}" ${f.required ? "required" : ""} autocomplete="on">
         ${errHtml}
@@ -99,7 +94,7 @@ export async function renderEntityForm(entity, data = {}, errors = {}) {
             if (!(key === "id" && !value)) {
                 const f = schema.fields.find(ff => ff.name === key);
                 if (f) {
-                    if(f.auto) return;
+                    if (f.auto) return;
                     switch (f.type) {
                         case "number":
                             payload[key] = (value === "" || isNaN(value)) ? 0 : Number(value);
@@ -143,7 +138,7 @@ export async function renderEntityForm(entity, data = {}, errors = {}) {
             await renderEntityForm(entity, payload);
         }
 
-});
+    });
 }
 
 export async function renderEntityRead(entity, id) {
@@ -185,8 +180,6 @@ export async function renderEntityRead(entity, id) {
     html += `<h4 style="margin-bottom: 1em;">Custom Actions</h4>`;
 
 
-
-
     if (schema.customActions && schema.customActions.length > 0) {
         // group actions by model_name
         const grouped = {};
@@ -200,7 +193,6 @@ export async function renderEntityRead(entity, id) {
             // Convert model_name to label (replace underscores with spaces and capitalize words)
             const modelLabel = model.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
             html += `<div id="custom-action-model-container"><div class="custom-action-model">${modelLabel}:</div>`;
-
 
 
             grouped[model].forEach(action => {
@@ -224,18 +216,11 @@ export async function renderEntityRead(entity, id) {
             });
 
 
-
             html += `</div>`;
         });
     } else {
         html += `<p style="color:grey;font-style:italic;">No custom actions.</p>`;
     }
-
-
-
-
-
-
 
 
     contentArea.innerHTML = html;
@@ -247,7 +232,7 @@ export async function renderEntityRead(entity, id) {
 // ========================================
 
 
-window.sortList = function(entity, field) {
+window.sortList = function (entity, field) {
     const params = new URLSearchParams(window.location.search);
     const currentSort = params.get('sort');
     const currentOrder = params.get('order') || 'asc';
@@ -288,7 +273,6 @@ export async function renderEntityList(entity) {
     url.searchParams.set("page_size", pageSize);
 
 
-
     if (currentSort) url.searchParams.set('sort', currentSort);
     if (currentOrder) url.searchParams.set('order', currentOrder);
 
@@ -298,8 +282,6 @@ export async function renderEntityList(entity) {
     Object.entries(filters).forEach(([key, value]) => {
         if (value) url.searchParams.set(key, value);
     });
-
-
 
 
     const json = await apiFetch(url.toString());
@@ -318,9 +300,7 @@ export async function renderEntityList(entity) {
     );
 
 
-
     let html = `<h3>${schema.label} List</h3>`;
-
 
 
     // --- FILTER UI ---
@@ -337,22 +317,19 @@ export async function renderEntityList(entity) {
 </div>`;
 
 
-
-
-
     html += `<div style="margin-bottom:10px;"><label>Items per page:</label>
         <select id="pageSizeSelect">${[5, 10, 20, 50, 100].map(s => `<option value="${s}" ${getPageSize() === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>`;
 
     html += `<table><thead><tr>
-    <th class="sortable" data-field="id">ID <span>${currentSort==='id' ? (currentOrder==='asc'?'🔼':'🔽') : ''}</span></th>
+    <th class="sortable" data-field="id">ID <span>${currentSort === 'id' ? (currentOrder === 'asc' ? '🔼' : '🔽') : ''}</span></th>
     `
-    if(!isColumnHidden(entity, "created_at")) {
-        html += `<th class="sortable" style="max-width:50px;" data-field="created_at">Created at<span>${currentSort==='created_at' ? (currentOrder==='asc'?'🔼':'🔽') : ''}</span></th>`
+    if (!isColumnHidden(entity, "created_at")) {
+        html += `<th class="sortable" style="max-width:50px;" data-field="created_at">Created at<span>${currentSort === 'created_at' ? (currentOrder === 'asc' ? '🔼' : '🔽') : ''}</span></th>`
     }
     html += `
 
 ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.description ?? ''}" style="cursor:pointer;">
-        ${toLabel(f.name)}${currentSort===f.name ? (currentOrder==='asc'?' 🔼':' 🔽') : ''}
+        ${toLabel(f.name)}${currentSort === f.name ? (currentOrder === 'asc' ? ' 🔼' : ' 🔽') : ''}
     </th>`).join('')}
 
     <th>Actions</th>
@@ -361,7 +338,7 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     if (items.length === 0) html += `<tr><td colspan="${listFields.length + 2}" style="text-align:center;color:gray;">No records found.</td></tr>`;
     else for (const item of items) {
         html += `<tr><td>${item.id}</td>`;
-        if(!isColumnHidden(entity, "created_at")) {
+        if (!isColumnHidden(entity, "created_at")) {
             html += `<td>${formatDateTime(item.created_at, true, true, true, false)}</td>`;
         }
         for (const f of listFields) {
@@ -451,7 +428,9 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     if (pageSizeSelect) {
         pageSizeSelect.addEventListener("change", e => {
             let size = Number(e.target.value);
-            if(size < 5) {size = 5;}
+            if (size < 5) {
+                size = 5;
+            }
             setPageSize(size);
             setCurrentPage(1);
 
@@ -495,13 +474,6 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     };
 
 
-
-
-
-
-
-
-
     const applyColumnsBtn = document.getElementById("applyColumns");
     if (applyColumnsBtn) {
         applyColumnsBtn.onclick = () => {
@@ -518,15 +490,11 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     }
 
 
-
-
     document.getElementById("pageSizeSelect").addEventListener("change", e => {
         setPageSize(Number(e.target.value));
         setCurrentPage(1);
         renderEntityList(entity);
     });
-
-
 
 
     document.getElementById("applyFilters").onclick = () => {
@@ -568,7 +536,6 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     }
 
 
-
 }
 
 
@@ -588,7 +555,6 @@ export function renderColumnSelector(entity) {
     html += `<button id="applyColumns">Apply</button></div>`;
     return html;
 }
-
 
 
 export async function executeCustomAction(entity, action, id) {
@@ -641,7 +607,7 @@ export async function executeCustomAction(entity, action, id) {
         // fallback: display JSON
         contentArea.innerHTML = `
             <h3>${def.label}</h3>
-            <pre style="background:#f5f5f5;padding:10px;border-radius:6px;">${JSON.stringify(json,null,2)}</pre>
+            <pre style="background:#f5f5f5;padding:10px;border-radius:6px;">${JSON.stringify(json, null, 2)}</pre>
             <p><a href="#" onclick="readEntity('${entity}', ${id});return false;">⬅️ Back</a></p>
         `;
     }

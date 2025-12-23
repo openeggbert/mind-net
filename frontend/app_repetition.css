@@ -8,6 +8,7 @@ body {
     flex-direction: column;
     align-items: center;
 }
+
 .card {
     background: #1e1e1e;
     padding: 1em;
@@ -15,17 +16,20 @@ body {
     max-width: 500px;
     width: 100%;
     margin-bottom: 1em;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
+
 .front, .back {
     font-size: 1.2em;
     margin-bottom: 1em;
 }
+
 .back {
     display: none;
     color: #a0ffa0;
     text-align: left
 }
+
 button {
     padding: 0.6em 1.2em;
     margin: 0.3em;
@@ -34,11 +38,13 @@ button {
     border-radius: 6px;
     cursor: pointer;
 }
+
 input[type="checkbox"] {
     transform: scale(1.8);
     margin: 6px;
     cursor: pointer;
 }
+
 .show-btn {
     background: #444;
     color: #fff;
@@ -94,12 +100,10 @@ label {
     min-width: 100px;
     display: inline-block;
 }
+
 main {
-    margin:auto;
+    margin: auto;
 }
-
-
-
 
 
 :root {
@@ -191,7 +195,7 @@ header div {
     color: #f0f0f0;
     border-radius: 8px;
     padding: 1em;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     transition: transform 0.2s, background 0.2s;
     text-align: left;
 }
@@ -269,6 +273,7 @@ input[readonly] {
         grid-template-columns: 1fr;
         padding: 0.5em;
     }
+
     .session-card {
         font-size: 0.95em;
     }
@@ -279,13 +284,6 @@ input[readonly] {
     color: #0066cc;
     cursor: default;
 }
-
-
-
-
-
-
-
 
 
 .window_container {

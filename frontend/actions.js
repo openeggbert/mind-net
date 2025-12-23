@@ -12,7 +12,6 @@ import {showError} from "./dom.js";
 window.selectAction = selectAction;
 
 
-
 window.readEntity = (entity, id) => {
     setSelectedEntity(entity);
     setSelectedActionId(id);
@@ -31,7 +30,7 @@ window.deleteEntity = async (entity, id) => {
     if (!confirm("Do you really want to delete this record?")) return;
 
     try {
-        const response = await fetch(`${API_BASE}/${entity}/${id}`, { method: "DELETE" });
+        const response = await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
 
         if (!response.ok) {
             let message = "";

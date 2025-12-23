@@ -13,9 +13,11 @@ function debounce(fn, delay) {
 export class Autocomplete {
     #callbacks = [];
     #items_map = new Map()
+
     addCallback(fn) {
         this.#callbacks.push(fn);
     }
+
     clear_after_click = true
 
     #runCallbacks(...args) {
@@ -43,7 +45,7 @@ export class Autocomplete {
                 input.parentNode.appendChild(this.box);
             } else {
                 let el = get_element(insert_after_id)
-                if(el === null) alert("el with id is null: " + insert_after_id)
+                if (el === null) alert("el with id is null: " + insert_after_id)
                 el.after(this.box)
             }
         } else {
@@ -72,6 +74,7 @@ export class Autocomplete {
     after_render(box, input, items) {
 
     }
+
     render(items, show_box = true) {
         console.log("Started rendering items: " + items.length + " show_box=" + show_box)
         this.box.innerHTML = "";
@@ -95,7 +98,7 @@ export class Autocomplete {
                 this.box.style.display = "none";
                 this.item = item;
                 this.#runCallbacks()
-                if(this.clear_after_click) this.input.value = ""
+                if (this.clear_after_click) this.input.value = ""
             };
 
             this.box.appendChild(div);
@@ -105,43 +108,49 @@ export class Autocomplete {
         this.box.appendChild(tmp_span.element())
         this.after_render(this.box, this.input)
 
-        if(show_box) this.box.style.display = "block";
+        if (show_box) this.box.style.display = "block";
     }
+
     set_selected_item(index) {
-        if(!this.#items_map.has(index)) {
+        if (!this.#items_map.has(index)) {
             return;
         }
         this.#items_map.get(index).click()
     }
+
     get_box() {
         return this.box
     }
+
     get_item() {
         return this.item;
     }
+
     get_item_id() {
         return this.item === null ? 0 : this.item.id;
     }
+
     async set_from_title(title, id = 0) {
         const items = await this.fetcher(title, this.input_min_length);
-        if(items.length === 0) return
+        if (items.length === 0) return
         let item = null;
-        if(id === 0) {
+        if (id === 0) {
             item = items[0]
         } else {
             for (const e of items) {
-                if(e.id === id) {
+                if (e.id === id) {
                     item = e;
                     break;
                 }
             }
         }
-        if(item === null) return
+        if (item === null) return
 
         this.input.value = title;
         this.item = item;
-        if(this.clear_after_click) this.input.value = ""
+        if (this.clear_after_click) this.input.value = ""
     }
+
     reset() {
         this.input.value = ""
         this.item = null

@@ -1,9 +1,3 @@
-
-
-
-
-
-
 export function buildEntitySchemas(modelDef) {
     const schemas = {};
     for (const item of modelDef.items) {
@@ -56,21 +50,29 @@ export function buildGlobals(modelDef, schemas) {
         ))
     ];
 
-    return { entities, entityLabels, actions };
+    return {entities, entityLabels, actions};
 }
 
 export function mapColumnType(colType) {
     const t = colType.toUpperCase();
 
     switch (t) {
-        case "TEXT": return "text";
-        case "TEXTAREA": return "textarea";
-        case "INTEGER": return "number";
-        case "BOOL": return "checkbox";
-        case "DATETIME": return "datetime";
-        case "REAL": return "number";
-        case "BLOB": return "file";
-        default: return "text";
+        case "TEXT":
+            return "text";
+        case "TEXTAREA":
+            return "textarea";
+        case "INTEGER":
+            return "number";
+        case "BOOL":
+            return "checkbox";
+        case "DATETIME":
+            return "datetime";
+        case "REAL":
+            return "number";
+        case "BLOB":
+            return "file";
+        default:
+            return "text";
     }
 }
 

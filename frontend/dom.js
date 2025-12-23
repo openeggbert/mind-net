@@ -1,8 +1,8 @@
-
 export const entityNav = document.getElementById('entityNav');
 export const crudMenu = document.getElementById('crudMenu');
 export const entityTitle = document.getElementById('entityTitle');
 export const contentArea = document.getElementById('contentArea');
+
 //
 export function getQueryParams() {
     const params = new URLSearchParams(window.location.search);
@@ -11,6 +11,7 @@ export function getQueryParams() {
     const others = Object.fromEntries(params.entries());
     return {entity, action, others};
 }
+
 export function formatDateTime(
     value,
     showHours = true,
@@ -38,13 +39,15 @@ export function formatDateTime(
     return result;
 }
 
-export function formatDate(value){
+export function formatDate(value) {
     return formatDateTime(value, false, false, false, false);
 }
-export function formatDateTimeHM(value){
+
+export function formatDateTimeHM(value) {
     return formatDateTime(value, true, true, false, false);
 }
-export function formatDateTimeHMS(value){
+
+export function formatDateTimeHMS(value) {
     return formatDateTime(value, true, true, true, false);
 }
 
@@ -144,12 +147,15 @@ export function showToast(message, timeout = 3000, type = "info") {
 export function showError(msg) {
     showToast(msg, 10000, "error");
 }
+
 export function showInfo(msg) {
     showToast(msg, 5000, "info");
 }
+
 export function showSuccess(msg) {
     showToast(msg, 5000, "success");
 }
+
 export function showWarn(msg) {
     showToast(msg, 10000, "warn");
 }
@@ -230,7 +236,7 @@ export function chooseOption(options, title = "") {
         panel.style.flexDirection = "column";
         panel.style.gap = "10px";
         panel.style.minWidth = "200px";
-        if(title !== "") {
+        if (title !== "") {
             let h1 = document.createElement("h1");
             h1.innerText = title;
             h1.style.textAlign = "center";

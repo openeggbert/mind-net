@@ -40,7 +40,7 @@ export function attachMarkdownEditor({
         .forEach(e => e.remove());
     {
         let div_height_10px = get_element("div_height_10px")
-        if(defined(div_height_10px)) div_height_10px.remove()
+        if (defined(div_height_10px)) div_height_10px.remove()
     }
 
     if (!textarea) throw "attachMarkdownEditor: textarea is required";

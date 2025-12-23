@@ -45,9 +45,10 @@ const md = window.markdownit({
         if (lang && window.hljs.getLanguage(lang)) {
             try {
                 return '<pre class="hljs"><code>' +
-                    window.hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+                    window.hljs.highlight(str, {language: lang, ignoreIllegals: true}).value +
                     '</code></pre>';
-            } catch (__) {}
+            } catch (__) {
+            }
         }
         return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
     }
@@ -56,12 +57,12 @@ const md = window.markdownit({
 // plugin for emoji (:smile:, :rocket:, etc.)
 md.use(window.markdownitEmoji);
 
-md.use(function(md) {
-    const defaultRender = md.renderer.rules.link_open || function(tokens, idx, options, env, self) {
+md.use(function (md) {
+    const defaultRender = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
         return self.renderToken(tokens, idx, options);
     };
 
-    md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
+    md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
         const hrefIndex = tokens[idx].attrIndex('href');
         if (hrefIndex >= 0) {
             const href = tokens[idx].attrs[hrefIndex][1];
@@ -102,7 +103,6 @@ document.addEventListener("click", e => {
         show_error(`Note "${title}" maybe exists, but is not yet linked. Save and reload to update.`);
     }
 });
-
 
 
 // configure highlight.js appearance
@@ -176,7 +176,6 @@ function makeDraggable(el) {
     }
 
 
-
     function doDrag(x, y, ev) {
         if (document.body._forceStopDragging) {
             dragging = false;
@@ -210,12 +209,12 @@ function makeDraggable(el) {
         const t = e.touches[0];
         startDrag(t.clientX, t.clientY);
         e.preventDefault();
-    }, { passive: false });
+    }, {passive: false});
 
     document.addEventListener('touchmove', e => {
         const t = e.touches[0];
         doDrag(t.clientX, t.clientY);
-    }, { passive: false });
+    }, {passive: false});
 
     document.addEventListener('touchend', stopDrag);
 }
@@ -247,8 +246,6 @@ export function closeWindow() {
 }
 
 
-
-
 export function showWindow() {
     const win = document.getElementById("window_container");
     document.body._forceStopDragging = true;
@@ -272,7 +269,6 @@ export function showWindow() {
         }
     });
 }
-
 
 
 window.showWindow = showWindow;
@@ -409,7 +405,6 @@ window.addEventListener("popstate", () => {
 });
 
 
-
 // ========================================
 // Main (DOMContentLoaded)
 // ========================================
@@ -505,6 +500,7 @@ async function link_to(a, params) {
 }
 
 let render_number = 0
+
 async function render() {
     // TODO split into renderParent(), renderCurrent(), renderMeta(), renderChildren().
     render_number++;
@@ -537,7 +533,7 @@ async function render() {
     }
     get_element("button_next").onclick = async () => {
 
-        if(!mode_notes) {
+        if (!mode_notes) {
             let children_url = get_element("children_ul")
 
             const firstLi = children_ul.querySelector("li");
@@ -556,7 +552,7 @@ async function render() {
 
         }
 
-        if(note_navigation === null || note_navigation === undefined) return;
+        if (note_navigation === null || note_navigation === undefined) return;
 
         if (note_navigation.next_note_id === 0) {
             show_warn("There is no next note in the map.")
@@ -570,7 +566,7 @@ async function render() {
     show_or_hide_elements(mode_root_or_notes, "button_previous", "button_next", "button_focus")
 
     // Breadcrumb
-        let breadcrumb = get_element("breadcrumb")
+    let breadcrumb = get_element("breadcrumb")
     breadcrumb.innerHTML = ""
     let dir = document.createElement("span");
     dir.innerText = "📂 ";
@@ -613,7 +609,7 @@ async function render() {
         }
         if (mode_notes) {
             parent_title.innerText = has_parent ? parent_note.title : map.name;
-            await link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+            await link_to(parent_title, has_parent ? {note_id: note.parent_note_id} : {map_id: note.map_id});
         }
 
         get_element("parent_button_copy").onclick = function () {
@@ -648,7 +644,7 @@ async function render() {
 
                 let map_ = await read_entity("map", note.map_id);
                 parent_title.innerText = has_parent ? parent_note.title : map_.name;
-                await link_to(parent_title, has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+                await link_to(parent_title, has_parent ? {note_id: note.parent_note_id} : {map_id: note.map_id});
             }
         }
     }
@@ -673,18 +669,18 @@ async function render() {
 
         //breadcrumb
         {
-        let separator = document.createElement("span");
-        separator.innerText = " › "
-        breadcrumb.appendChild(separator);
+            let separator = document.createElement("span");
+            separator.innerText = " › "
+            breadcrumb.appendChild(separator);
 
-        let breadcrumb_map = document.createElement("a");
-        breadcrumb_map.innerText = map.name;
-        breadcrumb_map.href = "?";
-        breadcrumb.appendChild(breadcrumb_map);
-        breadcrumb_map.onclick = async function () {
-            event.preventDefault();
-            await navigate_to({map_id: map.id});
-        }
+            let breadcrumb_map = document.createElement("a");
+            breadcrumb_map.innerText = map.name;
+            breadcrumb_map.href = "?";
+            breadcrumb.appendChild(breadcrumb_map);
+            breadcrumb_map.onclick = async function () {
+                event.preventDefault();
+                await navigate_to({map_id: map.id});
+            }
         }
         if (mode_notes) {
             const path_as_ids = note.path
@@ -745,11 +741,11 @@ async function render() {
         show_or_hide_element(mode_notes, "current_hint_label")
         show_or_hide_element(mode_notes, "current_hint")
         show_or_hide_element(mode_notes, "current_button_edit_hint")
-        if(mode_notes) {
+        if (mode_notes) {
             get_element("current_hint").innerText = note.hint
         }
         get_element("current_button_edit_hint").onclick = function () {
-            if(!mode_notes) return;
+            if (!mode_notes) return;
 
             let new_hint = prompt("Enter new hint", note.hint);
             if (new_hint !== undefined && new_hint !== null) {
@@ -799,19 +795,19 @@ async function render() {
             toolbar.style.marginBottom = "6px";
 
             const buttons = [
-                { label: "B", title: "Bold", before: "**", after: "**" },
-                { label: "I", title: "Italic", before: "*", after: "*" },
-                { label: "H1", title: "Heading 1", before: "# ", after: "" },
-                { label: "H2", title: "Heading 2", before: "## ", after: "" },
-                { label: "H3", title: "Heading 3", before: "### ", after: "" },
-                { label: "Code", title: "Inline code", before: "`", after: "`" },
-                { label: "Code block", title: "Code block", before: "```\n", after: "\n```" },
-                { label: "Quote", title: "Blockquote", before: "> ", after: "" },
-                { label: "Link", title: "Insert link", before: "[", after: "](url)" },
-                { label: "[[...]]", title: "Wiki link", before: "[[", after: "]]" },
-                { label: "List", title: "List item", before: "- ", after: "" },
-                { label: "[ ]", title: "Checkbox", before: "- [ ] ", after: "" },
-                { label: "---", title: "Divider", before: "\n---\n", after: "" },
+                {label: "B", title: "Bold", before: "**", after: "**"},
+                {label: "I", title: "Italic", before: "*", after: "*"},
+                {label: "H1", title: "Heading 1", before: "# ", after: ""},
+                {label: "H2", title: "Heading 2", before: "## ", after: ""},
+                {label: "H3", title: "Heading 3", before: "### ", after: ""},
+                {label: "Code", title: "Inline code", before: "`", after: "`"},
+                {label: "Code block", title: "Code block", before: "```\n", after: "\n```"},
+                {label: "Quote", title: "Blockquote", before: "> ", after: ""},
+                {label: "Link", title: "Insert link", before: "[", after: "](url)"},
+                {label: "[[...]]", title: "Wiki link", before: "[[", after: "]]"},
+                {label: "List", title: "List item", before: "- ", after: ""},
+                {label: "[ ]", title: "Checkbox", before: "- [ ] ", after: ""},
+                {label: "---", title: "Divider", before: "\n---\n", after: ""},
             ];
 
             buttons.forEach(cfg => {
@@ -839,7 +835,7 @@ async function render() {
 
 
         let markdownPreviewDiv = get_element("markdown_preview");
-        if(markdownPreviewDiv != null) {
+        if (markdownPreviewDiv != null) {
             markdownPreviewDiv.remove();
             markdownPreviewDiv = null;
         }
@@ -870,7 +866,6 @@ async function render() {
         }
 
 
-
         async function render_markdown() {
             // switch to read mode = render Markdown
             const markdownText = await convert_wikilinks_to_markdown(textarea.value);
@@ -891,6 +886,7 @@ async function render() {
             hide_element("current_button_read");
             show_element("current_button_edit");
         }
+
         get_element("current_button_edit").onclick = function () {
             // switch back to edit mode
             if (markdownPreviewDiv) {
@@ -909,7 +905,7 @@ async function render() {
         hide_element("markdown_toolbar")
 
         get_element("current_button_read").onclick = async function () {
-            if(mode_notes) {
+            if (mode_notes) {
                 await render_markdown()
                 hide_element("markdown_toolbar")
             } else {
@@ -961,7 +957,7 @@ async function render() {
                 console.info(response)
                 show_toast(response)
                 await sleep_for_seconds(4)
-                await navigate_to(has_parent ? { note_id: note.parent_note_id } : { map_id: note.map_id });
+                await navigate_to(has_parent ? {note_id: note.parent_note_id} : {map_id: note.map_id});
 
 
             } catch (err) {
@@ -1002,8 +998,6 @@ async function render() {
             }
 
 
-
-
             if (content === null) content = await read_entity("content", note.content_id);
             content.value = get_element("current_textarea").value;
             if (original_content_value !== content.value) {
@@ -1016,14 +1010,13 @@ async function render() {
             }
 
 
-
         }
 
 
     }
 
     // Meta
-        show_or_hide_element(mode_root_or_notes, "meta")
+    show_or_hide_element(mode_root_or_notes, "meta")
 
     if (mode_root_or_notes) {
         show_or_hide_element(mode_notes, "meta_start")
@@ -1126,7 +1119,7 @@ async function render() {
             let Models = "Links";
             let model = "link"
             let url = "index.html?entity=" + model + "&action=list"
-            if(mode_notes) url= url + "&from_note_id=" + note.id
+            if (mode_notes) url = url + "&from_note_id=" + note.id
             showWindowFrom(Models, url);
         }
 
@@ -1134,20 +1127,20 @@ async function render() {
             let Models = "Urls";
             let model = "url"
             let url = "index.html?entity=" + model + "&action=list"
-            if(mode_notes) url= url + "&from_note_id=" + note.id
+            if (mode_notes) url = url + "&from_note_id=" + note.id
             showWindowFrom(Models, url);
         }
 
         get_element("meta_button_terms").onclick = async function () {
             const result = await chooseOption(["List", "Add", "Fulltext"]);
-            if(result === null || result === undefined) return
+            if (result === null || result === undefined) return
 
             let Models = "Terms";
             let model = "term"
             let url;
-            if(result === "List") url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
-            if(result === "Add") url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
-            if(result === "Fulltext") {
+            if (result === "List") url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
+            if (result === "Add") url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
+            if (result === "Fulltext") {
                 clearWindow()
                 let div = document.createElement("div");
                 div.style.padding = "10px"
@@ -1204,8 +1197,8 @@ async function render() {
             let Models = "Ideas";
             let model = "idea"
             let url;
-            if(result === "List") url = "index.html?entity=" + model + "&action=list&user_id="+getUserId()
-            if(result === "Add") url = "index.html?entity=" + model + "&action=create&user_id="+getUserId()
+            if (result === "List") url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId()
+            if (result === "Add") url = "index.html?entity=" + model + "&action=create&user_id=" + getUserId()
             showWindowFrom(Models, url);
         }
         get_element("meta_button_questions").onclick = async function () {
@@ -1215,9 +1208,9 @@ async function render() {
             let Models = "Questions";
             let model = "question"
             let url;
-            if(result === "List") url = "index.html?entity=" + model + "&action=list&note_id="+note.id
-            if(result === "List all") url = "index.html?entity=" + model + "&action=list"
-            if(result === "Add") url = "index.html?entity=" + model + "&action=create&note_id="+note.id
+            if (result === "List") url = "index.html?entity=" + model + "&action=list&note_id=" + note.id
+            if (result === "List all") url = "index.html?entity=" + model + "&action=list"
+            if (result === "Add") url = "index.html?entity=" + model + "&action=create&note_id=" + note.id
             showWindowFrom(Models, url);
         }
 
@@ -1225,7 +1218,7 @@ async function render() {
             let Models = "Backlinks";
             let model = "link"
             let url = "index.html?entity=" + model + "&action=list"
-            if(mode_notes) url= url + "&to_note_id=" + note.id
+            if (mode_notes) url = url + "&to_note_id=" + note.id
             showWindowFrom(Models, url);
         }
 
@@ -1243,7 +1236,7 @@ async function render() {
             let Models = "Wanted notes";
             let model = "wanted_note"
             let url = "index.html?entity=" + model + "&action=list";
-            if(mode_notes) url= url + "&from_note_id=" + note.id
+            if (mode_notes) url = url + "&from_note_id=" + note.id
             showWindowFrom(Models, url);
         }
 
@@ -1254,13 +1247,13 @@ async function render() {
             let Models = "Properties";
             let model = "property"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "Add") {
+            if (result === "Add") {
                 url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
 
             }
             showWindowFrom(Models, url);
@@ -1273,21 +1266,21 @@ async function render() {
             let Models = "Tags";
             let model = "tag"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "Add") {
+            if (result === "Add") {
                 url = "index.html?entity=" + model + "&action=create"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "List types") {
+            if (result === "List types") {
                 url = "index.html?entity=" + "tag_type" + "&action=list&map_id=" + map.id;
             }
-            if(result === "Add type") {
+            if (result === "Add type") {
                 url = "index.html?entity=" + "tag_type" + "&action=create&map_id=" + map.id;
             }
-            if(result === "Fulltext") {
+            if (result === "Fulltext") {
                 clearWindow()
                 let div = document.createElement("div");
                 div.style.padding = "10px"
@@ -1314,20 +1307,20 @@ async function render() {
                 button.onclick = async function () {
                     let tag_type_exists = ac.get_item() !== null;
                     let tag_type_id = null;
-                    if(!tag_type_exists) {
-                    let tag_type = {
-                        map_id: map.id,
-                        title: input.value,
-                    }
+                    if (!tag_type_exists) {
+                        let tag_type = {
+                            map_id: map.id,
+                            title: input.value,
+                        }
 
-                    let created = await post_entity("tag_type", tag_type)
-                    if (created === null) {
-                        showError("Saving tag_type " + input.value + " failed.")
-                        return
-                    } else {
-                        showInfo("Saving tag_type " + input.value + " was successful.")
-                        tag_type_id = created.id
-                    }
+                        let created = await post_entity("tag_type", tag_type)
+                        if (created === null) {
+                            showError("Saving tag_type " + input.value + " failed.")
+                            return
+                        } else {
+                            showInfo("Saving tag_type " + input.value + " was successful.")
+                            tag_type_id = created.id
+                        }
                     } else {
                         tag_type_id = ac.get_item().id
                     }
@@ -1361,15 +1354,15 @@ async function render() {
             let Models = "Collections";
             let model = "collection"
             let url;
-            if(result === "List collections") {
+            if (result === "List collections") {
                 url = "index.html?entity=" + model + "&action=list"
             }
-            if(result === "Create collection") {
+            if (result === "Create collection") {
                 url = "index.html?entity=" + model + "&action=create"
             }
-            if(result === "Add to collection") {
+            if (result === "Add to collection") {
                 url = "index.html?entity=" + "collection_item" + "&action=create"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
             showWindowFrom(Models, url);
         }
@@ -1383,13 +1376,13 @@ async function render() {
             let Models = "Flags";
             let model = "flag"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list"
-                if(mode_notes) url = url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "Add") {
+            if (result === "Add") {
                 url = "index.html?entity=" + model + "&action=create"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
             showWindowFrom(Models, url);
         }
@@ -1401,13 +1394,13 @@ async function render() {
             let Models = "Annotations";
             let model = "annotation"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "Add") {
+            if (result === "Add") {
                 url = "index.html?entity=" + model + "&action=create"
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
             showWindowFrom(Models, url);
         }
@@ -1419,12 +1412,12 @@ async function render() {
             let Models = "Tests";
             let model = "test"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list&map_id=" + map.id;
             }
-            if(result === "Add") {
+            if (result === "Add") {
                 url = "index.html?entity=" + model + "&action=create&map_id=" + map.id;
-                if(mode_notes) url= url + "&under_note_id=" + note.id
+                if (mode_notes) url = url + "&under_note_id=" + note.id
             }
             showWindowFrom(Models, url);
         }
@@ -1435,15 +1428,15 @@ async function render() {
             let Models = "Test attempts";
             let model = "test_attempt"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId();
                 showWindowFrom(Models, url);
             }
-            if(result === "Add") {
+            if (result === "Add") {
                 url = "index.html?entity=" + model + "&action=create&user_id=" + getUserId();
                 showWindowFrom(Models, url);
             }
-            if(result === "Run") {
+            if (result === "Run") {
                 let test_attempt_id = prompt("Test attempt ID");
 
                 if (test_attempt_id === undefined || test_attempt_id === null) {
@@ -1456,14 +1449,14 @@ async function render() {
                 // alert(JSON.stringify(test, null, 2));
                 let started_at = test_attempt.started_at;
                 let finished_at = test_attempt.finished_at;
-                if(finished_at !== 0) {
+                if (finished_at !== 0) {
                     show_warn("This test attempt is already finished.")
                     return;
                 }
                 let time_limit_in_seconds = test.time_limit_in_seconds;
                 let expires_at = started_at + time_limit_in_seconds * 1000;
                 let expired = Date.now() > expires_at
-                if(expired) {
+                if (expired) {
                     show_warn("This test attempt is expired.")
                     return;
                 }
@@ -1474,8 +1467,8 @@ async function render() {
                     let test_attempt_answers = await list_all_entities(
                         "test_attempt_answer",
                         "&test_attempt_id=" + test_attempt_id + "&question_id=" + question_id
-                        )
-                    if(test_attempt_answers.length !== 0) {
+                    )
+                    if (test_attempt_answers.length !== 0) {
                         continue;
                     }
                     any_question = true
@@ -1489,13 +1482,15 @@ async function render() {
                     let correct = false
 
                     if (answers.length > 1) {
-                        result = await chooseOption(answers.slice().map(e=> {e.length === 0 ? e : e.substr(0)}), question_text);
+                        result = await chooseOption(answers.slice().map(e => {
+                            e.length === 0 ? e : e.substr(0)
+                        }), question_text);
                         if (result === null || result === undefined) {
                             show_warn("You exited this test.")
                             break;
                         }
                         for (const answer of answers) {
-                            if(answer === result) {
+                            if (answer === result) {
                                 correct = true;
                                 break;
                             }
@@ -1506,7 +1501,7 @@ async function render() {
                         show_info(answers[0])
                         result = await chooseOption(["I know", "I don't know"], "Did you know?");
                         correct = result !== null && result !== undefined && result === "I know";
-                        if(correct) result = answers[0];
+                        if (correct) result = answers[0];
                     }
                     let test_attempt_answer = {
                         test_attempt_id: test_attempt.id,
@@ -1515,28 +1510,30 @@ async function render() {
                         is_correct: correct ? 1 : 0,
                     }
                     let post_test_attempt_answer = post_entity("test_attempt_answer", test_attempt_answer)
-                    if(correct) show_info("Correct answer")
-                    if(!correct) show_error("Incorrect answer")
+                    if (correct) show_info("Correct answer")
+                    if (!correct) show_error("Incorrect answer")
                 }
-                if(!any_question) {
+                if (!any_question) {
                     show_warn("All questions were already answered.");
                 }
 
                 await sleep_for_seconds(1)
                 let test_attempt2 = await read_entity("test_attempt", test_attempt_id)
                 alert(JSON.stringify(test_attempt2, null, 2));
+
                 function score_to_text(score) {
-                    if(score >= 90) return "Excellent"
-                    if(score >= 80) return "Very Good"
-                    if(score >= 70) return "Good"
-                    if(score >= 60) return "Satisfactory"
-                    if(score >= 50) return "Poor"
+                    if (score >= 90) return "Excellent"
+                    if (score >= 80) return "Very Good"
+                    if (score >= 70) return "Good"
+                    if (score >= 60) return "Satisfactory"
+                    if (score >= 50) return "Poor"
                     return "Insufficient"
                 }
-                if(test_attempt2.finished_at !== 0) {
+
+                if (test_attempt2.finished_at !== 0) {
                     let score = test_attempt2.score_times_100
                     show_info("Test finished. Your score: " + score + "%. " + score_to_text(score))
-                    if(score >= 60) {
+                    if (score >= 60) {
                         show_info("You passed.")
                     } else {
                         show_error("You failed.")
@@ -1557,15 +1554,15 @@ async function render() {
             let Models = "Pinned notes";
             let model = "pinned_note"
             let url;
-            if(result === "List") {
+            if (result === "List") {
                 url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId()
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "Pin") {
+            if (result === "Pin") {
                 url = "index.html?entity=" + model + "&action=create&user_id=" + getUserId()
-                if(mode_notes) url= url + "&note_id=" + note.id
+                if (mode_notes) url = url + "&note_id=" + note.id
             }
-            if(result === "Pinned") {
+            if (result === "Pinned") {
                 url = "index.html?entity=" + model + "&action=list&user_id=" + getUserId()
             }
             showWindowFrom(Models, url);
@@ -1596,11 +1593,11 @@ async function render() {
             localStorage.setItem(key, JSON.stringify(ids));
         }
 
-        if(mode_notes) save_visited_note_id(note.id)
+        if (mode_notes) save_visited_note_id(note.id)
 
         get_element("meta_button_visited").onclick = async function () {
             let visited_note_ids = localStorage.getItem("visited_note_ids")
-            if(visited_note_ids === null || visited_note_ids === undefined) {
+            if (visited_note_ids === null || visited_note_ids === undefined) {
                 show_warn("History is empty");
                 return;
             }
@@ -1611,15 +1608,19 @@ async function render() {
             table.style.margin = "0 auto";
             let tr_first = document.createElement("tr");
             table.appendChild(tr_first);
-            let th_number = document.createElement("th"); th_number.innerText = "#"
-            let th_id = document.createElement("th"); th_id.innerText = "ID"
-            let th_title = document.createElement("th"); th_title.innerText = "Title"
-            let th_timestamp = document.createElement("th"); th_timestamp.innerText = "Timestamp"
+            let th_number = document.createElement("th");
+            th_number.innerText = "#"
+            let th_id = document.createElement("th");
+            th_id.innerText = "ID"
+            let th_title = document.createElement("th");
+            th_title.innerText = "Title"
+            let th_timestamp = document.createElement("th");
+            th_timestamp.innerText = "Timestamp"
             tr_first.appendChild(th_number)
             tr_first.appendChild(th_id)
             tr_first.appendChild(th_title)
             tr_first.appendChild(th_timestamp)
-            for(const el of [th_number, th_id, th_title, th_timestamp]) {
+            for (const el of [th_number, th_id, th_title, th_timestamp]) {
                 el.style.minWidth = "20px"
                 el.style.padding = "10px";
                 el.style.border = "1px solid black";
@@ -1638,7 +1639,7 @@ async function render() {
                 let td_id = document.createElement("td");
                 let td_title = document.createElement("td");
                 let td_timestamp = document.createElement("td");
-                for(const el of [td_number, td_id, td_title, td_timestamp]) {
+                for (const el of [td_number, td_id, td_title, td_timestamp]) {
                     el.style.padding = "10px";
                     el.style.border = "1px solid black";
                 }
@@ -1673,7 +1674,7 @@ async function render() {
                     await navigate_to({note_id: visited_note_id});
                 }
                 td_title.appendChild(a)
-                td_timestamp.innerText = formatDateTime(entry.ts,true, true, true)
+                td_timestamp.innerText = formatDateTime(entry.ts, true, true, true)
             }
             clearWindow()
             getWindowContent().appendChild(table);
@@ -1691,11 +1692,11 @@ async function render() {
             let model = "history"
             let url;
             url = "index.html?entity=" + model + "&action=list"
-            if(result === "History") {
-            if (mode_notes) url = url + "&table_name=note&record_id=" + note.id
-            if (mode_root) url = url + "&table_name=map&record_id=" + map.id
+            if (result === "History") {
+                if (mode_notes) url = url + "&table_name=note&record_id=" + note.id
+                if (mode_root) url = url + "&table_name=map&record_id=" + map.id
             }
-            if(result === "Content history") {
+            if (result === "Content history") {
                 if (mode_notes) url = url + "&table_name=content&record_id=" + note.content_id
                 if (mode_root) url = url + "&table_name=map&record_id=" + map.id
             }
@@ -1749,6 +1750,7 @@ async function render() {
             copy_to_clipboard(e.id);
         };
     }
+
     if (mode_root) document.getElementById("children_button_add").onclick = async function () {
         let title = prompt("Title of new note");
 
@@ -1759,7 +1761,7 @@ async function render() {
             new_note.title = title
             new_note.map_id = map_id
             let result = await post_entity("note", new_note)
-            if(result === undefined || result === null) return;
+            if (result === undefined || result === null) return;
             await add_note_to_children(result)
         }
     };
@@ -1775,7 +1777,7 @@ async function render() {
             new_note.map_id = note.map_id
             new_note.parent_note_id = note.id
             let result = await post_entity("note", new_note)
-            if(result === undefined || result === null) return;
+            if (result === undefined || result === null) return;
             await add_note_to_children(result)
         }
     };
@@ -1805,7 +1807,7 @@ async function render() {
             let a = document.createElement("a")
             li.appendChild(a);
             a.innerText = map.name;
-            link_to(a, { map_id: map.id });
+            link_to(a, {map_id: map.id});
             a.style.display = "inline-block";
             a.style.minWidth = "50px";
 
@@ -1860,9 +1862,6 @@ async function render() {
 
         window.addEventListener("beforeunload", beforeUnloadHandler);
     }
-
-    
-    
 
 
     console.log("render() #" + render_number + " ended");

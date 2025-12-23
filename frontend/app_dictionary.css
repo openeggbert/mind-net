@@ -52,6 +52,7 @@ body {
     background: linear-gradient(135deg, #f9f9f9, #eef3f7);
     color: #333;
 }
+
 h1 {
     font-size: 28px;
     margin-bottom: 20px;
@@ -60,9 +61,11 @@ h1 {
     align-items: center;
     gap: 10px;
 }
+
 h1::before {
     content: "📘";
 }
+
 label {
     font-weight: bold;
     display: block;
@@ -70,9 +73,11 @@ label {
     margin-bottom: 5px;
     color: #444;
 }
+
 .container_box label {
     margin-top: 5px;
 }
+
 select, input[type="text"], textarea {
     width: 100%;
     padding: 10px;
@@ -80,17 +85,20 @@ select, input[type="text"], textarea {
     font-size: 14px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 textarea {
     min-height: 80px;
 }
+
 .tags {
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
     align-items: center;
 }
+
 .tag {
     background-color: #ffe680;
     padding: 5px 10px;
@@ -98,8 +106,9 @@ textarea {
     font-weight: bold;
     display: flex;
     align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .tag button {
     margin-left: 5px;
     background: none;
@@ -108,6 +117,7 @@ textarea {
     cursor: pointer;
     color: #d9534f;
 }
+
 .tags_add_btn {
     margin-left: auto;
     background-color: #28a745;
@@ -117,9 +127,11 @@ textarea {
     padding: 12px;
     font-weight: bold;
 }
+
 .tags_add_btn:hover {
     background-color: rgba(40, 167, 69, 0.85);
 }
+
 .item {
     display: flex;
     align-items: center;
@@ -128,11 +140,13 @@ textarea {
     padding: 6px 10px;
     background-color: #fff;
     border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .item:hover {
     background-color: rgba(101, 181, 237, 0.24);
 }
+
 .item a, .item span {
     color: #007bff;
     text-decoration: none;
@@ -141,18 +155,23 @@ textarea {
     align-items: center;
     gap: 6px;
 }
+
 #links .item a::before {
     content: "🔗";
 }
+
 #notes .item span::before {
     content: "📑";
 }
+
 #sources .item span::before {
     content: "📖";
 }
+
 #aliases .item span::before {
     content: "➡️";
 }
+
 button {
     padding: 6px 12px;
     font-size: 14px;
@@ -161,9 +180,11 @@ button {
     border: 1px solid #ccc;
     background-color: #f0f0f0;
 }
+
 button:hover {
     background-color: #e2e6ea;
 }
+
 .save-btn {
     background-color: #007bff;
     color: white;
@@ -172,15 +193,18 @@ button:hover {
     padding: 12px 24px;
     font-size: 16px;
     border-radius: 20px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     margin-left: 10px;
 }
+
 .save-btn::before {
     content: "💾 ";
 }
+
 .save-btn:hover {
     background-color: rgba(0, 123, 255, 0.84);
 }
+
 .delete-btn {
     background-color: #e34343;
     color: white;
@@ -189,12 +213,14 @@ button:hover {
     padding: 12px 24px;
     font-size: 16px;
     border-radius: 20px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     gap: 8px;
 }
+
 .delete-btn::before {
     content: "🗑️ ";
 }
+
 .delete-btn:hover {
     background-color: rgba(227, 67, 67, 0.84);
 }
@@ -232,6 +258,7 @@ input[type="text"], select, textarea {
     .tags {
         flex-wrap: wrap;
     }
+
     .container {
         padding: 5px;
     }
@@ -261,27 +288,33 @@ fieldset label {
     display: inline;
     white-space: nowrap;
 }
+
 textarea {
     height: 200px;
 }
+
 #term_container {
     display: none
 }
+
 #term_container_h2 {
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
 .container_box {
     /*border-top: 2px solid #ddd;*/
     padding: 5px;
     margin: 10px 0 10px 0;
 }
+
 fieldset fieldset {
-    border:none;
-    margin:0;
-    margin-top:10px;
-    padding:0;
+    border: none;
+    margin: 0;
+    margin-top: 10px;
+    padding: 0;
 }
+
 /*fieldset fieldset * {*/
 /*    color: grey!important;*/
 /*    font-size: 70%!important;*/
@@ -289,13 +322,14 @@ fieldset fieldset {
 
 fieldset fieldset legend {
 
-    padding:0;
-    padding-bottom:5px;
+    padding: 0;
+    padding-bottom: 5px;
     font-weight: bold;
 }
+
 fieldset legend {
-    padding:0;
-    padding-bottom:5px;
+    padding: 0;
+    padding-bottom: 5px;
     font-weight: bold;
 }
 
@@ -312,6 +346,7 @@ fieldset legend {
     margin-left: -10px;
     transition: background-color 0.2s ease-in-out;
 }
+
 .form-row:hover {
     background-color: rgba(3, 102, 214, 0.1);
 

@@ -88,7 +88,7 @@ export async function changePassword(old_password, new_password) {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("access_token")}`
             },
-            body: JSON.stringify({ old_password, new_password })
+            body: JSON.stringify({old_password, new_password})
         });
     }
 

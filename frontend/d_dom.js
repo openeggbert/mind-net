@@ -5,57 +5,57 @@ import {gen_enum_id} from "./d_enums.js";
 
 export const EventType = Object.freeze({
     // mouse events
-    Click:        { id: 0,  label: "click" },
-    DblClick:     { id: 1,  label: "dblclick" },
-    MouseDown:    { id: 2,  label: "mousedown" },
-    MouseUp:      { id: 3,  label: "mouseup" },
-    MouseMove:    { id: 4,  label: "mousemove" },
-    MouseEnter:   { id: 5,  label: "mouseenter" },
-    MouseLeave:   { id: 6,  label: "mouseleave" },
-    MouseOver:    { id: 7,  label: "mouseover" },
-    MouseOut:     { id: 8,  label: "mouseout" },
-    ContextMenu:  { id: 9,  label: "contextmenu" },
+    Click: {id: 0, label: "click"},
+    DblClick: {id: 1, label: "dblclick"},
+    MouseDown: {id: 2, label: "mousedown"},
+    MouseUp: {id: 3, label: "mouseup"},
+    MouseMove: {id: 4, label: "mousemove"},
+    MouseEnter: {id: 5, label: "mouseenter"},
+    MouseLeave: {id: 6, label: "mouseleave"},
+    MouseOver: {id: 7, label: "mouseover"},
+    MouseOut: {id: 8, label: "mouseout"},
+    ContextMenu: {id: 9, label: "contextmenu"},
 
     // keyboard events
-    KeyDown:      { id: 10, label: "keydown" },
-    KeyUp:        { id: 11, label: "keyup" },
-    KeyPress:     { id: 12, label: "keypress" }, // deprecated, ale občas se hodí
+    KeyDown: {id: 10, label: "keydown"},
+    KeyUp: {id: 11, label: "keyup"},
+    KeyPress: {id: 12, label: "keypress"}, // deprecated, ale občas se hodí
 
     // form / input
-    Input:        { id: 13, label: "input" },
-    Change:       { id: 14, label: "change" },
-    Submit:       { id: 15, label: "submit" },
-    Focus:        { id: 16, label: "focus" },
-    Blur:         { id: 17, label: "blur" },
+    Input: {id: 13, label: "input"},
+    Change: {id: 14, label: "change"},
+    Submit: {id: 15, label: "submit"},
+    Focus: {id: 16, label: "focus"},
+    Blur: {id: 17, label: "blur"},
 
     // touch
-    TouchStart:   { id: 18, label: "touchstart" },
-    TouchMove:    { id: 19, label: "touchmove" },
-    TouchEnd:     { id: 20, label: "touchend" },
+    TouchStart: {id: 18, label: "touchstart"},
+    TouchMove: {id: 19, label: "touchmove"},
+    TouchEnd: {id: 20, label: "touchend"},
 
     // drag & drop
-    DragStart:    { id: 21, label: "dragstart" },
-    DragOver:     { id: 22, label: "dragover" },
-    Drop:         { id: 23, label: "drop" },
-    DragEnd:      { id: 24, label: "dragend" },
+    DragStart: {id: 21, label: "dragstart"},
+    DragOver: {id: 22, label: "dragover"},
+    Drop: {id: 23, label: "drop"},
+    DragEnd: {id: 24, label: "dragend"},
 
     // window / lifecycle
-    Load:         { id: 25, label: "load" },
-    DOMContentLoaded:{ id: 26, label: "DOMContentLoaded" },
-    Resize:       { id: 27, label: "resize" },
-    Scroll:       { id: 28, label: "scroll" },
+    Load: {id: 25, label: "load"},
+    DOMContentLoaded: {id: 26, label: "DOMContentLoaded"},
+    Resize: {id: 27, label: "resize"},
+    Scroll: {id: 28, label: "scroll"},
 });
 
 export const ButtonType = Object.freeze({
     // mouse events
-    Submit:    { id: 0,  label: "submit" },
-    Reset:     { id: 1,  label: "reset" },
-    Button:    { id: 2,  label: "button" },
+    Submit: {id: 0, label: "submit"},
+    Reset: {id: 1, label: "reset"},
+    Button: {id: 2, label: "button"},
 });
 
 export const ActionType = Object.freeze({
     // mouse events
-    Reset:    { id: 0,  label: "reset" },
+    Reset: {id: 0, label: "reset"},
 });
 
 /**
@@ -164,29 +164,34 @@ export class DomElement {
     #get_handler_key(action) {
         return typeof action === "object" ? action.label : action
     }
+
     add_action_handler(action, handler) {
         let key = this.#get_handler_key(action)
         this.#action_handlers.set(key, handler)
         return this
     }
+
     has_action_handler(action) {
         let key = this.#get_handler_key(action)
         return this.#action_handlers.has(key)
     }
+
     is_missing_action_handler(action) {
         let key = this.#get_handler_key(action)
         return !this.#action_handlers.has(key)
     }
+
     get_action_handler(action) {
         let key = this.#get_handler_key(action)
         return this.#action_handlers.get(key) ?? null
     }
-    remove_action_handler(action)
-    {
+
+    remove_action_handler(action) {
         let key = this.#get_handler_key(action)
         this.#action_handlers.delete(key)
         return this
     }
+
     execute_action(action, ...args) {
         let key = this.#get_handler_key(action)
         console.log(`Going to execute action: ${key}`)
@@ -203,9 +208,11 @@ export class DomElement {
     element() {
         return this.#element
     }
+
     style() {
         return this.#element.style
     }
+
     styles() {
         return this.#styles
     }
@@ -214,6 +221,7 @@ export class DomElement {
         this.#element.remove();
         return this
     }
+
     /**
      * Set element id.
      *
@@ -286,7 +294,7 @@ export class DomElement {
      */
     append(child) {
         console.log("append " + JSON.stringify(child))
-        if(this.#find_node(child, true).id === "progress-fill") console.log("calling for fill_search")
+        if (this.#find_node(child, true).id === "progress-fill") console.log("calling for fill_search")
         this.#element.append(this.#find_node(child, true));
         return this;
     }
@@ -312,9 +320,11 @@ export class DomElement {
         this.#element.textContent = text;
         return this;
     }
+
     clear_text() {
         return this.set_text("")
     }
+
     get_text() {
         return this.#element.textContent
     }
@@ -395,7 +405,7 @@ export class DomElement {
      * @returns {DomElement}
      */
     once(event, handler, options) {
-        this.#element.addEventListener(event, handler, { ...options, once: true });
+        this.#element.addEventListener(event, handler, {...options, once: true});
         return this;
     }
 
@@ -569,19 +579,21 @@ export class DomElement {
     }
 
     #original_display = null
+
     hide() {
         let s = this.#element.style;
-        if(s.display === Display.None.label) return this
+        if (s.display === Display.None.label) return this
         this.#original_display = s.display
         s.display = Display.None.label
         return this
     }
+
     show(d = null) {
-        if(d) {
+        if (d) {
             this.styles().display(d);
             return this
         }
-        if(this.#original_display){
+        if (this.#original_display) {
             this.styles().display(this.#original_display);
             return this
         }
@@ -615,6 +627,7 @@ export class DomElement {
             attached: this.#element.isConnected
         };
     }
+
     assert_type(tag) {
         if (this.#element.tagName.toLowerCase() !== tag.toLowerCase()) {
             console.warn(`Expected <${tag}>, got <${this.#element.tagName}>`, this.element);
@@ -625,16 +638,18 @@ export class DomElement {
 
 export function find_dom_element(id) {
     let el = get_element(id)
-    if(!el) return null
+    if (!el) return null
     let _object = el["_object"]
 
-    if(!_object) return null
+    if (!_object) return null
     return el._object
 }
+
 export function find_enum(text, instance) {
     return find_dom_element(gen_enum_id(text, instance))
 }
-export class Form extends DomElement{
+
+export class Form extends DomElement {
     constructor() {
         super("form")
 
@@ -655,24 +670,24 @@ export class Label extends DomElement {
         let l = DomElement.create_element("label")
         l.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
         l.innerText = innerText
-        if(l.innerText.size > 0) {
+        if (l.innerText.size > 0) {
             let last_character = l.innerText.at(-1)
-            if(last_character !== ":") l.innerText = innerText + ": "
+            if (last_character !== ":") l.innerText = innerText + ": "
         }
 
         this.appendChild(l)
         this.css({
-            width : width,
-            display : "inline-block",
-            whiteSpace : "nowrap",
+            width: width,
+            display: "inline-block",
+            whiteSpace: "nowrap",
         })
 
     }
 }
 
 export const InputType = Object.freeze({
-    Text: { id: 0, label: "text" },
-    Checkbox: { id: 1, label: "checkbox" },
+    Text: {id: 0, label: "text"},
+    Checkbox: {id: 1, label: "checkbox"},
 });
 
 export class ValueElement extends DomElement {
@@ -680,12 +695,15 @@ export class ValueElement extends DomElement {
         this.element().value = value
         return this
     }
+
     clear_value() {
         return this.set_value("")
     }
+
     get_value() {
         return this.element().value
     }
+
     get_value_as_number() {
         return Number(this.get_value())
     }
@@ -721,18 +739,25 @@ export class Input extends ValueElement {
     }
 
 }
-export class Checkbox extends Input{
+
+export class Checkbox extends Input {
     constructor() {
         super(InputType.Checkbox);
-        this.add_action_handler(ActionType.Reset, (self, ...args)=>{self.uncheck(); return true;});
+        this.add_action_handler(ActionType.Reset, (self, ...args) => {
+            self.uncheck();
+            return true;
+        });
     }
+
     is_checked() {
         return this.element().checked
     }
+
     set_checked(value) {
         this.element().checked = value
         return this
     }
+
     check() {
         this.set_checked(true)
         return this
@@ -763,10 +788,12 @@ export class Select extends DomElement {
         this.appendChild(option)
         return this
     }
+
     add_options(...options) {
         options.forEach(o => this.add_option(o));
         return this;
     }
+
     set_selected_index(index) {
         this.element().selectedIndex = index
         return this
@@ -775,6 +802,7 @@ export class Select extends DomElement {
     set_selected_index_to_0() {
         return this.set_selected_index(0)
     }
+
     set_no_selected_index() {
         return this.set_selected_index(-1)
     }
@@ -784,15 +812,18 @@ export class Select extends DomElement {
             option.selected = values.includes(Number(option.value));
         }
     }
+
     set_selected_value(value) {
         for (const option of this.options()) {
-            if(value !== (Number(option.value))) continue
+            if (value !== (Number(option.value))) continue
             option.selected = true
         }
     }
+
     options() {
         return this.element().options
     }
+
     selectedOptions() {
         return this.element().selectedOptions
     }
@@ -801,9 +832,9 @@ export class Select extends DomElement {
 export class Option extends ValueElement {
     constructor(value = null, text = null) {
         super("option");
-        if(value) this.set_value(value)
-        if(text) this.set_text(text)
-        if(value && text === null) this.set_text(value)
+        if (value) this.set_value(value)
+        if (text) this.set_text(text)
+        if (value && text === null) this.set_text(value)
     }
 }
 
@@ -812,13 +843,16 @@ export class Button extends DomElement {
         super("button");
         this.set_text(text)
     }
+
     set_title(text) {
         this.element().title = text
         return this
     }
+
     get_title() {
         return this.element().title
     }
+
     set_type(type) {
         console.log(type.label)
         this.element().type = type.label
@@ -838,11 +872,13 @@ class DivSpan extends DomElement {
         this.append_many(...children);
     }
 }
+
 export class Div extends DivSpan {
     constructor(...children) {
         super("div", ...children)
     }
 }
+
 export class Span extends DivSpan {
     constructor(...children) {
         super("span", ...children)
