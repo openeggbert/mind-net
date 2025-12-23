@@ -33,7 +33,7 @@ import {
     showWindowFrom,
     VirtualWindow
 } from "./d_window.js";
-import {FormRow, FormRowAutocomplete, SearchAutocomplete, SearchModel} from "./d_search.js";
+import {CloseButton, FormRow, FormRowAutocomplete, SearchAutocomplete, SearchModel} from "./d_search.js";
 import {
     Checkbox,
     Div,
@@ -323,65 +323,27 @@ class DictionaryApp {
 
             form.appendChild(new FormRow("Difficulty", diffContainer));
 
-            const tag_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Tag",
-                "dictionary_tag_type_fulltext",
-                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
-            )
+            function make_ac_control(label, model, map_in_query = true) {
+                return new FormRowAutocomplete(
+                    search_window,
+                    form,
+                    label,
+                    "dictionary_" + model+ "_fulltext",
+                    map_in_query ? ("&dictionary_map_id=" + dictionary_app.get_selected_map_id()) : ""
+                )
 
-            const flag_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Flag",
-                "dictionary_flag_fulltext",
-                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
-            )
+            }
+            const tag_control = make_ac_control("Tag", "tag_type")
+            const flag_control = make_ac_control("Flag", "flag")
+            const link_from_control = make_ac_control("Link from", "term")
+            const link_to_control = make_ac_control("Link to", "term")
 
-            const link_from_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Link from",
-                "dictionary_term_fulltext",
-                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
-            )
+            const noteInput = new Input().set_placeholder("e.g. mutex, allocator, RAII")
+            form.appendChild(new FormRow("Note contains", noteInput));
 
-            const link_to_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Link to",
-                "dictionary_term_fulltext",
-                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
-            )
-
-            const noteLabel = new Label("Note contains");
-            const noteInput = new Input();
-            noteInput.placeholder = "e.g. mutex, allocator, RAII";
-            form.appendChild(new Div(noteLabel, noteInput));
-
-            const index_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Index",
-                "dictionary_index_type_fulltext",
-                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
-            )
-
-            const source_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Source",
-                "dictionary_source_type_fulltext",
-            )
-
-            const alias_control = new FormRowAutocomplete(
-                search_window,
-                form,
-                "Alias",
-                "dictionary_term_alias_fulltext",
-                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
-            )
+            const index_control = make_ac_control("Index", "index_type")
+            const source_control = make_ac_control("Source", "source_type")
+            const alias_control = make_ac_control("Alias", "term_alias")
 
             // --- Missing items ---
             const missingLabel = new Label("Missing");
@@ -508,6 +470,7 @@ class DictionaryApp {
 
             // --- Buttons ---
             const buttonRow = new Span();
+            form.appendChild(buttonRow);
 
             const searchBtn = document.createElement("button");
             searchBtn.type = "button";
@@ -973,12 +936,19 @@ class DictionaryApp {
                 })
 
             buttonRow.appendChild(load_input)
+            buttonRow.appendChild(new Span().set_id("search_end_search"))
 
-            let search_autocomplete = new Autocomplete(load_input.element(), 1, "dictionary_search_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
-            search_autocomplete.box_margin_left = "465px"
-            search_autocomplete.clear_after_click = false
+            let search_autocomplete = new SearchAutocomplete(
+                search_window,
+                "search",
+                load_input.element(),
+                1,
+                "dictionary_search_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
 
-            new CloseButton("search", load_input, search_autocomplete)
+            //let close_button_search = new CloseButton("search", load_input.element(), search_autocomplete).set_id("close_button_search")
+
             search_autocomplete.addCallback(async e => {
                 let old_search_id = search_json === null ? 0 : search_json.id
                 let new_search_id = search_autocomplete.get_item_id()
@@ -1153,7 +1123,7 @@ class DictionaryApp {
             }
             buttonRow.appendChild(deleteBtn);
 
-            form.appendChild(buttonRow);
+
             let space = new Div().set_id("space").css({height: "50px"})
 
             // ---------- FINAL ----------

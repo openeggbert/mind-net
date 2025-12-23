@@ -174,10 +174,9 @@ export class SearchModel {
         this.sort = json.sort === null ? Sort.None : enumValue(Sort, json.sort)
         this.order = json.order === null ? Order.None : enumValue(Order, json.order);
     }
-
 }
 
-class CloseButton extends Button {
+export class CloseButton extends Button {
     constructor(model, input, autocomplete = null) {
         super()
 
@@ -227,7 +226,7 @@ export class SearchAutocomplete extends Autocomplete {
             const r = input.getBoundingClientRect();
             const b = box.getBoundingClientRect();
             box.style.transform =
-                `translate3d(${r.left}px, ${r.top + 42}px, 0)`;
+                `translate3d(${r.left}px, ${r.top + 46}px, 0)`;
             // showInfo("win: " + this.win.left() + " " + this.win.top())
             // showInfo("box: " + b.x + " " + b.y)
             let boxY = Number(b.y)
@@ -260,30 +259,6 @@ function runWhileShown(el, callback) {
     requestAnimationFrame(loop);
 
     return () => running = false; // optional destroy
-}
-
-function isOutsideViewport(rect) {
-    return (
-        rect.bottom < 0 ||
-        rect.top > window.innerHeight ||
-        rect.right < 0 ||
-        rect.left > window.innerWidth
-    );
-}
-
-function updateBoxVisibility(box) {
-    const r = box.getBoundingClientRect();
-
-    if (
-        r.bottom < 0 ||
-        r.top > window.innerHeight ||
-        r.right < 0 ||
-        r.left > window.innerWidth
-    ) {
-        box.style.display = "none";
-    } else {
-        box.style.display = "block";
-    }
 }
 
 export class FormRow extends Div {

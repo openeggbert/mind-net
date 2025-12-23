@@ -218,7 +218,7 @@ export function chooseOption(options, title = "") {
         overlay.style.display = "flex";
         overlay.style.justifyContent = "center";
         overlay.style.alignItems = "center";
-        overlay.style.zIndex = 1000;
+        overlay.style.zIndex = 100000;
 
         // Panel
         const panel = document.createElement("div");
