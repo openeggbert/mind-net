@@ -19,7 +19,7 @@ import {
     get_element,
     showError,
     showInfo,
-    showWarn, sleep_for_seconds
+    showWarn
 } from "./dom.js";
 import {Autocomplete, defined, null_or_undefined} from "./common.js";
 import {attachMarkdownEditor} from "./d_markdown.js";
@@ -33,19 +33,17 @@ import {
     showWindowFrom,
     VirtualWindow
 } from "./d_window.js";
-import {CloseButton, FormRow, FormRowAutocomplete, SearchAutocomplete, SearchModel} from "./d_search.js";
+import {FormRow, FormRowAutocomplete, SearchAutocomplete, SearchModel} from "./d_search.js";
 import {
     Checkbox,
     Div,
-    DomElement,
     EnumOption,
     find_dom_element,
     Form,
     Input,
     Label,
     Select,
-    Span,
-    ValueElement
+    Span
 } from "./d_dom.js";
 import {_10PX, _5PX} from "./d_styles.js";
 import {Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
@@ -247,11 +245,8 @@ class DictionaryApp {
                 height: 600
             });
 
-            const content = new Div()
-            search_window.set_content(content.element());
-            search_window.show();
-
-            content.style.height = "100%";
+            const content = new Div().styles().height("100%").end()
+            search_window.set_content(content.element()).show();
 
             // ---------- FORM ----------
 
@@ -281,47 +276,27 @@ class DictionaryApp {
             const pinnedCheckbox = new Checkbox()
             form.appendChild(new FormRow("Pinned only", pinnedCheckbox))
 
-            // --- Importance ---
-            const impContainer = new Span();
-            enumValues(Importance).forEach(importance_enum_value => {
-                const cb = new Checkbox()
-                    .set_value(importance_enum_value.id)
-                    .check()
-                    .set_id(gen_enum_id("importance", importance_enum_value))
-                    .css({marginLeft: "10px"})
+            function make_checkbox_form_row(label, enum_object) {
+                const container = new Span();
+                enumValues(enum_object).forEach(enum_value => {
+                    const cb = new Checkbox()
+                        .set_value(enum_value.id)
+                        .check()
+                        .set_id(gen_enum_id(label.toLowerCase(), enum_value))
+                        .styles().marginLeft(_10PX).end()
 
-                const l = new Label("", "auto")
-                    .css({
-                        marginRight: "10px",
-                        marginLeft: "10px"
+                    const l = new Label("", "auto")
+                        .styles().marginLeft(_10PX).marginRight(_10PX).end()
+                        .set_text(enum_value.label)
 
-                    })
-                    .set_text(importance_enum_value.label)
+                    container.append_many(cb, l);
+                });
+                return new FormRow(label, container);
 
-                impContainer.append_many(cb, l);
-            });
-            form.appendChild(new FormRow("Importance", impContainer));
+            }
 
-            // --- Difficulty ---
-            const diffContainer = new Span();
-
-            enumValues(Difficulty).forEach(difficulty_enum_value => {
-                const cb = new Checkbox()
-                    .set_value(difficulty_enum_value.id)
-                    .check()
-                    .set_id(gen_enum_id("difficulty", difficulty_enum_value))
-                    .css({marginLeft: "10px"})
-                const l = new Label("", "auto")
-                    .css({
-                    marginRight: "10px",
-                    marginLeft: "10px"
-
-                })
-                    .set_text(difficulty_enum_value.label)
-                diffContainer.append_many(cb, l);
-            });
-
-            form.appendChild(new FormRow("Difficulty", diffContainer));
+            form.appendChild(make_checkbox_form_row("Importance", Importance));
+            form.appendChild(make_checkbox_form_row("Difficulty", Difficulty));
 
             function make_ac_control(label, model, map_in_query = true) {
                 return new FormRowAutocomplete(
@@ -345,88 +320,62 @@ class DictionaryApp {
             const source_control = make_ac_control("Source", "source_type")
             const alias_control = make_ac_control("Alias", "term_alias")
 
-            // --- Missing items ---
-            const missingLabel = new Label("Missing");
-            const missingContainer = new Span();
+            function make_item_form_row(label) {
+                const container = new Span();
 
-            enumValues(DictionaryItem).forEach(e => {
-                const cb = new Checkbox()
-                    .set_value(e.id)
-                    .uncheck()
-                    .css({marginLeft :"5px"})
-                    .set_id(gen_enum_id("missing", e))
+                enumValues(DictionaryItem).forEach(e => {
+                    const cb = new Checkbox()
+                        .set_value(e.id)
+                        .uncheck()
+                        .styles().marginLeft(_5PX).end()
+                        .set_id(gen_enum_id(label.toLowerCase(), e))
 
-                const l = new Label("", "auto").set_text(e.label)
-                    .css({
-                        marginRight : "10px",
-                        marginLeft : "5px",
-                        fontSize : "80%"
-                    })
+                    const l = new Label("", "auto").set_text(e.label)
+                        .styles()
+                        .marginRight(_10PX)
+                        .marginLeft(_5PX)
+                        .fontSize("80%")
+                        .end()
 
-                missingContainer.append_many(cb, l);
-            });
-            form.appendChild(new Div(missingLabel, missingContainer));
+                    container.append_many(cb, l);
+                });
+                return new FormRow(label, container)
+            }
 
-            // --- Has items ---
-            const hasLabel = new Label("Has");
-            const hasContainer = new Span();
-
-            enumValues(DictionaryItem).forEach(e => {
-                let id_ = gen_enum_id("has", e)
-
-                const cb = new Checkbox()
-                    .set_value(e.id)
-                    .uncheck()
-                    .css({marginLeft :"5px"})
-                    .set_id(id_)
-
-                const l = new Label("", "auto").set_text(e.label)
-                    .css({
-                        marginRight : "10px",
-                        marginLeft : "5px",
-                        fontSize : "80%"
-                    })
-
-                hasContainer.append_many(cb, l);
-            });
-            form.appendChild(new Div(hasLabel, hasContainer));
+            form.appendChild(make_item_form_row("Missing"));
+            form.appendChild(make_item_form_row("Has"));
 
             const time_range_array = enumValues(TimeRange)
 
             // --- Created ---
-            const createdLabel = new Label("Created");
             const createdSelect = new Select()
             time_range_array.forEach(e => {
                 createdSelect.add_option(new EnumOption(e));
             });
-            form.appendChild(new Div(createdLabel, createdSelect));
+            form.appendChild(new FormRow("Created", createdSelect));
 
             // --- Updated ---
-            const updatedLabel = new Label("Updated");
             const updatedSelect = new Select()
             time_range_array.forEach(e => {
                 updatedSelect.add_option(new EnumOption(e));
             });
-            form.appendChild(new Div(updatedLabel, updatedSelect));
+            form.appendChild(new FormRow("Updated", updatedSelect));
 
             // --- Visited ---
-            const visitedLabel = new Label("Visited");
             const visitedSelect = new Select()
             time_range_array.forEach(e => {
                 visitedSelect.add_option(new EnumOption(e));
             });
-            form.appendChild(new Div(visitedLabel, visitedSelect));
+            form.appendChild(new FormRow("Visited", visitedSelect));
 
             // --- Reviewed ---
-            const reviewedLabel = new Label("Reviewed");
             const reviewedSelect = new Select()
             time_range_array.forEach(e => {
                 reviewedSelect.add_option(new EnumOption(e));
             });
-            form.appendChild(new Div(reviewedLabel, reviewedSelect));
+            form.appendChild(new FormRow("Reviewed", reviewedSelect));
 
             // --- Repetition ---
-            const repLabel = new Label("Repetition");
             const repContainer = new Span().styles().marginLeft(_10PX).end();
             enumValues(RepetitionMode).forEach(e => {
                 const cb = new Checkbox()
@@ -449,7 +398,7 @@ class DictionaryApp {
 
                 repContainer.append_many(cb, l);
             });
-            form.appendChild(new Div(repLabel, repContainer));
+            form.appendChild(new FormRow("Repetition", repContainer));
 
             // --- Sort ---
             const sortLabel = new Label("Sort:");
@@ -495,6 +444,7 @@ class DictionaryApp {
             class ProgressBar extends Div {
                 #fill;
                 #loading_data_progress;
+                #start_time = Date()
 
                 constructor() {
                     super();
@@ -518,12 +468,18 @@ class DictionaryApp {
 
                 set_progress(value) {
                     value = Math.max(0, Math.min(100, value));
+
+                    let remains = (100.0 - value) / 100.0
+                    let now = Date.now()
+                    let elapsed_seconds = (now - this.#start_time) / 1000
+                    let remains_seconds = Number(elapsed_seconds / (Number(value) / (100.0 - value))).toFixed()
                     this.#fill.element().style.width = value + "%";
-                    this.#loading_data_progress.set_text(value + "%")
+                    this.#loading_data_progress.set_text(value + "%" + " Remains: " + remains_seconds + " second" + (remains_seconds > 1.0 ? "s" : ""))
                     return this;
                 }
                 reset() {
                     this.set_progress(0)
+                    this.#start_time = Date.now()
                     return this;
                 }
             }
@@ -604,12 +560,15 @@ class DictionaryApp {
                 }
 
                 let details = items.length === 0 ? false : find_dom_element("details_checkbox").is_checked()
+                let th_hash = create_th("#")
                 let th_id = create_th("ID")
                 let th_title = create_th("Title")
                 let th_disambiguation = create_th("Disambiguation")
+                tr_th.appendChild(th_hash)
                 tr_th.appendChild(th_id)
                 tr_th.appendChild(th_title)
                 tr_th.appendChild(th_disambiguation)
+                th_hash.style.width = "50px"
                 th_id.style.width = "50px"
                 th_title.style.minWidth = "200px"
                 th_disambiguation.style.minWidth = "100px"
@@ -631,7 +590,7 @@ class DictionaryApp {
                     append_th("Importance")
                     append_th("Difficulty")
                     //if(!repetition_all)
-                        append_th("Next review")
+                    append_th("Next review")
                 }
                 const item_count = items.length
                 let done = 0.0
@@ -667,18 +626,25 @@ class DictionaryApp {
                     done++
                 }
 
+                let number = 0;
                 if(items.length === 0) {
                     let tr = document.createElement("tr")
                     tr.onmouseover = (e) => tr.style.backgroundColor = "rgba(101,181,237,0.34)"
                     tr.onmouseleave = (e) => tr.style.backgroundColor = "white"
                     resultTable.appendChild(tr)
 
+                    tr_th.remove()
+                    resultTable.style.border = ""
+
                     let td = create_td("No results found");
-                    td.colSpan = 3
+                    td.colSpan = 4
                     td.style.textAlign = "center"
                     td.style.color = "grey"
+                    td.style.width = "400px"
+                    td.style.border = ""
                     tr.appendChild(td)
                 } else items.forEach(e => {
+                    ++number
                     let tr = document.createElement("tr")
                     tr.onmouseover = (e) => tr.style.backgroundColor = "rgba(101,181,237,0.34)"
                     tr.onmouseleave = (e) => tr.style.backgroundColor = "white"
@@ -694,15 +660,13 @@ class DictionaryApp {
                     a.title = title
                     a.innerText = title
                     td_title.appendChild(a)
-                    // a.onclick = (async e => {
-                    //     e.preventDefault()
-                    //     await this.render(dictionary_term_id)
-                    // })
+
                     td_title.onclick = (async e => {
                         await dictionary_app.render(dictionary_term_id)
                         this.#term_container.show()
                     })
                     td_title.style.cursor = "pointer"
+                    tr.appendChild(create_td(number))
                     tr.appendChild(create_td(dictionary_term_id))
                     tr.appendChild(td_title)
                     tr.appendChild(create_td(disambiguation))
@@ -946,8 +910,6 @@ class DictionaryApp {
                 "dictionary_search_fulltext",
                 "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
             )
-
-            //let close_button_search = new CloseButton("search", load_input.element(), search_autocomplete).set_id("close_button_search")
 
             search_autocomplete.addCallback(async e => {
                 let old_search_id = search_json === null ? 0 : search_json.id
@@ -1310,6 +1272,15 @@ class DictionaryApp {
             showInfo("Created new term: " + new_term_created.title)
             await this.#term_container.render(new_term_created.id)
             this.#term_container.show()
+
+            if (false) {
+                const orig_title = new_term.title
+                for (let i = 0; i < 1000; i++) {
+                    new_term.title = orig_title + "_" + i
+                    await post_entity(Entities.dictionary_term, new_term)
+                    showInfo(i)
+                }
+            }
         }
         get_element("button_find_random_term").onclick = async () => {
             await this.#autocomplete_term_title.search("*", 1, true)
