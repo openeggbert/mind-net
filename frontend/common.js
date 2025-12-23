@@ -1,6 +1,6 @@
 import {list_all_entities, read_entity} from "./api.js";
 import {get_element} from "./dom.js";
-import {Input} from "./d_dom.js";
+import {Div, Input, Span} from "./d_dom.js";
 
 function debounce(fn, delay) {
     let timer = null;
@@ -17,13 +17,12 @@ export class Autocomplete {
         this.#callbacks.push(fn);
     }
     clear_after_click = true
-    box_margin_left = null
 
     #runCallbacks(...args) {
         this.#callbacks.forEach(fn => fn(...args));
     }
 
-    constructor(input, input_min_length, entity, query_params, title_column, part_column, insert_after_id = "") {
+    constructor(input, input_min_length, entity, query_params = "", title_column = "title", part_column = "title_part", insert_after_id = "") {
         this.input = input instanceof Input ? input.element() : input;
         this.title_column = title_column;
         this.item = null;
@@ -58,6 +57,7 @@ export class Autocomplete {
         this.input.addEventListener("input", this.input_handler);
     }
 
+
     async search(q, input_min_length = 3, show_box = true) {
         if (q.length < input_min_length) {
             this.box.style.display = "none";
@@ -69,6 +69,9 @@ export class Autocomplete {
         this.render(items, show_box);
     }
 
+    after_render(box, input, items) {
+
+    }
     render(items, show_box = true) {
         console.log("Started rendering items: " + items.length + " show_box=" + show_box)
         this.box.innerHTML = "";
@@ -95,14 +98,12 @@ export class Autocomplete {
                 if(this.clear_after_click) this.input.value = ""
             };
 
-            if(this.box_margin_left !== null) {
-                this.box.style.marginLeft = this.box_margin_left
-            } else {
-                this.box.style.marginLeft = ""
-            }
             this.box.appendChild(div);
             i++
         });
+        let tmp_span = new Span()
+        this.box.appendChild(tmp_span.element())
+        this.after_render(this.box, this.input)
 
         if(show_box) this.box.style.display = "block";
     }
@@ -111,6 +112,9 @@ export class Autocomplete {
             return;
         }
         this.#items_map.get(index).click()
+    }
+    get_box() {
+        return this.box
     }
     get_item() {
         return this.item;
@@ -154,6 +158,7 @@ export class Autocomplete {
             this.input.removeEventListener("input", this.input_handler);
         }
     }
+
 }
 
 export function null_or_undefined(value) {

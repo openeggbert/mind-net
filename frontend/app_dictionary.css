@@ -303,3 +303,16 @@ fieldset legend {
     opacity: 0.4;
     pointer-events: none;
 }
+
+.form-row {
+    min-height: 40px;
+    padding-top: 5px;
+    padding-bottom: 0px;
+    padding-left: 10px;
+    margin-left: -10px;
+    transition: background-color 0.2s ease-in-out;
+}
+.form-row:hover {
+    background-color: rgba(3, 102, 214, 0.1);
+
+}

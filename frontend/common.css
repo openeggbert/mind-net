@@ -212,11 +212,10 @@ a.note-wanted, a.note-unknown {
     margin: 0.2em 0;
 }
 
-
 .suggestions {
     border: 1px solid #ccc;
     max-width: 300px;
-    /*position: absolute;*/
+    position: absolute;
     background: white;
     display: none;
 }

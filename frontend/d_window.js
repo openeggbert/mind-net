@@ -24,9 +24,16 @@ export function bringToFront(win) {
 
 function get_inner_width() {
     return window.innerWidth;
-}   function get_inner_height() {
+}
+
+function get_inner_height() {
     return window.innerHeight
 }
+
+function clampTop(y) {
+    return Math.max(0, y);
+}
+
 
 export class VirtualWindow {
     #root;
@@ -147,9 +154,12 @@ export class VirtualWindow {
             const offY = e.clientY - rect.top;
 
             const move = ev => {
+
                 if(this.#maximized && !this.#minimized) return
                 this.#root.style.left = (ev.clientX - offX) + "px";
-                this.#root.style.top  = (ev.clientY - offY) + "px";
+                const newTop = clampTop(ev.clientY - offY);
+                this.#root.style.top = newTop + "px";
+
             };
 
             const up = () => {
@@ -163,6 +173,12 @@ export class VirtualWindow {
             document.addEventListener("mouseup", up);
         });
 
+        window.addEventListener("resize", () => {
+            const rect = this.#root.getBoundingClientRect();
+            if (rect.top < 0) {
+                this.#root.style.top = "0px";
+            }
+        });
 
         if (visible) {
             this.show();
@@ -197,10 +213,10 @@ export class VirtualWindow {
         let maximized = this.#maximized
 
         if(maximized) {
-            showInfo("Going to restore")
+            //showInfo("Going to restore")
             this.restore()
         } else {
-            showInfo("Going to maximize")
+            //showInfo("Going to maximize")
             this.maximize()
         }
     }
@@ -233,8 +249,8 @@ export class VirtualWindow {
         this.#root.style.resize = "both";
 
         this.#root.style.left = this.#restoreLeft
-        this.#root.style.top = this.#restoreTop
-
+        const restoreTop = parseInt(this.#restoreTop ?? "0", 10);
+        this.#root.style.top = clampTop(restoreTop) + "px";
 
         if(this.#maximized && !this.#minimized) {
             this.#maximized = false;
@@ -265,7 +281,9 @@ export class VirtualWindow {
                 const w = this.#root.offsetWidth;
                 const h = this.#root.offsetHeight;
                 this.#root.style.left = ((window.innerWidth - w) / 2) + "px";
-                this.#root.style.top  = ((window.innerHeight - h) / 2) + "px";
+                const top = (window.innerHeight - h) / 2;
+                this.#root.style.top = clampTop(top) + "px";
+
             });
         }
 
@@ -288,6 +306,25 @@ export class VirtualWindow {
         this.#root.style.transform = "none";
     }
 
+    left() {
+        return this.#root.style.left
+    }
+    top() {
+        return this.#root.style.top
+    }
+
+    right() {
+        return this.#root.style.right
+    }
+    bottom() {
+        return this.#root.style.top
+    }
+    height() {
+        return this.#root.style.height
+    }
+    width() {
+        return this.#root.style.width
+    }
 
     destroy() {
         this.#root.remove();
@@ -329,7 +366,9 @@ export class VirtualWindow {
     center(x = null, y = null) {
         const rect = this.#root.getBoundingClientRect();
         this.#root.style.left = (x ?? (window.innerWidth - rect.width) / 2) + "px";
-        this.#root.style.top = (y ?? (window.innerHeight - rect.height) / 2) + "px";
+        const top = y ?? (window.innerHeight - rect.height) / 2;
+        this.#root.style.top = clampTop(top) + "px";
+
         return this;
     }
 

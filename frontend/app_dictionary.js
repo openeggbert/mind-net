@@ -33,7 +33,7 @@ import {
     showWindowFrom,
     VirtualWindow
 } from "./d_window.js";
-import {SearchModel} from "./d_search.js";
+import {SearchAutocomplete, SearchModel} from "./d_search.js";
 import {
     Checkbox,
     Div,
@@ -258,37 +258,36 @@ class DictionaryApp {
             const form = new Form().set_id("form_search")
             content.appendChild(form.element());
 
+            class FormRow extends Div {
+                constructor(label_text, control) {
+                    super(new Label(label_text), control);
+                    this.add_class("form-row")
+                }
+            }
             // --- Title contains ---
-            const titleLabel = new Label("Title contains");
             const titleContainsInput = new Input().set_placeholder("e.g. mutex, allocator, RAII");
-            form.appendChild(new Div(titleLabel, titleContainsInput));
+            form.appendChild(new FormRow("Title contains", titleContainsInput));
 
             // --- Title starts with ---
-            const titleStartsWithLabel = new Label("Title starts with");
             const titleStartsWithInput = new Input().set_placeholder("e.g. mut, allo, C, K");
-            form.appendChild(new Div(titleStartsWithLabel, titleStartsWithInput));
+            form.appendChild(new FormRow("Title starts with", titleStartsWithInput));
 
             // --- Definition contains ---
-            const definitionLabel = new Label("Definition contains");
             const definitionInput = new Input().set_placeholder("e.g. mutex, allocator, RAII")
-            form.appendChild(new Div(definitionLabel, definitionInput));
+            form.appendChild(new FormRow("Definition contains", definitionInput));
 
             // --- Status ---
-            const statusLabel = new Label("Status");
             const statusSelect = new Select().multiple();
             enumValues(TermStatus).forEach(e => {
                 statusSelect.add_option(new EnumOption(e));
             });
-
-            form.appendChild(new Div(statusLabel, statusSelect));
+            form.appendChild(new FormRow("Status", statusSelect));
 
             // --- Pinned ---
-            const pinnedLabel = new Label("Pinned only")
             const pinnedCheckbox = new Checkbox()
-            form.appendChild(new Div(pinnedLabel, pinnedCheckbox))
+            form.appendChild(new FormRow("Pinned only", pinnedCheckbox))
 
             // --- Importance ---
-            const impLabel = new Label("Importance");
             const impContainer = new Span();
             enumValues(Importance).forEach(importance_enum_value => {
                 const cb = new Checkbox()
@@ -307,10 +306,9 @@ class DictionaryApp {
 
                 impContainer.append_many(cb, l);
             });
-            form.appendChild(new Div(impLabel, impContainer));
+            form.appendChild(new FormRow("Importance", impContainer));
 
             // --- Difficulty ---
-            const diffLabel = new Label("Difficulty");
             const diffContainer = new Span();
 
             enumValues(Difficulty).forEach(difficulty_enum_value => {
@@ -329,85 +327,127 @@ class DictionaryApp {
                 diffContainer.append_many(cb, l);
             });
 
-            form.appendChild(new Div(diffLabel, diffContainer));
+            form.appendChild(new FormRow("Difficulty", diffContainer));
 
             class CloseButton {
                 constructor(model, input, autocomplete = null) {
-                let close_button = document.createElement("button")
-                close_button.innerHTML = "&times;"
-                close_button.title = "Clear " + model
-                close_button.style.marginLeft = "10px"
-                close_button.onclick = (e) => {
-                    event.preventDefault();
-                    if (defined(autocomplete)) {
-                        autocomplete.reset()
-                    } else {
-                        input.clear_value()
+                    let close_button = document.createElement("button")
+                    close_button.innerHTML = "&times;"
+                    close_button.title = "Clear " + model
+                    close_button.style.marginLeft = "10px"
+                    close_button.onclick = (e) => {
+                        event.preventDefault();
+                        if (defined(autocomplete)) {
+                            autocomplete.reset()
+                        } else {
+                            input.clear_value()
+                        }
                     }
-                }
-                input.insert_after(close_button)}
+                    input.insert_after(close_button)}
             }
 
-            const tag_label = new Label("Tag")
-            const tag_input = new Input()
-            form.appendChild(new Div(tag_label, tag_input))
-            let tag_autocomplete = new Autocomplete(tag_input.element(), 1, "dictionary_tag_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
-            tag_autocomplete.clear_after_click = false
-            tag_autocomplete.box_margin_left = "200px"
-            new CloseButton("tag", tag_input, tag_autocomplete)
+            class FormRowAutocomplete extends FormRow {
+                static #create_container(label, input) {
+                    return new Span(
+                        input,
+                        new Div()
+                            .set_id("search_end_" + label.toLowerCase())
+                    )
+                        .css({
+                            position: "relative"
+                        })
+                }
 
-            const flag_label = new Label("Flag")
-            const flag_input = new Input()
-            form.appendChild(new Div(flag_label, flag_input))
-            let flag_autocomplete = new Autocomplete(flag_input.element(), 1, "dictionary_flag_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
-            flag_autocomplete.clear_after_click = false
-            flag_autocomplete.box_margin_left = "200px"
-            new CloseButton("flag", flag_input, flag_autocomplete)
+                #autocomplete
 
-            const link_from_label = new Label("Link from")
-            const link_from_input = new Input()
-            form.appendChild(new Div(link_from_label, link_from_input))
-            let link_from_autocomplete = new Autocomplete(link_from_input.element(), 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
-            link_from_autocomplete.clear_after_click = false
-            link_from_autocomplete.box_margin_left = "200px"
-            new CloseButton("link from", link_from_input, link_from_autocomplete)
+                constructor(win, form, label, entity, query_params = "", input = new Input()) {
+                    super(
+                        label,
+                        FormRowAutocomplete.#create_container(label, input)
+                    );
+                    this.input = input
+                    form.appendChild(this)
+                    this.#autocomplete = new SearchAutocomplete(
+                        win,
+                        label.toLowerCase(),
+                        input.element(),
+                        1,
+                        entity,
+                        query_params)
+                }
+                get_title() {
+                    return this.#autocomplete.get_item() === null ? "" : this.autocomplete.get_item().title
+                }
+                reset() {
+                    this.#autocomplete.reset()
+                }
+                get_item_id() {
+                    return this.#autocomplete.get_item_id()
+                }
+                async set_from_title(title, id) {
+                    await this.#autocomplete.set_from_title(title, id)
+                }
 
-            const link_to_label = new Label("Link to")
-            const link_to_input = new Input()
-            form.appendChild(new Div(link_to_label, link_to_input))
-            let link_to_autocomplete = new Autocomplete(link_to_input.element(), 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
-            link_to_autocomplete.clear_after_click = false
-            link_to_autocomplete.box_margin_left = "200px"
-            new CloseButton("link to", link_to_input, link_to_autocomplete)
+            }
+            const tag_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Tag",
+                "dictionary_tag_type_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
+
+            const flag_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Flag",
+                "dictionary_flag_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
+
+            const link_from_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Link from",
+                "dictionary_term_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
+
+            const link_to_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Link to",
+                "dictionary_term_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
 
             const noteLabel = new Label("Note contains");
             const noteInput = new Input();
             noteInput.placeholder = "e.g. mutex, allocator, RAII";
             form.appendChild(new Div(noteLabel, noteInput));
 
-            const index_label = new Label("Index")
-            const index_input = new Input()
-            form.appendChild(new Div(index_label, index_input))
-            let index_autocomplete = new Autocomplete(index_input.element(), 1, "dictionary_index_type_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "")
-            index_autocomplete.clear_after_click = false
-            index_autocomplete.box_margin_left = "200px"
-            new CloseButton("index", index_input, index_autocomplete)
+            const index_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Index",
+                "dictionary_index_type_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
 
-            const source_label = new Label("Source")
-            const source_input = new Input()
-            form.appendChild(new Div(source_label, source_input))
-            let source_autocomplete = new Autocomplete(source_input.element(), 1, "dictionary_source_type_fulltext", "", "title", "title_part")
-            source_autocomplete.clear_after_click = false
-            source_autocomplete.box_margin_left = "200px"
-            new CloseButton("source", source_input, source_autocomplete)
+            const source_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Source",
+                "dictionary_source_type_fulltext",
+            )
 
-            const alias_label = new Label("Alias")
-            const alias_input = new Input()
-            form.appendChild(new Div(alias_label, alias_input))
-            let alias_autocomplete = new Autocomplete(alias_input.element(), 1, "dictionary_term_alias_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part")
-            alias_autocomplete.clear_after_click = false
-            alias_autocomplete.box_margin_left = "200px"
-            new CloseButton("alias", alias_input, alias_autocomplete)
+            const alias_control = new FormRowAutocomplete(
+                search_window,
+                form,
+                "Alias",
+                "dictionary_term_alias_fulltext",
+                "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            )
 
             // --- Missing items ---
             const missingLabel = new Label("Missing");
@@ -826,14 +866,14 @@ class DictionaryApp {
                             if (cb !== pinnedCheckbox.element() && !cb.id.startsWith("missing_") && !cb.id.startsWith("has_")) cb.checked = true
                         }
                     )
-                tag_autocomplete.reset()
-                flag_autocomplete.reset()
-                link_from_autocomplete.reset()
-                link_to_autocomplete.reset()
+                tag_control.reset()
+                flag_control.reset()
+                link_from_control.reset()
+                link_to_control.reset()
                 noteInput.clear_value()
-                index_autocomplete.reset()
-                source_autocomplete.reset()
-                alias_autocomplete.reset()
+                index_control.reset()
+                source_control.reset()
+                alias_control.reset()
                 enumValues(DictionaryItem).forEach(e => {
                     find_by_enum_id("missing", e)._object.uncheck()
                 })
@@ -874,14 +914,14 @@ class DictionaryApp {
                 m.difficulty_medium = find_by_enum_id("difficulty", Difficulty.Medium)._object.is_checked()
                 m.difficulty_hard = find_by_enum_id("difficulty", Difficulty.Hard)._object.is_checked()
 
-                m.tag_id = tag_autocomplete.get_item_id()
-                m.flag_title = flag_autocomplete.get_item() === null ? "" : flag_autocomplete.get_item().title
-                m.link_from_term_id = link_from_autocomplete.get_item_id()
-                m.link_to_term_id = link_to_autocomplete.get_item_id()
+                m.tag_id = tag_control.get_item_id()
+                m.flag_title = flag_control.get_title()
+                m.link_from_term_id = link_from_control.get_item_id()
+                m.link_to_term_id = link_to_control.get_item_id()
                 m.note_contains = noteInput.get_value()
-                m.index_id = index_autocomplete.get_item_id()
-                m.source_id = source_autocomplete.get_item_id()
-                m.alias_alias = alias_autocomplete.get_item() === null ? "" : alias_autocomplete.get_item().title
+                m.index_id = index_control.get_item_id()
+                m.source_id = source_control.get_item_id()
+                m.alias_alias = alias_control.get_title()
                 m.missing_items = enumValues(DictionaryItem)
                     .filter(e => find_by_enum_id("missing", e)._object.is_checked())
                 m.has_items = enumValues(DictionaryItem)
@@ -1045,20 +1085,20 @@ class DictionaryApp {
                         if (!defined(read_tag_type)) {
                             showError("Reading tag type failed: " + read_tag.dictionary_tag_type_id)
                         } else {
-                            await tag_autocomplete.set_from_title(read_tag_type.title, query.tag_id)
+                            await tag_control.set_from_title(read_tag_type.title, query.tag_id)
                         }
                     }
                 }
 
                 if ((query.flag_title ?? "") !== "") {
-                    await flag_autocomplete.set_from_title(query.flag_title)
+                    await flag_control.set_from_title(query.flag_title)
                 }
                 if ((query.link_from_term_id ?? 0) !== 0) {
                     let read_term = await read_entity(Entities.dictionary_term, query.link_from_term_id)
                     if (!defined(read_term)) {
                         showError("Reading term failed: " + query.link_from_term_id)
                     } else {
-                        await link_from_autocomplete.set_from_title(read_term.title, query.link_from_term_id)
+                        await link_from_control.set_from_title(read_term.title, query.link_from_term_id)
                     }
                 }
                 if ((query.link_to_term_id ?? 0) !== 0) {
@@ -1066,7 +1106,7 @@ class DictionaryApp {
                     if (!defined(read_term)) {
                         showError("Reading term failed: " + query.link_to_term_id)
                     } else {
-                        await link_to_autocomplete.set_from_title(read_term.title, query.link_to_term_id)
+                        await link_to_control.set_from_title(read_term.title, query.link_to_term_id)
                     }
                 }
                 noteInput.set_value(query.note_contains ?? "")
@@ -1080,7 +1120,7 @@ class DictionaryApp {
                         if (!defined(read_index_type)) {
                             showError("Reading index type failed: " + read_index_type.dictionary_index_type_id)
                         } else {
-                            await index_autocomplete.set_from_title(read_index_type.title, query.index_id)
+                            await index_control.set_from_title(read_index_type.title, query.index_id)
                         }
                     }
                 }
@@ -1094,13 +1134,13 @@ class DictionaryApp {
                         if (!defined(read_source_type)) {
                             showError("Reading source type failed: " + read_source_type.dictionary_source_type_id)
                         } else {
-                            await source_autocomplete.set_from_title(read_source_type.title, query.source_id)
+                            await source_control.set_from_title(read_source_type.title, query.source_id)
                         }
                     }
                 }
 
                 if ((query.alias_alias ?? "") !== "") {
-                    await alias_autocomplete.set_from_title(query.alias_alias)
+                    await alias_control.set_from_title(query.alias_alias)
                 }
                 console.debug(JSON.stringify(query))
                 console.debug("query.missing=" + query.missing_items);

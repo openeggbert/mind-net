@@ -2,7 +2,7 @@ import {Styles} from "./d_styles.js";
 import {Display} from "./d_styles_enums.js";
 import {get_element} from "./dom.js";
 
-export const Event = Object.freeze({
+export const EventType = Object.freeze({
     // mouse events
     Click:        { id: 0,  label: "click" },
     DblClick:     { id: 1,  label: "dblclick" },
@@ -713,6 +713,20 @@ export class Option extends ValueElement {
         if(value) this.set_value(value)
         if(text) this.set_text(text)
         if(value && text === null) this.set_text(value)
+    }
+}
+
+export class Button extends DomElement {
+    constructor(text = "") {
+        super("button");
+        this.set_text(text)
+    }
+    set_title(text) {
+        this.element().title = text
+        return this
+    }
+    get_title() {
+        return this.element().title
     }
 }
 
