@@ -5,13 +5,11 @@ import {
 } from "../enums/d_enums.js";
 import {Autocomplete, defined} from "../../common.js";
 import {
-    ActionType,
     Button,
-    ButtonType,
     Checkbox,
     Div,
     EnumOption,
-    EventType, find_dom_element, find_enum,
+    find_dom_element, find_enum,
     Form,
     Input,
     Label, Select,
@@ -39,6 +37,9 @@ import {
 } from "../../api.js";
 import {BorderCollapse, Color, Cursor, Display, TextAlign, TextDecoration} from "../styles_enums/d_styles_enums.js";
 import {showDebug, USER_ID} from "../globals/d_globals.js";
+import {ActionType} from "../dom/attributes/ActionType.js";
+import {ButtonType} from "../dom/attributes/ButtonType.js";
+import {EventType} from "../dom/attributes/EventType.js";
 
 /*
  * ------------------------------------------------------------------

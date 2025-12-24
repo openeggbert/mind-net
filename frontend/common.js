@@ -1,6 +1,6 @@
 import {list_all_entities, read_entity} from "./api.js";
 import {get_element} from "./dom.js";
-import {Div, Input, Span} from "./d_dom.js";
+import {Div, Input, Span} from "./dictionary/dom/d_dom.js";
 
 function debounce(fn, delay) {
     let timer = null;

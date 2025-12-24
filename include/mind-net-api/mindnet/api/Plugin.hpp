@@ -55,9 +55,9 @@ namespace mindnet::api
         [[nodiscard]] const std::string& get_name() const;
         [[nodiscard]] const std::string& get_description() const;
         [[nodiscard]] const std::vector<std::string>& depends_on_plugins() const;
-        [[nodiscard]] std::vector<string> get_apps() const;
-        [[nodiscard]] std::vector<string> get_library_files() const;
-        void register_library_file(string library_file);
+        [[nodiscard]] const std::vector<string>& get_apps() const;
+        [[nodiscard]] const std::vector<string>& get_library_files() const;
+        void register_library_file(const string& library_file);
         void close_for_changes();
         [[nodiscard]] bool is_closed_for_changes() const;
         void register_model(

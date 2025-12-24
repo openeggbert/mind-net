@@ -61,19 +61,19 @@ namespace mindnet::api
         return plugins_which_this_plugin_depends_on;
     }
 
-    std::vector<string> Plugin::get_apps() const
+    const std::vector<string>& Plugin::get_apps() const
     {
         return apps;
     }
 
-    std::vector<string> Plugin::get_library_files() const
+    const std::vector<string>& Plugin::get_library_files() const
     {
         return library_files;
     }
 
     std::set<string> registered_library_files;
 
-    void Plugin::register_library_file(const string library_file)
+    void Plugin::register_library_file(const string& library_file)
     {
         if (is_closed_for_changes_)
         {

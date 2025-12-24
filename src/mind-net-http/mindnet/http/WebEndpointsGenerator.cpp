@@ -31,20 +31,101 @@
 
 namespace mindnet::http
 {
-    WebEndpointsGenerator::WebEndpointsGenerator(const std::string& directory_for_static_files_)
+    namespace fs = std::filesystem;
+
+    // ============================================================
+    // Allowed root files
+    // ============================================================
+    static const std::unordered_set<std::string> generic_allowed_files = {
+        "index.html",
+        "styles.css",
+        "common.css",
+        "common.js",
+        "scripts.js",
+        "conf.js",
+        "favicon.png",
+        "api.js",
+        "schemas.js",
+        "state.js",
+        "dom.js",
+        "crud.js",
+        "explore.js",
+        "navigation.js",
+        "actions.js",
+        "init.js",
+        "auth.js",
+        "auth-ui.js"
+    };
+
+    // ============================================================
+    // Secure resolver
+    // ============================================================
+    static std::optional<fs::path>
+    resolve_static_path(const fs::path& base, const fs::path& relative)
+    {
+        try
+        {
+            fs::path canonical_base = fs::canonical(base);
+            fs::path canonical_req  = fs::weakly_canonical(canonical_base / relative);
+
+            if (!canonical_req.native().starts_with(canonical_base.native()))
+                return std::nullopt;
+
+            if (!fs::exists(canonical_req) || fs::is_directory(canonical_req))
+                return std::nullopt;
+
+            return canonical_req;
+        }
+        catch (...)
+        {
+            return std::nullopt;
+        }
+    }
+
+    // ============================================================
+    // MIME types
+    // ============================================================
+    static std::string content_type_for(const fs::path& p)
+    {
+        static const std::unordered_map<std::string, std::string> mime_map = {
+            {".html", "text/html"},
+            {".css",  "text/css"},
+            {".js",   "application/javascript"},
+            {".png",  "image/png"},
+            {".svg",  "image/svg+xml"},
+            {".ico",  "image/x-icon"},
+            {".json", "application/json"}
+        };
+
+        auto it = mime_map.find(p.extension().string());
+        return it != mime_map.end()
+            ? it->second
+            : "application/octet-stream";
+    }
+    // ============================================================
+    // ctor
+    // ============================================================
+    WebEndpointsGenerator::WebEndpointsGenerator(
+        const std::string& directory_for_static_files_)
         : directory_for_static_files(directory_for_static_files_)
     {
     }
 
+    // ============================================================
+    // create endpoints
+    // ============================================================
     void WebEndpointsGenerator::create_web_endpoints(
         const api::ServicePtr& service_ptr_,
-        crow::SimpleApp& crow_app
-    )
+        crow::SimpleApp& crow_app)
     {
-        CROW_ROUTE(crow_app, "/web/<string>")
-        ([this, service_ptr_](const crow::request& req, crow::response& res, const std::string& file_name)
+        // ========================================================
+        // /web/<path>
+        // ========================================================
+        CROW_ROUTE(crow_app, "/web/<path>")
+        ([this, service_ptr_](const crow::request&, crow::response& res, const std::string& requested)
         {
-            if (essential::g_configuration.access_mode == essential::AccessMode::MaintenanceMode)
+            if (essential::g_configuration.access_mode
+                == essential::AccessMode::MaintenanceMode)
             {
                 res.code = 503;
                 res.write("Maintenance Mode. Service Unavailable.");
@@ -52,57 +133,119 @@ namespace mindnet::http
                 return;
             }
 
-            if (file_name.find("..") != std::string::npos)
+            fs::path rel = requested;
+            fs::path root = directory_for_static_files;
+            std::optional<fs::path> resolved;
+
+            // ----------------------------------------------------
+            // 1) ROOT: only whitelisted files + app_*.{html,css,js}
+            // ----------------------------------------------------
+            if (rel.begin() != rel.end() && ++rel.begin() == rel.end())
             {
-                res.code = 403;
-                res.write("Path traversal attempt blocked");
-                res.end();
-                return;
-            }
+                const std::string filename = rel.filename().string();
 
-            static const std::unordered_set<std::string> common_allowed_files = {
-                "index.html",
-                "styles.css",
-                "common.css",
-                "common.js",
-                "scripts.js",
-                "conf.js",
-                "favicon.png",
-                "api.js",
-                "schemas.js",
-                "state.js",
-                "dom.js",
-                "crud.js",
-                "explore.js",
-                "navigation.js",
-                "actions.js",
-                "init.js",
-                "auth.js",
-                "auth-ui.js"
-            };
-            static std::unordered_set<std::string> plugin_allowed_files;
+                bool allowed = generic_allowed_files.contains(filename);
 
-            auto& plugin_registry = service_ptr_->get_plugin_registry();
-            for (const auto& plugin_name : plugin_registry->get_plugin_names())
-            {
-                const auto& plugin = plugin_registry->get_plugin(plugin_name);
-                for (auto& app_name : plugin->get_apps())
+                if (!allowed)
                 {
-                    string path_prefix = "app_" + app_name;
-                    plugin_allowed_files.insert(path_prefix + ".html");
-                    plugin_allowed_files.insert(path_prefix + ".css");
-                    plugin_allowed_files.insert(path_prefix + ".js");
+                    auto& registry = service_ptr_->get_plugin_registry();
+                    for (const auto& plugin_name : registry->get_plugin_names())
+                    {
+                        const auto& plugin = registry->get_plugin(plugin_name);
+                        for (const auto& app : plugin->get_apps())
+                        {
+                            if (filename == "app_" + app + ".html" ||
+                                filename == "app_" + app + ".css"  ||
+                                filename == "app_" + app + ".js")
+                            {
+                                allowed = true;
+                                break;
+                            }
+                        }
+                        if (allowed) break;
+                    }
                 }
-                for (auto& library_file : plugin->get_library_files())
-                {
-                    plugin_allowed_files.insert(library_file);
-                }
-            }
 
-            if (common_allowed_files.find(file_name) == common_allowed_files.end()
-                &&
-                plugin_allowed_files.find(file_name) == plugin_allowed_files.end()
+                if (!allowed)
+                {
+                    res.code = 403;
+                    res.write("Access denied");
+                    res.end();
+                    return;
+                }
+
+                resolved = resolve_static_path(root, rel);
+            }
+            // ----------------------------------------------------
+            // 2) library/** → only .js .css .html
+            // ----------------------------------------------------
+            else if (
+                rel.has_parent_path() &&
+                rel.parent_path() == fs::path("library")
             )
+            {
+                fs::path rel_path = rel;
+                std::string filename = rel_path.filename().string();
+
+                auto& registry = service_ptr_->get_plugin_registry();
+                bool plugin_file_found = false;
+                for (const auto& plugin_name : registry->get_plugin_names())
+                {
+                    auto plugin = registry->get_plugin(plugin_name);
+                    const auto& library_files = plugin->get_library_files();
+                    for (const auto& lf: library_files)
+                    {
+                        if (filename == lf)
+                        {
+                            plugin_file_found = true;
+                            break;
+                        }
+                    }
+                    if (plugin_file_found) break;
+                }
+                if (!plugin_file_found)
+                {
+                    res.code = 403;
+                    res.write("Library file not allowed");
+                    res.end();
+                    return;
+                }
+                // auto ext = rel.extension().string();
+                // if (ext != ".js" && ext != ".css" && ext != ".html")
+                // {
+                //     res.code = 403;
+                //     res.write("Invalid library file type");
+                //     res.end();
+                //     return;
+                // }
+
+                resolved = resolve_static_path(
+                    root / "library",
+                    rel.lexically_relative("library"));
+            }
+            // ----------------------------------------------------
+            // 3) plugin/** → anything inside plugin dir
+            // ----------------------------------------------------
+            else
+            {
+                auto it = rel.begin();
+                std::string plugin_name = it->string();
+
+                auto& registry = service_ptr_->get_plugin_registry();
+                if (!registry->has_plugin_name(plugin_name))
+                {
+                    res.code = 403;
+                    res.write("Unknown plugin");
+                    res.end();
+                    return;
+                }
+
+                resolved = resolve_static_path(
+                    root / plugin_name,
+                    rel.lexically_relative(plugin_name));
+            }
+
+            if (!resolved)
             {
                 res.code = 403;
                 res.write("Access denied");
@@ -110,65 +253,28 @@ namespace mindnet::http
                 return;
             }
 
-            // for (auto& e : common_allowed_files)std::cout << "Allowed: " << e << std::endl;
-            // for (auto& e : plugin_allowed_files)std::cout << "Allowed: " << e << std::endl;
-
-            namespace fs = std::filesystem;
-            {
-                fs::path base_path = fs::canonical(directory_for_static_files);
-                fs::path requested_path = fs::weakly_canonical(base_path / file_name);
-
-                if (requested_path.string().find(base_path.string()) != 0)
-                {
-                    res.code = 403;
-                    res.write("Access denied");
-                    res.end();
-                    return;
-                }
-            }
-            std::string full_path = directory_for_static_files + "/" + file_name;
-            fs::path file_path(full_path);
-
-            if (!fs::exists(file_path))
-            {
-                res.code = 404;
-                res.write("File not found: " + file_path.string());
-                res.end();
-                return;
-            }
-
+            // ----------------------------------------------------
+            // cache
+            // ----------------------------------------------------
+            fs::path file_path = *resolved;
+            std::string cache_key = file_path.string();
             auto last_mod = fs::last_write_time(file_path);
-            auto it = file_cache.find(file_name);
 
-            if (it != file_cache.end() && it->second.last_modified == last_mod)
+            auto it_cache = file_cache.find(cache_key);
+            if (it_cache != file_cache.end()
+                && it_cache->second.last_modified == last_mod)
             {
-                // Serve from cache
-                if (file_name.ends_with(".css"))
-                {
-                    res.set_header("Content-Type", "text/css");
-                }
-                else if (file_name.ends_with(".js"))
-                {
-                    res.set_header("Content-Type", "application/javascript");
-                }
-                else if (file_name.ends_with(".png"))
-                {
-                    res.set_header("Content-Type", "image/png");
-                }
-
-                else
-                {
-                    res.set_header("Content-Type", "text/html");
-                }
-
-                res.write(it->second.content);
+                res.set_header("Content-Type", content_type_for(file_path));
+                res.write(it_cache->second.content);
                 res.end();
                 return;
             }
 
-            // Read from disk and update cache
-            std::ifstream file(full_path, std::ios::binary);
-            if (!file.is_open())
+            // ----------------------------------------------------
+            // read file
+            // ----------------------------------------------------
+            std::ifstream file(file_path, std::ios::binary);
+            if (!file)
             {
                 res.code = 500;
                 res.write("Failed to open file");
@@ -176,26 +282,15 @@ namespace mindnet::http
                 return;
             }
 
-            std::ostringstream content;
-            content << file.rdbuf();
-            std::string file_content = content.str();
+            std::ostringstream buffer;
+            buffer << file.rdbuf();
+            std::string content = buffer.str();
 
-            file_cache[file_name] = CachedFile{file_content, last_mod};
+            file_cache[cache_key] = CachedFile{content, last_mod};
 
-            if (file_name.ends_with(".css"))
-            {
-                res.set_header("Content-Type", "text/css");
-            }
-            else if (file_name.ends_with(".js"))
-            {
-                res.set_header("Content-Type", "application/javascript");
-            }
-            else
-            {
-                res.set_header("Content-Type", "text/html");
-            }
-
-            res.write(file_content);
+            static const std::string CONTENT_TYPE = "Content-Type";
+            res.set_header(CONTENT_TYPE, content_type_for(file_path));
+            res.write(content);
             res.end();
         });
 

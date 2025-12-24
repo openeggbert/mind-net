@@ -18,14 +18,13 @@
 // - d_search.js              // advanced search logic
 // - d_markdown.js            // rendering layer
 
-import {DictionaryApp} from "./d_core.js";
+import {DictionaryApp} from "./dictionary/core/DictionaryApp.js";
 
 document.addEventListener('DOMContentLoaded', async () => {
     await init_dom();
 });
 
-let dictionary_app = null
-
 async function init_dom() {
+    let dictionary_app = null
     dictionary_app = new DictionaryApp()
 }
