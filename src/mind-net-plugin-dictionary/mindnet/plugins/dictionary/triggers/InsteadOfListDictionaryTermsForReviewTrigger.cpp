@@ -82,9 +82,9 @@ namespace mindnet::plugins::dictionary::triggers
             is_never = true;
         }
         bool include_new_due_and_not_due = is_due && is_never && is_not_due;
-        bool include_empty_definition = f.contains("include_empty_definition")
-                                            ? stoll(f.at("include_empty_definition"))
-                                            : false;
+        bool has_definition = f.contains("has_definition")
+                                            ? stoll(f.at("has_definition"))
+                                            : true;
 
         req["dictionary_map_id"] = dictionary_map_id;
         if (f.contains("user_id") && stoll(f.at("user_id")) != user_id)
@@ -109,7 +109,7 @@ namespace mindnet::plugins::dictionary::triggers
         req["is_due"] = is_due;
         req["is_never"] = is_never;
         req["is_not_due"] = is_not_due;
-        req["include_empty_definition"] = include_empty_definition;
+        req["has_definition"] = has_definition;
 
         // int page_size = query_params.page_size;
         // int page_number = query_params.page_number;
@@ -165,7 +165,7 @@ namespace mindnet::plugins::dictionary::triggers
                     term_for_review.is_due = is_due;
                     term_for_review.is_due = is_never;
                     term_for_review.is_not_due = is_not_due;
-                    term_for_review.include_empty_definition = include_empty_definition;
+                    term_for_review.has_definition = has_definition;
 
                     auto values = term_for_review.to_values();
                     int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
@@ -206,7 +206,7 @@ namespace mindnet::plugins::dictionary::triggers
                 query_json_parsed["repetition_not_due"] = is_not_due;
                 query_json_parsed["repetition_never"] = is_never;
             }
-            if (!include_empty_definition)
+            if (has_definition)
             {
                 std::string has_items = query_json_parsed["has_items"];
                 query_json_parsed["has_items"] = has_items + ",Definition";
@@ -262,7 +262,7 @@ namespace mindnet::plugins::dictionary::triggers
                         models::DictionaryTerm term;
                         term.from_values(read_term.first);
 
-                        if (!include_empty_definition && term.definition.empty()) continue;
+                        if (has_definition && term.definition.empty()) continue;
 
                         models::DictionaryTermForReview term_for_review;
                         term_for_review.set_id(term_id);
@@ -278,7 +278,7 @@ namespace mindnet::plugins::dictionary::triggers
                         term_for_review.is_due = is_due;
                         term_for_review.is_due = is_never;
                         term_for_review.is_not_due = is_not_due;
-                        term_for_review.include_empty_definition = include_empty_definition;
+                        term_for_review.has_definition = has_definition;
 
                         auto values = term_for_review.to_values();
                         values[1] = now;

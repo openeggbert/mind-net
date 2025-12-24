@@ -174,7 +174,7 @@ LIMIT 100;
         bool is_due = request.value("is_due", false);
         bool is_not_due = request.value("is_not_due", false);
         bool is_never = request.value("is_never", false);
-        bool include_empty_definition = request.value("include_empty_definition", false);
+        bool has_definition = request.value("has_definition", true);
 
         // default: due + new
         if (!(is_due || is_not_due || is_never))
@@ -200,7 +200,7 @@ LIMIT 100;
                     term_ids,
                     {
                         dictionary_map_id,
-                        include_empty_definition ? 1LL : 0LL
+                        has_definition ? 0LL : 1LL
                     });
             }
             else
@@ -215,7 +215,7 @@ LIMIT 100;
                             dictionary_map_id,
                             user_id,
                             now_ms,
-                            include_empty_definition ? 1LL : 0LL
+                            has_definition ? 0LL : 1LL
                         });
                 }
 
@@ -227,7 +227,7 @@ LIMIT 100;
                         term_ids,
                         {
                             dictionary_map_id,
-                            include_empty_definition ? 1LL : 0LL,
+                            has_definition ? 0LL : 1LL,
                             user_id
                         });
                 }
@@ -242,7 +242,7 @@ LIMIT 100;
                             dictionary_map_id,
                             user_id,
                             now_ms,
-                            include_empty_definition ? 1LL : 0LL
+                            has_definition ? 0LL : 1LL
                         });
                 }
             }

@@ -14,10 +14,14 @@ function debounce(fn, delay) {
 
 export class Autocomplete {
     #callbacks = [];
+    #reset_callbacks = [];
     #items_map = new Map()
 
     addCallback(fn) {
         this.#callbacks.push(fn);
+    }
+    addResetCallback(fn) {
+        this.#reset_callbacks.push(fn);
     }
 
     clear_after_click = true
@@ -161,6 +165,7 @@ export class Autocomplete {
         this.item = null
         this.box.innerHTML = "";
         this.box.style.display = "none"
+        this.#reset_callbacks.forEach(fn => fn());
     }
 
     destroy() {

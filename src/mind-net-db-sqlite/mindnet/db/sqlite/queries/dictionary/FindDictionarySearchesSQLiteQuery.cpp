@@ -46,6 +46,7 @@ plugins::core::models::OptionalError& optional_error)
         }
 
         identification dictionary_map_id = request["dictionary_map_id"];
+        bool any_map = dictionary_map_id == 0;
 
         if (!request.contains("title_part"))
         {
@@ -75,7 +76,7 @@ plugins::core::models::OptionalError& optional_error)
         static std::string sql_filtered_titles = R"(
 select id, name
 from dictionary_search
-where dictionary_map_id = ?
+where (?=1 or dictionary_map_id = ?)
   and name like ?
   and (
         is_public = 1
@@ -89,7 +90,7 @@ limit ? offset ?
         static std::string sql_all_title = R"(
 select id, name
 from dictionary_search
-where dictionary_map_id = ?
+where (?=1 or dictionary_map_id = ?)
   and (
         is_public = 1
         or (is_public = 0 and user_id = ?)
@@ -114,6 +115,7 @@ limit ? offset ?
             SQLite::Statement query(db, sql);
             int index = 0;
             query.bind(++index, dictionary_map_id);
+            query.bind(++index, any_map ? 1 : 0);
             if (!all_titles) query.bind(++index, pattern);
             query.bind(++index, user_id);
 

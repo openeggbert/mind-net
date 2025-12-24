@@ -11,4 +11,7 @@ export class Option extends ValueElement {
         if (text) this.set_text(text)
         if ((value || value === 0) && text === null) this.set_text(value)
     }
+    set_selected(value = true) {
+        this.element().selected = value
+    }
 }

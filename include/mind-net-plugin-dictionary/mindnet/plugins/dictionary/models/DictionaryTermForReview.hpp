@@ -62,7 +62,7 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::IS_DUE, BOOL | READONLY).set_default_value(true),
             coldef(COLS::IS_NOT_DUE, BOOL | READONLY).set_default_value(false),
             coldef(COLS::IS_NEVER, BOOL | READONLY).set_default_value(true),
-            coldef(COLS::INCLUDE_EMPTY_DEFINITION, BOOL | READONLY).set_default_value(false),
+            coldef(COLS::HAS_DEFINITION, BOOL | READONLY).set_default_value(true),
         });
 
     struct Model : mindnet::model::BaseModel
@@ -80,7 +80,7 @@ namespace mindnet::plugins::dictionary::models
         bool is_due{false};
         bool is_never{false};
         bool is_not_due{false};
-        bool include_empty_definition{false};
+        bool has_definition{false};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
@@ -94,7 +94,7 @@ namespace mindnet::plugins::dictionary::models
             &Model::is_due,
             &Model::is_never,
             &Model::is_not_due,
-            &Model::include_empty_definition
+            &Model::has_definition
         );
 
         create_model_h_methods(Model, MODEL)
@@ -113,7 +113,7 @@ namespace mindnet::plugins::dictionary::models
                 is_due == other.is_due &&
                 is_never == other.is_never &&
                 is_not_due == other.is_not_due &&
-                include_empty_definition == other.include_empty_definition &&
+                has_definition == other.has_definition &&
                 created_at == other.created_at &&
                 updated_at == other.updated_at;
         }

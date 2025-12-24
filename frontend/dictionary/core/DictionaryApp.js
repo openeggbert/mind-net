@@ -6,6 +6,7 @@ import TermContainer from "./TermContainer.js";
 import {SearchWindow} from "../search/SearchWindow.js";
 import {Entities} from "../entities/Entities.js";
 import {showWindowFromUrl} from "../window/VirtualWindow.js";
+import {RepetitionWindow} from "../repetition/RepetitionWindow.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
@@ -14,8 +15,12 @@ export class DictionaryApp {
 
     constructor() {
         this.select_map = new SelectMap(
-            ()=> {this.refresh_autocomplete_term_title()},
-            () => {this.#term_container.hide()}
+            () => {
+                this.refresh_autocomplete_term_title()
+            },
+            () => {
+                this.#term_container.hide()
+            }
         )
         this.select_map.init()
         let get_selected_map_id_callback = () => {
@@ -92,7 +97,22 @@ export class DictionaryApp {
             let url = "app_dictionary.html"
             showWindowFromUrl("Dictionary - App", url)
         }
+        get_element("button_new_repetition").onclick = async () => {
+            let dictionary_map_id = this.get_selected_map_id()
+            let repetition_window = new RepetitionWindow(
+                () => {
+                    return this.get_selected_map_id()
+                },
+                async (term_id) => {
+                    await this.render(term_id)
+                    this.show_term_container()
+                }
+            )
+            repetition_window.init()
+            repetition_window.show()
+        }
     }
+
     show_term_container() {
         this.#term_container.show()
     }
