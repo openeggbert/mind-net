@@ -1,7 +1,7 @@
 import {get_element, showInfo} from "../../dom.js";
-import {Entities} from "../entities/d_entities.js";
 import {list_all_entities, post_entity, QueryParams} from "../../api.js";
-import {USER_ID} from "../globals/d_globals.js";
+import {Entities} from "../entities/Entities";
+import {USER_ID} from "../globals/Globals";
 
 export class SelectMap {
     #element

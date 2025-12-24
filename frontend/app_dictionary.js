@@ -6,10 +6,8 @@
 // - State & Config
 // - d_globals.js
 // - d_enums.js
-// - d_styles_enums.js
 //
 // - UI Infrastructure
-// - d_dom.js
 // - d_window.js
 // - Styles.js
 //

@@ -1,4 +1,3 @@
-import {Entities} from "../entities/d_entities.js";
 import {formatDateTime, get_element, showError, showInfo, showWarn} from "../../dom.js";
 import {
     delete_entity,
@@ -10,10 +9,7 @@ import {
     read_entity,
     setTitleCache
 } from "../../api.js";
-import {USER_ID} from "../globals/d_globals.js";
 import {defined, null_or_undefined} from "../../common.js";
-import {showWindowFromUrl, VirtualWindow} from "../window/d_window.js";
-import {attachMarkdownEditor} from "../markdown/d_markdown.js";
 import {Tags} from "./sections/Tags.js";
 import {Flags} from "./sections/Flags.js";
 import {Links} from "./sections/Links.js";
@@ -21,7 +17,11 @@ import {Notes} from "./sections/Notes.js";
 import {Indexes} from "./sections/Indexes.js";
 import {Sources} from "./sections/Sources.js";
 import {Aliases} from "./sections/Aliases.js";
-import {Div} from "../dom/d_dom.js";
+import {Div} from "../dom/elements/Div.js"
+import {Entities} from "../entities/Entities";
+import {attachMarkdownEditor} from "../markdown/Markdown";
+import {USER_ID} from "../globals/Globals";
+import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow";
 
 class TermContainer {
     #element

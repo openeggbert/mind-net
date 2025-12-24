@@ -158,6 +158,15 @@ Tables usually include:
 * When adding enums, prefer PascalCase (e.g. `HttpMethod::Post`).
 * Use `resolveForeignKeyValue` + cache for foreign key display names.
 * Run `GET /info` and `GET /health` to debug builds and runtime status.
+* Add missing ".js"
+```aiignore
+find . -type f -name "*.js" -exec perl -0777 -i -pe '
+s{
+  (from\s+"(?:\.\/|\.\.\/)(?:[^"]*/)*[^./"]+)
+  "
+}{$1.js"}gx
+' {} +
+```
 
 ---
 

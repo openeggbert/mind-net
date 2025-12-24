@@ -12,14 +12,9 @@ import {
     showInfo,
 } from "../../../dom.js";
 import {Autocomplete} from "../../../common.js";
-import {Entities} from "../../entities/d_entities.js";
-
-import {
-    showWindowFromUrl
-} from "../../window/d_window.js";
-
-import {_CrudSection} from "../CrudSection.js";
-
+import {_CrudSection} from "../_CrudSection";
+import {Entities} from "../../entities/Entities";
+import {showWindowFromUrl} from "../../window/VirtualWindow";
 
 export class Tags extends _CrudSection {
     constructor(get_selected_map_id_callback) {

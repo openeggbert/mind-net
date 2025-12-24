@@ -1,11 +1,11 @@
 import {post_entity} from "../../api.js";
-import {Entities} from "../entities/d_entities.js";
 import {get_element, showError, showInfo} from "../../dom.js";
 import {Autocomplete} from "../../common.js";
-import {SearchWindow} from "../search/d_search.js";
-import {showWindowFromUrl} from "../window/d_window.js";
 import {SelectMap} from "./SelectMap.js";
 import TermContainer from "./TermContainer.js";
+import {SearchWindow} from "../search/Search";
+import {Entities} from "../entities/Entities";
+import {showWindowFromUrl} from "../window/VirtualWindow";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")

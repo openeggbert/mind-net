@@ -1,20 +1,5 @@
-import {Entities} from "../entities/d_entities.js";
-import {
-    TermStatus, Importance, Difficulty, DictionaryItem, TimeRange, RepetitionMode, Sort, Order,
-    enumValue, enumValues, gen_enum_id, find_by_enum_id, humanizeEnumKey
-} from "../enums/d_enums.js";
 import {Autocomplete, defined} from "../../common.js";
-import {
-    Button,
-    Checkbox,
-    Div,
-    EnumOption,
-    find_dom_element, find_enum,
-    Form,
-    Input,
-    Label, Select,
-    Span, Table
-} from "../dom/d_dom.js";
+
 import {_10PX, _20PX, _40PX} from "../styles/Styles.js";
 import {
     chooseOption,
@@ -25,7 +10,6 @@ import {
     showError,
     showInfo, showWarn
 } from "../../dom.js";
-import {VirtualWindow} from "../window/d_window.js";
 import {
     delete_entity,
     list_all_entities,
@@ -35,11 +19,38 @@ import {
     QueryParams,
     read_entity
 } from "../../api.js";
-import {BorderCollapse, Color, Cursor, Display, TextAlign, TextDecoration} from "../styles_enums/d_styles_enums.js";
-import {showDebug, USER_ID} from "../globals/d_globals.js";
+import {showDebug, USER_ID} from "../globals/Globals.js";
 import {ActionType} from "../dom/attributes/ActionType.js";
 import {ButtonType} from "../dom/attributes/ButtonType.js";
 import {EventType} from "../dom/attributes/EventType.js";
+import {Sort} from "../enums/Sort";
+import {Order} from "../enums/Order";
+import {TimeRange} from "../enums/TimeRange";
+import {enumValue, enumValues, find_by_enum_id, gen_enum_id, humanizeEnumKey} from "../enums/EnumFunctions";
+import {TermStatus} from "../enums/TermStatus";
+import {DictionaryItem} from "../enums/DictionaryItem";
+import {Button} from "../dom/elements/Button";
+import {Form} from "../dom/elements/Form";
+import {Div} from "../dom/elements/Div";
+import {Label} from "../dom/elements/Label";
+import {Span} from "../dom/elements/Span";
+import {Input} from "../dom/elements/Input";
+import {VirtualWindow} from "../window/VirtualWindow";
+import {EnumOption} from "../dom/elements/EnumOption";
+import {Select} from "../dom/elements/Select";
+import {Checkbox} from "../dom/elements/Checkbox";
+import {RepetitionMode} from "../enums/RepetitionMode";
+import {TextAlign} from "../styles/properties/TextAlign";
+import {find_dom_element, find_enum} from "../dom/DomElement";
+import {Display} from "../styles/properties/Display";
+import {Entities} from "../entities/Entities";
+import {Importance} from "../enums/Importance";
+import {Difficulty} from "../enums/Difficulty";
+import {Table} from "../dom/elements/Table";
+import {BorderCollapse} from "../styles/properties/BorderCollapse";
+import {Color} from "../styles/properties/Color";
+import {TextDecoration} from "../styles/properties/TextDecoration";
+import {Cursor} from "../styles/properties/Cursor";
 
 /*
  * ------------------------------------------------------------------
@@ -1120,9 +1131,9 @@ export class SearchWindow extends VirtualWindow {
                     showInfo("New search was successfully created.")
                     search_json = new_search_created
                     find_dom_element("span_search_id_value").set_text(new_search_created.id)
-                    unloadBtn.disabled = ""
-                    load_input.disabled = ""
-                    deleteBtn.disabled = ""
+                    unloadBtn.disabled = false
+                    load_input.disabled = false
+                    deleteBtn.disabled = false
 
                 }
             }

@@ -1,5 +1,3 @@
-import {Cursor} from "../styles_enums/d_styles_enums.js";
-
 export const _5PX = "5px"
 export const _10PX = "10px"
 export const _20PX = "20px"

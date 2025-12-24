@@ -2,8 +2,7 @@
 // Window
 // ========================================
 
-import {Div, Span} from "../dom/d_dom.js";
-import {showError, showInfo} from "../../dom.js";
+import {showError} from "../../dom.js";
 
 let activeWindow = null;
 let topZ = 1000;

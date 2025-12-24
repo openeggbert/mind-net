@@ -1,5 +1,4 @@
 import {defined} from "../../common.js";
-
 export class CrudConfiguration {
     //string
     model

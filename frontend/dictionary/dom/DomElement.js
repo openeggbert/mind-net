@@ -1,8 +1,8 @@
 import {Styles} from "../styles/Styles.js";
-import {Display} from "../styles_enums/d_styles_enums.js";
 import {get_element} from "../../dom.js";
-import {gen_enum_id} from "../enums/d_enums.js";
 import {ActionType} from "./attributes/ActionType.js";
+import {Display} from "../styles/properties/Display";
+import {gen_enum_id} from "../enums/EnumFunctions";
 
 /**
  * DomElement
@@ -299,7 +299,6 @@ export class DomElement {
         return this.set_html_unsafe("")
     }
 
-
     /**
      * Apply multiple CSS styles at once.
      *
@@ -313,7 +312,6 @@ export class DomElement {
         //     width: "100px",
         //     margin: "10px"
         // });
-
     }
 
     /**
@@ -593,250 +591,4 @@ export function find_dom_element(id) {
 
 export function find_enum(text, instance) {
     return find_dom_element(gen_enum_id(text, instance))
-}
-
-export class Form extends DomElement {
-    constructor() {
-        super("form")
-
-        this.css({
-            display: Display.Flex.label,
-            flexDirection: "column",
-            gap: "12px",
-            padding: "10px"
-        })
-    }
-
-}
-
-export class Label extends DomElement {
-    constructor(innerText = "", width = "200px") {
-        super("div")
-
-        let l = DomElement.create_element("label")
-        l.style.cssText = "margin-right:10px; display: inline;white-space: nowrap;"
-        l.innerText = innerText
-        if (l.innerText.size > 0) {
-            let last_character = l.innerText.at(-1)
-            if (last_character !== ":") l.innerText = innerText + ": "
-        }
-
-        this.appendChild(l)
-        this.css({
-            width: width,
-            display: "inline-block",
-            whiteSpace: "nowrap",
-        })
-
-    }
-}
-
-export const InputType = Object.freeze({
-    Text: {id: 0, label: "text"},
-    Checkbox: {id: 1, label: "checkbox"},
-});
-
-export class ValueElement extends DomElement {
-    set_value(value) {
-        this.element().value = value
-        return this
-    }
-
-    clear_value() {
-        return this.set_value("")
-    }
-
-    get_value() {
-        return this.element().value
-    }
-
-    get_value_as_number() {
-        return Number(this.get_value())
-    }
-}
-
-export class Input extends ValueElement {
-    constructor(input_type = InputType.Text) {
-        super("input")
-        this.element().type = input_type.label;
-        if (input_type === InputType.Checkbox) {
-            this.css({
-                transform: "scale(2)",
-                marginLeft: "10px",
-                marginRight: "10px",
-                textAlign: "left",
-            })
-        } else {
-            this.css({width: "250px"})
-        }
-        this.add_action_handler(ActionType.Reset, (self, ...args) => {
-            self.clear_value();
-            return true;
-        });
-    }
-
-    set_placeholder(text) {
-        this.element().placeholder = text
-        return this
-    }
-
-    get_placeholder() {
-        return this.element().placeholder
-    }
-
-}
-
-export class Checkbox extends Input {
-    constructor() {
-        super(InputType.Checkbox);
-        this.add_action_handler(ActionType.Reset, (self, ...args) => {
-            self.uncheck();
-            return true;
-        });
-    }
-
-    is_checked() {
-        return this.element().checked
-    }
-
-    set_checked(value) {
-        this.element().checked = value
-        return this
-    }
-
-    check() {
-        this.set_checked(true)
-        return this
-    }
-
-    uncheck() {
-        this.set_checked(false)
-        return this
-    }
-}
-
-export class Select extends DomElement {
-    constructor() {
-        super("select");
-        this.styles().width("250px")
-        this.add_action_handler(ActionType.Reset, (self, ...args) => {
-            self.set_selected_index_to_0();
-            return true;
-        });
-    }
-
-    multiple() {
-        this.element().multiple = true
-        return this
-    }
-
-    add_option(option) {
-        this.appendChild(option)
-        return this
-    }
-
-    add_options(...options) {
-        options.forEach(o => this.add_option(o));
-        return this;
-    }
-
-    set_selected_index(index) {
-        this.element().selectedIndex = index
-        return this
-    }
-
-    set_selected_index_to_0() {
-        return this.set_selected_index(0)
-    }
-
-    set_no_selected_index() {
-        return this.set_selected_index(-1)
-    }
-
-    set_selected_values(values) {
-        for (const option of this.options()) {
-            option.selected = values.includes(Number(option.value));
-        }
-    }
-
-    set_selected_value(value) {
-        for (const option of this.options()) {
-            if (value !== (Number(option.value))) continue
-            option.selected = true
-        }
-    }
-
-    options() {
-        return this.element().options
-    }
-
-    selectedOptions() {
-        return this.element().selectedOptions
-    }
-}
-
-export class Option extends ValueElement {
-    constructor(value = null, text = null) {
-        super("option");
-        if (value) this.set_value(value)
-        if (text) this.set_text(text)
-        if (value && text === null) this.set_text(value)
-    }
-}
-
-export class Button extends DomElement {
-    constructor(text = "") {
-        super("button");
-        this.set_text(text)
-    }
-
-    set_title(text) {
-        this.element().title = text
-        return this
-    }
-
-    get_title() {
-        return this.element().title
-    }
-
-    set_type(type) {
-        console.log(type.label)
-        this.element().type = type.label
-        return this
-    }
-    click() {
-        this.element().click()
-        return this
-    }
-}
-
-export class EnumOption extends Option {
-    constructor(enum_instance) {
-        super(enum_instance.id, enum_instance.label);
-    }
-}
-
-class DivSpan extends DomElement {
-    constructor(tag, ...children) {
-        super(tag);
-        this.append_many(...children);
-    }
-}
-
-export class Div extends DivSpan {
-    constructor(...children) {
-        super("div", ...children)
-    }
-}
-
-export class Span extends DivSpan {
-    constructor(...children) {
-        super("span", ...children)
-    }
-}
-
-export class Table extends DomElement {
-    constructor() {
-        super("table");
-    }
 }

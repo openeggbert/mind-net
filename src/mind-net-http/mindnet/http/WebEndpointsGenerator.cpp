@@ -181,7 +181,7 @@ namespace mindnet::http
             // ----------------------------------------------------
             else if (
                 rel.has_parent_path() &&
-                rel.parent_path() == fs::path("library")
+                rel.parent_path() == fs::path("libraries")
             )
             {
                 fs::path rel_path = rel;
@@ -220,8 +220,8 @@ namespace mindnet::http
                 // }
 
                 resolved = resolve_static_path(
-                    root / "library",
-                    rel.lexically_relative("library"));
+                    root / "libraries",
+                    rel.lexically_relative("libraries"));
             }
             // ----------------------------------------------------
             // 3) plugin/** → anything inside plugin dir
