@@ -14,9 +14,15 @@ import {USER_ID} from "../globals/d_globals.js";
 import {defined, null_or_undefined} from "../../common.js";
 import {showWindowFromUrl, VirtualWindow} from "../window/d_window.js";
 import {attachMarkdownEditor} from "../markdown/d_markdown.js";
-import {Aliases, Flags, Indexes, Links, Notes, Sources, Tags} from "./sections.js";
+import {Tags} from "./sections/Tags.js";
+import {Flags} from "./sections/Flags.js";
+import {Links} from "./sections/Links.js";
+import {Notes} from "./sections/Notes.js";
+import {Indexes} from "./sections/Indexes.js";
+import {Sources} from "./sections/Sources.js";
+import {Aliases} from "./sections/Aliases.js";
 
-export class TermContainer {
+class TermContainer {
     #element
     #dictionary_term_json
     dictionary_term_id = 0
@@ -521,3 +527,5 @@ export class TermContainer {
         }
     }
 }
+
+export default TermContainer

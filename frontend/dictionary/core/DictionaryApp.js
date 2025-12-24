@@ -5,7 +5,7 @@ import {Autocomplete} from "../../common.js";
 import {SearchWindow} from "../search/d_search.js";
 import {showWindowFromUrl} from "../window/d_window.js";
 import {SelectMap} from "./SelectMap.js";
-import {TermContainer} from "./TermContainer.js";
+import TermContainer from "./TermContainer.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
