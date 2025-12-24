@@ -930,7 +930,7 @@ export class SearchWindow extends VirtualWindow {
             }
             resetBtn.click()
             let query = JSON.parse(read_search.query_json)
-            map_select.set_selected_values(read_search.map_id)
+            map_select.set_selected_values(read_search.map_id ?? [get_selected_map_id()])
             titleContainsInput.set_value(query.title_contains ?? "")
             titleStartsWithInput.set_value(query.title_starts_with ?? "")
             definitionInput.set_value(query.definition_contains ?? "")
