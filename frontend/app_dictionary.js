@@ -11,7 +11,7 @@
 // - UI Infrastructure
 // - d_dom.js
 // - d_window.js
-// - d_styles.js
+// - Styles.js
 //
 // - Domain Features
 // - d_entities.js            // term, note, tag, link…

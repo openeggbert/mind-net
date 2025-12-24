@@ -21,6 +21,7 @@ import {Notes} from "./sections/Notes.js";
 import {Indexes} from "./sections/Indexes.js";
 import {Sources} from "./sections/Sources.js";
 import {Aliases} from "./sections/Aliases.js";
+import {Div} from "../dom/d_dom.js";
 
 class TermContainer {
     #element
@@ -437,7 +438,7 @@ class TermContainer {
             let th_timestamp = document.createElement("th");
             th_timestamp.innerText = "Timestamp"
             tr_first.appendChild(th_number)
-            //tr_first.appendChild(th_id)
+            tr_first.appendChild(th_id)
             tr_first.appendChild(th_title)
             tr_first.appendChild(th_timestamp)
             for (const el of [th_number, th_id, th_title, th_timestamp]) {
@@ -476,7 +477,7 @@ class TermContainer {
                 }
 
                 tr.appendChild(td_number)
-                //tr.appendChild(td_id)
+                tr.appendChild(td_id)
                 tr.appendChild(td_title)
                 tr.appendChild(td_timestamp)
                 td_number.innerText = history_entry_number;
@@ -486,8 +487,7 @@ class TermContainer {
                 {
                     let title = getTitleCache(Entities.dictionary_term, visited_term_id)
                     if (title === null || title === undefined) {
-
-                        let x = entry.id
+                        let x = visited_term_id
                         let note_ = await read_entity(Entities.dictionary_term, x)
                         if (note_ === null) {
                             showWarn("Loading dictionary_term with id " + x + " failed.");
@@ -507,9 +507,10 @@ class TermContainer {
                     a.innerText = finalTitle;
                 }
 
+                let callback = this.render_term_id_callback
                 a.onclick = async function () {
                     event.preventDefault();
-                    await this.render_term_id_callback(visited_term_id)
+                    await callback(visited_term_id)
                 }
                 td_title.appendChild(a)
                 td_timestamp.innerText = formatDateTime(entry.created_at, true, true, true)

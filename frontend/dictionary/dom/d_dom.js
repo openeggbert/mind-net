@@ -1,4 +1,4 @@
-import {Styles} from "../styles/d_styles.js";
+import {Styles} from "../styles/Styles.js";
 import {Display} from "../styles_enums/d_styles_enums.js";
 import {get_element} from "../../dom.js";
 import {gen_enum_id} from "../enums/d_enums.js";

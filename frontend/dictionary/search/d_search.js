@@ -15,7 +15,7 @@ import {
     Label, Select,
     Span, Table
 } from "../dom/d_dom.js";
-import {_10PX, _20PX, _40PX} from "../styles/d_styles.js";
+import {_10PX, _20PX, _40PX} from "../styles/Styles.js";
 import {
     chooseOption,
     formatDateTime,
