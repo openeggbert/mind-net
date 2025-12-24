@@ -3,9 +3,9 @@ import {get_element, showError, showInfo} from "../../dom.js";
 import {Autocomplete} from "../../common.js";
 import {SelectMap} from "./SelectMap.js";
 import TermContainer from "./TermContainer.js";
-import {SearchWindow} from "../search/Search";
-import {Entities} from "../entities/Entities";
-import {showWindowFromUrl} from "../window/VirtualWindow";
+import {SearchWindow} from "../search/Search.js";
+import {Entities} from "../entities/Entities.js";
+import {showWindowFromUrl} from "../window/VirtualWindow.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")

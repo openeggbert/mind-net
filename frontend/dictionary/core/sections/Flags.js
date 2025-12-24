@@ -12,9 +12,9 @@ import {
     showError,
     showInfo
 } from "../../../dom.js";
-import {_CrudSection} from "../_CrudSection";
-import {Entities} from "../../entities/Entities";
-import {USER_ID} from "../../globals/Globals";
+import {_CrudSection} from "../_CrudSection.js";
+import {Entities} from "../../entities/Entities.js";
+import {USER_ID} from "../../globals/Globals.js";
 
 export class Flags extends _CrudSection {
     constructor(get_selected_map_id_callback) {

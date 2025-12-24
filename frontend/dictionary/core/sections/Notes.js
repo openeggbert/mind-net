@@ -13,9 +13,9 @@ import {
     showError,
     showInfo,
 } from "../../../dom.js";
-import {_CrudSection} from "../_CrudSection";
-import {Entities} from "../../entities/Entities";
-import {attachMarkdownEditor} from "../../markdown/Markdown";
+import {_CrudSection} from "../_CrudSection.js";
+import {Entities} from "../../entities/Entities.js";
+import {attachMarkdownEditor} from "../../markdown/Markdown.js";
 
 export class Notes extends _CrudSection {
 

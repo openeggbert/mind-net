@@ -11,9 +11,9 @@ import {
     showInfo,
     showWarn
 } from "../../../dom.js";
-import {_CrudSection} from "../_CrudSection";
-import {USER_ID} from "../../globals/Globals";
-import {Entities} from "../../entities/Entities";
+import {_CrudSection} from "../_CrudSection.js";
+import {USER_ID} from "../../globals/Globals.js";
+import {Entities} from "../../entities/Entities.js";
 
 export class Aliases extends _CrudSection {
     constructor(get_selected_map_id_callback) {

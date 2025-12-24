@@ -1,4 +1,5 @@
 import {DomElement} from "../DomElement.js";
+import {Display} from "../../styles/properties/Display.js";
 
 export class Form extends DomElement {
     constructor() {

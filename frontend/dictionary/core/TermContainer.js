@@ -18,10 +18,10 @@ import {Indexes} from "./sections/Indexes.js";
 import {Sources} from "./sections/Sources.js";
 import {Aliases} from "./sections/Aliases.js";
 import {Div} from "../dom/elements/Div.js"
-import {Entities} from "../entities/Entities";
-import {attachMarkdownEditor} from "../markdown/Markdown";
-import {USER_ID} from "../globals/Globals";
-import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow";
+import {Entities} from "../entities/Entities.js";
+import {attachMarkdownEditor} from "../markdown/Markdown.js";
+import {USER_ID} from "../globals/Globals.js";
+import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
 
 class TermContainer {
     #element

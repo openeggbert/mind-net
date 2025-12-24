@@ -1,8 +1,8 @@
 import {Styles} from "../styles/Styles.js";
 import {get_element} from "../../dom.js";
 import {ActionType} from "./attributes/ActionType.js";
-import {Display} from "../styles/properties/Display";
-import {gen_enum_id} from "../enums/EnumFunctions";
+import {Display} from "../styles/properties/Display.js";
+import {gen_enum_id} from "../enums/EnumFunctions.js";
 
 /**
  * DomElement

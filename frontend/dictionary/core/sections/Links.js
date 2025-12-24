@@ -15,9 +15,9 @@ import {
     showWarn
 } from "../../../dom.js";
 import {Autocomplete, defined} from "../../../common.js";
-import {_CrudSection} from "../_CrudSection";
-import {Entities} from "../../entities/Entities";
-import {USER_ID} from "../../globals/Globals";
+import {_CrudSection} from "../_CrudSection.js";
+import {Entities} from "../../entities/Entities.js";
+import {USER_ID} from "../../globals/Globals.js";
 
 export class Links extends _CrudSection {
     constructor(get_selected_map_id_callback, render_term_id_callback) {

@@ -13,9 +13,9 @@ import {
     showInfo,
 } from "../../../dom.js";
 import {Autocomplete} from "../../../common.js";
-import {_CrudSection} from "../_CrudSection";
-import {Entities} from "../../entities/Entities";
-import {showWindowFromUrl} from "../../window/VirtualWindow";
+import {_CrudSection} from "../_CrudSection.js";
+import {Entities} from "../../entities/Entities.js";
+import {showWindowFromUrl} from "../../window/VirtualWindow.js";
 
 export class Sources extends _CrudSection {
     constructor(get_selected_map_id_callback) {

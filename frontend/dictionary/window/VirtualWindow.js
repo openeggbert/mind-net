@@ -3,6 +3,8 @@
 // ========================================
 
 import {showError} from "../../dom.js";
+import {Div} from "../dom/elements/Div.js";
+import {Span} from "../dom/elements/Span.js";
 
 let activeWindow = null;
 let topZ = 1000;
