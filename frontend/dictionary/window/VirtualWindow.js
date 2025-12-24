@@ -144,6 +144,8 @@ export class VirtualWindow {
 
             this.focus();
 
+            this.#root.style.opacity = "0.85";
+
             if (!this.#userPositioned) {
                 this.#userPositioned = true;
                 this._detachFromCenter();
@@ -166,6 +168,7 @@ export class VirtualWindow {
                 document.removeEventListener("mousemove", move);
                 document.removeEventListener("mouseup", up);
                 document.body.style.userSelect = "";
+                this.#root.style.opacity = "1";
             };
 
             document.body.style.userSelect = "none";

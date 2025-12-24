@@ -46,6 +46,7 @@ plugins::core::models::OptionalError& optional_error)
         }
 
         identification dictionary_map_id = request["dictionary_map_id"];
+        bool any_map = dictionary_map_id == 0;
 
         if (!request.contains("title_part"))
         {
@@ -69,7 +70,7 @@ plugins::core::models::OptionalError& optional_error)
         static std::string sql_filtered_titles = R"(
 select distinct alias
 from dictionary_term_alias
-where dictionary_map_id = ?
+where (?=1 or dictionary_map_id = ?)
   and alias like ?
 order by random()
 limit ? offset ?
@@ -78,7 +79,7 @@ limit ? offset ?
         static std::string sql_all_title = R"(
 select distinct alias
 from dictionary_term_alias
-where dictionary_map_id = ?
+where (?=1 or dictionary_map_id = ?)
 order by random()
 limit ? offset ?
 )";
@@ -97,6 +98,7 @@ limit ? offset ?
 
             SQLite::Statement query(db, sql);
             int index = 0;
+            query.bind(++index, any_map ? 1 : 0);
             query.bind(++index, dictionary_map_id);
             if (!all_titles) query.bind(++index, pattern);
 

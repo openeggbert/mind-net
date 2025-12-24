@@ -3,7 +3,7 @@ import {get_element, showError, showInfo} from "../../dom.js";
 import {Autocomplete} from "../../common.js";
 import {SelectMap} from "./SelectMap.js";
 import TermContainer from "./TermContainer.js";
-import {SearchWindow} from "../search/Search.js";
+import {SearchWindow} from "../search/SearchWindow.js";
 import {Entities} from "../entities/Entities.js";
 import {showWindowFromUrl} from "../window/VirtualWindow.js";
 
@@ -14,7 +14,8 @@ export class DictionaryApp {
 
     constructor() {
         this.select_map = new SelectMap(
-            ()=> {this.refresh_autocomplete_term_title()}
+            ()=> {this.refresh_autocomplete_term_title()},
+            () => {this.#term_container.hide()}
         )
         this.select_map.init()
         let get_selected_map_id_callback = () => {

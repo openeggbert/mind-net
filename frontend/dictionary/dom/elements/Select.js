@@ -44,6 +44,13 @@ export class Select extends DomElement {
             option.selected = values.includes(Number(option.value));
         }
     }
+    get_selected_values() {
+        let result = []
+        for (const option of this.options()) {
+            if(option.selected) result.push(option.value)
+        }
+        return result
+    }
 
     set_selected_value(value) {
         for (const option of this.options()) {

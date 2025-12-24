@@ -31,9 +31,10 @@ export class Autocomplete {
         this.title_column = title_column;
         this.item = null;
         this.input_min_length = input_min_length
+        this.query_params = query_params
 
         this.fetcher = async query => {
-            const qp = query_params + "&" + part_column + "=" + encodeURIComponent(query);
+            const qp = this.query_params + "&" + part_column + "=" + encodeURIComponent(query);
             return await list_all_entities(entity, qp);
         };
 
@@ -60,7 +61,9 @@ export class Autocomplete {
 
         this.input.addEventListener("input", this.input_handler);
     }
-
+    set_query_params(query_params) {
+        this.query_params = query_params
+    }
 
     async search(q, input_min_length = 3, show_box = true) {
         if (q.length < input_min_length) {

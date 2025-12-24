@@ -93,7 +93,15 @@ namespace mindnet::plugins::dictionary::triggers
 
                 model.set_id(row["id"].get<identification>());
                 model.dictionary_term_id = model.get_id();
-                model.dictionary_map_id = dictionary_map_id;
+                model.dictionary_map_id = row["map_id"].get<identification>();
+                // if (dictionary_map_id == 0)
+                {
+                    model.term_created_at = row["created_at"].get<i64>();
+                    model.term_updated_at = row["updated_at"].get<i64>();
+                    model.status = static_cast<enums::TermStatus>(row["status"].get<int>());
+                    model.importance = static_cast<enums::Importance>(row["importance"].get<int>());
+                    model.difficulty = static_cast<enums::Difficulty>(row["difficulty"].get<int>());
+                }
 
                 std::string title = row["title"].get<std::string>();
                 std::string dis = row["disambiguation"].get<std::string>();

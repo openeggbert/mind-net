@@ -28,6 +28,10 @@
 
 #include "mindnet/model/BaseModel.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPlugin.hpp"
+#include "../enums/Difficulty.hpp"
+#include "mindnet/plugins/dictionary/enums/Importance.hpp"
+#include "mindnet/plugins/dictionary/enums/TermStatus.hpp"
+
 // ***** MACROS : START *****
 #define Model DictionaryTermSearch
 #define MODEL DICTIONARY_TERM_SEARCH
@@ -54,6 +58,14 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
             coldef(COLS::TITLE, MANDATORY | READONLY),
             coldef(COLS::DISAMBIGUATION),
+            coldef(COLS::TERM_CREATED_AT, MANDATORY | READONLY | DATETIME),
+            coldef(COLS::TERM_UPDATED_AT, MANDATORY | READONLY | DATETIME),
+            coldef(COLS::STATUS).set_default_value(0).set_enum_definition(enums::term_status_to_enum_definition())
+                                .set_description("Status of the term."),
+            coldef(COLS::IMPORTANCE).set_default_value(2).set_enum_definition(enums::importance_to_enum_definition())
+                                    .set_description("Importance level of the term."),
+            coldef(COLS::DIFFICULTY).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
+                                     set_description("Difficulty level of the term."),
         });
 
     struct Model : mindnet::model::BaseModel
@@ -62,12 +74,23 @@ namespace mindnet::plugins::dictionary::models
         identification dictionary_map_id{};
         std::string title{};
         std::string disambiguation{};
+        unixtime term_created_at{};
+        unixtime term_updated_at{};
+        enums::TermStatus status{enums::TermStatus::NotDefined};
+        enums::Importance importance{enums::Importance::Medium};
+        enums::Difficulty difficulty{enums::Difficulty::Medium};
+
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::dictionary_map_id,
             &Model::title,
-            &Model::disambiguation
+            &Model::disambiguation,
+            &Model::term_created_at,
+            &Model::term_updated_at,
+            &Model::status,
+            &Model::importance,
+            &Model::difficulty
         );
 
         create_model_h_methods(Model, MODEL)
@@ -79,6 +102,11 @@ namespace mindnet::plugins::dictionary::models
                 dictionary_term_id == other.dictionary_term_id
                 && title == other.title &&
                 disambiguation == other.disambiguation &&
+                term_created_at == other.term_created_at &&
+                term_updated_at == other.term_updated_at &&
+                status == other.status &&
+                importance == other.importance &&
+                difficulty == other.difficulty &&
                 created_at == other.created_at && updated_at == other.updated_at;
         }
     };

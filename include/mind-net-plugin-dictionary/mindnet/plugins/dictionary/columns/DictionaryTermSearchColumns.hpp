@@ -44,5 +44,10 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
         static constexpr const char* TITLE = "title";
         static constexpr const char* DISAMBIGUATION = "disambiguation";
+        static constexpr const char* TERM_CREATED_AT = "term_created_at";
+        static constexpr const char* TERM_UPDATED_AT = "term_updated_at";
+        static constexpr const char* STATUS = "status";
+        static constexpr const char* IMPORTANCE = "importance";
+        static constexpr const char* DIFFICULTY = "difficulty";
     };
 }

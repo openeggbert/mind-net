@@ -47,6 +47,7 @@ plugins::core::models::OptionalError& optional_error)
         }
 
         identification dictionary_map_id = request["dictionary_map_id"];
+        bool any_map = dictionary_map_id == 0;
 
         if (!request.contains("title_part"))
         {
@@ -66,8 +67,8 @@ plugins::core::models::OptionalError& optional_error)
         int page_number = 1;
 
         bool random = title_part == "*";
-        static std::string sql_standard = "select id, title, disambiguation from dictionary_term where dictionary_map_id=? and title like ? limit ? offset ?";
-        static std::string sql_random = "select id, title, disambiguation from dictionary_term where dictionary_map_id=? order by random() limit ?";
+        static std::string sql_standard = "select id, title, disambiguation from dictionary_term where (?=1 or dictionary_map_id = ?) and title like ? limit ? offset ?";
+        static std::string sql_random = "select id, title, disambiguation from dictionary_term where (?=1 or dictionary_map_id = ?) order by random() limit ?";
         std::string& sql = random? sql_random : sql_standard ;
 
         try
@@ -81,6 +82,7 @@ plugins::core::models::OptionalError& optional_error)
 
             SQLite::Statement query(db, sql);
             int index = 0;
+            query.bind(++index, any_map ? 1 : 0);
             query.bind(++index, dictionary_map_id);
             if (!random){
             std::string pattern = "%" + title_part + "%";

@@ -1,6 +1,6 @@
-import {Autocomplete, defined} from "../../common.js";
+import {defined} from "../../common.js";
 
-import {_10PX, _20PX, _40PX} from "../styles/Styles.js";
+import {_10PX, _20PX, _40PX, _5PX} from "../styles/Styles.js";
 import {
     chooseOption,
     formatDateTime,
@@ -8,7 +8,7 @@ import {
     formatDateTimeHMS,
     get_element,
     showError,
-    showInfo, showWarn
+    showInfo, showWarn, sleep_for_seconds
 } from "../../dom.js";
 import {
     delete_entity,
@@ -30,13 +30,13 @@ import {enumValue, enumValues, find_by_enum_id, gen_enum_id, humanizeEnumKey} fr
 import {TermStatus} from "../enums/TermStatus.js";
 import {DictionaryItem} from "../enums/DictionaryItem.js";
 import {Button} from "../dom/elements/Button.js";
-import {Form} from "../dom/elements/Form.js";
 import {Div} from "../dom/elements/Div.js";
 import {Label} from "../dom/elements/Label.js";
 import {Span} from "../dom/elements/Span.js";
 import {Input} from "../dom/elements/Input.js";
 import {VirtualWindow} from "../window/VirtualWindow.js";
 import {EnumOption} from "../dom/elements/EnumOption.js";
+import {Option} from "../dom/elements/Option.js";
 import {Select} from "../dom/elements/Select.js";
 import {Checkbox} from "../dom/elements/Checkbox.js";
 import {RepetitionMode} from "../enums/RepetitionMode.js";
@@ -51,360 +51,11 @@ import {BorderCollapse} from "../styles/properties/BorderCollapse.js";
 import {Color} from "../styles/properties/Color.js";
 import {TextDecoration} from "../styles/properties/TextDecoration.js";
 import {Cursor} from "../styles/properties/Cursor.js";
-
-/*
- * ------------------------------------------------------------------
- * class SearchModel
- * ------------------------------------------------------------------
- * PURPOSE:
- *   - Single source of truth for search state
- *   - NO DOM access
- *   - NO REST calls
- *
- * CONTENT:
- *   - Fields correspond EXACTLY to query_json keys:
- *
- * METHODS:
- *   - toJSON()
- *       -> returns object identical to current query_json
- *   - static fromJSON(json)
- *       -> used when loading saved searches
- *
- * RULE:
- *   - Backend contract MUST NOT change.
-*/
-export class SearchModel {
-    constructor() {
-        this.title_contains = "";
-        this.title_starts_with = "";
-        this.definition_contains = "";
-        this.statuses = [];
-        this.pinned_only = false;
-        this.importance_low = true
-        this.importance_medium = true
-        this.importance_high = true
-        this.difficulty_easy = true
-        this.difficulty_medium = true
-        this.difficulty_hard = true
-        this.tag_id = 0
-        this.flag_title = ""
-        this.link_from_term_id = 0
-        this.link_to_term_id = 0
-        this.note_contains = ""
-        this.index_id = 0
-        this.source_id = 0
-        this.alias_alias = ""
-        this.missing_items = []
-        this.has_items = []
-        this.created = TimeRange.Any
-        this.updated = TimeRange.Any
-        this.visited = TimeRange.Any
-        this.reviewed = TimeRange.Any
-        this.repetition_due = true
-        this.repetition_not_due = false
-        this.repetition_never = true
-        this.sort = Sort.None
-        this.order = Order.None
-        // …
-    }
-
-    reset() {
-        const def = new SearchModel();
-        Object.assign(this, def);
-    }
-
-    to_json() {
-        return {
-            title_contains: this.title_contains,
-            title_starts_with: this.title_starts_with,
-            definition_contains: this.definition_contains,
-
-            statuses: this.statuses.length === 1 && this.statuses[0] === -1 ? [] : this.statuses.map(e => {
-                return e.id
-            }),
-            pinned_only: this.pinned_only,
-
-            importance_low: this.importance_low,
-            importance_medium: this.importance_medium,
-            importance_high: this.importance_high,
-
-            difficulty_easy: this.difficulty_easy,
-            difficulty_medium: this.difficulty_medium,
-            difficulty_hard: this.difficulty_hard,
-
-            tag_id: this.tag_id,
-            flag_title: this.flag_title,
-
-            link_from_term_id: this.link_from_term_id,
-            link_to_term_id: this.link_to_term_id,
-
-            note_contains: this.note_contains,
-            index_id: this.index_id,
-            source_id: this.source_id,
-            alias_alias: this.alias_alias,
-
-            missing_items: this.missing_items.map(e => {
-                return e.id
-            }),
-            has_items: this.has_items.map(e => {
-                return e.id
-            }),
-
-            created: this.created.id,
-            updated: this.updated.id,
-            visited: this.visited.id,
-            reviewed: this.reviewed.id,
-
-            repetition_due: this.repetition_due,
-            repetition_not_due: this.repetition_not_due,
-            repetition_never: this.repetition_never,
-
-            sort: this.sort === null ? Sort.None.id : this.sort.id,
-            order: this.order === null ? Sort.None.id : this.order.id
-        };
-    }
-
-    from_json(json) {
-        if (!json || typeof json !== "object") {
-            this.reset();
-            return;
-        }
-
-        this.title_contains = json.title_contains ?? "";
-        this.title_starts_with = json.title_starts_with ?? "";
-        this.definition_contains = json.definition_contains ?? "";
-
-        this.statuses = Array.isArray(json.statuses)
-            ? json.statuses
-                .map(id => enumValue(TermStatus, id))
-                .filter(Boolean)
-            : [];
-
-        this.pinned_only = !!json.pinned_only;
-
-        this.importance_low = json.importance_low ?? true;
-        this.importance_medium = json.importance_medium ?? true;
-        this.importance_high = json.importance_high ?? true;
-
-        this.difficulty_easy = json.difficulty_easy ?? true;
-        this.difficulty_medium = json.difficulty_medium ?? true;
-        this.difficulty_hard = json.difficulty_hard ?? true;
-
-        this.tag_id = json.tag_id ?? 0;
-        this.flag_title = json.flag_title ?? "";
-
-        this.link_from_term_id = json.link_from_term_id ?? 0;
-        this.link_to_term_id = json.link_to_term_id ?? 0;
-
-        this.note_contains = json.note_contains ?? "";
-        this.index_id = json.index_id ?? 0;
-        this.source_id = json.source_id ?? 0;
-        this.alias_alias = json.alias_alias ?? "";
-
-        this.missing_items = Array.isArray(json.missing_items)
-            ? json.missing_items
-                .map(id => enumValue(DictionaryItem, id))
-                .filter(Boolean)
-            : [];
-
-        this.has_items = Array.isArray(json.has_items)
-            ? json.has_items
-                .map(id => enumValue(DictionaryItem, id))
-                .filter(Boolean)
-            : [];
-
-        this.created = enumValue(TimeRange, json.created) ?? TimeRange.Any;
-        this.updated = enumValue(TimeRange, json.updated) ?? TimeRange.Any;
-        this.visited = enumValue(TimeRange, json.visited) ?? TimeRange.Any;
-        this.reviewed = enumValue(TimeRange, json.reviewed) ?? TimeRange.Any;
-
-        this.repetition_due = json.repetition_due ?? true;
-        this.repetition_not_due = json.repetition_not_due ?? false;
-        this.repetition_never = json.repetition_never ?? true;
-
-        this.sort = json.sort === null ? Sort.None : enumValue(Sort, json.sort)
-        this.order = json.order === null ? Order.None : enumValue(Order, json.order);
-    }
-}
-
-export class CloseButton extends Button {
-    constructor(model, input, autocomplete = null) {
-        super()
-
-        this
-            .set_title("Clear " + model)
-            .set_html_unsafe("&times;")
-            .styles().marginLeft(_10PX).end()
-            .on(EventType.Click.label, (e => {
-                event.preventDefault();
-                if (defined(autocomplete)) {
-                    autocomplete.reset()
-                } else {
-                    input.clear_value()
-                }
-            }))
-        input._object.insert_after(this)
-    }
-}
-
-export class SearchAutocomplete extends Autocomplete {
-    constructor(win, model, input, input_min_length, entity, query_params = "") {
-        super(
-            input,
-            input_min_length,
-            entity,
-            query_params,
-            "title",
-            "title_part",
-            "search_end_" + model)
-
-        this.clear_after_click = false
-        this.box.style.positon = "fixed"
-        this.box.style.willChange = "transform";
-        this.win = win
-
-        new CloseButton(model, input, this)
-    }
-
-    after_render(box, input) {
-        box.style.position = "fixed";
-        box.style.left = "0px";
-        box.style.top = "0px";
-        box.style.willChange = "transform";
-
-        let i = 0
-        runWhileShown(box, () => {
-            const r = input.getBoundingClientRect();
-            const b = box.getBoundingClientRect();
-            box.style.transform =
-                `translate3d(${r.left}px, ${r.top + 46}px, 0)`;
-            // showInfo("win: " + this.win.left() + " " + this.win.top())
-            // showInfo("box: " + b.x + " " + b.y)
-            let boxY = Number(b.y)
-            let winY = this.win.top()
-
-            let wHeight = Number(this.win.height().slice(0, -2))
-            let wTop = Number(this.win.top().slice(0, -2))
-            let wBottom = wHeight + wTop
-
-            // showInfo(wHeight + " " + wTop + " " + wBottom + " " + this.win.top())
-            let over = boxY < (wTop + 40)
-            let under = boxY > (wBottom)
-            box.style.visibility = over || under ? "hidden" : "visible"
-        });
-    }
-
-}
-
-function runWhileShown(el, callback) {
-    let running = true;
-
-    function loop() {
-        if (!running || el.style.display !== "block") return;
-
-        callback();
-        requestAnimationFrame(loop);
-    }
-
-    requestAnimationFrame(loop);
-
-    return () => running = false; // optional destroy
-}
-
-export class SearchForm extends Form {
-    #controls = []
-
-    constructor() {
-        super();
-        this
-            .set_id("form_search")
-    }
-
-    add_control(control) {
-        super.appendChild(control)
-        this.#controls.push(control)
-        this.add_action_handler(ActionType.Reset, (self, ...args) => {
-            let success = true
-            this.#controls.forEach(e => {
-                let success_e = e.set_default_values()
-                if (!success_e) success = false
-            })
-            return success
-        })
-
-    }
-
-    appendChild(child) {
-        throw new Error("Function appendChild is not supported. Use add_control instead.")
-    }
-
-}
-
-export class FormRow extends Div {
-    constructor(label_text, control) {
-        super(new Label(label_text), control);
-        this.add_class("form-row")
-        this.set_id("form-row_" + label_text.toLowerCase())
-        this.control = control
-        this.add_action_handler(ActionType.Reset, (self, ...args) => {
-            self.control.set_default_values();
-            return true;
-        })
-
-    }
-
-    get_control() {
-        return this.control
-    }
-}
-
-export class FormRowAutocomplete extends FormRow {
-    static #create_container(label, input) {
-        return new Span(
-            input,
-            new Div()
-                .set_id("search_end_" + label.toLowerCase())
-        )
-            .css({
-                position: "relative"
-            })
-    }
-
-    #autocomplete
-
-    constructor(win, search_form, label, entity, query_params = "", input = new Input()) {
-        super(
-            label,
-            FormRowAutocomplete.#create_container(label, input)
-        );
-        this.input = input
-        search_form.add_control(this)
-        this.#autocomplete = new SearchAutocomplete(
-            win,
-            label.toLowerCase(),
-            input.element(),
-            1,
-            entity,
-            query_params)
-    }
-
-    get_title() {
-        return this.#autocomplete.get_item() === null ? "" : this.autocomplete.get_item().title
-    }
-
-    reset() {
-        this.#autocomplete.reset()
-    }
-
-    get_item_id() {
-        return this.#autocomplete.get_item_id()
-    }
-
-    async set_from_title(title, id) {
-        await this.#autocomplete.set_from_title(title, id)
-    }
-
-}
+import {FormRow} from "./FormRow.js";
+import {SearchForm} from "./SearchForm.js";
+import {FormRowAutocomplete} from "./FormRowAutocomplete.js";
+import {SearchAutocomplete} from "./SearchAutocomplete.js";
+import {SearchModel} from "./SearchModel.js";
 
 /*
 * =====================================================================================
@@ -563,7 +214,7 @@ export class SearchWindow extends VirtualWindow {
         })
         this.#init(dictionary_map_id, render_term_callback)
     }
-    #init(selected_map_id, render_term_callback) {
+    async #init(selected_map_id, render_term_callback) {
         let search_window = this
 
         const window_content = new Div().styles().height("100%").end()
@@ -574,6 +225,47 @@ export class SearchWindow extends VirtualWindow {
         const search_form = new SearchForm()
         window_content.appendChild(search_form);
 
+        class MapSelect extends Select {
+            #map_id_name = new Map()
+            constructor(maps) {
+                super();
+                if (!defined(maps)) {
+                    showError("Loading map failed.")
+                    return;
+                }
+
+                this.add_option(new Option(0, "Any"));
+                maps.forEach(e => {
+                    this.add_option(new Option(e.id, e.name));
+                    this.#map_id_name.set(e.id, e.name)
+                });
+                this.add_action_handler(ActionType.Reset, (self, ...args) => {
+                    console.log("calling default for map")
+                    Array.from(self.options()).forEach(e => {
+                        console.log("e.value="+e.value + " selected_map_id=" + selected_map_id)
+                        console.log("selected=" + (Number(e.value) === selected_map_id))
+                        e.selected = Number(e.value) === Number(selected_map_id)
+                    })
+
+                    return true;
+                });
+                this.set_default_values()
+            }
+            get_map_name_for_map_id(map_id) {
+                return this.#map_id_name.get(map_id) ?? "Unknown"
+            }
+        }
+
+        const maps = await list_all_entities(Entities.dictionary_map, new QueryParams().sort(Entities.dictionary_map.position).build());
+
+
+        const map_select = new MapSelect(maps)
+        search_form.add_control(new FormRow("Map", map_select))
+
+        function get_selected_map_id() {
+            let values =  map_select.get_selected_values()
+            return values.length === 0 ? 0 : Number(values[0])
+        }
         const titleContainsInput = new Input()
             .set_placeholder("e.g. mutex, allocator, RAII")
 
@@ -648,13 +340,18 @@ export class SearchWindow extends VirtualWindow {
                     search_form,
                     label,
                     "dictionary_" + model + "_fulltext",
-                    map_in_query ? ("&dictionary_map_id=" + selected_map_id) : ""
+                    map_in_query ? ("&dictionary_map_id=" + get_selected_map_id()) : ""
                 )
+                this.map_in_query = map_in_query
                 this.add_action_handler(ActionType.Reset, (self, ...args) => {
                     self.reset()
                     return true;
                 });
 
+            }
+            refresh_query_param() {
+                if(!this.map_in_query) return
+                this.set_query_params("&dictionary_map_id=" + get_selected_map_id())
             }
         }
 
@@ -670,16 +367,28 @@ export class SearchWindow extends VirtualWindow {
         const source_control = new AcControl("Source", "source_type")
         const alias_control = new AcControl("Alias", "term_alias")
 
+        map_select.on("change", ()=> {
+            [
+                tag_control,
+                flag_control,
+                link_from_control,
+                link_to_control,
+                index_control,
+                source_control,
+                alias_control
+            ].forEach(e=>e.refresh_query_param())
+        })
         class CheckBoxItemFormRow extends CheckBoxFormRow {
             constructor(label) {
                 super(label, DictionaryItem, false, "80%")
             }
         }
 
-        let missing_control = new CheckBoxItemFormRow("Missing")
-        search_form.add_control(missing_control);
         let has_control = new CheckBoxItemFormRow("Has")
         search_form.add_control(has_control);
+
+        let missing_control = new CheckBoxItemFormRow("Missing")
+        search_form.add_control(missing_control);
 
         class TimeRangeSelect extends EnumSelect {
             constructor() {
@@ -771,7 +480,9 @@ export class SearchWindow extends VirtualWindow {
                 let elapsed_seconds = (now - this.#start_time) / 1000
                 let remains_seconds = Number(elapsed_seconds / (Number(value) / (100.0 - value))).toFixed()
                 this.#fill.element().style.width = value + "%";
-                this.#loading_data_progress.set_text(value + "%" + " Remains: " + remains_seconds + " second" + (remains_seconds > 1.0 ? "s" : ""))
+                this.#loading_data_progress.set_text(value + "%" + " Remains: " +
+                    (!isFinite(Number(remains_seconds)) ? "? seconds" : ( + remains_seconds + " second" + (remains_seconds > 1.0 ? "s" : "")))
+                )
                 return this;
             }
 
@@ -804,7 +515,7 @@ export class SearchWindow extends VirtualWindow {
             let list_term_searches = await list_entities(
                 "dictionary_term_search",
                 new QueryParams()
-                    .add("dictionary_map_id", selected_map_id)
+                    .add("dictionary_map_id", get_selected_map_id())
                     .add("title", JSON.stringify(query_json))
                     .build(),
                 page_number,
@@ -857,18 +568,22 @@ export class SearchWindow extends VirtualWindow {
             }
 
             let details = items.length === 0 ? false : find_dom_element("details_checkbox").is_checked()
+            let next_review_shown = items.length === 0 ? false : find_dom_element("next_review_checkbox").is_checked()
             let th_hash = create_th("#")
             let th_id = create_th("ID")
             let th_title = create_th("Title")
             let th_disambiguation = create_th("Disambiguation")
+            let th_map = create_th("Map")
             tr_th.appendChild(th_hash)
             tr_th.appendChild(th_id)
             tr_th.appendChild(th_title)
             tr_th.appendChild(th_disambiguation)
+            tr_th.appendChild(th_map)
             th_hash.style.width = "50px"
             th_id.style.width = "50px"
             th_title.style.minWidth = "200px"
             th_disambiguation.style.minWidth = "100px"
+            th_map.style.minWidth = "50px"
             let term_map = new Map()
             let state_map = new Map()
 
@@ -876,18 +591,19 @@ export class SearchWindow extends VirtualWindow {
                 find_by_enum_id("repetition", RepetitionMode.Due).checked === true &&
                 find_by_enum_id("repetition", RepetitionMode.NotDue).checked === true &&
                 find_by_enum_id("repetition", RepetitionMode.Never).checked === true
+            function append_th(text) {
+                let th = create_th(text)
+                tr_th.appendChild(th)
+            }
             if (details) {
-                function append_th(text) {
-                    let th = create_th(text)
-                    tr_th.appendChild(th)
-                }
-
                 append_th("Created at")
                 append_th("Updated at")
                 append_th("Status")
                 append_th("Importance")
                 append_th("Difficulty")
-                //if(!repetition_all)
+            }
+            if(next_review_shown) {
+
                 append_th("Next review")
             }
             const item_count = items.length
@@ -895,16 +611,17 @@ export class SearchWindow extends VirtualWindow {
             for (const item of items) {
 
                 let term_id = item.id
-                let read_term = await read_entity(Entities.dictionary_term, term_id)
-                if (!defined) {
-                    showError("Reading term failed.")
-                    continue
-                }
-                term_map.set(term_id, read_term)
+
+                // let read_term = await read_entity(Entities.dictionary_term, term_id)
+                // if (!defined) {
+                //     showError("Reading term failed.")
+                //     continue
+                // }
+                // term_map.set(term_id, read_term)
 
                 let progress = Number((done + (details ? 0.5 : 1.0)) / item_count * 100).toFixed()
                 progress_bar.set_progress(progress)
-                if (details) {
+                if (next_review_shown) {
                     let list_states = await list_all_entities(
                         Entities.dictionary_state_18,
                         new QueryParams()
@@ -948,6 +665,7 @@ export class SearchWindow extends VirtualWindow {
                 let dictionary_term_id = e.dictionary_term_id
                 let title = e.title
                 let disambiguation = e.disambiguation
+                let map_name = map_select.get_map_name_for_map_id(e.dictionary_map_id)
 
                 let td_title = create_td(title);
                 td_title.innerText = ""
@@ -965,32 +683,42 @@ export class SearchWindow extends VirtualWindow {
                 tr.appendChild(create_td(dictionary_term_id))
                 tr.appendChild(td_title)
                 tr.appendChild(create_td(disambiguation))
+                tr.appendChild(create_td(map_name))
+
+                function append_td(text) {
+                    let td = create_td(text)
+                    td.innerText = text
+                    tr.appendChild(td)
+                }
+
                 if (details) {
-                    function append_td(text) {
-                        let td = create_td(text)
-                        td.innerText = text
-                        tr.appendChild(td)
-                    }
+                    //let term = term_map.has(dictionary_term_id) ? term_map.get(dictionary_term_id) : null
+                    let term_created_at = e.term_created_at
+                    let term_updated_at = e.term_updated_at
+                    let term_status = e.status
+                    let term_importance = e.importance
+                    let term_difficulty = e.difficulty
 
-                    let term = term_map.has(dictionary_term_id) ? term_map.get(dictionary_term_id) : null
-                    if (defined(term)) {
-                        append_td(formatDateTimeHMS(term.created_at))
-                        append_td(formatDateTimeHMS(term.updated_at))
-                        append_td(humanizeEnumKey(enumValue(TermStatus, term.status).label))
-                        append_td(enumValue(Importance, term.importance).label)
-                        append_td(enumValue(Difficulty, term.difficulty).label)
-                        //if(!repetition_all)
-                        {
-                            if (state_map.has(dictionary_term_id)) {
-                                append_td(formatDateTimeHM(state_map.get(dictionary_term_id).next_review))
-
-                            } else {
-                                append_td("---")
-                            }
-                        }
+                    //if (defined(term))
+                    {
+                        append_td(formatDateTimeHMS(term_created_at))
+                        append_td(formatDateTimeHMS(term_updated_at))
+                        append_td(humanizeEnumKey(enumValue(TermStatus, term_status).label))
+                        append_td(enumValue(Importance, term_importance).label)
+                        append_td(enumValue(Difficulty, term_difficulty).label)
                     }
 
                 }
+
+                if (next_review_shown) {
+                    if (state_map.has(dictionary_term_id)) {
+                        append_td(formatDateTimeHM(state_map.get(dictionary_term_id).next_review))
+
+                    } else {
+                        append_td("---")
+                    }
+                }
+
             })
 
             resultTable.show(Display.Block)
@@ -1030,6 +758,7 @@ export class SearchWindow extends VirtualWindow {
         function load_query_model_from_form() {
             const m = new SearchModel();
 
+            m.map_id = get_selected_map_id()
             m.title_contains = titleContainsInput.get_value()
             m.title_starts_with = titleStartsWithInput.get_value()
             m.definition_contains = definitionInput.get_value()
@@ -1057,10 +786,11 @@ export class SearchWindow extends VirtualWindow {
             m.index_id = index_control.get_item_id()
             m.source_id = source_control.get_item_id()
             m.alias_alias = alias_control.get_title()
-            m.missing_items = enumValues(DictionaryItem)
-                .filter(e => find_by_enum_id("missing", e)._object.is_checked())
             m.has_items = enumValues(DictionaryItem)
                 .filter(e => find_by_enum_id("has", e)._object.is_checked())
+            m.missing_items = enumValues(DictionaryItem)
+                .filter(e => find_by_enum_id("missing", e)._object.is_checked())
+
             m.created = Array
                 .from(createdSelect.selectedOptions())
                 .map(opt => opt.value)
@@ -1118,7 +848,7 @@ export class SearchWindow extends VirtualWindow {
             if (!search_already_exists) {
                 let new_search = {
                     user_id: USER_ID,
-                    dictionary_map_id: this.get_selected_map_id(),
+                    dictionary_map_id: get_selected_map_id(),
                     name: name,
                     query_json: JSON.stringify(query_json),
                     is_public: is_public ? 1 : 0
@@ -1161,6 +891,7 @@ export class SearchWindow extends VirtualWindow {
             unloadBtn.disabled = true
             load_input.disabled = false
             deleteBtn.disabled = true
+            renamedBtn.disabled = true
             find_dom_element("span_search_id_value").clear_text()
         }
         buttonRow.appendChild(unloadBtn);
@@ -1182,7 +913,7 @@ export class SearchWindow extends VirtualWindow {
             load_input.element(),
             1,
             "dictionary_search_fulltext",
-            "&dictionary_map_id=" + selected_map_id
+            "&dictionary_map_id=" + get_selected_map_id()
         )
 
         search_autocomplete.addCallback(async e => {
@@ -1199,6 +930,7 @@ export class SearchWindow extends VirtualWindow {
             }
             resetBtn.click()
             let query = JSON.parse(read_search.query_json)
+            map_select.set_selected_values(read_search.map_id)
             titleContainsInput.set_value(query.title_contains ?? "")
             titleStartsWithInput.set_value(query.title_starts_with ?? "")
             definitionInput.set_value(query.definition_contains ?? "")
@@ -1282,14 +1014,14 @@ export class SearchWindow extends VirtualWindow {
             console.debug(JSON.stringify(query))
             console.debug("query.missing=" + query.missing_items);
 
-            (query.missing_items ?? [])
-                .forEach(e => {
-                    find_enum("missing", e).check()
-                });
-
             (query.has_items ?? [])
                 .forEach(e => {
                     find_enum("has", e).check()
+                });
+
+            (query.missing_items ?? [])
+                .forEach(e => {
+                    find_enum("missing", e).check()
                 });
 
             createdSelect.set_selected_value(query.created)
@@ -1309,9 +1041,34 @@ export class SearchWindow extends VirtualWindow {
             console.debug(JSON.stringify(JSON.parse(read_search.query_json)))
             deleteBtn.disabled = false
             unloadBtn.disabled = false
+            renamedBtn.disabled = false
             search_json = read_search
             find_dom_element("span_search_id_value").set_text(read_search.id)
         })
+
+        const renamedBtn = make_button_obsolete("🔤 Rename");
+        renamedBtn.disabled = true
+        renamedBtn.onclick = async () => {
+            if (search_json === null) {
+                // nothing to do
+                return
+            }
+            let old_name = search_json.name
+            let new_name = null
+
+            new_name = prompt("Enter search name", old_name);
+            if (new_name === null || new_name === undefined || new_name === "") return
+
+            search_json.name = new_name
+            let updated = await put_entity(Entities.dictionary_search, search_json.id, search_json)
+            if (!defined(updated)) {
+                showError("Updating search failed: " + search_json.id + " " + search_json.name)
+                return
+            } else {
+                showInfo("Search was successfully renamed from " + old_name + " to " + new_name)
+            }
+        }
+        buttonRow.appendChild(renamedBtn);
 
         const deleteBtn = make_button_obsolete("🗑 Delete");
         deleteBtn.disabled = true
@@ -1328,6 +1085,7 @@ export class SearchWindow extends VirtualWindow {
             search_json = null
             deleteBtn.disabled = true
             unloadBtn.disabled = true
+            renamedBtn.disabled = true
             find_dom_element("span_search_id_value").clear_text()
         }
         buttonRow.appendChild(deleteBtn);
@@ -1352,16 +1110,26 @@ export class SearchWindow extends VirtualWindow {
                 new Option("10", "10"),
                 new Option("20", "20"),
                 new Option("50", "50"),
-                new Option("100", "100"))
+                new Option("100", "100"),
+                // new Option("1000", "1000")
+            )
             .set_selected_index(1)
+        page_size_select.on(EventType.Change.label, async () => {
+                searchBtn.click()
+                // await sleep_for_seconds(1)
+                // document
+                //     .getElementById("span_pages_toolbar")
+                //     .scrollIntoView({behavior: "smooth"});
+            }
+        )
 
         window_content.appendChild(new Span(page_size_label, page_size_select).element())
 
         let details_label = new Label("Details")
             .styles()
             .display(Display.Inline)
-            .marginRight(_10PX)
-            .marginLeft(_10PX)
+            .marginLeft(_20PX)
+            .marginRight()
             .end()
         let details_checkbox = new Checkbox()
             .set_id("details_checkbox")
@@ -1370,8 +1138,21 @@ export class SearchWindow extends VirtualWindow {
             .display(Display.Inline)
             .transform("scale(2)")
             .end()
+        let next_review_label = new Label("Next review")
+            .styles()
+            .display(Display.Inline)
+            .marginLeft(_20PX)
+            .marginRight()
+            .end()
+        let next_review_checkbox = new Checkbox()
+            .set_id("next_review_checkbox")
+            .set_checked(false)
+            .styles()
+            .display(Display.Inline)
+            .transform("scale(2)")
+            .end()
 
-        window_content.appendChild(new Span(details_label, details_checkbox).element())
+        window_content.appendChild(new Span(details_label, details_checkbox, next_review_label, next_review_checkbox).element())
 
         window_content.appendChild(space.element())
         let resultTable = new Table()

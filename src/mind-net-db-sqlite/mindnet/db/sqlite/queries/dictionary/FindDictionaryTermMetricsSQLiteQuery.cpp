@@ -45,6 +45,7 @@ plugins::core::models::OptionalError& optional_error)
             throw std::invalid_argument("Mandatory key dictionary_map_id is missing");
         }
         identification dictionary_map_id = request["dictionary_map_id"];
+        bool any_map = dictionary_map_id == 0;
 
         if (!request.contains("user_id"))
         {
@@ -116,7 +117,7 @@ LEFT JOIN (
     SELECT dictionary_term_id, COUNT(*) cnt, MAX(created_at) last_viewed_at
     FROM dictionary_term_visit where user_id = ? GROUP BY dictionary_term_id
 ) visit_cnt ON visit_cnt.dictionary_term_id = t.id
-WHERE t.dictionary_map_id = ?
+WHERE (?=1 or t.dictionary_map_id = ?)
 )";
         bool term_id_present = dictionary_term_id != 0;
         std::string sql2 = " and t.id = ? ";
@@ -138,6 +139,7 @@ WHERE t.dictionary_map_id = ?
             int index{0};
             query.bind(++index, user_id);
             query.bind(++index, dictionary_map_id);
+            query.bind(++index, any_map ? 1 : 0);
             if (term_id_present) query.bind(++index, dictionary_term_id);
             query.bind(++index, page_size);
             query.bind(++index, (page_number - 1) * page_size);

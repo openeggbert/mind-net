@@ -210,11 +210,54 @@ X(Desc, 2, ENUM_NAME)
 
     struct SearchModel
     {
+        identification map_id = 0;
+
+        // text filters
+        string title_contains;
+        string title_starts_with;
+        string definition_contains;
+
+        // enums / multi-selects serialized as comma-separated values
+        vector<TermStatus> statuses;
+        bool pinned_only = false;
+
+        bool difficulty_easy = false;
+        bool difficulty_medium = false;
+        bool difficulty_hard = false;
+
+        bool importance_low = false;
+        bool importance_medium = false;
+        bool importance_high = false;
+
+        int tag_id = 0;
+        string flag_title;
+        int link_from_term_id = 0;
+        int link_to_term_id = 0;
+        string note_contains;
+        int index_id = 0;
+        int source_id = 0;
+        string alias_alias;
+
+        vector<DictionaryItem> has_items;
+        vector<DictionaryItem> missing_items;
+        TimeRange created = TimeRange::Any;
+        TimeRange updated = TimeRange::Any;
+        TimeRange visited = TimeRange::Any;
+        TimeRange reviewed = TimeRange::Any;
+
+        bool repetition_due;
+        bool repetition_not_due;
+        bool repetition_never;
+
+        Sort sort = Sort::None;
+        Order order = Order::None;
+
         SearchModel(const std::string& json_string)
         {
             using json = nlohmann::json;
             json q = json::parse(json_string);
 
+            map_id = q.value("map_id", 0);
             // text filters
             title_contains = q.value("title_contains", "");
             title_starts_with = q.value("title_starts_with", "");
@@ -245,10 +288,10 @@ X(Desc, 2, ENUM_NAME)
             source_id = q.value("source_id", 0);
             alias_alias = q.value("alias_alias", "");
 
-            for (auto& e : q.at("missing_items").get<std::vector<int>>())
-                missing_items.push_back(int_to_dictionary_item(e));
             for (auto& e : q.at("has_items").get<std::vector<int>>())
                 has_items.push_back(int_to_dictionary_item(e));
+            for (auto& e : q.at("missing_items").get<std::vector<int>>())
+                missing_items.push_back(int_to_dictionary_item(e));
 
             created = int_to_time_range(q.at("created").get<int>());
             updated = int_to_time_range(q.at("updated").get<int>());
@@ -268,46 +311,6 @@ X(Desc, 2, ENUM_NAME)
             sort = int_to_sort(q.at("sort").get<int>());
         }
 
-        // text filters
-        string title_contains;
-        string title_starts_with;
-        string definition_contains;
-
-        // enums / multi-selects serialized as comma-separated values
-        vector<TermStatus> statuses;
-        bool pinned_only = false;
-
-        bool difficulty_easy = false;
-        bool difficulty_medium = false;
-        bool difficulty_hard = false;
-
-        bool importance_low = false;
-        bool importance_medium = false;
-        bool importance_high = false;
-
-        int tag_id = 0;
-        string flag_title;
-        int link_from_term_id = 0;
-        int link_to_term_id = 0;
-        string note_contains;
-        int index_id = 0;
-        int source_id = 0;
-        string alias_alias;
-
-        vector<DictionaryItem> missing_items;
-        vector<DictionaryItem> has_items;
-        TimeRange created = TimeRange::Any;
-        TimeRange updated = TimeRange::Any;
-        TimeRange visited = TimeRange::Any;
-        TimeRange reviewed = TimeRange::Any;
-
-        bool repetition_due;
-        bool repetition_not_due;
-        bool repetition_never;
-
-        Sort sort = Sort::None;
-        Order order = Order::None;
-
         [[nodiscard]] std::string to_json() const
         {
             using json = nlohmann::json;
@@ -325,6 +328,7 @@ X(Desc, 2, ENUM_NAME)
 
             json q;
 
+            q["map_id"] = map_id;
             q["title_contains"] = title_contains;
             q["title_starts_with"] = title_starts_with;
             q["definition_contains"] = definition_contains;
@@ -349,8 +353,8 @@ X(Desc, 2, ENUM_NAME)
             q["source_id"] = source_id;
             q["alias_alias"] = alias_alias;
 
-            q["missing_items"] = missing_items;
             q["has_items"] = has_items;
+            q["missing_items"] = missing_items;
             q["created"] = created;
             q["updated"] = updated;
             q["visited"] = visited;
@@ -450,19 +454,29 @@ X(Desc, 2, ENUM_NAME)
         if (!request.contains("dictionary_map_id"))
             throw std::invalid_argument("Mandatory key dictionary_map_id is missing");
         identification dictionary_map_id = request["dictionary_map_id"];
+        bool any_map = dictionary_map_id == 0;
 
         if (!request.contains("query_json"))
             throw std::invalid_argument("Mandatory key query_json is missing");
 
         SearchModel q(request["query_json"]);
         essential::debug << q.to_json() << essential::commit;
+        if (dictionary_map_id != q.map_id)
+        {
+            throw std::invalid_argument("dictionary_map_id mismatch");
+        }
 
         int page_size = request.value("page_size", 20);
         int page_number = request.value("page_number", 1);
         int offset = (page_number - 1) * page_size;
         i64 now_ms = get_now_ms();
 
-        std::string sql_start_page = "SELECT DISTINCT dt.id, dt.title, dt.disambiguation FROM dictionary_term dt ";
+        std::string sql_start_page =
+            //any_map ?
+        "SELECT DISTINCT dt.id, dt.title, dt.disambiguation, dt.dictionary_map_id, dt.created_at, dt.updated_at, dt.status, dt.importance, dt.difficulty FROM dictionary_term dt "
+        // :
+        // "SELECT DISTINCT dt.id, dt.title, dt.disambiguation, dt.dictionary_map_id FROM dictionary_term dt "
+        ;
         std::string sql_start_count = "SELECT COUNT(*) FROM dictionary_term dt ";
         std::string sql_where_and_joins;
         std::vector<BindValue> binders;
@@ -512,10 +526,13 @@ X(Desc, 2, ENUM_NAME)
             binders.push_back(user_id);
         }
 
-        // mandatory
-        append_where(sql_where_and_joins, first_where);
-        sql_where_and_joins += "dt.dictionary_map_id = ?";
-        binders.push_back(dictionary_map_id);
+        if (!any_map)
+        {
+            // mandatory
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.dictionary_map_id = ?";
+            binders.push_back(dictionary_map_id);
+        }
 
         // title filters
         if (!q.title_contains.empty())
@@ -665,45 +682,6 @@ X(Desc, 2, ENUM_NAME)
             {DictionaryItem::Indexes, "dictionary_index di"}
         };
 
-        // missing items
-        if (!q.missing_items.empty())
-        {
-            // common NOT EXISTS patterns
-
-            for (const auto& item : q.missing_items)
-            {
-                std::string condition;
-
-                // --- special cases ---
-                if (item == DictionaryItem::Definition)
-                {
-                    condition = "(dt.definition IS NULL OR dt.definition = '')";
-                }
-                else if (item == DictionaryItem::Links)
-                {
-                    condition =
-                        "NOT EXISTS (SELECT 1 FROM dictionary_link dl "
-                        "WHERE dl.from_dictionary_term_id = dt.id "
-                        "   OR dl.to_dictionary_term_id = dt.id)";
-                }
-                // --- generic NOT EXISTS ---
-                else if (auto it = dictionary_item_tables.find(item); it != dictionary_item_tables.end())
-                {
-                    condition =
-                        "NOT EXISTS (SELECT 1 FROM " + it->second +
-                        " WHERE " + it->second.substr(it->second.find(' ') + 1) +
-                        ".dictionary_term_id = dt.id)";
-                }
-
-                // append only if we really added a condition
-                if (!condition.empty())
-                {
-                    append_where(sql_where_and_joins, first_where);
-                    sql_where_and_joins += condition;
-                }
-            }
-        }
-
         // has items
         if (!q.has_items.empty())
         {
@@ -736,6 +714,45 @@ X(Desc, 2, ENUM_NAME)
                         " WHERE " + alias + ".dictionary_term_id = dt.id)";
                 }
 
+                if (!condition.empty())
+                {
+                    append_where(sql_where_and_joins, first_where);
+                    sql_where_and_joins += condition;
+                }
+            }
+        }
+
+        // missing items
+        if (!q.missing_items.empty())
+        {
+            // common NOT EXISTS patterns
+
+            for (const auto& item : q.missing_items)
+            {
+                std::string condition;
+
+                // --- special cases ---
+                if (item == DictionaryItem::Definition)
+                {
+                    condition = "(dt.definition IS NULL OR dt.definition = '')";
+                }
+                else if (item == DictionaryItem::Links)
+                {
+                    condition =
+                        "NOT EXISTS (SELECT 1 FROM dictionary_link dl "
+                        "WHERE dl.from_dictionary_term_id = dt.id "
+                        "   OR dl.to_dictionary_term_id = dt.id)";
+                }
+                // --- generic NOT EXISTS ---
+                else if (auto it = dictionary_item_tables.find(item); it != dictionary_item_tables.end())
+                {
+                    condition =
+                        "NOT EXISTS (SELECT 1 FROM " + it->second +
+                        " WHERE " + it->second.substr(it->second.find(' ') + 1) +
+                        ".dictionary_term_id = dt.id)";
+                }
+
+                // append only if we really added a condition
                 if (!condition.empty())
                 {
                     append_where(sql_where_and_joins, first_where);
@@ -1068,11 +1085,29 @@ NOT EXISTS (
                 nlohmann::json arr = nlohmann::json::array();
                 while (stmt.executeStep())
                 {
-                    arr.push_back({
-                        {"id", stmt.getColumn(0).getInt()},
-                        {"title", stmt.getColumn(1).getString()},
-                        {"disambiguation", stmt.getColumn(2).getString()}
-                    });
+                    // if (any_map)
+                    {
+                        arr.push_back({
+                            {"id", stmt.getColumn(0).getInt64()},
+                            {"title", stmt.getColumn(1).getString()},
+                            {"disambiguation", stmt.getColumn(2).getString()},
+                            {"map_id", stmt.getColumn(3).getInt64()},
+                            {"created_at", stmt.getColumn(4).getInt64()},
+                            {"updated_at", stmt.getColumn(5).getInt64()},
+                            {"status", stmt.getColumn(6).getInt()},
+                            {"importance", stmt.getColumn(7).getInt()},
+                            {"difficulty", stmt.getColumn(8).getInt()}
+                        });
+                    }
+                    // else
+                    // {
+                    //     arr.push_back({
+                    //         {"id", stmt.getColumn(0).getInt64()},
+                    //         {"title", stmt.getColumn(1).getString()},
+                    //         {"disambiguation", stmt.getColumn(2).getString()},
+                    //         {"map_id", stmt.getColumn(3).getInt64()},
+                    //     });
+                    // }
                 }
                 response["results"] = arr;
             }

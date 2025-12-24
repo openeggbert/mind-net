@@ -46,6 +46,7 @@ plugins::core::models::OptionalError& optional_error)
         }
 
         identification dictionary_map_id = request["dictionary_map_id"];
+        bool any_map = dictionary_map_id == 0;
 
         if (!request.contains("title_part"))
         {
@@ -64,7 +65,7 @@ plugins::core::models::OptionalError& optional_error)
         int page_size = 20;
         int page_number = 1;
 
-        static std::string sql = "select id, title from dictionary_tag_type where dictionary_map_id=? and title like ? limit ? offset ?";
+        static std::string sql = "select id, title from dictionary_tag_type where (?=1 or dictionary_map_id = ?) and title like ? limit ? offset ?";
 
         try
         {
@@ -76,11 +77,12 @@ plugins::core::models::OptionalError& optional_error)
             essential::debug << "Looking up tag_types (id, title) for dictionary_map_id=" << dictionary_map_id << " and title_part=" << title_part << essential::commit;
 
             SQLite::Statement query(db, sql);
-            query.bind(1, dictionary_map_id);
+            query.bind(1, any_map ? 1 : 0);
+            query.bind(2, dictionary_map_id);
             std::string pattern = "%" + title_part + "%";
-            query.bind(2, pattern);
-            query.bind(3, page_size);
-            query.bind(4, (page_number - 1) * page_size);
+            query.bind(3, pattern);
+            query.bind(4, page_size);
+            query.bind(5, (page_number - 1) * page_size);
 
             std::vector<std::pair<identification, std::string>> results;
             while (query.executeStep())

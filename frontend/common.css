@@ -251,13 +251,14 @@ a.note-wanted, a.note-unknown {
     min-width: 100px;
     min-height: 40px;
     background: white;
-    /*border-radius: 8px;*/
+    /*border-radius: 16px;*/
     /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);*/
     border: 2px solid #ddd;
     padding: 0px;
     z-index: 1000;
     resize: both;
     overflow: auto;
+    transition: opacity 180ms cubic-bezier(0.2, 0.0, 0.2, 1);
 }
 
 .window_container header {
