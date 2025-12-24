@@ -2,8 +2,8 @@
 // Markdown Renderer (syntax highlight + emoji)
 // ========================================
 
-import {get_element} from "./dom.js";
-import {defined} from "./common.js";
+import {get_element} from "../../dom.js";
+import {defined} from "../../common.js";
 
 // MD
 

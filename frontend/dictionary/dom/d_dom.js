@@ -1,7 +1,7 @@
-import {Styles} from "./d_styles.js";
-import {Display} from "./d_styles_enums.js";
-import {get_element} from "./dom.js";
-import {gen_enum_id} from "./d_enums.js";
+import {Styles} from "../styles/d_styles.js";
+import {Display} from "../styles_enums/d_styles_enums.js";
+import {get_element} from "../../dom.js";
+import {gen_enum_id} from "../enums/d_enums.js";
 
 export const EventType = Object.freeze({
     // mouse events

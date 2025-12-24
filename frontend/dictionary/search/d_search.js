@@ -1,9 +1,9 @@
-import {Entities} from "./d_entities.js";
+import {Entities} from "../entities/d_entities.js";
 import {
     TermStatus, Importance, Difficulty, DictionaryItem, TimeRange, RepetitionMode, Sort, Order,
     enumValue, enumValues, gen_enum_id, find_by_enum_id, humanizeEnumKey
-} from "./d_enums.js";
-import {Autocomplete, defined} from "./common.js";
+} from "../enums/d_enums.js";
+import {Autocomplete, defined} from "../../common.js";
 import {
     ActionType,
     Button,
@@ -16,8 +16,8 @@ import {
     Input,
     Label, Select,
     Span, Table
-} from "./d_dom.js";
-import {_10PX, _20PX, _40PX} from "./d_styles.js";
+} from "../dom/d_dom.js";
+import {_10PX, _20PX, _40PX} from "../styles/d_styles.js";
 import {
     chooseOption,
     formatDateTime,
@@ -26,8 +26,8 @@ import {
     get_element,
     showError,
     showInfo, showWarn
-} from "./dom.js";
-import {VirtualWindow} from "./d_window.js";
+} from "../../dom.js";
+import {VirtualWindow} from "../window/d_window.js";
 import {
     delete_entity,
     list_all_entities,
@@ -36,9 +36,9 @@ import {
     put_entity,
     QueryParams,
     read_entity
-} from "./api.js";
-import {BorderCollapse, Color, Cursor, Display, TextAlign, TextDecoration} from "./d_styles_enums.js";
-import {showDebug, USER_ID} from "./d_globals.js";
+} from "../../api.js";
+import {BorderCollapse, Color, Cursor, Display, TextAlign, TextDecoration} from "../styles_enums/d_styles_enums.js";
+import {showDebug, USER_ID} from "../globals/d_globals.js";
 
 /*
  * ------------------------------------------------------------------
@@ -543,15 +543,15 @@ export class FormRowAutocomplete extends FormRow {
 */
 
 export class SearchWindow extends VirtualWindow {
-    constructor(dictionary_app) {
+    constructor(dictionary_map_id, render_term_callback) {
         super({
             title: "🔍 Advanced Search",
             width: screen.width > 1000 ? 1000 : screen.width - 100,
             height: 600
         })
-        this.#init(dictionary_app)
+        this.#init(dictionary_map_id, render_term_callback)
     }
-    #init(dictionary_app) {
+    #init(selected_map_id, render_term_callback) {
         let search_window = this
 
         const window_content = new Div().styles().height("100%").end()
@@ -636,7 +636,7 @@ export class SearchWindow extends VirtualWindow {
                     search_form,
                     label,
                     "dictionary_" + model + "_fulltext",
-                    map_in_query ? ("&dictionary_map_id=" + dictionary_app.get_selected_map_id()) : ""
+                    map_in_query ? ("&dictionary_map_id=" + selected_map_id) : ""
                 )
                 this.add_action_handler(ActionType.Reset, (self, ...args) => {
                     self.reset()
@@ -792,7 +792,7 @@ export class SearchWindow extends VirtualWindow {
             let list_term_searches = await list_entities(
                 "dictionary_term_search",
                 new QueryParams()
-                    .add("dictionary_map_id", dictionary_app.get_selected_map_id())
+                    .add("dictionary_map_id", selected_map_id)
                     .add("title", JSON.stringify(query_json))
                     .build(),
                 page_number,
@@ -946,8 +946,7 @@ export class SearchWindow extends VirtualWindow {
                 td_title.appendChild(a)
 
                 td_title.onclick = (async e => {
-                    await dictionary_app.render(dictionary_term_id)
-                    this.dictionary_app.show_term_container()
+                    await render_term_callback(dictionary_term_id)
                 })
                 td_title.style.cursor = "pointer"
                 tr.appendChild(create_td(number))
@@ -1171,7 +1170,7 @@ export class SearchWindow extends VirtualWindow {
             load_input.element(),
             1,
             "dictionary_search_fulltext",
-            "&dictionary_map_id=" + dictionary_app.get_selected_map_id()
+            "&dictionary_map_id=" + selected_map_id
         )
 
         search_autocomplete.addCallback(async e => {

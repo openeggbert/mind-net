@@ -2,8 +2,8 @@
 // Window
 // ========================================
 
-import {Div, Span} from "./d_dom.js";
-import {showError, showInfo} from "./dom.js";
+import {Div, Span} from "../dom/d_dom.js";
+import {showError, showInfo} from "../../dom.js";
 
 let activeWindow = null;
 let topZ = 1000;
@@ -399,7 +399,7 @@ export class VirtualWindow {
 
 }
 
-export function showWindowFrom(title, url) {
+export function showWindowFromUrl(title, url) {
     if (url === undefined) {
         showError("url is required");
         return;

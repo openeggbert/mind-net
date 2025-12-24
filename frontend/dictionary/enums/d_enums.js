@@ -1,4 +1,4 @@
-import {get_element} from "./dom.js";
+import {get_element} from "../../dom.js";
 
 function canConvertToNumber(text) {
     return Number.isFinite(Number(text));
