@@ -1,4 +1,4 @@
-import {get_element, showError, showInfo, showWarn} from "../../dom.js";
+import {get_element, showError, showInfo, showSuccess, showWarn} from "../../dom.js";
 import {delete_entity, list_all_entities, post_entity, put_entity, QueryParams, read_entity} from "../../api.js";
 import {Entities} from "../entities/Entities.js";
 import {translate, USER_ID} from "../globals/Globals.js";
@@ -44,7 +44,7 @@ export class SelectMap {
                 showError(translate("dictionary.select_map.button.add_map.error.creating_map_failed") + ": " + name)
                 return
             } else {
-                showInfo( translate("dictionary.select_map.button.add_map.info.map_created")+ ": " + name)
+                showSuccess( translate("dictionary.select_map.button.add_map.info.map_created")+ ": " + name)
             }
             this.add_map(new_map_created.id, new_map_created.name)
             this.select_map(new_map_created.id)
@@ -75,7 +75,7 @@ export class SelectMap {
                 showError(translate("dictionary.select_map.button.rename_map.error.update_failed") + ": " + new_name)
                 return
             } else {
-                showInfo(translate("dictionary.select_map.button.rename_map.info.update_successful") + ": " + new_name)
+                showSuccess(translate("dictionary.select_map.button.rename_map.info.update_successful") + ": " + new_name)
             }
             this.rename_map(this.#selected_map_id, new_name)
         }
@@ -89,7 +89,7 @@ export class SelectMap {
                 return
             }
 
-            showInfo(translate("dictionary.select_map.button.delete_map.error.deleting_successful") + ": " + this.#selected_map_id)
+            showSuccess(translate("dictionary.select_map.button.delete_map.error.deleting_successful") + ": " + this.#selected_map_id)
 
             this.remove_map(this.#selected_map_id)
         }

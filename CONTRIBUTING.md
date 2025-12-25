@@ -35,7 +35,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] New cron job: delete terms with status Deleted
-- [ ] Multi-language
+- [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New table dictionary_url
 
 ### Plugin Slipbox

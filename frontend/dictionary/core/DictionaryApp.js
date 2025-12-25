@@ -1,5 +1,5 @@
 import {post_entity} from "../../api.js";
-import {get_element, showError, showInfo} from "../../dom.js";
+import {get_element, showError, showInfo, showSuccess} from "../../dom.js";
 import {Autocomplete} from "../../common.js";
 import {SelectMap} from "./SelectMap.js";
 import TermContainer from "./TermContainer.js";
@@ -80,7 +80,7 @@ export class DictionaryApp {
                 showError(this.translate("dictionary.term.button.add_term.error.creating_failed"))
                 return;
             }
-            showInfo(this.translate("dictionary.term.button.add_term.info.creating_was_successful") + new_term_created.title)
+            showSuccess(this.translate("dictionary.term.button.add_term.info.creating_was_successful") + new_term_created.title)
             await this.#term_container.render(new_term_created.id)
             this.#term_container.show()
 

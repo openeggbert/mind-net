@@ -146,19 +146,19 @@ export function showToast(message, timeout = 3000, type = "info") {
 }
 
 export function showError(msg) {
-    showToast(msg, 10000, "error");
+    showToast("❌️ " + msg, 10000, "error");
 }
 
 export function showInfo(msg) {
-    showToast(msg, 5000, "info");
+    showToast("ℹ️ " + msg, 5000, "info");
 }
 
 export function showSuccess(msg) {
-    showToast(msg, 5000, "success");
+    showToast("✅ " + msg, 5000, "success");
 }
 
 export function showWarn(msg) {
-    showToast(msg, 10000, "warn");
+    showToast("⚠️ " + msg, 10000, "warn");
 }
 
 export function makeEnum(map) {

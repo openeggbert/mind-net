@@ -1,4 +1,4 @@
-import {formatDateTime, get_element, showError, showInfo, showWarn} from "../../dom.js";
+import {formatDateTime, get_element, showError, showInfo, showSuccess, showWarn} from "../../dom.js";
 import {
     delete_entity,
     getTitleCache, list_all_entities,
@@ -22,6 +22,8 @@ import {Entities} from "../entities/Entities.js";
 import {attachMarkdownEditor} from "../markdown/Markdown.js";
 import {translate, USER_ID} from "../globals/Globals.js";
 import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
+
+const COLON_SPACE = ": "
 
 class TermContainer {
     #element
@@ -118,7 +120,7 @@ class TermContainer {
 
     async render(dictionary_term_id) {
         if (this.dictionary_term_id === dictionary_term_id) {
-            showWarn("This term is already shown.")
+            showWarn(translate("dictionary.term.container.info.term_already_shown"))
             return
         }
         if (dictionary_term_id === 0) return;
@@ -137,11 +139,11 @@ class TermContainer {
         this.dictionary_term_id = dictionary_term_id
         let dictionary_term = await read_entity(Entities.dictionary_term, dictionary_term_id)
         if(!defined(dictionary_term)) {
-            showError("Reading term failed: " + dictionary_term_id)
-            throw new Error ("Reading term failed: " + dictionary_term_id)
+            showError(translate("dictionary.term.container.error.reading_term_failed") + ": " + dictionary_term_id)
+            // throw new Error ("Reading term failed: " + dictionary_term_id)
             return;
         }
-        document.title = "Dictionary - App - " + dictionary_term.title
+        document.title = translate("dictionary.title.dictionary_app") + " - " + dictionary_term.title
         this.#dictionary_term_json = dictionary_term
         get_element("h2_term_id").innerText = dictionary_term.id
         get_element("input_title").value = dictionary_term.title
@@ -167,7 +169,7 @@ class TermContainer {
                 .build()
         )
         if (!defined(pinned_terms)) {
-            showError("Loading pinned terms failed.")
+            showError(translate("dictionary.term.container.error.loading_pinned_terms_failed"))
         } else {
             checkbox_pinned.checked = pinned_terms.length > 0
         }
@@ -189,13 +191,13 @@ class TermContainer {
         get_element("textarea_definition").innerText = dictionary_term.definition
 
         get_element("button_delete_term").onclick = async () => {
-            if (!confirm("Do you really want to delete this term and all its tags, flags, links, notes, sources and aliases?")) return;
+            if (!confirm(translate("dictionary.term.container.prompt.delete_term"))) return;
 
             async function delete_rows(model_name, entities) {
                 for (const e of entities) {
                     let delete_result = await delete_entity(model_name, e.id)
                     if (!delete_result) {
-                        showError("Deleting " + model_name + " failed.");
+                        showError(translate("dictionary.term.container.error.deleting_model_failed", {model_name: model_name}));
                     }
                 }
             }
@@ -282,7 +284,7 @@ class TermContainer {
             dictionary_term.status = 6 //deleted
             let updated = await put_entity(Entities.dictionary_term, dictionary_term_id, dictionary_term)
             if (!defined(updated)) {
-                showError("Setting term status to Deleted failed.")
+                showError(translate("dictionary.term.container.error.setting_status_to_deleted_failed"))
                 return;
             }
 
@@ -301,10 +303,10 @@ class TermContainer {
             await delete_rows(Entities.dictionary_term_visit, visits)
             let delete_dictionary_term = await delete_entity(Entities.dictionary_term, dictionary_term_id)
             if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
-                showInfo("Deleted dictionary term: " + dictionary_term.title)
+                showSuccess( translate("dictionary.term.container.info.deleting_term_successful")+ ": " + dictionary_term.title)
                 this.hide()
             } else {
-                showError("Deleting dictionary term failed: " + dictionary_term.title)
+                showError( translate("dictionary.term.container.error.deleting_term_failed")+ ": " + dictionary_term.title)
             }
         }
 
@@ -324,7 +326,7 @@ class TermContainer {
                     .build()
             )
             if (!defined(pinned_terms)) {
-                showError("Loading pinned terms failed.")
+                showError(translate("dictionary.term.container.error.loading_pinned_terms_failed"))
             } else {
                 let pinned_in_db = pinned_terms.length > 0
                 if (pinned_now !== pinned_in_db) {
@@ -336,20 +338,20 @@ class TermContainer {
                         }
                         let created = await post_entity(Entities.dictionary_pinned_term, new_pinned_term)
                         if (defined(created)) {
-                            showInfo("New pinned term was successfully created.")
+                            showSuccess(translate("dictionary.term.container.info.creating_pinned_term_successful"))
                             checkbox_pinned.checked = true
                         } else {
-                            showError("Creating new pinned term failed.")
+                            showError(translate("dictionary.term.container.error.creating_pinned_term_failed"))
                         }
                     }
                     if (!pinned_now) {
                         for (const e of pinned_terms) {
                             let deleted = await delete_entity(Entities.dictionary_pinned_term, e.id)
                             if (deleted) {
-                                showInfo("Pinned term was successfully deleted: " + e.id)
+                                showSuccess(translate("dictionary.term.container.info.deleting_pinned_term_successful") + COLON_SPACE + e.id)
                                 checkbox_pinned.checked = false
                             } else {
-                                showError("Deleting pinned term failed: " + e.id)
+                                showError(translate("dictionary.term.container.error.deleting_pinned_term_failed") + COLON_SPACE + e.id)
                             }
                         }
                     }
@@ -376,19 +378,19 @@ class TermContainer {
             new_term.difficulty = difficulty
             let updated = put_entity(Entities.dictionary_term, dictionary_term_id, new_term)
             if (updated !== null && updated !== undefined) {
-                showInfo("Dictionary term was successfully updated.")
+                showSuccess(translate("dictionary.term.container.info.updating_term_successful"))
                 this.#dictionary_term_json = new_term
             } else {
-                showError("Updating dictionary term failed.")
+                showError(translate("dictionary.term.container.error.updating_term_failed"))
             }
         }
         get_element("button_show_backlinks").onclick = () => {
             let url = "index.html?entity=dictionary_link&action=list&to_dictionary_term_id=" + dictionary_term_id
-            showWindowFromUrl("Backlinks", url)
+            showWindowFromUrl(translate("dictionary.term.container.backlinks"), url)
         }
         get_element("button_show_visited").onclick = async () => {
             let win = new VirtualWindow({
-                title: "Term Visit History (Last 100)",
+                title: translate("dictionary.term.container.visit_window.term_visit_history"),
                 width: 800,
                 height: 600,
             })
@@ -397,10 +399,11 @@ class TermContainer {
             let content = new Div()
 
             let button = document.createElement("button")
-            button.innerText = "Show all visits"
+            button.innerText = translate("dictionary.term.container.visit_window.button_show_all_visits")
+            button.dataset.i18n = "dictionary.term.container.visit_window.button_show_all_visits"
             button.onclick = () => {
                 let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + USER_ID
-                showWindowFromUrl("All visits", url)
+                showWindowFromUrl(translate("dictionary.term.container.visit_window.all_visits"), url)
             }
             button.style.margin = "20px;"
             button.style.textAlign = "center"
@@ -421,7 +424,7 @@ class TermContainer {
                 100
             )
             if (null_or_undefined(visits_result)) {
-                showError("Loading visits failed.")
+                showError(translate("dictionary.term.container.visit_window.error.loading_visits_failed"))
                 return;
             }
             let visits = visits_result.items
@@ -435,11 +438,14 @@ class TermContainer {
             let th_number = document.createElement("th");
             th_number.innerText = "#"
             let th_id = document.createElement("th");
-            th_id.innerText = "Term ID"
+            th_id.innerText = translate("dictionary.common.term_id")
+            th_id.dataset.i18n = "dictionary.common.term_id"
             let th_title = document.createElement("th");
-            th_title.innerText = "Title"
+            th_title.innerText = translate("dictionary.common.title")
+            th_title.dataset.i18n = "dictionary.common.title"
             let th_timestamp = document.createElement("th");
-            th_timestamp.innerText = "Timestamp"
+            th_timestamp.innerText = translate("dictionary.common.timestamp")
+            th_timestamp.dataset.i18n = "dictionary.common.timestamp"
             tr_first.appendChild(th_number)
             tr_first.appendChild(th_id)
             tr_first.appendChild(th_title)
@@ -461,8 +467,8 @@ class TermContainer {
                 if (!disambiguation_map.has(visited_term_id)) {
                     let term = await read_entity(Entities.dictionary_term, visited_term_id)
                     if (term === null || term === undefined) {
-                        showWarn("Loading dictionary_term with id " + visited_term_id + " failed.");
                         disambiguation_map.set(visited_term_id, "")
+                        showWarn(translate("dictionary.term.container.error.reading_term_failed") + COLON_SPACE + visited_term_id);
                     } else {
                         disambiguation_map.set(visited_term_id, term.disambiguation)
                     }
@@ -491,12 +497,12 @@ class TermContainer {
                     let title = getTitleCache(Entities.dictionary_term, visited_term_id)
                     if (title === null || title === undefined) {
                         let x = visited_term_id
-                        let note_ = await read_entity(Entities.dictionary_term, x)
-                        if (note_ === null) {
-                            showWarn("Loading dictionary_term with id " + x + " failed.");
-                            title = "Unknown (#" + x + ")"
+                        let term_ = await read_entity(Entities.dictionary_term, x)
+                        if (term_ === null) {
+                            showWarn(translate("dictionary.term.container.error.reading_term_failed") + x);
+                            title = "??? (# " + x + ")"
                         } else {
-                            title = note_.title
+                            title = term_.title
                             setTitleCache(Entities.dictionary_term, x, title);
                         }
                     }
@@ -527,7 +533,7 @@ class TermContainer {
         }
         let created_dictionary_term_visit = post_entity(Entities.dictionary_term_visit, new_visit)
         if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
-            showError("Creating new term visit failed.")
+            showError(translate("dictionary.term.container.error.creating_term_visit_failed"))
         }
     }
 }

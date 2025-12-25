@@ -2,6 +2,7 @@ import {get_element, showError, showWarn} from "../../dom.js";
 import {validate_cfg} from "./CrudConfiguration.js";
 import {defined} from "../../common.js";
 import {list_all_entities} from "../../api.js";
+import {translate} from "../globals/Globals.js";
 
 export class _CrudSection {
     #cfg
@@ -12,7 +13,7 @@ export class _CrudSection {
     constructor(cfg, get_selected_map_id_callback, render_term_id_callback = null) {
         this.get_selected_map_id_callback = get_selected_map_id_callback
         this.render_term_id_callback = render_term_id_callback
-        if (!validate_cfg(cfg)) throw "Configuration is not valid for model: " + cfg.model
+        if (!validate_cfg(cfg)) throw translate("dictionary.crud_section.cfg_not_valid", {model: cfg.model})
         this.#cfg = cfg
         this.#element = get_element(cfg.models);
         this.#input = cfg.input ? get_element("input_search_" + this.#cfg.model) : null;
@@ -49,7 +50,7 @@ export class _CrudSection {
 
         const items = await this.loadItems(dictionary_term_id);
         if (items === null || items === undefined) {
-            showError("Listing " + this.#cfg.models + " failed.")
+            showError(translate("dictionary.crud_section.error.listing_models_failed", {models: this.#cfg.models}))
             return
         }
         for (const item of items) {
@@ -58,7 +59,7 @@ export class _CrudSection {
 
             let title = await this.#cfg.resolveTitle(item)
             if (title === null || title === undefined) {
-                showError("Loading title failed for model: " + this.#cfg.model + " and id " + item.id)
+                showError(translate("dictionary.crud_section.error.listing_title_failed", {model: this.#cfg.model, id: item.id}))
                 continue
             }
             this.addItem(title, item.id, item);
@@ -105,7 +106,7 @@ export class _CrudSection {
         this.#autocomplete.addCallback(async () => {
             const item = this.#autocomplete.get_item();
             if (!item) {
-                showWarn("Autocomplete returned null item");
+                console.warn("Autocomplete returned null item");
                 return;
             }
             await this.#cfg.autocompleteCallback(item, termId)

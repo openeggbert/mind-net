@@ -4,20 +4,37 @@
   "dictionary.header.label": "Slovník",
 
   "dictionary.button.mindnet": "Mind Net",
-  "dictionary.button.mindnet.title": "Přejít na obecný Mind Net frontend",
+  "dictionary.button.mindnet.title": "Přejít na obecný frontend Mind Net",
 
   "dictionary.common.map": "Mapa",
+  "dictionary.select_map.info.map_changed": "Mapa byla změněna na",
 
   "dictionary.select_map.button.add_map": "Přidat mapu",
+  "dictionary.select_map.button.add_map.prompt.enter_map_name": "Zadejte název mapy",
+  "dictionary.select_map.button.add_map.error.creating_map_failed": "Vytvoření nové mapy se nezdařilo",
+  "dictionary.select_map.button.add_map.info.map_created": "Nová mapa byla úspěšně vytvořena",
+
   "dictionary.select_map.button.show_map": "Zobrazit mapu",
+
   "dictionary.select_map.button.rename_map": "Přejmenovat mapu",
+  "dictionary.select_map.button.rename_map.error.reading_map_failed": "Načtení mapy se nezdařilo",
+  "dictionary.select_map.button.rename_map.prompt_enter_new_map_name": "Zadejte nový název mapy",
+  "dictionary.select_map.button.rename_map.warn.no_change": "Název nebyl změněn. Není co aktualizovat.",
+  "dictionary.select_map.button.rename_map.error.update_failed": "Aktualizace mapy se nezdařila",
+  "dictionary.select_map.button.rename_map.info.update_successful": "Mapa byla úspěšně aktualizována",
+
   "dictionary.select_map.button.delete_map": "Smazat mapu",
+  "dictionary.select_map.button.delete_map.confirm.text": "Opravdu chcete tuto mapu smazat?",
+  "dictionary.select_map.button.delete_map.error.deleting_failed": "Mazání mapy se nezdařilo.",
+  "dictionary.select_map.button.delete_map.error.deleting_successful": "Mapa byla úspěšně smazána",
 
   "dictionary.label.search_term": "Hledat heslo",
   "dictionary.button.advanced_search": "Rozšířené vyhledávání",
 
   "dictionary.term.button.add_term": "Přidat heslo",
-  "dictionary.term.button.add_term.error.empty_title": "Nové heslo nemohlo být vytvořeno, protože název je prázdný.",
+  "dictionary.term.button.add_term.error.empty_title": "Nové heslo nelze vytvořit, název nesmí být prázdný.",
+  "dictionary.term.button.add_term.error.creating_failed": "Vytvoření nového hesla se nezdařilo.",
+  "dictionary.term.button.add_term.info.creating_was_successful": "Nové heslo bylo úspěšně vytvořeno: ",
   "dictionary.term.button.find_random": "Náhodné heslo",
   "dictionary.term.button.new_repetition": "Nové opakování",
   "dictionary.term.button.new_session": "Nová relace",
@@ -56,10 +73,14 @@
   "dictionary.term.labels.backlinks": "Zpětné odkazy",
   "dictionary.term.labels.visited": "Navštíveno",
 
+  "dictionary.common.term": "Heslo",
   "dictionary.common.delete": "Smazat",
   "dictionary.common.save": "Uložit",
   "dictionary.common.placeholder.start_writing": "Začněte psát...",
-  "dictionary.term.container.click_note": "{models} jsou skryté. Pro zobrazení klikněte na\"{models}\" .",
+
+  "dictionary.term.container.click_note": "{models} jsou skryté. Klikněte na „{models}“ pro jejich zobrazení.",
+  "dictionary.term.container.info.term_already_shown": "Toto heslo je již zobrazeno.",
+  "dictionary.term.container.error.loading_pinned_terms_failed": "Načítání připnutých hesel se nezdařilo.",
 
   "dictionary.sections.tags.label.tags": "Štítky",
   "dictionary.sections.tags.button.add_tag": "Přidat štítek",
@@ -87,6 +108,6 @@
   "dictionary.sections.sources.button.show_sources": "Zobrazit zdroje",
   "dictionary.sections.sources.label.search_source": "Hledat zdroj",
 
-  "dictionary.sections.aliases.label.aliases": "Alternativní názvy",
-  "dictionary.sections.aliases.button.add_alias": "Přidat alternativní název"
+  "dictionary.sections.aliases.label.aliases": "Alias",
+  "dictionary.sections.aliases.button.add_alias": "Přidat alias"
 }

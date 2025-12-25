@@ -539,7 +539,7 @@ export class SearchWindow extends VirtualWindow {
                 showInfo("No search results.")
             }
             progress_bar.reset().show()
-            let resultTable = find_dom_element("resultTable")
+            let resultTable = find_dom_element("resultTable" + search_window.get_created_at())
                 .clear_html()
                 .hide()
                 .styles().marginBottom(_40PX).end()
@@ -1156,7 +1156,7 @@ export class SearchWindow extends VirtualWindow {
 
         window_content.appendChild(space.element())
         let resultTable = new Table()
-            .set_id("resultTable")
+            .set_id("resultTable" +  search_window.get_created_at())
             .styles()
             .display(Display.None)
             .margin(_10PX)

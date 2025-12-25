@@ -68,6 +68,7 @@ export class VirtualWindow {
         // ===============================
         this.#root = document.createElement("div");
         this.#root.className = "window_container";
+        this.created_at = Date.now()
 
         if (width !== null) {
             this.#root.style.width = width + "px";
@@ -88,7 +89,7 @@ export class VirtualWindow {
         this.#close = document.createElement("button");
         this.#close.className = "window-close";
         this.#close.textContent = "✖";
-        this.#close.onclick = () => this.hide();
+        this.#close.onclick = () => this.close();
 
         this.#minimize = document.createElement("button");
         this.#minimize.className = "window-minimize";
@@ -189,6 +190,9 @@ export class VirtualWindow {
 
     }
 
+    get_created_at() {
+        return this.created_at
+    }
     // ===============================
     // Public API
     // ===============================
