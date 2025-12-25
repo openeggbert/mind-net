@@ -92,6 +92,22 @@ textarea {
     min-height: 80px;
 }
 
+#select_language,
+#label_select_map,
+#select_map
+{
+    display: inline-block;
+    max-width: none;
+    width: auto;
+}
+#label_select_map {
+    margin-right: 10px;
+}
+#select_map{
+    min-width: 300px;
+}
+
+
 .tags {
     display: flex;
     gap: 10px;
@@ -275,6 +291,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
+    margin-bottom: 20px;
 }
 
 header div {
@@ -351,3 +368,5 @@ fieldset legend {
     background-color: rgba(3, 102, 214, 0.1);
 
 }
+
+

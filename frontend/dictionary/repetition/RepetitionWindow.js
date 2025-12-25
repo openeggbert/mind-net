@@ -45,6 +45,7 @@ export class RepetitionWindow extends VirtualWindow {
         let model = null
         while (true) {
             model = await this.ask_user_for_model(model)
+            let searches = await this.list_term_searches(model)
             console.log("User confirmed repetition:", model)
             let c = confirm("Continue");
             if (!c) break;
@@ -52,6 +53,19 @@ export class RepetitionWindow extends VirtualWindow {
 
     }
 
+    async list_term_searches(model) {
+        let search = model.search_id != null
+        if(search) {
+
+        }
+        if(!search){
+
+        }
+    }
+    async ask_user_for_grade() {
+        return new Promise(async (resolve, reject) => {
+        })
+    }
     async ask_user_for_model(model = null) {
         return new Promise(async (resolve, reject) => {
 
@@ -141,6 +155,13 @@ export class RepetitionWindow extends VirtualWindow {
                 never_checkbox.get_checkbox().element().disabled = false
                 has_definition_checkbox.element().disabled = false
             })
+            if(defined(model)) {
+                let search = model.search_id !== 0
+                due_checkbox.get_checkbox().element().disabled = search
+                not_due_checkbox.get_checkbox().element().disabled = search
+                never_checkbox.get_checkbox().element().disabled = search
+                has_definition_checkbox.element().disabled = search
+            }
             start_button.on(EventType.Click.label, () => {
                 const model = new RepetitionModel()
 

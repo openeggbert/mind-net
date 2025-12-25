@@ -35,7 +35,9 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] New cron job: delete terms with status Deleted
-- 
+- [ ] Multi-language
+- [ ] New table dictionary_url
+
 ### Plugin Slipbox
 - [ ] Table map: add new column position
 - [ ] onclick textarea starts editing

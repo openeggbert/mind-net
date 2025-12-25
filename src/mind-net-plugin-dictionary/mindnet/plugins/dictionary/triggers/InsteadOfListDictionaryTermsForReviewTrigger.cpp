@@ -96,7 +96,7 @@ namespace mindnet::plugins::dictionary::triggers
             return result;
         }
         req["user_id"] = user_id;
-        int algorithm = f.contains("algorithm") ? stoll(f.at("algorithm")) : 18;
+        int algorithm = f.contains("algorithm") ? stoi(f.at("algorithm")) : 18;
         if (algorithm != 18)
         {
             err << "Query FindDictionaryTermsForReview failed: algorithm != 18" << commit;
@@ -200,18 +200,18 @@ namespace mindnet::plugins::dictionary::triggers
 
             auto query_json_parsed = nlohmann::json::parse(query_json);
 
-            if (!(is_due & is_not_due && is_never))
-            {
-                query_json_parsed["repetition_due"] = is_due;
-                query_json_parsed["repetition_not_due"] = is_not_due;
-                query_json_parsed["repetition_never"] = is_never;
-            }
-            if (has_definition)
-            {
-                std::string has_items = query_json_parsed["has_items"];
-                query_json_parsed["has_items"] = has_items + ",Definition";
-            }
-            query_json = query_json_parsed.dump();
+            // if (!(is_due && is_not_due && is_never))
+            // {
+            //     query_json_parsed["repetition_due"] = is_due;
+            //     query_json_parsed["repetition_not_due"] = is_not_due;
+            //     query_json_parsed["repetition_never"] = is_never;
+            // }
+            // if (has_definition)
+            // {
+            //     std::string has_items = query_json_parsed["has_items"];
+            //     query_json_parsed["has_items"] = has_items + ",Definition";
+            // }
+            // query_json = query_json_parsed.dump();
 
             orm::QueryParams query_params_dictionary_term_search;
             query_params_dictionary_term_search.add_filter("dictionary_map_id", dictionary_map_id);
