@@ -266,7 +266,7 @@ a.note-wanted, a.note-unknown {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #ccc;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
     padding-left: 10px;
     font-weight: bold;
     padding-top: 0px;

@@ -378,3 +378,61 @@ fieldset legend {
 }
 
 
+.repetition_div {
+    background-color: #121212;;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin: 0;
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.repetition_div *{
+    color: white;
+}
+.definition_div * {
+    color: rgb(160, 255, 160)!important;
+}
+.repetition_card {
+    background-color: #1e1e1e;
+    padding: 1em;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+    margin-bottom: 1em;
+}
+.repetition_button {
+    font-size: 110%;
+    color: #fff;
+    margin: 5px;
+    border: 0;
+    min-width: 40px;
+    height: 40px;
+}
+.rating-btn {
+    background: #2e7d32;
+}
+
+.rating-btn:hover {
+    background: #4fbc51;
+    color: #fff;
+}
+
+.rating-btn-selected {
+    background: #4fbc51;
+    color: #fff;
+}
+
+.action-btn:hover {
+    background: #2f89d9;
+    color: #fff;
+}
+.action-btn {
+    background: #1e6fb8;
+    color: #fff;
+}
+.common-repetition_button:hover{
+    background-color: rgb(129, 128, 128) !important;
+}

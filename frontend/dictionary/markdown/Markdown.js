@@ -30,6 +30,11 @@ md.use(window.markdownitEmoji);
 // configure highlight.js appearance
 window.hljs.configure({languages: ['cpp', 'js', 'json', 'html', 'sql', 'python']});
 
+export function markdownToHtml(markdownText) {
+    if (!markdownText) return "";
+    return md.render(markdownText);
+}
+
 export function attachMarkdownEditor({
                                          textarea,
                                          buttonEdit,

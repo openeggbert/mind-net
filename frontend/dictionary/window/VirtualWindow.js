@@ -140,6 +140,11 @@ export class VirtualWindow {
         // ===============================
         this.#install_drag();
 
+        this.#root.addEventListener("pointerdown", e => {
+            if (e.target.closest("button")) return;
+            this.focus();
+        });
+
         this.#header.addEventListener("mousedown", e => {
             if (e.buttons !== 1) return;
 
@@ -273,7 +278,7 @@ export class VirtualWindow {
         this.#root.classList.toggle("active", active);
     }
 
-    set_content_padding(value) {
+    set_content_padding(value = 0) {
         this.#content.style.padding = value
     }
 
@@ -292,10 +297,12 @@ export class VirtualWindow {
                 const top = (window.innerHeight - h) / 2;
                 this.#root.style.top = clampTop(top) + "px";
 
+                this.focus();
             });
+        } else {
+            this.focus();
         }
 
-        this.focus();
         return this;
     }
 

@@ -7,6 +7,7 @@
   "dictionary.button.mindnet.title": "Go to Mind Net generic frontend",
 
   "dictionary.common.map": "Map",
+  "dictionary.common.maps": "Maps",
   "dictionary.select_map.info.map_changed": "Map was changed to",
 
   "dictionary.select_map.button.add_map": "Add Map",
@@ -80,6 +81,15 @@
   "dictionary.common.term_id": "Term ID",
   "dictionary.common.title": "Title",
   "dictionary.common.timestamp": "Timestamp",
+  "dictionary.common.any": "Any",
+  "dictionary.common.search": "Search",
+  "dictionary.common.load_a_search": "Load a Search",
+  "dictionary.common.mode": "Mode",
+  "dictionary.common.due": "Due",
+  "dictionary.common.not_due": "Not due",
+  "dictionary.common.never": "Never",
+  "dictionary.common.has_definition": "Has definition",
+  "dictionary.common.start": "Start",
 
   "dictionary.term.container.click_note": "{models} are hidden. Click \"{models}\" to show them.",
   "dictionary.term.container.info.term_already_shown": "This term is already shown.",
@@ -136,5 +146,9 @@
   "dictionary.sections.sources.label.search_source": "Search source",
 
   "dictionary.sections.aliases.label.aliases": "Aliases",
-  "dictionary.sections.aliases.button.add_alias": "Add Alias"
+  "dictionary.sections.aliases.button.add_alias": "Add Alias",
+
+  "dictionary.repetition.repetition" : "Repetition",
+  "dictionary.repetition.error.loading_terms_for_review_failed" : "Loading terms for review failed",
+  "dictionary.repetition.item" : "Item"
 }
