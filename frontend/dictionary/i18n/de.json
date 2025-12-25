@@ -1,0 +1,95 @@
+{
+  "dictionary.title.dictionary_app": "Wörterbuch – App",
+  "dictionary.header.title": "Zur Startseite",
+  "dictionary.header.label": "Wörterbuch",
+
+  "dictionary.button.mindnet": "Mind Net",
+  "dictionary.button.mindnet.title": "Zum generischen Mind-Net-Frontend wechseln",
+
+  "dictionary.common.map": "Karte",
+  "dictionary.select_map.info.map_changed": "Karte wurde geändert zu",
+
+  "dictionary.select_map.button.add_map": "Karte hinzufügen",
+  "dictionary.select_map.button.show_map": "Karte anzeigen",
+  "dictionary.select_map.button.rename_map": "Karte umbenennen",
+  "dictionary.select_map.button.delete_map": "Karte löschen",
+
+  "dictionary.label.search_term": "Begriff suchen",
+  "dictionary.button.advanced_search": "Erweitert",
+
+  "dictionary.term.button.add_term": "Begriff hinzufügen",
+  "dictionary.term.button.add_term.error.empty_title": "Neuer Begriff konnte nicht erstellt werden, der Titel darf nicht leer sein.",
+  "dictionary.term.button.add_term.error.creating_failed": "Erstellung des neuen Begriffs fehlgeschlagen.",
+  "dictionary.term.button.add_term.info.creating_was_successful": "Neuer Begriff wurde erfolgreich erstellt: ",
+  "dictionary.term.button.find_random": "Zufälligen Begriff finden",
+  "dictionary.term.button.new_repetition": "Neue Wiederholung",
+  "dictionary.term.button.new_session": "Neue Sitzung",
+
+  "dictionary.term.info.found_term": "Begriff gefunden",
+
+  "dictionary.term.label.term": "Begriff",
+  "dictionary.term.label.title": "Titel",
+  "dictionary.term.label.disambiguation": "Disambiguierung",
+  "dictionary.term.label.definition": "Definition",
+  "dictionary.term.button.edit_definition": "Bearbeiten",
+  "dictionary.term.button.read_definition": "Lesen",
+
+  "dictionary.term.label.metadata": "Metadaten",
+  "dictionary.enums.status.label": "Status",
+  "dictionary.enums.status.not_defined": "Nicht definiert",
+  "dictionary.enums.status.stub": "Platzhalter",
+  "dictionary.enums.status.draft": "Entwurf",
+  "dictionary.enums.status.incomplete": "Unvollständig",
+  "dictionary.enums.status.verified": "Verifiziert",
+  "dictionary.enums.status.deprecated": "Veraltet",
+  "dictionary.enums.status.deleted": "Gelöscht",
+
+  "dictionary.term.label.pinned": "Angeheftet",
+
+  "dictionary.enums.importance.label": "Wichtigkeit",
+  "dictionary.enums.importance.low": "Niedrig",
+  "dictionary.enums.importance.medium": "Mittel",
+  "dictionary.enums.importance.high": "Hoch",
+
+  "dictionary.enums.difficulty.label": "Schwierigkeit",
+  "dictionary.enums.difficulty.easy": "Einfach",
+  "dictionary.enums.difficulty.medium": "Mittel",
+  "dictionary.enums.difficulty.hard": "Schwierig",
+
+  "dictionary.term.labels.backlinks": "Rückverweise",
+  "dictionary.term.labels.visited": "Besucht",
+
+  "dictionary.common.term": "Begriff",
+  "dictionary.common.delete": "Löschen",
+  "dictionary.common.save": "Speichern",
+  "dictionary.common.placeholder.start_writing": "Mit dem Schreiben beginnen…",
+
+  "dictionary.sections.tags.label.tags": "Tags",
+  "dictionary.sections.tags.button.add_tag": "Tag hinzufügen",
+  "dictionary.sections.tags.button.show_tags": "Tags anzeigen",
+  "dictionary.sections.tags.label.search_tag": "Tag suchen",
+
+  "dictionary.sections.flags.label.flags": "Kennzeichen",
+  "dictionary.sections.flags.button.add_flag": "Kennzeichen hinzufügen",
+  "dictionary.sections.flags.label.public": "Öffentlich",
+
+  "dictionary.sections.links.label.links": "Links",
+  "dictionary.sections.links.button.add_link": "Link hinzufügen",
+  "dictionary.sections.links.label.search_link": "Link suchen",
+
+  "dictionary.sections.notes.label.notes": "Notizen",
+  "dictionary.sections.notes.button.add_note": "Notiz hinzufügen",
+
+  "dictionary.sections.indexes.label.indexes": "Indizes",
+  "dictionary.sections.indexes.button.add_index": "Index hinzufügen",
+  "dictionary.sections.indexes.button.show_indexes": "Indizes anzeigen",
+  "dictionary.sections.indexes.label.search_index": "Index suchen",
+
+  "dictionary.sections.sources.label.sources": "Quellen",
+  "dictionary.sections.sources.button.add_source": "Quelle hinzufügen",
+  "dictionary.sections.sources.button.show_sources": "Quellen anzeigen",
+  "dictionary.sections.sources.label.search_source": "Quelle suchen",
+
+  "dictionary.sections.aliases.label.aliases": "Aliase",
+  "dictionary.sections.aliases.button.add_alias": "Alias hinzufügen"
+}

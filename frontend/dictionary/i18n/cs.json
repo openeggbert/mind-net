@@ -1,0 +1,92 @@
+{
+  "dictionary.title.dictionary_app": "Slovník – Aplikace",
+  "dictionary.header.title": "Jít domů",
+  "dictionary.header.label": "Slovník",
+
+  "dictionary.button.mindnet": "Mind Net",
+  "dictionary.button.mindnet.title": "Přejít na obecný Mind Net frontend",
+
+  "dictionary.common.map": "Mapa",
+
+  "dictionary.select_map.button.add_map": "Přidat mapu",
+  "dictionary.select_map.button.show_map": "Zobrazit mapu",
+  "dictionary.select_map.button.rename_map": "Přejmenovat mapu",
+  "dictionary.select_map.button.delete_map": "Smazat mapu",
+
+  "dictionary.label.search_term": "Hledat heslo",
+  "dictionary.button.advanced_search": "Rozšířené vyhledávání",
+
+  "dictionary.term.button.add_term": "Přidat heslo",
+  "dictionary.term.button.add_term.error.empty_title": "Nové heslo nemohlo být vytvořeno, protože název je prázdný.",
+  "dictionary.term.button.find_random": "Náhodné heslo",
+  "dictionary.term.button.new_repetition": "Nové opakování",
+  "dictionary.term.button.new_session": "Nová relace",
+
+  "dictionary.term.info.found_term": "Nalezeno heslo",
+
+  "dictionary.term.label.term": "Heslo",
+  "dictionary.term.label.title": "Název",
+  "dictionary.term.label.disambiguation": "Rozlišení",
+  "dictionary.term.label.definition": "Definice",
+  "dictionary.term.button.edit_definition": "Upravit",
+  "dictionary.term.button.read_definition": "Číst",
+
+  "dictionary.term.label.metadata": "Metadata",
+  "dictionary.enums.status.label": "Stav",
+  "dictionary.enums.status.not_defined": "Nedefinováno",
+  "dictionary.enums.status.stub": "Náčrt",
+  "dictionary.enums.status.draft": "Koncept",
+  "dictionary.enums.status.incomplete": "Neúplné",
+  "dictionary.enums.status.verified": "Ověřené",
+  "dictionary.enums.status.deprecated": "Zastaralé",
+  "dictionary.enums.status.deleted": "Smazané",
+
+  "dictionary.term.label.pinned": "Připnuté",
+
+  "dictionary.enums.importance.label": "Důležitost",
+  "dictionary.enums.importance.low": "Nízká",
+  "dictionary.enums.importance.medium": "Střední",
+  "dictionary.enums.importance.high": "Vysoká",
+
+  "dictionary.enums.difficulty.label": "Obtížnost",
+  "dictionary.enums.difficulty.easy": "Snadná",
+  "dictionary.enums.difficulty.medium": "Střední",
+  "dictionary.enums.difficulty.hard": "Těžká",
+
+  "dictionary.term.labels.backlinks": "Zpětné odkazy",
+  "dictionary.term.labels.visited": "Navštíveno",
+
+  "dictionary.common.delete": "Smazat",
+  "dictionary.common.save": "Uložit",
+  "dictionary.common.placeholder.start_writing": "Začněte psát...",
+  "dictionary.term.container.click_note": "{models} jsou skryté. Pro zobrazení klikněte na\"{models}\" .",
+
+  "dictionary.sections.tags.label.tags": "Štítky",
+  "dictionary.sections.tags.button.add_tag": "Přidat štítek",
+  "dictionary.sections.tags.button.show_tags": "Zobrazit štítky",
+  "dictionary.sections.tags.label.search_tag": "Hledat štítek",
+
+  "dictionary.sections.flags.label.flags": "Příznaky",
+  "dictionary.sections.flags.button.add_flag": "Přidat příznak",
+  "dictionary.sections.flags.label.public": "Veřejné",
+
+  "dictionary.sections.links.label.links": "Odkazy",
+  "dictionary.sections.links.button.add_link": "Přidat odkaz",
+  "dictionary.sections.links.label.search_link": "Hledat odkaz",
+
+  "dictionary.sections.notes.label.notes": "Poznámky",
+  "dictionary.sections.notes.button.add_note": "Přidat poznámku",
+
+  "dictionary.sections.indexes.label.indexes": "Indexy",
+  "dictionary.sections.indexes.button.add_index": "Přidat index",
+  "dictionary.sections.indexes.button.show_indexes": "Zobrazit indexy",
+  "dictionary.sections.indexes.label.search_index": "Hledat index",
+
+  "dictionary.sections.sources.label.sources": "Zdroje",
+  "dictionary.sections.sources.button.add_source": "Přidat zdroj",
+  "dictionary.sections.sources.button.show_sources": "Zobrazit zdroje",
+  "dictionary.sections.sources.label.search_source": "Hledat zdroj",
+
+  "dictionary.sections.aliases.label.aliases": "Alternativní názvy",
+  "dictionary.sections.aliases.button.add_alias": "Přidat alternativní název"
+}

@@ -1,0 +1,95 @@
+{
+  "dictionary.title.dictionary_app": "词典 - 应用",
+  "dictionary.header.title": "返回首页",
+  "dictionary.header.label": "词典",
+
+  "dictionary.button.mindnet": "Mind Net",
+  "dictionary.button.mindnet.title": "前往 Mind Net 通用前端",
+
+  "dictionary.common.map": "映射",
+  "dictionary.select_map.info.map_changed": "映射已更改为",
+
+  "dictionary.select_map.button.add_map": "添加映射",
+  "dictionary.select_map.button.show_map": "显示映射",
+  "dictionary.select_map.button.rename_map": "重命名映射",
+  "dictionary.select_map.button.delete_map": "删除映射",
+
+  "dictionary.label.search_term": "搜索术语",
+  "dictionary.button.advanced_search": "高级",
+
+  "dictionary.term.button.add_term": "添加术语",
+  "dictionary.term.button.add_term.error.empty_title": "无法创建新术语，标题不能为空。",
+  "dictionary.term.button.add_term.error.creating_failed": "创建新术语失败。",
+  "dictionary.term.button.add_term.info.creating_was_successful": "新术语创建成功：",
+  "dictionary.term.button.find_random": "随机查找",
+  "dictionary.term.button.new_repetition": "新复习",
+  "dictionary.term.button.new_session": "新会话",
+
+  "dictionary.term.info.found_term": "已找到术语",
+
+  "dictionary.term.label.term": "术语",
+  "dictionary.term.label.title": "标题",
+  "dictionary.term.label.disambiguation": "消歧",
+  "dictionary.term.label.definition": "定义",
+  "dictionary.term.button.edit_definition": "编辑",
+  "dictionary.term.button.read_definition": "阅读",
+
+  "dictionary.term.label.metadata": "元数据",
+  "dictionary.enums.status.label": "状态",
+  "dictionary.enums.status.not_defined": "未定义",
+  "dictionary.enums.status.stub": "占位",
+  "dictionary.enums.status.draft": "草稿",
+  "dictionary.enums.status.incomplete": "不完整",
+  "dictionary.enums.status.verified": "已验证",
+  "dictionary.enums.status.deprecated": "已弃用",
+  "dictionary.enums.status.deleted": "已删除",
+
+  "dictionary.term.label.pinned": "已固定",
+
+  "dictionary.enums.importance.label": "重要性",
+  "dictionary.enums.importance.low": "低",
+  "dictionary.enums.importance.medium": "中",
+  "dictionary.enums.importance.high": "高",
+
+  "dictionary.enums.difficulty.label": "难度",
+  "dictionary.enums.difficulty.easy": "简单",
+  "dictionary.enums.difficulty.medium": "中等",
+  "dictionary.enums.difficulty.hard": "困难",
+
+  "dictionary.term.labels.backlinks": "反向链接",
+  "dictionary.term.labels.visited": "已访问",
+
+  "dictionary.common.term": "术语",
+  "dictionary.common.delete": "删除",
+  "dictionary.common.save": "保存",
+  "dictionary.common.placeholder.start_writing": "开始书写…",
+
+  "dictionary.sections.tags.label.tags": "标签",
+  "dictionary.sections.tags.button.add_tag": "添加标签",
+  "dictionary.sections.tags.button.show_tags": "显示标签",
+  "dictionary.sections.tags.label.search_tag": "搜索标签",
+
+  "dictionary.sections.flags.label.flags": "标记",
+  "dictionary.sections.flags.button.add_flag": "添加标记",
+  "dictionary.sections.flags.label.public": "公开",
+
+  "dictionary.sections.links.label.links": "链接",
+  "dictionary.sections.links.button.add_link": "添加链接",
+  "dictionary.sections.links.label.search_link": "搜索链接",
+
+  "dictionary.sections.notes.label.notes": "笔记",
+  "dictionary.sections.notes.button.add_note": "添加笔记",
+
+  "dictionary.sections.indexes.label.indexes": "索引",
+  "dictionary.sections.indexes.button.add_index": "添加索引",
+  "dictionary.sections.indexes.button.show_indexes": "显示索引",
+  "dictionary.sections.indexes.label.search_index": "搜索索引",
+
+  "dictionary.sections.sources.label.sources": "来源",
+  "dictionary.sections.sources.button.add_source": "添加来源",
+  "dictionary.sections.sources.button.show_sources": "显示来源",
+  "dictionary.sections.sources.label.search_source": "搜索来源",
+
+  "dictionary.sections.aliases.label.aliases": "别名",
+  "dictionary.sections.aliases.button.add_alias": "添加别名"
+}

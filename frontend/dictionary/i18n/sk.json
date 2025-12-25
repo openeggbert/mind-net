@@ -1,0 +1,95 @@
+{
+  "dictionary.title.dictionary_app": "Slovník – aplikácia",
+  "dictionary.header.title": "Prejsť na domovskú stránku",
+  "dictionary.header.label": "Slovník",
+
+  "dictionary.button.mindnet": "Mind Net",
+  "dictionary.button.mindnet.title": "Prejsť na generický frontend Mind Net",
+
+  "dictionary.common.map": "Mapa",
+  "dictionary.select_map.info.map_changed": "Mapa bola zmenená na",
+
+  "dictionary.select_map.button.add_map": "Pridať mapu",
+  "dictionary.select_map.button.show_map": "Zobraziť mapu",
+  "dictionary.select_map.button.rename_map": "Premenovať mapu",
+  "dictionary.select_map.button.delete_map": "Odstrániť mapu",
+
+  "dictionary.label.search_term": "Hľadať pojem",
+  "dictionary.button.advanced_search": "Rozšírené",
+
+  "dictionary.term.button.add_term": "Pridať pojem",
+  "dictionary.term.button.add_term.error.empty_title": "Nie je možné vytvoriť nový pojem, názov nesmie byť prázdny.",
+  "dictionary.term.button.add_term.error.creating_failed": "Vytvorenie nového pojmu zlyhalo.",
+  "dictionary.term.button.add_term.info.creating_was_successful": "Nový pojem bol úspešne vytvorený: ",
+  "dictionary.term.button.find_random": "Náhodný pojem",
+  "dictionary.term.button.new_repetition": "Nové opakovanie",
+  "dictionary.term.button.new_session": "Nová relácia",
+
+  "dictionary.term.info.found_term": "Nájdený pojem",
+
+  "dictionary.term.label.term": "Pojem",
+  "dictionary.term.label.title": "Názov",
+  "dictionary.term.label.disambiguation": "Rozlíšenie",
+  "dictionary.term.label.definition": "Definícia",
+  "dictionary.term.button.edit_definition": "Upraviť",
+  "dictionary.term.button.read_definition": "Čítať",
+
+  "dictionary.term.label.metadata": "Metadáta",
+  "dictionary.enums.status.label": "Stav",
+  "dictionary.enums.status.not_defined": "Nedefinovaný",
+  "dictionary.enums.status.stub": "Náčrt",
+  "dictionary.enums.status.draft": "Koncept",
+  "dictionary.enums.status.incomplete": "Neúplný",
+  "dictionary.enums.status.verified": "Overený",
+  "dictionary.enums.status.deprecated": "Zastaraný",
+  "dictionary.enums.status.deleted": "Odstránený",
+
+  "dictionary.term.label.pinned": "Pripnutý",
+
+  "dictionary.enums.importance.label": "Dôležitosť",
+  "dictionary.enums.importance.low": "Nízka",
+  "dictionary.enums.importance.medium": "Stredná",
+  "dictionary.enums.importance.high": "Vysoká",
+
+  "dictionary.enums.difficulty.label": "Náročnosť",
+  "dictionary.enums.difficulty.easy": "Jednoduchá",
+  "dictionary.enums.difficulty.medium": "Stredná",
+  "dictionary.enums.difficulty.hard": "Ťažká",
+
+  "dictionary.term.labels.backlinks": "Spätné odkazy",
+  "dictionary.term.labels.visited": "Navštívené",
+
+  "dictionary.common.term": "Pojem",
+  "dictionary.common.delete": "Odstrániť",
+  "dictionary.common.save": "Uložiť",
+  "dictionary.common.placeholder.start_writing": "Začnite písať…",
+
+  "dictionary.sections.tags.label.tags": "Tagy",
+  "dictionary.sections.tags.button.add_tag": "Pridať tag",
+  "dictionary.sections.tags.button.show_tags": "Zobraziť tagy",
+  "dictionary.sections.tags.label.search_tag": "Hľadať tag",
+
+  "dictionary.sections.flags.label.flags": "Príznaky",
+  "dictionary.sections.flags.button.add_flag": "Pridať príznak",
+  "dictionary.sections.flags.label.public": "Verejné",
+
+  "dictionary.sections.links.label.links": "Odkazy",
+  "dictionary.sections.links.button.add_link": "Pridať odkaz",
+  "dictionary.sections.links.label.search_link": "Hľadať odkaz",
+
+  "dictionary.sections.notes.label.notes": "Poznámky",
+  "dictionary.sections.notes.button.add_note": "Pridať poznámku",
+
+  "dictionary.sections.indexes.label.indexes": "Indexy",
+  "dictionary.sections.indexes.button.add_index": "Pridať index",
+  "dictionary.sections.indexes.button.show_indexes": "Zobraziť indexy",
+  "dictionary.sections.indexes.label.search_index": "Hľadať index",
+
+  "dictionary.sections.sources.label.sources": "Zdroje",
+  "dictionary.sections.sources.button.add_source": "Pridať zdroj",
+  "dictionary.sections.sources.button.show_sources": "Zobraziť zdroje",
+  "dictionary.sections.sources.label.search_source": "Hľadať zdroj",
+
+  "dictionary.sections.aliases.label.aliases": "Aliasy",
+  "dictionary.sections.aliases.button.add_alias": "Pridať alias"
+}

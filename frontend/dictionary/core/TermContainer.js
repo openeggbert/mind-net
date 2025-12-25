@@ -20,7 +20,7 @@ import {Aliases} from "./sections/Aliases.js";
 import {Div} from "../dom/elements/Div.js"
 import {Entities} from "../entities/Entities.js";
 import {attachMarkdownEditor} from "../markdown/Markdown.js";
-import {USER_ID} from "../globals/Globals.js";
+import {translate, USER_ID} from "../globals/Globals.js";
 import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
 
 class TermContainer {
@@ -67,10 +67,13 @@ class TermContainer {
                 let tmp_id = "label_" + models + "_tmp"
                 if (shown) {
                     let start = models.charAt(0).toUpperCase() + models.slice(1)
-                    let text = start + " are hidden. " + "Click \"" + start + ":\" to show them."
+                    let text = translate("dictionary.term.container.click_note", {models: start})
+
 
                     let tmp_span = document.createElement("span")
                     tmp_span.innerText = text
+                    tmp_span.dataset.i18n = "dictionary.term.container.click_note"
+                    tmp_span.dataset.i18nParams = "models::" + "dictionary.sections." + models + ".label." + models
 
                     tmp_span.style.color = "grey"
                     tmp_span.style.fontSize = "75%"
@@ -140,7 +143,7 @@ class TermContainer {
         }
         document.title = "Dictionary - App - " + dictionary_term.title
         this.#dictionary_term_json = dictionary_term
-        get_element("term_container_h2").innerText = "Term #" + dictionary_term.id
+        get_element("h2_term_id").innerText = dictionary_term.id
         get_element("input_title").value = dictionary_term.title
         get_element("input_disambiguation").value = dictionary_term.disambiguation
         get_element("textarea_definition").value = dictionary_term.definition

@@ -109,6 +109,7 @@ export function isColumnHidden(entity, column) {
 }
 .toast.error   { background: #F99; }
 .toast.info    { background: #9CF; }
+.toast.warn { background: #f39c12; }
 .toast.success { background: #9F9; }
 
 `;

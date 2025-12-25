@@ -1,7 +1,7 @@
 import {get_element, showError, showInfo, showWarn} from "../../dom.js";
 import {delete_entity, list_all_entities, post_entity, put_entity, QueryParams, read_entity} from "../../api.js";
 import {Entities} from "../entities/Entities.js";
-import {USER_ID} from "../globals/Globals.js";
+import {translate, USER_ID} from "../globals/Globals.js";
 import {showWindowFromUrl} from "../window/VirtualWindow.js";
 import {defined} from "../../common.js";
 
@@ -23,11 +23,11 @@ export class SelectMap {
         this.#element.addEventListener("change", () => {
             this.#selected_map_id = this.#element.value
             refresh_autocomplete_term_title_callback()
-            showInfo("Map changed to: " + this.#maps.get(this.#element.value))
+            showInfo(translate("dictionary.select_map.info.map_changed") + ": " + this.#maps.get(this.#element.value))
         });
 
         let button_add_map = get_element("button_add_map").onclick = async () => {
-            const name = prompt("Enter map name");
+            const name = prompt(translate( "dictionary.select_map.button.add_map.prompt.enter_map_name"));
             if (name === null) return;
             let new_map = {
                 name: name,
@@ -41,10 +41,10 @@ export class SelectMap {
             let new_map_created = await post_entity(Entities.dictionary_map, new_map)
 
             if (new_map_created === null) {
-                showError("Creating new map failed: " + name)
+                showError(translate("dictionary.select_map.button.add_map.error.creating_map_failed") + ": " + name)
                 return
             } else {
-                showInfo("New map was successfully created: " + name)
+                showInfo( translate("dictionary.select_map.button.add_map.info.map_created")+ ": " + name)
             }
             this.add_map(new_map_created.id, new_map_created.name)
             this.select_map(new_map_created.id)
@@ -52,44 +52,44 @@ export class SelectMap {
         let button_show_map = get_element("button_show_map").onclick = async () => {
             if(this.#selected_map_id === 0) return
             let url = "index.html?entity=dictionary_map&action=read&id=" + this.get_selected_map_id()
-            showWindowFromUrl("Show map", url)
+            showWindowFromUrl(translate("dictionary.select_map.button.show_map"), url)
         }
         let button_rename_map = get_element("button_rename_map").onclick = async () => {
             if(this.#selected_map_id === 0) return
             let read_map = await read_entity(Entities.dictionary_map, this.#selected_map_id)
             if(!defined(read_map)) {
-                showError("Reading map failed: " + this.#selected_map_id)
+                showError(translate("dictionary.select_map.button.rename_map.error.reading_map_failed") + ": " + this.#selected_map_id)
                 return
             }
             const old_name = read_map.name
-            const new_name = prompt("Enter new map name", read_map.name);
+            const new_name = prompt(translate("dictionary.select_map.button.rename_map.prompt_enter_new_map_name"), read_map.name);
             if (new_name === null) return;
             if (new_name === old_name) {
-                showWarn("You did not change the name. Nothing to be updated.")
+                showWarn(translate("dictionary.select_map.button.rename_map.warn.no_change"))
                 return;
             }
             read_map.name = new_name
             let map_updated = await put_entity(Entities.dictionary_map, this.#selected_map_id, read_map)
 
             if (map_updated === null) {
-                showError("Updating new failed: " + new_name)
+                showError(translate("dictionary.select_map.button.rename_map.error.update_failed") + ": " + new_name)
                 return
             } else {
-                showInfo("Map was successfully updated: " + new_name)
+                showInfo(translate("dictionary.select_map.button.rename_map.info.update_successful") + ": " + new_name)
             }
             this.rename_map(this.#selected_map_id, new_name)
         }
         let button_delete_map = get_element("button_delete_map").onclick = async () => {
             if(this.#selected_map_id === 0) return
-            if (!confirm("Do you really want to delete this map?")) return;
+            if (!confirm(translate("dictionary.select_map.button.delete_map.confirm.text"))) return;
 
             let deleted = await delete_entity(Entities.dictionary_map, this.#selected_map_id)
             if(!defined(deleted)) {
-                showError("Deleting map failed. " + this.#selected_map_id)
+                showError(translate("dictionary.select_map.button.delete_map.error.deleting_failed") + this.#selected_map_id)
                 return
             }
 
-            showInfo("Map was successfully deleted: " + this.#selected_map_id)
+            showInfo(translate("dictionary.select_map.button.delete_map.error.deleting_successful") + ": " + this.#selected_map_id)
 
             this.remove_map(this.#selected_map_id)
         }

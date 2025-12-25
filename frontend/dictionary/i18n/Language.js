@@ -50,11 +50,31 @@ export const Language = Object.freeze({
     Latin: {id: 60, label: "Latin", native: "Latina", iso639: "la", emoji: "🏛️"},
     Esperanto: {id: 61, label: "Esperanto", native: "Esperanto", iso639: "eo", emoji: "🌍"},
 });
-export const SUPPORTED_LANGUAGES = [Language.English, Language.Czech]
+export const SUPPORTED_LANGUAGES = [
+    Language.English,
+    Language.German,
+    Language.Czech,
+    Language.Slovak,
+    Language.Chinese
+]
 
-export function find_language__iso639(iso639) {
+export function list_languages() {
 
     return Object.entries(Language).map(([key, value]) => ({
+        key,
+        id: value.id,
+        label: value.label,
+        native: value.native,
+        iso639: value.iso639,
+        emoji: value.emoji
+    }));
+
+}
+export function find_language_iso639(iso639) {
+
+    return Object.entries(Language)
+        .filter(e=> e.iso639 === iso639)
+        .map(([key, value]) => ({
         key,
         id: value.id,
         label: value.label,

@@ -92,6 +92,14 @@ textarea {
     min-height: 80px;
 }
 
+#loading_div {
+    width: 100%;
+    text-align: center;
+    padding: 40px;
+    font-weight: bold;
+    color: grey;
+    font-size: 200%;
+}
 #select_language,
 #label_select_map,
 #select_map

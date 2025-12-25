@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title data-i18n="dictionary.dictionary_app">Dictionary - App</title>
+    <title data-i18n="dictionary.title.dictionary_app">Dictionary - App</title>
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="libraries/github.min.css">
     <link rel="stylesheet" href="app_dictionary.css">
@@ -20,10 +20,11 @@
     </style>
 </head>
 <body>
-<div class="container">
+<div id="loading_div">⏳</div>
+<div class="container" id="main_container" style="display:none">
     <header>
-        <div id="dictionary_header" onclick="window.location.href='app_dictionary.html'">📚 <span data-i18n="dictionary.title.dictionary">Dictionary</span></div>
-        <button id="button_mindnet">🌐 Mind Net</button>
+        <div id="dictionary_header" onclick="window.location.href='app_dictionary.html'" data-i18n-title="dictionary.header.title">📚 <span data-i18n="dictionary.header.label">Dictionary</span></div>
+        <button id="button_mindnet" data-i18n-title="dictionary.button.mindnet.title">🌐 Mind Net</button>
         <select id="select_language" >
             <option value="en">🇬🇧 English</option>
             <option value="cs">🇨🇿 Čeština</option>
@@ -31,7 +32,7 @@
     </header>
 
     <!-- Select Map -->
-    <label for="select_map" id="label_select_map">🗺️ <span data-i18n="dictionary.map">Map</span>:</label>
+    <label for="select_map" id="label_select_map">🗺️ <span data-i18n="dictionary.common.map">Map</span>:</label>
     <select id="select_map">
         <!--        <option value="1">Concurrency</option>-->
         <!--        <option value="2">Parallelism</option>-->
@@ -62,7 +63,7 @@
 
     <div id="term_container" style="margin-top:30px;">
         <!-- Input for term -->
-        <h2 id="term_container_h2">Term #123</h2>
+        <h2 id="term_container_h2"><span data-i18n="dictionary.common.term">Term</span> #<span id="h2_term_id">123</span></h2>
 
         <style>
             #highlighted {
@@ -96,12 +97,12 @@
             <input type="text" id="input_title" style="width:95%">
 
             <label for="input_disambiguation">🌀 <span data-i18n="dictionary.term.label.disambiguation">Disambiguation</span>:</label>
-            <input type="text" style="width:95%" id="input_disambiguation" placeholder="Start writing..."/>
+            <input type="text" style="width:95%" id="input_disambiguation" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing" />
 
             <label for="textarea_definition" style="margin-right:20px; display: inline;white-space: nowrap;width:90%">📖
                 <span data-i18n="dictionary.term.label.definition">Definition</span>:</label>
             <button id="button_edit_definition">✏️ <span data-i18n="dictionary.term.button.edit_definition">Edit</span></button>
-            <button id="button_read_definition">📖 <span data-i18n="dictionary.term.label.read_definition">Read</span></button>
+            <button id="button_read_definition">📖 <span data-i18n="dictionary.term.button.read_definition">Read</span></button>
             <textarea id="textarea_definition" style="width:95%"></textarea>
             <div id="definition_preview" style="display:none"></div>
         </div>
@@ -109,7 +110,7 @@
         <fieldset id="metadata">
             <legend><span data-i18n="dictionary.term.label.metadata">Metadata</span></legend>
             <div>
-                <label for="select_status" style="display:inline;white-space: nowrap;">ℹ️ <span data-i18n="dictionary.term.label.status">Status</span>:</label>
+                <label for="select_status" style="display:inline;white-space: nowrap;">ℹ️ <span data-i18n="dictionary.enums.status.label">Status</span>:</label>
                 <select name="select_status" id="select_status"
                         style="max-width:250px; display:inline; margin-left:10px;">
                     <option value="0" data-i18n="dictionary.enums.status.not_defined">Not defined</option>
@@ -127,7 +128,7 @@
                    style="transform: scale(2);margin-left:10px; margin-right:10px;"/>
 
             <fieldset>
-                <label style="display: inline;white-space: nowrap;">🔥 <span data-i18n="dictionary.common.importance">Importance</span>:</label>
+                <label style="display: inline;white-space: nowrap;">🔥 <span data-i18n="dictionary.enums.importance.label">Importance</span>:</label>
 
                 <input id="input_importance_low" type="radio" name="importance" value="1"><label
                     for="input_importance_low" data-i18n="dictionary.enums.importance.low">Low</label>
@@ -139,7 +140,7 @@
 
 
             <fieldset>
-                <label style="display: inline;white-space: nowrap;">⭐ <span data-i18n="dictionary.common.importance">Difficulty</span>:</label>
+                <label style="display: inline;white-space: nowrap;">⭐ <span data-i18n="dictionary.enums.difficulty.label">Difficulty</span>:</label>
 
                 <input id="input_difficulty_easy" type="radio" name="difficulty" value="1"><label
                     for="input_difficulty_easy" data-i18n="dictionary.enums.difficulty.easy">Easy</label>
@@ -152,7 +153,7 @@
             <button id="button_show_visited">👣 <span data-i18n="dictionary.term.labels.visited">Visited</span></button>
         </fieldset>
 
-        <button id="button_delete_term" class="delete-btn"><span data-i18n="dictionary.common.deleted">Delete</span></button>
+        <button id="button_delete_term" class="delete-btn"><span data-i18n="dictionary.common.delete">Delete</span></button>
         <!-- Save -->
         <button id="button_save_term" class="save-btn"><span data-i18n="dictionary.common.save">Save</span></button>
 
@@ -172,7 +173,7 @@
                 <button id="button_show_tags">🏷️ <span data-i18n="dictionary.sections.tags.button.show_tags">Show tags</span></button>
                 <div id="div_search_tag" style="display:none">
                     <label for="input_search_tag">🔍 <span data-i18n="dictionary.sections.tags.label.search_tag">Search tag</span>:</label>
-                    <input type="text" id="input_search_tag" placeholder="Start writing..."/>
+                    <input type="text" id="input_search_tag" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing"/>
                     <div id="div_search_tag_end"></div>
                 </div>
             </div>
@@ -193,10 +194,12 @@
                         <button>&times;</button>
                     </div>
                 </div>
-                <button id="button_add_flag" class="tags_add_btn">➕ Add Flag</button>
+                <button id="button_add_flag" class="tags_add_btn">
+                    ➕ <span data-i18n="dictionary.sections.flags.button.add_flag">Add Flag</span>
+                </button>
                 <input id="input_checkbox_public_flag" type="checkbox"
                        style="transform: scale(2);margin-left:10px; margin-right:10px;">
-                <label for="input_checkbox_public_flag" style="display:inline;">Public</label>
+                <label for="input_checkbox_public_flag" style="display:inline;"> <span data-i18n="dictionary.sections.flags.label.public">Public</span></label>
             </div>
         </div>
 
@@ -207,21 +210,27 @@
                 <div id="links">
                     <div class="item">
                         <a href="#">Thread Safety</a>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <a href="#">Race Conditions</a>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <a href="#">Deadlocks</a>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                 </div>
-                <button id="button_add_link">➕ Add Link</button>
+                <button id="button_add_link">
+                    ➕ <span data-i18n="dictionary.sections.links.button.add_link">Add Link</span>
+                </button>
                 <div id="div_search_link" style="display:none">
-                    <label for="input_search_link">🔍 Search link:</label>
-                    <input type="text" id="input_search_link" placeholder="Start writing..."/>
+                    <label for="input_search_link">
+                        🔍 <span data-i18n="dictionary.sections.links.label.search_link">Search link</span>:
+                    </label>
+                    <input type="text" id="input_search_link" placeholder="Start writing..."
+                           data-i18n-placeholder="dictionary.common.placeholder.start_writing"/>
+
                     <div id="div_search_link_end"></div>
                 </div>
 
@@ -235,18 +244,21 @@
                 <div id="notes">
                     <div class="item">
                         <span>Advantages</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <span>Disadvantages</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <span>Best Practices</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                 </div>
-                <button id="button_add_note">➕ Add Note</button>
+                <button id="button_add_note">
+                    ➕ <span data-i18n="dictionary.sections.notes.button.add_note">Add Note</span>
+                </button>
+
             </div>
         </div>
 
@@ -257,22 +269,31 @@
                 <div id="indexes">
                     <div class="item">
                         <span>Primer</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <span>Effective STL </span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <span>Inside the C++ Object Model</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                 </div>
-                <button id="button_add_index">➕ Add Index</button>
-                <button id="button_show_indexes">📖 Show indexes</button>
+                <button id="button_add_index">
+                    ➕ <span data-i18n="dictionary.sections.indexes.button.add_index">Add Index</span>
+                </button>
+
+                <button id="button_show_indexes">
+                    📖 <span data-i18n="dictionary.sections.indexes.button.show_indexes">Show indexes</span>
+                </button>
+
                 <div id="div_search_index" style="display:none">
-                    <label for="input_search_index">🔍 Search index:</label>
-                    <input type="text" id="input_search_index" placeholder="Start writing..."/>
+                    <label for="input_search_index">
+                        🔍 <span data-i18n="dictionary.sections.indexes.label.search_index">Search index</span>:
+                    </label>
+
+                    <input type="text" id="input_search_index" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing" />
                     <div id="div_search_index_end"></div>
                 </div>
             </div>
@@ -285,22 +306,31 @@
                 <div id="sources">
                     <div class="item">
                         <span>Primer</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <span>Effective STL </span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
                         <span>Inside the C++ Object Model</span>
-                        <button>🗑️ Delete</button>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                 </div>
-                <button id="button_add_source">➕ Add Source</button>
-                <button id="button_show_sources">📖 Show sources</button>
+                <button id="button_add_source">
+                    ➕ <span data-i18n="dictionary.sections.sources.button.add_source">Add Source</span>
+                </button>
+
+                <button id="button_show_sources">
+                    📖 <span data-i18n="dictionary.sections.sources.button.show_sources">Show sources</span>
+                </button>
+
                 <div id="div_search_source" style="display:none">
-                    <label for="input_search_source">🔍 Search source:</label>
-                    <input type="text" id="input_search_source" placeholder="Start writing..."/>
+                    <label for="input_search_source">
+                        🔍 <span data-i18n="dictionary.sections.sources.label.search_source">Search source</span>:
+                    </label>
+
+                    <input type="text" id="input_search_source" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing" />
                     <div id="div_search_source_end"></div>
                 </div>
             </div>
@@ -324,7 +354,10 @@
                         <button>&times;</button>
                     </div>
                 </div>
-                <button id="button_add_alias">➕ Add Alias</button>
+                <button id="button_add_alias">
+                    ➕ <span data-i18n="dictionary.sections.aliases.button.add_alias">Add Alias</span>
+                </button>
+
             </div>
 
         </div>

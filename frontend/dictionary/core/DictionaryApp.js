@@ -7,13 +7,20 @@ import {SearchWindow} from "../search/SearchWindow.js";
 import {Entities} from "../entities/Entities.js";
 import {showWindowFromUrl} from "../window/VirtualWindow.js";
 import {RepetitionWindow} from "../repetition/RepetitionWindow.js";
+import {I18n} from "../i18n/I18n.js";
+import {LanguageObject, SUPPORTED_LANGUAGES} from "../i18n/Language.js";
+import {set_i18n} from "../globals/Globals.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
     #autocomplete_term_title = null
     #term_container = null
+    #i18n = null
 
     constructor() {
+        this.#i18n = new I18n("en")
+        set_i18n(this.#i18n)
+
         this.select_map = new SelectMap(
             () => {
                 this.refresh_autocomplete_term_title()
@@ -41,7 +48,7 @@ export class DictionaryApp {
         this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
-            showInfo("Found term: " + item.title)
+            showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
             await this.#term_container.render(item.id)
             this.#term_container.show()
             this.#input_search_term.value = ""
@@ -61,7 +68,7 @@ export class DictionaryApp {
 
         get_element("button_add_term").onclick = async () => {
             if (this.#input_search_term.value === "") {
-                showError("Could not create term, the title must not be empty.");
+                showError(this.translate("dictionary.term.button.add_term.error.empty_title"));
                 return;
             }
             let new_term = {
@@ -70,10 +77,10 @@ export class DictionaryApp {
             }
             let new_term_created = await post_entity(Entities.dictionary_term, new_term)
             if (new_term_created === null) {
-                showError("Creating new term failed.")
+                showError(this.translate("dictionary.term.button.add_term.error.creating_failed"))
                 return;
             }
-            showInfo("Created new term: " + new_term_created.title)
+            showInfo(this.translate("dictionary.term.button.add_term.info.creating_was_successful") + new_term_created.title)
             await this.#term_container.render(new_term_created.id)
             this.#term_container.show()
 
@@ -95,7 +102,7 @@ export class DictionaryApp {
         }
         get_element("button_new_session").onclick = async () => {
             let url = "app_dictionary.html"
-            showWindowFromUrl("Dictionary - App", url)
+            showWindowFromUrl(this.translate("dictionary.title.dictionary_app"), url)
         }
         get_element("button_new_repetition").onclick = async () => {
             let dictionary_map_id = this.get_selected_map_id()
@@ -108,9 +115,30 @@ export class DictionaryApp {
                     this.show_term_container()
                 }
             )
-            repetition_window.init()
+            await repetition_window.init()
             repetition_window.show()
         }
+    }
+
+    translate(key, params = {}) {
+        return this.#i18n.t(key, params)
+    }
+    async init_language() {
+        let lang = this.#i18n.getLanguage()
+        let select_language = get_element("select_language")
+        select_language.innerHTML = ""
+        SUPPORTED_LANGUAGES.forEach(l=>{
+            let option = document.createElement("option")
+            option.value = l.iso639
+            option.innerText = new LanguageObject((l)).generate_text_for_option()
+            if(option.value === lang) option.selected = true
+            select_language.appendChild(option)
+        })
+        select_language.onchange = ()=> {
+            let new_lang = select_language.selectedOptions[0].value
+            this.#i18n.setLanguage(new_lang)
+        }
+        await this.#i18n.setLanguage(lang)
     }
 
     show_term_container() {
@@ -122,7 +150,7 @@ export class DictionaryApp {
         this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
-            showInfo("Found term: " + item.title)
+            showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
             await this.#term_container.show()
             await this.#term_container.render(item.id)
             this.#input_search_term.value = ""
