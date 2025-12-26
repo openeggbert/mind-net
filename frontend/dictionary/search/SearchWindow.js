@@ -206,12 +206,14 @@ import {SearchModel} from "./SearchModel.js";
 */
 
 export class SearchWindow extends VirtualWindow {
+    static next_search_window_number = 1
     constructor(dictionary_map_id, render_term_callback) {
         super({
-            title: "🔍 Advanced Search",
+            title: "🔍 Advanced Search" + " #" + (SearchWindow.next_search_window_number++),
             width: screen.width > 1000 ? 1000 : screen.width - 100,
             height: 600
         })
+
         this.#init(dictionary_map_id, render_term_callback)
     }
     async #init(selected_map_id, render_term_callback) {

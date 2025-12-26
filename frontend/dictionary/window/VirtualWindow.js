@@ -2,12 +2,15 @@
 // Window
 // ========================================
 
-import {showError} from "../../dom.js";
+import {showError, showInfo} from "../../dom.js";
 import {Div} from "../dom/elements/Div.js";
 import {Span} from "../dom/elements/Span.js";
 
 let activeWindow = null;
 let topZ = 1000;
+let allWindows = new Set();
+let overviewMode = false;
+
 
 export function bringToFront(win) {
     topZ++;
@@ -55,6 +58,68 @@ export class VirtualWindow {
     #offY = 0;
     #restoreLeft;
     #restoreTop;
+    #overview = false;
+    #overviewRect = null;
+
+    #overviewPointerHandler = (e) => {
+        if (e.target.closest("button")) {
+            e.stopPropagation();
+            return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (this.#minimized) {
+            this.restore();
+        }
+
+        VirtualWindow.exitOverview();
+        this.focus();
+    };
+
+
+
+
+
+    static enterOverview() {
+        if (overviewMode) return;
+        overviewMode = true;
+
+        for (const win of allWindows) {
+            win._enterOverview();
+        }
+
+        VirtualWindow._reflowOverview();
+    }
+
+    static exitOverview() {
+        if (!overviewMode) return;
+        overviewMode = false;
+
+        for (const win of allWindows) {
+            win._exitOverview();
+        }
+    }
+
+    static _reflowOverview() {
+        if (!overviewMode) return;
+
+        const wins = Array.from(allWindows);
+        const total = wins.length;
+        if (total === 0) return;
+
+        const cols = Math.ceil(Math.sqrt(total));
+        const rows = Math.ceil(total / cols);
+        const gap = 20;
+
+        const cellW = window.innerWidth / cols;
+        const cellH = window.innerHeight / rows;
+
+        wins.forEach((win, index) => {
+            win._updateOverviewLayout(index, cellW, cellH, gap);
+        });
+    }
 
     constructor({
                     title = "Window",
@@ -66,6 +131,7 @@ export class VirtualWindow {
         // ===============================
         // Root
         // ===============================
+        allWindows.add(this);
         this.#root = document.createElement("div");
         this.#root.className = "window_container";
         this.created_at = Date.now()
@@ -195,6 +261,83 @@ export class VirtualWindow {
 
     }
 
+    _enterOverview() {
+        if (this.#overview) return;
+
+        this.#root.style.display = "block";
+        this.#root.style.transition =
+            "left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease";
+
+        const rect = this.#root.getBoundingClientRect();
+        this.#overviewRect = {
+            left: rect.left,
+            top: rect.top,
+            width: rect.width,
+            height: rect.height
+        };
+
+        this.#root.classList.add("overview");
+        this.#overview = true;
+
+        this.#root.addEventListener(
+            "pointerdown",
+            this.#overviewPointerHandler,
+            true
+        );
+    }
+
+
+    _exitOverview() {
+        if (!this.#overview) return;
+
+        this.#root.style.transition = "none";
+
+        const r = this.#overviewRect;
+        this.#root.style.left = r.left + "px";
+        this.#root.style.top = r.top + "px";
+        this.#root.style.width = r.width + "px";
+        this.#root.style.height = r.height + "px";
+
+        this.#root.classList.remove("overview");
+        this.#root.onclick = null;
+        this.#overview = false;
+
+        this.#root.removeEventListener(
+            "pointerdown",
+            this.#overviewPointerHandler,
+            true
+        );
+        if (this.#minimized) {
+            this.#root.style.display = "none";
+        }
+        requestAnimationFrame(() => {
+            this.#root.style.transition = "";
+        });
+
+
+    }
+
+    _updateOverviewLayout(index, cellW, cellH, gap) {
+        const cols = Math.ceil(window.innerWidth / cellW);
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+
+        const targetW = cellW - gap * 2;
+        const targetH = cellH - gap * 2;
+
+        const finalW = Math.min(targetW, this.#overviewRect.width);
+        const finalH = Math.min(targetH, this.#overviewRect.height);
+
+        const dx = Math.floor((targetW - finalW) / 2);
+        const dy = Math.floor((targetH - finalH) / 2);
+
+        this.#root.style.transition = "all 0.25s ease";
+        this.#root.style.width = finalW + "px";
+        this.#root.style.height = finalH + "px";
+        this.#root.style.left = (col * cellW + gap + dx) + "px";
+        this.#root.style.top  = (row * cellH + gap + dy) + "px";
+    }
+
     get_created_at() {
         return this.created_at
     }
@@ -205,20 +348,18 @@ export class VirtualWindow {
     minimize() {
         if (this.#minimized) return;
 
+        this.#minimized = true;
+
         this.#minimize.style.display = "none";
         this.#restore.style.display = "inline";
 
         const s = this.#root.style;
         this.#restoreWidth = s.width;
         this.#restoreHeight = s.height;
-        this.#restoreLeft = this.#root.style.left
-        this.#restoreTop = this.#root.style.top
+        this.#restoreLeft = s.left;
+        this.#restoreTop = s.top;
 
-        this.#root.style.resize = "none";
-
-        this.resize_from_strings("fit-content", "38px");
-
-        this.#minimized = true;
+        this.#root.style.display = "none";
     }
 
     toggle_maximize() {
@@ -252,27 +393,27 @@ export class VirtualWindow {
     }
 
     restore() {
-        if (!(this.#minimized || this.#maximized)) return;
+        if (!this.#minimized && !this.#maximized) return;
 
         this.#minimize.style.display = "inline";
         this.#restore.style.display = "none";
 
+        this.#root.style.display = "block";
+
         this.resize_from_strings(this.#restoreWidth, this.#restoreHeight);
 
-        this.#root.style.resize = "both";
-
-        this.#root.style.left = this.#restoreLeft
+        this.#root.style.left = this.#restoreLeft;
         const restoreTop = parseInt(this.#restoreTop ?? "0", 10);
         this.#root.style.top = clampTop(restoreTop) + "px";
 
-        if (this.#maximized && !this.#minimized) {
-            this.#maximized = false;
-        }
-        if (this.#maximized && this.#minimized) {
-            this.#root.style.resize = "none";
-        }
-        if (this.#minimized) this.#minimized = false;
+        this.#root.style.resize = "both";
+
+        this.#minimized = false;
+        this.#maximized = false;
+
+        this.focus();
     }
+
 
     _setActive(active) {
         this.#root.classList.toggle("active", active);
@@ -347,7 +488,11 @@ export class VirtualWindow {
 
     destroy() {
         this.#root.remove();
+        allWindows.delete(this);
+
+        VirtualWindow._reflowOverview();
     }
+
 
     close() {
         this.hide()
@@ -466,3 +611,43 @@ export function showWindowFromUrl(title, url) {
         win.set_title(newTitle)
     }
 }
+
+document.addEventListener("mousemove", e => {
+    if (e.clientX < 10 && e.clientY < 10) {
+        VirtualWindow.enterOverview();
+    }
+});
+
+window.addEventListener(
+    "keydown",
+    (e) => {
+        if (e.key === "Escape" && overviewMode) {
+            e.preventDefault();
+            VirtualWindow.exitOverview();
+            return;
+        }
+
+        if (e.code === "F9") {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!overviewMode) VirtualWindow.enterOverview();
+            else VirtualWindow.exitOverview();
+        }
+    },
+);
+
+let touchTimer = null;
+
+document.addEventListener("touchstart", e => {
+    if (e.target.closest(".window_container")) return;
+
+    touchTimer = setTimeout(() => {
+        VirtualWindow.enterOverview();
+    }, 600);
+});
+
+document.addEventListener("touchend", () => {
+    clearTimeout(touchTimer);
+});
+

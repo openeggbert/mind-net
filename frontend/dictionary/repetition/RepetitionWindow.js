@@ -22,8 +22,6 @@ import {markdownToHtml} from "../markdown/Markdown.js";
 import {Color} from "../styles/properties/Color.js";
 import {Display} from "../styles/properties/Display.js";
 
-let centred = false
-
 class RepetitionModel {
     constructor() {
         this.map_id = 0
@@ -53,6 +51,7 @@ class AskUserForGradeModel {
 }
 
 export class RepetitionWindow extends VirtualWindow {
+    #centred = false
     constructor(get_selected_map_id_callback, render_term_callback) {
         super({
             title: "🔁 " + translate("dictionary.repetition.repetition"),
@@ -157,9 +156,9 @@ export class RepetitionWindow extends VirtualWindow {
 
             let content = new Div()
             this.set_content(content.element())
-            if(!centred) {
+            if(!this.#centred) {
                 this.center()
-                centred = true
+                this.#centred = true
             }
 
             const repetition_form = new Form()

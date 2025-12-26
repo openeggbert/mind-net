@@ -115,8 +115,9 @@ export class DictionaryApp {
                     this.show_term_container()
                 }
             )
-            await repetition_window.init()
+
             repetition_window.show()
+            await repetition_window.init()
         }
     }
 

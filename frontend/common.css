@@ -251,8 +251,9 @@ a.note-wanted, a.note-unknown {
     min-width: 100px;
     min-height: 40px;
     background: white;
-    /*border-radius: 16px;*/
-    /*box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);*/
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     border: 2px solid #ddd;
     padding: 0px;
     z-index: 1000;
@@ -308,6 +309,17 @@ a.note-wanted, a.note-unknown {
 
 .window_container.active header:hover {
     background: #224b83;
+}
+
+.window_container.overview {
+    pointer-events: auto;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    opacity: 0.9;
+}
+
+.window_container.overview .window_container-content {
+    pointer-events: none;
 }
 
 
