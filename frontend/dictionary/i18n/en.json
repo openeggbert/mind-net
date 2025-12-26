@@ -41,6 +41,7 @@
   "dictionary.term.button.new_session": "New Session",
 
   "dictionary.term.info.found_term": "Found term",
+  "dictionary.term.warn.another_term_is_already_loading": "Another term is already loading.",
 
   "dictionary.term.label.term": "Term",
   "dictionary.term.label.title": "Title",

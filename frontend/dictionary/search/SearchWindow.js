@@ -1117,6 +1117,7 @@ export class SearchWindow extends VirtualWindow {
             )
             .set_selected_index(1)
         page_size_select.on(EventType.Change.label, async () => {
+            if(get_element("resultTable" +  search_window.get_created_at()).style.display === "none") return
                 searchBtn.click()
                 // await sleep_for_seconds(1)
                 // document

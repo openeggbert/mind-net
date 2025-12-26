@@ -32,10 +32,14 @@ class TermContainer {
 
     #sections = null
 
-    constructor(get_selected_map_id_callback, render_term_id_callback) {
+    constructor(
+        get_selected_map_id_callback,
+        set_selected_map_id_callback,
+        render_term_id_callback) {
         this.#element = get_element("term_container");
 
         this.get_selected_map_id_callback = get_selected_map_id_callback
+        this.set_selected_map_id_callback = set_selected_map_id_callback
         this.render_term_id_callback = render_term_id_callback
         this.#sections = [
             new Tags(get_selected_map_id_callback),
@@ -128,11 +132,10 @@ class TermContainer {
         // if (dictionary_term_id === undefined) return;
 
         await this.render_term(dictionary_term_id);
-        this.#sections.forEach(
-            section => {
-                section.render(dictionary_term_id)
-            }
-        )
+        for(let i = 0;i< this.#sections.length;i++) {
+            let section = this.#sections[i];
+            await section.render(dictionary_term_id)
+        }
     }
 
     async render_term(dictionary_term_id) {
@@ -142,6 +145,9 @@ class TermContainer {
             showError(translate("dictionary.term.container.error.reading_term_failed") + ": " + dictionary_term_id)
             // throw new Error ("Reading term failed: " + dictionary_term_id)
             return;
+        }
+        if(this.get_selected_map_id_callback() !== dictionary_term.dictionary_map_id) {
+            this.set_selected_map_id_callback(dictionary_term.dictionary_map_id)
         }
         document.title = translate("dictionary.title.dictionary_app") + " - " + dictionary_term.title
         this.#dictionary_term_json = dictionary_term

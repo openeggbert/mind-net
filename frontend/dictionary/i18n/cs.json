@@ -41,6 +41,7 @@
   "dictionary.term.button.new_session": "Nová relace",
 
   "dictionary.term.info.found_term": "Nalezeno heslo",
+  "dictionary.term.warn.another_term_is_already_loading": "Již se načítá jiné heslo.",
 
   "dictionary.term.label.term": "Heslo",
   "dictionary.term.label.title": "Název",
@@ -167,6 +168,7 @@
   "dictionary.repetition.next_action": "Další akce",
   "dictionary.repetition.send": "Odeslat",
   "dictionary.repetition.skip": "Přeskočit",
+  "dictionary.repetition.abort": "Zrušit",
   "dictionary.repetition.select_a_grade": "Před odesláním prosím vyberte hodnocení (0–5).",
   "dictionary.repetition.term_was_skipped": "Termín byl přeskočen",
   "dictionary.repetition.term_was_reviewed": "Termín byl zopakován",

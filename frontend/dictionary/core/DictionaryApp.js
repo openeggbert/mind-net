@@ -1,5 +1,5 @@
 import {post_entity} from "../../api.js";
-import {get_element, showError, showInfo, showSuccess} from "../../dom.js";
+import {get_element, showError, showInfo, showSuccess, showWarn} from "../../dom.js";
 import {Autocomplete} from "../../common.js";
 import {SelectMap} from "./SelectMap.js";
 import TermContainer from "./TermContainer.js";
@@ -9,7 +9,7 @@ import {showWindowFromUrl} from "../window/VirtualWindow.js";
 import {RepetitionWindow} from "../repetition/RepetitionWindow.js";
 import {I18n} from "../i18n/I18n.js";
 import {LanguageObject, SUPPORTED_LANGUAGES} from "../i18n/Language.js";
-import {set_i18n} from "../globals/Globals.js";
+import {set_i18n, translate} from "../globals/Globals.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
@@ -33,10 +33,17 @@ export class DictionaryApp {
         let get_selected_map_id_callback = () => {
             return this.select_map.get_selected_map_id()
         }
+        let set_selected_map_id_callback = (map_id) => {
+            return this.set_selected_map_id(map_id)
+        }
         let render_term_id_callback = async (term_id) => {
             await this.render(term_id)
         }
-        this.#term_container = new TermContainer(get_selected_map_id_callback, render_term_id_callback)
+        this.#term_container = new TermContainer(
+            get_selected_map_id_callback,
+            set_selected_map_id_callback,
+            render_term_id_callback
+        )
 
         get_element("dictionary_header").title = "Go to home"
         get_element("dictionary_header").style.cursor = "pointer"
@@ -161,8 +168,23 @@ export class DictionaryApp {
     get_selected_map_id() {
         return this.select_map.get_selected_map_id()
     }
+    set_selected_map_id(map_id) {
+        return this.select_map.set_selected_map_id(map_id)
+    }
 
+    #rendering_in_progress = false
     async render(dictionary_term_id) {
+        if(this.#rendering_in_progress) {
+            showWarn(translate("dictionary.term.warn.another_term_is_already_loading"))
+            return;
+        }
+        // get_element("main_container").style.display = "none"
+        // get_element("loading_div").style.display = "block"
+        this.#rendering_in_progress = true
         await this.#term_container.render(dictionary_term_id)
+        this.#rendering_in_progress = false
+        // get_element("main_container").style.display = "block"
+        // get_element("loading_div").style.display = "none"
+
     }
 }

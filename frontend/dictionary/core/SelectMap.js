@@ -23,6 +23,7 @@ export class SelectMap {
         this.#element.addEventListener("change", () => {
             this.#selected_map_id = this.#element.value
             refresh_autocomplete_term_title_callback()
+            this.#hide_term_container_callback()
             showInfo(translate("dictionary.select_map.info.map_changed") + ": " + this.#maps.get(this.#element.value))
         });
 
@@ -97,6 +98,9 @@ export class SelectMap {
 
     get_selected_map_id() {
         return this.#selected_map_id
+    }
+    set_selected_map_id(map_id) {
+        this.select_map(map_id)
     }
 
     async init() {
