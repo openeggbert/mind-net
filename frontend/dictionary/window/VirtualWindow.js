@@ -62,7 +62,7 @@ export class VirtualWindow {
 
     #overviewPointerHandler = (e) => {
         if (e.target.closest("button")) {
-            e.stopPropagation();
+            VirtualWindow.exitOverview();
             return;
         }
 
@@ -76,10 +76,6 @@ export class VirtualWindow {
         VirtualWindow.exitOverview();
         this.focus();
     };
-
-
-
-
 
     static enterOverview() {
         if (overviewMode) return;
@@ -509,9 +505,13 @@ export class VirtualWindow {
 
 
     close() {
-        this.hide()
-        this.destroy()
+        if (overviewMode) {
+            VirtualWindow.exitOverview();
+        }
+        this.hide();
+        this.destroy();
     }
+
 
     set_title(text) {
         this.#title.textContent = text;
