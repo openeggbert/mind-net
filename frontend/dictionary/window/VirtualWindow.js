@@ -10,6 +10,10 @@ let activeWindow = null;
 let topZ = 1000;
 let allWindows = new Set();
 let overviewMode = false;
+let lastWindowPosition = null;
+const CASCADE_OFFSET_X = 20;
+const CASCADE_OFFSET_Y = 20;
+
 
 export function bringToFront(win) {
     topZ++;
@@ -444,9 +448,24 @@ export class VirtualWindow {
             requestAnimationFrame(() => {
                 const w = this.#root.offsetWidth;
                 const h = this.#root.offsetHeight;
-                this.#root.style.left = ((window.innerWidth - w) / 2) + "px";
-                const top = (window.innerHeight - h) / 2;
-                this.#root.style.top = clampTop(top) + "px";
+
+                let left, top;
+
+                if (lastWindowPosition) {
+                    left = lastWindowPosition.left + CASCADE_OFFSET_X;
+                    top  = lastWindowPosition.top  + CASCADE_OFFSET_Y;
+                } else {
+                    left = (window.innerWidth - w) / 2;
+                    top  = (window.innerHeight - h) / 2;
+                }
+
+                if (left + w > window.innerWidth) left = 20;
+                if (top  + h > window.innerHeight) top = 20;
+
+                this.#root.style.left = left + "px";
+                this.#root.style.top  = clampTop(top) + "px";
+
+                lastWindowPosition = { left, top };
 
                 this.focus();
             });
@@ -456,6 +475,7 @@ export class VirtualWindow {
 
         return this;
     }
+
 
     hide() {
         this.#root.style.display = "none";
