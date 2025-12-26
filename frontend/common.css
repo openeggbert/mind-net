@@ -253,7 +253,6 @@ a.note-wanted, a.note-unknown {
     background: white;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     border: 2px solid #ddd;
     padding: 0px;
     z-index: 1000;
@@ -324,6 +323,9 @@ a.note-wanted, a.note-unknown {
 
 .window_container.overview .window_container-content {
     pointer-events: none;
+}
+.window_container.active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 
