@@ -11,7 +11,6 @@ let topZ = 1000;
 let allWindows = new Set();
 let overviewMode = false;
 
-
 export function bringToFront(win) {
     topZ++;
 
@@ -291,6 +290,7 @@ export class VirtualWindow {
         if (!this.#overview) return;
 
         this.#root.style.transition = "none";
+        this.#root.style.transform = "none";
 
         const r = this.#overviewRect;
         this.#root.style.left = r.left + "px";
@@ -318,24 +318,38 @@ export class VirtualWindow {
     }
 
     _updateOverviewLayout(index, cellW, cellH, gap) {
-        const cols = Math.ceil(window.innerWidth / cellW);
+        const cols = Math.ceil(Math.sqrt(allWindows.size));
         const col = index % cols;
         const row = Math.floor(index / cols);
 
-        const targetW = cellW - gap * 2;
-        const targetH = cellH - gap * 2;
+        const cellX = col * cellW + gap;
+        const cellY = row * cellH + gap;
 
-        const finalW = Math.min(targetW, this.#overviewRect.width);
-        const finalH = Math.min(targetH, this.#overviewRect.height);
+        const innerW = cellW - gap * 2;
+        const innerH = cellH - gap * 2;
 
-        const dx = Math.floor((targetW - finalW) / 2);
-        const dy = Math.floor((targetH - finalH) / 2);
+        const r = this.#overviewRect;
 
-        this.#root.style.transition = "all 0.25s ease";
-        this.#root.style.width = finalW + "px";
-        this.#root.style.height = finalH + "px";
-        this.#root.style.left = (col * cellW + gap + dx) + "px";
-        this.#root.style.top  = (row * cellH + gap + dy) + "px";
+        const scale = Math.min(
+            innerW / r.width,
+            innerH / r.height,
+            1
+        );
+
+        const targetCx = cellX + innerW / 2;
+        const targetCy = cellY + innerH / 2;
+
+        const srcCx = r.left + r.width / 2;
+        const srcCy = r.top + r.height / 2;
+
+        const dx = Math.round(targetCx - srcCx);
+        const dy = Math.round(targetCy - srcCy);
+
+        this.#root.style.transition =
+            "transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)";
+
+        this.#root.style.transform =
+            `translate(${dx}px, ${dy}px) scale(${scale})`;
     }
 
     get_created_at() {
