@@ -14,9 +14,9 @@ let lastWindowPosition = null;
 const CASCADE_OFFSET_X = 20;
 const CASCADE_OFFSET_Y = 20;
 const OVERVIEW_HOVER_SCALE = 1.08;
-const OVERVIEW_TRANSITION =
-    "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)";
-
+const OVERVIEW_TRANSITION = "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)";
+const OVERVIEW_ANIM_MS = 380;
+const OVERVIEW_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 export function bringToFront(win) {
     topZ++;
@@ -149,6 +149,7 @@ export class VirtualWindow {
             this.#close_big.style.transform =
                 `scale(${1.4 / s}) translate(-10px, 15px)`;
             this.#close_big.style.display = "inline-block";
+            this.#root.style.zIndex = 2000;
         });
 
 
@@ -160,6 +161,7 @@ export class VirtualWindow {
 
             this.#close_big.style.transform = "";
             this.#close_big.style.display = "none";
+            this.#root.style.zIndex = 1000;
         });
 
 
@@ -377,21 +379,11 @@ export class VirtualWindow {
     _exitOverview() {
         if (!this.#overview) return;
 
-        this.#root.style.transition = "none";
+        this.#root.style.transition =
+            `transform ${OVERVIEW_ANIM_MS}ms ${OVERVIEW_EASING}`;
         this.#root.style.transform = "none";
-        if (this.#close_big) {
-            this.#close_big.style.transform = "";
-            this.#close_big.style.display = "none"
-        }
-
-        const r = this.#overviewRect;
-        this.#root.style.left = r.left + "px";
-        this.#root.style.top = r.top + "px";
-        this.#root.style.width = r.width + "px";
-        this.#root.style.height = r.height + "px";
 
         this.#root.classList.remove("overview");
-        this.#root.onclick = null;
         this.#overview = false;
 
         this.#root.removeEventListener(
@@ -399,14 +391,25 @@ export class VirtualWindow {
             this.#overviewPointerHandler,
             true
         );
-        if (this.#minimized) {
-            this.#root.style.display = "none";
-        }
-        requestAnimationFrame(() => {
-            this.#root.style.transition = "";
-        });
+        this.#close_big.style.display = "none"
 
+        setTimeout(() => {
+            const r = this.#overviewRect;
+            if (!r) return;
 
+            this.#root.style.transition = "none";
+            this.#root.style.left   = r.left   + "px";
+            this.#root.style.top    = r.top    + "px";
+            this.#root.style.width  = r.width  + "px";
+            this.#root.style.height = r.height + "px";
+
+            this.#root.style.transform = "";
+            this.#overviewRect = null;
+
+            if (this.#minimized) {
+                this.#root.style.display = "none";
+            }
+        }, OVERVIEW_ANIM_MS);
     }
 
     _updateOverviewLayout(index, cellW, cellH, gap) {
@@ -441,7 +444,7 @@ export class VirtualWindow {
         const dy = Math.round(targetCy - srcCy);
 
         this.#root.style.transition =
-            "transform 0.25s cubic-bezier(0.22, 1, 0.36, 1)";
+            `transform ${OVERVIEW_ANIM_MS}ms ${OVERVIEW_EASING}`;
 
         this.#root.style.transform =
             `translate(${dx}px, ${dy}px) scale(${scale})`;
