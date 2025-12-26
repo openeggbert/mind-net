@@ -139,7 +139,7 @@ export class VirtualWindow {
             if (!this.#overview) return;
 
             const s = this.#overviewScale || 1;
-            this.#close.style.transform = `scale(${2/ s}) translate(-10px, 10px)`;
+            this.#close.style.transform = `scale(${1.5/ s}) translate(-10px, 10px)`;
             this.#close.style.transformOrigin = "center";
         });
 
