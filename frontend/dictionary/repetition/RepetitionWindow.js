@@ -7,10 +7,17 @@ import {Input} from "../dom/elements/Input.js";
 import {Checkbox} from "../dom/elements/Checkbox.js";
 import {Button} from "../dom/elements/Button.js";
 import {_10PX, _20PX, _5PX} from "../styles/Styles.js";
-import {list_all_entities, QueryParams} from "../../api.js";
-import {Entities} from "../entities/Entities.js";
+import {getUserId} from "../../api.js";
 import {defined} from "../../common.js";
-import {showError} from "../../dom.js";
+import {
+    formatDateTimeHM,
+    formatDateTimeHMS,
+    get_element, loadFromLocalStorage, saveToLocalStorage,
+    showError,
+    showInfo,
+    showSuccess,
+    showWarn
+} from "../../dom.js";
 import {Option} from "../dom/elements/Option.js";
 import {SearchAutocomplete} from "../search/SearchAutocomplete.js";
 import {EventType} from "../dom/attributes/EventType.js";
@@ -21,97 +28,325 @@ import {Br} from "../dom/elements/Br.js";
 import {markdownToHtml} from "../markdown/Markdown.js";
 import {Color} from "../styles/properties/Color.js";
 import {Display} from "../styles/properties/Display.js";
-
-class RepetitionModel {
-    constructor() {
-        this.map_id = 0
-        this.search_id = 0
-        this.search_name = ""
-        this.due = true
-        this.not_due = false
-        this.never = true
-        this.has_definition = true
-    }
-
-    to_json() {
-        return {
-            map_id: this.map_id,
-            search_id: this.search_id,
-            search_name: this.search_name,
-            due: this.due ? 1 : 0,
-            not_due: this.not_due ? 1 : 0,
-            never: this.never ? 1 : 0,
-            has_definition: this.has_definition ? 1 : 0
-        }
-    }
-}
-
-class AskUserForGradeModel {
-
-}
+import {B} from "../dom/elements/B.js";
+import {TextAlign} from "../styles/properties/TextAlign.js";
+import {RepetitionButton} from "./RepetitionButton.js";
+import {ActionButton} from "./ActionButton.js";
+import {RatingButton} from "./RatingButton.js";
+import {AskForGradeModel} from "./AskForGradeModel.js";
+import {RepetitionModel} from "./RepetitionModel.js";
+import {list_maps, list_term_searches, post_review, read_review, read_state_18} from "./RepetitionRepository.js";
+import {RatingModel} from "./RatingModel.js";
+import {RepetitionResultModel} from "./RepetitionResultModel.js";
+import {ReviewResult} from "./ReviewResult.js";
 
 export class RepetitionWindow extends VirtualWindow {
     #centred = false
+
     constructor(get_selected_map_id_callback, render_term_callback) {
         super({
-            title: "🔁 " + translate("dictionary.repetition.repetition"),
+            title: translate("dictionary.repetition.repetition"),
             width: screen.width > 1000 ? 1000 : screen.width - 100,
             height: 600
         })
         this.get_selected_map_id_callback = get_selected_map_id_callback
         this.render_term_callback = render_term_callback
         this.set_content_padding()
+        this.get_title_dataset().i18n = "dictionary.repetition.repetition"
     }
 
     async init() {
         let model = null
         while (true) {
             model = await this.ask_user_for_model(model)
-            let searches = await this.list_term_searches(model)
-            // alert(JSON.stringify(searches))
-            if (!searches) searches = await this.list_term_searches(model)
+            let searches = await list_term_searches(model)
             if (!searches) {
                 showError(translate("dictionary.repetition.error.loading_terms_for_review_failed"))
                 continue
             }
-            for (let i = 0; i < searches.length; i++) {
-                let search = searches[i]
-                await this.ask_user_for_grade(search, i + 1, searches.length)
+            //searches = Array.from(searches).slice(0, 2)
+            if (searches.length === 0) {
+                showInfo(translate("dictionary.repetition.no_terms_for_review"))
+                continue
             }
-            // console.log("User confirmed repetition:", model)
-            // let c = confirm("Continue");
-            // if (!c) break;
+            let repetition_result_model = new RepetitionResultModel(searches)
+
+            let aborted = false
+            for (let i = 0; i < searches.length; i++) {
+                if (aborted) {
+                    repetition_result_model.next_done(ReviewResult.Skipped, null)
+                    continue
+                }
+                let search = searches[i]
+                let start = Date.now()
+                let ask_for_grade_model = await this.ask_user_for_grade(search, i + 1, searches.length)
+
+                if (ask_for_grade_model.grade === -1) {
+                    repetition_result_model.next_done(ReviewResult.Skipped, null)
+                    continue
+                }
+                if (ask_for_grade_model.grade < -1) {
+                    aborted = true
+                    repetition_result_model.next_done(ReviewResult.Skipped, null)
+                    continue
+                }
+                let end = Date.now()
+                let latency_ms = end - start
+                let old_state = await read_state_18(search.dictionary_term_id)
+                let review = await post_review(
+                    {
+                        user_id: getUserId(),
+                        dictionary_map_id: model.map_id,
+                        algorithm: 18,
+                        dictionary_term_id: search.dictionary_term_id,
+                        review_date: Date.now(),
+                        grade: ask_for_grade_model.grade,
+                        started_at: start,
+                        ended_at: end,
+                        latency_ms: latency_ms,
+                        answer_change_count: ask_for_grade_model.answer_change_count,
+                        details_json: "{}"
+                    }
+                )
+                if (!review) {
+                    showError(translate("dictionary.repetition.error.posting_review_failed"))
+                    repetition_result_model.next_done(ReviewResult.Error, review)
+                    continue
+                }
+
+                let new_state = await read_state_18(search.dictionary_term_id)
+                let state_not_changed = defined(old_state) && old_state.updated_at === new_state.updated_at
+                if (state_not_changed) {
+                    repetition_result_model.next_done(ReviewResult.NotDueYet, review)
+                    showInfo(translate("dictionary.repetition.info.term_is_not_due_yet"))
+                }
+                if (!old_state) {
+                    showInfo(translate("dictionary.repetition.info.term_is_reviewed_for_the_first_time"))
+                }
+                if(!state_not_changed) repetition_result_model.next_done(ReviewResult.Reviewed, review)
+                await this.show_review_result(search, new_state, review.id)
+            }
+            repetition_result_model.end()
+            await this.show_total_result(repetition_result_model)
         }
 
     }
 
-    async ask_user_for_grade(term_for_review, number, size) {
+    async show_total_result(model) {
         return new Promise(async (resolve, reject) => {
-            class RepetitionButton extends Button {
-                constructor(text) {
-                    super(text)
-                        .add_class("repetition_button")
-                        .add_class("common-repetition_button")
-                    this.styles().backgroundColor("rgb(85, 85, 85)").end()
 
-                }
-            }
-            class RatingButton extends Button {
-                constructor(text) {
-                    super(text)
-                        .add_class("repetition_button")
-                        .add_class("rating-btn")
-                }
-            }
-            class ActionButton extends Button {
-                constructor(text) {
-                    super(text)
-                        .add_class("repetition_button")
-                        .add_class("action-btn")
-                }
-            }
             let content = new Div().add_class("repetition_div")
             this.set_content(content.element())
+            this.get_internal_content().style.backgroundColor = "#121212"
+
+
+            let total_result_span = new Div("Total result").styles().fontWeight("bold").fontSize("150%").marginBottom(_20PX).end()
+            total_result_span.element().dataset.i18n = "dictionary.repetition.total_result"
+
+            let card = new Div().add_class("repetition_card")
+            content.appendChild(card)
+            card.append_many(total_result_span)
+// alert(model.get_reviews())
+            {
+                let stats_div = new Div().styles().textAlign(TextAlign.Left).fontSize("125%").width("auto").end().add_class(("stats_div"))
+
+                let started_at_span = new Span("Started at")
+                //started_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let ended_at_span = new Span("Ended at")
+                //started_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let duration_at_span = new Span("Duration")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let total_span = new Span("Total")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let reviewed_span = new Span("Reviewed")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let skipped_span = new Span("Skipped")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let error_span = new Span("Error")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let not_due_yet_span = new Span("Not due yet")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let unknown_at_span = new Span("Unknown")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let total_latency_span = new Span("Total latency")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let average_latency_span = new Span("Average latency")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let min_latency_span = new Span("Min latency")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let max_latency_span = new Span("Max latency")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let average_grade_span = new Span("Average grade")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let total_answer_change_count_span = new Span("Total answer change count")
+                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
+
+                card.appendChild(stats_div)
+
+                class RLabel extends Div{
+                    constructor(emoji, text_span, value) {
+                        super();
+                        let first_column = new Div()
+                        first_column.append_many(new Span(emoji + " "), text_span, new Span(": "))
+                            .styles()
+                            .minWidth("200px")
+                            .display(Display.InlineBlock)
+                            .marginRight(_10PX)
+                            .end()
+                        let second_column = new Span(String(value))
+                        this.append_many(first_column, second_column)
+                    }
+                }
+                stats_div.appendChild(new RLabel("🚀", started_at_span,formatDateTimeHMS(model.get_started_at())))
+                stats_div.appendChild(new RLabel("🏁", ended_at_span, formatDateTimeHMS(model.get_ended_at())))
+                stats_div.appendChild(new RLabel("⏱️", duration_at_span, model.get_duration()).styles().marginBottom(_20PX).end())
+                stats_div.appendChild(new RLabel("🔢", total_span, model.get_total_count()).styles().marginBottom(_20PX).end())
+                stats_div.appendChild(new RLabel("✔️", reviewed_span, model.get_count(ReviewResult.Reviewed)))
+                stats_div.appendChild(new RLabel("⏭️", skipped_span, model.get_count(ReviewResult.Skipped)))
+                let errors = model.get_count(ReviewResult.Error)
+                if (errors > 0) stats_div.appendChild(new RLabel("❌", error_span, errors))
+                let not_due_yet = model.get_count(ReviewResult.NotDueYet)
+                if (not_due_yet > 0) stats_div.appendChild(new RLabel("⏳", not_due_yet_span,  not_due_yet))
+                let unknown = model.get_count(ReviewResult.Unknown)
+                if (unknown > 0) stats_div.appendChild(new RLabel("❓", unknown_at_span, unknown))
+
+                stats_div.appendChild
+                (
+                    new RLabel
+                    (
+                        "⏱️",
+                        total_latency_span,
+                        String((model.get_total_latency_ms()/1000).toFixed(2)) + " " + "seconds"
+
+                    ).styles().marginTop(_20PX).end()
+                )
+                stats_div.appendChild
+                (
+                    new RLabel
+                    (
+                        "🔢",
+                        average_latency_span,
+                        String((model.get_average_latency_ms()/1000).toFixed(2)) + " " + "seconds"
+
+                    )
+                )
+                stats_div.appendChild
+                (
+                    new RLabel
+                    (
+                        "⏬",
+                        min_latency_span,
+                        String((model.get_min_latency_ms()/1000).toFixed(2)) + " " + "seconds"
+
+                    )
+                )
+                stats_div.appendChild
+                (
+                    new RLabel
+                    (
+                        "⏫",
+                        max_latency_span,
+                        String((model.get_max_latency_ms()/1000).toFixed(2)) + " " + "seconds"
+
+                    )
+                )
+                stats_div.appendChild
+                (
+                    new RLabel
+                    (
+                        "➗",
+                        average_grade_span,
+                        String((model.get_average_grade()).toFixed(1))
+
+                    )
+                )
+                stats_div.appendChild
+                (
+                    new RLabel
+                    (
+                        "🧮",
+                        total_answer_change_count_span,
+                        String(model.get_total_answer_change_count())
+
+                    )
+                )
+
+            }
+
+            let continue_button = new ActionButton("Continue").on("click", () => {
+                resolve()
+            })
+            //send_button.element().dataset.i18n = "dictionary.repetition.send"
+            card.appendChild(new Br())
+            card.appendChild(continue_button)
+        })
+    }
+
+
+    async show_review_result(term_for_review, state18, review_id) {
+        return new Promise(async (resolve, reject) => {
+
+            let content = new Div().add_class("repetition_div")
+            this.set_content(content.element())
+            this.get_internal_content().style.backgroundColor = "#121212"
+
+            let review = await read_review(review_id)
+
+            let term_was_reviewed_span = new Span(translate("dictionary.repetition.term_was_reviewed")).styles().fontWeight("bold").end()
+            term_was_reviewed_span.element().dataset.i18n = "dictionary.repetition.term_was_reviewed"
+
+            let card = new Div().add_class("repetition_card")
+            content.appendChild(card)
+            card.appendChild(new Div(new Span("✅ "), term_was_reviewed_span, new Span(": " + term_for_review.title).styles().fontWeight("bold").end()).styles().fontSize("125%").end())
+            card.appendChild(new Br())
+
+            {
+                let stats_div = new Div().styles().textAlign(TextAlign.Left).fontSize("125%").width("auto").end().add_class(("stats_div"))
+                let next_review_span = new Span(translate("dictionary.repetition.next_review"))
+                next_review_span.element().dataset.i18n = "dictionary.repetition.next_review"
+                let repetitions_span = new Span(translate("dictionary.repetition.repetitions"))
+                repetitions_span.element().dataset.i18n = "dictionary.repetition.repetitions"
+                let stability_span = new Span(translate("dictionary.repetition.stability"))
+                stability_span.element().dataset.i18n = "dictionary.repetition.stability"
+                let retrievability_span = new Span(translate("dictionary.repetition.retrievability"))
+                retrievability_span.element().dataset.i18n = "dictionary.repetition.retrievability"
+//         📅 Next review : 2025-12-27 17:27
+// 🔢 Repetitions: 0
+// 📈 Stability: 17.61
+// 📈 Retrievability: 0.17
+                card.appendChild(stats_div)
+                let stability = (state18.stability_times_100 / 100).toFixed(2)
+
+                let details_json = defined(review) ? JSON.parse(review.details_json) : null
+                let retrievability = null
+
+                if (details_json) {
+                    if (details_json.R_now !== null && details_json.R_now !== undefined) {
+                        retrievability = Number(details_json.R_now).toFixed(2)
+                    }
+                }
+                stats_div.appendChild(new Div(new Span("📅 "), next_review_span, new Span(": " + formatDateTimeHM(state18.next_review))))
+                stats_div.appendChild(new Div(new Span("🔢 "), repetitions_span, new Span(": " + state18.repetitions)))
+                stats_div.appendChild(new Div(new Span("📈 "), stability_span, new Span(": " + stability)))
+                if (retrievability) stats_div.appendChild(new Div(new Span("⏱️ "), retrievability_span, new Span(": " + retrievability)))
+            }
+
+
+            let send_button = new ActionButton(translate("dictionary.repetition.send")).on("click", () => {
+
+                resolve()
+            })
+            send_button.element().dataset.i18n = "dictionary.repetition.send"
+            card.appendChild(new Br())
+            card.appendChild(send_button)
+        })
+    }
+
+    async ask_user_for_grade(term_for_review, number, size) {
+        return new Promise(async (resolve, reject) => {
+            let content = new Div().add_class("repetition_div")
+            this.set_content(content.element())
+            this.get_internal_content().style.backgroundColor = "#121212"
 
             let card = new Div().add_class("repetition_card")
             content.appendChild(card)
@@ -124,47 +359,170 @@ export class RepetitionWindow extends VirtualWindow {
 
 
             card.appendChild(new Label("❓ " + term_for_review.title).styles().fontSize("150%").margin(_10PX).end())
-            card.appendChild(new Div(new RepetitionButton("Show definition")))
-            let definition_div =new Div()
+            let show_hide_definition_button = new RepetitionButton(translate("dictionary.repetition.show_definition"))
+            let term_has_no_definition = new Span(translate("dictionary.repetition.no_definition")).styles().display(Display.None).end()
+            if (term_for_review.definition.length === 0) {
+                show_hide_definition_button.styles().display(Display.None).end()
+                term_has_no_definition.element().dataset.i18n = "dictionary.repetition.no_definition"
+                term_has_no_definition.styles().display(Display.Inline).color("#bbb").end()
+            } else {
+                show_hide_definition_button.element().style.minWidth = "180px"
+                show_hide_definition_button.element().dataset.i18n = "dictionary.repetition.show_definition"
+                show_hide_definition_button.element().dataset.definitionShown = "no"
+                show_hide_definition_button.element().onclick = () => {
+                    let definitionShown = show_hide_definition_button.element().dataset.definitionShown === "yes"
+                    if (definitionShown) {
+                        show_hide_definition_button.element().dataset.definitionShown = "no"
+                        show_hide_definition_button.set_text(translate("dictionary.repetition.show_definition"))
+                        show_hide_definition_button.element().dataset.i18n = "dictionary.repetition.show_definition"
+                    } else {
+                        show_hide_definition_button.element().dataset.definitionShown = "yes"
+                        show_hide_definition_button.set_text(translate("dictionary.repetition.hide_definition"))
+                        show_hide_definition_button.element().dataset.i18n = "dictionary.repetition.hide_definition"
+                    }
+                    get_element("definition_div" + this.get_created_at()).style.display = definitionShown ? "none" : "block"
+
+                }
+            }
+
+            let show_term_button = new RepetitionButton(translate("dictionary.repetition.show_term"))
+            show_term_button.element().dataset.i18n = "dictionary.repetition.show_term"
+
+            show_term_button.on(EventType.Click.label, async () => {
+                await this.render_term_callback(term_for_review.dictionary_term_id)
+            })
+            card.appendChild(new Div(show_hide_definition_button, term_has_no_definition, show_term_button))
+            show_hide_definition_button.styles().marginRight(_5PX).end()
+            term_has_no_definition.styles().marginRight(_5PX).end()
+                , show_term_button.styles().marginLeft(_5PX).end()
+            let definition_div = new Div()
                 .styles()
                 .padding(_10PX)
                 .minHeight("100px")
                 .color(Color.Black)
+                .display(Display.None)
                 .end()
                 .add_class("definition_div")
+                .set_id("definition_div" + this.get_created_at())
             card.appendChild(definition_div.set_html_unsafe(markdownToHtml(term_for_review.definition)))
-            card.appendChild(new Div("How well did you recall the note?").styles().margin(_10PX).end())
-            card.appendChild(new Div(
-                new RatingButton("0"),
-                new RatingButton("1"),
-                new RatingButton("2"),
-                new RatingButton("3"),
-                new RatingButton("4"),
-                new RatingButton("5")
-            ))
-            card.appendChild(new RepetitionButton("Show legend")).appendChild(new Br())
-            card.appendChild(new Div("Next action").styles().margin(_10PX).end())
-            let send_button = new ActionButton("Send").on("click", () => {
-                resolve(3)
+            let how_well = new Div(translate("dictionary.repetition.how_well_did_you_recall"))
+                .styles()
+                .margin(_10PX)
+                .end()
+            how_well.element().dataset.i18n = "dictionary.repetition.how_well_did_you_recall"
+            card.appendChild(how_well)
+
+            let rating_model = new RatingModel()
+            let grades = RatingModel.grades
+            let rating_buttons_div = new Div()
+            card.appendChild(rating_buttons_div)
+            grades.forEach(grade => {
+                rating_buttons_div.appendChild(new RatingButton(grade, rating_model))
             })
-            card.appendChild(new Div(send_button, new ActionButton("Skip")))
+
+            let show_legend_button = new RepetitionButton(translate("dictionary.repetition.show_legend"))
+            show_legend_button.element().style.minWidth = "180px"
+            show_legend_button.element().dataset.i18n = "dictionary.repetition.show_legend"
+            show_legend_button.element().dataset.legendShown = "no"
+            show_legend_button.element().onclick = () => {
+                let legendShown = show_legend_button.element().dataset.legendShown === "yes"
+                if (legendShown) {
+                    show_legend_button.element().dataset.legendShown = "no"
+                    show_legend_button.set_text(translate("dictionary.repetition.show_legend"))
+                    show_legend_button.element().dataset.i18n = "dictionary.repetition.show_legend"
+                } else {
+                    show_legend_button.element().dataset.legendShown = "yes"
+                    show_legend_button.set_text(translate("dictionary.repetition.hide_legend"))
+                    show_legend_button.element().dataset.i18n = "dictionary.repetition.hide_legend"
+                }
+                get_element("legend_div" + this.get_created_at()).style.display = legendShown ? "none" : "block"
+
+            }
+
+            card.appendChild(show_legend_button).appendChild(new Br())
+
+            let legend_div = new Div()
+                .styles()
+                .padding(_10PX)
+                .display(Display.None)
+                .textAlign(TextAlign.Left)
+                .end()
+                .add_class("rating-legend")
+                .set_id("legend_div" + this.get_created_at())
+            card.appendChild(legend_div)
+            grades.forEach(grade => {
+                let span_grade = new B(grade + ": ")
+                let key = "dictionary.repetition.legend." + grade
+                let legend = new Span(translate(key))
+                legend.element().dataset.i18n = "dictionary.repetition.legend." + grade
+                legend_div.appendChild(new Div(span_grade, legend))
+            })
+
+            let next_action_div = new Div(translate("dictionary.repetition.next_action")).styles().margin("15px").end()
+            next_action_div.element().dataset.i18n = "dictionary.repetition.next_action"
+            card.appendChild(next_action_div)
+            let send_button = new ActionButton(translate("dictionary.repetition.send")).on("click", () => {
+                if (rating_model.selected_grade < 0 || rating_model.selected_grade > 5) {
+                    showWarn(translate("dictionary.repetition.select_a_grade"))
+                    return
+                }
+                let was_correct = rating_model.selected_grade >= 3;
+
+                let msg = translate("dictionary.repetition.term_was_reviewed") + ": #" + term_for_review.dictionary_term_id + " " + term_for_review.title
+                if (was_correct) {
+                    showSuccess(msg)
+                } else {
+                    showInfo(msg)
+                }
+                resolve(new AskForGradeModel(rating_model.selected_grade, rating_model.answer_change_count))
+            })
+            send_button.element().dataset.i18n = "dictionary.repetition.send"
+            let skip_button = new ActionButton(translate("dictionary.repetition.skip")).on("click", () => {
+                showWarn(translate("dictionary.repetition.term_was_skipped") + ": #" + term_for_review.dictionary_term_id + " " + term_for_review.title)
+                resolve(new AskForGradeModel())
+            })
+            skip_button.element().dataset.i18n = "dictionary.repetition.skip"
+
+            let abort_button = new ActionButton(translate("dictionary.repetition.abort")).on("click", () => {
+                showWarn(translate("Session was aborted"))
+                resolve(new AskForGradeModel(-2))
+            })
+            abort_button.element().dataset.i18n = "dictionary.repetition.abort"
+            card.appendChild(new Div(send_button, skip_button, abort_button))
         })
     }
 
     async ask_user_for_model(model = null) {
         return new Promise(async (resolve, reject) => {
-
+            this.get_internal_content().style.backgroundColor = "#121212"
             let content = new Div()
             this.set_content(content.element())
-            if(!this.#centred) {
+            if (!this.#centred) {
                 this.center()
                 this.#centred = true
             }
+            if (model === null) {
+                let model_lc = loadFromLocalStorage("RepetitionModel")
+                // alert("model_lc=" + model_lc)
+                if (defined(model_lc)) {
+                    model = JSON.parse(model_lc)
+                }
+            }
 
             const repetition_form = new Form()
-            content.appendChild(repetition_form.element())
+            let card = new Div()
+                .add_class("repetition_card")
+                .styles()
+                .maxWidth("800px")
+                .width("auto")
+                .margin("auto")
+                .marginTop(_20PX)
+                .end()
+            card.appendChild(repetition_form)
 
-            let maps = await list_all_entities(Entities.dictionary_map, new QueryParams().sort(Entities.dictionary_map.position).build());
+            content.appendChild(card.element())
+
+            let maps = await list_maps()
             if (!defined(maps)) {
                 showError(translate("dictionary.crud_section.error.listing_models_failed", {models: translate("dictionary.common.maps").toLowerCase()}))
                 return
@@ -174,9 +532,11 @@ export class RepetitionWindow extends VirtualWindow {
                 let row = new FormRow(label, control)
                 row.styles().paddingTop("10px").end()
                 repetition_form.append(row)
+                return row
             }
 
             let map_select = new Select()
+            map_select.styles().backgroundColor(Color.Black).end()
             let o0 = new Option(0, translate("dictionary.common.any"))
             o0.element().dataset.i18n = "dictionary.common.any"
             map_select.add_option(o0)
@@ -194,6 +554,7 @@ export class RepetitionWindow extends VirtualWindow {
 
             let search_input = new Input().set_placeholder(translate("dictionary.common.load_a_search"))
             search_input.element().dataset.i18nPlaceholder = "dictionary.common.load_a_search"
+            search_input.styles().backgroundColor(Color.Black).end()
             let search_end_repetition = new Span().set_id("search_end_repetition_" + this.get_created_at())
 
             add_control("i18n.dictionary.common.search", new Span(search_input, search_end_repetition))
@@ -207,10 +568,16 @@ export class RepetitionWindow extends VirtualWindow {
                 search_autocomplete.set_query_params("&dictionary_map_id=" + map_select.get_selected_values()[0])
             })
 
+            class RCheckbox extends Checkbox {
+                constructor() {
+                    super();
+                    this.styles().accentColor(Color.Black).end()
+                }
+            }
             class ModePair extends Span {
                 constructor(label, checked = true) {
                     super(
-                        new Checkbox().set_checked(checked).styles().marginRight(_20PX).end(),
+                        new RCheckbox().set_checked(checked).styles().marginRight(_20PX).end(),
                         new Label(label, "").styles().marginRight(0).end(),
                     );
                 }
@@ -226,22 +593,31 @@ export class RepetitionWindow extends VirtualWindow {
             let modes = new Span(
                 due_checkbox, not_due_checkbox, never_checkbox
             )
-            add_control("i18n.dictionary.common.mode", modes)
+            let mode_control = add_control("i18n.dictionary.common.mode", modes)
 
-            let has_definition_checkbox = new Checkbox().set_checked(defined(model) ? model.has_definition : true)
-            add_control("i18n.dictionary.common.has_definition", has_definition_checkbox)
+            let has_definition_checkbox = new RCheckbox().set_checked(defined(model) ? model.has_definition : true)
+            let has_definition_control = add_control("i18n.dictionary.common.has_definition", has_definition_checkbox)
 
-            let start_button = new Button(translate("dictionary.common.start")).styles().marginTop(_20PX).marginLeft(_20PX).transform("scale(1.5)").end()
+            let start_button = new RepetitionButton(translate("dictionary.common.start")).styles().marginTop(_20PX).marginLeft(_20PX).transform("scale(1.25)").end()
             start_button.element().dataset.i18n = "dictionary.common.start"
-            content.appendChild(start_button)
+            card.appendChild(new Div(start_button).css({
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            }))
 
             search_autocomplete.addCallback(() => {
+                mode_control.hide()
+                has_definition_control.hide()
                 due_checkbox.get_checkbox().element().disabled = true
                 not_due_checkbox.get_checkbox().element().disabled = true
                 never_checkbox.get_checkbox().element().disabled = true
                 has_definition_checkbox.element().disabled = true
             })
             search_autocomplete.addResetCallback(() => {
+
+                mode_control.show()
+                has_definition_control.show()
                 due_checkbox.get_checkbox().element().disabled = false
                 not_due_checkbox.get_checkbox().element().disabled = false
                 never_checkbox.get_checkbox().element().disabled = false
@@ -249,6 +625,10 @@ export class RepetitionWindow extends VirtualWindow {
             })
             if (defined(model)) {
                 let search = model.search_id !== 0
+                if(search) {
+                    mode_control.hide()
+                    has_definition_control.hide()
+                }
                 due_checkbox.get_checkbox().element().disabled = search
                 not_due_checkbox.get_checkbox().element().disabled = search
                 never_checkbox.get_checkbox().element().disabled = search
@@ -266,25 +646,21 @@ export class RepetitionWindow extends VirtualWindow {
                 model.never = never_checkbox.get_checkbox().is_checked()
 
                 model.has_definition = has_definition_checkbox.is_checked()
+
+                const MILLISECONDS_PER_DAY = 365 * 24 * 60 * 60 * 1000
+                saveToLocalStorage("RepetitionModel", JSON.stringify(model.to_json()), MILLISECONDS_PER_DAY)
                 content.clear_html()
+                content.appendChild(new Div("⏳").css({
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "40px",
+                    fontSize: "200%"
+                }))
                 resolve(model)
             })
         })
     }
 
-    async list_term_searches(model) {
-        let json = model.to_json()
-        return await list_all_entities(
-            "dictionary_term_for_review",
-            new QueryParams()
-                .add_user_id()
-                .add("dictionary_map_id", json.map_id)
-                .add("dictionary_search_id", json.search_id)
-                .add("is_due", json.due)
-                .add("is_not_due", json.not_due)
-                .add("is_never", json.never)
-                .add("has_definition", json.has_definition)
-                .build()
-        )
-    }
+
 }

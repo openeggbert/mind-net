@@ -346,6 +346,9 @@ export class Styles {
     borderCollapse(value) {
         return this.#set("borderCollapse", value)
     }
+    accentColor(value) {
+        return this.#set("accentColor", value)
+    }
 
 
     /* =========================

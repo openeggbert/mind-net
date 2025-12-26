@@ -1187,10 +1187,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         }
                     }
                 }
-                let retrievibility = null
+                let retrievability = null
                 if (r18 && details_json !== null && details_json !== undefined) {
                     if (details_json.R_now !== null && details_json.R_now !== undefined) {
-                        retrievibility = details_json.R_now
+                        retrievability = details_json.R_now
                     }
                 }
 
@@ -1201,14 +1201,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             📅 Next review : ${state === null ? "?" : formatDateTimeHM(state.next_review)}<br>
             🔢 Repetitions: ${state === null ? "?" : state.repetitions}<br>
             <span id="result_stability" style="display:none">📈 Stability: ${state === null || !r18 ? "?" : (state.stability_times_100 / 100).toFixed(2)}</span>            
-            <span id="result_retrievibility" style="display:none">📈 Retrievibility: ${state === null || !r18 || retrievibility === null ? "?" : (retrievibility).toFixed(2)}</span>
+            <span id="result_retrievability" style="display:none">⏱️ Retrievability: ${state === null || !r18 || retrievability === null ? "?" : (retrievability).toFixed(2)}</span>
             </div>
             <button id="btn_next_note">Next Note</button>
             <button id="btn_test_note">Test</button>
             
         `;
                     if (r18) get_element("result_stability").style.display = "block";
-                    if (r18 && retrievibility !== null) get_element("result_retrievibility").style.display = "block";
+                    if (r18 && retrievability !== null) get_element("result_retrievability").style.display = "block";
 
                     get_element("btn_next_note").onclick = () => resolve();
                     get_element("btn_test_note").onclick = async () => {

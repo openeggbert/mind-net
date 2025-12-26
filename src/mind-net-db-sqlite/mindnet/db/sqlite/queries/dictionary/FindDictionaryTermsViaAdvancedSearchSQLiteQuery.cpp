@@ -252,12 +252,16 @@ X(Desc, 2, ENUM_NAME)
         Sort sort = Sort::None;
         Order order = Order::None;
 
-        SearchModel(const std::string& json_string)
+        SearchModel(const std::string& json_string, identification default_map_id)
         {
             using json = nlohmann::json;
             json q = json::parse(json_string);
 
             map_id = q.value("map_id", 0);
+            if (!q.contains("map_id"))
+            {
+                map_id = default_map_id;
+            }
             // text filters
             title_contains = q.value("title_contains", "");
             title_starts_with = q.value("title_starts_with", "");
@@ -459,7 +463,7 @@ X(Desc, 2, ENUM_NAME)
         if (!request.contains("query_json"))
             throw std::invalid_argument("Mandatory key query_json is missing");
 
-        SearchModel q(request["query_json"]);
+        SearchModel q(request["query_json"], dictionary_map_id);
         essential::debug << q.to_json() << essential::commit;
         if (dictionary_map_id != q.map_id)
         {

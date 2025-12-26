@@ -118,6 +118,7 @@ namespace mindnet::plugins::dictionary::triggers
 
         std::vector<identification> term_ids;
         api::AccessTokenContext ctx{true};
+        api::AccessTokenContext ctx_user{user_id, "", 0};
 
         if (!search)
             try
@@ -198,8 +199,8 @@ namespace mindnet::plugins::dictionary::triggers
             dictionary_search.from_values(read_dictionary_search.first);
             string query_json = dictionary_search.query_json;
 
-            auto query_json_parsed = nlohmann::json::parse(query_json);
-
+            // auto query_json_parsed = nlohmann::json::parse(query_json);
+            //
             // if (!(is_due && is_not_due && is_never))
             // {
             //     query_json_parsed["repetition_due"] = is_due;
@@ -225,7 +226,7 @@ namespace mindnet::plugins::dictionary::triggers
             {
                 auto list_dictionary_term_search = run_list(
                     models::DICTIONARY_TERM_SEARCH_DEFINITION,
-                    ctx,
+                    ctx_user,
                     query_params_dictionary_term_search,
                     stack_depth);
 
@@ -250,7 +251,7 @@ namespace mindnet::plugins::dictionary::triggers
                     auto& disambiguation = dictionary_term_search.disambiguation;
 
                     {
-                        const auto& read_term = run_read(models::DICTIONARY_TERM_DEFINITION, ctx, term_id, stack_depth);
+                        const auto& read_term = run_read(models::DICTIONARY_TERM_DEFINITION, ctx_user, term_id, stack_depth);
                         if (!read_term.second)
                         {
                             err << "Reading dictionary_term failed " << read_term.second.error << commit;

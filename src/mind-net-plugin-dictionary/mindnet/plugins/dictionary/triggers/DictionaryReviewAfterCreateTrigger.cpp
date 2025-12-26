@@ -75,28 +75,29 @@ namespace mindnet::plugins::dictionary::triggers
         return true;
     }
 
-    namespace params {
-        inline constexpr double B                = 1.1;
-        inline constexpr double R_TARGET          = 0.82;
-        inline constexpr double R_OPT             = 0.75;
-        inline constexpr double ALPHA             = 0.5;
-        inline constexpr double BETA              = 1.05;
-        inline constexpr double GAMMA             = 0.2;
-        inline constexpr double DELTA             = 0.4;
-        inline constexpr double K_OVER            = 0.55;
-        inline constexpr double S_MIN             = 8.0;
-        inline constexpr double SHORT_RETRY       = 0.02;
-        inline constexpr double T0                = 0.2;
-        inline constexpr double R_INFTY            = 0.02;
-        inline constexpr double FATIGUE_LAMBDA    = 0.1;
-        inline constexpr double THETA             = 1.0;
-        inline constexpr double G_OVER_MAX        = 4.0;
-        inline constexpr double S_DAMP            = 8000.0;
-        inline constexpr double MAX_GAIN          = 2.0;
-        inline constexpr double INTERVAL_SCALE    = 2.2;
-        inline constexpr double GROWTH_CAP        = 5.0;
+    namespace params
+    {
+        inline constexpr double B = 1.1;
+        inline constexpr double R_TARGET = 0.82;
+        inline constexpr double R_OPT = 0.75;
+        inline constexpr double ALPHA = 0.5;
+        inline constexpr double BETA = 1.05;
+        inline constexpr double GAMMA = 0.2;
+        inline constexpr double DELTA = 0.4;
+        inline constexpr double K_OVER = 0.55;
+        inline constexpr double S_MIN = 8.0;
+        inline constexpr double SHORT_RETRY = 0.02;
+        inline constexpr double T0 = 0.2;
+        inline constexpr double R_INFTY = 0.02;
+        inline constexpr double FATIGUE_LAMBDA = 0.1;
+        inline constexpr double THETA = 1.0;
+        inline constexpr double G_OVER_MAX = 4.0;
+        inline constexpr double S_DAMP = 8000.0;
+        inline constexpr double MAX_GAIN = 2.0;
+        inline constexpr double INTERVAL_SCALE = 2.2;
+        inline constexpr double GROWTH_CAP = 5.0;
         inline constexpr double MIN_INTERVAL_DAYS = 1.0;
-        inline constexpr double EF_MAX            = 2.6;
+        inline constexpr double EF_MAX = 2.6;
 
         inline constexpr double MAX_INTERVAL_DAYS = 1825.0;
     }
@@ -151,11 +152,13 @@ namespace mindnet::plugins::dictionary::triggers
         // Creating new state record, if it does not yet exist.
         // ============================================================
 
+        int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
+
         bool default_state_record_will_be_created = !state_record_already_exists;
         if (default_state_record_will_be_created)
         {
             entity_fields new_state_fields;
-            int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
+
 
             switch (review.algorithm)
             {
@@ -177,6 +180,7 @@ namespace mindnet::plugins::dictionary::triggers
                     new_state_fields = state.to_values();
                 }
                 break;
+            default: throw std::runtime_error { std::string("Unsupported algorithm: ") + std::to_string(static_cast<int>(review.algorithm))};
             }
 
             new_state_fields[1] = now;
@@ -246,6 +250,12 @@ namespace mindnet::plugins::dictionary::triggers
 
                 models::DictionaryState18 r18_state;
                 r18_state.from_values(read_r18_state.first);
+                if (r18_state.next_review > now)
+                {
+                    //future
+                    debug << "Review is in future for state18 with id " << state_record_id << commit;
+                    return;
+                }
 
                 const int q = std::clamp(review.grade, 0, 5);
                 bool was_correct = q >= 3;
@@ -254,25 +264,25 @@ namespace mindnet::plugins::dictionary::triggers
                 // Model parameters (SM-18)
                 // =======================
 
-                const double b                = params::B;
-                const double R_target         = params::R_TARGET;
-                const double R_opt            = params::R_OPT;
-                const double alpha            = params::ALPHA;
-                const double beta             = params::BETA;
-                const double gamma            = params::GAMMA;
-                const double delta            = params::DELTA;
-                const double k_over           = params::K_OVER;
-                const double S_min            = params::S_MIN;
-                const double short_retry      = params::SHORT_RETRY;
-                const double t0               = params::T0;
-                const double R_inf            = params::R_INFTY;
-                const double fatigue_lambda   = params::FATIGUE_LAMBDA;
-                const double theta            = params::THETA;
-                const double G_OVER_MAX       = params::G_OVER_MAX;
-                const double S_DAMP           = params::S_DAMP;
-                const double MAX_GAIN         = params::MAX_GAIN;
-                double interval_scale         = params::INTERVAL_SCALE;
-                const double min_interval_days= params::MIN_INTERVAL_DAYS;
+                constexpr double b = params::B;
+                constexpr double R_target = params::R_TARGET;
+                constexpr double R_opt = params::R_OPT;
+                constexpr double alpha = params::ALPHA;
+                constexpr double beta = params::BETA;
+                constexpr double gamma = params::GAMMA;
+                constexpr double delta = params::DELTA;
+                constexpr double k_over = params::K_OVER;
+                constexpr double S_min = params::S_MIN;
+                constexpr double short_retry = params::SHORT_RETRY;
+                constexpr double t0 = params::T0;
+                constexpr double R_inf = params::R_INFTY;
+                constexpr double fatigue_lambda = params::FATIGUE_LAMBDA;
+                constexpr double theta = params::THETA;
+                constexpr double G_OVER_MAX = params::G_OVER_MAX;
+                constexpr double S_DAMP = params::S_DAMP;
+                constexpr double MAX_GAIN = params::MAX_GAIN;
+                double interval_scale = params::INTERVAL_SCALE;
+                constexpr double min_interval_days = params::MIN_INTERVAL_DAYS;
 
                 if (r18_state.stability_times_100 < S_min * 100.0)
                 {
@@ -441,7 +451,10 @@ namespace mindnet::plugins::dictionary::triggers
                     double R_pred = R_now; // retrievability before review
                     int R_pred_times_100 = (int)(R_pred * 100.0);
                 }
-            }
+            } break;
+        default: throw std::runtime_error{
+                std::string("Unsupported algorithm: ") + std::to_string(static_cast<int>(review.algorithm))
+            };
         }
 
         if (!details_json.empty())

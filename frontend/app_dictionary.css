@@ -403,6 +403,12 @@ fieldset legend {
     width: 100%;
     margin-bottom: 1em;
 }
+.repetition_card *{
+color: #ccc
+}
+.repetition_card_checkbox {
+    background-color: black;
+}
 .repetition_button {
     font-size: 110%;
     color: #fff;

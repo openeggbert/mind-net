@@ -62,7 +62,11 @@ namespace mindnet::plugins::dictionary::validators
                                                                            const Model& old_entity,
                                                                            const Model& new_entity) const
     {
-        return status_405_unsupported_operation;
+        if (ctx.token.user_id != new_entity.user_id)
+        {
+            return {403, "Can only access your own reviews"};
+        }
+        return ok_result;
     }
 
     OperationResult DictionaryReviewValidator::validate_delete_authorization(const RequestContext& ctx,
@@ -105,7 +109,11 @@ namespace mindnet::plugins::dictionary::validators
                                                                        const Model& old_entity,
                                                                        const Model& new_entity) const
     {
-        return status_405_unsupported_operation;
+        if (old_entity.details_json != "{}")
+        {
+            return {400, "Review cannot be updated, if the old value for details_json is not {}"};
+        }
+        return ok_result;
     }
 
     OperationResult DictionaryReviewValidator::validate_delete_integrity(const RequestContext& ctx,

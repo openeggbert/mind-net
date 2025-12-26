@@ -57,6 +57,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Backend
 - [ ] New table error
+- [ ] ModelDefinition: readonly. ColumnDefinition: mutable
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2

@@ -32,7 +32,7 @@
 #include "BaseColumns.hpp"
 #include "CustomAction.hpp"
 #include "mindnet/model/ModelTypeDefs.hpp"
-// todo : creeate ModelDefinition.cpp
+// todo : create ModelDefinition.cpp
 namespace mindnet::model
 {
     using std::string;

@@ -315,6 +315,9 @@ export class VirtualWindow {
 
     }
 
+    get_title_dataset() {
+        return this.#title.dataset
+    }
     _applyOverviewTransform(extraScale = 1) {
         const r = this.#overviewRect;
         if (!r) return;
@@ -649,6 +652,9 @@ export class VirtualWindow {
             this.#content.appendChild(node);
         }
         return this;
+    }
+    get_internal_content() {
+        return this.#content
     }
 
     resize(width, height) {

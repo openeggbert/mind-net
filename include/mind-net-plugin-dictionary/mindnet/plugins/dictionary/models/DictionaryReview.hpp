@@ -68,10 +68,10 @@ namespace mindnet::plugins::dictionary::models
         identification dictionary_map_id{};
         enums::RepetitionAlgorithm algorithm{};
         identification dictionary_term_id{};
-        unixtime review_date;
+        unixtime review_date{};
         int grade{};
-        unixtime started_at;
-        unixtime ended_at;
+        unixtime started_at{};
+        unixtime ended_at{};
         int latency_ms{};
         int answer_change_count{0};
         string details_json{"{}"};
