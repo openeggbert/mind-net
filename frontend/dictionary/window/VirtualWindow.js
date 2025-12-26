@@ -52,6 +52,7 @@ export class VirtualWindow {
     #restoreWidth = "800px";
     #restoreHeight = "600px";
     #close;
+    #close_big
     #userPositioned = false;
     #lastTapTime = 0;
     #maximized = false
@@ -139,14 +140,18 @@ export class VirtualWindow {
             if (!this.#overview) return;
 
             const s = this.#overviewScale || 1;
-            this.#close.style.transform = `scale(${1.5/ s}) translate(-10px, 10px)`;
-            this.#close.style.transformOrigin = "center";
+            this.#close_big.style.transform = `scale(${1.5/ s}) translate(-10px, 15px)`;
+            this.#close_big.style.transformOrigin = "center";
+            this.#close_big.style.display = "inline-block"
+            this.#close_big.style.backgroundColor = "#333"
+            this.#close_big.style.color = "#ccc"
         });
 
         this.#root.addEventListener("mouseleave", () => {
             if (!this.#overview) return;
 
-            this.#close.style.transform = "";
+            this.#close_big.style.transform = "";
+            this.#close_big.style.display = "none"
         });
 
         this.created_at = Date.now()
@@ -171,6 +176,29 @@ export class VirtualWindow {
         this.#close.className = "window-close";
         this.#close.textContent = "✖";
         this.#close.onclick = () => this.close();
+
+        this.#close_big = document.createElement("button");
+        this.#close_big.className = "window-close";
+        this.#close_big.textContent = "✖";
+        this.#close_big.onclick = () => this.close();
+        this.#close_big.style.display = "none"
+        this.#close_big.style.backgroundColor = "#333"
+        this.#close_big.style.color = "#ddd"
+        this.#close_big.style.borderRadius = "25px"
+        this.#close_big.style.width = "35px"
+        this.#close_big.style.height = "35px"
+        this.#close_big.style.fontWeight = "normal"
+        this.#close_big.style.fontSize = "100%"
+
+        this.#close_big.addEventListener("mouseenter", () => {
+            if (!this.#overview) return;
+            this.#close_big.style.backgroundColor = "#555"
+        });
+
+        this.#close_big.addEventListener("mouseleave", () => {
+            if (!this.#overview) return;
+            this.#close_big.style.backgroundColor = "#333"
+        });
 
         this.#minimize = document.createElement("button");
         this.#minimize.className = "window-minimize";
@@ -205,7 +233,7 @@ export class VirtualWindow {
             }
         });
 
-        this.#header.append(this.#title, new Span(this.#minimize, this.#restore, this.#close).element());
+        this.#header.append(this.#title, new Span(this.#minimize, this.#restore, this.#close, this.#close_big).element());
 
         // ===============================
         // Content
@@ -307,8 +335,9 @@ export class VirtualWindow {
 
         this.#root.style.transition = "none";
         this.#root.style.transform = "none";
-        if (this.#close) {
-            this.#close.style.transform = "";
+        if (this.#close_big) {
+            this.#close_big.style.transform = "";
+            this.#close_big.style.display = "none"
         }
 
         const r = this.#overviewRect;
@@ -422,6 +451,8 @@ export class VirtualWindow {
         this.#root.style.left = "0"
         this.#root.style.top = "0"
         this.#root.style.resize = "none";
+        this.#root.borderTopLeftRadius= "0";
+        this.#root.borderTopRightRadius= "0";
 
         this.resize(get_inner_width(), get_inner_height());
         this.#maximized = true
@@ -442,6 +473,8 @@ export class VirtualWindow {
         this.#root.style.top = clampTop(restoreTop) + "px";
 
         this.#root.style.resize = "both";
+        this.#root.borderTopLeftRadius= "16px";
+        this.#root.borderTopRightRadius= "16px";
 
         this.#minimized = false;
         this.#maximized = false;
