@@ -13,7 +13,10 @@ let overviewMode = false;
 let lastWindowPosition = null;
 const CASCADE_OFFSET_X = 20;
 const CASCADE_OFFSET_Y = 20;
-const OVERVIEW_CLOSE_HOVER_SCALE = 1.4;
+const OVERVIEW_HOVER_SCALE = 1.08;
+const OVERVIEW_TRANSITION =
+    "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)";
+
 
 export function bringToFront(win) {
     topZ++;
@@ -139,20 +142,26 @@ export class VirtualWindow {
         this.#root.addEventListener("mouseenter", () => {
             if (!this.#overview) return;
 
+            this.#root.style.transition = OVERVIEW_TRANSITION;
+            this._applyOverviewTransform(OVERVIEW_HOVER_SCALE);
+
             const s = this.#overviewScale || 1;
-            this.#close_big.style.transform = `scale(${1.5/ s}) translate(-10px, 15px)`;
-            this.#close_big.style.transformOrigin = "center";
-            this.#close_big.style.display = "inline-block"
-            this.#close_big.style.backgroundColor = "#333"
-            this.#close_big.style.color = "#ccc"
+            this.#close_big.style.transform =
+                `scale(${1.4 / s}) translate(-10px, 15px)`;
+            this.#close_big.style.display = "inline-block";
         });
+
 
         this.#root.addEventListener("mouseleave", () => {
             if (!this.#overview) return;
 
+            this.#root.style.transition = OVERVIEW_TRANSITION;
+            this._applyOverviewTransform(1);
+
             this.#close_big.style.transform = "";
-            this.#close_big.style.display = "none"
+            this.#close_big.style.display = "none";
         });
+
 
         this.created_at = Date.now()
 
@@ -304,6 +313,41 @@ export class VirtualWindow {
 
     }
 
+    _applyOverviewTransform(extraScale = 1) {
+        const r = this.#overviewRect;
+        if (!r) return;
+
+        const scale = (this.#overviewScale ?? 1) * extraScale;
+
+        const cols = Math.ceil(Math.sqrt(allWindows.size));
+        const index = Array.from(allWindows).indexOf(this);
+
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+
+        const gap = 20;
+        const cellW = window.innerWidth / cols;
+        const cellH = window.innerHeight / Math.ceil(allWindows.size / cols);
+
+        const cellX = col * cellW + gap;
+        const cellY = row * cellH + gap;
+
+        const innerW = cellW - gap * 2;
+        const innerH = cellH - gap * 2;
+
+        const targetCx = cellX + innerW / 2;
+        const targetCy = cellY + innerH / 2;
+
+        const srcCx = r.left + r.width / 2;
+        const srcCy = r.top + r.height / 2;
+
+        const dx = Math.round(targetCx - srcCx);
+        const dy = Math.round(targetCy - srcCy);
+
+        this.#root.style.transform =
+            `translate(${dx}px, ${dy}px) scale(${scale})`;
+    }
+
     _enterOverview() {
         if (this.#overview) return;
 
@@ -384,7 +428,8 @@ export class VirtualWindow {
             1
         );
         this.#overviewScale = scale;
-
+        this.#root.style.transition = OVERVIEW_TRANSITION;
+        this._applyOverviewTransform();
 
         const targetCx = cellX + innerW / 2;
         const targetCy = cellY + innerH / 2;
@@ -405,6 +450,7 @@ export class VirtualWindow {
     get_created_at() {
         return this.created_at
     }
+
     // ===============================
     // Public API
     // ===============================
@@ -451,8 +497,8 @@ export class VirtualWindow {
         this.#root.style.left = "0"
         this.#root.style.top = "0"
         this.#root.style.resize = "none";
-        this.#root.borderTopLeftRadius= "0";
-        this.#root.borderTopRightRadius= "0";
+        this.#root.borderTopLeftRadius = "0";
+        this.#root.borderTopRightRadius = "0";
 
         this.resize(get_inner_width(), get_inner_height());
         this.#maximized = true
@@ -473,8 +519,8 @@ export class VirtualWindow {
         this.#root.style.top = clampTop(restoreTop) + "px";
 
         this.#root.style.resize = "both";
-        this.#root.borderTopLeftRadius= "16px";
-        this.#root.borderTopRightRadius= "16px";
+        this.#root.borderTopLeftRadius = "16px";
+        this.#root.borderTopRightRadius = "16px";
 
         this.#minimized = false;
         this.#maximized = false;
@@ -507,19 +553,19 @@ export class VirtualWindow {
 
                 if (lastWindowPosition) {
                     left = lastWindowPosition.left + CASCADE_OFFSET_X;
-                    top  = lastWindowPosition.top  + CASCADE_OFFSET_Y;
+                    top = lastWindowPosition.top + CASCADE_OFFSET_Y;
                 } else {
                     left = (window.innerWidth - w) / 2;
-                    top  = (window.innerHeight - h) / 2;
+                    top = (window.innerHeight - h) / 2;
                 }
 
                 if (left + w > window.innerWidth) left = 20;
-                if (top  + h > window.innerHeight) top = 20;
+                if (top + h > window.innerHeight) top = 20;
 
                 this.#root.style.left = left + "px";
-                this.#root.style.top  = clampTop(top) + "px";
+                this.#root.style.top = clampTop(top) + "px";
 
-                lastWindowPosition = { left, top };
+                lastWindowPosition = {left, top};
 
                 this.focus();
             });
