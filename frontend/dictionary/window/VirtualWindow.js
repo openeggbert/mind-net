@@ -66,7 +66,8 @@ export class VirtualWindow {
 
     #overviewPointerHandler = (e) => {
         if (e.target.closest("button")) {
-            VirtualWindow.exitOverview();
+            e.preventDefault();
+            e.stopPropagation();
             return;
         }
 
@@ -525,9 +526,6 @@ export class VirtualWindow {
 
 
     close() {
-        if (overviewMode) {
-            VirtualWindow.exitOverview();
-        }
         this.hide();
         this.destroy();
     }
