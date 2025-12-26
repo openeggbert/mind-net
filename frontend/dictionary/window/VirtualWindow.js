@@ -13,7 +13,7 @@ let overviewMode = false;
 let lastWindowPosition = null;
 const CASCADE_OFFSET_X = 20;
 const CASCADE_OFFSET_Y = 20;
-
+const OVERVIEW_CLOSE_HOVER_SCALE = 1.4;
 
 export function bringToFront(win) {
     topZ++;
@@ -63,6 +63,7 @@ export class VirtualWindow {
     #restoreTop;
     #overview = false;
     #overviewRect = null;
+    #overviewScale;
 
     #overviewPointerHandler = (e) => {
         if (e.target.closest("button")) {
@@ -134,6 +135,20 @@ export class VirtualWindow {
         allWindows.add(this);
         this.#root = document.createElement("div");
         this.#root.className = "window_container";
+        this.#root.addEventListener("mouseenter", () => {
+            if (!this.#overview) return;
+
+            const s = this.#overviewScale || 1;
+            this.#close.style.transform = `scale(${2/ s}) translate(-10px, 10px)`;
+            this.#close.style.transformOrigin = "center";
+        });
+
+        this.#root.addEventListener("mouseleave", () => {
+            if (!this.#overview) return;
+
+            this.#close.style.transform = "";
+        });
+
         this.created_at = Date.now()
 
         if (width !== null) {
@@ -292,6 +307,9 @@ export class VirtualWindow {
 
         this.#root.style.transition = "none";
         this.#root.style.transform = "none";
+        if (this.#close) {
+            this.#close.style.transform = "";
+        }
 
         const r = this.#overviewRect;
         this.#root.style.left = r.left + "px";
@@ -336,6 +354,8 @@ export class VirtualWindow {
             innerH / r.height,
             1
         );
+        this.#overviewScale = scale;
+
 
         const targetCx = cellX + innerW / 2;
         const targetCy = cellY + innerH / 2;
