@@ -237,6 +237,40 @@
             </div>
         </div>
 
+        <!-- Backlinks -->
+        <div class="container_box">
+            <label id="label_backlinks">↩️ <span data-i18n="dictionary.sections.backlinks.label.backlinks">Backlinks</span>:</label>
+            <div id="container_backlinks">
+                <div id="backlinks">
+                    <div class="item">
+                        <a href="#">Thread Safety</a>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
+                    </div>
+                    <div class="item">
+                        <a href="#">Race Conditions</a>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
+                    </div>
+                    <div class="item">
+                        <a href="#">Deadlocks</a>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
+                    </div>
+                </div>
+                <button id="button_add_backlink">
+                    ➕ <span data-i18n="dictionary.sections.backlinks.button.add_backlink">Add Backlink</span>
+                </button>
+                <div id="div_search_backlink" style="display:none">
+                    <label for="input_search_backlink">
+                        🔍 <span data-i18n="dictionary.sections.backlinks.label.search_backlink">Search Backlink</span>:
+                    </label>
+                    <input type="text" id="input_search_backlink" placeholder="Start writing..."
+                           data-i18n-placeholder="dictionary.common.placeholder.start_writing"/>
+
+                    <div id="div_search_backlink_end"></div>
+                </div>
+
+            </div>
+        </div>
+
         <!-- Notes -->
         <div class="container_box">
             <label id="label_notes">📑 <span data-i18n="dictionary.sections.notes.label.notes">Notes</span>:</label>

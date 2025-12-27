@@ -13,6 +13,7 @@ import {defined, null_or_undefined} from "../../common.js";
 import {Tags} from "./sections/Tags.js";
 import {Flags} from "./sections/Flags.js";
 import {Links} from "./sections/Links.js";
+import {Backlinks} from "./sections/Backlinks.js";
 import {Notes} from "./sections/Notes.js";
 import {Indexes} from "./sections/Indexes.js";
 import {Sources} from "./sections/Sources.js";
@@ -45,6 +46,7 @@ class TermContainer {
             new Tags(get_selected_map_id_callback),
             new Flags(get_selected_map_id_callback),
             new Links(get_selected_map_id_callback, render_term_id_callback),
+            new Backlinks(get_selected_map_id_callback, render_term_id_callback),
             new Notes(get_selected_map_id_callback),
             new Indexes(get_selected_map_id_callback),
             new Sources(get_selected_map_id_callback),
