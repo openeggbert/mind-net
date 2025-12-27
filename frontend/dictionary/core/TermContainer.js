@@ -101,7 +101,7 @@ class TermContainer {
 
             }
 
-            const array = ["flags", "indexes", "sources", "aliases"]
+            const array = ["flags", "backlinks", "indexes", "sources", "aliases"]
             array.forEach(e => {
                 if (models === e) {
                     label.click()
