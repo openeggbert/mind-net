@@ -61,14 +61,19 @@ export class VirtualWindow {
     #lastTapTime = 0;
     #maximized = false
 
-    #dragging = false;
-    #offX = 0;
-    #offY = 0;
     #restoreLeft;
     #restoreTop;
     #overview = false;
     #overviewRect = null;
     #overviewScale;
+
+    #resizeHandle;
+    #resizing = false;
+    #startW;
+    #startH;
+    #startX;
+    #startY;
+
 
     #overviewPointerHandler = (e) => {
         if (e.target.closest("button")) {
@@ -168,6 +173,56 @@ export class VirtualWindow {
             this.#title_big.style.transform = "";
             this.#title_big.style.display = "none";
             this.#root.style.zIndex = 1000;
+        });
+
+        this.#resizeHandle = document.createElement("div");
+        this.#resizeHandle.className = "window-resize-handle";
+        this.#root.appendChild(this.#resizeHandle);
+        this.#resizeHandle.addEventListener("pointerdown", e => {
+
+            if (this.#maximized) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            this.#resizeHandle.setPointerCapture(e.pointerId);
+
+            this.focus();
+
+            const rect = this.#root.getBoundingClientRect();
+
+            this.#resizing = true;
+            this.#startW = rect.width;
+            this.#startH = rect.height;
+            this.#startX = e.clientX;
+            this.#startY = e.clientY;
+
+            const move = ev => {
+                if (!this.#resizing) return;
+
+                const dx = ev.clientX - this.#startX;
+                const dy = ev.clientY - this.#startY;
+
+                const minW = 300;
+                const minH = 200;
+
+                const newW = Math.max(minW, this.#startW + dx);
+                const newH = Math.max(minH, this.#startH + dy);
+
+                this.#root.style.width  = newW + "px";
+                this.#root.style.height = newH + "px";
+            };
+
+            const up = ev => {
+                this.#resizing = false;
+                this.#resizeHandle.releasePointerCapture(ev.pointerId);
+
+                document.removeEventListener("pointermove", move);
+                document.removeEventListener("pointerup", up);
+            };
+
+            document.addEventListener("pointermove", move);
+            document.addEventListener("pointerup", up);
         });
 
 

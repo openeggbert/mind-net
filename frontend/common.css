@@ -337,6 +337,35 @@ a.note-wanted, a.note-unknown {
 /*    cursor: grabbing;*/
 /*}*/
 
+.window_container {
+    position: absolute;
+}
+
+.window-resize-handle {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    height: 40px;
+
+    cursor: nwse-resize;
+    touch-action: none;
+}
+.window-resize-handle:hover {
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22'>\
+<defs>\
+<pattern id='p' width='6' height='6' patternUnits='userSpaceOnUse'>\
+<rect width='3' height='3' fill='white'/>\
+</pattern>\
+</defs>\
+<polygon points='22,0 22,22 0,22' fill='url(%23p)' opacity='0.75'/>\
+</svg>");
+}
+
+
 
 
 /*
