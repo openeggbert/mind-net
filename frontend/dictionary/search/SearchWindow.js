@@ -636,9 +636,9 @@ export class SearchWindow extends VirtualWindow {
                 progress = Number((done + (details ? 0.5 : 1.0)) / item_count * 100).toFixed()
                 progress_bar.set_progress(progress)
 
-                document
-                    .getElementById("span_pages_toolbar")
-                    .scrollIntoView({behavior: "smooth"});
+                // document
+                //     .getElementById("span_pages_toolbar")
+                //     .scrollIntoView({behavior: "smooth"});
                 done++
             }
 
@@ -1170,6 +1170,7 @@ export class SearchWindow extends VirtualWindow {
 
         let span_pages_toolbar = new Span()
             .set_id("span_pages_toolbar")
+            .styles().paddingBottom(_20PX).end()
             .hide()
 
         let button_first_page = document.createElement("button")

@@ -154,5 +154,6 @@ export function renderAuthStatus() {
     };
     document.getElementById("clearCacheBtn").onclick = () => {
         localStorage.removeItem("model_definition_cache")
+        localStorage.removeItem("applications_cache")
     };
 }

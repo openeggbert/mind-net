@@ -2,7 +2,7 @@
 // Global action helpers
 // ========================================
 
-import {API_BASE} from "./api.js";
+import {API_BASE, apiFetch} from "./api.js";
 import {selectAction} from "./navigation.js";
 import {setSelectedEntity} from "./state.js";
 import {setSelectedActionId} from "./state.js";
@@ -30,23 +30,18 @@ window.deleteEntity = async (entity, id) => {
     if (!confirm("Do you really want to delete this record?")) return;
 
     try {
-        const response = await fetch(`${API_BASE}/${entity}/${id}`, {method: "DELETE"});
-
-        if (!response.ok) {
-            let message = "";
-            try {
-                message = await response.text();
-            } catch (e) {
-                message = response.statusText;
-            }
-            showError(`Error deleting record: ${message}`);
+        const res_json = await apiFetch(
+            `${API_BASE}/${entity}/${id}`,
+            { method: "DELETE" }
+        );
+        if (!res_json) {
+            showError(`Error deleting record: ${id}`);
             return;
         }
 
         setSelectedActionId(null);
         selectAction("list", null);
     } catch (err) {
-        showError(`Network error: ${err}`);
+        showError(`Error deleting record: ${err?.message || "Unknown error"}`);
     }
 };
-
