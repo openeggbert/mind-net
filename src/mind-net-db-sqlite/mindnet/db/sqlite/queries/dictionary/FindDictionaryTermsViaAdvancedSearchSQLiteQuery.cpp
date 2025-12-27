@@ -657,7 +657,8 @@ X(Desc, 2, ENUM_NAME)
         if (!q.note_contains.empty())
         {
             append_where(sql_where_and_joins, first_where);
-            sql_where_and_joins += "dn.content LIKE ?";
+            sql_where_and_joins += "((dn.title LIKE ?) OR (dn.content LIKE ?))";
+            binders.push_back("%" + q.note_contains + "%");
             binders.push_back("%" + q.note_contains + "%");
         }
 

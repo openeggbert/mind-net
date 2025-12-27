@@ -37,6 +37,10 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New table dictionary_url
+- [ ] Notes: New buttons: Expand, Collapse
+- [ ] If map is changed, clear Search term input
+- [ ] dictionary_map - new column emoji
+- [ ] Window "Term Visit History" - add paging
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
