@@ -2,36 +2,28 @@
   "dictionary.title.dictionary_app": "Slovník – Aplikace",
   "dictionary.header.title": "Jít domů",
   "dictionary.header.label": "Slovník",
-
   "dictionary.button.mindnet": "Mind Net",
   "dictionary.button.mindnet.title": "Přejít na obecný frontend Mind Net",
-
   "dictionary.common.map": "Mapa",
   "dictionary.common.maps": "Mapy",
   "dictionary.select_map.info.map_changed": "Mapa byla změněna na",
-
   "dictionary.select_map.button.add_map": "Přidat mapu",
   "dictionary.select_map.button.add_map.prompt.enter_map_name": "Zadejte název mapy",
   "dictionary.select_map.button.add_map.error.creating_map_failed": "Vytvoření nové mapy se nezdařilo",
   "dictionary.select_map.button.add_map.info.map_created": "Nová mapa byla úspěšně vytvořena",
-
   "dictionary.select_map.button.show_map": "Zobrazit mapu",
-
   "dictionary.select_map.button.rename_map": "Přejmenovat mapu",
   "dictionary.select_map.button.rename_map.error.reading_map_failed": "Načtení mapy se nezdařilo",
   "dictionary.select_map.button.rename_map.prompt_enter_new_map_name": "Zadejte nový název mapy",
   "dictionary.select_map.button.rename_map.warn.no_change": "Název nebyl změněn. Není co aktualizovat.",
   "dictionary.select_map.button.rename_map.error.update_failed": "Aktualizace mapy se nezdařila",
   "dictionary.select_map.button.rename_map.info.update_successful": "Mapa byla úspěšně aktualizována",
-
   "dictionary.select_map.button.delete_map": "Smazat mapu",
   "dictionary.select_map.button.delete_map.confirm.text": "Opravdu chcete tuto mapu smazat?",
   "dictionary.select_map.button.delete_map.error.deleting_failed": "Mazání mapy se nezdařilo.",
   "dictionary.select_map.button.delete_map.error.deleting_successful": "Mapa byla úspěšně smazána",
-
   "dictionary.label.search_term": "Hledat heslo",
   "dictionary.button.advanced_search": "Rozšířené vyhledávání",
-
   "dictionary.term.button.add_term": "Přidat heslo",
   "dictionary.term.button.add_term.error.empty_title": "Nové heslo nelze vytvořit, název nesmí být prázdný.",
   "dictionary.term.button.add_term.error.creating_failed": "Vytvoření nového hesla se nezdařilo.",
@@ -39,17 +31,14 @@
   "dictionary.term.button.find_random": "Náhodné heslo",
   "dictionary.term.button.new_repetition": "Nové opakování",
   "dictionary.term.button.new_session": "Nová relace",
-
   "dictionary.term.info.found_term": "Nalezeno heslo",
   "dictionary.term.warn.another_term_is_already_loading": "Již se načítá jiné heslo.",
-
   "dictionary.term.label.term": "Heslo",
   "dictionary.term.label.title": "Název",
   "dictionary.term.label.disambiguation": "Rozlišení",
   "dictionary.term.label.definition": "Definice",
   "dictionary.term.button.edit_definition": "Upravit",
   "dictionary.term.button.read_definition": "Číst",
-
   "dictionary.term.label.metadata": "Metadata",
   "dictionary.enums.status.label": "Stav",
   "dictionary.enums.status.not_defined": "Nedefinováno",
@@ -59,22 +48,17 @@
   "dictionary.enums.status.verified": "Ověřené",
   "dictionary.enums.status.deprecated": "Zastaralé",
   "dictionary.enums.status.deleted": "Smazané",
-
   "dictionary.term.label.pinned": "Připnuté",
-
   "dictionary.enums.importance.label": "Důležitost",
   "dictionary.enums.importance.low": "Nízká",
   "dictionary.enums.importance.medium": "Střední",
   "dictionary.enums.importance.high": "Vysoká",
-
   "dictionary.enums.difficulty.label": "Obtížnost",
   "dictionary.enums.difficulty.easy": "Snadná",
   "dictionary.enums.difficulty.medium": "Střední",
   "dictionary.enums.difficulty.hard": "Těžká",
-
   "dictionary.term.labels.backlinks": "Zpětné odkazy",
   "dictionary.term.labels.visited": "Navštíveno",
-
   "dictionary.common.term": "Heslo",
   "dictionary.common.delete": "Smazat",
   "dictionary.common.save": "Uložit",
@@ -91,7 +75,6 @@
   "dictionary.common.never": "Nikdy",
   "dictionary.common.has_definition": "Má definici",
   "dictionary.common.start": "Spustit",
-
   "dictionary.term.container.click_note": "{models} jsou skryté. Klikněte na „{models}“ pro jejich zobrazení.",
   "dictionary.term.container.info.term_already_shown": "Toto heslo je již zobrazeno.",
   "dictionary.term.container.error.reading_term_failed": "Načtení hesla se nezdařilo.",
@@ -106,55 +89,45 @@
   "dictionary.term.container.info.deleting_pinned_term_successful": "Připnuté heslo bylo úspěšně odstraněno.",
   "dictionary.term.container.error.deleting_pinned_term_failed": "Odstranění připnutého hesla se nezdařilo.",
   "dictionary.term.container.error.creating_term_visit_failed": "Vytvoření záznamu návštěvy hesla se nezdařilo.",
-
   "dictionary.term.container.info.updating_term_successful": "Heslo bylo úspěšně aktualizováno.",
   "dictionary.term.container.error.updating_term_failed": "Aktualizace hesla se nezdařila.",
   "dictionary.term.container.backlinks": "Zpětné odkazy",
-
   "dictionary.term.container.visit_window.term_visit_history": "Historie návštěv hesla (posledních 100)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Zobrazit všechny návštěvy",
   "dictionary.term.container.visit_window.all_visits": "Všechny návštěvy",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "Načítání návštěv se nezdařilo.",
-
   "dictionary.crud_section.error.cfg_not_valid": "Konfigurace není platná pro model: {model}",
   "dictionary.crud_section.error.listing_models_failed": "Načítání {models} se nezdařilo.",
   "dictionary.crud_section.error.listing_title_failed": "Načtení názvu selhalo pro model: {model} a ID {id}.",
-
   "dictionary.sections.tags.label.tags": "Štítky",
   "dictionary.sections.tags.button.add_tag": "Přidat štítek",
   "dictionary.sections.tags.button.show_tags": "Zobrazit štítky",
   "dictionary.sections.tags.label.search_tag": "Hledat štítek",
-
   "dictionary.sections.flags.label.flags": "Příznaky",
   "dictionary.sections.flags.button.add_flag": "Přidat příznak",
   "dictionary.sections.flags.label.public": "Veřejné",
-
   "dictionary.sections.links.label.links": "Odkazy",
   "dictionary.sections.links.button.add_link": "Přidat odkaz",
   "dictionary.sections.links.label.search_link": "Hledat odkaz",
-
   "dictionary.sections.notes.label.notes": "Poznámky",
   "dictionary.sections.notes.button.add_note": "Přidat poznámku",
-
   "dictionary.sections.indexes.label.indexes": "Indexy",
   "dictionary.sections.indexes.button.add_index": "Přidat index",
   "dictionary.sections.indexes.button.show_indexes": "Zobrazit indexy",
   "dictionary.sections.indexes.label.search_index": "Hledat index",
-
   "dictionary.sections.sources.label.sources": "Zdroje",
   "dictionary.sections.sources.button.add_source": "Přidat zdroj",
   "dictionary.sections.sources.button.show_sources": "Zobrazit zdroje",
   "dictionary.sections.sources.label.search_source": "Hledat zdroj",
-
   "dictionary.sections.aliases.label.aliases": "Alias",
   "dictionary.sections.aliases.button.add_alias": "Přidat alias",
-
   "dictionary.repetition.repetition": "🔁 Opakování",
   "dictionary.repetition.error.loading_terms_for_review_failed": "Načítání termínů k opakování selhalo",
+  "dictionary.repetition.error.no_mode_enabled": "Musíte povolit alespoň jeden režim.",
   "dictionary.repetition.item": "Položka",
   "dictionary.repetition.show_definition": "Zobrazit definici",
   "dictionary.repetition.hide_definition": "Skrýt definici",
-  "dictionary.repetition.no_definition" : "Žádná definice",
+  "dictionary.repetition.no_definition": "Žádná definice",
   "dictionary.repetition.how_well_did_you_recall": "Jak dobře jste si vybavil(a) tento pojem?",
   "dictionary.repetition.legend.0": "Úplné selhání — naprostá neschopnost si informaci vybavit.",
   "dictionary.repetition.legend.1": "Nesprávná odpověď, ale po zobrazení správné odpovědi byla informace povědomá.",
@@ -168,7 +141,8 @@
   "dictionary.repetition.next_action": "Další akce",
   "dictionary.repetition.send": "Odeslat",
   "dictionary.repetition.skip": "Přeskočit",
-  "dictionary.repetition.abort": "Zrušit",
+  "dictionary.repetition.abort": "Ukončit",
+  "dictionary.repetition.warn.session_was_aborted": "Sezení bylo ukončeno.",
   "dictionary.repetition.select_a_grade": "Před odesláním prosím vyberte hodnocení (0–5).",
   "dictionary.repetition.term_was_skipped": "Termín byl přeskočen",
   "dictionary.repetition.term_was_reviewed": "Termín byl zopakován",
@@ -179,5 +153,27 @@
   "dictionary.repetition.no_terms_for_review": "Nejsou žádné termíny k opakování.",
   "dictionary.repetition.error.posting_review_failed": "Odeslání hodnocení se nezdařilo.",
   "dictionary.repetition.info.term_is_not_due_yet": "Na tento termín ještě není čas.",
-  "dictionary.repetition.info.term_is_reviewed_for_the_first_time": "Termín je opakován poprvé."
+  "dictionary.repetition.info.term_is_reviewed_for_the_first_time": "Termín je opakován poprvé.",
+  "dictionary.repetition.stats.total_result": "Souhrnný výsledek",
+  "dictionary.repetition.stats.started_at": "Začátek",
+  "dictionary.repetition.stats.ended_at": "Konec",
+  "dictionary.repetition.stats.duration": "Doba trvání",
+  "dictionary.repetition.stats.total": "Celkem",
+  "dictionary.repetition.stats.reviewed": "Zopakováno",
+  "dictionary.repetition.stats.skipped": "Přeskočeno",
+  "dictionary.repetition.stats.error": "Chyba",
+  "dictionary.repetition.stats.not_due_yet": "Ještě není na řadě",
+  "dictionary.repetition.stats.unknown": "Neznámé",
+  "dictionary.repetition.stats.total_latency": "Celková latence",
+  "dictionary.repetition.stats.average_latency": "Průměrná latence",
+  "dictionary.repetition.stats.min_latency": "Minimální latence",
+  "dictionary.repetition.stats.max_latency": "Maximální latence",
+  "dictionary.repetition.stats.average_grade": "Průměrné hodnocení",
+  "dictionary.repetition.stats.total_answer_change_count": "Celkový počet změn odpovědi",
+  "dictionary.repetition.continue": "Pokračovat",
+  "dictionary.repetition.seconds": "sekund",
+
+  "allow_en": [
+    "dictionary.term.label.metadata"
+  ]
 }

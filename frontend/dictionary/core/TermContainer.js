@@ -340,7 +340,7 @@ class TermContainer {
                         let new_pinned_term = {
                             dictionary_term_id: dictionary_term_id,
                             user_id: USER_ID,
-                            dictionary_map_id: this.get_selected_map_id_callback
+                            dictionary_map_id: this.get_selected_map_id_callback()
                         }
                         let created = await post_entity(Entities.dictionary_pinned_term, new_pinned_term)
                         if (defined(created)) {

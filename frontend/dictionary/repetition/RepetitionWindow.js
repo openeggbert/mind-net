@@ -139,9 +139,8 @@ export class RepetitionWindow extends VirtualWindow {
             this.set_content(content.element())
             this.get_internal_content().style.backgroundColor = "#121212"
 
-
-            let total_result_span = new Div("Total result").styles().fontWeight("bold").fontSize("150%").marginBottom(_20PX).end()
-            total_result_span.element().dataset.i18n = "dictionary.repetition.total_result"
+            let total_result_span = new Div(translate("dictionary.repetition.stats.total_result")).styles().fontWeight("bold").fontSize("150%").marginBottom(_20PX).end()
+            total_result_span.element().dataset.i18n = "dictionary.repetition.stats.total_result"
 
             let card = new Div().add_class("repetition_card")
             content.appendChild(card)
@@ -150,133 +149,70 @@ export class RepetitionWindow extends VirtualWindow {
             {
                 let stats_div = new Div().styles().textAlign(TextAlign.Left).fontSize("125%").width("auto").end().add_class(("stats_div"))
 
-                let started_at_span = new Span("Started at")
-                //started_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let ended_at_span = new Span("Ended at")
-                //started_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let duration_at_span = new Span("Duration")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let total_span = new Span("Total")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let reviewed_span = new Span("Reviewed")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let skipped_span = new Span("Skipped")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let error_span = new Span("Error")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let not_due_yet_span = new Span("Not due yet")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let unknown_at_span = new Span("Unknown")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let total_latency_span = new Span("Total latency")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let average_latency_span = new Span("Average latency")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let min_latency_span = new Span("Min latency")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let max_latency_span = new Span("Max latency")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let average_grade_span = new Span("Average grade")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-                let total_answer_change_count_span = new Span("Total answer change count")
-                //duration_at_span.element().dataset.i18n = "dictionary.repetition.next_review"
-
+                class I18nSpan extends Span {
+                    constructor(i18n_key) {
+                        super();
+                        this.set_text(translate(i18n_key))
+                        this.data_i18n(i18n_key)
+                    }
+                }
                 card.appendChild(stats_div)
 
                 class RLabel extends Div{
-                    constructor(emoji, text_span, value) {
+                    constructor(emoji, text_i18n, value, marginBottom = false, seconds = false) {
                         super();
                         let first_column = new Div()
-                        first_column.append_many(new Span(emoji + " "), text_span, new Span(": "))
+                        first_column.append_many(new Span(emoji + " "), text_i18n.length === 0 ? "" : new I18nSpan("dictionary.repetition.stats." + text_i18n), text_i18n.length === 0 ? "" :new Span(": "))
                             .styles()
                             .minWidth("200px")
                             .display(Display.InlineBlock)
                             .marginRight(_10PX)
                             .end()
                         let second_column = new Span(String(value))
+                        if(seconds) {
+                            second_column.appendChild(new Span(" "))
+                            second_column.appendChild(new I18nSpan("dictionary.repetition.seconds"))
+                        }
                         this.append_many(first_column, second_column)
+                        if (marginBottom) {
+                            this.styles().marginBottom(_20PX).end()
+                        }
                     }
                 }
-                stats_div.appendChild(new RLabel("🚀", started_at_span,formatDateTimeHMS(model.get_started_at())))
-                stats_div.appendChild(new RLabel("🏁", ended_at_span, formatDateTimeHMS(model.get_ended_at())))
-                stats_div.appendChild(new RLabel("⏱️", duration_at_span, model.get_duration()).styles().marginBottom(_20PX).end())
-                stats_div.appendChild(new RLabel("🔢", total_span, model.get_total_count()).styles().marginBottom(_20PX).end())
-                stats_div.appendChild(new RLabel("✔️", reviewed_span, model.get_count(ReviewResult.Reviewed)))
-                stats_div.appendChild(new RLabel("⏭️", skipped_span, model.get_count(ReviewResult.Skipped)))
+
+                let reviewed = model.get_count(ReviewResult.Reviewed)
                 let errors = model.get_count(ReviewResult.Error)
-                if (errors > 0) stats_div.appendChild(new RLabel("❌", error_span, errors))
                 let not_due_yet = model.get_count(ReviewResult.NotDueYet)
-                if (not_due_yet > 0) stats_div.appendChild(new RLabel("⏳", not_due_yet_span,  not_due_yet))
                 let unknown = model.get_count(ReviewResult.Unknown)
-                if (unknown > 0) stats_div.appendChild(new RLabel("❓", unknown_at_span, unknown))
+                function add_stat(emoji, i18n, value, marginBottom = false, seconds = false) {
+                    stats_div.appendChild(new RLabel(emoji, i18n, value, marginBottom, seconds))
+                }
+                add_stat("🚀", "started_at",formatDateTimeHMS(model.get_started_at()))
+                add_stat("🏁", "ended_at", formatDateTimeHMS(model.get_ended_at()))
+                add_stat("⏱️", "duration", model.get_duration(), true)
+                add_stat("🔢", "total", model.get_total_count(), true)
+                add_stat("✔️", "reviewed", reviewed)
+                add_stat("⏭️", "skipped", model.get_count(ReviewResult.Skipped))
 
-                stats_div.appendChild
-                (
-                    new RLabel
-                    (
-                        "⏱️",
-                        total_latency_span,
-                        String((model.get_total_latency_ms()/1000).toFixed(2)) + " " + "seconds"
+                if (errors > 0) add_stat("❌", "error", errors)
+                if (not_due_yet > 0) add_stat("⏳", "not_due_yet",  not_due_yet)
+                if (unknown > 0) add_stat("❓", "unknown", unknown)
+                add_stat("️", "", "")
 
-                    ).styles().marginTop(_20PX).end()
-                )
-                stats_div.appendChild
-                (
-                    new RLabel
-                    (
-                        "🔢",
-                        average_latency_span,
-                        String((model.get_average_latency_ms()/1000).toFixed(2)) + " " + "seconds"
-
-                    )
-                )
-                stats_div.appendChild
-                (
-                    new RLabel
-                    (
-                        "⏬",
-                        min_latency_span,
-                        String((model.get_min_latency_ms()/1000).toFixed(2)) + " " + "seconds"
-
-                    )
-                )
-                stats_div.appendChild
-                (
-                    new RLabel
-                    (
-                        "⏫",
-                        max_latency_span,
-                        String((model.get_max_latency_ms()/1000).toFixed(2)) + " " + "seconds"
-
-                    )
-                )
-                stats_div.appendChild
-                (
-                    new RLabel
-                    (
-                        "➗",
-                        average_grade_span,
-                        String((model.get_average_grade()).toFixed(1))
-
-                    )
-                )
-                stats_div.appendChild
-                (
-                    new RLabel
-                    (
-                        "🧮",
-                        total_answer_change_count_span,
-                        String(model.get_total_answer_change_count())
-
-                    )
-                )
+                if(reviewed > 0 || not_due_yet > 0) {
+                add_stat("⏱️","total_latency",String((model.get_total_latency_s()).toFixed(2)),false, true)
+                add_stat("🔢","average_latency",String((model.get_average_latency_s()).toFixed(2)),false, true)
+                add_stat("⏬","min_latency",String((model.get_min_latency_s()).toFixed(2)), false, true)
+                add_stat("⏫","max_latency",String((model.get_max_latency_s()).toFixed(2)), false, true)
+                add_stat("➗","average_grade",String((model.get_average_grade()).toFixed(1)))
+                add_stat("🧮","total_answer_change_count",String(model.get_total_answer_change_count()))
+                }
 
             }
 
-            let continue_button = new ActionButton("Continue").on("click", () => {
-                resolve()
-            })
-            //send_button.element().dataset.i18n = "dictionary.repetition.send"
+            let continue_button = new ActionButton(translate("dictionary.repetition.continue")).on("click", () => {resolve()})
+            continue_button.element().dataset.i18n = "dictionary.repetition.continue"
+
             card.appendChild(new Br())
             card.appendChild(continue_button)
         })
@@ -484,7 +420,7 @@ export class RepetitionWindow extends VirtualWindow {
             skip_button.element().dataset.i18n = "dictionary.repetition.skip"
 
             let abort_button = new ActionButton(translate("dictionary.repetition.abort")).on("click", () => {
-                showWarn(translate("Session was aborted"))
+                showWarn(translate("dictionary.repetition.warn.session_was_aborted"))
                 resolve(new AskForGradeModel(-2))
             })
             abort_button.element().dataset.i18n = "dictionary.repetition.abort"
@@ -644,6 +580,10 @@ export class RepetitionWindow extends VirtualWindow {
                 model.due = due_checkbox.get_checkbox().is_checked()
                 model.not_due = not_due_checkbox.get_checkbox().is_checked()
                 model.never = never_checkbox.get_checkbox().is_checked()
+                if(model.search_id === 0 && !model.due && !model.not_due && !model.never) {
+                    showError(translate("dictionary.repetition.error.no_mode_enabled"))
+                    return
+                }
 
                 model.has_definition = has_definition_checkbox.is_checked()
 
@@ -661,6 +601,5 @@ export class RepetitionWindow extends VirtualWindow {
             })
         })
     }
-
 
 }

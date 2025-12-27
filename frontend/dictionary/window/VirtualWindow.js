@@ -56,6 +56,7 @@ export class VirtualWindow {
     #restoreHeight = "600px";
     #close;
     #close_big
+    #title_big
     #userPositioned = false;
     #lastTapTime = 0;
     #maximized = false
@@ -147,8 +148,11 @@ export class VirtualWindow {
 
             const s = this.#overviewScale || 1;
             this.#close_big.style.transform =
-                `scale(${1.4 / s}) translate(-10px, 15px)`;
+                `scale(${1.4 / s}) translate(-20px, 10px)`;
             this.#close_big.style.display = "inline-block";
+            this.#title_big.style.transform =
+                `scale(${1.4 / s / 1.5}) translate(60px, 30px)`;
+            this.#title_big.style.display = "inline-block";
             this.#root.style.zIndex = 2000;
         });
 
@@ -161,6 +165,8 @@ export class VirtualWindow {
 
             this.#close_big.style.transform = "";
             this.#close_big.style.display = "none";
+            this.#title_big.style.transform = "";
+            this.#title_big.style.display = "none";
             this.#root.style.zIndex = 1000;
         });
 
@@ -193,6 +199,7 @@ export class VirtualWindow {
         this.#close_big.textContent = "✖";
         this.#close_big.onclick = () => this.close();
         this.#close_big.style.display = "none"
+        this.#close_big.style.position = "absolute"
         this.#close_big.style.backgroundColor = "#333"
         this.#close_big.style.color = "#ddd"
         this.#close_big.style.borderRadius = "25px"
@@ -200,6 +207,19 @@ export class VirtualWindow {
         this.#close_big.style.height = "35px"
         this.#close_big.style.fontWeight = "normal"
         this.#close_big.style.fontSize = "100%"
+
+        this.#title_big = document.createElement("button");
+        this.#title_big.className = "window-close";
+        this.#title_big.textContent = this.#title.textContent;
+        this.#title_big.style.display = "none"
+        this.#title_big.style.position = "absolute"
+        this.#title_big.style.backgroundColor = "#333"
+        this.#title_big.style.color = "#ddd"
+        this.#title_big.style.borderRadius = "25px"
+        this.#title_big.style.height = "35px"
+        this.#title_big.style.fontWeight = "normal"
+        this.#title_big.style.fontSize = "100%"
+        this.#title_big.style.overflow =
 
         this.#close_big.addEventListener("mouseenter", () => {
             if (!this.#overview) return;
@@ -209,6 +229,15 @@ export class VirtualWindow {
         this.#close_big.addEventListener("mouseleave", () => {
             if (!this.#overview) return;
             this.#close_big.style.backgroundColor = "#333"
+        });
+        this.#title_big.addEventListener("mouseenter", () => {
+            if (!this.#overview) return;
+            this.#title_big.style.backgroundColor = "#555"
+        });
+
+        this.#title_big.addEventListener("mouseleave", () => {
+            if (!this.#overview) return;
+            this.#title_big.style.backgroundColor = "#333"
         });
 
         this.#minimize = document.createElement("button");
@@ -244,7 +273,7 @@ export class VirtualWindow {
             }
         });
 
-        this.#header.append(this.#title, new Span(this.#minimize, this.#restore, this.#close, this.#close_big).element());
+        this.#header.append(this.#title, this.#title_big, new Span(this.#minimize, this.#restore, this.#close, this.#close_big).element());
 
         // ===============================
         // Content
@@ -395,6 +424,7 @@ export class VirtualWindow {
             true
         );
         this.#close_big.style.display = "none"
+        this.#title_big.style.display = "none"
 
         setTimeout(() => {
             const r = this.#overviewRect;
@@ -462,7 +492,7 @@ export class VirtualWindow {
     // ===============================
 
     minimize() {
-        if (this.#minimized) return;
+        if (this.#minimized || this.#overview) return;
 
         this.#minimized = true;
 

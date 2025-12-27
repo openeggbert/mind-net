@@ -416,6 +416,9 @@ export class DomElement {
         this.#element.dataset[key] = value;
         return this;
     }
+    data_i18n(value) {
+        return this.data("i18n", value)
+    }
 
     /**
      * Add a CSS class.

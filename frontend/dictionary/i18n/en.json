@@ -2,36 +2,28 @@
   "dictionary.title.dictionary_app": "Dictionary - App",
   "dictionary.header.title": "Go to home",
   "dictionary.header.label": "Dictionary",
-
   "dictionary.button.mindnet": "Mind Net",
   "dictionary.button.mindnet.title": "Go to Mind Net generic frontend",
-
   "dictionary.common.map": "Map",
   "dictionary.common.maps": "Maps",
   "dictionary.select_map.info.map_changed": "Map was changed to",
-
   "dictionary.select_map.button.add_map": "Add Map",
   "dictionary.select_map.button.add_map.prompt.enter_map_name": "Enter map name",
   "dictionary.select_map.button.add_map.error.creating_map_failed": "Creating new map failed",
   "dictionary.select_map.button.add_map.info.map_created": "New map was successfully created",
-
   "dictionary.select_map.button.show_map": "Show Map",
-
   "dictionary.select_map.button.rename_map": "Rename Map",
   "dictionary.select_map.button.rename_map.error.reading_map_failed": "Reading map failed",
   "dictionary.select_map.button.rename_map.prompt_enter_new_map_name": "Enter new map name",
   "dictionary.select_map.button.rename_map.warn.no_change": "You did not change the name. Nothing to be updated.",
   "dictionary.select_map.button.rename_map.error.update_failed": "Updating new failed",
   "dictionary.select_map.button.rename_map.info.update_successful": "Map was successfully updated",
-
   "dictionary.select_map.button.delete_map": "Delete Map",
   "dictionary.select_map.button.delete_map.confirm.text": "Do you really want to delete this map?",
   "dictionary.select_map.button.delete_map.error.deleting_failed": "Deleting map failed. ",
   "dictionary.select_map.button.delete_map.error.deleting_successful": "Map was successfully deleted",
-
   "dictionary.label.search_term": "Search term",
   "dictionary.button.advanced_search": "Advanced",
-
   "dictionary.term.button.add_term": "Add Term",
   "dictionary.term.button.add_term.error.empty_title": "Could not create new term, the title must not be empty.",
   "dictionary.term.button.add_term.error.creating_failed": "Creating new term failed.",
@@ -39,17 +31,14 @@
   "dictionary.term.button.find_random": "Find Random",
   "dictionary.term.button.new_repetition": "New Repetition",
   "dictionary.term.button.new_session": "New Session",
-
   "dictionary.term.info.found_term": "Found term",
   "dictionary.term.warn.another_term_is_already_loading": "Another term is already loading.",
-
   "dictionary.term.label.term": "Term",
   "dictionary.term.label.title": "Title",
   "dictionary.term.label.disambiguation": "Disambiguation",
   "dictionary.term.label.definition": "Definition",
   "dictionary.term.button.edit_definition": "Edit",
   "dictionary.term.button.read_definition": "Read",
-
   "dictionary.term.label.metadata": "Metadata",
   "dictionary.enums.status.label": "Status",
   "dictionary.enums.status.not_defined": "Not defined",
@@ -59,22 +48,17 @@
   "dictionary.enums.status.verified": "Verified",
   "dictionary.enums.status.deprecated": "Deprecated",
   "dictionary.enums.status.deleted": "Deleted",
-
   "dictionary.term.label.pinned": "Pinned",
-
   "dictionary.enums.importance.label": "Importance",
   "dictionary.enums.importance.low": "Low",
   "dictionary.enums.importance.medium": "Medium",
   "dictionary.enums.importance.high": "High",
-
   "dictionary.enums.difficulty.label": "Difficulty",
   "dictionary.enums.difficulty.easy": "Easy",
   "dictionary.enums.difficulty.medium": "Medium",
   "dictionary.enums.difficulty.hard": "Hard",
-
   "dictionary.term.labels.backlinks": "Backlinks",
   "dictionary.term.labels.visited": "Visited",
-
   "dictionary.common.term": "Term",
   "dictionary.common.delete": "Delete",
   "dictionary.common.save": "Save",
@@ -91,7 +75,6 @@
   "dictionary.common.never": "Never",
   "dictionary.common.has_definition": "Has definition",
   "dictionary.common.start": "Start",
-
   "dictionary.term.container.click_note": "{models} are hidden. Click \"{models}\" to show them.",
   "dictionary.term.container.info.term_already_shown": "This term is already shown.",
   "dictionary.term.container.error.reading_term_failed": "Reading term failed",
@@ -106,51 +89,41 @@
   "dictionary.term.container.info.deleting_pinned_term_successful" : "Pinned term was successfully deleted",
   "dictionary.term.container.error.deleting_pinned_term_failed" : "Deleting pinned term failed",
   "dictionary.term.container.error.creating_term_visit_failed" : "Creating new term visit failed.",
-
   "dictionary.term.container.info.updating_term_successful" : "Dictionary term was successfully updated.",
   "dictionary.term.container.error.updating_term_failed" : "Updating dictionary term failed.",
   "dictionary.term.container.backlinks" : "Backlinks",
-
   "dictionary.term.container.visit_window.term_visit_history" : "Term Visit History (Last 100)",
   "dictionary.term.container.visit_window.button_show_all_visits" : "Show all visits",
   "dictionary.term.container.visit_window.all_visits" : "All visits",
   "dictionary.term.container.visit_window.error.loading_visits_failed" : "Loading visits failed.",
-
   "dictionary.crud_section.error.cfg_not_valid": "Configuration is not valid for model: {model}",
   "dictionary.crud_section.error.listing_models_failed": "Listing {models} failed.",
   "dictionary.crud_section.error.listing_title_failed": "Loading title failed for model: {model} and id {id}.",
-
   "dictionary.sections.tags.label.tags": "Tags",
   "dictionary.sections.tags.button.add_tag": "Add Tag",
   "dictionary.sections.tags.button.show_tags": "Show tags",
   "dictionary.sections.tags.label.search_tag": "Search tag",
-
   "dictionary.sections.flags.label.flags": "Flags",
   "dictionary.sections.flags.button.add_flag": "Add Flag",
   "dictionary.sections.flags.label.public": "Public",
-
   "dictionary.sections.links.label.links": "Links",
   "dictionary.sections.links.button.add_link": "Add Link",
   "dictionary.sections.links.label.search_link": "Search link",
-
   "dictionary.sections.notes.label.notes": "Notes",
   "dictionary.sections.notes.button.add_note": "Add Note",
-
   "dictionary.sections.indexes.label.indexes": "Indexes",
   "dictionary.sections.indexes.button.add_index": "Add Index",
   "dictionary.sections.indexes.button.show_indexes": "Show indexes",
   "dictionary.sections.indexes.label.search_index": "Search index",
-
   "dictionary.sections.sources.label.sources": "Sources",
   "dictionary.sections.sources.button.add_source": "Add Source",
   "dictionary.sections.sources.button.show_sources": "Show sources",
   "dictionary.sections.sources.label.search_source": "Search source",
-
   "dictionary.sections.aliases.label.aliases": "Aliases",
   "dictionary.sections.aliases.button.add_alias": "Add Alias",
-
   "dictionary.repetition.repetition" : "\uD83D\uDD01 Repetition",
   "dictionary.repetition.error.loading_terms_for_review_failed" : "Loading terms for review failed",
+  "dictionary.repetition.error.no_mode_enabled": "You must enable at least one mode option.",
   "dictionary.repetition.item" : "Item",
   "dictionary.repetition.show_definition" : "Show definition",
   "dictionary.repetition.hide_definition" : "Hide definition",
@@ -169,6 +142,7 @@
   "dictionary.repetition.send": "Send",
   "dictionary.repetition.skip": "Skip",
   "dictionary.repetition.abort": "Abort",
+  "dictionary.repetition.warn.session_was_aborted": "Session was aborted.",
   "dictionary.repetition.select_a_grade": "Please select a grade (0–5) before sending.",
   "dictionary.repetition.term_was_skipped": "Term was skipped",
   "dictionary.repetition.term_was_reviewed": "Term was reviewed",
@@ -179,5 +153,22 @@
   "dictionary.repetition.no_terms_for_review": "There are no terms for review.",
   "dictionary.repetition.error.posting_review_failed": "Posting review failed.",
   "dictionary.repetition.info.term_is_not_due_yet": "Term is not due yet.",
-  "dictionary.repetition.info.term_is_reviewed_for_the_first_time": "Term term is reviewed for the first time."
+  "dictionary.repetition.info.term_is_reviewed_for_the_first_time": "Term term is reviewed for the first time.",
+  "dictionary.repetition.stats.total_result": "Total result",
+  "dictionary.repetition.stats.started_at": "Started at",
+  "dictionary.repetition.stats.ended_at": "Ended at",
+  "dictionary.repetition.stats.duration": "Duration",
+  "dictionary.repetition.stats.total": "Total",
+  "dictionary.repetition.stats.reviewed": "Reviewed",
+  "dictionary.repetition.stats.skipped": "Skipped",
+  "dictionary.repetition.stats.error": "Error",
+  "dictionary.repetition.stats.not_due_yet": "Not due yet",
+  "dictionary.repetition.stats.unknown": "Unknown",  "dictionary.repetition.stats.total_latency": "Total latency",
+  "dictionary.repetition.stats.average_latency": "Average latency",
+  "dictionary.repetition.stats.min_latency": "Min latency",
+  "dictionary.repetition.stats.max_latency": "Max latency",
+  "dictionary.repetition.stats.average_grade": "Average grade",
+  "dictionary.repetition.stats.total_answer_change_count": "Total answer change count",
+  "dictionary.repetition.continue": "Continue",
+  "dictionary.repetition.seconds": "seconds"
 }

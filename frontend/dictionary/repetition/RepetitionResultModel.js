@@ -78,7 +78,7 @@ export class RepetitionResultModel {
     // get_reviews() {
     //     return this.#reviews
     // }
-    get_average_latency_ms() {
+    get_average_latency_s() {
         if (this.#reviews.length === 0) return 0
 
         const total = this.#reviews.reduce(
@@ -86,9 +86,9 @@ export class RepetitionResultModel {
             0
         )
 
-        return Math.round(total / this.#reviews.length)
+        return Math.round(total / this.#reviews.length) / 1000.0
     }
-    get_min_latency_ms() {
+    get_min_latency_s() {
         if (this.#reviews.length === 0) return 0
 
         let min = Number.POSITIVE_INFINITY
@@ -99,9 +99,9 @@ export class RepetitionResultModel {
             }
         }
 
-        return min === Number.POSITIVE_INFINITY ? 0 : min
+        return min === Number.POSITIVE_INFINITY ? 0 : min / 1000.0
     }
-    get_max_latency_ms() {
+    get_max_latency_s() {
         if (this.#reviews.length === 0) return 0
 
         let max = 0
@@ -112,14 +112,14 @@ export class RepetitionResultModel {
             }
         }
 
-        return max
+        return max / 1000.0
     }
 
-    get_total_latency_ms() {
+    get_total_latency_s() {
         return this.#reviews.reduce(
             (sum, r) => sum + (typeof r.latency_ms === "number" ? r.latency_ms : 0),
             0
-        )
+        ) / 1000.0
     }
 
     get_average_grade() {

@@ -219,7 +219,7 @@ export class SearchWindow extends VirtualWindow {
     async #init(selected_map_id, render_term_callback) {
         let search_window = this
 
-        const window_content = new Div().styles().height("100%").end()
+        const window_content = new Div().styles().height("100%").paddingTop(_5PX).end()
         search_window.set_content(window_content.element()).show();
 
         // ---------- FORM ----------

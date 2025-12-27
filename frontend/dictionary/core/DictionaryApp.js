@@ -1,5 +1,5 @@
 import {post_entity} from "../../api.js";
-import {get_element, showError, showInfo, showSuccess, showWarn} from "../../dom.js";
+import {get_element, showError, showInfo, showSuccess, showWarn, sleep_for_seconds} from "../../dom.js";
 import {Autocomplete} from "../../common.js";
 import {SelectMap} from "./SelectMap.js";
 import TermContainer from "./TermContainer.js";
