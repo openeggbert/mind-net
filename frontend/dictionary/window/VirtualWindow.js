@@ -294,12 +294,18 @@ export class VirtualWindow {
             this.focus();
         });
 
-        this.#header.addEventListener("mousedown", e => {
-            if (e.buttons !== 1) return;
+        this.#header.addEventListener("pointerdown", e => {
+
+            if (e.target.closest("button")) {
+                return;
+            }
+
+            if (e.button !== undefined && e.button !== 0) return;
+
+            e.preventDefault();
+            this.#header.setPointerCapture(e.pointerId);
 
             this.focus();
-
-            this.#root.style.opacity = "0.85";
 
             if (!this.#userPositioned) {
                 this.#userPositioned = true;
@@ -311,25 +317,22 @@ export class VirtualWindow {
             const offY = e.clientY - rect.top;
 
             const move = ev => {
-
-                if (this.#maximized && !this.#minimized) return
+                if (this.#maximized) return;
                 this.#root.style.left = (ev.clientX - offX) + "px";
-                const newTop = clampTop(ev.clientY - offY);
-                this.#root.style.top = newTop + "px";
-
+                this.#root.style.top  = clampTop(ev.clientY - offY) + "px";
             };
 
-            const up = () => {
-                document.removeEventListener("mousemove", move);
-                document.removeEventListener("mouseup", up);
-                document.body.style.userSelect = "";
-                this.#root.style.opacity = "1";
+            const up = ev => {
+                this.#header.releasePointerCapture(ev.pointerId);
+                document.removeEventListener("pointermove", move);
+                document.removeEventListener("pointerup", up);
             };
 
-            document.body.style.userSelect = "none";
-            document.addEventListener("mousemove", move);
-            document.addEventListener("mouseup", up);
+            document.addEventListener("pointermove", move);
+            document.addEventListener("pointerup", up);
         });
+
+
 
         window.addEventListener("resize", () => {
             const rect = this.#root.getBoundingClientRect();
@@ -406,7 +409,6 @@ export class VirtualWindow {
             true
         );
     }
-
 
     _exitOverview() {
         if (!this.#overview) return;

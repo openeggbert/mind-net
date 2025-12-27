@@ -328,6 +328,16 @@ a.note-wanted, a.note-unknown {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+.window_container-header {
+    touch-action: none;
+    /*cursor: grab;*/
+}
+
+/*.window_container-header:active {*/
+/*    cursor: grabbing;*/
+/*}*/
+
+
 
 /*
 Source - https://stackoverflow.com/a
