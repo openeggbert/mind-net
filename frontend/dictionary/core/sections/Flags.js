@@ -72,7 +72,7 @@ export class Flags extends _CrudSection {
         let button_add_flag = get_element("button_add_flag")
 
         let input_checkbox_public_flag = get_element("input_checkbox_public_flag")
-        input_checkbox_public_flag.checked = false
+        //input_checkbox_public_flag.checked = false
 
         button_add_flag.onclick = async () => {
             const title = prompt("Enter flag title");

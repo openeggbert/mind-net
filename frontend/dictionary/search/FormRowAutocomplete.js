@@ -32,13 +32,15 @@ export class FormRowAutocomplete extends FormRow {
             1,
             entity,
             query_params)
+
+        if (label === "Flags") alert("this.#autocomplete=" + this.#autocomplete)
     }
 
     set_query_params(query_params) {
         this.#autocomplete.set_query_params(query_params)
     }
     get_title() {
-        return this.#autocomplete.get_item() === null ? "" : this.autocomplete.get_item().title
+        return this.#autocomplete.get_item() === null ? "" : this.#autocomplete.get_item().title
     }
 
     reset() {
