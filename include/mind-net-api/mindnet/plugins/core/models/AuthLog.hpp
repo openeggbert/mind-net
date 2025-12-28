@@ -62,7 +62,7 @@ namespace mindnet::plugins::core::models
             coldef(COLS::REQUEST_BODY).set_description("Request body"),
             coldef(COLS::STATUS_CODE, INTEGER | MANDATORY).set_description("HTTP response status code"),
             coldef(COLS::ERROR).set_description("Error message if request failed"),
-            coldef(COLS::SUCCESS | BOOL).set_description("Whether the request succeeded")
+            coldef(COLS::SUCCESS, BOOL).set_description("Whether the request succeeded")
             //
         });
 
