@@ -1,0 +1,75 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 851db5f0..0c7dd4c4 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -53,8 +53,6 @@ add_subdirectory(src/mind-net-orm)
+ add_subdirectory(src/mind-net-api)
+ add_subdirectory(src/mind-net-db-sqlite)
+ add_subdirectory(src/mind-net-http)
+-add_subdirectory(src/mind-net-plugin-slip-box)
+-add_subdirectory(src/mind-net-plugin-repetition)
+ add_subdirectory(src/mind-net-plugin-dictionary)
+ 
+ add_subdirectory(src/mind-net-app)
+diff --git a/src/mind-net-app/CMakeLists.txt b/src/mind-net-app/CMakeLists.txt
+index 87370652..73fc40b6 100644
+--- a/src/mind-net-app/CMakeLists.txt
++++ b/src/mind-net-app/CMakeLists.txt
+@@ -19,8 +19,6 @@ target_link_libraries(mind_net_app PRIVATE
+         mind_net_api
+         mind_net_http
+         mind_net_db_sqlite
+-        mind_net_plugin_slip_box
+-        mind_net_plugin_repetition
+         mind_net_plugin_dictionary
+         nlohmann_json::nlohmann_json
+ )
+diff --git a/src/mind-net-app/mindnet/app/Main.cpp b/src/mind-net-app/mindnet/app/Main.cpp
+index fd5f2b4d..798f98a3 100644
+--- a/src/mind-net-app/mindnet/app/Main.cpp
++++ b/src/mind-net-app/mindnet/app/Main.cpp
+@@ -42,8 +42,6 @@
+ #include "mindnet/http/CrowLoggerAdapter.hpp"
+ #include "mindnet/plugins/core/CorePluginFactory.hpp"
+ #include "mindnet/plugins/core/models/User.hpp"
+-#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
+-#include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
+ #include "mindnet/plugins/dictionary/DictionaryPluginFactory.hpp"
+ 
+ #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
+@@ -371,8 +369,6 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
+     }
+ 
+     REGISTER_PLUGIN(core, Core)
+-    REGISTER_PLUGIN(slipbox, SlipBox)
+-    REGISTER_PLUGIN(repetition, Repetition)
+     REGISTER_PLUGIN(dictionary, Dictionary)
+     if (plugin_registry->get_plugin_count() == 0)
+     {
+diff --git a/src/mind-net-plugin-dictionary/CMakeLists.txt b/src/mind-net-plugin-dictionary/CMakeLists.txt
+index 0dc36251..253b1464 100644
+--- a/src/mind-net-plugin-dictionary/CMakeLists.txt
++++ b/src/mind-net-plugin-dictionary/CMakeLists.txt
+@@ -16,6 +16,16 @@ target_include_directories(mind_net_plugin_dictionary
+         ${CMAKE_SOURCE_DIR}/include/mind-net-util
+ )
+ 
++include(FetchContent)
++
++FetchContent_Declare(
++        cmark
++        GIT_REPOSITORY https://github.com/commonmark/cmark.git
++        GIT_TAG master
++)
++
++FetchContent_MakeAvailable(cmark)
++
+ target_link_libraries(mind_net_plugin_dictionary
+         PUBLIC
+         mind_net_essential
+diff --git a/thirdparty/SQLiteCpp b/thirdparty/SQLiteCpp
+--- a/thirdparty/SQLiteCpp
++++ b/thirdparty/SQLiteCpp
+@@ -1 +1 @@
+-Subproject commit 0fef5b93eab8dfe20c0b3d79783a83e806a48478
++Subproject commit 0fef5b93eab8dfe20c0b3d79783a83e806a48478-dirty

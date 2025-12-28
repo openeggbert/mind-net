@@ -16,6 +16,16 @@ target_include_directories(mind_net_plugin_dictionary
         ${CMAKE_SOURCE_DIR}/include/mind-net-util
 )
 
+include(FetchContent)
+
+FetchContent_Declare(
+        cmark
+        GIT_REPOSITORY https://github.com/commonmark/cmark.git
+        GIT_TAG master
+)
+
+FetchContent_MakeAvailable(cmark)
+
 target_link_libraries(mind_net_plugin_dictionary
         PUBLIC
         mind_net_essential

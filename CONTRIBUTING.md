@@ -43,6 +43,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Window "Term Visit History" - add paging
 - [ ] PreviousTerm, NextTerm
 - [ ] &map_id={}&term_id={}
+- [ ] dictionary_term - new column repetition bool default 1
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

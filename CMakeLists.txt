@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(mind_net LANGUAGES CXX)
 
+option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
+option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" OFF)
+option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" OFF)
+
+message(STATUS "")
+message(STATUS "Mind Net plugin configuration:")
+message(STATUS "  Dictionary plugin : ${MINDNET_ENABLE_DICTIONARY_PLUGIN}")
+message(STATUS "  Slipbox plugin    : ${MINDNET_ENABLE_SLIPBOX_PLUGIN}")
+message(STATUS "  Repetition plugin : ${MINDNET_ENABLE_REPETITION_PLUGIN}")
+message(STATUS "")
+
 # ccache (if installed)
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
@@ -53,9 +64,19 @@ add_subdirectory(src/mind-net-orm)
 add_subdirectory(src/mind-net-api)
 add_subdirectory(src/mind-net-db-sqlite)
 add_subdirectory(src/mind-net-http)
-add_subdirectory(src/mind-net-plugin-slip-box)
-add_subdirectory(src/mind-net-plugin-repetition)
-add_subdirectory(src/mind-net-plugin-dictionary)
+
+if (MINDNET_ENABLE_DICTIONARY_PLUGIN)
+    add_subdirectory(src/mind-net-plugin-dictionary)
+endif ()
+
+if (MINDNET_ENABLE_SLIPBOX_PLUGIN)
+    add_subdirectory(src/mind-net-plugin-slip-box)
+endif ()
+
+if (MINDNET_ENABLE_REPETITION_PLUGIN)
+    add_subdirectory(src/mind-net-plugin-repetition)
+endif ()
+
 
 add_subdirectory(src/mind-net-app)
 

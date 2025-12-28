@@ -42,9 +42,18 @@
 #include "mindnet/http/CrowLoggerAdapter.hpp"
 #include "mindnet/plugins/core/CorePluginFactory.hpp"
 #include "mindnet/plugins/core/models/User.hpp"
-#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
-#include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
+
+#ifdef MINDNET_ENABLE_DICTIONARY_PLUGIN
 #include "mindnet/plugins/dictionary/DictionaryPluginFactory.hpp"
+#endif
+
+#ifdef MINDNET_ENABLE_SLIPBOX_PLUGIN
+#include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
+#endif
+
+#ifdef MINDNET_ENABLE_REPETITION_PLUGIN
+#include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
+#endif
 
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;
@@ -371,9 +380,20 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
     }
 
     REGISTER_PLUGIN(core, Core)
-    REGISTER_PLUGIN(slipbox, SlipBox)
-    REGISTER_PLUGIN(repetition, Repetition)
+
+#ifdef MINDNET_ENABLE_DICTIONARY_PLUGIN
     REGISTER_PLUGIN(dictionary, Dictionary)
+#endif
+
+#ifdef MINDNET_ENABLE_SLIPBOX_PLUGIN
+    REGISTER_PLUGIN(slipbox, SlipBox)
+#endif
+
+#ifdef MINDNET_ENABLE_REPETITION_PLUGIN
+    REGISTER_PLUGIN(repetition, Repetition)
+#endif
+
+
     if (plugin_registry->get_plugin_count() == 0)
     {
         throw std::runtime_error("No plugins registered");
