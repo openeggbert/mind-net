@@ -44,12 +44,12 @@ namespace mindnet::plugins::dictionary::models
 
     inline const def DICTIONARY_LINK_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
-        .set_all_rest_operations()
+        .set_all_rest_operations().set_readonly()
         .set_group("Dictionary", 100)
         .set_columns({
-            coldef(COLS::FROM_DICTIONARY_TERM_ID, MANDATORY | READONLY).set_foreign_key("dictionary_term"),
-            coldef(COLS::TO_DICTIONARY_TERM_ID, MANDATORY | READONLY).set_foreign_key("dictionary_term"),
-            coldef(COLS::TYPE).set_default_value(0).set_enum_definition(enums::term_relation_type_enum_definition())
+            coldef(COLS::FROM_DICTIONARY_TERM_ID, MANDATORY).set_foreign_key("dictionary_term"),
+            coldef(COLS::TO_DICTIONARY_TERM_ID, MANDATORY).set_foreign_key("dictionary_term"),
+            coldef(COLS::TYPE, MUTABLE).set_default_value(0).set_enum_definition(enums::term_relation_type_enum_definition())
         });
 
     struct Model : mindnet::model::BaseModel

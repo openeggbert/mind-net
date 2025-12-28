@@ -46,13 +46,13 @@ namespace mindnet::plugins::dictionary::models
         .set_group("Dictionary #2", 100)
         .set_rest_operations("l").set_title_column(COLS::ID)
         .set_no_table(true)
-        .set_cache_enabled(false)
+        .set_cache_enabled(false).set_readonly()
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_SOURCE_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::TITLE, MANDATORY | READONLY),
-            coldef(COLS::EDITION),
-            coldef(COLS::TITLE_PART, MANDATORY | READONLY)
+            coldef(COLS::DICTIONARY_SOURCE_TYPE_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::EDITION, MUTABLE),
+            coldef(COLS::TITLE_PART, MANDATORY)
         });
 
     struct Model : mindnet::model::BaseModel

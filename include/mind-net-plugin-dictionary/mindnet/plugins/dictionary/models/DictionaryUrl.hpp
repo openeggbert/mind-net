@@ -44,13 +44,13 @@ namespace mindnet::plugins::dictionary::models
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_group("Dictionary", 100)
         .set_all_rest_operations()
-        .set_title_column(COLS::DICTIONARY_URL_TYPE_ID)
+        .set_title_column(COLS::DICTIONARY_URL_TYPE_ID).set_readonly()
         .set_columns({
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::DICTIONARY_URL_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::POSITION, INTEGER),
-            coldef(COLS::NOTE),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_URL_TYPE_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::POSITION, INTEGER | MUTABLE),
+            coldef(COLS::NOTE, MUTABLE),
         });
 
     struct Model : mindnet::model::BaseModel

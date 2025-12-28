@@ -49,70 +49,70 @@ namespace mindnet::plugins::core::models
     inline const def ERROR_DEFINITION =
         def(COLSERROR::MODEL_NAME, CORE_PLUGIN_NAME)
             .set_rest_operations("rul")
-            .set_group("Core", 600)
+            .set_group("Core", 600).set_readonly()
             .set_columns({
                 /* identity */
-                coldef(COLSERROR::HUMAN_IDENTIFICATION, MANDATORY | READONLY)
+                coldef(COLSERROR::HUMAN_IDENTIFICATION, MANDATORY)
                     .set_description("Public error identifier shown to the user"),
-                coldef(COLSERROR::UUID, MANDATORY | READONLY)
+                coldef(COLSERROR::UUID, MANDATORY)
                     .set_description("Internal unique error identifier"),
 
                 /* classification */
-                coldef(COLSERROR::SEVERITY, MANDATORY | READONLY)
+                coldef(COLSERROR::SEVERITY, MANDATORY)
                     .set_enum_definition(
                         mindnet::plugins::core::enums::error_severity_to_enum_definition())
                     .set_description("Severity of the error"),
-                coldef(COLSERROR::HTTP_STATUS, INTEGER | READONLY)
+                coldef(COLSERROR::HTTP_STATUS, INTEGER)
                     .set_description("HTTP status associated with the error"),
 
                 /* origin & layer */
-                coldef(COLSERROR::ORIGIN, READONLY)
+                coldef(COLSERROR::ORIGIN)
                     .set_enum_definition(
                         mindnet::plugins::core::enums::error_origin_to_enum_definition())
                     .set_description("Execution origin that triggered the error"),
-                coldef(COLSERROR::LAYER, READONLY)
+                coldef(COLSERROR::LAYER)
                     .set_enum_definition(
                         mindnet::plugins::core::enums::execution_layer_to_enum_definition())
                     .set_description("Build-time layer (CMake target) where the error occurred"),
 
                 /* system location */
-                coldef(COLSERROR::PLUGIN, READONLY)
+                coldef(COLSERROR::PLUGIN)
                     .set_description("Plugin in which the error occurred"),
-                coldef(COLSERROR::OPERATION, READONLY)
+                coldef(COLSERROR::OPERATION)
                     .set_enum_definition(enums::crudl_to_enum_definition())
                     .set_description("High-level operation being executed"),
 
                 /* code location */
-                coldef(COLSERROR::CPP_NAMESPACE, READONLY)
+                coldef(COLSERROR::CPP_NAMESPACE)
                     .set_description("C++ namespace where the error occurred"),
-                coldef(COLSERROR::CPP_CLASS, READONLY)
+                coldef(COLSERROR::CPP_CLASS)
                     .set_description("C++ class where the error occurred"),
-                coldef(COLSERROR::CPP_SYMBOL, READONLY)
+                coldef(COLSERROR::CPP_SYMBOL)
                     .set_description("C++ function or method where the error occurred"),
 
                 /* technical context */
-                coldef(COLSERROR::SQL_QUERY, READONLY)
+                coldef(COLSERROR::SQL_QUERY)
                     .set_description("SQL query associated with the error, if any"),
 
                 /* request / user context */
-                coldef(COLSERROR::USER_ID, INTEGER | READONLY | FOREIGN_KEY)
+                coldef(COLSERROR::USER_ID, INTEGER | FOREIGN_KEY)
                     .set_description("User associated with the error, if any"),
-                coldef(COLSERROR::REQUEST_IDENTIFICATION, READONLY)
+                coldef(COLSERROR::REQUEST_IDENTIFICATION)
                     .set_description("Request correlation identifier"),
 
                 /* payload */
-                coldef(COLSERROR::MESSAGE, MANDATORY | READONLY)
+                coldef(COLSERROR::MESSAGE, MANDATORY)
                     .set_description("Human-readable error message"),
-                coldef(COLSERROR::EXCEPTION_TYPE, READONLY)
+                coldef(COLSERROR::EXCEPTION_TYPE)
                     .set_description("C++ exception type"),
-                   coldef(COLSERROR::EXCEPTION_MESSAGE, READONLY),
+                   coldef(COLSERROR::EXCEPTION_MESSAGE),
 
                 /* lifecycle */
-                coldef(COLSERROR::HANDLED, BOOL).set_default_value(false)
+                coldef(COLSERROR::HANDLED, BOOL | MUTABLE).set_default_value(false)
                     .set_description("Error handling state"),
 
                 /* versioning */
-                coldef(COLSERROR::MINDNET_VERSION, READONLY)
+                coldef(COLSERROR::MINDNET_VERSION)
                     .set_description("Mind Net version in which the error occurred"),
             });
 

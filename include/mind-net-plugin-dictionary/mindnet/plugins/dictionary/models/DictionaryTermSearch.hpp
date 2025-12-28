@@ -51,20 +51,20 @@ namespace mindnet::plugins::dictionary::models
         .set_group("Dictionary #2", 100)
         .set_rest_operations("l").set_title_column(COLS::ID)
         .set_no_table(true)
-        .set_cache_enabled(false)
+        .set_cache_enabled(false).set_readonly()
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::TITLE, MANDATORY | READONLY),
-            coldef(COLS::DISAMBIGUATION),
-            coldef(COLS::TERM_CREATED_AT, MANDATORY | READONLY | DATETIME),
-            coldef(COLS::TERM_UPDATED_AT, MANDATORY | READONLY | DATETIME),
-            coldef(COLS::STATUS).set_default_value(0).set_enum_definition(enums::term_status_to_enum_definition())
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::DISAMBIGUATION, MUTABLE),
+            coldef(COLS::TERM_CREATED_AT, MANDATORY | DATETIME),
+            coldef(COLS::TERM_UPDATED_AT, MANDATORY | DATETIME),
+            coldef(COLS::STATUS, MUTABLE).set_default_value(0).set_enum_definition(enums::term_status_to_enum_definition())
                                 .set_description("Status of the term."),
-            coldef(COLS::IMPORTANCE).set_default_value(2).set_enum_definition(enums::importance_to_enum_definition())
+            coldef(COLS::IMPORTANCE, MUTABLE).set_default_value(2).set_enum_definition(enums::importance_to_enum_definition())
                                     .set_description("Importance level of the term."),
-            coldef(COLS::DIFFICULTY).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
+            coldef(COLS::DIFFICULTY, MUTABLE).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the term."),
         });
 

@@ -47,23 +47,23 @@ namespace mindnet::plugins::dictionary::models
         .set_rest_operations("l")
         .set_no_table(true)
         .set_cache_enabled(false)
-        .set_title_column(COLS::DICTIONARY_TERM_ID)
+        .set_title_column(COLS::DICTIONARY_TERM_ID).set_readonly()
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY)
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY)
             .set_description("Dictionary term this metric belongs to."),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY | READONLY)
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY)
             .set_description("Dictionary map this metric belongs to."),
 
-            coldef(COLS::TAG_COUNT, READONLY | INTEGER),
-            coldef(COLS::FLAG_COUNT, READONLY | INTEGER),
-            coldef(COLS::LINK_COUNT, READONLY | INTEGER),
-            coldef(COLS::NOTE_COUNT, READONLY | INTEGER),
-            coldef(COLS::INDEX_COUNT, READONLY | INTEGER),
-            coldef(COLS::SOURCE_COUNT, READONLY | INTEGER),
-            coldef(COLS::ALIAS_COUNT, READONLY | INTEGER),
+            coldef(COLS::TAG_COUNT, INTEGER),
+            coldef(COLS::FLAG_COUNT, INTEGER),
+            coldef(COLS::LINK_COUNT, INTEGER),
+            coldef(COLS::NOTE_COUNT, INTEGER),
+            coldef(COLS::INDEX_COUNT, INTEGER),
+            coldef(COLS::SOURCE_COUNT, INTEGER),
+            coldef(COLS::ALIAS_COUNT, INTEGER),
 
-            coldef(COLS::VIEW_COUNT, READONLY | INTEGER),
-            coldef(COLS::LAST_VIEWED_AT, READONLY | DATETIME),
+            coldef(COLS::VIEW_COUNT, INTEGER),
+            coldef(COLS::LAST_VIEWED_AT, DATETIME),
         });
 
     struct DictionaryTermMetric : mindnet::model::BaseModel

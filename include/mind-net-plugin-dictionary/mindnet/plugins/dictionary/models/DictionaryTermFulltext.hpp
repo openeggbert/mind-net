@@ -47,14 +47,14 @@ namespace mindnet::plugins::dictionary::models
         .set_group("Dictionary #2", 100)
         .set_rest_operations("l").set_title_column(COLS::ID)
         .set_no_table(true)
-        .set_cache_enabled(false)
+        .set_cache_enabled(false).set_readonly()
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::TITLE_PART, MANDATORY | READONLY),
-            coldef(COLS::TITLE, MANDATORY | READONLY),
-            coldef(COLS::DISAMBIGUATION),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE_PART, MANDATORY),
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::DISAMBIGUATION, MUTABLE),
         });
 
     struct Model : mindnet::model::BaseModel

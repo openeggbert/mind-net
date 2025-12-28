@@ -45,11 +45,11 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_TAG_TYPE_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_all_rest_operations()
-        .set_group("Dictionary", 100).set_title_column(COLS::TITLE)
+        .set_group("Dictionary", 100).set_title_column(COLS::TITLE).set_readonly()
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::TITLE, MANDATORY | READONLY),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::TITLE, MANDATORY),
             //
         })
         .add_custom_list_action("dictionary_tag", "List tags", {"dictionary_tag_type_id", "{id}"})

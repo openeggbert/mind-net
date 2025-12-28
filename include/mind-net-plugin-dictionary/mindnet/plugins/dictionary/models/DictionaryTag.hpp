@@ -43,10 +43,10 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_TAG_DEFINITION =
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_group("Dictionary", 100)
-        .set_rest_operations("crdl").set_title_column(COLS::DICTIONARY_TAG_TYPE_ID)
+        .set_rest_operations("crdl").set_title_column(COLS::DICTIONARY_TAG_TYPE_ID).set_readonly()
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY),
-            coldef(COLS::DICTIONARY_TAG_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_TAG_TYPE_ID, MANDATORY | FOREIGN_KEY),
         });
 
     struct Model : mindnet::model::BaseModel

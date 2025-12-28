@@ -45,21 +45,21 @@ namespace mindnet::plugins::dictionary::models
         def(COLS::MODEL_NAME, DICTIONARY_PLUGIN_NAME)
         .set_rest_operations("crdl")
         .set_group("Dictionary", 100).set_title_column(COLS::DICTIONARY_TERM_ID)
-        .allow_reader_write()
+        .allow_reader_write().set_readonly()
         .set_columns({
-            coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::DICTIONARY_MAP_ID, FOREIGN_KEY | MANDATORY | READONLY),
-            coldef(COLS::ALGORITHM, MANDATORY | READONLY)
+            coldef(COLS::USER_ID, FOREIGN_KEY | MANDATORY),
+            coldef(COLS::DICTIONARY_MAP_ID, FOREIGN_KEY | MANDATORY),
+            coldef(COLS::ALGORITHM, MANDATORY)
             .set_enum_definition(enums::repetition_algorithm_to_enum_definition())
             .set_default_value(18),
-            coldef(COLS::DICTIONARY_TERM_ID, FOREIGN_KEY | READONLY),
-            coldef(COLS::REVIEW_DATE, DATETIME | READONLY),
-            coldef(COLS::GRADE, INTEGER | READONLY),
-            coldef(COLS::STARTED_AT, DATETIME | READONLY),
-            coldef(COLS::ENDED_AT, DATETIME | READONLY),
-            coldef(COLS::LATENCY_MS, INTEGER | READONLY),
-            coldef(COLS::ANSWER_CHANGE_COUNT, INTEGER | READONLY).set_default_value(0),
-            coldef(COLS::DETAILS_JSON, MANDATORY)
+            coldef(COLS::DICTIONARY_TERM_ID, FOREIGN_KEY),
+            coldef(COLS::REVIEW_DATE, DATETIME),
+            coldef(COLS::GRADE, INTEGER),
+            coldef(COLS::STARTED_AT, DATETIME),
+            coldef(COLS::ENDED_AT, DATETIME),
+            coldef(COLS::LATENCY_MS, INTEGER),
+            coldef(COLS::ANSWER_CHANGE_COUNT, INTEGER).set_default_value(0),
+            coldef(COLS::DETAILS_JSON, MANDATORY | MUTABLE)
         });
 
     struct Model : mindnet::model::BaseModel

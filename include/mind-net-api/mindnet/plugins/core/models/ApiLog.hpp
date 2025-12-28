@@ -45,21 +45,21 @@ namespace mindnet::plugins::core::models
     inline const def API_LOG_DEFINITION =
         def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
-        .set_title_column(COLS::ENDPOINT)
+        .set_title_column(COLS::ENDPOINT).set_readonly()
         .set_group("Core", 600).allow_reader_write().set_cache_enabled(false)
         .set_columns({
             //
-            coldef(COLS::USER_ID, FOREIGN_KEY | READONLY).set_description("User ID who performed the request"),
-            coldef(COLS::IP_ADDRESS, READONLY).set_description("Client IP address"),
-            coldef(COLS::ENDPOINT, MANDATORY | READONLY).set_description("Requested API endpoint"),
-            coldef(COLS::METHOD, MANDATORY | READONLY).set_enum_definition(
+            coldef(COLS::USER_ID, FOREIGN_KEY).set_description("User ID who performed the request"),
+            coldef(COLS::IP_ADDRESS).set_description("Client IP address"),
+            coldef(COLS::ENDPOINT, MANDATORY).set_description("Requested API endpoint"),
+            coldef(COLS::METHOD, MANDATORY).set_enum_definition(
                 enums::http_method_to_enum_definition()).set_description("HTTP method"),
-            coldef(COLS::ENTITY_NAME, MANDATORY | READONLY).set_description("Target model name"),
-            coldef(COLS::ENTITY_ID, READONLY).set_description("Target entity ID"),
-            coldef(COLS::PARAMETERS, READONLY).set_description("Query parameters"),
-            coldef(COLS::REQUEST_BODY, READONLY).set_description("Request body"),
-            coldef(COLS::STATUS_CODE, INTEGER | MANDATORY | READONLY).set_description("HTTP response status code"),
-            coldef(COLS::ERROR, READONLY).set_description("Error message if request failed")
+            coldef(COLS::ENTITY_NAME, MANDATORY).set_description("Target model name"),
+            coldef(COLS::ENTITY_ID).set_description("Target entity ID"),
+            coldef(COLS::PARAMETERS).set_description("Query parameters"),
+            coldef(COLS::REQUEST_BODY).set_description("Request body"),
+            coldef(COLS::STATUS_CODE, INTEGER | MANDATORY).set_description("HTTP response status code"),
+            coldef(COLS::ERROR).set_description("Error message if request failed")
             //
         });
 

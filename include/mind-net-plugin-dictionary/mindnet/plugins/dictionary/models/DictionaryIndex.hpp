@@ -20,18 +20,18 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_INDEX_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
             .set_group("Dictionary", 210)
-            .set_all_rest_operations()
+            .set_all_rest_operations().set_readonly()
             .set_columns({
-                coldef(COLS::DICTIONARY_INDEX_TYPE_ID, MANDATORY | READONLY | FOREIGN_KEY)
+                coldef(COLS::DICTIONARY_INDEX_TYPE_ID, MANDATORY | FOREIGN_KEY)
                     .set_description("Dictionary index type acting as entry gate."),
 
-                coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY)
+                coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY)
                     .set_description("Dictionary term belonging to the index."),
 
-                coldef(COLS::POSITION, INTEGER).set_default_value(false)
+                coldef(COLS::POSITION, INTEGER | MUTABLE).set_default_value(false)
                     .set_description("Optional ordering of the term inside the index."),
 
-                coldef(COLS::IS_ENTRY_POINT, BOOL).set_default_value(false)
+                coldef(COLS::IS_ENTRY_POINT, BOOL | MUTABLE).set_default_value(false)
                     .set_description("Marks the term as an entry point of the index."),
             });
 

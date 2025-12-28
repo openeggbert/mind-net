@@ -43,13 +43,13 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_PINNED_TERM_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
         .set_group("Dictionary", 200)
-        .set_rest_operations("crdl")
+        .set_rest_operations("crdl").set_readonly()
         .set_columns({
             //
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description(
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY).set_description(
                 "Dictionary term that was PINNED."),
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY).set_description("User who pinned the term."),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY | READONLY)
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY).set_description("User who pinned the term."),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY)
         });
 
     struct DictionaryPinnedTerm : mindnet::model::BaseModel

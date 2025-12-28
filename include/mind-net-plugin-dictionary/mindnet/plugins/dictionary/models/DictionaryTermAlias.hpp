@@ -21,13 +21,13 @@ namespace mindnet::plugins::dictionary::models
     inline const def DICTIONARY_TERM_ALIAS_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
         .set_group("Dictionary", 210)
-        .set_rest_operations("crdl")
+        .set_rest_operations("crdl").set_readonly()
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | READONLY | FOREIGN_KEY)
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY)
                 .set_description("Primary dictionary term."),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | READONLY | FOREIGN_KEY)
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY)
                 .set_description("Map ID."),
-            coldef(COLS::ALIAS, MANDATORY | READONLY)
+            coldef(COLS::ALIAS, MANDATORY)
                 .set_description("Alias (alternative name) for the dictionary term."),
         });
 

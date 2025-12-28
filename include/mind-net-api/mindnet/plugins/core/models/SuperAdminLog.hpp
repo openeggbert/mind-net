@@ -46,21 +46,21 @@ namespace mindnet::plugins::core::models
         def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
         .set_title_column(COLS::ENDPOINT)
-        .set_group("Core", 600).allow_reader_write()
+        .set_group("Core", 600).allow_reader_write().set_readonly()
         .set_columns({
-            coldef(COLS::USER_ID, FOREIGN_KEY | READONLY).set_description("User ID who performed the request"),
-            coldef(COLS::IP_ADDRESS, READONLY).set_description("Client IP address"),
-            coldef(COLS::USER_AGENT, READONLY).set_description("Client user agent string"),
-            coldef(COLS::ENDPOINT, MANDATORY | READONLY).set_description("Requested API endpoint"),
-            coldef(COLS::METHOD, MANDATORY | READONLY).set_enum_definition(
+            coldef(COLS::USER_ID, FOREIGN_KEY).set_description("User ID who performed the request"),
+            coldef(COLS::IP_ADDRESS).set_description("Client IP address"),
+            coldef(COLS::USER_AGENT).set_description("Client user agent string"),
+            coldef(COLS::ENDPOINT, MANDATORY).set_description("Requested API endpoint"),
+            coldef(COLS::METHOD, MANDATORY).set_enum_definition(
                 enums::http_method_to_enum_definition()).set_description("HTTP method"),
-            coldef(COLS::ACTION, MANDATORY | READONLY).set_description("Action performed"),
-            coldef(COLS::PARAMETERS, READONLY).set_description("Query parameters"),
-            coldef(COLS::REQUEST_BODY, READONLY).set_description("Request body"),
-            coldef(COLS::DIFF, READONLY).set_description("Differences between change"),
-            coldef(COLS::STATUS_CODE, INTEGER | MANDATORY | READONLY).set_description("HTTP response status code"),
-            coldef(COLS::ERROR, READONLY).set_description("Error message if request failed"),
-            coldef(COLS::SUCCESS, READONLY | BOOL).set_description("Whether the request succeeded")
+            coldef(COLS::ACTION, MANDATORY).set_description("Action performed"),
+            coldef(COLS::PARAMETERS).set_description("Query parameters"),
+            coldef(COLS::REQUEST_BODY).set_description("Request body"),
+            coldef(COLS::DIFF).set_description("Differences between change"),
+            coldef(COLS::STATUS_CODE, INTEGER | MANDATORY).set_description("HTTP response status code"),
+            coldef(COLS::ERROR).set_description("Error message if request failed"),
+            coldef(COLS::SUCCESS, BOOL).set_description("Whether the request succeeded")
         });
 
     struct Model : mindnet::model::BaseModel

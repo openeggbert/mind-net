@@ -44,17 +44,17 @@ namespace mindnet::plugins::core::models
     inline const def HISTORY_DEFINITION =
         def(COLS::MODEL_NAME, CORE_PLUGIN_NAME)
         .set_rest_operations("rl")
-        .set_group("Core", 500).allow_reader_write().set_cache_enabled(false)
+        .set_group("Core", 500).allow_reader_write().set_cache_enabled(false).set_readonly()
         .set_columns({
             //
-            coldef(COLS::USER_ID, FOREIGN_KEY | READONLY).set_description("User ID who made the change"),
-            coldef(COLS::TABLE_NAME, MANDATORY | READONLY).set_description("Name of the table where change was made"),
-            coldef(COLS::RECORD_ID, MANDATORY | READONLY).set_description("ID of the record that was changed"),
-            coldef(COLS::OPERATION, MANDATORY | READONLY).set_enum_definition(
+            coldef(COLS::USER_ID, FOREIGN_KEY).set_description("User ID who made the change"),
+            coldef(COLS::TABLE_NAME, MANDATORY).set_description("Name of the table where change was made"),
+            coldef(COLS::RECORD_ID, MANDATORY).set_description("ID of the record that was changed"),
+            coldef(COLS::OPERATION, MANDATORY).set_enum_definition(
                 mindnet::plugins::core::enums::crudl_to_enum_definition()).set_description(
                 "Type of operation performed"),
-            coldef(COLS::DATA_JSON, MANDATORY | READONLY).set_description("JSON data containing the changes"),
-            coldef(COLS::REASON, READONLY).set_description("Reason for making the change"),
+            coldef(COLS::DATA_JSON, MANDATORY).set_description("JSON data containing the changes"),
+            coldef(COLS::REASON).set_description("Reason for making the change"),
             //
         });
 

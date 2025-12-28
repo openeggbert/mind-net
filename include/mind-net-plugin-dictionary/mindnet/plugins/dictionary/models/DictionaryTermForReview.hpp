@@ -47,22 +47,22 @@ namespace mindnet::plugins::dictionary::models
         .set_group("Dictionary #2", 200)
         .set_rest_operations("l").set_title_column(COLS::TITLE)
         .set_no_table(true)
-        .set_cache_enabled(false)
+        .set_cache_enabled(false).set_readonly()
         .set_columns({
-            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY | READONLY),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY | READONLY),
-            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY | READONLY),
-            coldef(COLS::DICTIONARY_SEARCH_ID, FOREIGN_KEY | READONLY),
+            coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DICTIONARY_SEARCH_ID, FOREIGN_KEY),
 
-            coldef(COLS::TITLE, MANDATORY | READONLY),
-            coldef(COLS::DISAMBIGUATION, READONLY),
-            coldef(COLS::DEFINITION, READONLY),
+            coldef(COLS::TITLE, MANDATORY),
+            coldef(COLS::DISAMBIGUATION),
+            coldef(COLS::DEFINITION),
 
-            coldef(COLS::ALGORITHM, INTEGER | READONLY),
-            coldef(COLS::IS_DUE, BOOL | READONLY).set_default_value(true),
-            coldef(COLS::IS_NOT_DUE, BOOL | READONLY).set_default_value(false),
-            coldef(COLS::IS_NEVER, BOOL | READONLY).set_default_value(true),
-            coldef(COLS::HAS_DEFINITION, BOOL | READONLY).set_default_value(true),
+            coldef(COLS::ALGORITHM, INTEGER),
+            coldef(COLS::IS_DUE, BOOL).set_default_value(true),
+            coldef(COLS::IS_NOT_DUE, BOOL).set_default_value(false),
+            coldef(COLS::IS_NEVER, BOOL).set_default_value(true),
+            coldef(COLS::HAS_DEFINITION, BOOL).set_default_value(true),
         });
 
     struct Model : mindnet::model::BaseModel
