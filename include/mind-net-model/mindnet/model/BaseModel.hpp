@@ -251,11 +251,14 @@ using member_type_t =
         if (old_.size() != new_.size()) return "The number of fields in the entity has changed";
 
         const auto& columns = def_.get_columns();
+        bool readonly_model = def_.is_readonly();
         for (int i = 0; i < old_.size(); i++)
         {
             const auto& column = columns[i];
             if (column.get_column_name() == BaseColumns::CREATED_AT) continue;
-            if (column.is_readonly() && old_[i] != new_[i])
+            if (readonly_model && column.get_column_name() == BaseColumns::UPDATED_AT) continue;
+            bool readonly = readonly_model ? !column.is_mutable() : column.is_readonly();
+            if (readonly && old_[i] != new_[i])
             {
                 return "Value of column " + column.get_column_name() + " is readonly and cannot be changed.";
             }

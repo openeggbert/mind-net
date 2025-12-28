@@ -58,6 +58,7 @@ namespace mindnet::model
         bool reader_can_write{false};
         bool cache_enabled{true};
         bool cached_after_create{true};
+        bool readonly = false;
 
     public:
         /**
@@ -155,6 +156,11 @@ namespace mindnet::model
         [[nodiscard]] bool is_cached_after_create() const
         {
             return cached_after_create;
+        }
+
+        [[nodiscard]] bool is_readonly() const
+        {
+            return readonly;
         }
 
         //Setters
@@ -285,6 +291,12 @@ namespace mindnet::model
         ModelDefinition& set_cached_after_create(bool value)
         {
             cached_after_create = value;
+            return *this;
+        }
+
+        ModelDefinition& set_readonly()
+        {
+            readonly = true;
             return *this;
         }
 

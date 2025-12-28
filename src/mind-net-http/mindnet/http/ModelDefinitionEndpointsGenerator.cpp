@@ -70,6 +70,7 @@ namespace mindnet::http
             result["auto"] = column_definition.is_auto();
             if (column_definition.is_hidden()) { result["hidden"] = column_definition.is_hidden(); }
             if (column_definition.is_readonly()) { result["readonly"] = column_definition.is_readonly(); }
+            if (column_definition.is_mutable()) { result["mutable"] = column_definition.is_mutable(); }
             if (column_definition.is_internal()) { result["internal"] = column_definition.is_internal(); }
             result["default_value"] = column_definition.get_default_value();
             if (!column_definition.get_description().empty())
@@ -170,6 +171,10 @@ namespace mindnet::http
             if (fields_set_empty || fields_set.contains("cached_after_create"))
             {
                 res["cached_after_create"] = model_definition->is_cached_after_create();
+            }
+            if (fields_set_empty || fields_set.contains("readonly"))
+            {
+                res["readonly"] = model_definition->is_readonly();
             }
 
             //

@@ -41,6 +41,7 @@ using mindnet::model::FOREIGN_KEY;\
 using mindnet::model::AUTO;\
 using mindnet::model::HIDDEN;\
 using mindnet::model::READONLY;\
+using mindnet::model::MUTABLE;\
 using mindnet::model::INTERNAL;\
 using mindnet::model::TEXT;\
 using mindnet::model::TEXTAREA;\
@@ -60,14 +61,15 @@ namespace mindnet::model
         AUTO = 1 << 3,
         HIDDEN = 1 << 4,
         READONLY = 1 << 5,
-        INTERNAL = 1 << 6,
-        TEXT = 1 << 7,
-        TEXTAREA = 1 << 8,
-        INTEGER = 1 << 9,
-        REAL = 1 << 10,
-        BLOB = 1 << 11,
-        BOOL = 1 << 12,
-        DATETIME = 1 << 13
+        MUTABLE = 1 << 6,
+        INTERNAL = 1 << 7,
+        TEXT = 1 << 8,
+        TEXTAREA = 1 << 9,
+        INTEGER = 1 << 10,
+        REAL = 1 << 11,
+        BLOB = 1 << 12,
+        BOOL = 1 << 13,
+        DATETIME = 1 << 14
     };
 
     inline std::vector<ColumnDefinitionFlag> column_definition_flag_values()
@@ -79,6 +81,7 @@ namespace mindnet::model
             AUTO,
             HIDDEN,
             READONLY,
+            MUTABLE,
             INTERNAL,
             TEXT,
             TEXTAREA,
@@ -103,6 +106,7 @@ namespace mindnet::model
         bool auto_ = false;
         bool hidden = false;
         bool readonly = false;
+        bool mutable_ = false;
         bool internal_ = false;
         std::string default_value;
         string description;
@@ -242,6 +246,11 @@ namespace mindnet::model
             return readonly;
         }
 
+        [[nodiscard]] const bool is_mutable() const
+        {
+            return mutable_;
+        }
+
         [[nodiscard]] const bool is_internal() const
         {
             return internal_;
@@ -335,6 +344,12 @@ namespace mindnet::model
             return *this;
         }
 
+        ColumnDefinition& set_mutable()
+        {
+            mutable_ = true;
+            return *this;
+        }
+
         ColumnDefinition& set_internal()
         {
             internal_ = true;
@@ -361,6 +376,7 @@ namespace mindnet::model
             if (flags_set.contains(AUTO)) set_auto();
             if (flags_set.contains(HIDDEN)) set_hidden();
             if (flags_set.contains(READONLY)) set_readonly();
+            if (flags_set.contains(MUTABLE)) set_mutable();
             if (flags_set.contains(INTERNAL)) set_internal();
             //
             if (flags_set.contains(TEXT)) column_type = mindnet::model::ColumnType::Text;
