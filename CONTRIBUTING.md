@@ -41,6 +41,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] If map is changed, clear Search term input
 - [ ] dictionary_map - new column emoji
 - [ ] Window "Term Visit History" - add paging
+- [ ] PreviousTerm, NextTerm
+- [ ] &map_id={}&term_id={}
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
