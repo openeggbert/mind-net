@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "Vocabulum feliciter renovatum est.",
   "dictionary.term.container.error.updating_term_failed": "Renovatio vocabuli defecit.",
-  "dictionary.term.container.backlinks": "Nexus reversi",
 
   "dictionary.term.container.visit_window.term_visit_history": "Historia visitationum vocabuli (100 recentissimae)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Monstrare omnes visitationes",

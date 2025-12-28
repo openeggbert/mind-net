@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "Pojem bol úspešne aktualizovaný.",
   "dictionary.term.container.error.updating_term_failed": "Aktualizácia pojmu zlyhala.",
-  "dictionary.term.container.backlinks": "Spätné odkazy",
 
   "dictionary.term.container.visit_window.term_visit_history": "História návštev pojmu (posledných 100)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Zobraziť všetky návštevy",

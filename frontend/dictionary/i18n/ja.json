@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "用語が正常に更新されました。",
   "dictionary.term.container.error.updating_term_failed": "用語の更新に失敗しました。",
-  "dictionary.term.container.backlinks": "バックリンク",
 
   "dictionary.term.container.visit_window.term_visit_history": "用語の訪問履歴（最新100件）",
   "dictionary.term.container.visit_window.button_show_all_visits": "すべての訪問を表示",

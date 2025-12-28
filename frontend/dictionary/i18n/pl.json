@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "Hasło zostało pomyślnie zaktualizowane.",
   "dictionary.term.container.error.updating_term_failed": "Nie udało się zaktualizować hasła.",
-  "dictionary.term.container.backlinks": "Odnośniki zwrotne",
 
   "dictionary.term.container.visit_window.term_visit_history": "Historia odwiedzin hasła (ostatnie 100)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Pokaż wszystkie odwiedziny",

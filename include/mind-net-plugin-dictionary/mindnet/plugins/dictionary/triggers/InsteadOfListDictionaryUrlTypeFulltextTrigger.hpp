@@ -23,52 +23,21 @@
 
 #pragma once
 
-#include <string>
+#include "mindnet/api/Trigger.hpp"
 
-#include "mindnet/model/EnumDefinition.hpp"
-
-namespace mindnet::plugins::dictionary::enums
+namespace mindnet::plugins::dictionary::triggers
 {
-    enum class SourceType
+    class InsteadOfListDictionaryUrlTypeFulltextTrigger : public api::Trigger
     {
-        NotDefined = 0,
-        Book = 1,
-        Article = 2,
-        Paper = 3,
-        Website = 4,
-        Video = 5,
+    public:
+        InsteadOfListDictionaryUrlTypeFulltextTrigger();
+
+        ~InsteadOfListDictionaryUrlTypeFulltextTrigger() override = default;
+        std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            const orm::QueryParams& query_params) override;
     };
-
-    inline std::string source_type_to_string(const SourceType type)
-    {
-        switch (type)
-        {
-        case SourceType::NotDefined:
-            return "NotDefined";
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
-
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
-
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 6, 0, 1, 2, 3, 4, 5
-        };
-    }
 }

@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "Begriff wurde erfolgreich aktualisiert.",
   "dictionary.term.container.error.updating_term_failed": "Aktualisierung des Begriffs fehlgeschlagen.",
-  "dictionary.term.container.backlinks": "Rückverweise",
 
   "dictionary.term.container.visit_window.term_visit_history": "Besuchshistorie des Begriffs (letzte 100)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Alle Besuche anzeigen",

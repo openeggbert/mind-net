@@ -170,6 +170,14 @@ using member_type_t =
             auto& def = get_model_definition();
             return def.get_column_index(column_name);
         }
+
+        bool operator==(const BaseModel& other) const
+        {
+            return id == other.id
+                && created_at == other.created_at
+                && updated_at == other.updated_at;
+        }
+
     protected:
         template<typename T>
         entity_fields serialize_fields(const T& obj) const

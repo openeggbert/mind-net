@@ -1,4 +1,12 @@
-import {formatDateTime, get_element, showError, showInfo, showSuccess, showWarn} from "../../dom.js";
+import {
+    formatDateTime,
+    get_element, loadFromLocalStorage,
+    saveToLocalStorage,
+    showError,
+    showInfo,
+    showSuccess,
+    showWarn
+} from "../../dom.js";
 import {
     delete_entity,
     getTitleCache, list_all_entities,
@@ -15,6 +23,7 @@ import {Flags} from "./sections/Flags.js";
 import {Links} from "./sections/Links.js";
 import {Backlinks} from "./sections/Backlinks.js";
 import {Notes} from "./sections/Notes.js";
+import {Urls} from "./sections/Urls.js";
 import {Indexes} from "./sections/Indexes.js";
 import {Sources} from "./sections/Sources.js";
 import {Aliases} from "./sections/Aliases.js";
@@ -48,6 +57,7 @@ class TermContainer {
             new Links(get_selected_map_id_callback, render_term_id_callback),
             new Backlinks(get_selected_map_id_callback, render_term_id_callback),
             new Notes(get_selected_map_id_callback),
+            new Urls(get_selected_map_id_callback),
             new Indexes(get_selected_map_id_callback),
             new Sources(get_selected_map_id_callback),
             new Aliases(get_selected_map_id_callback)
@@ -101,12 +111,12 @@ class TermContainer {
 
             }
 
-            const array = ["flags", "backlinks", "indexes", "sources", "aliases"]
-            array.forEach(e => {
-                if (models === e) {
-                    label.click()
-                }
-            })
+            // const array = ["flags", "backlinks", "indexes", "sources", "aliases"]
+            // array.forEach(e => {
+            //     if (models === e) {
+            //         label.click()
+            //     }
+            // })
         }
 
         this.#sections.forEach(section => {
@@ -124,6 +134,13 @@ class TermContainer {
         this.#element.style.display = "none"
     }
 
+    async render_last_visited_term() {
+        let term_id = loadFromLocalStorage("last_visited_term_id")
+        if(!term_id) return
+
+        this.render(term_id)
+        this.show()
+    }
     async render(dictionary_term_id) {
         if (this.dictionary_term_id === dictionary_term_id) {
             showWarn(translate("dictionary.term.container.info.term_already_shown"))
@@ -392,148 +409,7 @@ class TermContainer {
                 showError(translate("dictionary.term.container.error.updating_term_failed"))
             }
         }
-        get_element("button_show_backlinks").onclick = () => {
-            let url = "index.html?entity=dictionary_link&action=list&to_dictionary_term_id=" + dictionary_term_id
-            showWindowFromUrl(translate("dictionary.term.container.backlinks"), url)
-        }
-        get_element("button_show_visited").onclick = async () => {
-            let win = new VirtualWindow({
-                title: translate("dictionary.term.container.visit_window.term_visit_history"),
-                width: 800,
-                height: 600,
-            })
 
-            win.show()
-            let content = new Div()
-
-            let button = document.createElement("button")
-            button.innerText = translate("dictionary.term.container.visit_window.button_show_all_visits")
-            button.dataset.i18n = "dictionary.term.container.visit_window.button_show_all_visits"
-            button.onclick = () => {
-                let url = "index.html?entity=dictionary_term_visit&action=list&user_id=" + USER_ID
-                showWindowFromUrl(translate("dictionary.term.container.visit_window.all_visits"), url)
-            }
-            button.style.margin = "20px;"
-            button.style.textAlign = "center"
-
-            content.appendChild(button)
-
-            let table = document.createElement("table");
-            content.appendChild(table);
-            win.set_content(content.element())
-
-            let visits_result = await list_entities(
-                Entities.dictionary_term_visit,
-                new QueryParams()
-                    .add("user_id", USER_ID)
-                    .sort("created_at", "desc")
-                    .build(),
-                1,
-                100
-            )
-            if (null_or_undefined(visits_result)) {
-                showError(translate("dictionary.term.container.visit_window.error.loading_visits_failed"))
-                return;
-            }
-            let visits = visits_result.items
-            const disambiguation_map = new Map()
-
-
-            table.style.borderCollapse = "collapse";
-            table.style.margin = "0 auto";
-            let tr_first = document.createElement("tr");
-            table.appendChild(tr_first);
-            let th_number = document.createElement("th");
-            th_number.innerText = "#"
-            let th_id = document.createElement("th");
-            th_id.innerText = translate("dictionary.common.term_id")
-            th_id.dataset.i18n = "dictionary.common.term_id"
-            let th_title = document.createElement("th");
-            th_title.innerText = translate("dictionary.common.title")
-            th_title.dataset.i18n = "dictionary.common.title"
-            let th_timestamp = document.createElement("th");
-            th_timestamp.innerText = translate("dictionary.common.timestamp")
-            th_timestamp.dataset.i18n = "dictionary.common.timestamp"
-            tr_first.appendChild(th_number)
-            tr_first.appendChild(th_id)
-            tr_first.appendChild(th_title)
-            tr_first.appendChild(th_timestamp)
-            for (const el of [th_number, th_id, th_title, th_timestamp]) {
-                el.style.minWidth = "20px"
-                el.style.padding = "10px";
-                el.style.border = "1px solid black";
-                el.style.background = "#ccc"
-            }
-            th_title.style.minWidth = "200px"
-
-            let history_entry_number = 0;
-            for (const entry of visits.slice()) {
-                history_entry_number++
-
-                let visited_term_id = entry.dictionary_term_id
-
-                if (!disambiguation_map.has(visited_term_id)) {
-                    let term = await read_entity(Entities.dictionary_term, visited_term_id)
-                    if (term === null || term === undefined) {
-                        disambiguation_map.set(visited_term_id, "")
-                        showWarn(translate("dictionary.term.container.error.reading_term_failed") + COLON_SPACE + visited_term_id);
-                    } else {
-                        disambiguation_map.set(visited_term_id, term.disambiguation)
-                    }
-                }
-
-                let tr = document.createElement("tr");
-                table.appendChild(tr)
-                let td_number = document.createElement("td");
-                let td_id = document.createElement("td");
-                let td_title = document.createElement("td");
-                let td_timestamp = document.createElement("td");
-                for (const el of [td_number, td_id, td_title, td_timestamp]) {
-                    el.style.padding = "10px";
-                    el.style.border = "1px solid black";
-                }
-
-                tr.appendChild(td_number)
-                tr.appendChild(td_id)
-                tr.appendChild(td_title)
-                tr.appendChild(td_timestamp)
-                td_number.innerText = history_entry_number;
-                td_id.innerText = visited_term_id;
-                let a = document.createElement("a");
-                a.href = "?";
-                {
-                    let title = getTitleCache(Entities.dictionary_term, visited_term_id)
-                    if (title === null || title === undefined) {
-                        let x = visited_term_id
-                        let term_ = await read_entity(Entities.dictionary_term, x)
-                        if (term_ === null) {
-                            showWarn(translate("dictionary.term.container.error.reading_term_failed") + x);
-                            title = "??? (# " + x + ")"
-                        } else {
-                            title = term_.title
-                            setTitleCache(Entities.dictionary_term, x, title);
-                        }
-                    }
-                    let finalTitle = title
-                    if (disambiguation_map.has(visited_term_id)) {
-                        let value = disambiguation_map.get(visited_term_id)
-                        if (value !== "") finalTitle = title + " (" + disambiguation_map.get(visited_term_id) + ")"
-                    }
-                    a.title = finalTitle
-
-                    a.innerText = finalTitle;
-                }
-
-                let callback = this.render_term_id_callback
-                a.onclick = async function () {
-                    event.preventDefault();
-                    await callback(visited_term_id)
-                }
-                td_title.appendChild(a)
-                td_timestamp.innerText = formatDateTime(entry.created_at, true, true, true)
-            }
-
-        }
         let new_visit = {
             dictionary_term_id: dictionary_term_id,
             user_id: USER_ID,
@@ -543,6 +419,8 @@ class TermContainer {
         if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
             showError(translate("dictionary.term.container.error.creating_term_visit_failed"))
         }
+        const MILLISECONDS_PER_365_DAYS = 1000 * 3600 * 24 * 365;
+        saveToLocalStorage("last_visited_term_id",dictionary_term_id, MILLISECONDS_PER_365_DAYS)
     }
 }
 

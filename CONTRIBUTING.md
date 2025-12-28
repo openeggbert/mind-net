@@ -45,8 +45,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] &map_id={}&term_id={}
 - [ ] dictionary_term - new column repetition bool default 1
 - [ ] Search Term - should also use the table dictionary_term_alias
-- [ ] Button Backlinks - remove
-- [ ] Button Visited - move to the top of the page
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

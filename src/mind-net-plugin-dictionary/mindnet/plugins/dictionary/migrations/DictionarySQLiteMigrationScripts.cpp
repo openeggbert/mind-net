@@ -469,5 +469,62 @@ CREATE INDEX idx_dictionary_search_map
 CREATE UNIQUE INDEX idx_dictionary_search_user_map_name
     ON dictionary_search(user_id, dictionary_map_id, name);
 )");
+
+        add_migration("V18__create_dictionary_url_type.sql", R"(
+CREATE TABLE dictionary_url_type (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_map_id   INTEGER NOT NULL,
+    url                 TEXT    NOT NULL,
+    title               TEXT    NOT NULL DEFAULT '',
+    type                INTEGER    NOT NULL DEFAULT 0,
+
+    FOREIGN KEY (dictionary_map_id) REFERENCES dictionary_map(id)
+);
+
+CREATE UNIQUE INDEX idx_dictionary_url_type_map_url
+    ON dictionary_url_type(dictionary_map_id, url);
+
+CREATE INDEX idx_dictionary_url_type_map
+    ON dictionary_url_type(dictionary_map_id);
+)");
+
+        add_migration("V19__create_dictionary_url.sql", R"(
+CREATE TABLE dictionary_url (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_map_id        INTEGER NOT NULL,
+    dictionary_term_id       INTEGER NOT NULL,
+    dictionary_url_type_id   INTEGER NOT NULL,
+    position                INTEGER NOT NULL DEFAULT 0,
+    note                    TEXT,
+
+    FOREIGN KEY (dictionary_map_id)
+        REFERENCES dictionary_map(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (dictionary_term_id)
+        REFERENCES dictionary_term(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (dictionary_url_type_id)
+        REFERENCES dictionary_url_type(id)
+        ON DELETE CASCADE
+);
+
+CREATE UNIQUE INDEX idx_dictionary_url_unique
+    ON dictionary_url(dictionary_map_id, dictionary_term_id, dictionary_url_type_id);
+
+CREATE INDEX idx_dictionary_url_term
+    ON dictionary_url(dictionary_term_id);
+
+CREATE INDEX idx_dictionary_url_type
+    ON dictionary_url(dictionary_url_type_id);
+)");
+
     }
 }

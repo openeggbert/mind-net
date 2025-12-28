@@ -42,6 +42,8 @@
 #include "mindnet/plugins/dictionary/models/DictionaryState18.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTag.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTagType.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryUrl.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryUrlType.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermAlias.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermVisit.hpp"
@@ -73,6 +75,8 @@ namespace mindnet::plugins::dictionary
     gen_find_h(dictionary, DictionaryState18, dictionary_state18)
     gen_find_h(dictionary, DictionaryTag, dictionary_tag)
     gen_find_h(dictionary, DictionaryTagType, dictionary_tag_type)
+    gen_find_h(dictionary, DictionaryUrl, dictionary_url)
+    gen_find_h(dictionary, DictionaryUrlType, dictionary_url_type)
     gen_find_h(dictionary, DictionaryTerm, dictionary_term)
     gen_find_h(dictionary, DictionaryTermAlias, dictionary_term_alias)
     gen_find_h(dictionary, DictionaryTermVisit, dictionary_term_visit)

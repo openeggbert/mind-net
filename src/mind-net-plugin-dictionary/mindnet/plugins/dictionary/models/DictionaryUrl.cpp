@@ -21,54 +21,21 @@
  * THE SOFTWARE.
  */
 
-#pragma once
+#include "mindnet/plugins/dictionary/models/DictionaryUrl.hpp"
 
-#include <string>
-
-#include "mindnet/model/EnumDefinition.hpp"
-
-namespace mindnet::plugins::dictionary::enums
+namespace mindnet::plugins::dictionary::models
 {
-    enum class SourceType
-    {
-        NotDefined = 0,
-        Book = 1,
-        Article = 2,
-        Paper = 3,
-        Website = 4,
-        Video = 5,
-    };
+    create_model_cpp_methods(DictionaryUrl)
 
-    inline std::string source_type_to_string(const SourceType type)
+    string DictionaryUrl::validate()
     {
-        switch (type)
-        {
-        case SourceType::NotDefined:
-            return "NotDefined";
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
-            return "Website";
-        case SourceType::Video:
-            return "Video";
-        default:
-            return "Unknown";
-        }
-    }
+        using columns::DictionaryUrlColumns;
 
-    inline std::string source_type_to_string(int type)
-    {
-        return source_type_to_string(static_cast<SourceType>(type));
-    }
-
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
-    {
-        return mindnet::model::EnumDefinition{
-            source_type_to_string, 6, 0, 1, 2, 3, 4, 5
+        validator_chain_vector list{
+            [this] { return test_ne(dictionary_term_id, 0, DictionaryUrlColumns::DICTIONARY_TERM_ID); },
+            [this] { return test_ne(dictionary_url_type_id, 0, DictionaryUrlColumns::DICTIONARY_URL_TYPE_ID); },
+            [this] { return testt_at_most(note, 256, DictionaryUrlColumns::NOTE); },
         };
+        return util::ValidatorChain::run(list);
     }
 }

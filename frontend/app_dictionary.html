@@ -55,6 +55,7 @@
     <button id="button_add_term">➕ <span data-i18n="dictionary.term.button.add_term">Add Term</span></button>
     <button id="button_find_random_term" style="margin-left: 5px;">🎲  <span data-i18n="dictionary.term.button.find_random">Find Random</span></button>
     <button id="button_new_repetition" style="margin-left: 5px;">🔁 <span data-i18n="dictionary.term.button.new_repetition">New Repetition</span></button>
+    <button id="button_show_visited">👣 <span data-i18n="dictionary.term.labels.visited">Visited</span></button>
     <button id="button_new_session" style="margin-left: 5px;">🪟 <span data-i18n="dictionary.term.button.new_session">New Session</span></button>
 
     <input type="text" id="input_search_term" style="margin-top: 5px;"/>
@@ -149,8 +150,7 @@
                 <input id="input_difficulty_hard" type="radio" name="difficulty" value="3"><label
                     for="input_difficulty_hard" data-i18n="dictionary.enums.difficulty.hard">Hard</label>
             </fieldset>
-            <button id="button_show_backlinks" style="margin-top:10px">🔁 <span data-i18n="dictionary.term.labels.backlinks">Backlinks</span></button>
-            <button id="button_show_visited">👣 <span data-i18n="dictionary.term.labels.visited">Visited</span></button>
+
         </fieldset>
 
         <button id="button_delete_term" class="delete-btn"><span data-i18n="dictionary.common.delete">Delete</span></button>
@@ -200,6 +200,57 @@
                 <input id="input_checkbox_public_flag" type="checkbox"
                        style="transform: scale(2);margin-left:10px; margin-right:10px;">
                 <label for="input_checkbox_public_flag" style="display:inline;"> <span data-i18n="dictionary.sections.flags.label.public">Public</span></label>
+            </div>
+        </div>
+
+        <!-- Aliases -->
+        <div class="container_box">
+            <label id="label_aliases">➡️ <span data-i18n="dictionary.sections.aliases.label.aliases">Aliases</span>:</label>
+            <div id="container_aliases">
+                <div id="aliases" class="tags">
+                    <div class="tag">
+                        A
+                        <button>&times;</button>
+                    </div>
+                    <div class="tag">
+                        Aa
+                        <button>&times;</button>
+                    </div>
+                    <div class="tag">
+                        Ab
+                        <button>&times;</button>
+                    </div>
+                </div>
+                <button id="button_add_alias">
+                    ➕ <span data-i18n="dictionary.sections.aliases.button.add_alias">Add Alias</span>
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- Notes -->
+        <div class="container_box">
+            <label id="label_notes">📑 <span data-i18n="dictionary.sections.notes.label.notes">Notes</span>:</label>
+            <div id="container_notes">
+                <div id="notes">
+                    <div class="item">
+                        <span>Advantages</span>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
+                    </div>
+                    <div class="item">
+                        <span>Disadvantages</span>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
+                    </div>
+                    <div class="item">
+                        <span>Best Practices</span>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
+                    </div>
+                </div>
+                <button id="button_add_note">
+                    ➕ <span data-i18n="dictionary.sections.notes.button.add_note">Add Note</span>
+                </button>
+
             </div>
         </div>
 
@@ -270,65 +321,40 @@
 
             </div>
         </div>
-
-        <!-- Notes -->
+        
+        <!-- Urls -->
         <div class="container_box">
-            <label id="label_notes">📑 <span data-i18n="dictionary.sections.notes.label.notes">Notes</span>:</label>
-            <div id="container_notes">
-                <div id="notes">
+            <label id="label_urls">🌐 <span data-i18n="dictionary.sections.urls.label.urls">Urls</span>:</label>
+            <div id="container_urls">
+                <div id="urls">
                     <div class="item">
-                        <span>Advantages</span>
+                        <span>https://google.com</span>
                         <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
-                        <span>Disadvantages</span>
+                        <span>https://yahoo.com</span>
                         <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                     <div class="item">
-                        <span>Best Practices</span>
+                        <span>https://example.com</span>
                         <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                 </div>
-                <button id="button_add_note">
-                    ➕ <span data-i18n="dictionary.sections.notes.button.add_note">Add Note</span>
+                <button id="button_add_url">
+                    ➕ <span data-i18n="dictionary.sections.urls.button.add_url">Add Url</span>
                 </button>
 
-            </div>
-        </div>
-
-        <!-- Indexes -->
-        <div class="container_box">
-            <label id="label_indexes">🗂️ <span data-i18n="dictionary.sections.indexes.label.indexes">Indexes</span>:</label>
-            <div id="container_indexes">
-                <div id="indexes">
-                    <div class="item">
-                        <span>Primer</span>
-                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
-                    </div>
-                    <div class="item">
-                        <span>Effective STL </span>
-                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
-                    </div>
-                    <div class="item">
-                        <span>Inside the C++ Object Model</span>
-                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
-                    </div>
-                </div>
-                <button id="button_add_index">
-                    ➕ <span data-i18n="dictionary.sections.indexes.button.add_index">Add Index</span>
+                <button id="button_show_urls">
+                    📖 <span data-i18n="dictionary.sections.urls.button.show_urls">Show urls</span>
                 </button>
 
-                <button id="button_show_indexes">
-                    📖 <span data-i18n="dictionary.sections.indexes.button.show_indexes">Show indexes</span>
-                </button>
-
-                <div id="div_search_index" style="display:none">
-                    <label for="input_search_index">
-                        🔍 <span data-i18n="dictionary.sections.indexes.label.search_index">Search index</span>:
+                <div id="div_search_url" style="display:none">
+                    <label for="input_search_url">
+                        🔍 <span data-i18n="dictionary.sections.urls.label.search_url">Search url</span>:
                     </label>
 
-                    <input type="text" id="input_search_index" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing" />
-                    <div id="div_search_index_end"></div>
+                    <input type="text" id="input_search_url" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing" />
+                    <div id="div_search_url_end"></div>
                 </div>
             </div>
         </div>
@@ -370,31 +396,43 @@
             </div>
         </div>
 
-        <!-- Aliases -->
+        <!-- Indexes -->
         <div class="container_box">
-            <label id="label_aliases">➡️ <span data-i18n="dictionary.sections.aliases.label.aliases">Aliases</span>:</label>
-            <div id="container_aliases">
-                <div id="aliases" class="tags">
-                    <div class="tag">
-                        A
-                        <button>&times;</button>
+            <label id="label_indexes">🗂️ <span data-i18n="dictionary.sections.indexes.label.indexes">Indexes</span>:</label>
+            <div id="container_indexes">
+                <div id="indexes">
+                    <div class="item">
+                        <span>Primer</span>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
-                    <div class="tag">
-                        Aa
-                        <button>&times;</button>
+                    <div class="item">
+                        <span>Effective STL </span>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
-                    <div class="tag">
-                        Ab
-                        <button>&times;</button>
+                    <div class="item">
+                        <span>Inside the C++ Object Model</span>
+                        <button>🗑️ <span data-i18n="dictionary.common.delete">Delete</span></button>
                     </div>
                 </div>
-                <button id="button_add_alias">
-                    ➕ <span data-i18n="dictionary.sections.aliases.button.add_alias">Add Alias</span>
+                <button id="button_add_index">
+                    ➕ <span data-i18n="dictionary.sections.indexes.button.add_index">Add Index</span>
                 </button>
 
-            </div>
+                <button id="button_show_indexes">
+                    📖 <span data-i18n="dictionary.sections.indexes.button.show_indexes">Show indexes</span>
+                </button>
 
+                <div id="div_search_index" style="display:none">
+                    <label for="input_search_index">
+                        🔍 <span data-i18n="dictionary.sections.indexes.label.search_index">Search index</span>:
+                    </label>
+
+                    <input type="text" id="input_search_index" placeholder="Start writing..." data-i18n-placeholder="dictionary.common.placeholder.start_writing" />
+                    <div id="div_search_index_end"></div>
+                </div>
+            </div>
         </div>
+
 
     </div>
 

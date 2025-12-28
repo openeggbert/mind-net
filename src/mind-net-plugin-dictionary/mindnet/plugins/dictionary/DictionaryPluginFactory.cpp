@@ -25,6 +25,7 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindNextDictionaryNotePositionSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTagTypesSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryUrlTypesSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryIndexTypesSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionarySourceTypesSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermMetricsSQLiteQuery.hpp"
@@ -46,6 +47,9 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryTagValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagTypeValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTagTypeFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryUrlValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryUrlTypeValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryUrlTypeFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionarySourceTypeFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermAliasValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermValidator.hpp"
@@ -67,6 +71,7 @@
 #include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTagTypeFulltextTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryUrlTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryIndexTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySourceTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermMetricsTrigger.hpp"
@@ -97,6 +102,7 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_link, DictionaryLink, DICTIONARY_LINK)
         REGISTER_MODEL(dictionary_flag, DictionaryFlag, DICTIONARY_FLAG)
         REGISTER_MODEL(dictionary_tag, DictionaryTag, DICTIONARY_TAG)
+        REGISTER_MODEL(dictionary_url, DictionaryUrl, DICTIONARY_URL)
         REGISTER_MODEL(dictionary_note, DictionaryNote, DICTIONARY_NOTE)
         REGISTER_MODEL(dictionary_index, DictionaryIndex, DICTIONARY_INDEX)
         REGISTER_MODEL(dictionary_source, DictionarySource, DICTIONARY_SOURCE)
@@ -105,6 +111,7 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_term_alias, DictionaryTermAlias, DICTIONARY_TERM_ALIAS)
 
         REGISTER_MODEL(dictionary_tag_type, DictionaryTagType, DICTIONARY_TAG_TYPE)
+        REGISTER_MODEL(dictionary_url_type, DictionaryUrlType, DICTIONARY_URL_TYPE)
         REGISTER_MODEL(dictionary_index_type, DictionaryIndexType, DICTIONARY_INDEX_TYPE)
         REGISTER_MODEL(dictionary_source_type, DictionarySourceType, DICTIONARY_SOURCE_TYPE)
         REGISTER_MODEL(dictionary_search, DictionarySearch, DICTIONARY_SEARCH)
@@ -118,6 +125,7 @@ namespace mindnet::plugins::dictionary
         REGISTER_MODEL(dictionary_term_for_review, DictionaryTermForReview, DICTIONARY_TERM_FOR_REVIEW)
         REGISTER_MODEL(dictionary_term_search, DictionaryTermSearch, DICTIONARY_TERM_SEARCH)
         REGISTER_MODEL(dictionary_tag_type_fulltext, DictionaryTagTypeFulltext, DICTIONARY_TAG_TYPE_FULLTEXT)
+        REGISTER_MODEL(dictionary_url_type_fulltext, DictionaryUrlTypeFulltext, DICTIONARY_URL_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_index_type_fulltext, DictionaryIndexTypeFulltext, DICTIONARY_INDEX_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_source_type_fulltext, DictionarySourceTypeFulltext, DICTIONARY_SOURCE_TYPE_FULLTEXT)
         REGISTER_MODEL(dictionary_flag_fulltext, DictionaryFlagFulltext, DICTIONARY_FLAG_FULLTEXT)
@@ -127,6 +135,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::BeforeCreateDictionaryNoteTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTagTypeFulltextTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryUrlTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySourceTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryIndexTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermMetricsTrigger>());
@@ -141,6 +150,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsViaAdvancedSearchSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTagTypesSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryUrlTypesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionarySourceTypesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryIndexTypesSQLiteQuery>());;
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermMetricsSQLiteQuery>());

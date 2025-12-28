@@ -29,46 +29,43 @@
 
 namespace mindnet::plugins::dictionary::enums
 {
-    enum class SourceType
+    enum class UrlType
     {
         NotDefined = 0,
-        Book = 1,
+        Website = 1,
         Article = 2,
-        Paper = 3,
-        Website = 4,
-        Video = 5,
+        Video = 3,
+        Repository = 4,
     };
 
-    inline std::string source_type_to_string(const SourceType type)
+    inline std::string url_type_to_string(const UrlType type)
     {
         switch (type)
         {
-        case SourceType::NotDefined:
+        case UrlType::NotDefined:
             return "NotDefined";
-        case SourceType::Book:
-            return "Book";
-        case SourceType::Article:
-            return "Article";
-        case SourceType::Paper:
-            return "Paper";
-        case SourceType::Website:
+        case UrlType::Website:
             return "Website";
-        case SourceType::Video:
+        case UrlType::Article:
+            return "Article";
+        case UrlType::Video:
             return "Video";
+        case UrlType::Repository:
+            return "Repository";
         default:
             return "Unknown";
         }
     }
 
-    inline std::string source_type_to_string(int type)
+    inline std::string url_type_to_string(int type)
     {
-        return source_type_to_string(static_cast<SourceType>(type));
+        return url_type_to_string(static_cast<UrlType>(type));
     }
 
-    inline mindnet::model::EnumDefinition source_type_to_enum_definition()
+    inline mindnet::model::EnumDefinition url_type_to_enum_definition()
     {
         return mindnet::model::EnumDefinition{
-            source_type_to_string, 6, 0, 1, 2, 3, 4, 5
+            url_type_to_string, 5, 0, 1, 2, 3, 4
         };
     }
 }

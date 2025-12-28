@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "Термин был успешно обновлён.",
   "dictionary.term.container.error.updating_term_failed": "Не удалось обновить термин.",
-  "dictionary.term.container.backlinks": "Обратные ссылки",
 
   "dictionary.term.container.visit_window.term_visit_history": "История посещений термина (последние 100)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Показать все посещения",

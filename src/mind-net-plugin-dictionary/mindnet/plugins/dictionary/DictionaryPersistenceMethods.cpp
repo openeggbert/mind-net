@@ -27,8 +27,6 @@
 #include "mindnet/plugins/core/enums/SingleRight.hpp"
 #include "mindnet/orm/QueryParams.hpp"
 #include "mindnet/api/ValidatorBase.hpp"
-#include "mindnet/plugins/core/models/Team.hpp"
-#include "mindnet/plugins/core/models/User.hpp"
 
 namespace mindnet::plugins::dictionary
 {
@@ -91,6 +89,8 @@ namespace mindnet::plugins::dictionary
     gen_find_cpp(dictionary, DictionaryState18, dictionary_state_18, DICTIONARY_STATE_18)
     gen_find_cpp(dictionary, DictionaryTagType, dictionary_tag_type, DICTIONARY_TAG_TYPE)
     gen_find_cpp(dictionary, DictionaryTag, dictionary_tag, DICTIONARY_TAG)
+    gen_find_cpp(dictionary, DictionaryUrlType, dictionary_url_type, DICTIONARY_URL_TYPE)
+    gen_find_cpp(dictionary, DictionaryUrl, dictionary_url, DICTIONARY_URL)
     gen_find_cpp(dictionary, DictionaryLink, dictionary_link, DICTIONARY_LINK)
     gen_find_cpp(dictionary, DictionaryTerm, dictionary_term, DICTIONARY_TERM)
     gen_find_cpp(dictionary, DictionaryTermAlias, dictionary_term_alias, DICTIONARY_TERM_ALIAS)

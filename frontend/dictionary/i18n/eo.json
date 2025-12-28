@@ -109,7 +109,6 @@
 
   "dictionary.term.container.info.updating_term_successful": "La termino estis sukcese ĝisdatigita.",
   "dictionary.term.container.error.updating_term_failed": "Ĝisdatigo de la termino malsukcesis.",
-  "dictionary.term.container.backlinks": "Retroligoj",
 
   "dictionary.term.container.visit_window.term_visit_history": "Vizithistorio de termino (lastaj 100)",
   "dictionary.term.container.visit_window.button_show_all_visits": "Montri ĉiujn vizitojn",

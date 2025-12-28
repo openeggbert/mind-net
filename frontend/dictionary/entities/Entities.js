@@ -164,6 +164,35 @@ export const Entities = Object.freeze({
         note: "note"
     }),
 
+    dictionary_url_type: Object.freeze({
+        table_name: "dictionary_url_type",
+
+        id: "id",
+        created_at: "created_at",
+        updated_at: "updated_at",
+
+        dictionary_map_id: "dictionary_map_id",
+
+        url: "url",
+        title: "title",
+        type: "type"
+    }),
+
+    dictionary_url: Object.freeze({
+        table_name: "dictionary_url",
+
+        id: "id",
+        created_at: "created_at",
+        updated_at: "updated_at",
+
+        dictionary_map_id: "dictionary_map_id",
+        dictionary_term_id: "dictionary_term_id",
+        dictionary_url_type_id: "dictionary_url_type_id",
+
+        position: "position",
+        note: "note"
+    }),
+
     dictionary_state_18: Object.freeze({
         table_name: "dictionary_state_18",
 
