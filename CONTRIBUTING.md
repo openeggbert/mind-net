@@ -36,7 +36,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 ### Plugin Dictionary
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Multi-language - translate English text, which is not yet translated
-- [ ] New table dictionary_url
+- [ ] New tables: dictionary_url_type a dictionary_url
 - [ ] Notes: New buttons: Expand, Collapse
 - [ ] If map is changed, clear Search term input
 - [ ] dictionary_map - new column emoji
@@ -44,6 +44,9 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] PreviousTerm, NextTerm
 - [ ] &map_id={}&term_id={}
 - [ ] dictionary_term - new column repetition bool default 1
+- [ ] Search Term - should also use the table dictionary_term_alias
+- [ ] Button Backlinks - remove
+- [ ] Button Visited - move to the top of the page
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
