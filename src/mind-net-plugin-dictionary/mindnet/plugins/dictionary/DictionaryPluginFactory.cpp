@@ -30,6 +30,7 @@
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionarySourceTypesSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermMetricsSQLiteQuery.hpp"
 #include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryFlagsSQLiteQuery.hpp"
+#include "../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryOlderNewerTermsSQLiteQuery.hpp"
 #include "mindnet/api/Plugin.hpp"
 #include "mindnet/api/PluginFactory.hpp"
 #include "mindnet/db/sqlite/queries/dictionary/FindDictionarySearchesSQLiteQuery.hpp"
@@ -66,6 +67,8 @@
 #include "mindnet/plugins/dictionary/validators/DictionaryFlagFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionaryTermAliasFulltextValidator.hpp"
 #include "mindnet/plugins/dictionary/validators/DictionarySearchFulltextValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryOlderTermValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryNewerTermValidator.hpp"
 
 #include "mindnet/plugins/dictionary/migrations/DictionarySQLiteMigrationScripts.hpp"
 #include "mindnet/plugins/dictionary/triggers/BeforeCreateDictionaryNoteTrigger.hpp"
@@ -75,6 +78,8 @@
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryIndexTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySourceTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermMetricsTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfReadDictionaryOlderTermTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfReadDictionaryNewerTermTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryFlagsFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/jobs/DictionaryHtmlExportJob.hpp"
 #include "mindnet/plugins/dictionary/triggers/DictionaryReviewAfterCreateTrigger.hpp"
@@ -118,6 +123,8 @@ namespace mindnet::plugins::dictionary
 
         REGISTER_MODEL(dictionary_term_visit, DictionaryTermVisit, DICTIONARY_TERM_VISIT)
         REGISTER_MODEL(dictionary_term_metric, DictionaryTermMetric, DICTIONARY_TERM_METRIC)
+        REGISTER_MODEL(dictionary_older_term, DictionaryOlderTerm, DICTIONARY_OLDER_TERM)
+        REGISTER_MODEL(dictionary_newer_term, DictionaryNewerTerm, DICTIONARY_NEWER_TERM)
         REGISTER_MODEL(dictionary_review, DictionaryReview, DICTIONARY_REVIEW)
         REGISTER_MODEL(dictionary_state_18, DictionaryState18, DICTIONARY_STATE_18)
 
@@ -145,6 +152,8 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermSearchTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermsForReviewTrigger>());
         plugin->register_trigger(std::make_shared<triggers::DictionaryReviewAfterCreateTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfReadDictionaryOlderTermTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfReadDictionaryNewerTermTrigger>());
 
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindNextDictionaryNotePositionSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsSQLiteQuery>());
@@ -158,6 +167,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermAliasesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionarySearchesSQLiteQuery>());
         plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryTermsForReviewSQLiteQuery>());
+        plugin->register_query(std::make_shared<mindnet::db::sqlite::queries::dictionary::FindDictionaryOlderNewerTermsSQLiteQuery>());
 
         plugin->register_job(std::make_shared<mindnet::plugins::dictionary::jobs::DictionaryHtmlExportJob>());
 

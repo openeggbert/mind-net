@@ -70,6 +70,8 @@ namespace mindnet::plugins::dictionary::models
         .add_custom_create_action("dictionary_tag", "Add tag", {"dictionary_term_id", "{id}"})
         .add_custom_list_action("dictionary_note", "List notes", {"dictionary_term_id", "{id}"})
         .add_custom_create_action("dictionary_note", "Add note", {"dictionary_term_id", "{id}"})
+        .add_custom_read_action("dictionary_older_term", "Read older term", {"id", "{id}"})
+        .add_custom_read_action("dictionary_newer_term", "Read newer term", {"id", "{id}"})
     ;
 
     struct DictionaryTerm : mindnet::model::BaseModel

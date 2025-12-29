@@ -201,6 +201,34 @@ class TermContainer {
         }
         document.title = translate("dictionary.title.dictionary_app") + " - " + dictionary_term.title
         this.#dictionary_term_json = dictionary_term
+        get_element("button_older").onclick = async () => {
+            let older = await read_entity("dictionary_older_term", dictionary_term.id)
+            if(!older) {
+                showError("Reading older term failed.")
+                return
+            }
+            let older_term_id = older.older_term_id
+            if(older_term_id === 0) {
+                showWarn("This map has no older term.")
+                return
+            }
+            showInfo(translate("dictionary.term.info.found_term") + ": " + older_term_id)
+            this.render_term_id_callback(older_term_id, true)
+        }
+        get_element("button_newer").onclick = async ()=> {
+            let newer = await read_entity("dictionary_newer_term", dictionary_term.id)
+            if(!newer) {
+                showError("Reading newer term failed.")
+                return
+            }
+            let newer_term_id = newer.newer_term_id
+            if(newer_term_id === 0)
+            {
+                showWarn("This map has no newer term.")
+                return;
+            }
+            showInfo(translate("dictionary.term.info.found_term") + ": " + newer_term_id)
+            this.render_term_id_callback(newer_term_id, true)        }
         get_element("h2_term_id").innerText = dictionary_term.id
         get_element("input_title").value = dictionary_term.title
         get_element("input_disambiguation").value = dictionary_term.disambiguation

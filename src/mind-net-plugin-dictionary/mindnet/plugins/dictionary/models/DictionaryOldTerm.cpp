@@ -21,46 +21,19 @@
  * THE SOFTWARE.
  */
 
-#pragma once
+#include "mindnet/plugins/dictionary/models/DictionaryOlderTerm.hpp"
 
-#define ok_result {}
-#define status_405_unsupported_operation {405, "Unsupported operation."}
-#define status_403_forbidden {403, "You are not authorized to access this resource."}
-
-#include <utility>
-#include <string>
-
-namespace mindnet::api
+namespace mindnet::plugins::dictionary::models
 {
-    struct OperationResult
+    create_model_cpp_methods(DictionaryOlderTerm)
+
+    string DictionaryOlderTerm::validate()
     {
-        int status; // 0 = OK, other number = error
-        std::string error; // error description, empty if OK
+        using columns::DictionaryOlderTermColumns;
 
-        OperationResult(int status_, std::string error_)
-            : status(status_),
-              error(std::move(error_))
-        {
-        }
+        validator_chain_vector list{
 
-        OperationResult() : status(0)
-        {
-        }
-
-        [[nodiscard]] bool ok() const
-        {
-            return status == 0;
-        }
-
-        [[nodiscard]] bool ko() const
-        {
-            return !ok();
-        }
-        explicit operator bool() const noexcept {
-            return ok();
-        }
-
-    };
-
-    inline OperationResult empty_result;
+        };
+        return util::ValidatorChain::run(list);
+    }
 }

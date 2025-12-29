@@ -21,92 +21,80 @@
  * THE SOFTWARE.
  */
 
-#include "mindnet/plugins/dictionary/validators/DictionaryTermMetricValidator.hpp"
+#include "mindnet/plugins/dictionary/validators/DictionaryNewerTermValidator.hpp"
 
 #include "mindnet/essential/Global.hpp"
 #include "mindnet/plugins/dictionary/models/DictionaryTermMetric.hpp"
 #include "mindnet/api/Persistence.hpp"
 #include "mindnet/plugins/dictionary/DictionaryPersistenceMethods.hpp"
 
-#define Model DictionaryTermMetric
-#define MODEL DICTIONARY_TERM_METRIC
-#define model dictionary_term_metric
+#define Model DictionaryNewerTerm
+#define MODEL DICTIONARY_NEWER_TERM
+#define model dictionary_newer_term
 
 namespace mindnet::plugins::dictionary::validators
 {
-    using validators::DictionaryTermMetricValidator;
+    using validators::DictionaryNewerTermValidator;
     using mindnet::api::OperationResult;
     using mindnet::essential::g_configuration;
 
-    OperationResult DictionaryTermMetricValidator::validate_create_authorization(
+    OperationResult DictionaryNewerTermValidator::validate_create_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_read_authorization(
+    OperationResult DictionaryNewerTermValidator::validate_read_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        return ok_result;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_update_authorization(
+    OperationResult DictionaryNewerTermValidator::validate_update_authorization(
         const RequestContext& ctx, const Model& old_entity,
         const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_delete_authorization(
+    OperationResult DictionaryNewerTermValidator::validate_delete_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_list_authorization(const RequestContext& ctx,
+    OperationResult DictionaryNewerTermValidator::validate_list_authorization(const RequestContext& ctx,
         const string_map& filter) const
     {
-        mandatory_filter(dictionary_map_id)
+        return status_405_unsupported_operation;
+    }
 
-        auto dictionary_map_id = std::stoll(filter.at("dictionary_map_id"));
+    OperationResult DictionaryNewerTermValidator::validate_create_integrity(const RequestContext& ctx,
+        const Model& entity) const
+    {
+        return status_405_unsupported_operation;
+    }
 
-        if (!dictionary::has_right_for_map(ctx, dictionary_map_id, plugins::core::enums::SingleRight::Read))
-            return {
-                403,
-                std::string(
-                    "You do not have permission to list dictionary metrics for map with ID " + std::to_string(
-                        dictionary_map_id)
-                    + ".")
-            };
+    OperationResult DictionaryNewerTermValidator::validate_read_integrity(const RequestContext& ctx,
+        const Model& entity) const
+    {
         return ok_result;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_create_integrity(const RequestContext& ctx,
-        const Model& entity) const
-    {
-        return status_405_unsupported_operation;
-    }
-
-    OperationResult DictionaryTermMetricValidator::validate_read_integrity(const RequestContext& ctx,
-        const Model& entity) const
-    {
-        return status_405_unsupported_operation;
-    }
-
-    OperationResult DictionaryTermMetricValidator::validate_update_integrity(const RequestContext& ctx,
+    OperationResult DictionaryNewerTermValidator::validate_update_integrity(const RequestContext& ctx,
         const Model& old_entity,
         const Model& new_entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_delete_integrity(const RequestContext& ctx,
+    OperationResult DictionaryNewerTermValidator::validate_delete_integrity(const RequestContext& ctx,
         const Model& entity) const
     {
         return status_405_unsupported_operation;
     }
 
-    OperationResult DictionaryTermMetricValidator::validate_list_integrity(const RequestContext& ctx,
+    OperationResult DictionaryNewerTermValidator::validate_list_integrity(const RequestContext& ctx,
         const string_map& filter) const
     {
         mandatory_filter(dictionary_map_id)
@@ -114,7 +102,7 @@ namespace mindnet::plugins::dictionary::validators
         return ok_result;
     }
 
-    string DictionaryTermMetricValidator::get_model_name() const
+    string DictionaryNewerTermValidator::get_model_name() const
     {
         return STRINGIFY(model);
     }

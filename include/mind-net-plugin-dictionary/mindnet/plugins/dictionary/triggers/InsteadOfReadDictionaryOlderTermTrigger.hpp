@@ -23,44 +23,21 @@
 
 #pragma once
 
-#define ok_result {}
-#define status_405_unsupported_operation {405, "Unsupported operation."}
-#define status_403_forbidden {403, "You are not authorized to access this resource."}
+#include "mindnet/api/Trigger.hpp"
 
-#include <utility>
-#include <string>
-
-namespace mindnet::api
+namespace mindnet::plugins::dictionary::triggers
 {
-    struct OperationResult
+    class InsteadOfReadDictionaryOlderTermTrigger : public api::Trigger
     {
-        int status; // 0 = OK, other number = error
-        std::string error; // error description, empty if OK
+    public:
+        InsteadOfReadDictionaryOlderTermTrigger();
 
-        OperationResult(int status_, std::string error_)
-            : status(status_),
-              error(std::move(error_))
-        {
-        }
-
-        OperationResult() : status(0)
-        {
-        }
-
-        [[nodiscard]] bool ok() const
-        {
-            return status == 0;
-        }
-
-        [[nodiscard]] bool ko() const
-        {
-            return !ok();
-        }
-        explicit operator bool() const noexcept {
-            return ok();
-        }
-
+        ~InsteadOfReadDictionaryOlderTermTrigger() override = default;
+        std::optional<std::pair<entity_fields, api::OperationResult>> run_instead_of_read(
+            int stack_depth,
+            api::OperationResult& validation_result,
+            const model::ModelDefinition& def,
+            identification user_id,
+            identification id) override;
     };
-
-    inline OperationResult empty_result;
 }

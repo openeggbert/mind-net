@@ -23,44 +23,24 @@
 
 #pragma once
 
-#define ok_result {}
-#define status_405_unsupported_operation {405, "Unsupported operation."}
-#define status_403_forbidden {403, "You are not authorized to access this resource."}
+#include <memory>
 
-#include <utility>
-#include <string>
+#include "mindnet/essential/DatabaseType.hpp"
+#include "mindnet/api/ValidatorBase.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryOlderTerm.hpp"
 
-namespace mindnet::api
+namespace mindnet::plugins::dictionary::validators
 {
-    struct OperationResult
+    using api::RequestContext;
+    using mindnet::plugins::dictionary::models::DictionaryOlderTerm;
+
+    class DictionaryOlderTermValidator : public api::ValidatorBase<DictionaryOlderTermValidator, DictionaryOlderTerm>
     {
-        int status; // 0 = OK, other number = error
-        std::string error; // error description, empty if OK
+    public:
+        DictionaryOlderTermValidator() = default;
+        ~DictionaryOlderTermValidator() = default; // explicitly make it destructible
+        using Model = DictionaryOlderTerm;
 
-        OperationResult(int status_, std::string error_)
-            : status(status_),
-              error(std::move(error_))
-        {
-        }
-
-        OperationResult() : status(0)
-        {
-        }
-
-        [[nodiscard]] bool ok() const
-        {
-            return status == 0;
-        }
-
-        [[nodiscard]] bool ko() const
-        {
-            return !ok();
-        }
-        explicit operator bool() const noexcept {
-            return ok();
-        }
-
+        create_method_prototypes_for_ValidatorBase(Model)
     };
-
-    inline OperationResult empty_result;
 }

@@ -21,46 +21,28 @@
  * THE SOFTWARE.
  */
 
+/**
+ *
+* @author <a href="mailto:robertvokac@robertvokac.com">Robert Vokac</a>
+ */
 #pragma once
 
-#define ok_result {}
-#define status_405_unsupported_operation {405, "Unsupported operation."}
-#define status_403_forbidden {403, "You are not authorized to access this resource."}
+#include "mindnet/model/BaseColumns.hpp"
 
-#include <utility>
-#include <string>
-
-namespace mindnet::api
+namespace mindnet::plugins::dictionary::columns
 {
-    struct OperationResult
+    struct DictionaryOlderTermColumns : model::BaseColumns
     {
-        int status; // 0 = OK, other number = error
-        std::string error; // error description, empty if OK
+        DictionaryOlderTermColumns() = delete;
 
-        OperationResult(int status_, std::string error_)
-            : status(status_),
-              error(std::move(error_))
-        {
-        }
+        DictionaryOlderTermColumns(const DictionaryOlderTermColumns&) = delete;
+        DictionaryOlderTermColumns& operator=(const DictionaryOlderTermColumns&) = delete;
 
-        OperationResult() : status(0)
-        {
-        }
+        static constexpr const char* MODEL_NAME = "dictionary_older_term";
 
-        [[nodiscard]] bool ok() const
-        {
-            return status == 0;
-        }
-
-        [[nodiscard]] bool ko() const
-        {
-            return !ok();
-        }
-        explicit operator bool() const noexcept {
-            return ok();
-        }
+        static constexpr const char* DICTIONARY_MAP_ID = "dictionary_map_id";
+        static constexpr const char* DICTIONARY_TERM_ID = "dictionary_term_id";
+        static constexpr const char* OLDER_TERM_ID = "older_term_id";
 
     };
-
-    inline OperationResult empty_result;
 }

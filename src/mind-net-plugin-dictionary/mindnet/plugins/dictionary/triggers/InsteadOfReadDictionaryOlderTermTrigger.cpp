@@ -1,0 +1,122 @@
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#include "mindnet/plugins/dictionary/triggers/InsteadOfReadDictionaryOlderTermTrigger.hpp"
+#include "mindnet/essential/Global.hpp"
+#include "mindnet/api/AccessTokenContext.hpp"
+#include <string>
+#include <vector>
+#include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryOlderNewerTermsSQLiteQuery.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryOlderTerm.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTerm.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryTermMetric.hpp"
+
+#include "mindnet/util/Utils.hpp"
+
+namespace mindnet::plugins::dictionary::triggers
+{
+    using_loggers()
+
+    InsteadOfReadDictionaryOlderTermTrigger::InsteadOfReadDictionaryOlderTermTrigger()
+        : Trigger(
+            "InsteadOfReadDictionaryOlderTermTrigger",
+            "Calls custom sql for read older term request",
+            1000,
+            {essential::Crudl::Read},
+            api::TriggerPhase::InsteadOf,
+            "dictionary_older_term"
+        )
+    {
+    }
+
+    std::optional<std::pair<entity_fields, api::OperationResult>> InsteadOfReadDictionaryOlderTermTrigger::
+    run_instead_of_read(int stack_depth, api::OperationResult& validation_result, const model::ModelDefinition& def,
+                        identification user_id, identification id)
+    {
+        api::AccessTokenContext ctx{true};
+        auto read_term = run_read(models::DICTIONARY_TERM_DEFINITION, ctx, id, stack_depth);
+
+        models::DictionaryOlderTerm result;
+        if (!read_term.second)
+        {
+            auto values = result.to_values();
+            auto r = std::make_pair<entity_fields, api::OperationResult>(std::move(values), {
+                                                                             500, "Internal server error."
+                                                                         });
+            return r;
+        }
+        nlohmann::json req;
+
+        models::DictionaryTerm term;
+        term.from_values(read_term.first);
+
+        auto dictionary_map_id = term.dictionary_map_id;
+        req["dictionary_map_id"] = dictionary_map_id;
+        auto dictionary_term_id = id;
+        req["dictionary_term_id"] = dictionary_term_id;
+        req["mode"] = "older";
+
+        nlohmann::json res;
+
+        try
+        {
+            res = call_query(db::sqlite::queries::dictionary::QUERY_FindDictionaryOlderNewerTerms, req);
+
+            if (res.contains("error"))
+            {
+                auto values = result.to_values();
+                auto r = std::make_pair<entity_fields, api::OperationResult>(
+                    std::move(values), {500, "Internal server error."});
+                return r;
+            }
+
+            info << res.dump() << commit;
+            info << "Query FindDictionaryOlderTerms successful" << commit;
+        }
+        catch (std::exception& e)
+        {
+            err << "Query FindDictionaryOlderTerms failed " << e.what() << commit;
+            auto values = result.to_values();
+            auto r = std::make_pair<entity_fields, api::OperationResult>(std::move(values), {
+                                                                             500, "Internal server error."
+                                                                         });
+            return r;
+        }
+
+        result.set_id(id);
+        result.dictionary_map_id = dictionary_map_id;
+        result.dictionary_term_id = id;
+        result.older_term_id = res["id"];
+        auto values = result.to_values();
+        int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
+        values[1] = now;
+        values[2] = now;
+
+        auto v = result.to_values();
+        auto r =
+            std::make_pair<entity_fields, api::OperationResult>
+            (std::move(v), ok_result);
+
+        return r;
+    }
+}

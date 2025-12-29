@@ -35,10 +35,11 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Window "Term Visit History" - add paging
-- [ ] PreviousTerm, NextTerm
 - [ ] Search Term - should also use the table dictionary_term_alias
 - [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New cron job: delete terms with status Deleted
+- [ ] Export to static web
+- [ ] Bug: Search: Any map does not take effect
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -241,3 +242,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] dictionary_map - new column emoji
 - [x] dictionary_term - new column repetition bool default 1
 - [x] &map_id={}&term_id={}
+- [x] OlderTerm, NewerTerm

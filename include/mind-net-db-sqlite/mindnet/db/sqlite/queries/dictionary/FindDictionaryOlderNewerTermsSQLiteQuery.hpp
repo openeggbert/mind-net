@@ -23,44 +23,21 @@
 
 #pragma once
 
-#define ok_result {}
-#define status_405_unsupported_operation {405, "Unsupported operation."}
-#define status_403_forbidden {403, "You are not authorized to access this resource."}
+#include "mindnet/api/Query.hpp"
 
-#include <utility>
-#include <string>
-
-namespace mindnet::api
+namespace mindnet::db::sqlite::queries::dictionary
 {
-    struct OperationResult
+    const std::string QUERY_FindDictionaryOlderNewerTerms = "FindDictionaryOlderNewerTerms";
+
+    class FindDictionaryOlderNewerTermsSQLiteQuery : public api::Query
     {
-        int status; // 0 = OK, other number = error
-        std::string error; // error description, empty if OK
+    public:
+        FindDictionaryOlderNewerTermsSQLiteQuery();
 
-        OperationResult(int status_, std::string error_)
-            : status(status_),
-              error(std::move(error_))
-        {
-        }
+        ~FindDictionaryOlderNewerTermsSQLiteQuery() override = default;
 
-        OperationResult() : status(0)
-        {
-        }
+        nlohmann::json call(nlohmann::json& request, api::InvalidateMethod& invalidate_method, plugins::core::models::OptionalError& optional_error) override;
 
-        [[nodiscard]] bool ok() const
-        {
-            return status == 0;
-        }
-
-        [[nodiscard]] bool ko() const
-        {
-            return !ok();
-        }
-        explicit operator bool() const noexcept {
-            return ok();
-        }
-
+    private:
     };
-
-    inline OperationResult empty_result;
 }

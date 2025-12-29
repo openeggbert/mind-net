@@ -64,7 +64,7 @@ namespace mindnet::plugins::dictionary::validators
                                                                            const Model& old_entity,
                                                                            const Model& new_entity) const
     {
-        return status_405_unsupported_operation
+        return status_405_unsupported_operation;
     }
 
     OperationResult DictionaryState18Validator::validate_delete_authorization(const RequestContext& ctx,
