@@ -52,6 +52,7 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::NAME, MANDATORY | UNIQUE),
             coldef(COLS::DESCRIPTION),
             coldef(COLS::POSITION, INTEGER).set_default_value(0),
+            coldef(COLS::EMOJI).set_default_value("📘"),
             coldef(COLS::OWNER_ID, MANDATORY).set_foreign_key("user"),
             coldef(COLS::TEAM_ID, FOREIGN_KEY),
             coldef(COLS::OWNER_RIGHTS, INTEGER | MANDATORY).set_default_value("7").set_enum_definition(
@@ -71,6 +72,7 @@ namespace mindnet::plugins::dictionary::models
         string name;
         string description;
         int position{0};
+        string emoji;
         identification owner_id{};
         identification team_id{};
         core::enums::AccessRight owner_rights{7};
@@ -84,6 +86,7 @@ namespace mindnet::plugins::dictionary::models
     &Model::name,
     &Model::description,
     &Model::position,
+    &Model::emoji,
     &Model::owner_id,
     &Model::team_id,
     &Model::owner_rights,
@@ -96,7 +99,7 @@ namespace mindnet::plugins::dictionary::models
         bool operator==(const Model& other) const
         {
             return id == other.id && name == other.name && description == other.description && position == other.
-                position
+                position && emoji == other.emoji
                 && owner_id == other.owner_id && team_id == other.team_id
                 && owner_rights == other.owner_rights && team_rights == other.team_rights
                 && other_rights == other.other_rights

@@ -34,7 +34,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
-- [ ] dictionary_map - new column emoji
 - [ ] Window "Term Visit History" - add paging
 - [ ] PreviousTerm, NextTerm
 - [ ] &map_id={}&term_id={}
@@ -241,3 +240,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] New tables: dictionary_url_type a dictionary_url
 - [x] Notes: New buttons: Expand, Collapse
 - [x] If map is changed, clear Search term input
+- [x] dictionary_map - new column emoji

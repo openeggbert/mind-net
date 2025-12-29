@@ -526,5 +526,11 @@ CREATE INDEX idx_dictionary_url_type
     ON dictionary_url(dictionary_url_type_id);
 )");
 
+        add_migration("V20__alter_table_dictionary_map_add_column_emoji.sql", R"(
+ALTER TABLE dictionary_map
+ADD COLUMN emoji TEXT NULL;
+
+)");
+
     }
 }

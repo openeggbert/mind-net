@@ -14,11 +14,23 @@ export class SelectMap {
     async list_maps_from_backend() {
         return await list_all_entities(Entities.dictionary_map, new QueryParams().sort(Entities.dictionary_map.position).build());
     }
+    set_emoji(emoji) {
+        get_element("map_emoji").innerText = emoji
+        get_element("map_emoji_td").style.display = emoji.length > 0 ? "" : "none"
+
+    }
+    clear_emoji() {
+        this.set_emoji("")
+    }
+
+    #emoji_map = new Map()
 
     constructor(refresh_autocomplete_term_title_callback, hide_term_container_callback) {
         this.#element = get_element("select_map");
         this.#element.innerHTML = ""
         this.#hide_term_container_callback = hide_term_container_callback
+
+        this.clear_emoji()
 
         this.#element.addEventListener("change", () => {
             this.#selected_map_id = this.#element.value
@@ -26,6 +38,13 @@ export class SelectMap {
             this.#hide_term_container_callback()
             showInfo(translate("dictionary.select_map.info.map_changed") + ": " + this.#maps.get(this.#element.value))
             get_element("input_search_term").value = ""
+
+            let emoji = this.#emoji_map.get(Number(this.#selected_map_id))
+            if(emoji && emoji.length > 0) {
+                this.set_emoji(emoji)
+            } else {
+                this.clear_emoji()
+            }
         });
 
         let button_add_map = get_element("button_add_map").onclick = async () => {
@@ -81,6 +100,36 @@ export class SelectMap {
             }
             this.rename_map(this.#selected_map_id, new_name)
         }
+        let button_emoji_map = get_element("button_emoji_map").onclick = async () => {
+            if(this.#selected_map_id === 0) return
+            let read_map = await read_entity(Entities.dictionary_map, this.#selected_map_id)
+            if(!defined(read_map)) {
+                showError(translate("dictionary.select_map.button.rename_map.error.reading_map_failed") + ": " + this.#selected_map_id)
+                return
+            }
+            const old_emoji = read_map.emoji
+            const new_emoji = prompt("Enter new emoji", read_map.emoji);
+            if (new_emoji === null) return;
+            if (new_emoji === old_emoji) {
+                showWarn(translate("dictionary.select_map.button.change_map_emoji.warn.no_change"))
+                return;
+            }
+            read_map.emoji = new_emoji
+            let map_updated = await put_entity(Entities.dictionary_map, this.#selected_map_id, read_map)
+
+            if (map_updated === null) {
+                showError(translate("dictionary.select_map.button.rename_map.error.update_failed") + ": " + new_emoji)
+                return
+            } else {
+                showSuccess(translate("dictionary.select_map.button.rename_map.info.update_successful") + ": " + new_emoji)
+            }
+            this.#emoji_map.set(Number(this.#selected_map_id), new_emoji)
+            if(new_emoji.length> 0) {
+                this.set_emoji(new_emoji)
+            } else {
+                this.clear_emoji()
+            }
+        }
         let button_delete_map = get_element("button_delete_map").onclick = async () => {
             if(this.#selected_map_id === 0) return
             if (!confirm(translate("dictionary.select_map.button.delete_map.confirm.text"))) return;
@@ -93,6 +142,8 @@ export class SelectMap {
 
             showSuccess(translate("dictionary.select_map.button.delete_map.error.deleting_successful") + ": " + this.#selected_map_id)
 
+            this.#emoji_map.delete(this.#selected_map_id)
+            this.clear_emoji()
             this.remove_map(this.#selected_map_id)
         }
     }
@@ -102,13 +153,22 @@ export class SelectMap {
     }
     set_selected_map_id(map_id) {
         this.select_map(map_id)
+        let emoji = this.#emoji_map.get(Number(map_id))
+        if(emoji && emoji.length > 0) {
+            this.set_emoji(emoji)
+        } else {
+            this.clear_emoji()
+        }
     }
 
     async init() {
         const maps = await this.list_maps_from_backend();
         maps.forEach(e => {
             this.add_map(e.id, e.name);
+            this.#emoji_map.set(e.id, e.emoji)
         });
+
+        this.clear_emoji()
     }
 
     add_map(id, name) {

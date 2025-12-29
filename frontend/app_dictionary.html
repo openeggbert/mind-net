@@ -31,18 +31,36 @@
         </select>
     </header>
 
-    <!-- Select Map -->
-    <label for="select_map" id="label_select_map">🗺️ <span data-i18n="dictionary.common.map">Map</span>:</label>
-    <select id="select_map">
-        <!--        <option value="1">Concurrency</option>-->
-        <!--        <option value="2">Parallelism</option>-->
-        <!--        <option value="3">Synchronization</option>-->
-    </select>
-    <br>
-    <button id="button_add_map">➕ <span data-i18n="dictionary.select_map.button.add_map">Add Map</span></button>
-    <button id="button_show_map">👉 <span data-i18n="dictionary.select_map.button.show_map">Show Map</span></button>
-    <button id="button_rename_map">🔤 <span data-i18n="dictionary.select_map.button.rename_map">Rename Map</span></button>
-    <button id="button_delete_map">🗑 <span data-i18n="dictionary.select_map.button.delete_map">Delete Map</span></button>
+    <div>
+
+        <table>
+            <tr>
+                <td rowspan="2" id="map_emoji_td" ><span id="map_emoji" style="font-size:400%;background-color:rgba(246,231,166,0.5);margin-right: 5px;">🗺️</span></td>
+                <td><!-- Select Map -->
+                    <label for="select_map" id="label_select_map">🗺️ <span data-i18n="dictionary.common.map">Map</span>:</label>
+                    <select id="select_map">
+                        <!--        <option value="1">Concurrency</option>-->
+                        <!--        <option value="2">Parallelism</option>-->
+                        <!--        <option value="3">Synchronization</option>-->
+                    </select></td>
+            </tr>
+
+            <tr>
+                <td>
+                    <button id="button_add_map">➕ <span data-i18n="dictionary.select_map.button.add_map">Add Map</span>
+                    </button>
+                    <button id="button_show_map">👉 <span
+                            data-i18n="dictionary.select_map.button.show_map">Show Map</span></button>
+                    <button id="button_rename_map">🔤 <span data-i18n="dictionary.select_map.button.rename_map">Rename Map</span>
+                    </button>
+                    <button id="button_emoji_map">🙂 <span>Set emoji</span>
+                    </button>
+                    <button id="button_delete_map">🗑 <span data-i18n="dictionary.select_map.button.delete_map">Delete Map</span>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
 
     <label for="input_search_term">
         🔍  <span data-i18n="dictionary.label.search_term">Search term</span>

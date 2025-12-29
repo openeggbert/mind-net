@@ -18,6 +18,7 @@
   "dictionary.select_map.button.rename_map.warn.no_change": "You did not change the name. Nothing to be updated.",
   "dictionary.select_map.button.rename_map.error.update_failed": "Updating new failed",
   "dictionary.select_map.button.rename_map.info.update_successful": "Map was successfully updated",
+  "dictionary.select_map.button.change_map_emoji.warn.no_change": "You did not change the emoji. Nothing to be updated.",
   "dictionary.select_map.button.delete_map": "Delete Map",
   "dictionary.select_map.button.delete_map.confirm.text": "Do you really want to delete this map?",
   "dictionary.select_map.button.delete_map.error.deleting_failed": "Deleting map failed. ",

@@ -184,11 +184,18 @@ namespace mindnet::model
             cols.emplace(cols.begin(), BaseColumns::CREATED_AT);
             cols.emplace(cols.begin(), BaseColumns::ID);
             columns = std::move(cols);
+            std::set<std::string> column_names;
 
             int index{0};
             for (auto& column :columns)
             {
-                column_indexes[column.get_column_name()] = index;
+                const auto& column_name = column.get_column_name();
+                if (column_names.contains(column_name))
+                {
+                    throw std::runtime_error("Column with this name was already added: " + column_name);
+                }
+                column_indexes[column_name] = index;
+                column_names.insert(column_name);
                 index++;
             }
 
