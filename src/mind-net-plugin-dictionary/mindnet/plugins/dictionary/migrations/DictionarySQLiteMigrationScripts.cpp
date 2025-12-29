@@ -535,6 +535,10 @@ ADD COLUMN emoji TEXT NULL;
 ALTER TABLE dictionary_term
 ADD COLUMN repetition BOOL NOT NULL DEFAULT 1;
 )");
+        add_migration("V22__alter_table_dictionary_term_rename_column_repetition_to_is_for_repetition.sql", R"(
+ALTER TABLE dictionary_term
+RENAME COLUMN repetition TO is_for_repetition;
+)");
 
     }
 }

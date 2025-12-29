@@ -257,6 +257,13 @@ namespace mindnet::plugins::dictionary::triggers
                     return;
                 }
 
+                if (!term.is_for_repetition)
+                {
+                    //not is_for_repetition
+                    debug << "Term is not for repetition: id=" << term.get_id() << commit;
+                    return;
+                }
+
                 const int q = std::clamp(review.grade, 0, 5);
                 bool was_correct = q >= 3;
 

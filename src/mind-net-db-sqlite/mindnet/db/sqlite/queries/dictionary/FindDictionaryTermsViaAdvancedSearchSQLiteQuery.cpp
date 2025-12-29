@@ -188,6 +188,14 @@ X(Never,   3, ENUM_NAME)
 
     DECLARE_ENUM(RepetitionMode, repetition_mode, REPETITION_MODE_LIST)
 
+
+#define IS_FOR_REPETITION_MODE_LIST(X, ENUM_NAME) \
+X(Any,     1, ENUM_NAME)               \
+X(ForRepetition,  2, ENUM_NAME)               \
+X(NotForRepetition,   3, ENUM_NAME)
+    DECLARE_ENUM(IsForRepetitionMode, is_for_repetition_mode, IS_FOR_REPETITION_MODE_LIST)
+
+
 #define SORT_LIST(X, ENUM_NAME)        \
 X(None,        0,  ENUM_NAME)     \
 X(Title,       1,  ENUM_NAME)     \
@@ -228,6 +236,7 @@ X(Desc, 2, ENUM_NAME)
         bool importance_low = false;
         bool importance_medium = false;
         bool importance_high = false;
+        IsForRepetitionMode is_for_repetition = IsForRepetitionMode::Any;
 
         int tag_id = 0;
         string flag_title;
@@ -282,6 +291,9 @@ X(Desc, 2, ENUM_NAME)
             importance_low = q.value("importance_low", true);
             importance_medium = q.value("importance_medium", true);
             importance_high = q.value("importance_high", true);
+
+            int is_for_repetition_int = q.value("is_for_repetition", static_cast<int>(IsForRepetitionMode::Any));
+            is_for_repetition = int_to_is_for_repetition_mode(is_for_repetition_int);
 
             tag_id = q.value("tag_id", 0);
             flag_title = q.value("flag_title", "");
@@ -347,6 +359,7 @@ X(Desc, 2, ENUM_NAME)
             q["importance_low"] = importance_low;
             q["importance_medium"] = importance_medium;
             q["importance_high"] = importance_high;
+            q["is_for_repetition"] = is_for_repetition;
 
             q["tag_id"] = tag_id;
             q["flag_title"] = flag_title;
@@ -628,6 +641,18 @@ X(Desc, 2, ENUM_NAME)
             sql_where_and_joins += ")";
         }
 
+        // is_for_repetition
+        if (q.is_for_repetition != IsForRepetitionMode::Any)
+        {
+            if (q.is_for_repetition == IsForRepetitionMode::ForRepetition) {
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins += "dt.is_for_repetition = 1";
+            }
+            if (q.is_for_repetition == IsForRepetitionMode::NotForRepetition) {
+                append_where(sql_where_and_joins, first_where);
+                sql_where_and_joins += "dt.is_for_repetition = 0";
+            }
+        }
         // tag
         if (q.tag_id > 0)
         {

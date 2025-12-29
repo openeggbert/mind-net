@@ -44,6 +44,7 @@ WHERE
 AND s.user_id = ?
 AND s.next_review <= ?
 AND t.status != 6
+AND t.is_for_repetition = 1
 AND (? = 1 OR TRIM(t.definition) <> '')
 ORDER BY RANDOM()
 LIMIT 100;
@@ -59,6 +60,7 @@ WHERE
 AND s.user_id = ?
 AND s.next_review > ?
 AND t.status != 6
+AND t.is_for_repetition = 1
 AND (? = 1 OR TRIM(t.definition) <> '')
 ORDER BY RANDOM()
 LIMIT 100;
@@ -70,6 +72,7 @@ FROM dictionary_term t
 WHERE
     t.dictionary_map_id = ?
 AND t.status != 6
+AND t.is_for_repetition = 1
 AND (? = 1 OR TRIM(t.definition) <> '')
 AND NOT EXISTS (
     SELECT 1

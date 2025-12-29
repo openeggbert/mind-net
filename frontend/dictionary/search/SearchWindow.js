@@ -56,6 +56,7 @@ import {SearchForm} from "./SearchForm.js";
 import {FormRowAutocomplete} from "./FormRowAutocomplete.js";
 import {SearchAutocomplete} from "./SearchAutocomplete.js";
 import {SearchModel} from "./SearchModel.js";
+import {IsForRepetitionMode} from "../enums/IsForRepetitionMode.js";
 
 /*
 * =====================================================================================
@@ -334,6 +335,9 @@ export class SearchWindow extends VirtualWindow {
         search_form.add_control(importance_control);
         let difficulty_control = new CheckBoxFormRow("Difficulty", Difficulty, true)
         search_form.add_control(difficulty_control);
+
+        const is_for_repetition_select = new EnumSelect(IsForRepetitionMode).multiple();
+        search_form.add_control(new FormRow("Is for repetition", is_for_repetition_select));
 
         class AcControl extends FormRowAutocomplete {
             constructor(label, model, map_in_query = true) {

@@ -34,7 +34,7 @@ export const Entities = Object.freeze({
         status: "status",
         importance: "importance",
         difficulty: "difficulty",
-        repetition: "repetition"
+        is_for_repetition: "is_for_repetition"
     }),
 
     dictionary_term_visit: Object.freeze({

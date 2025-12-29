@@ -27,6 +27,7 @@ import {enumValue} from "../enums/EnumFunctions.js";
 import {Sort} from "../enums/Sort.js";
 import {Order} from "../enums/Order.js";
 import {TermStatus} from "../enums/TermStatus.js";
+import {IsForRepetitionMode} from "../enums/IsForRepetitionMode.js";
 
 export class SearchModel {
     constructor() {
@@ -42,6 +43,7 @@ export class SearchModel {
         this.difficulty_easy = true
         this.difficulty_medium = true
         this.difficulty_hard = true
+        this.is_for_repetition = IsForRepetitionMode.Any
         this.tag_id = 0
         this.flag_title = ""
         this.link_from_term_id = 0
@@ -88,6 +90,8 @@ export class SearchModel {
             difficulty_easy: this.difficulty_easy,
             difficulty_medium: this.difficulty_medium,
             difficulty_hard: this.difficulty_hard,
+
+            is_for_repetition: this.is_for_repetition.id,
 
             tag_id: this.tag_id,
             flag_title: this.flag_title,
@@ -147,6 +151,8 @@ export class SearchModel {
         this.difficulty_easy = json.difficulty_easy ?? true;
         this.difficulty_medium = json.difficulty_medium ?? true;
         this.difficulty_hard = json.difficulty_hard ?? true;
+
+        this.is_for_repetition = enumValue(TimeRange, json.is_for_repetition) ?? IsForRepetitionMode.Any;
 
         this.tag_id = json.tag_id ?? 0;
         this.flag_title = json.flag_title ?? "";
