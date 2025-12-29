@@ -32,6 +32,8 @@ import {Entities} from "../entities/Entities.js";
 import {attachMarkdownEditor} from "../markdown/Markdown.js";
 import {translate, USER_ID} from "../globals/Globals.js";
 import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
+import {Button} from "../dom/elements/Button.js";
+import {_10PX} from "../styles/Styles.js";
 
 const COLON_SPACE = ": "
 
@@ -39,7 +41,6 @@ class TermContainer {
     #element
     #dictionary_term_json
     dictionary_term_id = 0
-
     #sections = null
 
     constructor(
@@ -69,7 +70,7 @@ class TermContainer {
         term_container_h2.style.padding = "10px"
         term_container_h2.style.borderBottom = "1px solid #dcdfe3"
 
-        function attach_onclick_to_label(models) {
+        function attach_onclick_to_label(section, models, self) {
             let label = get_element("label_" + models)
             let container = get_element("container_" + models)
             label.style.cursor = "pointer"
@@ -77,7 +78,31 @@ class TermContainer {
             label.style.color = "#2c3e50";
             label.style.borderBottom = "1px solid #dcdfe3"
             label.style.padding = "10px"
-            label.onclick = () => {
+            let expand_button = new Button("▶️ Expand")
+            let collapse_button = new Button("▼ Collapse")
+
+            if(models === "notes") {
+                expand_button.element().onclick = (e)=> {
+                    console.debug("expand_button clicked")
+                    section.execute_action("expand");
+                    // label.click()
+                }
+                collapse_button.element().onclick = (e)=> {
+                    console.debug("collapse_button clicked")
+                    section.execute_action("collapse");
+                }
+                label.appendChild(expand_button.element())
+                label.appendChild(collapse_button.element())
+                Array.from([expand_button, collapse_button]).forEach((e)=>{
+                    e.styles().marginLeft(_10PX).end()
+                })
+            }
+            label.onclick = (e) => {
+                if (e.target === expand_button.element()) return;
+                if (e.target === collapse_button.element()) return;
+                e.preventDefault()
+                e.stopPropagation()
+
                 let current_display = container.style.display;
                 let shown = current_display === "block" || current_display === "";
                 container.style.display = shown ? "none" : "block"
@@ -86,7 +111,6 @@ class TermContainer {
                 if (shown) {
                     let start = models.charAt(0).toUpperCase() + models.slice(1)
                     let text = translate("dictionary.term.container.click_note", {models: start})
-
 
                     let tmp_span = document.createElement("span")
                     tmp_span.innerText = text
@@ -102,11 +126,15 @@ class TermContainer {
                     containerParent.style.margin = "0px 0 0px 0"
                     // label.style.display = "inline-block"
                     label.style.whiteSpace = "nowrap"
+                    expand_button.hide()
+                    collapse_button.hide()
                 } else {
                     get_element(tmp_id).remove()
                     containerParent.style.margin = "10px 0 10px 0"
                     // label.style.display = "block"
                     label.style.whiteSpace = "normal"
+                    expand_button.show("inline-block")
+                    collapse_button.show("inline-block")
                 }
 
             }
@@ -121,7 +149,7 @@ class TermContainer {
 
         this.#sections.forEach(section => {
             let models = section.get_configuration().models
-            attach_onclick_to_label(models)
+            attach_onclick_to_label(section, models, this)
         })
 
     }

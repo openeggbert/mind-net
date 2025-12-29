@@ -10,6 +10,8 @@ export class _CrudSection {
     #input = null
     #autocomplete = null
 
+    #execute_action = null
+
     constructor(cfg, get_selected_map_id_callback, render_term_id_callback = null) {
         this.get_selected_map_id_callback = get_selected_map_id_callback
         this.render_term_id_callback = render_term_id_callback
@@ -19,6 +21,16 @@ export class _CrudSection {
         this.#input = cfg.input ? get_element("input_search_" + this.#cfg.model) : null;
         this.autocomplete = null;
         this.#reset()
+    }
+
+    set_execution_action(a) {
+        this.#execute_action = a
+    }
+
+    execute_action(action) {
+        if(this.#execute_action === null || this.#execute_action === undefined) return
+        //console.log("execute_action: " + action)
+        this.#execute_action(action)
     }
 
     get_configuration() {

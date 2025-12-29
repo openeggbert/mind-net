@@ -31,6 +31,14 @@ export class Notes extends _CrudSection {
                     return item.title
                 },
             },get_selected_map_id_callback);
+        this.set_execution_action((action) => {
+            if (action === "expand") {
+                Array.from(this.#collapsed_notes).forEach(e=> e.click())
+            }
+            if (action === "collapse") {
+                Array.from(this.#expanded_notes).forEach(e=> e.click())
+            }
+        })
     }
 
     async afterRender(dictionary_term_id) {
@@ -57,22 +65,32 @@ export class Notes extends _CrudSection {
 
     }
 
+    #collapsed_notes = new Set()
+    #expanded_notes = new Set()
+
+
     addItem(title, id) {
-        let div = document.createElement("div")
-        div.classList.add("item")
-        this._element.appendChild(div)
+        let note_row = document.createElement("div")
+        note_row.classList.add("item")
+        this._element.appendChild(note_row)
 
         let span = document.createElement("span")
         span.innerText = title
-        div.appendChild(span)
-        div.onclick = async (e) => {
+        note_row.appendChild(span)
+        note_row.onclick = async (e) => {
             let div_id = "notes_" + id;
             let note_details = get_element(div_id)
 
             let note_details_exist = note_details !== null && note_details !== undefined;
 
             if (e.target.tagName === "BUTTON") {
-                if (note_details_exist) note_details.remove()
+                if (note_details_exist) {
+                    note_details.remove()
+                    this.#collapsed_notes.add(note_row)
+                    this.#expanded_notes.delete(note_row)
+                    console.log("collapsing note: " + title)
+                }
+
                 return;
             }
 
@@ -100,13 +118,17 @@ export class Notes extends _CrudSection {
                     if (!confirm("Do you really want to collapse this note? Unsaved changes will be lost.")) return;
                 }
 
+                this.#collapsed_notes.add(note_row)
+                this.#expanded_notes.delete(note_row)
+                console.log("collapsing note: " + title)
+
                 note_details.remove()
                 return
             }
 
             note_details = document.createElement("div")
             note_details.id = div_id
-            div.after(note_details)
+            note_row.after(note_details)
             note_details.style.border = "1px solid #ddd"
             note_details.style.backgroundColor = "#e4e09c"
             note_details.style.padding = "10px"
@@ -122,7 +144,6 @@ export class Notes extends _CrudSection {
                 note_details.appendChild(label)
                 return label
             }
-
 
             make_label(id_title, "Title")
 
@@ -188,6 +209,9 @@ export class Notes extends _CrudSection {
                 showInfo("Note was successfully updated: " + read_note.title)
             }
 
+            this.#collapsed_notes.delete(note_row)
+            this.#expanded_notes.add(note_row)
+            console.log("expanding note: " + title)
         }
 
         let div_buttons = document.createElement("div")
@@ -195,7 +219,7 @@ export class Notes extends _CrudSection {
         edit_button.innerHTML = "📝 Edit"
         edit_button.style.marginRight = "10px"
         edit_button.onclick = async () => {
-            div.click()
+            note_row.click()
         }
         div_buttons.appendChild(edit_button)
 
@@ -207,12 +231,13 @@ export class Notes extends _CrudSection {
             let deleted = note_deleted !== null && note_deleted !== undefined
             if (deleted) {
                 showInfo("Note was successfully deleted: " + title)
-                div.remove()
+                note_row.remove()
             } else {
                 showError("Deleting note failed: " + title)
             }
         }
         div_buttons.appendChild(delete_button)
-        div.appendChild(div_buttons)
+        note_row.appendChild(div_buttons)
+        this.#collapsed_notes.add(note_row)
     }
 }

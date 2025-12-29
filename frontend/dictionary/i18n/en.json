@@ -117,6 +117,7 @@
   "dictionary.sections.urls.button.add_url": "Add Url",
   "dictionary.sections.urls.button.show_urls": "Show urls",
   "dictionary.sections.urls.label.search_url": "Search url",
+  "dictionary.sections.urls.label.assign": "Assign",
   "dictionary.sections.indexes.label.indexes": "Indexes",
   "dictionary.sections.indexes.button.add_index": "Add Index",
   "dictionary.sections.indexes.button.show_indexes": "Show indexes",

@@ -34,9 +34,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
-- [ ] New cron job: delete terms with status Deleted
-- [ ] Multi-language - translate English text, which is not yet translated
-- [ ] New tables: dictionary_url_type a dictionary_url
 - [ ] Notes: New buttons: Expand, Collapse
 - [ ] If map is changed, clear Search term input
 - [ ] dictionary_map - new column emoji
@@ -45,6 +42,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] &map_id={}&term_id={}
 - [ ] dictionary_term - new column repetition bool default 1
 - [ ] Search Term - should also use the table dictionary_term_alias
+- [ ] Multi-language - translate English text, which is not yet translated
+- [ ] New cron job: delete terms with status Deleted
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -241,3 +240,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] visit history
 - [x] All occurrences of methods to_values(), from_values() must use serialize_fields() and deserialize_fields()
 - [x] ModelDefinition: readonly. ColumnDefinition: mutable
+- [x] New tables: dictionary_url_type a dictionary_url

@@ -46,6 +46,7 @@ export class Urls extends _CrudSection {
                     )
                 },
                 autocompleteCallback: async (item, termId) => {
+                    if(!get_element("input_checkbox_assign_flag").checked) return
                     showInfo("Found url: " + item.url)
                     let dictionary_url_type_id = item.id
                     let new_url = {
@@ -85,6 +86,14 @@ export class Urls extends _CrudSection {
                 showError("Creating new url type failed: " + url)
                 return
             }
+            let input_checkbox_assign_flag = get_element("input_checkbox_assign_flag").checked
+
+            if(!input_checkbox_assign_flag)
+            {
+                showInfo("New url type was created: " + url)
+                return
+            }
+
             let new_url = {
                 dictionary_map_id: this.get_selected_map_id_callback(),
                 dictionary_term_id: dictionary_term_id,
