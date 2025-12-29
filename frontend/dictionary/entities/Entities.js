@@ -10,6 +10,7 @@ export const Entities = Object.freeze({
         name: "name",
         description: "description",
         position: "position",
+        emoji: "emoji",
 
         owner_id: "owner_id",
         team_id: "team_id",
@@ -32,7 +33,8 @@ export const Entities = Object.freeze({
 
         status: "status",
         importance: "importance",
-        difficulty: "difficulty"
+        difficulty: "difficulty",
+        repetition: "repetition"
     }),
 
     dictionary_term_visit: Object.freeze({

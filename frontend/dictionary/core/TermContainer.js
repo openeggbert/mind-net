@@ -241,6 +241,10 @@ class TermContainer {
         input_importance.checked = true;
         input_difficulty.checked = true;
 
+
+        let checkbox_repetition = get_element("checkbox_repetition")
+        checkbox_repetition.checked = dictionary_term.repetition !== 0
+
         get_element("textarea_definition").innerText = dictionary_term.definition
 
         get_element("button_delete_term").onclick = async () => {
@@ -324,6 +328,11 @@ class TermContainer {
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
 
+            table = Entities.dictionary_url
+            let urls = await list_all_entities(
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+
             table = Entities.dictionary_review
             let reviews = await list_all_entities(
                 table,
@@ -354,6 +363,8 @@ class TermContainer {
             await delete_rows(Entities.dictionary_tag, tags)
             await delete_rows(Entities.dictionary_term_alias, aliases)
             await delete_rows(Entities.dictionary_term_visit, visits)
+            await delete_rows(Entities.dictionary_url, urls)
+
             let delete_dictionary_term = await delete_entity(Entities.dictionary_term, dictionary_term_id)
             if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
                 showSuccess( translate("dictionary.term.container.info.deleting_term_successful")+ ": " + dictionary_term.title)
@@ -429,7 +440,8 @@ class TermContainer {
             if (input_difficulty_hard.checked) difficulty = 3
             new_term.importance = importance
             new_term.difficulty = difficulty
-            let updated = put_entity(Entities.dictionary_term, dictionary_term_id, new_term)
+            new_term.repetition = get_element("checkbox_repetition").checked ? 1 : 0
+            let updated = await put_entity(Entities.dictionary_term, dictionary_term_id, new_term)
             if (updated !== null && updated !== undefined) {
                 showSuccess(translate("dictionary.term.container.info.updating_term_successful"))
                 this.#dictionary_term_json = new_term

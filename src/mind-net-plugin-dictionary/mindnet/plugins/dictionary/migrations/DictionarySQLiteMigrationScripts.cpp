@@ -531,6 +531,10 @@ ALTER TABLE dictionary_map
 ADD COLUMN emoji TEXT NULL;
 
 )");
+        add_migration("V21__alter_table_dictionary_term_add_column_repetition.sql", R"(
+ALTER TABLE dictionary_term
+ADD COLUMN repetition BOOL NOT NULL DEFAULT 1;
+)");
 
     }
 }

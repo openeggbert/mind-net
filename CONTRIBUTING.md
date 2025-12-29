@@ -37,7 +37,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Window "Term Visit History" - add paging
 - [ ] PreviousTerm, NextTerm
 - [ ] &map_id={}&term_id={}
-- [ ] dictionary_term - new column repetition bool default 1
 - [ ] Search Term - should also use the table dictionary_term_alias
 - [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New cron job: delete terms with status Deleted
@@ -241,3 +240,5 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Notes: New buttons: Expand, Collapse
 - [x] If map is changed, clear Search term input
 - [x] dictionary_map - new column emoji
+- [x] dictionary_term - new column repetition bool default 1
+- 
