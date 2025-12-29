@@ -45,10 +45,11 @@ namespace mindnet::plugins::core::jobs
     {
         essential::info << "CleanupJob TestJob (" << util::Utils::current_unixtime_to_string() << essential::commit;
 
-        auto api_log_threshold_in_days = job_config.get_int_or_default("api_log_threshold_in_days", 90);
-        auto history_read_threshold_in_days = job_config.get_int_or_default("history_read_threshold_in_days", 90);
-        auto history_list_threshold_in_days = job_config.get_int_or_default("history_list_threshold_in_days", 90);
-        auto access_token_threshold_in_days = job_config.get_int_or_default("access_token_threshold_in_days", 90);
+        constexpr const static int DEFAULT_DAYS = 90;
+        auto api_log_threshold_in_days = job_config.get_int_or_default("api_log_threshold_in_days", DEFAULT_DAYS);
+        auto history_read_threshold_in_days = job_config.get_int_or_default("history_read_threshold_in_days", DEFAULT_DAYS);
+        auto history_list_threshold_in_days = job_config.get_int_or_default("history_list_threshold_in_days", DEFAULT_DAYS);
+        auto access_token_threshold_in_days = job_config.get_int_or_default("access_token_threshold_in_days", DEFAULT_DAYS);
 
         nlohmann::json req;
         req["api_log_threshold_in_days"] = cast64(api_log_threshold_in_days.first);

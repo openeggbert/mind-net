@@ -73,7 +73,7 @@ namespace mindnet::plugins::repetition::validators
     OperationResult R18StateValidator::validate_delete_authorization(const RequestContext& ctx,
                                                                      const Model& entity) const
     {
-        return status_405_unsupported_operation
+        return status_405_unsupported_operation;
     }
 
     OperationResult R18StateValidator::validate_list_authorization(const RequestContext& ctx,

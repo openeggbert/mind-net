@@ -28,6 +28,8 @@
 #include <limits>
 #include <algorithm>
 
+//TODO: create new class CronExpressionBuilder
+
 namespace mindnet::api::cronq
 {
     inline std::string trim(const std::string& s)
