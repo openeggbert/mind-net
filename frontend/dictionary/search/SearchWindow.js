@@ -336,7 +336,7 @@ export class SearchWindow extends VirtualWindow {
         let difficulty_control = new CheckBoxFormRow("Difficulty", Difficulty, true)
         search_form.add_control(difficulty_control);
 
-        const is_for_repetition_select = new EnumSelect(IsForRepetitionMode).multiple();
+        const is_for_repetition_select = new EnumSelect(IsForRepetitionMode);
         search_form.add_control(new FormRow("Is for repetition", is_for_repetition_select));
 
         class AcControl extends FormRowAutocomplete {
@@ -784,6 +784,11 @@ export class SearchWindow extends VirtualWindow {
             m.difficulty_medium = find_by_enum_id("difficulty", Difficulty.Medium)._object.is_checked()
             m.difficulty_hard = find_by_enum_id("difficulty", Difficulty.Hard)._object.is_checked()
 
+            m.is_for_repetition = Array
+                .from(is_for_repetition_select.selectedOptions())
+                .map(opt => opt.value)
+                .map(e => enumValue(IsForRepetitionMode, e))[0]
+
             m.tag_id = tag_control.get_item_id()
             m.flag_title = flag_control.get_title()
             m.link_from_term_id = link_from_control.get_item_id()
@@ -950,6 +955,8 @@ export class SearchWindow extends VirtualWindow {
             find_enum("difficulty", Difficulty.Easy).set_checked(query.difficulty_easy ?? true)
             find_enum("difficulty", Difficulty.Medium).set_checked(query.difficulty_medium ?? true)
             find_enum("difficulty", Difficulty.Hard).set_checked(query.difficulty_hard ?? true)
+
+            is_for_repetition_select.set_selected_value(query.is_for_repetition)
 
             if ((query.tag_id ?? 0) !== 0) {
                 let read_tag = await read_entity(Entities.dictionary_tag, query.tag_id)
