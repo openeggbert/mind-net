@@ -25,6 +25,7 @@ export class SelectMap {
             refresh_autocomplete_term_title_callback()
             this.#hide_term_container_callback()
             showInfo(translate("dictionary.select_map.info.map_changed") + ": " + this.#maps.get(this.#element.value))
+            get_element("input_search_term").value = ""
         });
 
         let button_add_map = get_element("button_add_map").onclick = async () => {

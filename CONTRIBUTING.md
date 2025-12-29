@@ -34,8 +34,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
-- [ ] Notes: New buttons: Expand, Collapse
-- [ ] If map is changed, clear Search term input
 - [ ] dictionary_map - new column emoji
 - [ ] Window "Term Visit History" - add paging
 - [ ] PreviousTerm, NextTerm
@@ -241,3 +239,5 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] All occurrences of methods to_values(), from_values() must use serialize_fields() and deserialize_fields()
 - [x] ModelDefinition: readonly. ColumnDefinition: mutable
 - [x] New tables: dictionary_url_type a dictionary_url
+- [x] Notes: New buttons: Expand, Collapse
+- [x] If map is changed, clear Search term input
