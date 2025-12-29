@@ -34,6 +34,7 @@ import {translate, USER_ID} from "../globals/Globals.js";
 import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
 import {Button} from "../dom/elements/Button.js";
 import {_10PX} from "../styles/Styles.js";
+import {set_params} from "./Utils.js";
 
 const COLON_SPACE = ": "
 
@@ -181,7 +182,8 @@ class TermContainer {
         await this.render_term(dictionary_term_id);
         for(let i = 0;i< this.#sections.length;i++) {
             let section = this.#sections[i];
-            await section.render(dictionary_term_id)
+            //await
+                section.render(dictionary_term_id)
         }
     }
 
@@ -193,6 +195,7 @@ class TermContainer {
             // throw new Error ("Reading term failed: " + dictionary_term_id)
             return;
         }
+        set_params(null, dictionary_term_id)
         if(this.get_selected_map_id_callback() !== dictionary_term.dictionary_map_id) {
             this.set_selected_map_id_callback(dictionary_term.dictionary_map_id)
         }
@@ -369,6 +372,9 @@ class TermContainer {
             if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
                 showSuccess( translate("dictionary.term.container.info.deleting_term_successful")+ ": " + dictionary_term.title)
                 this.hide()
+                set_params(this.get_selected_map_id_callback(), null)
+                saveToLocalStorage("last_visited_term_id",null)
+
             } else {
                 showError( translate("dictionary.term.container.error.deleting_term_failed")+ ": " + dictionary_term.title)
             }

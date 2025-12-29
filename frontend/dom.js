@@ -296,7 +296,8 @@ export function saveToLocalStorage(key, data, ttlMs) {
             value: data,
             expires: now + ttlMs
         };
-        localStorage.setItem(key, JSON.stringify(item));
+        if(data) localStorage.setItem(key, JSON.stringify(item));
+        if(!data) localStorage.removeItem(key)
     } catch (e) {
         console.error(`Failed to save ${key} to localStorage:`, e);
     }

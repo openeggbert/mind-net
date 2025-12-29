@@ -11,6 +11,7 @@ import {I18n} from "../i18n/I18n.js";
 import {LanguageObject, SUPPORTED_LANGUAGES} from "../i18n/Language.js";
 import {set_i18n, translate, USER_ID} from "../globals/Globals.js";
 import {Div} from "../dom/elements/Div.js";
+import {get_params, set_params} from "./Utils.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
@@ -30,7 +31,6 @@ export class DictionaryApp {
                 this.#term_container.hide()
             }
         )
-        this.select_map.init()
         let get_selected_map_id_callback = () => {
             return this.select_map.get_selected_map_id()
         }
@@ -105,6 +105,7 @@ export class DictionaryApp {
             await this.#autocomplete_term_title.search("*", 1, true)
 
             this.#autocomplete_term_title.set_selected_item(0)
+            set_params(null, this.#autocomplete_term_title.get_item_id())
             //await this.#term_container.render(this.#autocomplete_term_title.get_item_id())
             this.#term_container.show()
         }
@@ -273,8 +274,20 @@ export class DictionaryApp {
     }
     async init() {
         await this.init_language()
+        await this.select_map.init()
+
+        let params = get_params()
+        if(params.map_id) {
+            this.set_selected_map_id(params.map_id)
+        }
+        if(params.term_id) {
+            await this.render(params.term_id)
+            this.#term_container.show()
+        }
+        if(params.term_id || params.map_id) return
         await this.#term_container.render_last_visited_term()
     }
+
     async init_language() {
         let lang = this.#i18n.getLanguage()
         let select_language = get_element("select_language")

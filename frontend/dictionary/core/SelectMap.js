@@ -4,6 +4,7 @@ import {Entities} from "../entities/Entities.js";
 import {translate, USER_ID} from "../globals/Globals.js";
 import {showWindowFromUrl} from "../window/VirtualWindow.js";
 import {defined} from "../../common.js";
+import {set_params} from "./Utils.js";
 
 export class SelectMap {
     #element
@@ -45,6 +46,7 @@ export class SelectMap {
             } else {
                 this.clear_emoji()
             }
+            set_params(this.#selected_map_id)
         });
 
         let button_add_map = get_element("button_add_map").onclick = async () => {
@@ -159,6 +161,7 @@ export class SelectMap {
         } else {
             this.clear_emoji()
         }
+        set_params(map_id)
     }
 
     async init() {
