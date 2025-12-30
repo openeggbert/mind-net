@@ -208,16 +208,16 @@ import {IsForRepetitionMode} from "../enums/IsForRepetitionMode.js";
 
 export class SearchWindow extends VirtualWindow {
     static next_search_window_number = 1
-    constructor(dictionary_map_id, render_term_callback) {
+    constructor(dictionary_map_id, render_term_callback, defaultModel = null) {
         super({
             title: "🔍 Advanced Search" + " #" + (SearchWindow.next_search_window_number++),
             width: screen.width > 1000 ? 1000 : screen.width - 100,
             height: 600
         })
 
-        this.#init(dictionary_map_id, render_term_callback)
+        this.#init(dictionary_map_id, render_term_callback, defaultModel)
     }
-    async #init(selected_map_id, render_term_callback) {
+    async #init(selected_map_id, render_term_callback, defaultModel) {
         let search_window = this
 
         const window_content = new Div().styles().height("100%").paddingTop(_5PX).end()
@@ -1309,5 +1309,14 @@ export class SearchWindow extends VirtualWindow {
         window_content.appendChild(span_pages_toolbar.element())
 
         window_content.style.padding = "5px"
+
+        if(defaultModel) {
+            if(defaultModel.title_contains !== null && defaultModel.title_contains !== undefined) {
+                titleContainsInput.set_value(defaultModel.title_contains)
+                searchBtn.click()
+                searchBtn.element()
+                    .scrollIntoView({behavior: "smooth"});
+            }
+        }
     }
 }

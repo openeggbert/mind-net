@@ -1,5 +1,5 @@
 import {list_all_entities, read_entity} from "./api.js";
-import {get_element} from "./dom.js";
+import {get_element, showInfo} from "./dom.js";
 import {Div} from "./dictionary/dom/elements/Div.js";
 import {Input} from "./dictionary/dom/elements/Input.js";
 import {Span} from "./dictionary/dom/elements/Span.js";
@@ -15,6 +15,7 @@ function debounce(fn, delay) {
 export class Autocomplete {
     #callbacks = [];
     #reset_callbacks = [];
+    #search_all_results_callback = null
     #items_map = new Map()
 
     addCallback(fn) {
@@ -28,6 +29,9 @@ export class Autocomplete {
 
     #runCallbacks(...args) {
         this.#callbacks.forEach(fn => fn(...args));
+    }
+    set_search_all_results_callback(fn) {
+        this.#search_all_results_callback = fn
     }
 
     constructor(input, input_min_length, entity, query_params = "", title_column = "title", part_column = "title_part", insert_after_id = "") {
@@ -77,14 +81,14 @@ export class Autocomplete {
         }
 
         const items = await this.fetcher(q);
-        this.render(items, show_box);
+        this.render(items, q, show_box);
     }
 
     after_render(box, input, items) {
 
     }
 
-    render(items, show_box = true) {
+    render(items, q, show_box = true) {
         console.log("Started rendering items: " + items.length + " show_box=" + show_box)
         this.box.innerHTML = "";
 
@@ -113,6 +117,24 @@ export class Autocomplete {
             this.box.appendChild(div);
             i++
         });
+        if(this.#search_all_results_callback && q!== "*") {
+            {
+                const div = document.createElement("div");
+                div.className = "suggestion-item";
+                let title = "Search all results for \"" + q + "\""
+                div.textContent = title;
+                div.style.color = "rgb(29,89,147)"
+
+                div.onclick = () => {
+                    this.#search_all_results_callback(q)
+                    this.box.style.display = "none";
+                    if (this.clear_after_click) this.input.value = ""
+                };
+
+                this.box.appendChild(div);
+                i++
+            }
+        }
         let tmp_span = new Span()
         this.box.appendChild(tmp_span.element())
         this.after_render(this.box, this.input)

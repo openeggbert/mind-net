@@ -61,6 +61,7 @@ export class DictionaryApp {
             this.#term_container.show()
             this.#input_search_term.value = ""
         })
+        this.set_search_all_results_callback()
 
         get_element("button_open_advanced_search").onclick = async () => {
             let dictionary_map_id = this.get_selected_map_id()
@@ -269,6 +270,21 @@ export class DictionaryApp {
         }
     }
 
+    set_search_all_results_callback() {
+        this.#autocomplete_term_title.set_search_all_results_callback((q)=> {
+            showInfo(q)
+            let dictionary_map_id = this.get_selected_map_id()
+            let search_window = new SearchWindow(
+                dictionary_map_id,
+                async (term_id) => {
+                    await this.render(term_id)
+                    this.show_term_container()
+                },
+                {title_contains: q}
+            )
+            search_window.show()
+        })
+    }
     translate(key, params = {}) {
         return this.#i18n.t(key, params)
     }
@@ -321,6 +337,7 @@ export class DictionaryApp {
             await this.#term_container.render(item.id)
             this.#input_search_term.value = ""
         })
+        this.set_search_all_results_callback()
     }
 
     get_selected_map_id() {
