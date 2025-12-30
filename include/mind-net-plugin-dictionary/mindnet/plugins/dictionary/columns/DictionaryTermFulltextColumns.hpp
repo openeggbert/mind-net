@@ -45,5 +45,6 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* TITLE_PART = "title_part";
         static constexpr const char* TITLE = "title";
         static constexpr const char* DISAMBIGUATION = "disambiguation";
+        static constexpr const char* ALIAS = "alias";
     };
 }

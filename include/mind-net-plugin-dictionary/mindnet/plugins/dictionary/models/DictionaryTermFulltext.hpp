@@ -55,6 +55,7 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::TITLE_PART, MANDATORY),
             coldef(COLS::TITLE, MANDATORY),
             coldef(COLS::DISAMBIGUATION, MUTABLE),
+            coldef(COLS::ALIAS, MUTABLE),
         });
 
     struct Model : mindnet::model::BaseModel
@@ -64,13 +65,15 @@ namespace mindnet::plugins::dictionary::models
         std::string title_part{};
         std::string title{};
         std::string disambiguation{};
+        std::string alias;
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::dictionary_map_id,
             &Model::title_part,
             &Model::title,
-            &Model::disambiguation
+            &Model::disambiguation,
+            &Model::alias
         );
 
         create_model_h_methods(Model, MODEL)

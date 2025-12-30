@@ -53,7 +53,7 @@ export class DictionaryApp {
         });
         get_element("button_mindnet").title = "Go to Mind Net generic frontend"
 
-        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
+        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&alias=1&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
             showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
@@ -313,7 +313,7 @@ export class DictionaryApp {
 
     refresh_autocomplete_term_title() {
         this.#autocomplete_term_title.destroy()
-        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
+        this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&alias=1&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
             showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)

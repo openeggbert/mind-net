@@ -35,11 +35,14 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Window "Term Visit History" - add paging
-- [ ] Search Term - should also use the table dictionary_term_alias
+- [ ] Ask user, if unsaved changes exist
 - [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Export to static web
 - [ ] Bug: Search: Any map does not take effect
+- [ ] Repetition: Under Start button: 42 cards selected: 18 due / 12 not due / 12 never
+- [ ] Modify fulltext search - replace LIKE by FTS
+- [ ] UI: Add: Created at and Updated at
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -243,3 +246,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] dictionary_term - new column repetition bool default 1
 - [x] &map_id={}&term_id={}
 - [x] OlderTerm, NewerTerm
+- [x] Search Term - should also use the table dictionary_term_alias

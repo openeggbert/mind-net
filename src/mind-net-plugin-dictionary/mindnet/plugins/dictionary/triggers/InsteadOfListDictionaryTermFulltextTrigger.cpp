@@ -62,12 +62,14 @@ namespace mindnet::plugins::dictionary::triggers
         req["dictionary_map_id"] = std::stoll(dictionary_map_id);
         auto title_part = query_params.filters.at("title_part");
         req["title_part"] = title_part;
+        std::string alias = query_params.filters.contains("alias") ? query_params.filters.at("alias") : "0";
+        req["include_aliases"] = alias == "1";
         int page_size = query_params.page_size;
         int page_number = query_params.page_number;
         req["page_size"] = page_size;
         req["page_number"] = page_number;
         nlohmann::json res;
-        std::vector<std::pair<identification, std::pair<std::string, std::string>>> results;
+        std::vector<nlohmann::json> results;
 
         try
         {
@@ -92,20 +94,28 @@ namespace mindnet::plugins::dictionary::triggers
             return result;
         }
 
-        for (auto& e:results)
+        for (auto& result:results)
         {
             models::DictionaryTermFulltext term_fulltext;
-            term_fulltext.set_id(e.first);
-            term_fulltext.dictionary_term_id = e.first;
+            term_fulltext.set_id(result["id"]);
+            term_fulltext.dictionary_term_id = result["dictionary_term_id"];
             term_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
             term_fulltext.title_part = title_part;
-            term_fulltext.title = e.second.first;
-            auto disambiguation = e.second.second;
+            term_fulltext.title = result["title"];
+            std::string disambiguation = result["disambiguation"];
             if (!disambiguation.empty())
             {
                 term_fulltext.title = term_fulltext.title + " (" + disambiguation + ")";
+                term_fulltext.disambiguation = disambiguation;
             }
-            term_fulltext.disambiguation = disambiguation;
+            std::string alias = result["alias"];
+            if (!alias.empty())
+            {
+                term_fulltext.title = term_fulltext.title + " [" + alias + "]";
+                term_fulltext.alias = alias;
+
+            }
+
             auto values = term_fulltext.to_values();
             int64_t now = static_cast<int64_t>(util::Utils::current_unix_timestamp_ms());
             values[1] = now;

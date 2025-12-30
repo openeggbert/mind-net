@@ -31,13 +31,13 @@
 namespace mindnet::db::sqlite::queries::dictionary
 {
     FindDictionaryTermsSQLiteQuery::FindDictionaryTermsSQLiteQuery()
-        : Query(QUERY_FindDictionaryTerms,"FindDictionaryTermsSQLiteQuery", essential::DatabaseType::SQLite)
+        : Query(QUERY_FindDictionaryTerms, "FindDictionaryTermsSQLiteQuery", essential::DatabaseType::SQLite)
     {
     }
 
     nlohmann::json FindDictionaryTermsSQLiteQuery::call(nlohmann::json& request,
-    api::InvalidateMethod& invalidate_method,
-plugins::core::models::OptionalError& optional_error)
+                                                        api::InvalidateMethod& invalidate_method,
+                                                        plugins::core::models::OptionalError& optional_error)
     {
         nlohmann::json response;
 
@@ -55,6 +55,11 @@ plugins::core::models::OptionalError& optional_error)
         }
 
         string title_part = request["title_part"];
+        bool include_aliases = false;
+        if (request.contains("include_aliases"))
+        {
+            include_aliases = request["include_aliases"] == true;
+        }
 
         // int page_size = request["page_size"];
         // int page_number = request["page_number"];
@@ -66,10 +71,44 @@ plugins::core::models::OptionalError& optional_error)
         int page_size = 20;
         int page_number = 1;
 
-        bool random = title_part == "*";
-        static std::string sql_standard = "select id, title, disambiguation from dictionary_term where (?=1 or dictionary_map_id = ?) and title like ? limit ? offset ?";
-        static std::string sql_random = "select id, title, disambiguation from dictionary_term where (?=1 or dictionary_map_id = ?) order by random() limit ?";
-        std::string& sql = random? sql_random : sql_standard ;
+        bool random = include_aliases ? false : title_part == "*";
+        static std::string sql_standard_with_alias = R"(
+SELECT DISTINCT
+    t.id,
+    t.title,
+    t.disambiguation,
+    '' AS alias_used
+FROM dictionary_term t
+WHERE (? = 1 OR t.dictionary_map_id = ?)
+  AND t.title LIKE ?
+  AND NOT EXISTS (
+      SELECT 1
+      FROM dictionary_term_alias a
+      WHERE a.dictionary_term_id = t.id
+        AND a.alias LIKE ?
+  )
+
+UNION
+
+SELECT DISTINCT
+    t.id,
+    t.title,
+    t.disambiguation,
+    a.alias AS alias_used
+FROM dictionary_term_alias a
+JOIN dictionary_term t ON t.id = a.dictionary_term_id
+WHERE (? = 1 OR t.dictionary_map_id = ?)
+  AND a.alias LIKE ?
+
+LIMIT ? OFFSET ?;
+
+)";
+
+        static std::string sql_standard =
+            "select id, title, disambiguation from dictionary_term where (?=1 or dictionary_map_id = ?) and title like ? limit ? offset ?";
+        static std::string sql_random =
+            "select id, title, disambiguation from dictionary_term where (?=1 or dictionary_map_id = ?) order by random() limit ?";
+        std::string& sql = random ? sql_random : (include_aliases ? sql_standard_with_alias : sql_standard);
 
         try
         {
@@ -78,26 +117,45 @@ plugins::core::models::OptionalError& optional_error)
             db.exec("PRAGMA journal_mode=WAL;");
 
             essential::debug << sql << essential::commit;
-            essential::debug << "Looking up terms (id, title) for dictionary_map_id=" << dictionary_map_id << " and title_part=" << title_part << essential::commit;
+            essential::debug << "Looking up terms (id, title) for dictionary_map_id=" << dictionary_map_id <<
+                " and title_part=" << title_part << essential::commit;
 
             SQLite::Statement query(db, sql);
             int index = 0;
             query.bind(++index, any_map ? 1 : 0);
             query.bind(++index, dictionary_map_id);
-            if (!random){
-            std::string pattern = "%" + title_part + "%";
-            query.bind(++index, pattern);
-        }
+            if (!random)
+            {
+                std::string pattern = "%" + title_part + "%";
+                query.bind(++index, pattern);
+            }
+            if (include_aliases)
+            {
+                std::string pattern = "%" + title_part + "%";
+                query.bind(++index, pattern);
+                query.bind(++index, any_map ? 1 : 0);
+                query.bind(++index, dictionary_map_id);
+                query.bind(++index, pattern);
+            }
             query.bind(++index, page_size);
             if (!random) query.bind(++index, (page_number - 1) * page_size);
 
-            std::vector<std::pair<identification, std::pair<std::string, std::string>>> results;
+            std::vector<nlohmann::json> results;
+
             while (query.executeStep())
             {
+                nlohmann::json result;
                 identification id = query.getColumn(0);
                 std::string title = query.getColumn(1);
                 std::string disambiguation = query.getColumn(2);
-                results.push_back(std::make_pair(id, std::make_pair(title, disambiguation)));            }
+                std::string alias = include_aliases ? query.getColumn(3) : "";
+                result["id"] = id;
+                result["dictionary_term_id"] = id;
+                result["title"] = title;
+                result["disambiguation"] = disambiguation;
+                result["alias"] = alias;
+                results.push_back(result);
+            }
             response["results"] = results;
         }
         catch (SQLite::Exception& e)
