@@ -49,6 +49,19 @@ export const Entities = Object.freeze({
         dictionary_map_id: "dictionary_map_id"
     }),
 
+    dictionary_term_understanding: Object.freeze({
+        table_name: "dictionary_term_understanding",
+
+        id: "id",
+        created_at: "created_at",
+        updated_at: "updated_at",
+
+        dictionary_term_id: "dictionary_term_id",
+        user_id: "user_id",
+        dictionary_map_id: "dictionary_map_id",
+        level: "level"
+    }),
+
     dictionary_link: Object.freeze({
         table_name: "dictionary_link",
 

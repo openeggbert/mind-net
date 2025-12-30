@@ -28,6 +28,7 @@ import {Sort} from "../enums/Sort.js";
 import {Order} from "../enums/Order.js";
 import {TermStatus} from "../enums/TermStatus.js";
 import {IsForRepetitionMode} from "../enums/IsForRepetitionMode.js";
+import {UnderstandingLevel} from "../enums/UnderstandingLevel.js";
 
 export class SearchModel {
     constructor() {
@@ -36,6 +37,7 @@ export class SearchModel {
         this.title_starts_with = "";
         this.definition_contains = "";
         this.statuses = [];
+        this.understandings = [];
         this.pinned_only = false;
         this.importance_low = true
         this.importance_medium = true
@@ -80,6 +82,9 @@ export class SearchModel {
             definition_contains: this.definition_contains,
 
             statuses: this.statuses.length === 1 && this.statuses[0] === -1 ? [] : this.statuses.map(e => {
+                return e.id
+            }),
+            understandings: this.understandings.length === 1 && this.understandings[0] === -1 ? [] : this.understandings.map(e => {
                 return e.id
             }),
             pinned_only: this.pinned_only,
@@ -141,6 +146,11 @@ export class SearchModel {
         this.statuses = Array.isArray(json.statuses)
             ? json.statuses
                 .map(id => enumValue(TermStatus, id))
+                .filter(Boolean)
+            : [];
+        this.understandings = Array.isArray(json.understandings)
+            ? json.understandings
+                .map(id => enumValue(UnderstandingLevel, id))
                 .filter(Boolean)
             : [];
 

@@ -540,5 +540,32 @@ ALTER TABLE dictionary_term
 RENAME COLUMN repetition TO is_for_repetition;
 )");
 
+        add_migration("V23__create_dictionary_term_understanding.sql", R"(
+CREATE TABLE dictionary_term_understanding (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at DATETIME,
+    updated_at DATETIME,
+
+    dictionary_term_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    dictionary_map_id INTEGER NOT NULL,
+    level INTEGER NOT NULL DEFAULT 0,
+
+    UNIQUE (dictionary_term_id, user_id, dictionary_map_id),
+
+    FOREIGN KEY(dictionary_term_id) REFERENCES dictionary_term(id),
+    FOREIGN KEY(user_id) REFERENCES user(id),
+    FOREIGN KEY(dictionary_map_id) REFERENCES dictionary_map(id)
+);
+
+CREATE INDEX idx_dictionary_term_understanding_term ON dictionary_term_understanding(dictionary_term_id);
+CREATE INDEX idx_dictionary_term_understanding_user ON dictionary_term_understanding(user_id);
+CREATE INDEX idx_dictionary_term_understanding_map ON dictionary_term_understanding(dictionary_map_id);
+)");
+        add_migration("V24__create_index_idx_term_understanding_user_term.sql", R"(
+        CREATE INDEX idx_term_understanding_user_term
+ON dictionary_term_understanding(user_id, dictionary_term_id, level);
+)");
+
     }
 }

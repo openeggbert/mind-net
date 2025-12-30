@@ -62,7 +62,20 @@ X(Deprecated,  5, ENUM_NAME)       \
 X(Deleted,     6, ENUM_NAME)
 
     DECLARE_ENUM(TermStatus, term_status, TERM_STATUS_LIST)
+////
 
+    #define UNDERSTANDING_LEVEL_LIST(X, ENUM_NAME) \
+X(Any,          -1, ENUM_NAME)             \
+\
+X(Unknown,       0, ENUM_NAME)             \
+X(Recognized,    1, ENUM_NAME)             \
+X(Understood,    2, ENUM_NAME)             \
+X(Applied,       3, ENUM_NAME)             \
+X(Internalized,  4, ENUM_NAME)
+
+DECLARE_ENUM(UnderstandingLevel, understanding_level, UNDERSTANDING_LEVEL_LIST)
+
+////
 #define IMPORTANCE_LIST(X, ENUM_NAME) \
 X(Low,    1, ENUM_NAME)           \
 X(Medium, 2, ENUM_NAME)           \
@@ -227,6 +240,7 @@ X(Desc, 2, ENUM_NAME)
 
         // enums / multi-selects serialized as comma-separated values
         vector<TermStatus> statuses;
+        vector<UnderstandingLevel> understandings;
         bool pinned_only = false;
 
         bool difficulty_easy = false;
@@ -283,6 +297,11 @@ X(Desc, 2, ENUM_NAME)
             {
                 if (e == -1) continue; //Any
                 statuses.push_back(int_to_term_status(e));
+            }
+            for (auto& e : q.at("understandings").get<std::vector<int>>())
+            {
+                if (e == -1) continue; //Any
+                understandings.push_back(int_to_understanding_level(e));
             }
             pinned_only = q.value("pinned_only", false);
 
@@ -354,6 +373,7 @@ X(Desc, 2, ENUM_NAME)
             q["definition_contains"] = definition_contains;
 
             q["statuses"] = statuses;
+            q["understandings"] = understandings;
             q["pinned_only"] = pinned_only;
 
             q["difficulty_easy"] = difficulty_easy;
@@ -530,6 +550,19 @@ X(Desc, 2, ENUM_NAME)
         if (q.source_id > 0)
             sql_where_and_joins += " JOIN dictionary_source ds ON ds.dictionary_term_id = dt.id ";
 
+        bool understandings_enabled =
+            !q.understandings.empty() &&
+            !(q.understandings.size() == 1 && q.understandings[0] == UnderstandingLevel::Any);
+
+        if (understandings_enabled)
+        {
+            sql_where_and_joins +=
+                " LEFT JOIN dictionary_term_understanding du "
+                " ON du.dictionary_term_id = dt.id AND du.user_id = ? ";
+            binders.push_back(user_id);
+        }
+
+
         bool sort_next_review = q.sort == Sort::NextReview;
         if (sort_next_review)
         {
@@ -593,6 +626,26 @@ X(Desc, 2, ENUM_NAME)
                 if (status_int == -1) continue;
                 binders.push_back(status_int);
             }
+            sql_where_and_joins += ")";
+        }
+
+        if (understandings_enabled)
+        {
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "COALESCE(du.level, 0) IN (";
+
+            for (size_t i = 0; i < q.understandings.size(); ++i)
+            {
+                if (i) sql_where_and_joins += ",";
+                sql_where_and_joins += "?";
+
+                auto u = q.understandings[i];
+                auto u_int = understanding_level_to_int(u);
+                if (u_int == -1) continue;
+
+                binders.push_back(u_int);
+            }
+
             sql_where_and_joins += ")";
         }
 
@@ -706,6 +759,13 @@ X(Desc, 2, ENUM_NAME)
             binders.push_back(q.index_id);
         }
 
+        // source
+        if (q.source_id > 0)
+        {
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "ds.dictionary_source_type_id = ?";
+            binders.push_back(q.source_id);
+        }
         // source
         if (q.source_id > 0)
         {

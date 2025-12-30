@@ -144,6 +144,20 @@
                 </select>
             </div>
 
+            <div>
+                <label for="select_understanding" style="display:inline;white-space: nowrap;">🧠 <span data-i18n="dictionary.enums.understanding.label">Understanding</span>:</label>
+                <select name="select_understanding" id="select_understanding"
+                        style="max-width:250px; display:inline; margin-left:10px;">
+                    <option value="0">Unknown</option>
+                    <option value="1">Recognized</option>
+                    <option value="2">Understood</option>
+                    <option value="3">Applied</option>
+                    <option value="4">Internalized</option>
+                </select>
+                <button id="button_show_understanding_legend" style="margin-left: 5px;">ℹ️ <span data-i18n="dictionary.common.show_legend">Show Legend</span></button>
+
+            </div>
+
             <label for="checkbox_pinned" style="display:inline;white-space: nowrap;">📌 <span data-i18n="dictionary.term.label.pinned">Pinned</span>:</label>
             <input type="checkbox" id="checkbox_pinned"
                    style="transform: scale(2);margin-left:10px; margin-right:10px;"/>

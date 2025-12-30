@@ -57,6 +57,7 @@ import {FormRowAutocomplete} from "./FormRowAutocomplete.js";
 import {SearchAutocomplete} from "./SearchAutocomplete.js";
 import {SearchModel} from "./SearchModel.js";
 import {IsForRepetitionMode} from "../enums/IsForRepetitionMode.js";
+import {UnderstandingLevel} from "../enums/UnderstandingLevel.js";
 
 /*
 * =====================================================================================
@@ -261,7 +262,6 @@ export class SearchWindow extends VirtualWindow {
 
         const maps = await list_all_entities(Entities.dictionary_map, new QueryParams().sort(Entities.dictionary_map.position).build());
 
-
         const map_select = new MapSelect(maps)
         search_form.add_control(new FormRow("Map", map_select))
 
@@ -290,8 +290,10 @@ export class SearchWindow extends VirtualWindow {
         }
 
         const statusSelect = new EnumSelect(TermStatus).multiple();
-
         search_form.add_control(new FormRow("Status", statusSelect));
+
+        const understandingSelect = new EnumSelect(UnderstandingLevel).multiple();
+        search_form.add_control(new FormRow("Understanding", understandingSelect));
 
         const pinnedCheckbox = new Checkbox()
             .add_action_handler(ActionType.Reset, (self, ...args) => {
@@ -780,6 +782,13 @@ export class SearchWindow extends VirtualWindow {
                         return result
                     }
                 )
+            m.understandings = Array
+                .from(understandingSelect.selectedOptions())
+                .map(opt => {
+                        let result = enumValue(UnderstandingLevel, opt.value)
+                        return result
+                    }
+                )
             m.pinned_only = pinnedCheckbox.is_checked()
             m.importance_low = find_by_enum_id("importance", Importance.Low)._object.is_checked()
             m.importance_medium = find_by_enum_id("importance", Importance.Medium)._object.is_checked()
@@ -952,6 +961,7 @@ export class SearchWindow extends VirtualWindow {
             titleStartsWithInput.set_value(query.title_starts_with ?? "")
             definitionInput.set_value(query.definition_contains ?? "")
             statusSelect.set_selected_values(query.statuses)
+            understandingSelect.set_selected_values(query.understandings)
             pinnedCheckbox.set_checked(query.pinned_only ?? false)
 
             find_enum("importance", Importance.Low).set_checked(query.importance_low ?? true)

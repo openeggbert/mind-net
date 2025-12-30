@@ -1,23 +1,14 @@
 import {
-    formatDateTime,
-    get_element, loadFromLocalStorage,
+    get_element,
+    loadFromLocalStorage,
     saveToLocalStorage,
     showError,
     showInfo,
     showSuccess,
     showWarn
 } from "../../dom.js";
-import {
-    delete_entity,
-    getTitleCache, list_all_entities,
-    list_entities,
-    post_entity,
-    put_entity,
-    QueryParams,
-    read_entity,
-    setTitleCache
-} from "../../api.js";
-import {defined, null_or_undefined} from "../../common.js";
+import {delete_entity, list_all_entities, post_entity, put_entity, QueryParams, read_entity} from "../../api.js";
+import {defined} from "../../common.js";
 import {Tags} from "./sections/Tags.js";
 import {Flags} from "./sections/Flags.js";
 import {Links} from "./sections/Links.js";
@@ -27,14 +18,16 @@ import {Urls} from "./sections/Urls.js";
 import {Indexes} from "./sections/Indexes.js";
 import {Sources} from "./sections/Sources.js";
 import {Aliases} from "./sections/Aliases.js";
-import {Div} from "../dom/elements/Div.js"
 import {Entities} from "../entities/Entities.js";
 import {attachMarkdownEditor} from "../markdown/Markdown.js";
 import {translate, USER_ID} from "../globals/Globals.js";
-import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
 import {Button} from "../dom/elements/Button.js";
 import {_10PX} from "../styles/Styles.js";
 import {set_params} from "./Utils.js";
+import {VirtualWindow} from "../window/VirtualWindow.js";
+import {Div} from "../dom/elements/Div.js";
+import {Span} from "../dom/elements/Span.js";
+import {B} from "../dom/elements/B.js";
 
 const COLON_SPACE = ": "
 
@@ -240,9 +233,60 @@ class TermContainer {
             buttonRead: get_element("button_read_definition")
         });
 
+        get_element("select_status").selectedIndex = dictionary_term.status
 
-        let status = dictionary_term.status
-        get_element("select_status").selectedIndex = status
+        let list_understandings = await list_all_entities(
+            Entities.dictionary_term_understanding,
+            new QueryParams().add_user_id().add(Entities.dictionary_term_understanding.dictionary_term_id, dictionary_term_id).build()
+        )
+        if (!list_understandings) {
+            showError("Loading dictionary_term_understanding failed")
+            this.hide()
+            return
+        } else {
+            let understanding = list_understandings.length === 0 ? null : list_understandings[0]
+            get_element("select_understanding").selectedIndex = understanding === null ? 0 : understanding.level
+        }
+        let button_show_understanding_legend = get_element("button_show_understanding_legend")
+        if(!button_show_understanding_legend.onclick) {
+            button_show_understanding_legend.onclick=()=> {
+                let window = new VirtualWindow(
+                    {
+                        title: "Understanding legend",
+                        width: 600,
+                        height: 400
+                    }
+                )
+                let content = new Div()
+
+                function appendUnderstanding(content, title, description) {
+                    content.appendChild(new Div(new B(title)))
+                    content.appendChild(new Div(
+                        new Span(" -- "),
+                        new Span(description)
+                    ))
+                }
+
+                appendUnderstanding(content, "Unknown",
+                    "I know the term exists, but nothing more.")
+
+                appendUnderstanding(content, "Recognized",
+                    "I recognize the name and its general context.")
+
+                appendUnderstanding(content, "Understood",
+                    "I understand the definition and core idea.")
+
+                appendUnderstanding(content, "Applied",
+                    "I can correctly use it in practice.")
+
+                appendUnderstanding(content, "Internalized",
+                    "Using it is automatic and requires no conscious effort.")
+
+
+                window.set_content(content.element())
+                window.show()
+            }
+        }
 
         let checkbox_pinned = get_element("checkbox_pinned")
         let pinned_terms = await list_all_entities(
@@ -457,6 +501,49 @@ class TermContainer {
             }
 
             new_term.status = get_element("select_status").selectedIndex
+
+
+            let understanding_level = get_element("select_understanding").selectedIndex
+
+            let list_understandings = await list_all_entities(
+                Entities.dictionary_term_understanding,
+                new QueryParams().add_user_id().add(Entities.dictionary_term_understanding.dictionary_term_id, dictionary_term_id).build()
+            )
+            if (!list_understandings) {
+                showError("Saving understanding failed")
+            } else {
+                let understanding = list_understandings.length === 0 ? null : list_understandings[0]
+                let to_be_created = understanding === null;
+                if(to_be_created) {
+                    understanding = {
+                        dictionary_term_id: dictionary_term_id,
+                        user_id: USER_ID,
+                        dictionary_map_id: this.get_selected_map_id_callback(),
+                        level: understanding_level
+                    }
+                } else {
+                    understanding.level = understanding_level
+                }
+
+                if (to_be_created) {
+
+                    let created = await post_entity(Entities.dictionary_term_understanding, understanding)
+                    if (defined(created)) {
+                        showSuccess("Creating new term understanding was successful.")
+                    } else {
+                        showError("Creating new term understanding failed.")
+                    }
+                }
+                if (!to_be_created) {
+
+                    let updated = await put_entity(Entities.dictionary_term_understanding, understanding.id, understanding)
+                    if (defined(updated)) {
+                        showSuccess("Updating term understanding was successful.")
+                    } else {
+                        showError("Updating term understanding failed.")
+                    }
+                }
+            }
 
             let importance = 0
             let difficulty = 0

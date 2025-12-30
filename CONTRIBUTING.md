@@ -44,8 +44,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Modify fulltext search - replace LIKE by FTS
 - [ ] UI: Add: Created at and Updated at
 - [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
-- [ ] New table dictionary_term_understanding. New enum UnderstandingLevel: Unknown, Recognized, Understood, Applied, Internalized
-- [ ] New column dictionary_term_visit.type: Unknown, Created, Search, Link, Note, External, Other
+- [ ] New column dictionary_term_visit.type: Unknown, Created, Search, Link, Note, Random, External, Other
+- [ ] Bug - &term_id is sometimes hidden in the url
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -250,3 +250,6 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] &map_id={}&term_id={}
 - [x] OlderTerm, NewerTerm
 - [x] Search Term - should also use the table dictionary_term_alias
+- [x] New table dictionary_term_understanding.
+- [x] New enum UnderstandingLevel: Unknown, Recognized, Understood, Applied, Internalized
+- 
