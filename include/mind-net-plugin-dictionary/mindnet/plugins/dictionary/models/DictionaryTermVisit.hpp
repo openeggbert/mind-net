@@ -32,6 +32,7 @@
 #define MODEL DICTIONARY_TERM_VISIT
 #define COLS columns::DictionaryTermVisitColumns
 #include "../columns/DictionaryTermVisitColumns.hpp"
+#include "mindnet/plugins/dictionary/enums/VisitSource.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::dictionary::models
@@ -49,7 +50,8 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY).set_description(
                 "Dictionary term that was visited."),
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY).set_description("User who visited the term."),
-            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY)
+            coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::SOURCE).set_enum_definition(enums::visit_source_to_enum_definition()).set_default_value(0)
         });
 
     struct DictionaryTermVisit : mindnet::model::BaseModel
@@ -57,11 +59,13 @@ namespace mindnet::plugins::dictionary::models
         identification dictionary_term_id{};
         identification user_id{};
         identification dictionary_map_id{};
+        enums::VisitSource source{enums::VisitSource::Unknown};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::user_id,
-            &Model::dictionary_map_id
+            &Model::dictionary_map_id,
+            &Model::source
         );
 
         create_model_h_methods(Model, MODEL)

@@ -34,7 +34,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
-- [ ] New column dictionary_term_visit.type: Unknown, Created, Search, Link, Note, Random, External, Other
 - [ ] Window "Term Visit History" - add paging
 - [ ] Ask user, if unsaved changes exist
 - [ ] Multi-language - translate English text, which is not yet translated
@@ -253,4 +252,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Search Term - should also use the table dictionary_term_alias
 - [x] New table dictionary_term_understanding.
 - [x] New enum UnderstandingLevel: Unknown, Recognized, Understood, Applied, Internalized
-- 
+- [x] New column dictionary_term_visit.source: Unknown, Created, Search, Link, Note, Random, External, Other, ...

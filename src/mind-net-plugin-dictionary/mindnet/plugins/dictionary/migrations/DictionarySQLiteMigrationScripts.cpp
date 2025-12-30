@@ -567,5 +567,10 @@ CREATE INDEX idx_dictionary_term_understanding_map ON dictionary_term_understand
 ON dictionary_term_understanding(user_id, dictionary_term_id, level);
 )");
 
+        add_migration("V25__alter_table_dictionary_term_visit_add_column_source.sql", R"(
+ALTER TABLE dictionary_term_visit ADD COLUMN source INTEGER NOT NULL DEFAULT 0;
+
+)");
+
     }
 }

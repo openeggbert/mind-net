@@ -20,7 +20,13 @@ import {Sources} from "./sections/Sources.js";
 import {Aliases} from "./sections/Aliases.js";
 import {Entities} from "../entities/Entities.js";
 import {attachMarkdownEditor} from "../markdown/Markdown.js";
-import {translate, USER_ID} from "../globals/Globals.js";
+import {
+    clear_next_visit_source,
+    get_next_visit_source,
+    set_next_visit_source,
+    translate,
+    USER_ID
+} from "../globals/Globals.js";
 import {Button} from "../dom/elements/Button.js";
 import {_10PX} from "../styles/Styles.js";
 import {set_params} from "./Utils.js";
@@ -28,6 +34,7 @@ import {VirtualWindow} from "../window/VirtualWindow.js";
 import {Div} from "../dom/elements/Div.js";
 import {Span} from "../dom/elements/Span.js";
 import {B} from "../dom/elements/B.js";
+import {VisitSource} from "../enums/VisitSource.js";
 
 const COLON_SPACE = ": "
 
@@ -160,6 +167,7 @@ class TermContainer {
         let term_id = loadFromLocalStorage("last_visited_term_id")
         if(!term_id) return
 
+        set_next_visit_source(VisitSource.LastVisited)
         this.render(term_id)
         this.show()
     }
@@ -206,6 +214,7 @@ class TermContainer {
                 return
             }
             showInfo(translate("dictionary.term.info.found_term") + ": " + older_term_id)
+            set_next_visit_source(VisitSource.Older)
             this.render_term_id_callback(older_term_id, true)
         }
         get_element("button_newer").onclick = async ()=> {
@@ -221,6 +230,7 @@ class TermContainer {
                 return;
             }
             showInfo(translate("dictionary.term.info.found_term") + ": " + newer_term_id)
+            set_next_visit_source(VisitSource.Newer)
             this.render_term_id_callback(newer_term_id, true)        }
         get_element("h2_term_id").innerText = dictionary_term.id
         get_element("input_title").value = dictionary_term.title
@@ -408,6 +418,11 @@ class TermContainer {
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
 
+            table = Entities.dictionary_term_understanding
+            let understandings = await list_all_entities(
+                table,
+                new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+
             table = Entities.dictionary_review
             let reviews = await list_all_entities(
                 table,
@@ -439,6 +454,7 @@ class TermContainer {
             await delete_rows(Entities.dictionary_term_alias, aliases)
             await delete_rows(Entities.dictionary_term_visit, visits)
             await delete_rows(Entities.dictionary_url, urls)
+            await delete_rows(Entities.dictionary_term_understanding, understandings)
 
             let delete_dictionary_term = await delete_entity(Entities.dictionary_term, dictionary_term_id)
             if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
@@ -574,8 +590,11 @@ class TermContainer {
         let new_visit = {
             dictionary_term_id: dictionary_term_id,
             user_id: USER_ID,
-            dictionary_map_id: this.get_selected_map_id_callback()
+            dictionary_map_id: this.get_selected_map_id_callback(),
+            source: get_next_visit_source().id
         }
+        clear_next_visit_source()
+
         let created_dictionary_term_visit = post_entity(Entities.dictionary_term_visit, new_visit)
         if (created_dictionary_term_visit === null || created_dictionary_term_visit === undefined) {
             showError(translate("dictionary.term.container.error.creating_term_visit_failed"))

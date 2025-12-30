@@ -9,9 +9,11 @@ import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
 import {RepetitionWindow} from "../repetition/RepetitionWindow.js";
 import {I18n} from "../i18n/I18n.js";
 import {LanguageObject, SUPPORTED_LANGUAGES} from "../i18n/Language.js";
-import {set_i18n, translate, USER_ID} from "../globals/Globals.js";
+import {set_i18n, set_next_visit_source, translate, USER_ID} from "../globals/Globals.js";
 import {Div} from "../dom/elements/Div.js";
 import {get_params, set_params} from "./Utils.js";
+import {VisitSource} from "../enums/VisitSource.js";
+import {enumValue} from "../enums/EnumFunctions.js";
 
 export class DictionaryApp {
     #input_search_term = document.getElementById("input_search_term")
@@ -57,6 +59,7 @@ export class DictionaryApp {
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
             showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
+            set_next_visit_source(VisitSource.Search)
             await this.#term_container.render(item.id)
             this.#term_container.show()
             this.#input_search_term.value = ""
@@ -90,6 +93,7 @@ export class DictionaryApp {
                 return;
             }
             showSuccess(this.translate("dictionary.term.button.add_term.info.creating_was_successful") + new_term_created.title)
+            set_next_visit_source(VisitSource.Created)
             await this.#term_container.render(new_term_created.id)
             this.#term_container.show()
 
@@ -104,7 +108,7 @@ export class DictionaryApp {
         }
         get_element("button_find_random_term").onclick = async () => {
             await this.#autocomplete_term_title.search("*", 1, true)
-
+            set_next_visit_source(VisitSource.Random)
             this.#autocomplete_term_title.set_selected_item(0)
             set_params(null, this.#autocomplete_term_title.get_item_id())
             //await this.#term_container.render(this.#autocomplete_term_title.get_item_id())
@@ -117,6 +121,7 @@ export class DictionaryApp {
                     return this.get_selected_map_id()
                 },
                 async (term_id) => {
+                    set_next_visit_source(VisitSource.Repetition)
                     await this.render(term_id)
                     this.show_term_container()
                 }
@@ -128,7 +133,7 @@ export class DictionaryApp {
         get_element("button_show_visited").onclick = async () => {
             let win = new VirtualWindow({
                 title: translate("dictionary.term.container.visit_window.term_visit_history"),
-                width: 800,
+                width: 1000,
                 height: 600,
             })
 
@@ -167,7 +172,6 @@ export class DictionaryApp {
             let visits = visits_result.items
             const disambiguation_map = new Map()
 
-
             table.style.borderCollapse = "collapse";
             table.style.margin = "0 auto";
             let tr_first = document.createElement("tr");
@@ -180,14 +184,20 @@ export class DictionaryApp {
             let th_title = document.createElement("th");
             th_title.innerText = translate("dictionary.common.title")
             th_title.dataset.i18n = "dictionary.common.title"
+
+            let th_source = document.createElement("th");
+            th_source.innerText = "Source"
+
             let th_timestamp = document.createElement("th");
             th_timestamp.innerText = translate("dictionary.common.timestamp")
             th_timestamp.dataset.i18n = "dictionary.common.timestamp"
+
             tr_first.appendChild(th_number)
             tr_first.appendChild(th_id)
+            tr_first.appendChild(th_source)
             tr_first.appendChild(th_title)
             tr_first.appendChild(th_timestamp)
-            for (const el of [th_number, th_id, th_title, th_timestamp]) {
+            for (const el of [th_number, th_id, th_title, th_source, th_timestamp]) {
                 el.style.minWidth = "20px"
                 el.style.padding = "10px";
                 el.style.border = "1px solid black";
@@ -216,8 +226,9 @@ export class DictionaryApp {
                 let td_number = document.createElement("td");
                 let td_id = document.createElement("td");
                 let td_title = document.createElement("td");
+                let td_source = document.createElement("td");
                 let td_timestamp = document.createElement("td");
-                for (const el of [td_number, td_id, td_title, td_timestamp]) {
+                for (const el of [td_number, td_id, td_title, td_source, td_timestamp]) {
                     el.style.padding = "10px";
                     el.style.border = "1px solid black";
                 }
@@ -225,6 +236,7 @@ export class DictionaryApp {
                 tr.appendChild(td_number)
                 tr.appendChild(td_id)
                 tr.appendChild(td_title)
+                tr.appendChild(td_source)
                 tr.appendChild(td_timestamp)
                 td_number.innerText = String(history_entry_number);
                 td_id.innerText = visited_term_id;
@@ -256,9 +268,12 @@ export class DictionaryApp {
                 let callback = async (term_id) => await this.render(term_id, true)
                 a.onclick = async function () {
                     event.preventDefault();
+                    set_next_visit_source(VisitSource.VisitedHistory)
                     await callback(visited_term_id)
                 }
                 td_title.appendChild(a)
+                let source = enumValue(VisitSource, entry.source)
+                td_source.innerText = source == null ? VisitSource.Unknown.label : source.label
                 td_timestamp.innerText = formatDateTime(entry.created_at, true, true, true)
             }
 
@@ -297,6 +312,7 @@ export class DictionaryApp {
             this.set_selected_map_id(params.map_id)
         }
         if(params.term_id) {
+            set_next_visit_source(VisitSource.External)
             await this.render(params.term_id)
             this.set_selected_map_id(this.get_selected_map_id())
             this.#term_container.show()
@@ -334,6 +350,7 @@ export class DictionaryApp {
             let item = this.#autocomplete_term_title.get_item()
             showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
             await this.#term_container.show()
+            set_next_visit_source(VisitSource.Search)
             await this.#term_container.render(item.id)
             this.#input_search_term.value = ""
         })

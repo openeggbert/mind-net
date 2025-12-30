@@ -46,7 +46,8 @@ export const Entities = Object.freeze({
 
         dictionary_term_id: "dictionary_term_id",
         user_id: "user_id",
-        dictionary_map_id: "dictionary_map_id"
+        dictionary_map_id: "dictionary_map_id",
+        source: "source"
     }),
 
     dictionary_term_understanding: Object.freeze({

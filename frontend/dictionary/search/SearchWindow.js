@@ -19,7 +19,7 @@ import {
     QueryParams,
     read_entity
 } from "../../api.js";
-import {showDebug, USER_ID} from "../globals/Globals.js";
+import {set_next_visit_source, showDebug, USER_ID} from "../globals/Globals.js";
 import {ActionType} from "../dom/attributes/ActionType.js";
 import {ButtonType} from "../dom/attributes/ButtonType.js";
 import {EventType} from "../dom/attributes/EventType.js";
@@ -58,6 +58,7 @@ import {SearchAutocomplete} from "./SearchAutocomplete.js";
 import {SearchModel} from "./SearchModel.js";
 import {IsForRepetitionMode} from "../enums/IsForRepetitionMode.js";
 import {UnderstandingLevel} from "../enums/UnderstandingLevel.js";
+import {VisitSource} from "../enums/VisitSource.js";
 
 /*
 * =====================================================================================
@@ -689,6 +690,7 @@ export class SearchWindow extends VirtualWindow {
                 td_title.appendChild(a)
 
                 td_title.onclick = (async e => {
+                    set_next_visit_source(VisitSource.AdvancedSearch)
                     await render_term_callback(dictionary_term_id)
                 })
                 td_title.style.cursor = "pointer"

@@ -17,7 +17,8 @@ import {
 import {Autocomplete, defined} from "../../../common.js";
 import {_CrudSection} from "../_CrudSection.js";
 import {Entities} from "../../entities/Entities.js";
-import {USER_ID} from "../../globals/Globals.js";
+import {set_next_visit_source, USER_ID} from "../../globals/Globals.js";
+import {VisitSource} from "../../enums/VisitSource.js";
 
 export class Links extends _CrudSection {
     constructor(get_selected_map_id_callback, render_term_id_callback) {
@@ -136,6 +137,7 @@ export class Links extends _CrudSection {
             if(!defined(this.render_term_id_callback)) {
                 throw new Error ("render_term_id_callback is null or undefined")
             } else {
+                set_next_visit_source(VisitSource.Link)
                 await this.render_term_id_callback(to_dictionary_term_id)
             }
         }

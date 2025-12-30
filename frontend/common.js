@@ -117,7 +117,7 @@ export class Autocomplete {
             this.box.appendChild(div);
             i++
         });
-        if(this.#search_all_results_callback && q!== "*") {
+        if(items.length >= 20 && this.#search_all_results_callback && q!== "*") {
             {
                 const div = document.createElement("div");
                 div.className = "suggestion-item";
