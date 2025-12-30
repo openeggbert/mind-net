@@ -337,9 +337,7 @@ a.note-wanted, a.note-unknown {
 /*    cursor: grabbing;*/
 /*}*/
 
-.window_container {
-    position: absolute;
-}
+
 
 .window-resize-handle {
     position: absolute;

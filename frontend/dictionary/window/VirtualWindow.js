@@ -18,6 +18,16 @@ const OVERVIEW_TRANSITION = "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)";
 const OVERVIEW_ANIM_MS = 380;
 const OVERVIEW_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 
+let lastPointer = {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
+};
+
+document.addEventListener("pointermove", e => {
+    lastPointer.x = e.clientX;
+    lastPointer.y = e.clientY;
+});
+
 export function bringToFront(win) {
     topZ++;
 
@@ -405,6 +415,23 @@ export class VirtualWindow {
     get_title_dataset() {
         return this.#title.dataset
     }
+
+    _showAt(_x, y) {
+        const rect = this.#root.getBoundingClientRect();
+        const pad = 12;
+
+        if (!this.#root.style.left) {
+            const centerX = (window.innerWidth - rect.width) / 2;
+            this.#root.style.left = centerX + "px";
+        }
+
+        y = Math.max(pad, Math.min(y, window.innerHeight - rect.height - pad));
+        this.#root.style.top = y + "px";
+
+        this.#userPositioned = true;
+    }
+
+
     _applyOverviewTransform(extraScale = 1) {
         const r = this.#overviewRect;
         if (!r) return;
@@ -595,6 +622,8 @@ export class VirtualWindow {
 
         this.resize(get_inner_width(), get_inner_height());
         this.#maximized = true
+
+        this.#userPositioned = true;
     }
 
     restore() {
@@ -618,6 +647,7 @@ export class VirtualWindow {
         this.#minimized = false;
         this.#maximized = false;
 
+        this.#userPositioned = true;
         this.focus();
     }
 
@@ -637,37 +667,22 @@ export class VirtualWindow {
     show() {
         this.#root.style.display = "block";
 
-        if (!this.#userPositioned) {
-            requestAnimationFrame(() => {
-                const w = this.#root.offsetWidth;
-                const h = this.#root.offsetHeight;
+        requestAnimationFrame(() => {
 
-                let left, top;
+            if (!this.#userPositioned) {
+                this._showAt(
+                    lastPointer?.x ?? window.innerWidth / 2,
+                    lastPointer?.y ?? window.innerHeight / 2
+                );
+            }
 
-                if (lastWindowPosition) {
-                    left = lastWindowPosition.left + CASCADE_OFFSET_X;
-                    top = lastWindowPosition.top + CASCADE_OFFSET_Y;
-                } else {
-                    left = (window.innerWidth - w) / 2;
-                    top = (window.innerHeight - h) / 2;
-                }
-
-                if (left + w > window.innerWidth) left = 20;
-                if (top + h > window.innerHeight) top = 20;
-
-                this.#root.style.left = left + "px";
-                this.#root.style.top = clampTop(top) + "px";
-
-                lastWindowPosition = {left, top};
-
-                this.focus();
-            });
-        } else {
             this.focus();
-        }
+        });
 
         return this;
     }
+
+
 
 
     hide() {
