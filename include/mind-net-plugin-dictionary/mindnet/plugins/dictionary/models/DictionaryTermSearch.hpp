@@ -76,7 +76,7 @@ namespace mindnet::plugins::dictionary::models
         std::string disambiguation{};
         unixtime term_created_at{};
         unixtime term_updated_at{};
-        enums::TermStatus status{enums::TermStatus::NotDefined};
+        enums::TermStatus status{enums::TermStatus::None};
         enums::Importance importance{enums::Importance::Medium};
         enums::Difficulty difficulty{enums::Difficulty::Medium};
 

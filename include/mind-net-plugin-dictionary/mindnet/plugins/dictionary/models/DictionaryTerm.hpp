@@ -80,7 +80,7 @@ namespace mindnet::plugins::dictionary::models
         string title;
         string disambiguation;
         string definition;
-        enums::TermStatus status{enums::TermStatus::NotDefined};
+        enums::TermStatus status{enums::TermStatus::None};
         enums::Importance importance{enums::Importance::Medium};
         enums::Difficulty difficulty{enums::Difficulty::Medium};
         bool is_for_repetition{true};
