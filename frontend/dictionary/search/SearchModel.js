@@ -51,6 +51,7 @@ export class SearchModel {
         this.note_contains = ""
         this.index_id = 0
         this.source_id = 0
+        this.alias_contains = "";
         this.alias_alias = ""
         this.has_items = []
         this.missing_items = []
@@ -102,6 +103,7 @@ export class SearchModel {
             note_contains: this.note_contains,
             index_id: this.index_id,
             source_id: this.source_id,
+            alias_contains: this.alias_contains,
             alias_alias: this.alias_alias,
 
             has_items: this.has_items.map(e => {
@@ -163,6 +165,7 @@ export class SearchModel {
         this.note_contains = json.note_contains ?? "";
         this.index_id = json.index_id ?? 0;
         this.source_id = json.source_id ?? 0;
+        this.alias_contains = json.alias_contains ?? "";
         this.alias_alias = json.alias_alias ?? "";
 
         this.has_items = Array.isArray(json.has_items)

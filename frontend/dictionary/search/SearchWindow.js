@@ -269,9 +269,9 @@ export class SearchWindow extends VirtualWindow {
             let values =  map_select.get_selected_values()
             return values.length === 0 ? 0 : Number(values[0])
         }
+
         const titleContainsInput = new Input()
             .set_placeholder("e.g. mutex, allocator, RAII")
-
         search_form.add_control(new FormRow("Title contains", titleContainsInput));
 
         const titleStartsWithInput = new Input().set_placeholder("e.g. mut, allo, C, K");
@@ -371,6 +371,11 @@ export class SearchWindow extends VirtualWindow {
 
         const index_control = new AcControl("Index", "index_type")
         const source_control = new AcControl("Source", "source_type")
+
+        const aliasContainsInput = new Input()
+            .set_placeholder("e.g. mut, alloc, II")
+        search_form.add_control(new FormRow("Alias contains", aliasContainsInput));
+
         const alias_control = new AcControl("Alias", "term_alias")
 
         map_select.on("change", ()=> {
@@ -796,6 +801,7 @@ export class SearchWindow extends VirtualWindow {
             m.note_contains = noteInput.get_value()
             m.index_id = index_control.get_item_id()
             m.source_id = source_control.get_item_id()
+            m.alias_contains = aliasContainsInput.get_value()
             m.alias_alias = alias_control.get_title()
             m.has_items = enumValues(DictionaryItem)
                 .filter(e => find_by_enum_id("has", e)._object.is_checked())
@@ -1020,6 +1026,8 @@ export class SearchWindow extends VirtualWindow {
                     }
                 }
             }
+
+            aliasContainsInput.set_value(query.alias_contains ?? "")
 
             if ((query.alias_alias ?? "") !== "") {
                 await alias_control.set_from_title(query.alias_alias)

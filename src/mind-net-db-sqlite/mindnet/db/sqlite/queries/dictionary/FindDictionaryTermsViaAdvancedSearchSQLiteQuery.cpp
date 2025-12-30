@@ -245,6 +245,8 @@ X(Desc, 2, ENUM_NAME)
         string note_contains;
         int index_id = 0;
         int source_id = 0;
+
+        string alias_contains;
         string alias_alias;
 
         vector<DictionaryItem> has_items;
@@ -302,6 +304,8 @@ X(Desc, 2, ENUM_NAME)
             note_contains = q.value("note_contains", "");
             index_id = q.value("index_id", 0);
             source_id = q.value("source_id", 0);
+
+            alias_contains = q.value("alias_contains", "");
             alias_alias = q.value("alias_alias", "");
 
             for (auto& e : q.at("has_items").get<std::vector<int>>())
@@ -368,6 +372,7 @@ X(Desc, 2, ENUM_NAME)
             q["note_contains"] = note_contains;
             q["index_id"] = index_id;
             q["source_id"] = source_id;
+            q["alias_contains"] = alias_contains;
             q["alias_alias"] = alias_alias;
 
             q["has_items"] = has_items;
@@ -507,7 +512,7 @@ X(Desc, 2, ENUM_NAME)
         if (!q.flag_title.empty())
             sql_where_and_joins += " JOIN dictionary_flag df ON df.dictionary_term_id = dt.id ";
 
-        if (!q.alias_alias.empty())
+        if (!q.alias_alias.empty() || !q.alias_contains.empty())
             sql_where_and_joins += " JOIN dictionary_term_alias da ON da.dictionary_term_id = dt.id ";
 
         if (q.link_from_term_id > 0)
@@ -674,8 +679,14 @@ X(Desc, 2, ENUM_NAME)
         if (!q.alias_alias.empty())
         {
             append_where(sql_where_and_joins, first_where);
-            sql_where_and_joins += "da.alias LIKE ?";
+            sql_where_and_joins += "da.alias = ?";
             binders.push_back("%" + q.alias_alias + "%");
+        }
+        if (!q.alias_contains.empty())
+        {
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "da.alias LIKE ?";
+            binders.push_back("%" + q.alias_contains + "%");
         }
 
         // note
