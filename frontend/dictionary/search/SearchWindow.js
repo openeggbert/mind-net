@@ -1322,8 +1322,7 @@ export class SearchWindow extends VirtualWindow {
             if(defaultModel.title_contains !== null && defaultModel.title_contains !== undefined) {
                 titleContainsInput.set_value(defaultModel.title_contains)
                 searchBtn.click()
-                searchBtn.element()
-                    .scrollIntoView({behavior: "smooth"});
+                // searchBtn.element().scrollIntoView({behavior: "smooth"});
             }
         }
     }

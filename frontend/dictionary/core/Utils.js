@@ -17,8 +17,6 @@ export function set_params(map_id, term_id = null) {
         url.searchParams.set("term_id", term_id);
     }
 
-    // throw new Error("abc")
-
     window.history.pushState({}, "", url);
 }
 
