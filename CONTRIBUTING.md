@@ -43,6 +43,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition: Under Start button: 42 cards selected: 18 due / 12 not due / 12 never
 - [ ] Modify fulltext search - replace LIKE by FTS
 - [ ] UI: Add: Created at and Updated at
+- [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

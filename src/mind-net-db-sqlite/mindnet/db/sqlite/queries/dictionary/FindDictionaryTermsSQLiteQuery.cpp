@@ -71,7 +71,8 @@ namespace mindnet::db::sqlite::queries::dictionary
         int page_size = 20;
         int page_number = 1;
 
-        bool random = include_aliases ? false : title_part == "*";
+        bool random = title_part == "*";
+        if (random) include_aliases = false;
         static std::string sql_standard_with_alias = R"(
 SELECT DISTINCT
     t.id,
