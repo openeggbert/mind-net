@@ -12,19 +12,22 @@ async function init_dom() {
     get_element("main_container").style.display = "block"
     get_element("loading_div").style.display= "none"
 
-    window.addEventListener("popstate", () => {
+    window.addEventListener("popstate", async () => {
         const params = new URLSearchParams(window.location.search);
         console.log(params.get("map_id"), params.get("term_id"));
         let map_id = params.get("map_id")
         let term_id = params.get("term_id")
 
-        if(map_id){
+        if (map_id) {
             let map_id_ = Number(map_id)
-            if(map_id_>0) dictionary_app.set_selected_map_id(map_id_)
+            if (map_id_ > 0) dictionary_app.set_selected_map_id(map_id_)
         }
-        if(term_id){
+        if (term_id) {
             let term_id_ = Number(term_id)
-            if(term_id_>0) dictionary_app.render(term_id_)
+            if (term_id_ > 0) {
+                await dictionary_app.render(term_id_)
+                dictionary_app.set_selected_map_id(dictionary_app.set_selected_map_id)
+            }
         }
     });
 

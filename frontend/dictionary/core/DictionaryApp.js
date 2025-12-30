@@ -282,6 +282,7 @@ export class DictionaryApp {
         }
         if(params.term_id) {
             await this.render(params.term_id)
+            this.set_selected_map_id(this.get_selected_map_id())
             this.#term_container.show()
         }
         if(params.term_id || params.map_id) return
