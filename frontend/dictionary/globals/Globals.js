@@ -10,15 +10,18 @@ import {VisitSource} from "../enums/VisitSource.js";
 export const debug = false
 export const USER_ID = getUserId()
 let i18n_ = null
-let next_visit_source = VisitSource.Unknown
+let next_visit_source = null
 export function set_next_visit_source(source) {
-    next_visit_source = source ?? VisitSource.Unknown
+    next_visit_source = source
 }
 export function clear_next_visit_source() {
     set_next_visit_source(null)
 }
 export function get_next_visit_source() {
-    return next_visit_source
+    return next_visit_source ?? VisitSource.Unknown
+}
+export function has_visit_source() {
+    return next_visit_source !== null && next_visit_source !== undefined
 }
 
 export function showDebug(msg) {

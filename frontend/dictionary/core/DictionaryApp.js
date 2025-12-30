@@ -9,7 +9,7 @@ import {showWindowFromUrl, VirtualWindow} from "../window/VirtualWindow.js";
 import {RepetitionWindow} from "../repetition/RepetitionWindow.js";
 import {I18n} from "../i18n/I18n.js";
 import {LanguageObject, SUPPORTED_LANGUAGES} from "../i18n/Language.js";
-import {set_i18n, set_next_visit_source, translate, USER_ID} from "../globals/Globals.js";
+import {get_next_visit_source, set_i18n, set_next_visit_source, translate, USER_ID} from "../globals/Globals.js";
 import {Div} from "../dom/elements/Div.js";
 import {get_params, set_params} from "./Utils.js";
 import {VisitSource} from "../enums/VisitSource.js";
@@ -59,7 +59,7 @@ export class DictionaryApp {
         this.#autocomplete_term_title.addCallback(async () => {
             let item = this.#autocomplete_term_title.get_item()
             showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
-            set_next_visit_source(VisitSource.Search)
+            if(get_next_visit_source() !== VisitSource.Random) set_next_visit_source(VisitSource.Search)
             await this.#term_container.render(item.id)
             this.#term_container.show()
             this.#input_search_term.value = ""
@@ -350,7 +350,7 @@ export class DictionaryApp {
             let item = this.#autocomplete_term_title.get_item()
             showInfo(this.translate("dictionary.term.info.found_term") + ": " + item.title)
             await this.#term_container.show()
-            set_next_visit_source(VisitSource.Search)
+            if(get_next_visit_source() !== VisitSource.Random) set_next_visit_source(VisitSource.Search)
             await this.#term_container.render(item.id)
             this.#input_search_term.value = ""
         })
