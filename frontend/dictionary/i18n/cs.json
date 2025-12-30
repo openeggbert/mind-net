@@ -41,7 +41,7 @@
   "dictionary.term.button.read_definition": "Číst",
   "dictionary.term.label.metadata": "Metadata",
   "dictionary.enums.status.label": "Stav",
-  "dictionary.enums.status.not_defined": "Nedefinováno",
+  "dictionary.enums.status.none": "Nedefinováno",
   "dictionary.enums.status.stub": "Náčrt",
   "dictionary.enums.status.draft": "Koncept",
   "dictionary.enums.status.incomplete": "Neúplné",

@@ -31,7 +31,7 @@ namespace mindnet::plugins::dictionary::enums
 {
     enum class TermStatus
     {
-        NotDefined = 0,
+        None = 0,
 
         Stub = 1,        // placeholder, title or one sentence
         Draft = 2,       // work in progress
@@ -45,8 +45,8 @@ namespace mindnet::plugins::dictionary::enums
     {
         switch (status)
         {
-        case TermStatus::NotDefined:
-            return "Not defined";
+        case TermStatus::None:
+            return "None";
 
         case TermStatus::Stub:
             return "Stub";
@@ -62,7 +62,7 @@ namespace mindnet::plugins::dictionary::enums
             return "Deleted";
 
         default:
-            return "Not defined";
+            return "None";
         }
     }
 

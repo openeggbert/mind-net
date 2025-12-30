@@ -52,7 +52,7 @@
 
   "dictionary.term.label.metadata": "Métadonnées",
   "dictionary.enums.status.label": "Statut",
-  "dictionary.enums.status.not_defined": "Non défini",
+  "dictionary.enums.status.none": "Non défini",
   "dictionary.enums.status.stub": "Ébauche",
   "dictionary.enums.status.draft": "Brouillon",
   "dictionary.enums.status.incomplete": "Incomplet",

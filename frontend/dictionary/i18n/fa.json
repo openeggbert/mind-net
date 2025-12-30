@@ -52,7 +52,7 @@
 
   "dictionary.term.label.metadata": "فراداده",
   "dictionary.enums.status.label": "وضعیت",
-  "dictionary.enums.status.not_defined": "تعریف‌نشده",
+  "dictionary.enums.status.none": "تعریف‌نشده",
   "dictionary.enums.status.stub": "پیش‌نویس اولیه",
   "dictionary.enums.status.draft": "پیش‌نویس",
   "dictionary.enums.status.incomplete": "ناقص",

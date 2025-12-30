@@ -31,7 +31,7 @@ namespace mindnet::plugins::dictionary::enums
 {
     enum class TermRelationType
     {
-        NotDefined = 0,
+        None = 0,
 
         IsA = 1,
         PartOf = 2,
@@ -47,8 +47,8 @@ namespace mindnet::plugins::dictionary::enums
     {
         switch (type)
         {
-        case TermRelationType::NotDefined:
-            return "Not defined";
+        case TermRelationType::None:
+            return "None";
 
         case TermRelationType::IsA:
             return "Is a";
@@ -67,7 +67,7 @@ namespace mindnet::plugins::dictionary::enums
         case TermRelationType::AlternativeTo:
             return "Alternative to";
         default:
-            return "Not defined";
+            return "None";
         }
     }
 
@@ -80,7 +80,7 @@ namespace mindnet::plugins::dictionary::enums
         case TermRelationType::AlternativeTo:
             return true;
 
-        case TermRelationType::NotDefined:
+        case TermRelationType::None:
         case TermRelationType::IsA:
         case TermRelationType::PartOf:
         case TermRelationType::Uses:
@@ -102,7 +102,7 @@ namespace mindnet::plugins::dictionary::enums
         case TermRelationType::DependsOn:
             return true;
 
-        case TermRelationType::NotDefined:
+        case TermRelationType::None:
         case TermRelationType::Uses:
         case TermRelationType::Implements:
         case TermRelationType::Related:

@@ -52,7 +52,7 @@
 
   "dictionary.term.label.metadata": "メタデータ",
   "dictionary.enums.status.label": "状態",
-  "dictionary.enums.status.not_defined": "未定義",
+  "dictionary.enums.status.none": "未定義",
   "dictionary.enums.status.stub": "スタブ",
   "dictionary.enums.status.draft": "下書き",
   "dictionary.enums.status.incomplete": "未完成",

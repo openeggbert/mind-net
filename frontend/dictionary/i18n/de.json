@@ -52,7 +52,7 @@
 
   "dictionary.term.label.metadata": "Metadaten",
   "dictionary.enums.status.label": "Status",
-  "dictionary.enums.status.not_defined": "Nicht definiert",
+  "dictionary.enums.status.none": "Nicht definiert",
   "dictionary.enums.status.stub": "Platzhalter",
   "dictionary.enums.status.draft": "Entwurf",
   "dictionary.enums.status.incomplete": "Unvollständig",

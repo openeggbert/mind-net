@@ -46,6 +46,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
 - [ ] New column dictionary_term_visit.type: Unknown, Created, Search, Link, Note, Random, External, Other
 - [ ] Bug - &term_id is sometimes hidden in the url
+- [ ] Fix translations for: dictionary.enums.status.none
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

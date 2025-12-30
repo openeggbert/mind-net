@@ -147,7 +147,7 @@ export class Backlinks extends _CrudSection {
         function termRelationTypeToString(type) {
             switch (type) {
                 case 0:
-                    return "Not defined";   // NotDefined
+                    return "None";   // None
                 case 1:
                     return "Is a";          // IsA
                 case 2:
@@ -165,14 +165,14 @@ export class Backlinks extends _CrudSection {
                 case 8:
                     return "Alternative to";// AlternativeTo
                 default:
-                    return "Not defined";
+                    return "None";
             }
         }
 
         function stringToTermRelationType(str) {
             switch (str) {
-                case "Not defined":
-                    return 0; // NotDefined
+                case "None":
+                    return 0; // None
                 case "Is a":
                     return 1; // IsA
                 case "Part of":
@@ -190,7 +190,7 @@ export class Backlinks extends _CrudSection {
                 case "Alternative to":
                     return 8; // AlternativeTo
                 default:
-                    return 0; // NotDefined
+                    return 0; // None
             }
         }
 
@@ -204,7 +204,7 @@ export class Backlinks extends _CrudSection {
         edit_button.innerHTML = "📝 Edit"
         edit_button.onclick = async () => {
             let option = await chooseOption([
-                "Not defined",
+                "None",
                 "Is a",
                 "Part of",
                 "Uses",

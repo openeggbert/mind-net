@@ -52,7 +52,7 @@
 
   "dictionary.term.label.metadata": "Metadáta",
   "dictionary.enums.status.label": "Stav",
-  "dictionary.enums.status.not_defined": "Nedefinovaný",
+  "dictionary.enums.status.none": "Nedefinovaný",
   "dictionary.enums.status.stub": "Náčrt",
   "dictionary.enums.status.draft": "Koncept",
   "dictionary.enums.status.incomplete": "Neúplný",

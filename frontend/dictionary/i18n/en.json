@@ -43,7 +43,7 @@
   "dictionary.term.button.read_definition": "Read",
   "dictionary.term.label.metadata": "Metadata",
   "dictionary.enums.status.label": "Status",
-  "dictionary.enums.status.not_defined": "Not defined",
+  "dictionary.enums.status.none": "None",
   "dictionary.enums.status.stub": "Stub",
   "dictionary.enums.status.draft": "Draft",
   "dictionary.enums.status.incomplete": "Incomplete",
