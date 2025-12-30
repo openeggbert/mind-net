@@ -59,7 +59,7 @@ namespace mindnet::plugins::dictionary::models
         coldef(COLS::LAST_QUALITY, INTEGER).set_default_value(0),
         });
 
-    struct DictionaryState18 : mindnet::model::BaseModel
+    struct Model : mindnet::model::BaseModel
     {
         identification user_id{};
         identification dictionary_term_id{};
@@ -67,8 +67,8 @@ namespace mindnet::plugins::dictionary::models
         int last_interval_times_100{0};
         int repetitions{0};
         int lapses{0};
-        unixtime next_review;
-        unixtime last_review;
+        unixtime next_review{0};
+        unixtime last_review{0};
         int last_quality{0};
 
         static constexpr auto fields = std::make_tuple(
@@ -84,25 +84,6 @@ namespace mindnet::plugins::dictionary::models
         );
 
         create_model_h_methods(Model, MODEL)
-
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                   created_at == other.created_at &&
-                   updated_at == other.updated_at &&
-
-                   user_id == other.user_id &&
-                   dictionary_term_id == other.dictionary_term_id &&
-
-                   stability_times_100 == other.stability_times_100 &&
-                   last_interval_times_100 == other.last_interval_times_100 &&
-                   repetitions == other.repetitions &&
-                   lapses == other.lapses &&
-
-                   next_review == other.next_review &&
-                   last_review == other.last_review &&
-                   last_quality == other.last_quality;
-        }
 
     };
 }

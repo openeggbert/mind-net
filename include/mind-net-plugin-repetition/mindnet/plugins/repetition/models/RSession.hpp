@@ -114,28 +114,6 @@ namespace mindnet::plugins::repetition::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                map_id == other.map_id &&
-                map_collection_id == other.map_collection_id &&
-                cloned_from_session_id == other.cloned_from_session_id &&
-                algorithm == other.algorithm &&
-                schedule == other.schedule &&
-                scope == other.scope &&
-                description == other.description &&
-                filter_eligible == other.filter_eligible &&
-                filter_under_note == other.filter_under_note &&
-                filter_date_from == other.filter_date_from &&
-                filter_date_to == other.filter_date_to &&
-                filter_tag == other.filter_tag &&
-                filter_collection == other.filter_collection &&
-                selected_items == other.selected_items &&
-                pinned == other.pinned;
-        }
     };
 }
 #undef Model

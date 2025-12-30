@@ -92,24 +92,6 @@ namespace mindnet::plugins::repetition::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                note_id == other.note_id &&
-                eligible == other.eligible &&
-                stability_times_100 == other.stability_times_100 &&
-                last_interval_times_100 == other.last_interval_times_100 &&
-                repetitions == other.repetitions &&
-                lapses == other.lapses &&
-                next_review == other.next_review &&
-                last_review == other.last_review &&
-                last_quality == other.last_quality &&
-                last_seen_semantic_version == other.last_seen_semantic_version &&
-                content_modified_since_last_review == other.content_modified_since_last_review;
-        }
     };
 }
 #undef Model

@@ -88,21 +88,6 @@ static constexpr auto fields = std::make_tuple(
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id
-                && title == other.title
-                && author == other.author
-                && year == other.year
-                && publisher == other.publisher
-                && edition == other.edition
-                && pages == other.pages
-                && url == other.url
-                && type == other.type
-                && note == other.note
-                && created_at == other.created_at
-                && updated_at == other.updated_at;
-        }
     };
 }
 #undef Model

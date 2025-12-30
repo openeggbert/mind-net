@@ -155,18 +155,6 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id && map_id == other.map_id &&
-                sibling_order == other.sibling_order && title == other.title &&
-                hint == other.hint &&
-                content_id == other.content_id && source_id == other.source_id &&
-                alias_for_note_id == other.alias_for_note_id &&
-                parent_note_id == other.parent_note_id &&
-                importance == other.importance && difficulty == other.difficulty &&
-                path == other.path && depth == other.depth &&
-                created_at == other.created_at && updated_at == other.updated_at;
-        }
     };
 }
 #undef Model

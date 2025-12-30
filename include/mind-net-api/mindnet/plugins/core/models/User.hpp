@@ -90,20 +90,6 @@ namespace mindnet::plugins::core::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                username == other.username &&
-                password_hash == other.password_hash &&
-                display_name == other.display_name &&
-                role == other.role &&
-                profile_text == other.profile_text &&
-                last_login == other.last_login &&
-                email == other.email &&
-                status == other.status;
-        }
     };
 }
 #undef Model

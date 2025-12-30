@@ -99,24 +99,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                dictionary_map_id == other.dictionary_map_id &&
-                user_id == other.user_id &&
-                dictionary_search_id == other.dictionary_search_id &&
-                title == other.title &&
-                disambiguation == other.disambiguation &&
-                definition == other.definition &&
-                algorithm == other.algorithm &&
-                is_due == other.is_due &&
-                is_never == other.is_never &&
-                is_not_due == other.is_not_due &&
-                has_definition == other.has_definition &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at;
-        }
     };
 }
 #undef Model

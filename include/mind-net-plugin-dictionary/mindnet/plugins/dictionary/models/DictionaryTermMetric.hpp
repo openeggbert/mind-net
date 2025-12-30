@@ -98,26 +98,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                dictionary_term_id == other.dictionary_term_id &&
-                dictionary_map_id == other.dictionary_map_id &&
-
-                tag_count == other.tag_count &&
-                flag_count == other.flag_count &&
-                link_count == other.link_count &&
-                note_count == other.note_count &&
-                index_count == other.index_count &&
-                source_count == other.source_count &&
-                alias_count == other.alias_count &&
-
-                view_count == other.view_count &&
-                last_viewed_at == other.last_viewed_at &&
-
-                created_at == other.created_at &&
-                updated_at == other.updated_at;
-        }
     };
 }
 

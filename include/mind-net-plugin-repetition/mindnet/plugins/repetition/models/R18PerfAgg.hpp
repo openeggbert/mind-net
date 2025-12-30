@@ -70,16 +70,6 @@ namespace mindnet::plugins::repetition::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                bin_log_t_times_100 == other.bin_log_t_times_100 &&
-                total == other.total &&
-                correct == other.correct;
-        }
     };
 }
 #undef Model

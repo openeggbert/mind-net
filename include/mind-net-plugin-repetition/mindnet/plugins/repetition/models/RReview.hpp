@@ -100,26 +100,6 @@ namespace mindnet::plugins::repetition::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                map_id == other.map_id &&
-                r_session_id == other.r_session_id &&
-                algorithm == other.algorithm &&
-                note_id == other.note_id &&
-                review_date == other.review_date &&
-                grade == other.grade &&
-                response_data == other.response_data &&
-                notes == other.notes &&
-                started_at == other.started_at &&
-                ended_at == other.ended_at &&
-                latency_ms == other.latency_ms &&
-                answer_change_count == other.answer_change_count &&
-                details_json == other.details_json;
-        }
     };
 }
 #undef Model

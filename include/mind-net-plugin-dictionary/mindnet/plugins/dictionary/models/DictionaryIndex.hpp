@@ -51,16 +51,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                   dictionary_index_type_id == other.dictionary_index_type_id &&
-                   dictionary_term_id == other.dictionary_term_id &&
-                   position == other.position &&
-                   is_entry_point == other.is_entry_point &&
-                   created_at == other.created_at &&
-                   updated_at == other.updated_at;
-        }
     };
 }
 

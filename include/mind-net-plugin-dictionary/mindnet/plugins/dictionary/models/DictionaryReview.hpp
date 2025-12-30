@@ -92,23 +92,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                dictionary_map_id == other.dictionary_map_id &&
-                algorithm == other.algorithm &&
-                dictionary_term_id == other.dictionary_term_id &&
-                review_date == other.review_date &&
-                grade == other.grade &&
-                started_at == other.started_at &&
-                ended_at == other.ended_at &&
-                latency_ms == other.latency_ms &&
-                answer_change_count == other.answer_change_count &&
-                details_json == other.details_json;
-        }
     };
 }
 #undef Model

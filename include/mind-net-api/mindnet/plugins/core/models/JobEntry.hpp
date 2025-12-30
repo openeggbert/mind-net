@@ -84,22 +84,6 @@ namespace mindnet::plugins::core::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                name == other.name &&
-                description == other.description &&
-                plugin_name == other.plugin_name &&
-                cron_expression == other.cron_expression &&
-                run_once_when_missed == other.run_once_when_missed &&
-                enabled == other.enabled &&
-                configuration == other.configuration &&
-                last_run == other.last_run &&
-                next_run == other.next_run;
-        }
-
         [[nodiscard]]
         bool equals_or_differs_only_in_enabled_or_configuration(const Model& other) const
         {

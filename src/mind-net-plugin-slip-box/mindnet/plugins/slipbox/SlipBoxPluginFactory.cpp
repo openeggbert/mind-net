@@ -83,8 +83,8 @@ namespace mindnet::plugins::slipbox
             SLIP_BOX_PLUGIN_NAME,
             "slip_box",
             std::vector<std::string>{
-                "slip_box",
-                "simple_slip_box"
+                "slip_box"
+                // , "simple_slip_box"
             }
         );
 

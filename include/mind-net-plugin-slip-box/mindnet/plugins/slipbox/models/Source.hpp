@@ -88,21 +88,6 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id
-                && map_id == other.map_id
-                && title == other.title
-                && author == other.author
-                && year == other.year
-                && publisher == other.publisher
-                && edition == other.edition
-                && pages == other.pages
-                && url == other.url
-                && type == other.type
-                && created_at == other.created_at
-                && updated_at == other.updated_at;
-        }
     };
 }
 #undef Model

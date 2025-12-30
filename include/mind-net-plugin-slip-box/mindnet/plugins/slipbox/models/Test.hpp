@@ -85,20 +85,6 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id
-                && created_at == other.created_at
-                && updated_at == other.updated_at
-                && map_id == other.map_id
-                && under_note_id == other.under_note_id
-                && title == other.title
-                && description == other.description
-                && time_limit_in_seconds == other.time_limit_in_seconds
-                && answer_count_limit == other.answer_count_limit
-                && attempt_limit == other.attempt_limit
-                && is_public == other.is_public;
-        }
     };
 }
 

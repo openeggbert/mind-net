@@ -61,7 +61,6 @@ namespace mindnet::plugins::dictionary::models
         std::string title{};
         std::string edition{};
         std::string title_part{};
-        
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_source_type_id,
@@ -72,16 +71,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                dictionary_source_type_id == other.dictionary_source_type_id &&
-                title == other.title &&
-                edition == other.edition &&
-                title_part == other.title_part &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at;
-        }
     };
 }
 #undef Model

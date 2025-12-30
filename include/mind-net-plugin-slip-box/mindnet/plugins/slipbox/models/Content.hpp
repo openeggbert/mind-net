@@ -87,19 +87,6 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                value == other.value &&
-                format == other.format &&
-                version == other.version &&
-                semantic_version == other.semantic_version &&
-                change_ratio == other.change_ratio &&
-                last_parsed_success_at == other.last_parsed_success_at &&
-                last_parsed_fail_at == other.last_parsed_fail_at;
-        }
     };
 }
 

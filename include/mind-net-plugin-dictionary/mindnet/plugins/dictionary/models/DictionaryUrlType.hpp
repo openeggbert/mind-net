@@ -75,14 +75,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return BaseModel::operator==(other)
-                && dictionary_map_id == other.dictionary_map_id
-                && url == other.url
-                && title == other.title
-                && type == other.type;
-        }
 
     };
 }

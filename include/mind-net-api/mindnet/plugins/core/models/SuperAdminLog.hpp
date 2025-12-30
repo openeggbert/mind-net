@@ -95,24 +95,6 @@ namespace mindnet::plugins::core::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                ip_address == other.ip_address &&
-                user_agent == other.user_agent &&
-                endpoint == other.endpoint &&
-                method == other.method &&
-                action == other.action &&
-                parameters == other.parameters &&
-                request_body == other.request_body &&
-                diff == other.diff &&
-                status_code == other.status_code &&
-                error == other.error &&
-                success == other.success;
-        }
     };
 
     const SuperAdminLog super_admin_log_from_crow_request(

@@ -92,24 +92,6 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                note_id == other.note_id &&
-                title == other.title &&
-                description == other.description &&
-                progress == other.progress &&
-                in_progress == other.in_progress &&
-                important == other.important &&
-                due_date == other.due_date &&
-                created_by == other.created_by &&
-                owner_id == other.owner_id &&
-                assigned_to == other.assigned_to &&
-                category == other.category &&
-                is_public == other.is_public;
-        }
     };
 }
 #undef Model

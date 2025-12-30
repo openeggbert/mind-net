@@ -32,6 +32,8 @@
 #include "ModelDefinition.hpp"
 
 #include "mindnet/util/TestUtils.hpp"
+#include <tuple>
+#include <utility>
 
 #define create_model_h_methods(Model, MODEL)\
 int get_field_count()\
@@ -54,7 +56,17 @@ friend std::ostream& operator<<(std::ostream& os, const Model & o)\
     return os;\
 }\
 \
-Model() = default;
+Model() = default;\
+bool operator==(const Model& other) const\
+        {\
+            return BaseModel::operator==(other) &&\
+                   equals_by_fields(*this, other);\
+        }\
+bool operator!=(const Model& other) const\
+        {\
+            return !(*this == other);\
+        }
+
 
 #define create_model_cpp_methods(Model) \
 entity_fields Model::to_values() const {return serialize_fields(*this);} \
@@ -219,6 +231,27 @@ using member_type_t =
                     }(),
                 ...);
             }, combined_fields);
+        }
+
+        template <typename T, std::size_t... I>
+        constexpr bool equals_by_fields_impl(
+            const T& a,
+            const T& b,
+            std::index_sequence<I...>) const
+        {
+            return (... && (a.*std::get<I>(T::fields) == b.*std::get<I>(T::fields)));
+        }
+
+        template <typename T>
+        constexpr bool equals_by_fields(const T& a, const T& b) const
+        {
+            return equals_by_fields_impl(
+                a,
+                b,
+                std::make_index_sequence<
+                    std::tuple_size_v<decltype(T::fields)>
+                >{}
+            );
         }
 
     };

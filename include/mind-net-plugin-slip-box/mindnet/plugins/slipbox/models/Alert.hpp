@@ -121,28 +121,6 @@ namespace mindnet::plugins::slipbox::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                trigger_at == other.trigger_at &&
-                last_triggered_at == other.last_triggered_at &&
-                trigger_count == other.trigger_count &&
-                snooze_until == other.snooze_until &&
-                expires_at == other.expires_at &&
-                repeat_interval == other.repeat_interval &&
-                repeat_count == other.repeat_count &&
-                repeat_until == other.repeat_until &&
-                user_id == other.user_id &&
-                note_id == other.note_id &&
-                url == other.url &&
-                title == other.title &&
-                message == other.message &&
-                status == other.status &&
-                important == other.important &&
-                channel == other.channel;
-        }
     };
 }
 #undef Model

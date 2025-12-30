@@ -196,31 +196,6 @@ namespace mindnet::plugins::core::models
         }
         create_model_h_methods(ModelERROR, MODELERROR)
 
-        bool operator==(const ModelERROR& other) const
-        {
-            return id == other.id &&
-                   created_at == other.created_at &&
-                   updated_at == other.updated_at &&
-                   human_identification == other.human_identification &&
-                   uuid == other.uuid &&
-                   severity == other.severity &&
-                   http_status == other.http_status &&
-                   origin == other.origin &&
-                   layer == other.layer &&
-                   plugin == other.plugin &&
-                   operation == other.operation &&
-                   cpp_namespace == other.cpp_namespace &&
-                   cpp_class == other.cpp_class &&
-                   cpp_symbol == other.cpp_symbol &&
-                   sql_query == other.sql_query &&
-                   user_id == other.user_id &&
-                   request_identification == other.request_identification &&
-                   message == other.message &&
-                   exception_type == other.exception_type &&
-                   exception_message == other.exception_message &&
-                   handled == other.handled &&
-                   mindnet_version == other.mindnet_version;
-        }
     };
 using OptionalError = std::optional<plugins::core::models::Error>;
 }

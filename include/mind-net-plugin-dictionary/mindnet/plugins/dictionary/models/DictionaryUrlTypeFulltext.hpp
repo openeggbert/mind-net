@@ -71,14 +71,6 @@ namespace mindnet::plugins::dictionary::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return
-                dictionary_url_type_id == other.dictionary_url_type_id &&
-                dictionary_map_id == other.dictionary_map_id &&
-                url_part == other.url_part &&
-                url == other.url;
-        }
     };
 }
 #undef Model

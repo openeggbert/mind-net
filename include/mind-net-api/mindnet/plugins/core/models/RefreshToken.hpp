@@ -90,23 +90,6 @@ namespace mindnet::plugins::core::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                user_id == other.user_id &&
-                token_hash == other.token_hash &&
-                issued_at == other.issued_at &&
-                expires_at == other.expires_at &&
-                is_revoked == other.is_revoked &&
-                revoked_at == other.revoked_at &&
-                replaced_by_id == other.replaced_by_id &&
-                rotated_from_id == other.rotated_from_id &&
-                last_used_at == other.last_used_at &&
-                ip_address == other.ip_address &&
-                user_agent == other.user_agent;
-        }
     };
 }
 #undef Model

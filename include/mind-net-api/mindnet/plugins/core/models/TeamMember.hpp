@@ -79,18 +79,6 @@ namespace mindnet::plugins::core::models
 
         create_model_h_methods(Model, MODEL)
 
-        bool operator==(const Model& other) const
-        {
-            return id == other.id &&
-                created_at == other.created_at &&
-                updated_at == other.updated_at &&
-                team_id == other.team_id &&
-                user_id == other.user_id &&
-                role == other.role &&
-                status == other.status &&
-                joined_at == other.joined_at &&
-                left_at == other.left_at;
-        }
     };
 }
 #undef Model
