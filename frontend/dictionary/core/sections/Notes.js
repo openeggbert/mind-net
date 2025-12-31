@@ -232,6 +232,8 @@ export class Notes extends _CrudSection {
             if (deleted) {
                 showInfo("Note was successfully deleted: " + title)
                 note_row.remove()
+                this.#expanded_notes.delete(note_row)
+                this.#collapsed_notes.delete(note_row)
             } else {
                 showError("Deleting note failed: " + title)
             }

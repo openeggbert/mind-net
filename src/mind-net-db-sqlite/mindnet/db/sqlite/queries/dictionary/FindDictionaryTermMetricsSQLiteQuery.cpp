@@ -220,7 +220,6 @@ WHERE (? = 1 OR t.dictionary_map_id = ?)
             }
 
             response["results"] = results;
-            essential::err << "%%%" << response.dump(0) << essential::commit;
         }
         catch (SQLite::Exception& e)
         {

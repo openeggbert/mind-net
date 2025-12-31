@@ -46,14 +46,18 @@ namespace mindnet::plugins::dictionary::validators
         if (!from_term.second.empty()) return {500, from_term.second};
         auto to_term = find_dictionary_term(ctx, entity.to_dictionary_term_id);
         if (!to_term.second.empty()) return {500, to_term.second};
-        if (from_term.first.dictionary_map_id != to_term.first.dictionary_map_id)
-        {
-            return {400, "Both the dictionary_map ids must be the same."};
-        }
-        auto map_id = from_term.first.dictionary_map_id;
+        // if (from_term.first.dictionary_map_id != to_term.first.dictionary_map_id)
+        // {
+        //     return {400, "Both the dictionary_map ids must be the same."};
+        // }
+        auto map_1_id = from_term.first.dictionary_map_id;
+        auto map_2_id = to_term.first.dictionary_map_id;
 
-        if (!dictionary::has_right_for_map(ctx, map_id, plugins::core::enums::SingleRight::Write))
-        return {403, "You do not have permission to create this link."};
+        if (!dictionary::has_right_for_map(ctx, map_1_id, plugins::core::enums::SingleRight::Write))
+            return {403, "You do not have permission to create this link."};
+        if (map_1_id != map_2_id && !dictionary::has_right_for_map(ctx, map_2_id,
+                                                                   plugins::core::enums::SingleRight::Write))
+            return {403, "You do not have permission to create this link."};
 
         return ok_result;
     }
