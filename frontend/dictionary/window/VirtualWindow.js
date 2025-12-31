@@ -12,8 +12,8 @@ let topZ = 1000;
 let allWindows = new Set();
 let overviewMode = false;
 let lastWindowPosition = null;
-const CASCADE_OFFSET_X = 20;
-const CASCADE_OFFSET_Y = 20;
+const CASCADE_OFFSET_X = 35;
+const CASCADE_OFFSET_Y = 35;
 const OVERVIEW_HOVER_SCALE = 1.08;
 const OVERVIEW_TRANSITION = "transform 0.22s cubic-bezier(0.22, 1, 0.36, 1)";
 const OVERVIEW_ANIM_MS = 380;
@@ -23,6 +23,40 @@ let lastPointer = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2
 };
+
+const CASCADE_CURSOR_LENGTH = 40
+let cascadeCursor = {
+    x: CASCADE_CURSOR_LENGTH,
+    y: CASCADE_CURSOR_LENGTH,
+    colStartX: CASCADE_CURSOR_LENGTH
+};
+
+
+function getNextCascadePosition(winWidth, winHeight) {
+    const pad = CASCADE_CURSOR_LENGTH / 2;
+    const maxX = window.innerWidth  - winWidth  - pad;
+    const maxY = window.innerHeight - winHeight - pad;
+
+    let x = cascadeCursor.x;
+    let y = cascadeCursor.y;
+
+    cascadeCursor.x += CASCADE_OFFSET_X;
+    cascadeCursor.y += CASCADE_OFFSET_Y;
+
+    if (cascadeCursor.x > maxX) {
+        cascadeCursor.colStartX += 260;
+        cascadeCursor.x = cascadeCursor.colStartX;
+        cascadeCursor.y = CASCADE_CURSOR_LENGTH;
+    }
+
+    if (cascadeCursor.y > maxY) {
+        cascadeCursor.x = CASCADE_CURSOR_LENGTH;
+        cascadeCursor.y = CASCADE_CURSOR_LENGTH;
+        cascadeCursor.colStartX = CASCADE_CURSOR_LENGTH;
+    }
+
+    return { x, y };
+}
 
 document.addEventListener("pointermove", e => {
     lastPointer.x = e.clientX;
@@ -671,10 +705,13 @@ export class VirtualWindow {
         requestAnimationFrame(() => {
 
             if (!this.#userPositioned) {
-                this._showAt(
-                    lastPointer?.x ?? window.innerWidth / 2,
-                    lastPointer?.y ?? window.innerHeight / 2
-                );
+                const rect = this.#root.getBoundingClientRect();
+                const { x, y } = getNextCascadePosition(rect.width, rect.height);
+
+                this.#root.style.left = x + "px";
+                this.#root.style.top  = y + "px";
+
+                this.#userPositioned = true;
             }
 
             this.focus();
