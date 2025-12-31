@@ -144,9 +144,10 @@ export class Autocomplete {
 
     set_selected_item(index) {
         if (!this.#items_map.has(index)) {
-            return;
+            return false;
         }
         this.#items_map.get(index).click()
+        return true
     }
 
     get_box() {

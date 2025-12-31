@@ -108,8 +108,13 @@ export class DictionaryApp {
         }
         get_element("button_find_random_term").onclick = async () => {
             await this.#autocomplete_term_title.search("*", 1, true)
+
+            let has_items = this.#autocomplete_term_title.set_selected_item(0)
+            if(!has_items) {
+                showWarn("This map has no term.")
+                return
+            }
             set_next_visit_source(VisitSource.Random)
-            this.#autocomplete_term_title.set_selected_item(0)
             set_params(null, this.#autocomplete_term_title.get_item_id())
             //await this.#term_container.render(this.#autocomplete_term_title.get_item_id())
             this.#term_container.show()

@@ -162,7 +162,7 @@ export class SelectMap {
         } else {
             this.clear_emoji()
         }
-        set_params(map_id)
+        set_params(map_id, -1)
     }
 
     async init() {
