@@ -46,6 +46,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
 - [ ] Bug - &term_id is sometimes hidden in the url
 - [ ] Fix translations for: dictionary.enums.status.none
+- [ ] Bug - Browser title is not updated after map is changed.
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

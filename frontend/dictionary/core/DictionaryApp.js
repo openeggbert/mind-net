@@ -194,8 +194,8 @@ export class DictionaryApp {
 
             tr_first.appendChild(th_number)
             tr_first.appendChild(th_id)
-            tr_first.appendChild(th_source)
             tr_first.appendChild(th_title)
+            tr_first.appendChild(th_source)
             tr_first.appendChild(th_timestamp)
             for (const el of [th_number, th_id, th_title, th_source, th_timestamp]) {
                 el.style.minWidth = "20px"

@@ -69,6 +69,7 @@ export class SelectMap {
             } else {
                 showSuccess( translate("dictionary.select_map.button.add_map.info.map_created")+ ": " + name)
             }
+            this.clear_emoji()
             this.add_map(new_map_created.id, new_map_created.name)
             this.select_map(new_map_created.id)
         }
