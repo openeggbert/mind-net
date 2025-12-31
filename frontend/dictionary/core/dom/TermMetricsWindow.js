@@ -11,6 +11,7 @@ import {BorderCollapse} from "../../styles/properties/BorderCollapse.js";
 import {TextAlign} from "../../styles/properties/TextAlign.js";
 import {_10PX} from "../../styles/Styles.js";
 import {EventType} from "../../dom/attributes/EventType.js";
+import {HoverTr} from "./HoverTr.js";
 
 export class TermMetricsWindow extends VirtualWindow {
     #term_id = null
@@ -87,13 +88,8 @@ export class TermMetricsWindow extends VirtualWindow {
             if(value === "No") {
                 count_td.styles().fontWeight("normal").color("red").end()
             }
-            let tr = new Tr(section_td, count_td)
-            tr.on(EventType.MouseEnter.label, ()=> {
-                tr.styles().backgroundColor("rgba(131,199,230,0.4)").end()
-            })
-            tr.on(EventType.MouseLeave.label, ()=> {
-                tr.styles().backgroundColor("white").end()
-            })
+            let tr = new HoverTr(section_td, count_td)
+
             table.appendChild(tr)
         }
 

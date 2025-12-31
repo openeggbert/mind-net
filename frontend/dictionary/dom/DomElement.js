@@ -334,7 +334,7 @@ export class DomElement {
      */
     on(event, handler, options) {
         this.#element.addEventListener(
-            event,
+            this.#get_handler_key(event),
             handler,
             options);
         return this;

@@ -19,6 +19,7 @@ export class DictionaryApp {
     #autocomplete_term_title = null
     #term_container = null
     #i18n = null
+    #render_term_id_callback
 
     constructor() {
         this.#i18n = new I18n("en")
@@ -38,13 +39,13 @@ export class DictionaryApp {
         let set_selected_map_id_callback = (map_id) => {
             return this.set_selected_map_id(map_id)
         }
-        let render_term_id_callback = async (term_id) => {
-            await this.render(term_id)
+        this.#render_term_id_callback = async (term_id, show_box = false) => {
+            await this.render(term_id, show_box)
         }
         this.#term_container = new TermContainer(
             get_selected_map_id_callback,
             set_selected_map_id_callback,
-            render_term_id_callback
+            this.#render_term_id_callback
         )
 
         get_element("dictionary_header").title = "Go to home"
@@ -135,7 +136,7 @@ export class DictionaryApp {
             await repetition_window.init()
         }
         get_element("button_show_visited").onclick = async () => {
-            let win = new TermVisitHistoryWindow()
+            let win = new TermVisitHistoryWindow(this.#render_term_id_callback)
             win.show()
             await win.init()
         }
