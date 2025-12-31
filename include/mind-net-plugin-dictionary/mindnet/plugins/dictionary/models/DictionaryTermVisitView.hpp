@@ -28,11 +28,11 @@
 #include "mindnet/model/BaseModel.hpp"
 
 // ***** MACROS : START *****
-#define Model DictionaryTermUnderstanding
-#define MODEL DICTIONARY_TERM_UNDERSTANDING
-#define COLS columns::DictionaryTermUnderstandingColumns
-#include "../columns/DictionaryTermUnderstandingColumns.hpp"
-#include "mindnet/plugins/dictionary/enums/UnderstandingLevel.hpp"
+#define Model DictionaryTermVisitView
+#define MODEL DICTIONARY_TERM_VISIT_VIEW
+#define COLS columns::DictionaryTermVisitViewColumns
+#include "../columns/DictionaryTermVisitViewColumns.hpp"
+#include "mindnet/plugins/dictionary/enums/VisitSource.hpp"
 // ***** MACROS : END *****
 
 namespace mindnet::plugins::dictionary::models
@@ -41,17 +41,18 @@ namespace mindnet::plugins::dictionary::models
     using mindnet::model::coldef;
     using_flags();
 
-    inline const def DICTIONARY_TERM_UNDERSTANDING_DEFINITION =
+    inline const def DICTIONARY_TERM_VISIT_VIEW_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
         .set_group("Dictionary #2", 200)
-        .set_all_rest_operations().set_readonly().allow_reader_write()
+        .set_rest_operations("l").set_readonly().set_cache_enabled(false)
         .set_columns({
             //
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY).set_description(
                 "Dictionary term that was visited."),
             coldef(COLS::USER_ID, MANDATORY | FOREIGN_KEY).set_description("User who visited the term."),
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
-            coldef(COLS::LEVEL, MUTABLE).set_default_value(0).set_enum_definition(enums::understanding_level_to_enum_definition()),
+            coldef(COLS::SOURCE).set_enum_definition(enums::visit_source_to_enum_definition()).set_default_value(0),
+            coldef(COLS::DISAMBIGUATION)
         });
 
     struct Model : mindnet::model::BaseModel
@@ -59,13 +60,15 @@ namespace mindnet::plugins::dictionary::models
         identification dictionary_term_id{};
         identification user_id{};
         identification dictionary_map_id{};
-        enums::UnderstandingLevel level{enums::UnderstandingLevel::Unknown};
+        enums::VisitSource source{enums::VisitSource::Unknown};
+        string disambiguation;
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::user_id,
             &Model::dictionary_map_id,
-            &Model::level
+            &Model::source,
+            &Model::disambiguation
         );
 
         create_model_h_methods(Model, MODEL)

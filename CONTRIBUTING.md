@@ -35,7 +35,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
-- [ ] Window "Term Visit History" - add paging
 - [ ] Ask user, if unsaved changes exist
 - [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New cron job: delete terms with status Deleted
@@ -46,6 +45,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] UI: Add: Created at and Updated at
 - [ ] Fix translations for: dictionary.enums.status.none
 - [ ] Bug - Browser title is not updated after map is changed.
+- [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -254,3 +254,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] New enum UnderstandingLevel: Unknown, Recognized, Understood, Applied, Internalized
 - [x] New column dictionary_term_visit.source: Unknown, Created, Search, Link, Note, Random, External, Other, ...
 - [x] Bug - &term_id is sometimes not present in the url
+- [x] Window "Term Visit History" - add paging

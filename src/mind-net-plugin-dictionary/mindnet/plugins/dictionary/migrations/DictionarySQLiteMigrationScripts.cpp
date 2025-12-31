@@ -571,6 +571,11 @@ ON dictionary_term_understanding(user_id, dictionary_term_id, level);
 ALTER TABLE dictionary_term_visit ADD COLUMN source INTEGER NOT NULL DEFAULT 0;
 
 )");
+        add_migration("V26__create_view_dictionary_term_visit_view.sql", R"(
+CREATE VIEW dictionary_term_visit_view AS
+SELECT v.id, v.created_at, v.updated_at, v.dictionary_term_id, v.user_id, v.dictionary_map_id, v.source, t.disambiguation
+from dictionary_term_visit as v, dictionary_term as t where t.id = v.dictionary_term_id;
+)");
 
     }
 }

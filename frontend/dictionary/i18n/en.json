@@ -94,7 +94,7 @@
   "dictionary.term.container.error.creating_term_visit_failed" : "Creating new term visit failed.",
   "dictionary.term.container.info.updating_term_successful" : "Dictionary term was successfully updated.",
   "dictionary.term.container.error.updating_term_failed" : "Updating dictionary term failed.",
-  "dictionary.term.container.visit_window.term_visit_history" : "Term Visit History (Last 100)",
+  "dictionary.term.container.visit_window.term_visit_history" : "Term Visit History",
   "dictionary.term.container.visit_window.button_show_all_visits" : "Show all visits",
   "dictionary.term.container.visit_window.all_visits" : "All visits",
   "dictionary.term.container.visit_window.error.loading_visits_failed" : "Loading visits failed.",
