@@ -34,7 +34,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
-- [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
 - [ ] Ask user, if unsaved changes exist
 - [ ] Multi-language - translate English text, which is not yet translated
 - [ ] New cron job: delete terms with status Deleted
@@ -255,3 +254,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] New column dictionary_term_visit.source: Unknown, Created, Search, Link, Note, Random, External, Other, ...
 - [x] Bug - &term_id is sometimes not present in the url
 - [x] Window "Term Visit History" - add paging
+- [x] Implement three-level autocomplete relevance scoring: 1) exact title > exact alias 2) prefix title > prefix alias 3) substring title > substring alias
