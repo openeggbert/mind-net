@@ -68,7 +68,7 @@ export class TermMetricsWindow extends VirtualWindow {
                     .end()
             }
         }
-        table.appendChild(new Tr(new MTh("Section"), new MTh("Count")))
+        table.appendChild(new Tr(new MTh("Section"), new MTh("Value")))
 
         let read_term_metric = await read_entity("dictionary_term_metric", this.#term_id)
         if (!read_term_metric) {
