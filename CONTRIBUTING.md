@@ -34,8 +34,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
-- [ ] Ask user, if unsaved changes exist
 - [ ] Multi-language - translate English text, which is not yet translated
+- [ ] Ask user, if unsaved changes exist
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Export to static web
 - [ ] Bug: Search: Any map does not take effect
@@ -45,6 +45,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Fix translations for: dictionary.enums.status.none
 - [ ] Bug - Browser title is not updated after map is changed.
 - [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
+- [ ] New window History
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

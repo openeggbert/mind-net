@@ -487,7 +487,7 @@ class TermContainer {
             new_term.status = get_element("select_status").selectedIndex
 
 
-            let understanding_level = get_element("select_understanding").selectedIndex
+            let new_understanding_level = get_element("select_understanding").selectedIndex
 
             let list_understandings = await list_all_entities(
                 Entities.dictionary_term_understanding,
@@ -498,18 +498,19 @@ class TermContainer {
             } else {
                 let understanding = list_understandings.length === 0 ? null : list_understandings[0]
                 let to_be_created = understanding === null;
+                let old_understanding_level = to_be_created ? 0 : understanding.level
                 if(to_be_created) {
                     understanding = {
                         dictionary_term_id: dictionary_term_id,
                         user_id: USER_ID,
                         dictionary_map_id: this.get_selected_map_id_callback(),
-                        level: understanding_level
+                        level: new_understanding_level
                     }
                 } else {
-                    understanding.level = understanding_level
+                    understanding.level = new_understanding_level
                 }
 
-                if (to_be_created) {
+                if (to_be_created && new_understanding_level !== 0) {
 
                     let created = await post_entity(Entities.dictionary_term_understanding, understanding)
                     if (defined(created)) {
@@ -518,7 +519,7 @@ class TermContainer {
                         showError("Creating new term understanding failed.")
                     }
                 }
-                if (!to_be_created) {
+                if (!to_be_created && old_understanding_level !== new_understanding_level) {
 
                     let updated = await put_entity(Entities.dictionary_term_understanding, understanding.id, understanding)
                     if (defined(updated)) {
