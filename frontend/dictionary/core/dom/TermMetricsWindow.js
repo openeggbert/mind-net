@@ -81,14 +81,19 @@ export class TermMetricsWindow extends VirtualWindow {
             let section_td = new MTd();
             section_td.appendChild(new Span(emoji + " "))
             section_td.appendChild(new Span(section))
-            let count_td = new MTd(value)
+            let value_td = new MTd(value)
+            let empty = false
             if(value === "Yes") {
-                count_td.styles().fontWeight("normal").color("green").end()
+                value_td.styles().fontWeight("normal").color("green").end()
             }
             if(value === "No") {
-                count_td.styles().fontWeight("normal").color("red").end()
+                value_td.styles().fontWeight("normal").color("red").end()
+                empty = true
             }
-            let tr = new HoverTr(section_td, count_td)
+            if(value.length === 0) empty = true
+            if(value === 0) empty = true
+            if(empty) value_td.styles().backgroundColor("rgba(238,238,238,1.00)").end()
+            let tr = new HoverTr(section_td, value_td)
 
             table.appendChild(tr)
         }
