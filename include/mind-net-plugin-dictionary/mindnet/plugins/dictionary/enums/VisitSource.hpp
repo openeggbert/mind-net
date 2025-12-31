@@ -42,6 +42,7 @@ namespace mindnet::plugins::dictionary::enums
         Repetition       = 11,
         VisitedHistory   = 12,
         LastVisited      = 13,
+        Refresh          = 14,
 
         Older            = 20,
         Newer            = 21,
@@ -85,9 +86,9 @@ namespace mindnet::plugins::dictionary::enums
     {
         return mindnet::model::EnumDefinition{
             visit_source_to_string,
-            14, // number of enum values
+            15, // number of enum values
             0, 1, 2, 3, 4, 5,
-            10, 11, 12, 13,
+            10, 11, 12, 13, 14,
             20, 21,
             50, 100
         };

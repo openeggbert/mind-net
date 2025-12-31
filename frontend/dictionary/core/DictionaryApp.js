@@ -145,6 +145,19 @@ export class DictionaryApp {
             let url = "app_dictionary.html"
             showWindowFromUrl(this.translate("dictionary.title.dictionary_app"), url)
         }
+
+        get_element("button_refresh").onclick = async () => {
+            let params = get_params()
+            let term_id = params.term_id
+            if(!term_id) {
+                showWarn("There is shown no term.")
+                return;
+            }
+            set_next_visit_source(VisitSource.Refresh)
+            await this.render(term_id, true, true)
+            showSuccess("Term was refreshed.")
+
+        }
     }
 
     set_search_all_results_callback() {
@@ -227,7 +240,7 @@ export class DictionaryApp {
     }
 
     #rendering_in_progress = false
-    async render(dictionary_term_id, show_container = false) {
+    async render(dictionary_term_id, show_container = false, refresh =false) {
         if(this.#rendering_in_progress) {
             showWarn(translate("dictionary.term.warn.another_term_is_already_loading"))
             return;
@@ -235,7 +248,7 @@ export class DictionaryApp {
         // get_element("main_container").style.display = "none"
         // get_element("loading_div").style.display = "block"
         this.#rendering_in_progress = true
-        await this.#term_container.render(dictionary_term_id)
+        await this.#term_container.render(dictionary_term_id, refresh)
         this.#rendering_in_progress = false
         // get_element("main_container").style.display = "block"
         // get_element("loading_div").style.display = "none"

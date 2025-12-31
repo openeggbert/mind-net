@@ -11,6 +11,7 @@ export const VisitSource = Object.freeze({
     Repetition: {id: 11, label: "Repetition"},
     VisitedHistory: {id: 12, label: "VisitedHistory"},
     LastVisited: {id: 13, label: "LastVisited"},
+    Refresh: {id: 14, label: "Refresh"},
     Older: {id: 20, label: "Older"},
     Newer: {id: 21, label: "Newer"},
     Other: {id: 50, label: "Other"},

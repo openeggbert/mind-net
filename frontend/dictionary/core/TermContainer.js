@@ -169,8 +169,8 @@ class TermContainer {
         this.render(term_id)
         this.show()
     }
-    async render(dictionary_term_id) {
-        if (this.dictionary_term_id === dictionary_term_id) {
+    async render(dictionary_term_id, refresh = false) {
+        if (!refresh && this.dictionary_term_id === dictionary_term_id) {
             showWarn(translate("dictionary.term.container.info.term_already_shown"))
             return
         }

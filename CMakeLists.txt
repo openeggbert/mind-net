@@ -6,9 +6,15 @@ option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" ON)
 option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
 
 if(ALLOW_LEGACY_PLUGINS)
-option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
-option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" ON)
+    option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
+    option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" ON)
 endif()
+
+if(NOT ALLOW_LEGACY_PLUGINS)
+    unset(MINDNET_ENABLE_SLIPBOX_PLUGIN CACHE)
+    unset(MINDNET_ENABLE_REPETITION_PLUGIN CACHE)
+endif()
+
 
 
 message(STATUS "")
