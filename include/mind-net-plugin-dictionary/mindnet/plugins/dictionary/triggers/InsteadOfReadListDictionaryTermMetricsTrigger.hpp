@@ -27,12 +27,17 @@
 
 namespace mindnet::plugins::dictionary::triggers
 {
-    class InsteadOfListDictionaryTermMetricsTrigger : public api::Trigger
+    class InsteadOfReadListDictionaryTermMetricsTrigger : public api::Trigger
     {
     public:
-        InsteadOfListDictionaryTermMetricsTrigger();
+        InsteadOfReadListDictionaryTermMetricsTrigger();
 
-        ~InsteadOfListDictionaryTermMetricsTrigger() override = default;
+        ~InsteadOfReadListDictionaryTermMetricsTrigger() override = default;
+
+
+        std::optional<std::pair<entity_fields, api::OperationResult>>
+        run_instead_of_read(int stack_depth, api::OperationResult& validation_result, const model::ModelDefinition& def,
+                            identification user_id, identification id) override;
         std::optional<std::pair<std::vector<entity_fields>, api::OperationResult>> run_instead_of_list(
             int stack_depth,
             api::OperationResult& validation_result,

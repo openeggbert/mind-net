@@ -5,6 +5,7 @@
 import {showError, showInfo} from "../../dom.js";
 import {Div} from "../dom/elements/Div.js";
 import {Span} from "../dom/elements/Span.js";
+import {DomElement} from "../dom/DomElement.js";
 
 let activeWindow = null;
 let topZ = 1000;
@@ -656,7 +657,7 @@ export class VirtualWindow {
         this.#root.classList.toggle("active", active);
     }
 
-    set_content_padding(value = 0) {
+    set_content_padding(value = "0") {
         this.#content.style.padding = value
     }
 
@@ -752,6 +753,10 @@ export class VirtualWindow {
         this.clear_content();
         if (node instanceof Node) {
             this.#content.appendChild(node);
+        }
+
+        if (node instanceof DomElement) {
+            this.#content.appendChild(node.element());
         }
         return this;
     }

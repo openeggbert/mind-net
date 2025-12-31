@@ -78,7 +78,7 @@
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryUrlTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryIndexTypeFulltextTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionarySourceTypeFulltextTrigger.hpp"
-#include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryTermMetricsTrigger.hpp"
+#include "mindnet/plugins/dictionary/triggers/InsteadOfReadListDictionaryTermMetricsTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfReadDictionaryOlderTermTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfReadDictionaryNewerTermTrigger.hpp"
 #include "mindnet/plugins/dictionary/triggers/InsteadOfListDictionaryFlagsFulltextTrigger.hpp"
@@ -147,7 +147,7 @@ namespace mindnet::plugins::dictionary
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryUrlTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySourceTypeFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryIndexTypeFulltextTrigger>());
-        plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermMetricsTrigger>());
+        plugin->register_trigger(std::make_shared<triggers::InsteadOfReadListDictionaryTermMetricsTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryFlagsFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionaryTermAliasesFulltextTrigger>());
         plugin->register_trigger(std::make_shared<triggers::InsteadOfListDictionarySearchesFulltextTrigger>());

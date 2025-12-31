@@ -47,7 +47,14 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermMetricValidator::validate_read_authorization(
         const RequestContext& ctx, const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        auto term = dictionary::find_dictionary_term(ctx, entity.get_id());
+        if (!term.second.empty()) return {400, term.second};
+
+        if (dictionary::has_right_for_map(ctx, term.first.dictionary_map_id, plugins::core::enums::SingleRight::Read))
+        {
+            return ok_result;
+        }
+        return {403, "You do not have permission to read this term metric."};
     }
 
     OperationResult DictionaryTermMetricValidator::validate_update_authorization(
@@ -90,7 +97,7 @@ namespace mindnet::plugins::dictionary::validators
     OperationResult DictionaryTermMetricValidator::validate_read_integrity(const RequestContext& ctx,
         const Model& entity) const
     {
-        return status_405_unsupported_operation;
+        return ok_result;
     }
 
     OperationResult DictionaryTermMetricValidator::validate_update_integrity(const RequestContext& ctx,

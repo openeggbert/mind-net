@@ -45,13 +45,19 @@ namespace mindnet::plugins::dictionary::columns
 
         static constexpr const char* TAG_COUNT    = "tag_count";
         static constexpr const char* FLAG_COUNT   = "flag_count";
-        static constexpr const char* LINK_COUNT   = "link_count";
-        static constexpr const char* NOTE_COUNT   = "note_count";
-        static constexpr const char* INDEX_COUNT  = "index_count";
-        static constexpr const char* SOURCE_COUNT = "source_count";
         static constexpr const char* ALIAS_COUNT  = "alias_count";
+        static constexpr const char* NOTE_COUNT   = "note_count";
+        static constexpr const char* LINK_COUNT   = "link_count";
+        static constexpr const char* BACKLINK_COUNT   = "backlink_count";
+        static constexpr const char* URL_COUNT   = "url_count";
+        static constexpr const char* SOURCE_COUNT = "source_count";
+        static constexpr const char* INDEX_COUNT  = "index_count";
+        static constexpr const char* REVIEW_COUNT  = "review_count";
+        static constexpr const char* STATE_18_COUNT  = "state_18_count";
 
+        static constexpr const char* UPDATE_COUNT      = "update_count";
         static constexpr const char* VIEW_COUNT      = "view_count";
         static constexpr const char* LAST_VIEWED_AT  = "last_viewed_at";
+        static constexpr const char* LAST_UPDATED_AT  = "last_updated_at";
     };
 }

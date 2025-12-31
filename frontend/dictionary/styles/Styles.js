@@ -243,6 +243,9 @@ export class Styles {
     textAlign(value) {
         return this.#set("textAlign", value)
     }
+    verticalAlign(value) {
+        return this.#set("verticalAlign", value)
+    }
 
     textDecoration(value) {
         return this.#set("textDecoration", value)
@@ -288,6 +291,18 @@ export class Styles {
      * ========================= */
     border(value = "") {
         return this.#set("border", value)
+    }
+    borderTop(value = "") {
+        return this.#set("borderTop", value)
+    }
+    borderRight(value = "") {
+        return this.#set("borderRight", value)
+    }
+    borderBottom(value = "") {
+        return this.#set("borderBottom", value)
+    }
+    borderLeft(value = "") {
+        return this.#set("borderLeft", value)
     }
 
     borderRadius(value) {

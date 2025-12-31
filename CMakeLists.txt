@@ -2,8 +2,10 @@ cmake_minimum_required(VERSION 3.25.1)
 project(mind_net LANGUAGES CXX)
 
 option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
-option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
-option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" ON)
+option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" OFF)
+option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" OFF)
+#option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
+#option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" ON)
 
 message(STATUS "")
 message(STATUS "Mind Net plugin configuration:")

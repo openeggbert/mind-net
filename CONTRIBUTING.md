@@ -34,6 +34,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] TASK Check operator== implementations for all models
 
 ### Plugin Dictionary
+- [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
+- [ ] Bug - &term_id is sometimes hidden in the url
 - [ ] Window "Term Visit History" - add paging
 - [ ] Ask user, if unsaved changes exist
 - [ ] Multi-language - translate English text, which is not yet translated
@@ -43,8 +45,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition: Under Start button: 42 cards selected: 18 due / 12 not due / 12 never
 - [ ] Modify fulltext search - replace LIKE by FTS
 - [ ] UI: Add: Created at and Updated at
-- [ ] Implement three-level autocomplete relevance ranking: exact match (alias/title) > prefix match > substring match.
-- [ ] Bug - &term_id is sometimes hidden in the url
 - [ ] Fix translations for: dictionary.enums.status.none
 - [ ] Bug - Browser title is not updated after map is changed.
 

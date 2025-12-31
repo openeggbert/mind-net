@@ -318,7 +318,7 @@ export class DictionaryApp {
             this.#term_container.show()
         }
         if(params.term_id || params.map_id) return
-        await this.#term_container.render_last_visited_term()
+        await this.#term_container.render_last_visited_term(params.map_id)
     }
 
     async init_language() {

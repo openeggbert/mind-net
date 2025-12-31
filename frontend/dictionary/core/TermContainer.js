@@ -30,11 +30,9 @@ import {
 import {Button} from "../dom/elements/Button.js";
 import {_10PX} from "../styles/Styles.js";
 import {set_params} from "./Utils.js";
-import {VirtualWindow} from "../window/VirtualWindow.js";
-import {Div} from "../dom/elements/Div.js";
-import {Span} from "../dom/elements/Span.js";
-import {B} from "../dom/elements/B.js";
 import {VisitSource} from "../enums/VisitSource.js";
+import {UnderstandingLegendWindow} from "./dom/UnderstandingLegendWindow.js";
+import {TermMetricsWindow} from "./dom/TermMetricsWindow.js";
 
 const COLON_SPACE = ": "
 
@@ -260,41 +258,7 @@ class TermContainer {
         let button_show_understanding_legend = get_element("button_show_understanding_legend")
         if(!button_show_understanding_legend.onclick) {
             button_show_understanding_legend.onclick=()=> {
-                let window = new VirtualWindow(
-                    {
-                        title: "Understanding legend",
-                        width: 600,
-                        height: 400
-                    }
-                )
-                let content = new Div()
-
-                function appendUnderstanding(content, title, description) {
-                    content.appendChild(new Div(new B(title)))
-                    content.appendChild(new Div(
-                        new Span(" -- "),
-                        new Span(description)
-                    ))
-                }
-
-                appendUnderstanding(content, "Unknown",
-                    "I know the term exists, but nothing more.")
-
-                appendUnderstanding(content, "Recognized",
-                    "I recognize the name and its general context.")
-
-                appendUnderstanding(content, "Understood",
-                    "I understand the definition and core idea.")
-
-                appendUnderstanding(content, "Applied",
-                    "I can correctly use it in practice.")
-
-                appendUnderstanding(content, "Internalized",
-                    "Using it is automatic and requires no conscious effort.")
-
-
-                window.set_content(content.element())
-                window.show()
+                new UnderstandingLegendWindow().show();
             }
         }
 
@@ -326,9 +290,13 @@ class TermContainer {
         input_importance.checked = true;
         input_difficulty.checked = true;
 
-
         let checkbox_repetition = get_element("checkbox_repetition")
         checkbox_repetition.checked = dictionary_term.repetition !== 0
+
+        get_element("button_show_metrics").onclick = () => {
+            let w = new TermMetricsWindow(dictionary_term_id)
+            if (w.init()) w.show()
+        }
 
         get_element("textarea_definition").innerText = dictionary_term.definition
 
