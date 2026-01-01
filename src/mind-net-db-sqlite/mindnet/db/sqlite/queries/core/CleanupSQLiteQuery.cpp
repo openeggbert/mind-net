@@ -45,12 +45,15 @@ namespace mindnet::db::sqlite::queries::core
             throw std::runtime_error("history_read_threshold_in_days not found");
         if (!request.contains("history_list_threshold_in_days"))
             throw std::runtime_error("api_log_threshold_in_days not found");
+        if (!request.contains("login_session_threshold_in_days"))
+            throw std::runtime_error("login_session_threshold_in_days not found");
         if (!request.contains("access_token_threshold_in_days"))
             throw std::runtime_error("access_token_threshold_in_days not found");
 
         int api_log_threshold_in_days = request["api_log_threshold_in_days"];
         int history_read_threshold_in_days = request["history_read_threshold_in_days"];
         int history_list_threshold_in_days = request["history_list_threshold_in_days"];
+        int login_session_threshold_in_days = request["login_session_threshold_in_days"];
         int access_token_threshold_in_days = request["access_token_threshold_in_days"];
 
         nlohmann::json response;
@@ -60,16 +63,22 @@ namespace mindnet::db::sqlite::queries::core
         std::string cleanup_table_api_log_sql = "delete from api_log where created_at <= ?";
         std::string cleanup_table_history_read_sql = "delete from history where operation = 2 and created_at <= ?";
         std::string cleanup_table_history_list_sql = "delete from history where operation = 5 and created_at <= ?";
+        std::string cleanup_table_login_session_sql = R"SQL(
+DELETE FROM login_session
+WHERE created_at <= ?
+  AND expires_at < CAST(strftime('%s','now') AS INTEGER) * 1000 + CAST(strftime('%f','now') * 1000 AS INTEGER) % 1000
+)SQL";
         std::string cleanup_table_access_token_sql = R"SQL(
 DELETE FROM access_token
 WHERE created_at <= ?
-  AND expires_at < CAST(strftime('%f','now') * 1000 AS INTEGER)
+  AND expires_at < CAST(strftime('%s','now') AS INTEGER) * 1000 + CAST(strftime('%f','now') * 1000 AS INTEGER) % 1000
   AND id NOT IN (SELECT access_token_id FROM login_session)
 )SQL";
 
         info << cleanup_table_api_log_sql << commit;
         info << cleanup_table_history_read_sql << commit;
         info << cleanup_table_history_list_sql << commit;
+        info << cleanup_table_login_session_sql << commit;
         info << cleanup_table_access_token_sql << commit;
 
         try
@@ -137,6 +146,27 @@ WHERE created_at <= ?
             response["cleanup_table_history_list_sql"] = cleanup_table_history_list_sql;
         }
 
+        try
+        {
+            SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);
+            db.exec("PRAGMA journal_mode=WAL;");
+            db.exec("PRAGMA synchronous=NORMAL;");
+            db.exec("PRAGMA foreign_keys = ON;");
+
+            SQLite::Statement query(db, cleanup_table_login_session_sql);
+            query.bind(1, cast64(now - login_session_threshold_in_days * MILLISECONDS_PER_DAY));
+
+            int affected = query.exec();
+            response["login_session_deleted_count"] = cast64(affected);
+            essential::info << "login_session_deleted_count: " << affected << essential::commit;
+        }
+        catch (SQLite::Exception& e)
+        {
+            std::cerr << "Exception happened during SQL " << cleanup_table_login_session_sql << e.what() << " " <<
+                std::endl;
+            response["error"] = e.what();
+            response["cleanup_table_login_session_sql"] = cleanup_table_login_session_sql;
+        }
         try
         {
             SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE);

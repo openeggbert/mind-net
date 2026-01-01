@@ -34,7 +34,7 @@ namespace mindnet::plugins::core::jobs
         : Job(
             "CleanupJob",
             "CleanupJob",
-            "@monthly",
+            "@daily",
             true,
             true
         )
@@ -45,16 +45,18 @@ namespace mindnet::plugins::core::jobs
     {
         essential::info << "CleanupJob TestJob (" << util::Utils::current_unixtime_to_string() << essential::commit;
 
-        constexpr const static int DEFAULT_DAYS = 90;
+        constexpr const static int DEFAULT_DAYS = 30;
         auto api_log_threshold_in_days = job_config.get_int_or_default("api_log_threshold_in_days", DEFAULT_DAYS);
         auto history_read_threshold_in_days = job_config.get_int_or_default("history_read_threshold_in_days", DEFAULT_DAYS);
         auto history_list_threshold_in_days = job_config.get_int_or_default("history_list_threshold_in_days", DEFAULT_DAYS);
+        auto login_session_threshold_in_days = job_config.get_int_or_default("login_session_threshold_in_days", DEFAULT_DAYS);
         auto access_token_threshold_in_days = job_config.get_int_or_default("access_token_threshold_in_days", DEFAULT_DAYS);
 
         nlohmann::json req;
         req["api_log_threshold_in_days"] = cast64(api_log_threshold_in_days.first);
         req["history_read_threshold_in_days"] = cast64(history_read_threshold_in_days.first);
         req["history_list_threshold_in_days"] = cast64(history_list_threshold_in_days.first);
+        req["login_session_threshold_in_days"] = cast64(login_session_threshold_in_days.first);
         req["access_token_threshold_in_days"] = cast64(access_token_threshold_in_days.first);
 
         nlohmann::json result = call_query("Cleanup", req);

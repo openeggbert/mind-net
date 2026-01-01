@@ -35,6 +35,8 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Multi-language - translate English text, which is not yet translated
+- [ ] Bug: Map emoji is not loaded, if VisitSource is External
+- [ ] Bug: renaming term does not remove the old title from the cache
 - [ ] Ask user, if unsaved changes exist
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Export to static web
@@ -43,9 +45,11 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Modify fulltext search - replace LIKE by FTS
 - [ ] UI: Add: Created at and Updated at
 - [ ] Fix translations for: dictionary.enums.status.none
-- [ ] Bug - Browser title is not updated after map is changed.
+- [ ] Bug: Browser title is not updated after map is changed.
 - [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
 - [ ] New window History
+- [ ] TermVisitHistoryWindow.js: Add an option to show only visits for the current term
+- [ ] Frontend : Do not update, if the term, note, ... was not changed.
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -66,6 +70,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Backend
 - [ ] New table error
+- [ ] Bug: column ip_address has always the value 127.0.0.1
 - [ ] Fix bugs in the cron_quartz and CronScheduler
 - [ ] CronScheduler: fix ShardedModelCache, computing the shard index
 - [ ] Replace hash_sha_256(password) with: Argon2id (best modern choice) or bcrypt/scrypt/PBKDF2

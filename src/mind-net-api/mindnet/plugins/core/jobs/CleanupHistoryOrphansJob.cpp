@@ -31,7 +31,7 @@ namespace mindnet::plugins::core::jobs
         : Job(
             "CleanupHistoryOrphansJob",
             "CleanupHistoryOrphansJob",
-            "@monthly",
+            "@weekly",
             true,
             true
         )
@@ -40,7 +40,8 @@ namespace mindnet::plugins::core::jobs
 
     std::string CleanupHistoryOrphansJob::run(api::cronq::JobConfig& job_config)
     {
-        auto history_orphan_threshold_in_days = job_config.get_int_or_default("history_orphan_threshold_in_days", 30);
+        const constexpr static int DEFAULT_DAYS = 30;
+        auto history_orphan_threshold_in_days = job_config.get_int_or_default("history_orphan_threshold_in_days", DEFAULT_DAYS);
 
         nlohmann::json req;
         req["history_orphan_threshold_in_days"] = cast64(history_orphan_threshold_in_days.first);
