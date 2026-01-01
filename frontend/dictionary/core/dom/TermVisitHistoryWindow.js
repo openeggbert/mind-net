@@ -1,4 +1,4 @@
-import {showWindowFromUrl, VirtualWindow} from "../../window/VirtualWindow.js";
+import {VirtualWindow} from "../../window/VirtualWindow.js";
 import {Div} from "../../dom/elements/Div.js";
 import {Span} from "../../dom/elements/Span.js";
 import {Table} from "../../dom/elements/Table.js";
@@ -13,7 +13,7 @@ import {
     read_entity,
     setTitleCache
 } from "../../../api.js";
-import {formatDateTimeHMS, showError, showSuccess, showWarn} from "../../../dom.js";
+import {entityTitle, formatDateTimeHMS, showError, showSuccess, showWarn} from "../../../dom.js";
 import {BorderCollapse} from "../../styles/properties/BorderCollapse.js";
 import {TextAlign} from "../../styles/properties/TextAlign.js";
 import {_10PX, _20PX, _40PX} from "../../styles/Styles.js";
@@ -281,6 +281,7 @@ export class TermVisitHistoryWindow extends VirtualWindow {
         this.total_items.set_text(visits_result.total_items)
         this.#page_count = visits_result.total_pages
 
+        const title_cache = new Map()
 
         let history_entry_number = (this.#page_number -1) * PAGE_SIZE;
         for (const entry of visits.slice()) {
@@ -288,7 +289,10 @@ export class TermVisitHistoryWindow extends VirtualWindow {
 
             let visited_term_id = entry.dictionary_term_id
 
-            let title_ = await find_title(visited_term_id)
+            if (!title_cache.has(visited_term_id)) {
+                title_cache.set(visited_term_id, await find_title(visited_term_id))
+            }
+            let title_ = title_cache.get(visited_term_id)
             let disambiguation = entry.disambiguation
             if (disambiguation.length > 0) {
                 title_ = title_ + " (" + disambiguation + ")"

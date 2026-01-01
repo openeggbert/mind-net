@@ -7,7 +7,15 @@ import {
     showSuccess,
     showWarn
 } from "../../dom.js";
-import {delete_entity, list_all_entities, post_entity, put_entity, QueryParams, read_entity} from "../../api.js";
+import {
+    delete_entity,
+    list_all_entities,
+    post_entity,
+    put_entity,
+    QueryParams,
+    read_entity,
+    setTitleCache
+} from "../../api.js";
 import {defined} from "../../common.js";
 import {Tags} from "./sections/Tags.js";
 import {Flags} from "./sections/Flags.js";
@@ -554,6 +562,8 @@ class TermContainer {
             if (updated !== null && updated !== undefined) {
                 showSuccess(translate("dictionary.term.container.info.updating_term_successful"))
                 this.#dictionary_term_json = new_term
+                setTitleCache(Entities.dictionary_term, dictionary_term_id, new_term.title);
+
             } else {
                 showError(translate("dictionary.term.container.error.updating_term_failed"))
             }
