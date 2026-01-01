@@ -164,9 +164,8 @@ class TermContainer {
     async render_last_visited_term() {
         let term_id = loadFromLocalStorage("last_visited_term_id")
         if(!term_id) return
-
         set_next_visit_source(VisitSource.LastVisited)
-        this.render(term_id)
+        await this.render(term_id)
         this.show()
     }
     async render(dictionary_term_id, refresh = false) {
@@ -195,9 +194,9 @@ class TermContainer {
             return;
         }
         set_params(null, dictionary_term_id)
-        if(this.get_selected_map_id_callback() !== dictionary_term.dictionary_map_id) {
-            this.set_selected_map_id_callback(dictionary_term.dictionary_map_id)
-        }
+
+        this.set_selected_map_id_callback(dictionary_term.dictionary_map_id)
+
         document.title = translate("dictionary.title.dictionary_app") + " - " + dictionary_term.title
         this.#dictionary_term_json = dictionary_term
         get_element("button_older").onclick = async () => {

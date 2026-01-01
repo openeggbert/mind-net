@@ -35,7 +35,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Multi-language - translate English text, which is not yet translated
-- [ ] Bug: Map emoji is not loaded, if VisitSource is External
 - [ ] Bug: renaming term does not remove the old title from the cache
 - [ ] Ask user, if unsaved changes exist
 - [ ] New cron job: delete terms with status Deleted
@@ -261,3 +260,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Bug - &term_id is sometimes not present in the url
 - [x] Window "Term Visit History" - add paging
 - [x] Implement three-level autocomplete relevance scoring: 1) exact title > exact alias 2) prefix title > prefix alias 3) substring title > substring alias
+- [x] Bug: Map emoji is not loaded, if VisitSource is External
