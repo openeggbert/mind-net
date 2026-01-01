@@ -48,7 +48,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
 - [ ] New window History
 - [ ] TermVisitHistoryWindow.js: Add an option to show only visits for the current term
-- [ ] Frontend : Do not update, if the term, note, ... was not changed.
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
@@ -261,3 +260,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Window "Term Visit History" - add paging
 - [x] Implement three-level autocomplete relevance scoring: 1) exact title > exact alias 2) prefix title > prefix alias 3) substring title > substring alias
 - [x] Bug: Map emoji is not loaded, if VisitSource is External
+- [x] Frontend : Do not update, if the term, note, ... was not changed.

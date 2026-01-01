@@ -11,7 +11,7 @@ import {
     chooseOption,
     get_element,
     showError,
-    showInfo,
+    showInfo, showWarn,
 } from "../../../dom.js";
 import {_CrudSection} from "../_CrudSection.js";
 import {Entities} from "../../entities/Entities.js";
@@ -103,6 +103,7 @@ export class Notes extends _CrudSection {
                 showError("Loading note failed: " + title)
                 return;
             }
+            note_row._json = read_note
 
             if (note_details_exist) {
                 let unsaved_changes = false
@@ -197,9 +198,22 @@ export class Notes extends _CrudSection {
             note_details.appendChild(save_button)
 
             save_button.onclick = async () => {
+                let title_changed = read_note.title !== input_title.value
+                let position_changed = read_note.position !== Number(input_position.value)
+                let content_changed = read_note.content !== text_area_content.value
+
+                console.log(title_changed + " " + position_changed + " "+  content_changed)
+                console.log("old position: " + typeof read_note.position + " new position: " + typeof input_position.value)
+                console.log("old content: " + read_note.content + " new content: " + text_area_content.value)
+                let nothing_changed = !title_changed && !position_changed && !content_changed
+                if(nothing_changed) {
+                    showWarn("Nothing changed. Nothing to be saved.")
+                    return
+                }
                 read_note.title = input_title.value
                 read_note.position = input_position.value
                 read_note.content = text_area_content.value
+
                 let updated = await put_entity(Entities.dictionary_note, read_note.id, read_note)
                 if (updated === null || updated === undefined) {
                     showError("Updating note failed: " + read_note.title)

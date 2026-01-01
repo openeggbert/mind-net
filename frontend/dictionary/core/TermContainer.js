@@ -190,7 +190,6 @@ class TermContainer {
         let dictionary_term = await read_entity(Entities.dictionary_term, dictionary_term_id)
         if(!defined(dictionary_term)) {
             showError(translate("dictionary.term.container.error.reading_term_failed") + ": " + dictionary_term_id)
-            // throw new Error ("Reading term failed: " + dictionary_term_id)
             return;
         }
         set_params(null, dictionary_term_id)
@@ -290,7 +289,7 @@ class TermContainer {
         input_difficulty.checked = true;
 
         let checkbox_repetition = get_element("checkbox_repetition")
-        checkbox_repetition.checked = dictionary_term.repetition !== 0
+        checkbox_repetition.checked = dictionary_term.is_for_repetition !== 0
 
         get_element("button_show_metrics").onclick = () => {
             let w = new TermMetricsWindow(dictionary_term_id)
@@ -545,7 +544,12 @@ class TermContainer {
             if (input_difficulty_hard.checked) difficulty = 3
             new_term.importance = importance
             new_term.difficulty = difficulty
-            new_term.repetition = get_element("checkbox_repetition").checked ? 1 : 0
+            new_term.is_for_repetition = get_element("checkbox_repetition").checked ? 1 : 0
+
+            if(JSON.stringify(new_term) === JSON.stringify(this.#dictionary_term_json)) {
+                showInfo("Term was not changed. Nothing to be updated.")
+                return
+            }
             let updated = await put_entity(Entities.dictionary_term, dictionary_term_id, new_term)
             if (updated !== null && updated !== undefined) {
                 showSuccess(translate("dictionary.term.container.info.updating_term_successful"))
