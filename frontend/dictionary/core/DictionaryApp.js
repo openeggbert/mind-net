@@ -153,7 +153,10 @@ export class DictionaryApp {
                 showWarn("There is shown no term.")
                 return;
             }
-            set_next_visit_source(VisitSource.Refresh)
+            if(get_next_visit_source() !== VisitSource.Discard)
+            {
+                set_next_visit_source(VisitSource.Refresh)
+            }
             await this.render(term_id, true, true)
             showSuccess("Term was refreshed.")
 

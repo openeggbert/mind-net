@@ -193,6 +193,73 @@ class TermContainer {
         }
     }
 
+    #old_pinned_term
+    #old_understanding_level
+
+    term_changed(new_term_json = this.load_json_from_form()) {
+        console.log("term_changed()")
+        return JSON.stringify(new_term_json) !== JSON.stringify(this.#dictionary_term_json)
+    }
+    understanding_changed() {
+        console.log("understanding_changed()")
+        let new_understanding_level = get_element("select_understanding").selectedIndex
+        return new_understanding_level !== this.#old_understanding_level
+    }
+    pinned_term_changed() {
+        console.log("pinned_term_changed()")
+        let checkbox_pinned = get_element("checkbox_pinned")
+        let pinned_now = checkbox_pinned.checked
+        return pinned_now !== this.#old_pinned_term
+    }
+    static you_have_unchanged_changes = get_element("you_have_unchanged_changes")
+    refresh_you_have_unchanged_changes(hint = 0) {
+        let changes = false;
+        if(hint === 0) changes = this.term_changed() || this.understanding_changed() || this.pinned_term_changed()
+        if(hint === 1) changes = this.term_changed()
+        if(hint === 2) changes = this.understanding_changed()
+        if(hint === 3) changes = this.pinned_term_changed()
+        TermContainer.you_have_unchanged_changes.style.display = changes ? "block" : "none"
+
+    }
+    static {
+        get_element("you_have_unchanged_changes_save").onclick = ()=> {
+            get_element("button_save_term").click()
+        }
+
+        get_element("you_have_unchanged_changes_discard").onclick = ()=> {
+            set_next_visit_source(VisitSource.Discard)
+            get_element("button_refresh").click()
+        }
+
+    }
+    load_json_from_form() {
+        let new_term = structuredClone(this.#dictionary_term_json)
+        new_term.title = get_element("input_title").value
+        new_term.disambiguation = get_element("input_disambiguation").value
+        new_term.definition = get_element("textarea_definition").value
+        new_term.status = get_element("select_status").selectedIndex
+
+        let importance = 0
+        let difficulty = 0
+        let input_importance_low = get_element("input_importance_low")
+        let input_importance_medium = get_element("input_importance_medium")
+        let input_importance_high = get_element("input_importance_high")
+        let input_difficulty_easy = get_element("input_difficulty_easy")
+        let input_difficulty_medium = get_element("input_difficulty_medium")
+        let input_difficulty_hard = get_element("input_difficulty_hard")
+        if (input_importance_low.checked) importance = 1
+        if (input_importance_medium.checked) importance = 2
+        if (input_importance_high.checked) importance = 3
+        if (input_difficulty_easy.checked) difficulty = 1
+        if (input_difficulty_medium.checked) difficulty = 2
+        if (input_difficulty_hard.checked) difficulty = 3
+        new_term.importance = importance
+        new_term.difficulty = difficulty
+        new_term.is_for_repetition = get_element("checkbox_repetition").checked ? 1 : 0
+
+        return new_term
+    }
+
     async render_term(dictionary_term_id) {
         this.dictionary_term_id = dictionary_term_id
         let dictionary_term = await read_entity(Entities.dictionary_term, dictionary_term_id)
@@ -201,6 +268,7 @@ class TermContainer {
             return;
         }
         set_params(null, dictionary_term_id)
+        TermContainer.you_have_unchanged_changes.style.display = "none"
 
         this.set_selected_map_id_callback(dictionary_term.dictionary_map_id)
 
@@ -237,9 +305,16 @@ class TermContainer {
             set_next_visit_source(VisitSource.Newer)
             this.render_term_id_callback(newer_term_id, true)        }
         get_element("h2_term_id").innerText = dictionary_term.id
-        get_element("input_title").value = dictionary_term.title
-        get_element("input_disambiguation").value = dictionary_term.disambiguation
-        get_element("textarea_definition").value = dictionary_term.definition
+        let input_title = get_element("input_title")
+        let input_disambiguation= get_element("input_disambiguation")
+        let textarea_definition= get_element("textarea_definition")
+        input_title.value = dictionary_term.title
+        input_disambiguation.value = dictionary_term.disambiguation
+        textarea_definition.value = dictionary_term.definition
+
+        input_title.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
+        input_disambiguation.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
+        textarea_definition.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
 
         attachMarkdownEditor({
             textarea: get_element("textarea_definition"),
@@ -247,7 +322,9 @@ class TermContainer {
             buttonRead: get_element("button_read_definition")
         });
 
-        get_element("select_status").selectedIndex = dictionary_term.status
+        let select_status =get_element("select_status")
+        select_status.selectedIndex = dictionary_term.status
+        select_status.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
 
         let list_understandings = await list_all_entities(
             Entities.dictionary_term_understanding,
@@ -255,11 +332,16 @@ class TermContainer {
         )
         if (!list_understandings) {
             showError("Loading dictionary_term_understanding failed")
+            this.#old_understanding_level = null
             this.hide()
             return
         } else {
             let understanding = list_understandings.length === 0 ? null : list_understandings[0]
-            get_element("select_understanding").selectedIndex = understanding === null ? 0 : understanding.level
+            let select_understanding = get_element("select_understanding")
+            select_understanding.selectedIndex = understanding === null ? 0 : understanding.level
+            this.#old_understanding_level = select_understanding.selectedIndex
+            select_understanding.oninput= ()=> this.refresh_you_have_unchanged_changes(2)
+
         }
         let button_show_understanding_legend = get_element("button_show_understanding_legend")
         if(!button_show_understanding_legend.onclick) {
@@ -269,6 +351,7 @@ class TermContainer {
         }
 
         let checkbox_pinned = get_element("checkbox_pinned")
+        checkbox_pinned.oninput= ()=> this.refresh_you_have_unchanged_changes(3)
         let pinned_terms = await list_all_entities(
             Entities.dictionary_pinned_term,
             new QueryParams()
@@ -278,9 +361,15 @@ class TermContainer {
         )
         if (!defined(pinned_terms)) {
             showError(translate("dictionary.term.container.error.loading_pinned_terms_failed"))
+            this.#old_pinned_term = null
         } else {
             checkbox_pinned.checked = pinned_terms.length > 0
+            this.#old_pinned_term = checkbox_pinned.checked
         }
+
+        let checkbox_repetition = get_element("checkbox_repetition")
+        checkbox_repetition.checked = dictionary_term.is_for_repetition !== 0
+        checkbox_repetition.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
 
         let importance = dictionary_term.importance
         let difficulty = dictionary_term.difficulty
@@ -296,8 +385,15 @@ class TermContainer {
         input_importance.checked = true;
         input_difficulty.checked = true;
 
-        let checkbox_repetition = get_element("checkbox_repetition")
-        checkbox_repetition.checked = dictionary_term.is_for_repetition !== 0
+        [
+            get_element("input_importance_low"),
+            get_element("input_importance_medium"),
+            get_element("input_importance_high"),
+            get_element("input_difficulty_easy"),
+            get_element("input_difficulty_medium"),
+            get_element("input_difficulty_hard"),
+        ].forEach(e=> e.oninput= ()=> this.refresh_you_have_unchanged_changes(1))
+
 
         get_element("button_show_metrics").onclick = () => {
             let w = new TermMetricsWindow(dictionary_term_id)
@@ -318,7 +414,21 @@ class TermContainer {
                 }
             }
 
+            class Pair {
+                first
+                second
+                constructor(f,s) {
+                    this.first = f
+                    this.second = s
+                }
+            }
+            let to_be_deleted = []
+
             let table = null;
+
+            function add_for_deletion(entities) {
+                to_be_deleted.push(new Pair(table, entities))
+            }
 
             table = Entities.dictionary_pinned_term
             let pinned_terms = await list_all_entities(
@@ -328,11 +438,13 @@ class TermContainer {
                     .add(table.dictionary_term_id, dictionary_term_id)
                     .build()
             )
+            add_for_deletion(pinned_terms)
 
             table = Entities.dictionary_tag
             let tags = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(tags)
 
             table = Entities.dictionary_flag
             let private_flags = await list_all_entities(
@@ -342,6 +454,7 @@ class TermContainer {
                     .add(table.dictionary_term_id, dictionary_term_id)
                     .add_user_id()
                     .build())
+            add_for_deletion(private_flags)
 
             table = Entities.dictionary_flag
             let public_flags = await list_all_entities(
@@ -351,61 +464,74 @@ class TermContainer {
                     .add(table.dictionary_term_id, dictionary_term_id)
                     .build()
             )
+            add_for_deletion(public_flags)
 
             table = Entities.dictionary_link
             let links_from = await list_all_entities(
                 table,
                 new QueryParams(table.from_dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(links_from)
 
             table = Entities.dictionary_link
             let links_to = await list_all_entities(
                 table,
                 new QueryParams(table.to_dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(links_to)
 
             table = Entities.dictionary_note
             let notes = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(notes)
 
             table = Entities.dictionary_index
             let indexes = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(indexes)
 
             table = Entities.dictionary_source
             let sources = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(sources)
 
             table = Entities.dictionary_term_alias
             let aliases = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(aliases)
 
             table = Entities.dictionary_term_visit
             let visits = await list_all_entities(
                 table,
-                new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+                new QueryParams(table.dictionary_term_id, dictionary_term_id)
+                    .add_user_id().build())
+            add_for_deletion(visits)
 
             table = Entities.dictionary_url
             let urls = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).build())
+            add_for_deletion(urls)
 
             table = Entities.dictionary_term_understanding
             let understandings = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+            add_for_deletion(understandings)
 
             table = Entities.dictionary_review
             let reviews = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+            add_for_deletion(reviews)
 
             table = Entities.dictionary_state_18
             let states_18 = await list_all_entities(
                 table,
                 new QueryParams(table.dictionary_term_id, dictionary_term_id).add_user_id().build())
+            add_for_deletion(states_18)
 
             dictionary_term.status = 6 //deleted
             let updated = await put_entity(Entities.dictionary_term, dictionary_term_id, dictionary_term)
@@ -414,21 +540,9 @@ class TermContainer {
                 return;
             }
 
-            await delete_rows(Entities.dictionary_pinned_term, pinned_terms)
-            await delete_rows(Entities.dictionary_flag, private_flags)
-            await delete_rows(Entities.dictionary_flag, public_flags)
-            await delete_rows(Entities.dictionary_link, links_from)
-            await delete_rows(Entities.dictionary_link, links_to)
-            await delete_rows(Entities.dictionary_note, notes)
-            await delete_rows(Entities.dictionary_review, reviews)
-            await delete_rows(Entities.dictionary_index, indexes)
-            await delete_rows(Entities.dictionary_source, sources)
-            await delete_rows(Entities.dictionary_state_18, states_18)
-            await delete_rows(Entities.dictionary_tag, tags)
-            await delete_rows(Entities.dictionary_term_alias, aliases)
-            await delete_rows(Entities.dictionary_term_visit, visits)
-            await delete_rows(Entities.dictionary_url, urls)
-            await delete_rows(Entities.dictionary_term_understanding, understandings)
+            for (const e of to_be_deleted) {
+                await delete_rows(e.first, e.second);
+            }
 
             let delete_dictionary_term = await delete_entity(Entities.dictionary_term, dictionary_term_id)
             if (delete_dictionary_term !== null && delete_dictionary_term !== undefined) {
@@ -443,10 +557,7 @@ class TermContainer {
         }
 
         get_element("button_save_term").onclick = async () => {
-            let new_term = structuredClone(this.#dictionary_term_json)
-            new_term.title = get_element("input_title").value
-            new_term.disambiguation = get_element("input_disambiguation").value
-            new_term.definition = get_element("textarea_definition").value
+            let new_term = this.load_json_from_form()
 
             let checkbox_pinned = get_element("checkbox_pinned")
             let pinned_now = checkbox_pinned.checked
@@ -472,6 +583,7 @@ class TermContainer {
                         if (defined(created)) {
                             showSuccess(translate("dictionary.term.container.info.creating_pinned_term_successful"))
                             checkbox_pinned.checked = true
+                            this.#old_pinned_term = true
                         } else {
                             showError(translate("dictionary.term.container.error.creating_pinned_term_failed"))
                         }
@@ -482,6 +594,7 @@ class TermContainer {
                             if (deleted) {
                                 showSuccess(translate("dictionary.term.container.info.deleting_pinned_term_successful") + COLON_SPACE + e.id)
                                 checkbox_pinned.checked = false
+                                this.#old_pinned_term = false
                             } else {
                                 showError(translate("dictionary.term.container.error.deleting_pinned_term_failed") + COLON_SPACE + e.id)
                             }
@@ -489,9 +602,6 @@ class TermContainer {
                     }
                 }
             }
-
-            new_term.status = get_element("select_status").selectedIndex
-
 
             let new_understanding_level = get_element("select_understanding").selectedIndex
 
@@ -521,6 +631,7 @@ class TermContainer {
                     let created = await post_entity(Entities.dictionary_term_understanding, understanding)
                     if (defined(created)) {
                         showSuccess("Creating new term understanding was successful.")
+                        this.#old_understanding_level = new_understanding_level
                     } else {
                         showError("Creating new term understanding failed.")
                     }
@@ -530,31 +641,14 @@ class TermContainer {
                     let updated = await put_entity(Entities.dictionary_term_understanding, understanding.id, understanding)
                     if (defined(updated)) {
                         showSuccess("Updating term understanding was successful.")
+                        this.#old_understanding_level = new_understanding_level
                     } else {
                         showError("Updating term understanding failed.")
                     }
                 }
             }
 
-            let importance = 0
-            let difficulty = 0
-            let input_importance_low = get_element("input_importance_low")
-            let input_importance_medium = get_element("input_importance_medium")
-            let input_importance_high = get_element("input_importance_high")
-            let input_difficulty_easy = get_element("input_difficulty_easy")
-            let input_difficulty_medium = get_element("input_difficulty_medium")
-            let input_difficulty_hard = get_element("input_difficulty_hard")
-            if (input_importance_low.checked) importance = 1
-            if (input_importance_medium.checked) importance = 2
-            if (input_importance_high.checked) importance = 3
-            if (input_difficulty_easy.checked) difficulty = 1
-            if (input_difficulty_medium.checked) difficulty = 2
-            if (input_difficulty_hard.checked) difficulty = 3
-            new_term.importance = importance
-            new_term.difficulty = difficulty
-            new_term.is_for_repetition = get_element("checkbox_repetition").checked ? 1 : 0
-
-            if(JSON.stringify(new_term) === JSON.stringify(this.#dictionary_term_json)) {
+            if(!this.term_changed(new_term)) {
                 showInfo("Term was not changed. Nothing to be updated.")
                 return
             }
@@ -563,6 +657,7 @@ class TermContainer {
                 showSuccess(translate("dictionary.term.container.info.updating_term_successful"))
                 this.#dictionary_term_json = new_term
                 setTitleCache(Entities.dictionary_term, dictionary_term_id, new_term.title);
+                TermContainer.you_have_unchanged_changes.style.display = "none"
 
             } else {
                 showError(translate("dictionary.term.container.error.updating_term_failed"))

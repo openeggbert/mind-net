@@ -12,6 +12,7 @@ export const VisitSource = Object.freeze({
     VisitedHistory: {id: 12, label: "VisitedHistory"},
     LastVisited: {id: 13, label: "LastVisited"},
     Refresh: {id: 14, label: "Refresh"},
+    Discard: {id: 15, label: "Discard"},
     Older: {id: 20, label: "Older"},
     Newer: {id: 21, label: "Newer"},
     Other: {id: 50, label: "Other"},

@@ -442,3 +442,51 @@ color: #ccc
 .common-repetition_button:hover{
     background-color: rgb(129, 128, 128) !important;
 }
+
+.unsaved {
+    display: block;
+
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    padding: 8px 12px;
+    margin-top: 10px;
+
+    background: #fff8e1;
+    border-bottom: 1px solid #f0d58c;
+
+    color: #5d4a00;
+    font-weight: 500;
+}
+
+.unsaved .icon {
+    font-size: 16px;
+}
+
+.unsaved button {
+    margin-left: 20px;
+    padding: 4px 10px;
+
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.unsaved button.save {
+    background: #2563eb;
+    color: white;
+}
+
+.unsaved button.discard {
+    background: transparent;
+    color: #6b7280;
+}
+
+.unsaved button:hover {
+    filter: brightness(0.95);
+}
+
+.hidden {
+    display: none;
+}

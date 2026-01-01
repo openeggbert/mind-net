@@ -35,7 +35,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Multi-language - translate English text, which is not yet translated
-- [ ] Ask user, if unsaved changes exist
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Export to static web
 - [ ] Bug: Search: Any map does not take effect
@@ -261,3 +260,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Frontend : Do not update, if the term, note, ... was not changed.
 - [x] Bug: renaming term does not remove the old title from the cache
 - [x] Fix translations for: dictionary.enums.status.none
+- [x] Added message "You have unsaved changes."
