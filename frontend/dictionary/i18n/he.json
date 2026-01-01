@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "מטא־נתונים",
   "dictionary.enums.status.label": "מצב",
-  "dictionary.enums.status.none": "לא מוגדר",
   "dictionary.enums.status.stub": "טיוטה ראשונית",
   "dictionary.enums.status.draft": "טיוטה",
   "dictionary.enums.status.incomplete": "לא שלם",

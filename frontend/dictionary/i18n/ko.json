@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "메타데이터",
   "dictionary.enums.status.label": "상태",
-  "dictionary.enums.status.none": "정의되지 않음",
   "dictionary.enums.status.stub": "초안",
   "dictionary.enums.status.draft": "임시본",
   "dictionary.enums.status.incomplete": "미완성",

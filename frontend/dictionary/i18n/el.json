@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Μεταδεδομένα",
   "dictionary.enums.status.label": "Κατάσταση",
-  "dictionary.enums.status.none": "Μη καθορισμένο",
   "dictionary.enums.status.stub": "Πρόχειρο",
   "dictionary.enums.status.draft": "Σχέδιο",
   "dictionary.enums.status.incomplete": "Ελλιπές",

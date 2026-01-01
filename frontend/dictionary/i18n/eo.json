@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Metadatumoj",
   "dictionary.enums.status.label": "Stato",
-  "dictionary.enums.status.none": "Nedifinita",
   "dictionary.enums.status.stub": "Skizo",
   "dictionary.enums.status.draft": "Malneto",
   "dictionary.enums.status.incomplete": "Nekompleta",

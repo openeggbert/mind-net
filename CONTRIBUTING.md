@@ -35,7 +35,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Plugin Dictionary
 - [ ] Multi-language - translate English text, which is not yet translated
-- [ ] Bug: renaming term does not remove the old title from the cache
 - [ ] Ask user, if unsaved changes exist
 - [ ] New cron job: delete terms with status Deleted
 - [ ] Export to static web
@@ -43,7 +42,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Repetition: Under Start button: 42 cards selected: 18 due / 12 not due / 12 never
 - [ ] Modify fulltext search - replace LIKE by FTS
 - [ ] UI: Add: Created at and Updated at
-- [ ] Fix translations for: dictionary.enums.status.none
 - [ ] Bug: Browser title is not updated after map is changed.
 - [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
 - [ ] New window History
@@ -261,3 +259,5 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Implement three-level autocomplete relevance scoring: 1) exact title > exact alias 2) prefix title > prefix alias 3) substring title > substring alias
 - [x] Bug: Map emoji is not loaded, if VisitSource is External
 - [x] Frontend : Do not update, if the term, note, ... was not changed.
+- [x] Bug: renaming term does not remove the old title from the cache
+- [x] Fix translations for: dictionary.enums.status.none

@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Метаданные",
   "dictionary.enums.status.label": "Статус",
-  "dictionary.enums.status.none": "Не определён",
   "dictionary.enums.status.stub": "Черновик",
   "dictionary.enums.status.draft": "Проект",
   "dictionary.enums.status.incomplete": "Неполный",

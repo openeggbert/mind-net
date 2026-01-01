@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Metaadatok",
   "dictionary.enums.status.label": "Állapot",
-  "dictionary.enums.status.none": "Nincs meghatározva",
   "dictionary.enums.status.stub": "Vázlat",
   "dictionary.enums.status.draft": "Tervezet",
   "dictionary.enums.status.incomplete": "Hiányos",

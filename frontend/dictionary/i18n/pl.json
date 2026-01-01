@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Metadane",
   "dictionary.enums.status.label": "Status",
-  "dictionary.enums.status.none": "Nieokreślony",
   "dictionary.enums.status.stub": "Szkic",
   "dictionary.enums.status.draft": "Wersja robocza",
   "dictionary.enums.status.incomplete": "Niekompletny",

@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Metadata",
   "dictionary.enums.status.label": "Status",
-  "dictionary.enums.status.none": "Non definitum",
   "dictionary.enums.status.stub": "Adumbratio",
   "dictionary.enums.status.draft": "Schema",
   "dictionary.enums.status.incomplete": "Incompletum",

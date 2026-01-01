@@ -52,7 +52,6 @@
 
   "dictionary.term.label.metadata": "Siêu dữ liệu",
   "dictionary.enums.status.label": "Trạng thái",
-  "dictionary.enums.status.none": "Chưa xác định",
   "dictionary.enums.status.stub": "Bản nháp",
   "dictionary.enums.status.draft": "Dự thảo",
   "dictionary.enums.status.incomplete": "Chưa hoàn chỉnh",
