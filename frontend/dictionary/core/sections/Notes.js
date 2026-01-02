@@ -199,7 +199,7 @@ export class Notes extends _CrudSection {
 
             save_button.onclick = async () => {
                 let title_changed = read_note.title !== input_title.value
-                let position_changed = read_note.position !== Number(input_position.value)
+                let position_changed = Number(read_note.position) !== Number(input_position.value)
                 let content_changed = read_note.content !== text_area_content.value
 
                 console.log(title_changed + " " + position_changed + " "+  content_changed)

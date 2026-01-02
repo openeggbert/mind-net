@@ -241,7 +241,7 @@ a.note-wanted, a.note-unknown {
 }
 
 .suggestion-item:hover {
-    background: #eee;
+    background: rgba(101, 181, 237, 0.24);;
 }
 
 .window_container {

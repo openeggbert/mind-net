@@ -50,6 +50,7 @@ export class Autocomplete {
         this.box.className = "suggestions";
         this.box.style.display = "none";
         this.box.style.zIndex = "1000"
+        this.box.style.minWidth = "100px"
 
         if (input.parentNode) {
             if (insert_after_id === null || insert_after_id === undefined || insert_after_id === "") {

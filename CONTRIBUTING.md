@@ -45,6 +45,10 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
 - [ ] New window History
 - [ ] TermVisitHistoryWindow.js: Add an option to show only visits for the current term
+- [ ] Add new column dictionary_link.position
+- [ ] Button "Add Alias" should look the same as buttons "Add Tag" and "Add Flag"
+- [ ] New rule: Alias.alias must be different from term.title
+- [ ] Term, Note: The Save button should switch the textarea to rendered Markdown view.
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position
