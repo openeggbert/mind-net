@@ -44,7 +44,7 @@ namespace mindnet::plugins::slipbox::models
 
     inline const def NOTE_NAVIGATION_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
-        .set_group("Slip Box #2", 100)
+        .set_group("Slip Box #2", 1000)
         .set_rest_operations("r").set_title_column(COLS::ID)
         .set_no_table(true)
         .set_cache_enabled(false)

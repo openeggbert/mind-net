@@ -6,14 +6,11 @@ option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
 
 if(ALLOW_LEGACY_PLUGINS)
     option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
-    option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" ON)
+    option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" OFF)
 else()
     unset(MINDNET_ENABLE_SLIPBOX_PLUGIN CACHE)
     unset(MINDNET_ENABLE_REPETITION_PLUGIN CACHE)
 endif()
-
-
-
 
 message(STATUS "")
 message(STATUS "Mind Net plugin configuration:")

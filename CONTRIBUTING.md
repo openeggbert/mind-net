@@ -51,6 +51,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Term, Note: The Save button should switch the textarea to rendered Markdown view.
 - [ ] After a new note is created, the note should be expanded.
 - [ ] Markdown editor: add emoji button
+- [ ] Markdown renderer: fix the styles
 - [ ] Make UI mobile friendly
 
 ### Plugin Slipbox

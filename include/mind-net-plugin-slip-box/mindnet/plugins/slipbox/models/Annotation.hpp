@@ -46,7 +46,7 @@ namespace mindnet::plugins::slipbox::models
     inline const def ANNOTATION_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_rest_operations("crudl")
-        .set_group("Slip Box #2", 110)
+        .set_group("Slip Box #2", 1000)
         .set_columns({
             coldef(COLS::NOTE_ID, MANDATORY | FOREIGN_KEY | READONLY),
             coldef(COLS::PARENT_ANNOTATION_ID).set_foreign_key("annotation"),

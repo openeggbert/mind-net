@@ -43,7 +43,7 @@ namespace mindnet::plugins::dictionary::models
 
     inline const def DICTIONARY_TERM_METRIC_DEFINITION =
         def(COLS::MODEL_NAME, "dictionary")
-        .set_group("Dictionary #2", 210)
+        .set_group("Dictionary #2", 200)
         .set_rest_operations("rl")
         .set_no_table(true)
         .set_cache_enabled(false)

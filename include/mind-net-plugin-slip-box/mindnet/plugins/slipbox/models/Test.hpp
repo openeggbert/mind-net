@@ -45,7 +45,7 @@ namespace mindnet::plugins::slipbox::models
     inline const def TEST_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
-        .set_group("Slip Box #2", 100)
+        .set_group("Slip Box #2", 1000)
         .set_title_column(COLS::TITLE)
         .set_columns(
             {

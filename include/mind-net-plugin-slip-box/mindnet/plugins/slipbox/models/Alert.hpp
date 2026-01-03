@@ -47,7 +47,7 @@ namespace mindnet::plugins::slipbox::models
     inline const def ALERT_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
-        .set_group("Slip Box #2", 100).set_title_column(COLS::TITLE)
+        .set_group("Slip Box #2", 1000).set_title_column(COLS::TITLE)
         .set_columns({
             coldef(COLS::TRIGGER_AT, DATETIME | MANDATORY).set_description("When notification should trigger"),
             coldef(COLS::LAST_TRIGGERED_AT, DATETIME).set_description("Last time the alert was triggered"),

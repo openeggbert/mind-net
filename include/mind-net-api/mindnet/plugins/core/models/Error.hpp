@@ -49,7 +49,7 @@ namespace mindnet::plugins::core::models
     inline const def ERROR_DEFINITION =
         def(COLSERROR::MODEL_NAME, CORE_PLUGIN_NAME)
             .set_rest_operations("rul")
-            .set_group("Core", 600).set_readonly()
+            .set_group("Core", 10000).set_readonly()
             .set_columns({
                 /* identity */
                 coldef(COLSERROR::HUMAN_IDENTIFICATION, MANDATORY)

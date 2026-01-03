@@ -44,7 +44,7 @@ namespace mindnet::plugins::slipbox::models
     inline const def PROJECT_DEFINITION =
         def(COLS::MODEL_NAME, SLIP_BOX_PLUGIN_NAME)
         .set_all_rest_operations()
-        .set_group("Slip Box #2", 100).set_title_column(COLS::TITLE)
+        .set_group("Slip Box #2", 1000).set_title_column(COLS::TITLE)
         .set_columns({
             coldef(COLS::NOTE_ID, INTEGER | FOREIGN_KEY).set_description("Note ID this project is linked to"),
             coldef(COLS::TITLE, MANDATORY).set_description("Project title"),
