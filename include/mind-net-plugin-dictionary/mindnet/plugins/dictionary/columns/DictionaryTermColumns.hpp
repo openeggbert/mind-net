@@ -48,5 +48,6 @@ namespace mindnet::plugins::dictionary::columns
         static constexpr const char* IMPORTANCE = "importance";
         static constexpr const char* DIFFICULTY = "difficulty";
         static constexpr const char* IS_FOR_REPETITION = "is_for_repetition";
+        static constexpr const char* IS_ROOT = "is_root";
     };
 }

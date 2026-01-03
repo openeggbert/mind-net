@@ -251,6 +251,7 @@ X(Desc, 2, ENUM_NAME)
         bool importance_medium = false;
         bool importance_high = false;
         IsForRepetitionMode is_for_repetition = IsForRepetitionMode::Any;
+        bool root_only = false;
 
         int tag_id = 0;
         string flag_title;
@@ -315,6 +316,7 @@ X(Desc, 2, ENUM_NAME)
 
             int is_for_repetition_int = q.value("is_for_repetition", static_cast<int>(IsForRepetitionMode::Any));
             is_for_repetition = int_to_is_for_repetition_mode(is_for_repetition_int);
+            root_only = q.value("root_only", false);
 
             tag_id = q.value("tag_id", 0);
             flag_title = q.value("flag_title", "");
@@ -384,6 +386,7 @@ X(Desc, 2, ENUM_NAME)
             q["importance_medium"] = importance_medium;
             q["importance_high"] = importance_high;
             q["is_for_repetition"] = is_for_repetition;
+            q["root_only"] = root_only;
 
             q["tag_id"] = tag_id;
             q["flag_title"] = flag_title;
@@ -710,6 +713,12 @@ X(Desc, 2, ENUM_NAME)
                 append_where(sql_where_and_joins, first_where);
                 sql_where_and_joins += "dt.is_for_repetition = 0";
             }
+        }
+        // is_root
+        if (q.root_only)
+        {
+            append_where(sql_where_and_joins, first_where);
+            sql_where_and_joins += "dt.is_root = 1";
         }
         // tag
         if (q.tag_id > 0)

@@ -342,6 +342,13 @@ export class SearchWindow extends VirtualWindow {
         const is_for_repetition_select = new EnumSelect(IsForRepetitionMode);
         search_form.add_control(new FormRow("Is for repetition", is_for_repetition_select));
 
+        const rootCheckbox = new Checkbox()
+            .add_action_handler(ActionType.Reset, (self, ...args) => {
+                self.uncheck();
+                return true;
+            })
+        search_form.add_control(new FormRow("Root only", rootCheckbox))
+
         class AcControl extends FormRowAutocomplete {
             constructor(label, model, map_in_query = true) {
                 super(
@@ -805,6 +812,8 @@ export class SearchWindow extends VirtualWindow {
                 .map(opt => opt.value)
                 .map(e => enumValue(IsForRepetitionMode, e))[0]
 
+            m.root_only = rootCheckbox.is_checked()
+
             m.tag_id = tag_control.get_item_id()
             m.flag_title = flag_control.get_title()
             m.link_from_term_id = link_from_control.get_item_id()
@@ -975,6 +984,8 @@ export class SearchWindow extends VirtualWindow {
             find_enum("difficulty", Difficulty.Hard).set_checked(query.difficulty_hard ?? true)
 
             is_for_repetition_select.set_selected_value(query.is_for_repetition)
+
+            rootCheckbox.set_checked(query.root_only ?? false)
 
             if ((query.tag_id ?? 0) !== 0) {
                 let read_tag = await read_entity(Entities.dictionary_tag, query.tag_id)

@@ -49,6 +49,9 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Button "Add Alias" should look the same as buttons "Add Tag" and "Add Flag"
 - [ ] New rule: Alias.alias must be different from term.title
 - [ ] Term, Note: The Save button should switch the textarea to rendered Markdown view.
+- [ ] After a new note is created, the note should be expanded.
+- [ ] Markdown editor: add emoji button
+- [ ] Make UI mobile friendly
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

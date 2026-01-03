@@ -46,6 +46,7 @@ export class SearchModel {
         this.difficulty_medium = true
         this.difficulty_hard = true
         this.is_for_repetition = IsForRepetitionMode.Any
+        this.root_only = false
         this.tag_id = 0
         this.flag_title = ""
         this.link_from_term_id = 0
@@ -98,6 +99,7 @@ export class SearchModel {
             difficulty_hard: this.difficulty_hard,
 
             is_for_repetition: this.is_for_repetition.id,
+            root_only: this.root_only,
 
             tag_id: this.tag_id,
             flag_title: this.flag_title,
@@ -165,6 +167,7 @@ export class SearchModel {
         this.difficulty_hard = json.difficulty_hard ?? true;
 
         this.is_for_repetition = enumValue(TimeRange, json.is_for_repetition) ?? IsForRepetitionMode.Any;
+        this.root_only = !!json.root_only
 
         this.tag_id = json.tag_id ?? 0;
         this.flag_title = json.flag_title ?? "";

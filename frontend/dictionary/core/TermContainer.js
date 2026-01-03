@@ -256,6 +256,7 @@ class TermContainer {
         new_term.importance = importance
         new_term.difficulty = difficulty
         new_term.is_for_repetition = get_element("checkbox_repetition").checked ? 1 : 0
+        new_term.is_root = get_element("checkbox_root").checked ? 1 : 0
 
         return new_term
     }
@@ -370,6 +371,10 @@ class TermContainer {
         let checkbox_repetition = get_element("checkbox_repetition")
         checkbox_repetition.checked = dictionary_term.is_for_repetition !== 0
         checkbox_repetition.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
+
+        let checkbox_root = get_element("checkbox_root")
+        checkbox_root.checked = dictionary_term.is_root !== 0
+        checkbox_root.oninput= ()=> this.refresh_you_have_unchanged_changes(1)
 
         let importance = dictionary_term.importance
         let difficulty = dictionary_term.difficulty

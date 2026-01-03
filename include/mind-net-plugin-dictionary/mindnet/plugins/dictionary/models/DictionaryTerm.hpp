@@ -63,6 +63,7 @@ namespace mindnet::plugins::dictionary::models
             coldef(COLS::DIFFICULTY).set_default_value(2).set_enum_definition(enums::difficulty_to_enum_definition()).
                                      set_description("Difficulty level of the term."),
             coldef(COLS::IS_FOR_REPETITION, BOOL).set_default_value(true),
+            coldef(COLS::IS_ROOT, BOOL).set_default_value(false),
         })
         .add_custom_list_action("dictionary_term_visit", "List term visits", {"dictionary_term_id", "{id}"})
         .add_custom_create_action("dictionary_term_visit", "Add term visit", {"dictionary_term_id", "{id}"})
@@ -84,6 +85,7 @@ namespace mindnet::plugins::dictionary::models
         enums::Importance importance{enums::Importance::Medium};
         enums::Difficulty difficulty{enums::Difficulty::Medium};
         bool is_for_repetition{true};
+        bool is_root{false};
 
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_map_id,
@@ -93,7 +95,8 @@ namespace mindnet::plugins::dictionary::models
             &Model::status,
             &Model::importance,
             &Model::difficulty,
-            &Model::is_for_repetition
+            &Model::is_for_repetition,
+            &Model::is_root
         );
 
         create_model_h_methods(Model, MODEL)

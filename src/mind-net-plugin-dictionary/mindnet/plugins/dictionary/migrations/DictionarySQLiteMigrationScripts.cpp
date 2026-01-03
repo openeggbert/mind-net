@@ -577,5 +577,11 @@ SELECT v.id, v.created_at, v.updated_at, v.dictionary_term_id, v.user_id, v.dict
 from dictionary_term_visit as v, dictionary_term as t where t.id = v.dictionary_term_id;
 )");
 
+                add_migration("V27__alter_table_dictionary_term_add_column_is_root.sql", R"(
+ALTER TABLE dictionary_term
+ADD COLUMN is_root BOOL NOT NULL DEFAULT 0;
+)");
+
+
     }
 }
