@@ -41,7 +41,7 @@ export class Backlinks extends _CrudSection {
                         input,
                         1,
                         "dictionary_term_fulltext",
-                        "&alias=1&dictionary_map_id=0", // + this.get_selected_map_id_callback(),
+                        "&alias=1&dictionary_map_id=0&default_dictionary_map_id=" + get_selected_map_id_callback(),
                         "title",
                         "title_part",
                         "div_search_backlink_end"

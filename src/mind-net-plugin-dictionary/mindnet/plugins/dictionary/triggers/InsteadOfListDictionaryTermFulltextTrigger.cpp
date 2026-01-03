@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include "../../../../../../include/mind-net-db-sqlite/mindnet/db/sqlite/queries/dictionary/FindDictionaryTermsSQLiteQuery.hpp"
+#include "mindnet/plugins/dictionary/models/DictionaryMap.hpp"
 
 #include "mindnet/util/Utils.hpp"
 
@@ -60,6 +61,8 @@ namespace mindnet::plugins::dictionary::triggers
         nlohmann::json req;
         auto dictionary_map_id = query_params.filters.at("dictionary_map_id");
         req["dictionary_map_id"] = std::stoll(dictionary_map_id);
+        identification default_dictionary_map_id = query_params.filters.contains("default_dictionary_map_id") ? std::stoll(query_params.filters.at("default_dictionary_map_id")) : 0L;
+        bool any_map = dictionary_map_id == "0";
         auto title_part = query_params.filters.at("title_part");
         req["title_part"] = title_part;
         std::string alias = query_params.filters.contains("alias") ? query_params.filters.at("alias") : "0";
@@ -99,7 +102,7 @@ namespace mindnet::plugins::dictionary::triggers
             models::DictionaryTermFulltext term_fulltext;
             term_fulltext.set_id(result["id"]);
             term_fulltext.dictionary_term_id = result["dictionary_term_id"];
-            term_fulltext.dictionary_map_id = std::stoll(dictionary_map_id);
+            term_fulltext.dictionary_map_id = result["dictionary_map_id"];
             term_fulltext.title_part = title_part;
             term_fulltext.title = result["title"];
             std::string disambiguation = result["disambiguation"];
@@ -114,6 +117,11 @@ namespace mindnet::plugins::dictionary::triggers
                 term_fulltext.title = term_fulltext.title + " [" + alias + "]";
                 term_fulltext.alias = alias;
 
+            }
+            if (any_map && term_fulltext.dictionary_map_id != default_dictionary_map_id)
+            {
+                std::string map_name = result["dictionary_map_name"];
+                term_fulltext.title = term_fulltext.title + " {" + map_name + "}";
             }
 
             auto values = term_fulltext.to_values();

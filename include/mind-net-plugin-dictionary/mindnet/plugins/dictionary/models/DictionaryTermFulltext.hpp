@@ -52,6 +52,7 @@ namespace mindnet::plugins::dictionary::models
             //
             coldef(COLS::DICTIONARY_TERM_ID, MANDATORY | FOREIGN_KEY),
             coldef(COLS::DICTIONARY_MAP_ID, MANDATORY | FOREIGN_KEY),
+            coldef(COLS::DEFAULT_DICTIONARY_MAP_ID).set_foreign_key("dictionary_map_id"),
             coldef(COLS::TITLE_PART, MANDATORY),
             coldef(COLS::TITLE, MANDATORY),
             coldef(COLS::DISAMBIGUATION, MUTABLE),
@@ -62,6 +63,7 @@ namespace mindnet::plugins::dictionary::models
     {
         identification dictionary_term_id{};
         identification dictionary_map_id{};
+        identification default_dictionary_map_id{};
         std::string title_part{};
         std::string title{};
         std::string disambiguation{};
@@ -70,6 +72,7 @@ namespace mindnet::plugins::dictionary::models
         static constexpr auto fields = std::make_tuple(
             &Model::dictionary_term_id,
             &Model::dictionary_map_id,
+            &Model::default_dictionary_map_id,
             &Model::title_part,
             &Model::title,
             &Model::disambiguation,

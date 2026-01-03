@@ -53,6 +53,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Markdown editor: add emoji button
 - [ ] Markdown renderer: fix the styles - table, pre, code, ...
 - [ ] Make UI mobile friendly
+- [ ] New button "Focus Mode"
 
 ### Plugin Slipbox
 - [ ] Table map: add new column position

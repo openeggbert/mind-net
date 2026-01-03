@@ -109,10 +109,43 @@ namespace mindnet::model
             if (!column_indexes.contains(column_name)) throw std::runtime_error(std::string("There is no column with name ") + column_name);
             return column_indexes.at(column_name);
         }
-        [[nodiscard]] const column_definition& get_column(const char* column_name)
+        [[nodiscard]] const column_definition& get_column(const char* column_name) const
         {
             int index = get_column_index(column_name);
             return columns[index];
+        }
+        [[nodiscard]] const entity_field& get_entity_field(const char* column_name, const entity_fields& fields) const
+        {
+            int column_index = get_column_index(column_name);
+            const entity_field& field = fields[column_index];
+            return field;
+        }
+
+        void ensure_column_is_primitive_type(const char* column_name, const PrimitiveColumnType pct_arg) const
+        {
+            const ColumnDefinition& cf = get_column(column_name);
+            const ColumnType& ct = cf.get_column_type();
+            const PrimitiveColumnType pcf = column_type_to_primitive_column_type(ct);
+            if (pcf != pct_arg)
+            {
+                throw std::runtime_error(std::string("Column type is not ") + primitive_column_type_to_string(pct_arg) + " :" + column_name);
+            }
+        }
+        [[nodiscard]] std::string get_string_value(const char* column_name, const entity_fields& fields) const
+        {
+            ensure_column_is_primitive_type(column_name, PrimitiveColumnType::Text);
+            const entity_field& field = get_entity_field(column_name, fields);
+            return std::get<std::string>(field);
+        }
+        [[nodiscard]] i64 get_i64_value(const char* column_name, const entity_fields& fields) const
+        {
+            ensure_column_is_primitive_type(column_name, PrimitiveColumnType::Number);
+            const entity_field& field = get_entity_field(column_name, fields);
+            return std::get<i64>(field);
+        }
+        [[nodiscard]] i64 get_id_value(const entity_fields& fields) const
+        {
+            return get_i64_value(BaseColumns::ID, fields);
         }
 
         /** @return The allowed CRUD operations */

@@ -62,6 +62,7 @@ SELECT
     title,
     disambiguation,
     '' AS alias_used,
+    dictionary_map_id,
     0 AS relevance
 FROM dictionary_term
 WHERE (? = 1 OR dictionary_map_id = ?)
@@ -75,6 +76,7 @@ SELECT
     t.title,
     t.disambiguation,
     COALESCE(a.alias, '') AS alias_used,
+    t.dictionary_map_id,
 
     MAX(
         CASE
@@ -105,8 +107,32 @@ ORDER BY
     t.title COLLATE NOCASE
 LIMIT ? OFFSET ?
 )";
+        static const std::string select_all_maps = "select id, name from dictionary_map";
 
         const std::string& sql = random ? sql_random : sql_relevance;
+
+        std::map<identification, std::string> map_names;
+
+        if (any_map) try
+        {
+            SQLite::Database db(SQLITE_FILE_NAME, SQLite::OPEN_READONLY);
+            db.exec("PRAGMA foreign_keys = ON;");
+            db.exec("PRAGMA journal_mode = WAL;");
+
+            SQLite::Statement query(db, select_all_maps);
+
+            while (query.executeStep())
+            {
+                essential::debug << "Found map " + std::to_string(query.getColumn(0).getInt64())+ std::string(" ") + query.getColumn(1).getString() << essential::commit;
+                identification id_ = query.getColumn(0).getInt64();
+                auto name_ = query.getColumn(1).getString();
+                map_names[id_] = name_;
+            }
+        }
+        catch (const SQLite::Exception& e)
+        {
+            essential::err << e.what() << essential::commit;
+        }
 
         try
         {
@@ -159,7 +185,13 @@ LIMIT ? OFFSET ?
                 r["title"] = query.getColumn(1).getString();
                 r["disambiguation"] = query.getColumn(2).getString();
                 r["alias"] = query.getColumn(3).getString();
-                r["relevance"] = query.getColumn(4).getInt();
+                r["dictionary_map_id"] = query.getColumn(4).getInt64();
+                r["relevance"] = query.getColumn(5).getInt();
+                if (any_map)
+                {
+                    identification dmi = query.getColumn(4).getInt64();
+                    r["dictionary_map_name"] = (map_names.contains(dmi) ? map_names[dmi] : "?");
+                }
                 results.push_back(std::move(r));
             }
 
