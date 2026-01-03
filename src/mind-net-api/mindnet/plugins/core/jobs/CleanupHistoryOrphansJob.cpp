@@ -42,9 +42,14 @@ namespace mindnet::plugins::core::jobs
     {
         const constexpr static int DEFAULT_DAYS = 30;
         auto history_orphan_threshold_in_days = job_config.get_int_or_default("history_orphan_threshold_in_days", DEFAULT_DAYS);
+        auto delete_deleted_rows = job_config.get_bool_or_default("delete_deleted_rows", false);
 
         nlohmann::json req;
         req["history_orphan_threshold_in_days"] = cast64(history_orphan_threshold_in_days.first);
+        if (delete_deleted_rows.first)
+        {
+            req["delete_deleted_rows"] = delete_deleted_rows.first;
+        }
 
         nlohmann::json result = call_query("CleanupHistoryOrphans", req);
 
