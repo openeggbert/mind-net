@@ -33,6 +33,7 @@ namespace mindnet::plugins::dictionary::models
 
         validator_chain_vector list{
             [this] { return testt_not_empty(alias, DictionaryTermAliasColumns::ALIAS); },
+            [this] { return util::testt_trimmed(alias, DictionaryTermAliasColumns::ALIAS); },
 
         };
         return util::ValidatorChain::run(list);

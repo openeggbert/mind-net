@@ -33,6 +33,7 @@ namespace mindnet::plugins::dictionary::models
 
         validator_chain_vector list{
             [this] { return testt_between(name, 1, 80, DictionaryMapColumns::NAME); },
+            [this] {return util::testt_trimmed(name, DictionaryMapColumns::NAME);},
             [this] { return testt_between(description, 0, 512, DictionaryMapColumns::DESCRIPTION); },
             [this] { return test_ne(owner_id, 0, DictionaryMapColumns::OWNER_ID); },
             [this] { return test_between(cast64(owner_rights), 0, 7, DictionaryMapColumns::OWNER_RIGHTS); },

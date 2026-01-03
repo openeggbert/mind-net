@@ -58,11 +58,13 @@ namespace mindnet::util
     test_result test_at_most(int64_t number, int64_t max_value, const char* field);
     test_result test_between(int64_t number, int64_t min_value, int64_t max_value, const char* field);
     //
-    test_result testt_at_least(string& text, int64_t min_value, const char* field);
-    test_result testt_at_most(string& text, int64_t max_value, const char* field);
-    test_result testt_between(string& text, int64_t min_value, int64_t max_value, const char* field);
+    test_result testt_at_least(const string& text, int64_t min_value, const char* field);
+    test_result testt_at_most(const string& text, int64_t max_value, const char* field);
+    test_result testt_between(const string& text, int64_t min_value, int64_t max_value, const char* field);
+    test_result testt_trimmed(const string& text, const char* field);
+
     //
-    test_result testt_not_empty(string& text, const char* field);
-    test_result testt_is_alpha_or_digit(string& text, const char* field);
+    test_result testt_not_empty(const string& text, const char* field);
+    test_result testt_is_alpha_or_digit(const string& text, const char* field);
     //
 }

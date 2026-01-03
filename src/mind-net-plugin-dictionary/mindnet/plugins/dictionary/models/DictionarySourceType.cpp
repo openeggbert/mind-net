@@ -33,6 +33,7 @@ namespace mindnet::plugins::dictionary::models
 
         validator_chain_vector list{
             [this] { return testt_between(title, 0, 128, DictionarySourceTypeColumns::TITLE); },
+            [this] { return util::testt_trimmed(title, DictionarySourceTypeColumns::TITLE); },
             [this] { return testt_between(author, 0, 64, DictionarySourceTypeColumns::AUTHOR); },
             [this] { return test_at_most(year, 3000, DictionarySourceTypeColumns::YEAR); },
             [this] { return testt_between(publisher, 0, 128, DictionarySourceTypeColumns::PUBLISHER); },

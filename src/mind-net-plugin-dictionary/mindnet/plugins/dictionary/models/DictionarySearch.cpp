@@ -38,6 +38,7 @@ namespace mindnet::plugins::dictionary::models
 
             // metadata
             [this] { return testt_not_empty(name, DictionarySearchColumns::NAME); },
+            [this] {return util::testt_trimmed(name, DictionarySearchColumns::NAME);},
 
             // core definition
             [this] { return testt_not_empty(query_json, DictionarySearchColumns::QUERY_JSON); },

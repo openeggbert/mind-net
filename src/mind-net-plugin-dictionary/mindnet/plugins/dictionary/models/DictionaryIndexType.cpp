@@ -47,6 +47,7 @@ namespace mindnet::plugins::dictionary::models
                     DictionaryIndexTypeColumns::TITLE
                 );
             },
+            [this] {return util::testt_trimmed(title, DictionaryIndexTypeColumns::TITLE);},
             [this] {
                 return test_at_least(
                     position,

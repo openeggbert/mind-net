@@ -36,7 +36,9 @@ namespace mindnet::plugins::dictionary::models
         validator_chain_vector list{
             [this] { return test_ne(dictionary_map_id, 0, DictionaryUrlTypeColumns::DICTIONARY_MAP_ID); },
             [this] { return testt_between(url, 3, 2048, DictionaryUrlTypeColumns::URL); },
+            [this] { return util::testt_trimmed(url, DictionaryUrlTypeColumns::URL); },
             [this] { return testt_at_most(title, 256, DictionaryUrlTypeColumns::TITLE); },
+            [this] { return util::testt_trimmed(title, DictionaryUrlTypeColumns::TITLE); },
         };
         return util::ValidatorChain::run(list);
     }

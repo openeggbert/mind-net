@@ -95,30 +95,48 @@ namespace mindnet::util
     }
 
     //
-    test_result testt_at_least(string& text, int64_t min_value, const char* field)
+    test_result testt_at_least(const string& text, int64_t min_value, const char* field)
     {
         return test_at_least(text.size(), min_value, field);
     }
 
-    test_result testt_at_most(string& text, int64_t max_value, const char* field)
+    test_result testt_at_most(const string& text, int64_t max_value, const char* field)
     {
         return test_at_most(text.size(), max_value, field);
     }
 
-    test_result testt_between(string& text, int64_t min_value, int64_t max_value, const char* field)
+    test_result testt_between(const string& text, int64_t min_value, int64_t max_value, const char* field)
     {
         const string field_string = field;
         return test_between(text.size(), min_value, max_value, field);
     }
+    static bool has_no_leading_or_trailing_whitespace(const std::string& s)
+    {
+        if (s.empty())
+            return true;
+
+        return !std::isspace(static_cast<unsigned char>(s.front())) &&
+               !std::isspace(static_cast<unsigned char>(s.back()));
+    }
+
+    test_result testt_trimmed(const string& text, const char* field)
+    {
+        using namespace std::string_literals;
+
+        string field_string = field;
+        return test_true(has_no_leading_or_trailing_whitespace(text),
+                 "Expected "s + field_string + " to be trimmed, but \"" + text + "\" starts or ends with a whitespace.");
+
+    }
 
     //
-    test_result testt_not_empty(string& text, const char* field)
+    test_result testt_not_empty(const string& text, const char* field)
     {
         const string field_string = field;
         return test_true(!text.empty(), field_string + " must not be empty");
     }
 
-    test_result testt_is_alpha_or_digit(string& text, const char* field)
+    test_result testt_is_alpha_or_digit(const string& text, const char* field)
     {
         string field_string = field;
         return test_true(std::all_of(text.begin(), text.end(), [](char c) { return isalpha(c) || isdigit(c); }),
