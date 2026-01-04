@@ -49,7 +49,6 @@ namespace mindnet::http
         "state.js",
         "dom.js",
         "crud.js",
-        "explore.js",
         "navigation.js",
         "actions.js",
         "init.js",

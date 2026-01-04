@@ -52,18 +52,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Markdown renderer: fix the styles - table, pre, code, ...
 - [ ] Make UI mobile friendly
 - [ ] New button "Focus Mode"
-
-### Plugin Slipbox
-- [ ] Table map: add new column position
-- [ ] onclick textarea starts editing
-- [ ] fulltext search
-- [ ] Keyboard shortcuts
-- [ ] Fix Focus Mode
-- [ ] Toggle Theme
-- [ ] import note as JSON and via the web interface
-- [ ] Bug: Changes are not saved when exiting a note prematurely
-- [ ] HtmlExportJob: Add previous, next buttons
-- [ ] HtmlExportJob: Add support for links, tags, flags, etc.
+- [ ] Graph, vis.js
 
 ### Backend
 - [ ] New table error

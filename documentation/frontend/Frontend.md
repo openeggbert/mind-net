@@ -51,17 +51,7 @@ JavaScript files are split into several modules.
 * `executeCustomAction()`
 * Event handlers for form submit, pageSize changes, applyColumns
 
-### 6️⃣ `explore.js` - Map/Network visualization
-
-* `renderMapExplore()`
-* `loadChildren()`
-* `loadTestNodes()`
-* `add_node_and_edges()`
-* `drawNetwork()`
-* `replaceSpacesWithUnderscores()`
-* `currentCenterNodeId`, `parentStack`, `network`
-
-### 7️⃣ `navigation.js` - Navigation and menu
+### 6️⃣ `navigation.js` - Navigation and menu
 
 * `renderEntityNav()`
 * `renderCrudMenu()`
@@ -70,11 +60,11 @@ JavaScript files are split into several modules.
 * `selectAction()`
 * `changePage()`
 
-### 8️⃣ `actions.js` - Global CRUD helpers
+### 7️⃣ `actions.js` - Global CRUD helpers
 
 * `readEntity()`, `editEntity()`, `deleteEntity()`
 
-### 9️⃣ `init.js` - Initialization
+### 8️⃣ `init.js` - Initialization
 
 * `initializeFromURL()`
 * Mobile menu button handler

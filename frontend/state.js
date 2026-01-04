@@ -65,7 +65,6 @@ export const actionLabels = {
     create: '➕ Create',
     read: '📖 Read',
     update: '✏️ Update',
-    delete: '🗑️ Delete',
-    explore: '🗺️ Explore'
+    delete: '🗑️ Delete'
 };
 

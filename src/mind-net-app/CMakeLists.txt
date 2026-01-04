@@ -20,14 +20,12 @@ target_link_libraries(mind_net_app PRIVATE
         mind_net_http
         mind_net_db_sqlite
         $<$<BOOL:${MINDNET_ENABLE_DICTIONARY_PLUGIN}>:mind_net_plugin_dictionary>
-        $<$<BOOL:${MINDNET_ENABLE_SLIPBOX_PLUGIN}>:mind_net_plugin_slip_box>
         nlohmann_json::nlohmann_json
 )
 
 target_compile_definitions(mind_net_app
         PUBLIC
         $<$<BOOL:${MINDNET_ENABLE_DICTIONARY_PLUGIN}>:MINDNET_ENABLE_DICTIONARY_PLUGIN>
-        $<$<BOOL:${MINDNET_ENABLE_SLIPBOX_PLUGIN}>:MINDNET_ENABLE_SLIPBOX_PLUGIN>
 )
 
 

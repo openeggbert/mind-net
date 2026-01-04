@@ -63,7 +63,7 @@ This document summarizes the current state of the **mind-net** CMake build syste
 
 6. **Static “plugin” libraries**
 
-   * Plugins (`chat`, `mail`, `slip-box`, etc.) are built as `STATIC` and linked into the main app.
+   * Plugins (`chat`, `mail`, `dictionary`, etc.) are built as `STATIC` and linked into the main app.
    * This limits extensibility compared to dynamic modules.
 
 7. **Tests are always built**

@@ -10,8 +10,6 @@ import {
 } from "./state.js";
 import {contentArea, crudMenu, entityNav, entityTitle, showError} from "./dom.js";
 import {renderEntityForm, renderEntityList, renderEntityRead} from "./crud.js";
-import {renderMapExplore} from "./explore.js";
-
 
 export function renderEntityNav() {
     entityNav.innerHTML = "";
@@ -117,7 +115,7 @@ export function renderCrudMenu() {
         const link = document.createElement("a");
         let href = `?entity=${encodeURIComponent(entity)}&action=${encodeURIComponent(action)}`;
 
-        if (["read", "update", "delete", "explore"].includes(action) && getSelectedActionId()) {
+        if (["read", "update", "delete"].includes(action) && getSelectedActionId()) {
             href += `&id=${getSelectedActionId()}`;
         }
 
@@ -125,7 +123,7 @@ export function renderCrudMenu() {
         link.textContent = actionLabels[action] || action;
         link.onclick = e => {
             e.preventDefault();
-            if (["read", "update", "delete", "explore"].includes(action) && !getSelectedActionId()) {
+            if (["read", "update", "delete"].includes(action) && !getSelectedActionId()) {
                 showError(`No ID selected for ${actionLabels[action] || action}`);
                 return;
             }
@@ -153,11 +151,6 @@ export function selectAction(action, id = null) {
     setSelectedAction(action);
     setSelectedActionId(id);
 
-    // If it's explore but no ID was provided, use default map 
-    if (getSelectedAction() === 'explore' && !getSelectedActionId() && getSelectedEntity() === 'map') {
-        setSelectedActionId(1);
-    }
-
     [...crudMenu.children].forEach(el => el.classList.remove('active'));
     const activeLink = [...crudMenu.children].find(el => el.textContent === actionLabels[action]);
     if (activeLink) activeLink.classList.add('active');
@@ -182,9 +175,6 @@ export function selectAction(action, id = null) {
     } else if (action === "delete") {
         if (getSelectedActionId()) deleteEntity(getSelectedEntity(), getSelectedActionId());
         else contentArea.innerHTML = `<p style="color:red;">No ID provided for Delete action.</p>`;
-    } else if (action === "explore") {
-        if (getSelectedActionId()) renderMapExplore(getSelectedActionId());
-        else contentArea.innerHTML = `<p style="color:red;">No ID provided for Explore action.</p>`;
     } else {
         contentArea.innerHTML = `<p style="color:red;">Action <span style="background:yellow;">${actionLabels[getSelectedAction()]}</span> not implemented for ${getEntityLabels()[getSelectedEntity()]}.</p>`;
     }

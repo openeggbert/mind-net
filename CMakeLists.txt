@@ -1,19 +1,11 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(mind_net LANGUAGES CXX)
 
-option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" ON)
 option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
-
-if(ALLOW_LEGACY_PLUGINS)
-    option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
-else()
-    unset(MINDNET_ENABLE_SLIPBOX_PLUGIN CACHE)
-endif()
 
 message(STATUS "")
 message(STATUS "Mind Net plugin configuration:")
 message(STATUS "  Dictionary plugin : ${MINDNET_ENABLE_DICTIONARY_PLUGIN}")
-message(STATUS "  Slipbox plugin    : ${MINDNET_ENABLE_SLIPBOX_PLUGIN}")
 message(STATUS "")
 
 # ccache (if installed)
@@ -72,11 +64,6 @@ add_subdirectory(src/mind-net-http)
 if (MINDNET_ENABLE_DICTIONARY_PLUGIN)
     add_subdirectory(src/mind-net-plugin-dictionary)
 endif ()
-
-if (MINDNET_ENABLE_SLIPBOX_PLUGIN)
-    add_subdirectory(src/mind-net-plugin-slip-box)
-endif ()
-
 
 add_subdirectory(src/mind-net-app)
 

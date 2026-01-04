@@ -359,9 +359,7 @@ ${listFields.map(f => `<th class="sortable" data-field="${f.name}" title="${f.de
     <a href="#" onclick="readEntity('${entity}',${item.id})">📖 Read</a>
     <a href="#" onclick="editEntity('${entity}',${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Update</a>
     <a href="#" onclick="deleteEntity('${entity}',${item.id})">🗑️ Delete</a>`;
-        if (entity === "map") {
-            html += ` <a href="#" onclick="selectAction('explore', ${item.id}); return false;">🗺️ Explore</a>`;
-        }
+
         html += `</td></tr>`;
 
     }

@@ -121,14 +121,6 @@ namespace mindnet::plugins::core::triggers
             action_result.status = 500;
             action_result.error = create_result.second.error;
         }
-        // auto result = run_read(slipbox::models::NOTE_DEFINITION, token, 1, stack_depth);
-        //         if (result.second.ko()) experiment << result.second.error << commit;
-        //         if (result.second.ok())
-        //         {
-        //             slipbox::models::Note note;
-        //             note.from_values(result.first);
-        //             std::cout << note << std::endl;
-        //         }
-        //     }
+
     }
 }

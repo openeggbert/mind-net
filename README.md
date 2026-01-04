@@ -162,7 +162,6 @@ mind-net/
 ├── frontend/               # Web UI (vanilla JS, HTML, CSS)
 │   ├── crud.js             # CRUD logic
 │   ├── navigation.js       # Navigation
-│   └── explore.js          # Map visualization (vis.js)
 ├── CMakeLists.txt          # Build configuration
 └── LICENSE                 # MIT
 ```
