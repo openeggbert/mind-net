@@ -6,17 +6,14 @@ option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
 
 if(ALLOW_LEGACY_PLUGINS)
     option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
-    option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" OFF)
 else()
     unset(MINDNET_ENABLE_SLIPBOX_PLUGIN CACHE)
-    unset(MINDNET_ENABLE_REPETITION_PLUGIN CACHE)
 endif()
 
 message(STATUS "")
 message(STATUS "Mind Net plugin configuration:")
 message(STATUS "  Dictionary plugin : ${MINDNET_ENABLE_DICTIONARY_PLUGIN}")
 message(STATUS "  Slipbox plugin    : ${MINDNET_ENABLE_SLIPBOX_PLUGIN}")
-message(STATUS "  Repetition plugin : ${MINDNET_ENABLE_REPETITION_PLUGIN}")
 message(STATUS "")
 
 # ccache (if installed)
@@ -78,10 +75,6 @@ endif ()
 
 if (MINDNET_ENABLE_SLIPBOX_PLUGIN)
     add_subdirectory(src/mind-net-plugin-slip-box)
-endif ()
-
-if (MINDNET_ENABLE_REPETITION_PLUGIN)
-    add_subdirectory(src/mind-net-plugin-repetition)
 endif ()
 
 

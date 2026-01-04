@@ -51,10 +51,6 @@
 #include "mindnet/plugins/slipbox/SlipBoxPluginFactory.hpp"
 #endif
 
-#ifdef MINDNET_ENABLE_REPETITION_PLUGIN
-#include "mindnet/plugins/repetition/RepetitionPluginFactory.hpp"
-#endif
-
 #define REGISTER_PLUGIN(plugin, Plugin) plugin_registry->register_plugin(mindnet::plugins:: plugin :: Plugin##PluginFactory().create(repository_factory));
 using mindnet::essential::commit;
 using mindnet::essential::g_configuration;
@@ -388,11 +384,6 @@ void register_plugins(const std::shared_ptr<mindnet::api::PluginRegistry>& plugi
 #ifdef MINDNET_ENABLE_SLIPBOX_PLUGIN
     REGISTER_PLUGIN(slipbox, SlipBox)
 #endif
-
-#ifdef MINDNET_ENABLE_REPETITION_PLUGIN
-    REGISTER_PLUGIN(repetition, Repetition)
-#endif
-
 
     if (plugin_registry->get_plugin_count() == 0)
     {

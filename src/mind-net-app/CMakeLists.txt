@@ -21,33 +21,13 @@ target_link_libraries(mind_net_app PRIVATE
         mind_net_db_sqlite
         $<$<BOOL:${MINDNET_ENABLE_DICTIONARY_PLUGIN}>:mind_net_plugin_dictionary>
         $<$<BOOL:${MINDNET_ENABLE_SLIPBOX_PLUGIN}>:mind_net_plugin_slip_box>
-        $<$<BOOL:${MINDNET_ENABLE_REPETITION_PLUGIN}>:mind_net_plugin_repetition>
         nlohmann_json::nlohmann_json
 )
-
-#if (MINDNET_ENABLE_DICTIONARY_PLUGIN)
-#    target_link_libraries(mind_net_app PRIVATE
-#            mind_net_plugin_dictionary
-#    )
-#endif ()
-#
-#if (MINDNET_ENABLE_SLIPBOX_PLUGIN)
-#    target_link_libraries(mind_net_app PRIVATE
-#            mind_net_plugin_slip_box
-#    )
-#endif ()
-#
-#if (MINDNET_ENABLE_REPETITION_PLUGIN)
-#    target_link_libraries(mind_net_app PRIVATE
-#            mind_net_plugin_repetition
-#    )
-#endif ()
 
 target_compile_definitions(mind_net_app
         PUBLIC
         $<$<BOOL:${MINDNET_ENABLE_DICTIONARY_PLUGIN}>:MINDNET_ENABLE_DICTIONARY_PLUGIN>
         $<$<BOOL:${MINDNET_ENABLE_SLIPBOX_PLUGIN}>:MINDNET_ENABLE_SLIPBOX_PLUGIN>
-        $<$<BOOL:${MINDNET_ENABLE_REPETITION_PLUGIN}>:MINDNET_ENABLE_REPETITION_PLUGIN>
 )
 
 

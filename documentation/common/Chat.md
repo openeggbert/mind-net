@@ -1,10 +1,5 @@
 # Chat
 
-## SSE
-
-Use server sent events (SSE)
-   * https://github.com/CrowCpp/crow/issues/99
-
 ## New tables
 
 ### New table comment_reaction

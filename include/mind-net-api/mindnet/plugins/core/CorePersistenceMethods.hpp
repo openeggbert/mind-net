@@ -42,8 +42,6 @@
 // #include "mindnet/plugins/suggestion/models/Suggestion.hpp"
 // #include "mindnet/plugins/suggestion/models/SuggestionReview.hpp"
 // #include "mindnet/plugins/core/models/History.hpp"
-// #include "mindnet/plugins/repetition/models/Review.hpp"
-// #include "mindnet/plugins/repetition/models/SM2State.hpp"
 
 namespace mindnet::plugins::core::models
 {
