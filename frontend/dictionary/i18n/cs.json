@@ -90,7 +90,7 @@
   "dictionary.term.container.error.creating_term_visit_failed": "Vytvoření záznamu návštěvy hesla se nezdařilo.",
   "dictionary.term.container.info.updating_term_successful": "Heslo bylo úspěšně aktualizováno.",
   "dictionary.term.container.error.updating_term_failed": "Aktualizace hesla se nezdařila.",
-  "dictionary.term.container.visit_window.term_visit_history": "Historie návštěv hesla (posledních 100)",
+  "dictionary.term.container.visit_window.term_visit_history": "Historie návštěv hesla",
   "dictionary.term.container.visit_window.button_show_all_visits": "Zobrazit všechny návštěvy",
   "dictionary.term.container.visit_window.all_visits": "Všechny návštěvy",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "Načítání návštěv se nezdařilo.",

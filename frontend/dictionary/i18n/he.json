@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "המונח עודכן בהצלחה.",
   "dictionary.term.container.error.updating_term_failed": "עדכון המונח נכשל.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "היסטוריית ביקורים של מונח (100 אחרונים)",
+  "dictionary.term.container.visit_window.term_visit_history": "היסטוריית ביקורים של מונח",
   "dictionary.term.container.visit_window.button_show_all_visits": "הצגת כל הביקורים",
   "dictionary.term.container.visit_window.all_visits": "כל הביקורים",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "טעינת הביקורים נכשלה.",

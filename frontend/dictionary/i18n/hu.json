@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "A kifejezés sikeresen frissítve lett.",
   "dictionary.term.container.error.updating_term_failed": "A kifejezés frissítése sikertelen.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "Kifejezés látogatási előzményei (utolsó 100)",
+  "dictionary.term.container.visit_window.term_visit_history": "Kifejezés látogatási előzményei",
   "dictionary.term.container.visit_window.button_show_all_visits": "Összes látogatás megjelenítése",
   "dictionary.term.container.visit_window.all_visits": "Összes látogatás",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "A látogatások betöltése sikertelen.",

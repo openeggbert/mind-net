@@ -107,7 +107,7 @@ export class DictionaryApp {
             }
         }
         get_element("button_find_random_term").onclick = async () => {
-            await this.#autocomplete_term_title.search("*", 1, true)
+            await this.#autocomplete_term_title.search("***", 1, true)
 
             let has_items = this.#autocomplete_term_title.set_selected_item(0)
             if(!has_items) {

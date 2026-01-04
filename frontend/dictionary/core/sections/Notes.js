@@ -61,12 +61,18 @@ export class Notes extends _CrudSection {
             }
             showInfo("New note was created: " + title)
             this.addItem(title, note_created.id)
+
+            if(this.#last_added_note_row) {
+                this.#last_added_note_row.click()
+                this.#last_added_note_row = null
+            }
         }
 
     }
 
     #collapsed_notes = new Set()
     #expanded_notes = new Set()
+    #last_added_note_row = null
 
 
     addItem(title, id) {
@@ -255,5 +261,6 @@ export class Notes extends _CrudSection {
         div_buttons.appendChild(delete_button)
         note_row.appendChild(div_buttons)
         this.#collapsed_notes.add(note_row)
+        this.#last_added_note_row = note_row
     }
 }

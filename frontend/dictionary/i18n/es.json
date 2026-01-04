@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "El término se actualizó correctamente.",
   "dictionary.term.container.error.updating_term_failed": "Error al actualizar el término.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "Historial de visitas del término (últimas 100)",
+  "dictionary.term.container.visit_window.term_visit_history": "Historial de visitas del término",
   "dictionary.term.container.visit_window.button_show_all_visits": "Mostrar todas las visitas",
   "dictionary.term.container.visit_window.all_visits": "Todas las visitas",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "Error al cargar las visitas.",

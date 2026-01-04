@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "용어가 성공적으로 업데이트되었습니다.",
   "dictionary.term.container.error.updating_term_failed": "용어 업데이트에 실패했습니다.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "용어 방문 기록 (최근 100개)",
+  "dictionary.term.container.visit_window.term_visit_history": "용어 방문 기록",
   "dictionary.term.container.visit_window.button_show_all_visits": "모든 방문 표시",
   "dictionary.term.container.visit_window.all_visits": "모든 방문",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "방문 기록을 불러오지 못했습니다.",

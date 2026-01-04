@@ -34,7 +34,11 @@ export class Backlinks extends _CrudSection {
                         showError("Loading term failed: " + item.from_dictionary_term_id)
                         return null
                     }
-                    return another_dictionary_term.title
+                    let t = another_dictionary_term.title
+                    if(another_dictionary_term.disambiguation.length > 0) {
+                        t = t + " (" + another_dictionary_term.disambiguation + ")"
+                    }
+                    return t
                 },
                 createAutocomplete: input => {
                     return new Autocomplete(

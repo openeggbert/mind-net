@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "术语已成功更新。",
   "dictionary.term.container.error.updating_term_failed": "更新术语失败。",
 
-  "dictionary.term.container.visit_window.term_visit_history": "术语访问历史（最近 100 条）",
+  "dictionary.term.container.visit_window.term_visit_history": "术语访问历史",
   "dictionary.term.container.visit_window.button_show_all_visits": "显示所有访问",
   "dictionary.term.container.visit_window.all_visits": "所有访问",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "加载访问记录失败。",

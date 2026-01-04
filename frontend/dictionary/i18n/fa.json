@@ -109,7 +109,6 @@
   "dictionary.term.container.info.updating_term_successful": "واژه با موفقیت به‌روزرسانی شد.",
   "dictionary.term.container.error.updating_term_failed": "به‌روزرسانی واژه ناموفق بود.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "سابقهٔ بازدید واژه (۱۰۰ مورد اخیر)",
   "dictionary.term.container.visit_window.button_show_all_visits": "نمایش همهٔ بازدیدها",
   "dictionary.term.container.visit_window.all_visits": "همهٔ بازدیدها",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "بارگذاری بازدیدها ناموفق بود.",

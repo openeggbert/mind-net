@@ -42,14 +42,12 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Modify fulltext search - replace LIKE by FTS
 - [ ] UI: Add: Created at and Updated at
 - [ ] Bug: Browser title is not updated after map is changed.
-- [ ] Fix translation - dictionary.term.container.visit_window.term_visit_history
 - [ ] New window History
 - [ ] TermVisitHistoryWindow.js: Add an option to show only visits for the current term
 - [ ] Add new column dictionary_link.position
 - [ ] Button "Add Alias" should look the same as buttons "Add Tag" and "Add Flag"
 - [ ] New rule: Alias.alias must be different from term.title
 - [ ] Term, Note: The Save button should switch the textarea to rendered Markdown view.
-- [ ] After a new note is created, the note should be expanded.
 - [ ] Markdown editor: add emoji button
 - [ ] Markdown renderer: fix the styles - table, pre, code, ...
 - [ ] Make UI mobile friendly
@@ -270,3 +268,4 @@ CREATE INDEX idx_file_mime_type ON file(mime_type);
 - [x] Bug: renaming term does not remove the old title from the cache
 - [x] Fix translations for: dictionary.enums.status.none
 - [x] Added message "You have unsaved changes."
+- [x] After a new note is created, the note should be expanded.

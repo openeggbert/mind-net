@@ -48,7 +48,7 @@ namespace mindnet::db::sqlite::queries::dictionary
         int page_size = 20;
         int page_number = 1;
 
-        bool random = title_part == "*";
+        bool random = title_part == "***";
         if (random)
         {
             include_aliases = false;

@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "Thuật ngữ đã được cập nhật thành công.",
   "dictionary.term.container.error.updating_term_failed": "Không thể cập nhật thuật ngữ.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "Lịch sử truy cập thuật ngữ (100 lần gần nhất)",
+  "dictionary.term.container.visit_window.term_visit_history": "Lịch sử truy cập thuật ngữ",
   "dictionary.term.container.visit_window.button_show_all_visits": "Hiển thị tất cả lượt truy cập",
   "dictionary.term.container.visit_window.all_visits": "Tất cả lượt truy cập",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "Không thể tải lịch sử truy cập.",

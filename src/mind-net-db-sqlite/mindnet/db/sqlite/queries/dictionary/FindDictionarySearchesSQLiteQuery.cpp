@@ -61,7 +61,7 @@ plugins::core::models::OptionalError& optional_error)
         }
 
         identification user_id = request["user_id"];
-        bool all_titles = title_part == "*";
+        bool all_titles = title_part == "***";
 
         int page_size = request["page_size"];
         int page_number = request["page_number"];

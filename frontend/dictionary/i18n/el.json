@@ -109,7 +109,7 @@
   "dictionary.term.container.info.updating_term_successful": "Ο όρος ενημερώθηκε με επιτυχία.",
   "dictionary.term.container.error.updating_term_failed": "Αποτυχία ενημέρωσης του όρου.",
 
-  "dictionary.term.container.visit_window.term_visit_history": "Ιστορικό επισκέψεων όρου (τελευταίες 100)",
+  "dictionary.term.container.visit_window.term_visit_history": "Ιστορικό επισκέψεων όρου",
   "dictionary.term.container.visit_window.button_show_all_visits": "Εμφάνιση όλων των επισκέψεων",
   "dictionary.term.container.visit_window.all_visits": "Όλες οι επισκέψεις",
   "dictionary.term.container.visit_window.error.loading_visits_failed": "Αποτυχία φόρτωσης επισκέψεων.",
