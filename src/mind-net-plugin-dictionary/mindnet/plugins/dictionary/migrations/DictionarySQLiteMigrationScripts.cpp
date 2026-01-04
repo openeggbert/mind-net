@@ -582,6 +582,15 @@ ALTER TABLE dictionary_term
 ADD COLUMN is_root BOOL NOT NULL DEFAULT 0;
 )");
 
+        add_migration("V28__alter_table_dictionary_term_drop_column_is_for_repetition.sql", R"(
+ALTER TABLE dictionary_term
+DROP COLUMN is_for_repetition;
+)");
+        add_migration("V29__alter_table_dictionary_term_rename_column_repetition_to_is_for_repetition.sql", R"(
+ALTER TABLE dictionary_term
+ADD COLUMN is_for_repetition BOOL NOT NULL DEFAULT 0;
+)");
+
 
     }
 }
