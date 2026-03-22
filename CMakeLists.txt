@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(mind_net LANGUAGES CXX)
 
+option(MINDNET_ENABLE_API_LOG "Enable api_log" OFF)
+option(MINDNET_ENABLE_HISTORY "Enable history" ON)
+
 option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" ON)
 option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
 
@@ -18,6 +21,13 @@ message(STATUS "  Dictionary plugin : ${MINDNET_ENABLE_DICTIONARY_PLUGIN}")
 message(STATUS "  Slipbox plugin    : ${MINDNET_ENABLE_SLIPBOX_PLUGIN}")
 message(STATUS "  Repetition plugin : ${MINDNET_ENABLE_REPETITION_PLUGIN}")
 message(STATUS "")
+
+if(MINDNET_ENABLE_API_LOG)
+        add_compile_definitions(MINDNET_ENABLE_API_LOG)
+endif()
+if(MINDNET_ENABLE_HISTORY)
+        add_compile_definitions(MINDNET_ENABLE_HISTORY)
+endif()
 
 # ccache (if installed)
 find_program(CCACHE_PROGRAM ccache)

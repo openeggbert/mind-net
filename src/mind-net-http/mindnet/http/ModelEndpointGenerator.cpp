@@ -104,6 +104,10 @@ namespace mindnet::http
                               api::AccessTokenContext& login_token, int status_code, identification entity_id = 0,
                               const std::string& error = "")
         {
+#ifndef MINDNET_ENABLE_API_LOG
+            return;
+#endif
+                        ;
             auto log_object = plugins::core::models::api_log_from_crow_request(
                 req,
                 login_token.user_id,

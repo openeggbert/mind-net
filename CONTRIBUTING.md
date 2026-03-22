@@ -101,7 +101,6 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 
 ### Frontend
 - [ ] sort and order is missing
-- [ ] Tree view: via vis.js, clicking on node opens the node in a new tab
 - [ ] Frontend should not show actions, for which user is not authorized to
 - 
 ### Experimental

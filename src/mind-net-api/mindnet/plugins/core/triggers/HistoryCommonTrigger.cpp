@@ -56,6 +56,10 @@ namespace mindnet::plugins::core::triggers
         entity_fields& old_fields,
         const orm::QueryParams query_params)
     {
+#ifndef MINDNET_ENABLE_HISTORY
+        return;
+#endif
+
         if (def.get_model_name() == "history") return;
         if (def.get_model_name() == "api_log") return;
         if (def.get_model_name() == "auth_log") return;
