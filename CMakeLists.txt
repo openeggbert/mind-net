@@ -4,7 +4,7 @@ project(mind_net LANGUAGES CXX)
 option(MINDNET_ENABLE_API_LOG "Enable api_log" OFF)
 option(MINDNET_ENABLE_HISTORY "Enable history" ON)
 
-option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" ON)
+option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" OFF)
 option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
 
 if(ALLOW_LEGACY_PLUGINS)
