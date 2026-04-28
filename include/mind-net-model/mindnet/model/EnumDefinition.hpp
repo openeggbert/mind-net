@@ -135,7 +135,7 @@ namespace mindnet::model
             for (int i = 0; i < value_count; ++i)
             {
                 int value = get_value(i);
-                std::string str = get_value_as_string(value);
+                std::string str = get_value_as_string(i);
                 if (str == text) {return value;}
             }
             return -1;
