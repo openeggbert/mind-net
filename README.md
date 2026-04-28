@@ -1,9 +1,9 @@
 # 🧠 Mind-Net
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
-![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
+![C++26](https://img.shields.io/badge/C%2B%2B-26-blue)
 
-Mind-Net is a modular **C++23 universal data server** with a metadata-driven backend, auto-generated REST API, automation engine (jobs + triggers), and schema-driven web frontend.
+Mind-Net is a modular **C++26 universal data server** with a metadata-driven backend, auto-generated REST API, automation engine (jobs + triggers), and schema-driven web frontend.
 
 It is designed for teams and individuals who need more than CRUD: a system that evolves through plugins, model metadata, and domain-specific automation.
 
@@ -166,7 +166,7 @@ The metadata endpoint is the contract between backend and dynamic frontend.
 
 ## 🧰 Technology Stack
 
-- **Language:** C++23
+- **Language:** C++26
 - **HTTP:** Crow
 - **Database:** SQLite (via SQLiteCpp + custom DB layer)
 - **JSON:** `nlohmann/json`
@@ -178,7 +178,7 @@ The metadata endpoint is the contract between backend and dynamic frontend.
 
 ### 1) Prerequisites
 
-- C++23-capable compiler (GCC 14 tested)
+- C++26-capable compiler (GCC 15 tested)
 - CMake
 - Git
 - Linux build essentials
@@ -194,8 +194,14 @@ git submodule update --init --recursive
 ### 3) Build
 
 ```bash
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build --target mind_net_app
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_C_COMPILER=/opt/gcc-15.2.0/bin/gcc-15 \
+  -DCMAKE_CXX_COMPILER=/opt/gcc-15.2.0/bin/g++-15 \
+  -DCMAKE_CXX_STANDARD=26 \
+  -DCMAKE_CXX_STANDARD_REQUIRED=ON \
+  -DCMAKE_CXX_EXTENSIONS=OFF
+#-G Ninja 
+cmake --build build --target mind_net_app -j$(nproc)
 ```
 
 ### 4) Run
@@ -212,6 +218,12 @@ Then open:
 
 - Web UI: `http://localhost:9000/web/`
 - API base: `http://localhost:9000/api/v1/`
+
+#### Clion
+
+Add this to Run Configuration: `LD_LIBRARY_PATH=/opt/gcc-15.2.0/lib64`
+/opt/gcc-15.2.0/bin/gcc-15
+/opt/gcc-15.2.0/bin/g++-15
 
 ### Initial administrator login
 

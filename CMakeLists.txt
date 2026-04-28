@@ -1,15 +1,15 @@
-cmake_minimum_required(VERSION 3.25.1)
+cmake_minimum_required(VERSION 3.30)
 project(mind_net LANGUAGES CXX)
 
 option(MINDNET_ENABLE_API_LOG "Enable api_log" OFF)
 option(MINDNET_ENABLE_HISTORY "Enable history" ON)
 
-option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" OFF)
+option(ALLOW_LEGACY_PLUGINS "Allow legacy plugins" ON)
 option(MINDNET_ENABLE_DICTIONARY_PLUGIN "Enable Dictionary plugin" ON)
 
 if(ALLOW_LEGACY_PLUGINS)
     option(MINDNET_ENABLE_SLIPBOX_PLUGIN "Enable Slipbox plugin" ON)
-    option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" OFF)
+    option(MINDNET_ENABLE_REPETITION_PLUGIN "Enable Repetition plugin" ON)
 else()
     unset(MINDNET_ENABLE_SLIPBOX_PLUGIN CACHE)
     unset(MINDNET_ENABLE_REPETITION_PLUGIN CACHE)
@@ -50,8 +50,9 @@ set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -Wl,--gc-s
 #set(CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -fsanitize=address")
 
 # C++ standard
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Enable Unity build for all targets (faster builds)
 set(CMAKE_UNITY_BUILD ON)
