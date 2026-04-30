@@ -1,6 +1,6 @@
-# 👩‍💻 Mind-Net Developer Guide
+# 👩‍💻 Hive Developer Guide
 
-This document is the technical reference for Mind-Net internals.
+This document is the technical reference for Hive internals.
 
 - For setup and user-level usage, see [README.md](README.md).
 - For contribution rules, see [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -9,19 +9,19 @@ This document is the technical reference for Mind-Net internals.
 
 ## 1) Architecture Deep Dive
 
-Mind-Net is a modular C++ system with clear boundaries between metadata, transport, orchestration, persistence, and domain extensions.
+Hive is a modular C++ system with clear boundaries between metadata, transport, orchestration, persistence, and domain extensions.
 
 ### Module boundaries and responsibilities
 
 | Module | Responsibility |
 |---|---|
-| `src/mind-net-app` | Process startup, command parsing, plugin factory registration, migration bootstrap, HTTP server start |
-| `src/mind-net-http` | Endpoint generators, routing glue, web/static serving, auth and metadata endpoints |
-| `src/mind-net-essential` | Service orchestration: CRUD flow, validators, triggers, jobs, query dispatch |
-| `src/mind-net-model` | Core metadata types (`ModelDefinition`) and model contracts |
-| `src/mind-net-orm` | ORM entities + column constants (`BaseColumns`-style definitions) |
-| `src/mind-net-db-sqlite` | SQLite persistence, repositories, migration executor, cache-backed data access |
-| `src/mind-net-plugin-*` | Feature domains packaged as plugins (models + behavior + migrations + automation) |
+| `src/hive-app` | Process startup, command parsing, plugin factory registration, migration bootstrap, HTTP server start |
+| `src/hive-http` | Endpoint generators, routing glue, web/static serving, auth and metadata endpoints |
+| `src/hive-essential` | Service orchestration: CRUD flow, validators, triggers, jobs, query dispatch |
+| `src/hive-model` | Core metadata types (`ModelDefinition`) and model contracts |
+| `src/hive-orm` | ORM entities + column constants (`BaseColumns`-style definitions) |
+| `src/hive-db-sqlite` | SQLite persistence, repositories, migration executor, cache-backed data access |
+| `src/hive-plugin-*` | Feature domains packaged as plugins (models + behavior + migrations + automation) |
 | `frontend/` | Metadata-driven CRUD UI (vanilla JS), auth/session handling, API client |
 
 ### Layer interaction
@@ -52,7 +52,7 @@ Traditional CRUD systems duplicate schema intent across:
 - persistence mapping
 - frontend form/table definitions
 
-Mind-Net centralizes that intent in model metadata, reducing divergence across layers.
+Hive centralizes that intent in model metadata, reducing divergence across layers.
 
 ### What it describes
 
@@ -70,7 +70,7 @@ For each model, metadata includes:
 - **API:** model routes are generated under `/api/v1/<model>`.
 - **UI:** frontend reads `/api/v1/model_definition` and renders generic CRUD views.
 
-This is the central reason Mind-Net can onboard new entities quickly with consistent behavior.
+This is the central reason Hive can onboard new entities quickly with consistent behavior.
 
 ---
 
@@ -180,7 +180,7 @@ This section is a practical, minimal path to adding a production-safe plugin.
 Create a new module folder following existing naming:
 
 ```text
-src/mind-net-plugin-<your-domain>/
+src/hive-plugin-<your-domain>/
 ├── CMakeLists.txt
 ├── ... plugin source files ...
 └── ... headers ...
@@ -210,7 +210,7 @@ If you can avoid custom behavior at first, start with models + migrations only, 
 ### Step 4: Wire build and startup
 
 - Add the plugin subdirectory in top-level `CMakeLists.txt`.
-- Link plugin library into `mind_net_app` in `src/mind-net-app/CMakeLists.txt` (typically behind a feature flag).
+- Link plugin library into `hive_app` in `src/hive-app/CMakeLists.txt` (typically behind a feature flag).
 - Register plugin factory in app startup composition (`Main.cpp`) with existing plugin registration pattern.
 
 ### Step 5: Verify end-to-end behavior
@@ -267,7 +267,7 @@ Validators enforce operation rules before persistence, typically for:
 
 ### Persistence model
 
-Mind-Net uses repository-based persistence over SQLite, aligned with model metadata.
+Hive uses repository-based persistence over SQLite, aligned with model metadata.
 
 Key characteristics:
 
@@ -360,7 +360,7 @@ This keeps frontend feature growth mostly metadata-driven rather than hand-coded
 
 ### B) Add a new plugin
 
-1. Create plugin module under `src/mind-net-plugin-<name>/`.
+1. Create plugin module under `src/hive-plugin-<name>/`.
 2. Implement plugin factory and registrations.
 3. Declare dependencies on required plugins.
 4. Add plugin migrations and domain models.

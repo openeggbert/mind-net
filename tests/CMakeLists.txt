@@ -2,20 +2,20 @@ file(GLOB_RECURSE TEST_SOURCES "*.cpp")
 
 add_executable(Tests ${TEST_SOURCES})
 
-configure_file( ${CMAKE_SOURCE_DIR}/configuration/mindnet.properties ${CMAKE_CURRENT_BINARY_DIR}/mindnet.properties COPYONLY )
+configure_file( ${CMAKE_SOURCE_DIR}/configuration/hive.properties ${CMAKE_CURRENT_BINARY_DIR}/hive.properties COPYONLY )
 
 target_include_directories(Tests PRIVATE
         ${CMAKE_SOURCE_DIR}/include
 )
 
 target_link_libraries(Tests PRIVATE
-        mind_net_essential
-        mind_net_util
-        mind_net_model
-        mind_net_orm
-        mind_net_api
-        mind_net_http
-        mind_net_db_sqlite
+        hive_essential
+        hive_util
+        hive_model
+        hive_orm
+        hive_api
+        hive_http
+        hive_db_sqlite
         gtest_main
 )
 

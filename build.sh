@@ -13,16 +13,16 @@ time cmake --build build --config Release || exit
 # ------------------------------
 # Optimize binary
 # ------------------------------
-cd build/src/mind-net-app || exit
-strip --strip-all mind_net_app || exit
-upx --best --lzma mind_net_app || exit
+cd build/src/hive-app || exit
+strip --strip-all hive_app || exit
+upx --best --lzma hive_app || exit
 cd ../.. || exit
 directory=build_$now || exit
 mkdir $directory || exit
 
-mv src/mind-net-app/mind_net_app $directory/mindnet || exit
-cp ../configuration/mindnet.properties $directory/mindnet.properties || exit
-cp ../start-mindnet.sh $directory/start-mindnet.sh || exit
+mv src/hive-app/hive_app $directory/hive || exit
+cp ../configuration/hive.properties $directory/hive.properties || exit
+cp ../start-hive.sh $directory/start-hive.sh || exit
 mkdir $directory/frontend || exit
 cp -r ../frontend/* $directory/frontend || exit
 

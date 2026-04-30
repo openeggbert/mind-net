@@ -1,0 +1,67 @@
+/*
+ * MIT License
+ * Copyright (c) 2025 Robert Vokac
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#pragma once
+
+#include <string>
+
+#include "hive/model/EnumDefinition.hpp"
+
+namespace hive::plugins::dictionary::enums
+{
+    /**
+     *
+     * @author robertvokac
+     */
+    enum class Importance
+    {
+        Low = 1, Medium = 2, High = 3
+    };
+
+    inline std::string importance_to_string(Importance importance)
+    {
+        switch (importance)
+        {
+        case Importance::Low:
+            return "Low";
+        case Importance::Medium:
+            return "Medium";
+        case Importance::High:
+            return "High";
+        default:
+            return "Unknown";
+        }
+    }
+
+    inline std::string importance_to_string(int importance)
+    {
+        return importance_to_string(static_cast<Importance>(importance));
+    }
+
+    inline model::EnumDefinition importance_to_enum_definition()
+    {
+        return model::EnumDefinition{
+            importance_to_string, 3, 1, 2, 3
+        };
+    }
+} // namespace hive::enums

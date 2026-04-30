@@ -1,17 +1,17 @@
-# 🧠 Mind-Net
+# 🧠 Hive
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)
 
-Mind-Net is a modular **C++23 universal data server** with a metadata-driven backend, auto-generated REST API, automation engine (jobs + triggers), and schema-driven web frontend.
+Hive is a modular **C++23 universal data server** with a metadata-driven backend, auto-generated REST API, automation engine (jobs + triggers), and schema-driven web frontend.
 
 It is designed for teams and individuals who need more than CRUD: a system that evolves through plugins, model metadata, and domain-specific automation.
 
-Mind-Net demonstrates system-level C++ engineering: custom model abstractions, runtime extensibility, migration integrity, and API/UI generation from a shared metadata contract.
+Hive demonstrates system-level C++ engineering: custom model abstractions, runtime extensibility, migration integrity, and API/UI generation from a shared metadata contract.
 
 ## 🚀 Overview
 
-Mind-Net combines:
+Hive combines:
 
 - a high-performance C++ backend (Crow + SQLite)
 - a custom model/ORM stack (`ModelDefinition`, `BaseModel`, column metadata)
@@ -29,9 +29,9 @@ Mind-Net combines:
 
 For implementation internals and extension mechanics, see [DEVELOPERS.md](./DEVELOPERS.md).
 
-## 🎯 When to use Mind-Net
+## 🎯 When to use Hive
 
-Mind-Net is a strong fit when you need:
+Hive is a strong fit when you need:
 
 - a domain platform with many entities that should expose consistent CRUD APIs quickly
 - backend-driven UI generation to minimize repetitive frontend form/table code
@@ -87,13 +87,13 @@ It is especially suitable for knowledge systems, structured content domains, int
 
 ### High-level modules
 
-- `src/mind-net-app` — application bootstrap, plugin loading, command handling
-- `src/mind-net-http` — endpoint generators, HTTP server integration
-- `src/mind-net-essential` — service orchestration (CRUD, triggers, validators, jobs, queries)
-- `src/mind-net-model` — model definitions and base model abstractions
-- `src/mind-net-orm` — ORM entities and column constants
-- `src/mind-net-db-sqlite` — repositories, queries, migrations, SQLite integration
-- `src/mind-net-plugin-*` — domain extensions (`core`, `dictionary`, `slipbox`, `repetition`)
+- `src/hive-app` — application bootstrap, plugin loading, command handling
+- `src/hive-http` — endpoint generators, HTTP server integration
+- `src/hive-essential` — service orchestration (CRUD, triggers, validators, jobs, queries)
+- `src/hive-model` — model definitions and base model abstractions
+- `src/hive-orm` — ORM entities and column constants
+- `src/hive-db-sqlite` — repositories, queries, migrations, SQLite integration
+- `src/hive-plugin-*` — domain extensions (`core`, `dictionary`, `slipbox`, `repetition`)
 - `frontend/` — dynamic web UI (vanilla JS)
 
 ### Request/data flow (at runtime)
@@ -186,8 +186,8 @@ The metadata endpoint is the contract between backend and dynamic frontend.
 ### 2) Clone and prepare
 
 ```bash
-git clone https://github.com/openeggbert/mind-net.git
-cd mind-net
+git clone https://github.com/openeggbert/hive.git
+cd hive
 git submodule update --init --recursive
 ```
 
@@ -195,13 +195,13 @@ git submodule update --init --recursive
 
 ```bash
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build --target mind_net_app
+cmake --build build --target hive_app
 ```
 
 ### 4) Run
 
 ```bash
-./build/src/mind-net-app/mind_net_app start \
+./build/src/hive-app/hive_app start \
   --port 9000 \
   --frontend-port 9000 \
   --host http://localhost \
@@ -224,10 +224,10 @@ Default administrator credentials are written to `pw.txt` on first bootstrap.
 ## 🧭 Developer Entry Points
 
 - Start with [DEVELOPERS.md](./DEVELOPERS.md) for architecture deep dive and extension workflow.
-- Inspect `src/mind-net-app/mindnet/app/Main.cpp` for startup composition.
-- Inspect `src/mind-net-http/` for endpoint generators.
-- Inspect `src/mind-net-essential/` for service orchestration, validators, triggers, and jobs.
-- Inspect plugin factories under `src/mind-net-plugin-*/` to see real extension examples.
+- Inspect `src/hive-app/hive/app/Main.cpp` for startup composition.
+- Inspect `src/hive-http/` for endpoint generators.
+- Inspect `src/hive-essential/` for service orchestration, validators, triggers, and jobs.
+- Inspect plugin factories under `src/hive-plugin-*/` to see real extension examples.
 - Follow the practical first-plugin walkthrough in [DEVELOPERS.md](./DEVELOPERS.md#6-creating-your-first-plugin-practical).
 
 ## 📖 Usage
@@ -250,7 +250,7 @@ Default administrator credentials are written to `pw.txt` on first bootstrap.
 - Track execution using persisted `job_entry` and `job_run` data.
 - Add triggers to react to CRUD events (`Before`, `After`, `InsteadOf`).
 
-## 🧠 Why Mind-Net is interesting (Engineering Perspective)
+## 🧠 Why Hive is interesting (Engineering Perspective)
 
 - **Metadata-driven architecture:** one model definition influences API, persistence behavior, and dynamic UI.
 - **Extensible runtime:** plugins package schema + behavior + automation instead of isolated DTOs.
@@ -268,23 +268,23 @@ For deep technical internals, see [DEVELOPERS.md](./DEVELOPERS.md).
 ## 🗂️ Project Structure
 
 ```text
-mind-net/
+hive/
 ├── CMakeLists.txt
 ├── include/
-│   ├── mind-net-model/
-│   ├── mind-net-orm/
-│   ├── mind-net-http/
-│   └── mind-net-api/
+│   ├── hive-model/
+│   ├── hive-orm/
+│   ├── hive-http/
+│   └── hive-api/
 ├── src/
-│   ├── mind-net-app/
-│   ├── mind-net-essential/
-│   ├── mind-net-db-sqlite/
-│   ├── mind-net-http/
-│   ├── mind-net-model/
-│   ├── mind-net-orm/
-│   ├── mind-net-plugin-dictionary/
-│   ├── mind-net-plugin-slip-box/
-│   └── mind-net-plugin-repetition/
+│   ├── hive-app/
+│   ├── hive-essential/
+│   ├── hive-db-sqlite/
+│   ├── hive-http/
+│   ├── hive-model/
+│   ├── hive-orm/
+│   ├── hive-plugin-dictionary/
+│   ├── hive-plugin-slip-box/
+│   └── hive-plugin-repetition/
 ├── frontend/
 ├── screenshots/
 ├── tests/

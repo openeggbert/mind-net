@@ -99,7 +99,7 @@ const apps = [
 ```aiignore
 const token = localStorage.getItem("auth_token");
 
-fetch("https://api.mindnet.cz/v1/note", {
+fetch("https://api.hive.cz/v1/note", {
   method: "POST", 
   headers: {
     "Content-Type": "application/json",

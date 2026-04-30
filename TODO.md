@@ -523,7 +523,7 @@ Isolate all database access through generic interfaces so the application can su
 ---
 
 ## Step 1: Define Interfaces
-Create generic interfaces in `mindnet/db/api/`:
+Create generic interfaces in `hive/db/api/`:
 
 - **IDatabase**  
   - `prepare(sql) -> IStatement`  

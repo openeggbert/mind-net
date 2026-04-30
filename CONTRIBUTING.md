@@ -1,9 +1,9 @@
-# Contributing to Mind-Net
+# Contributing to Hive
 
 We welcome contributions of all kinds: code, documentation, tests, or feature ideas.  
 Please follow the [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/) and existing project style.
 
-For a **detailed technical description of how Mind-Net works internally**, see  
+For a **detailed technical description of how Hive works internally**, see  
 👉 [DEVELOPERS.md](./DEVELOPERS.md)
 
 ## How to contribute
@@ -13,7 +13,7 @@ For a **detailed technical description of how Mind-Net works internally**, see
 3. Add tests where possible.
 4. Open a Pull Request with a clear description of your changes.
 
-Please report bugs or request features in [GitHub Issues](https://github.com/openeggbert/mind-net/issues).
+Please report bugs or request features in [GitHub Issues](https://github.com/openeggbert/hive/issues).
 
 ## Project TODO / Roadmap
 
@@ -89,7 +89,7 @@ Please report bugs or request features in [GitHub Issues](https://github.com/ope
 - [ ] Implement adding reason for changes (history.reason)
 - [ ] Validators - reorder methods in cpp files
 - [ ] Add new ColumnTypes: BLOB, REAL: std::variant<int64_t, std::string, double, std::vector<std::byte>> `static_assert(sizeof(double) == 8, "double must be 64-bit"); typedef double r64;`
-- [ ] Integrate AI into mind-net
+- [ ] Integrate AI into hive
 - [ ] Add tests
 - [ ] ORM framework: add count, exists, empty
 - [ ] To avoid model name collisions, use plugin_name consistently throughout the system. When finding a model, both

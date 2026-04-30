@@ -417,10 +417,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 function init_dom() {
     get_element("slipbox_header").title = "Go to list of all maps"
     get_element("slipbox_header").style.cursor = "pointer"
-    get_element("button_mindnet").addEventListener("click", () => {
+    get_element("button_hive").addEventListener("click", () => {
         window.location.href = 'index.html'
     });
-    get_element("button_mindnet").title = "Go to Mind Net generic frontend"
+    get_element("button_hive").title = "Go to Mind Net generic frontend"
     get_element("button_previous").title = "Previous sibling by order";
     get_element("button_next").title = "Next sibling by order";
     if (!simple) {

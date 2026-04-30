@@ -1,6 +1,6 @@
 # CMake Review & Modernization TODO
 
-This document summarizes the current state of the **mind-net** CMake build system and provides recommendations for modernization, optimization, and maintainability.
+This document summarizes the current state of the **hive** CMake build system and provides recommendations for modernization, optimization, and maintainability.
 
 ---
 
@@ -8,7 +8,7 @@ This document summarizes the current state of the **mind-net** CMake build syste
 
 1. **Project modularity**
 
-   * Each component (`mind-net-api`, `mind-net-model`, `mind-net-http`, plugins, etc.) has its own `CMakeLists.txt`.
+   * Each component (`hive-api`, `hive-model`, `hive-http`, plugins, etc.) has its own `CMakeLists.txt`.
    * Provides a good basis for scalability and selective builds.
 
 2. **Modern CMake version**
@@ -95,7 +95,7 @@ This document summarizes the current state of the **mind-net** CMake build syste
    * Define a central function in root `CMakeLists.txt`, e.g.:
 
      ```cmake
-     function(add_mindnet_module name)
+     function(add_hive_module name)
          add_library(${name} STATIC ${ARGN})
          target_include_directories(${name} PUBLIC ${CMAKE_SOURCE_DIR}/src)
          target_compile_features(${name} PUBLIC cxx_std_23)
@@ -116,7 +116,7 @@ This document summarizes the current state of the **mind-net** CMake build syste
 
 4. **Consider dynamic plugins**
 
-   * Use `add_library(mind_net_plugin_chat MODULE ...)` or `SHARED`.
+   * Use `add_library(hive_plugin_chat MODULE ...)` or `SHARED`.
    * This allows runtime plugin loading (`dlopen`) and better extensibility.
 
 5. **Conditional test builds**
@@ -134,7 +134,7 @@ This document summarizes the current state of the **mind-net** CMake build syste
    * Use precompiled headers:
 
      ```cmake
-     target_precompile_headers(mind_net_essential PRIVATE <vector> <string> ...)
+     target_precompile_headers(hive_essential PRIVATE <vector> <string> ...)
      ```
    * Enable compiler cache (`CMAKE_CXX_COMPILER_LAUNCHER=ccache`).
 
@@ -143,7 +143,7 @@ This document summarizes the current state of the **mind-net** CMake build syste
    * Example:
 
      ```cmake
-     install(TARGETS mind_net_app mind_net_api ...)
+     install(TARGETS hive_app hive_api ...)
      export(EXPORT MindNetTargets)
      ```
 
@@ -165,5 +165,5 @@ This document summarizes the current state of the **mind-net** CMake build syste
 * **Weaknesses:** global flags, outdated include style, heavy boilerplate, non-optional dependencies, static plugins.
 * **Next steps:** refactor to target-based CMake, modularize plugin handling, introduce PCH, conditionally build tests, and add install/export rules.
 
-This modernization will improve **maintainability, build speed, portability, and extensibility** of the mind-net project.
+This modernization will improve **maintainability, build speed, portability, and extensibility** of the hive project.
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25.1)
-project(mind_net LANGUAGES CXX)
+project(hive LANGUAGES CXX)
 
 option(MINDNET_ENABLE_API_LOG "Enable api_log" OFF)
 option(MINDNET_ENABLE_HISTORY "Enable history" ON)
@@ -74,28 +74,28 @@ include_directories(${CROW_DIR}/include)
 include_directories(${ASIO_DIR}/asio/include)
 
 # ===== Project modules =====
-add_subdirectory(src/mind-net-essential)
-add_subdirectory(src/mind-net-util)
-add_subdirectory(src/mind-net-model)
-add_subdirectory(src/mind-net-orm)
-add_subdirectory(src/mind-net-api)
-add_subdirectory(src/mind-net-db-sqlite)
-add_subdirectory(src/mind-net-http)
+add_subdirectory(src/hive-essential)
+add_subdirectory(src/hive-util)
+add_subdirectory(src/hive-model)
+add_subdirectory(src/hive-orm)
+add_subdirectory(src/hive-api)
+add_subdirectory(src/hive-db-sqlite)
+add_subdirectory(src/hive-http)
 
 if (MINDNET_ENABLE_DICTIONARY_PLUGIN)
-    add_subdirectory(src/mind-net-plugin-dictionary)
+    add_subdirectory(src/hive-plugin-dictionary)
 endif ()
 
 if (MINDNET_ENABLE_SLIPBOX_PLUGIN)
-    add_subdirectory(src/mind-net-plugin-slip-box)
+    add_subdirectory(src/hive-plugin-slip-box)
 endif ()
 
 if (MINDNET_ENABLE_REPETITION_PLUGIN)
-    add_subdirectory(src/mind-net-plugin-repetition)
+    add_subdirectory(src/hive-plugin-repetition)
 endif ()
 
 
-add_subdirectory(src/mind-net-app)
+add_subdirectory(src/hive-app)
 
 # ===== Tests =====
 if (ENABLE_TESTS)
@@ -104,7 +104,7 @@ if (ENABLE_TESTS)
 endif ()
 
 configure_file(
-        ${CMAKE_SOURCE_DIR}/configuration/mindnet.properties
-        ${CMAKE_BINARY_DIR}/mindnet.properties
+        ${CMAKE_SOURCE_DIR}/configuration/hive.properties
+        ${CMAKE_BINARY_DIR}/hive.properties
         COPYONLY
 )

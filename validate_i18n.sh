@@ -8,7 +8,7 @@ BASE_FILE="$LOCALES_DIR/$BASE_LANG"
 
 # Implicitly allowed EN values (brand / product names)
 IMPLICIT_ALLOW_EN_KEYS="
-dictionary.button.mindnet
+dictionary.button.hive
 "
 
 if [ ! -f "$BASE_FILE" ]; then
