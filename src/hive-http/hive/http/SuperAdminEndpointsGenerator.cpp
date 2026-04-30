@@ -38,7 +38,7 @@ namespace hive::http
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mind Net Configuration</title>
+  <title>Hive Configuration</title>
   <link rel="icon" type="image/png" href="../../../web/favicon.png">
   <style>
     body {{
@@ -124,8 +124,8 @@ content: " (takes effect after restart) ";
   </style>
 </head>
 <body>
-  <h1><a href="configure">Mind Net Configuration</a></h1>
-  <i><a href="../web">Mind Net</a></i>
+  <h1><a href="configure">Hive Configuration</a></h1>
+  <i><a href="../web">Hive</a></i>
 
   <form id="configForm">
     <!-- Identification -->
@@ -505,7 +505,7 @@ if (!form) {{
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Mind Net Configuration</title>
+  <title>Hive Configuration</title>
   <link rel="icon" type="image/png" href="../../../web/favicon.png">
   <style>
     body {
@@ -542,7 +542,7 @@ if (!form) {{
   </style>
 </head>
 <body>
-  <h1><a href="configure">Mind Net Configuration</a></h1>
+  <h1><a href="configure">Hive Configuration</a></h1>
   <a style="padding:5px; border:2px solid grey; background:#ddd;text-align:center;" href="/web">Go to Main Menu</a>
 
 <script>

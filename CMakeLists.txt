@@ -16,7 +16,7 @@ else()
 endif()
 
 message(STATUS "")
-message(STATUS "Mind Net plugin configuration:")
+message(STATUS "Hive plugin configuration:")
 message(STATUS "  Dictionary plugin : ${MINDNET_ENABLE_DICTIONARY_PLUGIN}")
 message(STATUS "  Slipbox plugin    : ${MINDNET_ENABLE_SLIPBOX_PLUGIN}")
 message(STATUS "  Repetition plugin : ${MINDNET_ENABLE_REPETITION_PLUGIN}")

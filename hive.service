@@ -1,7 +1,7 @@
 [Unit]
 #Install also: apt update && apt install libasan8  libfmt10
 
-Description=Mind Net (C++ REST backend)
+Description=Hive (C++ REST backend)
 After=network.target
 
 [Service]

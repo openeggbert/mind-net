@@ -63,13 +63,13 @@ namespace hive::plugins::core::columns
          */
         static constexpr const char* ORIGIN = "origin"; // api | system | job | trigger
 
-        // build-time layer (CMake target / Mind Net module)
+        // build-time layer (CMake target / Hive module)
         static constexpr const char* LAYER = "layer";
 
         /* ------------------------------------------------------------------
          * System location
          * ------------------------------------------------------------------
-         * Where in the Mind Net architecture the error occurred
+         * Where in the Hive architecture the error occurred
          */
         static constexpr const char* PLUGIN = "plugin"; // dictionary, core, auth, ...
         static constexpr const char* OPERATION = "operation"; // LIST / CREATE / UPDATE / DELETE
@@ -117,7 +117,7 @@ namespace hive::plugins::core::columns
         /* ------------------------------------------------------------------
          * Versioning
          * ------------------------------------------------------------------
-         * Mind Net version in which the error occurred
+         * Hive version in which the error occurred
          */
         static constexpr const char* MINDNET_VERSION = "hive_version";
     };

@@ -44,7 +44,7 @@ namespace hive::essential
      * - ADMIN: Can do anything.
      * - SUPER_ADMIN: Has all ADMIN privileges plus system-level controls including server management (restart/shutdown) and runtime configuration modifications through the web interface.
      * - SYSTEM: Can do anything and even more than ADMIN.
-     * During the first application launch, Mind Net creates two users with usernames: admin and editor, both the users have the empty passwords.
+     * During the first application launch, Hive creates two users with usernames: admin and editor, both the users have the empty passwords.
      */
     enum class UserRole
     {

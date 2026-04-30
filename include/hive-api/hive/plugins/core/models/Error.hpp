@@ -113,7 +113,7 @@ namespace hive::plugins::core::models
 
                 /* versioning */
                 coldef(COLSERROR::MINDNET_VERSION)
-                    .set_description("Mind Net version in which the error occurred"),
+                    .set_description("Hive version in which the error occurred"),
             });
 
     struct ModelERROR : hive::model::BaseModel

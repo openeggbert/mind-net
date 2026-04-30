@@ -40,7 +40,7 @@
 
 /**
  * @file Note.h
- * @brief Definition of the SlipBox Note model within Mind Net ORM framework.
+ * @brief Definition of the SlipBox Note model within Hive ORM framework.
  *
  * The Note entity represents a single atomic note in the SlipBox (Zettelkasten) system.
  * Each note may have hierarchical relationships, metadata, and references to content.

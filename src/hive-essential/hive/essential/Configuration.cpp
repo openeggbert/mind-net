@@ -182,9 +182,9 @@ namespace hive::essential
     }
 
     constexpr auto hive_properties_template = FMT_STRING(R"(
-#Configuration for Mind Net
+#Configuration for Hive
 
-#Warning: This configuration is loaded only when Mind Net starts.
+#Warning: This configuration is loaded only when Hive starts.
 
 #Identification
 name={name}

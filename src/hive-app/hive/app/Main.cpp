@@ -101,7 +101,7 @@ void migrate_schema_if_needed(hive::api::PluginRegistryPtr& plugin_registry_ptr)
 
 void print_logo()
 {
-    info << "Starting Mind Net..." << commit;
+    info << "Starting Hive..." << commit;
 
     std::cout << R"(
   __  __ _           _   _   _      _

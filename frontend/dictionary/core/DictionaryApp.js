@@ -53,7 +53,7 @@ export class DictionaryApp {
         get_element("button_hive").addEventListener("click", () => {
             window.location.href = 'index.html'
         });
-        get_element("button_hive").title = "Go to Mind Net generic frontend"
+        get_element("button_hive").title = "Go to Hive generic frontend"
 
         this.#autocomplete_term_title = new Autocomplete(this.#input_search_term, 1, "dictionary_term_fulltext", "&alias=1&dictionary_map_id=" + this.select_map.get_selected_map_id(), "title", "title_part", "div_search_term_end")
         this.#autocomplete_term_title.addCallback(async () => {

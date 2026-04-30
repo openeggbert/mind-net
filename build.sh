@@ -1,5 +1,5 @@
 rm -r build
-echo Going to build Mind Net
+echo Going to build Hive
 
 now=`date +"%Y%m%d_%H%M%S"`
 
@@ -27,5 +27,5 @@ mkdir $directory/frontend || exit
 cp -r ../frontend/* $directory/frontend || exit
 
 
-echo "Mind Net was successfully built."
+echo "Hive was successfully built."
 cd ..
